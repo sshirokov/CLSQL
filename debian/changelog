@@ -1,3 +1,9 @@
+cl-sql (1.9.2-1) unstable; urgency=low
+
+  * Automatically detect mysql version
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Wed, 31 Mar 2004 16:56:23 -0700
+
 cl-sql (1.9.1-1) unstable; urgency=low
 
   * Add better support for mysql v4
