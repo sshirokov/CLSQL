@@ -20,8 +20,8 @@
 
 ;; need to load uffi for below output-files method 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  #+common-lisp-controller (require 'uffi)
-  #-common-lisp-controller (asdf:operate 'asdf:load-op 'uffi))
+  (unless (find-package 'uffi)
+    (asdf:operate 'asdf:load-op 'uffi)))
 
 (defpackage clsql-uffi-system (:use #:asdf #:cl))
 (in-package clsql-uffi-system)

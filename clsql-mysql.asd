@@ -20,8 +20,8 @@
 (in-package #:clsql-mysql-system)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  #+common-lisp-controller (require 'uffi)
-  #-common-lisp-controller (asdf:operate 'asdf:load-op 'uffi))
+  (unless (find-package 'uffi)
+    (asdf:operate 'asdf:load-op 'uffi)))
 
 (defvar *library-file-dir* (append (pathname-directory *load-truename*)
 				   (list "db-mysql")))
