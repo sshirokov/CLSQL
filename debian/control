@@ -49,7 +49,7 @@ Description: CLSQL database backend, AODBC
 
 Package: cl-sql-postgresql
 Architecture: all
-Depends: cl-sql-base (>= ${Source-Version}), postgresql-client, cl-sql-uffi (>= ${Source-Version})
+Depends: cl-sql-base (>= ${Source-Version}), postgresql-dev, cl-sql-uffi (>= ${Source-Version})
 Provides: cl-sql-backend
 Description: CLSQL database backend, PostgreSQL
  This package enables you to use the CLSQL data access package
@@ -57,7 +57,7 @@ Description: CLSQL database backend, PostgreSQL
 
 Package: cl-sql-postgresql-socket
 Architecture: all
-Depends: cl-sql-base (>= ${Source-Version}), cl-md5, cl-sql-uffi (>= ${Source-Version})
+Depends: cl-sql-base (>= ${Source-Version}), cl-md5, cl-sql-uffi (>= ${Source-Version}), libc6-dev
 Provides: cl-sql-backend
 Description: CLSQL database backend, PostgreSQL
  This package enables you to use the CLSQL data access package
