@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: tester-clsql.cl,v 1.1 2002/04/08 02:50:28 kevin Exp $
+;;;; $Id: tester-clsql.cl,v 1.2 2002/04/08 02:52:39 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -16,14 +16,9 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(error "Not yet implemented")
-
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :cl-user)
 
-(defvar *config-pathname* (make-pathname :name "test"
-					 :type "config"
-					 :defaults *load-truename*))
 (unless (find-package :util.test)
   (load (make-pathname :name "acl-compat-tester" :type "cl"
 		       :defaults *load-truename*)))
@@ -31,17 +26,22 @@
 (in-package :clsql-user)
 (use-package :util.test)
 
-(def-test-fixture clsql-fixture ()
+(defvar *config-pathname* (make-pathname :name "test"
+					 :type "config"
+					 :defaults *load-truename*))
+
+
+(defclass conn-specs ()
   ((aodbc-spec :accessor aodbc-spec)
    (mysql-spec :accessor mysql-spec)
    (pgsql-spec :accessor pgsql-spec)
    (pgsql-socket-spec :accessor pgsql-socket-spec))
   (:documentation "Test fixture for CLSQL testing"))
 
-(defvar *config-pathname* (make-pathname :name "test"
-					 :type "config"
-					 :defaults *load-truename*))
-(defmethod setup ((fix clsql-fixture))
+
+(error "Not yet implemented")
+
+(defmethod setup ((fix conn-specs))
   (if (probe-file *config-pathname*)
       (let (config)
 	(with-open-file (stream *config-pathname* :direction :input)
@@ -53,19 +53,19 @@
 	      (cadr (assoc :postgresql-socket config))))
       (error "XPTest Config file ~S not found" *config-pathname*)))
 
-(defmethod teardown ((fix clsql-fixture))
+(defmethod teardown ((fix conn-specs))
   t)
 
-(defmethod mysql-table-test ((test clsql-fixture))
+(defmethod mysql-table-test ((test conn-specs))
   (test-table (mysql-spec test) :mysql))
 
-(defmethod aodbc-table-test ((test clsql-fixture))
+(defmethod aodbc-table-test ((test conn-specs))
   (test-table (aodbc-spec test) :aodbc))
 
-(defmethod pgsql-table-test ((test clsql-fixture))
+(defmethod pgsql-table-test ((test conn-specs))
   (test-table (pgsql-spec test) :postgresql))
 
-(defmethod pgsql-socket-table-test ((test clsql-fixture))
+(defmethod pgsql-socket-table-test ((test conn-specs))
   (test-table (pgsql-socket-spec test) :postgresql-socket))
 
 
@@ -103,7 +103,7 @@
 	(disconnect :database db)))))
 
 
-(defmethod mysql-low-level ((test clsql-fixture))
+(defmethod mysql-low-level ((test conn-specs))
   (let ((spec (mysql-spec test)))
     (when spec
       (let ((db (clsql-mysql::database-connect spec :mysql)))
@@ -127,22 +127,22 @@
     (make-test-suite
      "CLSQL Test Suite"
      "Basic test suite for database operations."
-     ("MySQL Low Level Interface" 'clsql-fixture
+     ("MySQL Low Level Interface" 'conn-specs
 		   :test-thunk 'mysql-low-level
 		   :description "A test of MySQL low-level interface")
-     ("MySQL Table" 'clsql-fixture
+     ("MySQL Table" 'conn-specs
 		   :test-thunk 'mysql-table-test
 		   :description "A test of MySQL")
-     ("PostgreSQL Table" 'clsql-fixture
+     ("PostgreSQL Table" 'conn-specs
 		   :test-thunk 'pgsql-table-test
 		   :description "A test of PostgreSQL tables")     
-     ("PostgreSQL Socket Table" 'clsql-fixture
+     ("PostgreSQL Socket Table" 'conn-specs
 		   :test-thunk 'pgsql-socket-table-test
 		   :description "A test of PostgreSQL Socket tables")
   ))
 
 #+allegro 
-(add-test (make-test-case "AODBC table test" 'clsql-fixture
+(add-test (make-test-case "AODBC table test" 'conn-specs
 			  :test-thunk 'aodbc-table-test
 			  :description "Test AODBC table")
 	  clsql-test-suite)
