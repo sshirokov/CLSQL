@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql-base.asd,v 1.2 2002/08/18 04:08:56 kevin Exp $
+;;;; $Id: clsql-base.asd,v 1.3 2002/08/18 04:39:59 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -25,7 +25,12 @@
   (when (probe-file helper-pathname)
       (load helper-pathname)))
 
-;;; System definitions
+(unless (ignore-errors (find-class 'clsql-cl-source-file))
+  (defclass clsql-cl-source-file (cl-source-file) ())
+  (defmethod source-file-type ((c clsql-cl-source-file) (s module)) 
+    "cl"))
+
+ ;;; System definitions
 
 (defsystem clsql-base
   :default-component-class clsql-cl-source-file

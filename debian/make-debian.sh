@@ -1,5 +1,5 @@
 #!/bin/bash -e
 
-bdeb.sh -Sclsql -Dcl-sql -bc -bp $*
+bdeb clsql -bc -bp $*
 
 exit 0
