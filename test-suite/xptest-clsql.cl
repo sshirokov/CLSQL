@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: xptest-clsql.cl,v 1.5 2002/03/27 10:56:02 kevin Exp $
+;;;; $Id: xptest-clsql.cl,v 1.6 2002/03/27 11:13:27 kevin Exp $
 ;;;;
 ;;;; The XPTest package can be downloaded from
 ;;;; http://alpha.onshored.com/lisp-software/
@@ -80,6 +80,19 @@
 	     (loop for row across (map-query 'vector #'list "select * from test_clsql" 
 					     :database db :types nil)
 		   do (test-table-row row nil))
+	     (loop for row in (map-query 'list #'list "select * from test_clsql" 
+					 :database db :types nil)
+		   do (test-table-row row nil))
+	     (loop for row in (map-query 'list #'list "select * from test_clsql" 
+					 :database db :types :auto)
+		   do (test-table-row row :auto))
+	     (when (map-query nil #'list "select * from test_clsql" 
+					 :database db :types :auto)
+	       (failure "Expected NIL result from map-query nil"))
+	     (do-query ((int float str) "select * from test_clsql")
+	       (test-table-row (list int float str) nil))
+	     (do-query ((int float str) "select * from test_clsql" :types :auto)
+	       (test-table-row (list int float str) :auto))
 	     (drop-test-table db)
 	     )
 	(disconnect :database db)))))

@@ -9,7 +9,7 @@
 ;;;;                
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-api.cl,v 1.10 2002/03/27 10:48:12 kevin Exp $
+;;;; $Id: postgresql-socket-api.cl,v 1.11 2002/03/27 11:13:27 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -644,27 +644,28 @@ connection, if it is still open."
        (unless before-decimal
 	 (error "Unexpected value"))))
     
-    (dotimes (i length)
-      (setq char (read-byte socket))
-;;      (format t "~&len:~D, i:~D, char:~D, minusp:~A, decimalp:~A" length i char minusp decimalp)
-      (let ((weight (ascii-digit char)))
-	(cond 
-	  ((and weight (not decimalp)) ;; before decimal point
-	   (setq before-decimal (+ weight (* 10 before-decimal))))
-	  ((and weight decimalp) ;; after decimal point
-	   (setq after-decimal (+ weight (* 10 after-decimal)))
-	   (incf decimal-count))
-	  ((and (= char +char-code-period+))
-	   (setq decimalp t))
-	  ((or (= char +char-code-lower-e+) 	      ;; E is for exponent
-	       (= char +char-code-upper-e+))
-	   (setq exponent (read-integer-from-socket socket (- length i 1)))
-	   (setq exponent (or exponent 0))
-	   (setq i length))
+    (block loop
+      (dotimes (i length)
+	(setq char (read-byte socket))
+	;;      (format t "~&len:~D, i:~D, char:~D, minusp:~A, decimalp:~A" length i char minusp decimalp)
+	(let ((weight (ascii-digit char)))
+	  (cond 
+	   ((and weight (not decimalp)) ;; before decimal point
+	    (setq before-decimal (+ weight (* 10 before-decimal))))
+	   ((and weight decimalp) ;; after decimal point
+	    (setq after-decimal (+ weight (* 10 after-decimal)))
+	    (incf decimal-count))
+	   ((and (= char +char-code-period+))
+	    (setq decimalp t))
+	   ((or (= char +char-code-lower-e+) 	      ;; E is for exponent
+		(= char +char-code-upper-e+))
+	    (setq exponent (read-integer-from-socket socket (- length i 1)))
+	    (setq exponent (or exponent 0))
+	    (return-from loop))
 	  (t 
 	   (break "Unexpected value"))
 	  )
-	))
+	)))
     (setq result (* (+ (coerce before-decimal 'double-float)
 		       (* after-decimal 
 			  (expt 10 (- decimal-count))))
