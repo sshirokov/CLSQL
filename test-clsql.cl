@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: test-clsql.cl,v 1.3 2002/03/24 18:31:05 kevin Exp $
+;;;; $Id: test-clsql.cl,v 1.4 2002/03/24 22:25:51 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -44,8 +44,12 @@
   (dolist (elem config)
     (let ((type (car elem))
 	  (spec (cadr elem)))
-      (clsql-test-table spec type))))
-
+      #-allegro
+      (unless (eq type :aodbc)
+	(clsql-test-table spec type))
+      #+allegro
+      (clsql-test-table spec type)))
+  )
 
 
 

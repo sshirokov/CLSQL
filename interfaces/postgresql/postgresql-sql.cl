@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.cl,v 1.5 2002/03/24 18:39:32 kevin Exp $
+;;;; $Id: postgresql-sql.cl,v 1.6 2002/03/24 22:25:51 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -120,7 +120,7 @@
                      (loop for i from 0 below (PQnfields result)
                          collect
                            (if (zerop (PQgetisnull result tuple-index i))
-                               (uffi:convert-from-cstring
+                               (uffi:convert-from-foreign-string
                                 (PQgetvalue result tuple-index i))
                              nil))))
               (t
@@ -164,7 +164,7 @@
 (defstruct postgresql-result-set
   (res-ptr (uffi:make-null-pointer 'pgsql-result) 
 	   :type pgsql-result-def)
-  (field-types nil :type cons) 
+  (field-types nil) 
   (num-tuples 0 :type integer)
   (num-fields 0 :type integer)
   (tuple-index 0 :type integer))
@@ -227,7 +227,7 @@
           do
             (setf (car rest)
               (if (zerop (PQgetisnull result tuple-index i))
-                  (uffi:convert-from-cstring 
+                  (uffi:convert-from-foreign-string 
                    (PQgetvalue result tuple-index i))
                 nil))
           finally

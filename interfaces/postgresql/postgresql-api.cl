@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-api.cl,v 1.1 2002/03/23 17:10:48 kevin Exp $
+;;;; $Id: postgresql-api.cl,v 1.2 2002/03/24 22:25:51 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -165,7 +165,7 @@
    (tup-num :int)
    (field-num :int))
   :module "postgresql"
-  :returning :cstring)
+  :returning (* :unsigned-char))
 
 (declaim (inline PQgetlength))
 (uffi:def-function ("PQgetlength" PQgetlength)
