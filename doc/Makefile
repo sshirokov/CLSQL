@@ -21,9 +21,9 @@ DOCFILE_EXT_DEFAULT:=xml
 
 # Standard docfile processing
 
-DEBIAN=expr "`cat /etc/issue`" : '.*Debian.*'
-SUSE=expr "`cat /etc/issue`" : '.*SuSE.*'
-REDHAT=expr "`cat /etc/issue`" : '.*RedHat.*'
+DEBIAN=$(shell expr "`cat /etc/issue`" : '.*Debian.*')
+SUSE=$(shell expr "`cat /etc/issue`" : '.*SuSE.*')
+REDHAT=$(shell expr "`cat /etc/issue`" : '.*RedHat.*')
 
 ifneq (${DEBIAN},0)
 OS:=debian
