@@ -41,6 +41,7 @@ a functional and an object oriented interface."
 			:pathname ""
 			:components ((:file "generics")
 				     (:file "classes" :depends-on ("generics"))
+				     (:file "loop-extension" :depends-on ("classes"))
 				     (:file "operations" :depends-on ("classes"))
 				     (:file "syntax" :depends-on ("operations")))
 			:depends-on (:package))

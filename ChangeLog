@@ -1,4 +1,14 @@
 4 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* sql/classes.lisp: Add SQL-OBJECT-QUERY type. Have [select 'class]
+	now return a sql-object-query type rather than directly performing a query.
+	This improves CommonSQL conformance.
+	* sql/sql.lisp:	Add new QUERY method for SQL-OBJECT-QUERY. Move
+	from basic/basic-sql.lisp the DO-QUERY and MAP-QUERY since they now
+	depend on sql-object-query-type.
+	* sql/loop-extensions.lisp: Move from base package
+	* classic/package.lisp: remove references to map-query and do-query
+
+4 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* TODO: New section on optimizations, especially optimizing JOINs.
 	* sql/objects.lisp: Have :target-slot return of list of lists rather
 	than a list of cons pairs to be conformant with CommonSQL.
@@ -6,8 +16,8 @@
 	statement and just requiring one SQL query. Add :retrieval :deferrred
 	to target-slot joins. Add placeholder for update-objects-join.
 	* sql/classes.lisp: Add :inner-join and :on slots to sql-query class
-	and process them for query output-sql.
-	
+	and process them for query output-sql. 
+
 4 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.11
 	* base/basic-sql.lisp: Avoid multiple evaluation

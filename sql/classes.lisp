@@ -426,6 +426,20 @@
     :initform nil))
   (:documentation "An SQL SELECT query."))
 
+(defclass sql-object-query (%sql-expression)
+  ((objects
+    :initarg :objects
+    :initform nil)
+   (flatp
+    :initarg :flatp
+    :initform nil)
+   (exp
+    :initarg :exp
+    :initform nil)
+   (refresh
+    :initarg :refresh
+    :initform nil)))
+
 (defmethod collect-table-refs ((sql sql-query))
   (remove-duplicates (collect-table-refs (slot-value sql 'where))
                      :test (lambda (tab1 tab2)
@@ -459,7 +473,10 @@ uninclusive, and the args from that keyword to the end."
     (multiple-value-bind (selections arglist)
 	(query-get-selections args)
       (if (select-objects selections) 
-	  (apply #'select args)
+	  (destructuring-bind (&key flatp refresh &allow-other-keys) arglist
+	    (make-instance 'sql-object-query :objects selections
+			   :flatp flatp :refresh refresh
+			   :exp arglist))
 	  (destructuring-bind (&key all flatp set-operation distinct from where
 				    group-by having order-by order-by-descending
 				    offset limit inner-join on &allow-other-keys)
@@ -541,6 +558,13 @@ uninclusive, and the args from that keyword to the end."
     (when *in-subselect*
       (write-string ")" *sql-stream*)))
   t)
+
+(defmethod output-sql ((query sql-object-query) database)
+  (with-slots (objects)
+      query
+    (when objects
+      (format *sql-stream* "(~{~A~^ ~})" objects))))
+
 
 ;; INSERT
 

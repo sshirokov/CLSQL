@@ -32,6 +32,17 @@
   (query (sql-output expr database) :database database :flatp flatp
          :result-types result-types :field-names field-names))
 
+(defmethod query ((expr sql-object-query) &key (database *default-database*)
+					       (result-types :auto) (flatp nil))
+  (declare (ignore result-types))
+  (apply #'select (append (slot-value expr 'objects)
+			  (slot-value expr 'exp) 
+			  (when (slot-value expr 'refresh) 
+			    (list :refresh (sql-output expr database)))
+			  (when (or flatp (slot-value expr 'flatp) )
+			    (list :flatp t))
+			  (list :database database))))
+
 (defun truncate-database (&key (database *default-database*))
   (unless (typep database 'database)
     (clsql-base::signal-no-database-error database))
@@ -272,3 +283,133 @@ condition is true."
       (when sequence
         (create-sequence-from-class class)))))
  
+;;; Iteration
+
+
+(defmacro do-query (((&rest args) query-expression
+		     &key (database '*default-database*) (result-types :auto))
+		    &body body)
+  "Repeatedly executes BODY within a binding of ARGS on the
+attributes of each record resulting from QUERY-EXPRESSION. The
+return value is determined by the result of executing BODY. The
+default value of DATABASE is *DEFAULT-DATABASE*."
+  (let ((result-set (gensym "RESULT-SET-"))
+	(qe (gensym "QUERY-EXPRESSION-"))
+	(columns (gensym "COLUMNS-"))
+	(row (gensym "ROW-"))
+	(db (gensym "DB-")))
+    `(let ((,qe ,query-expression))
+      (typecase ,qe
+	(sql-object-query
+         (dolist (,row (query ,qe))
+           (destructuring-bind ,args 
+               ,row
+             ,@body)))
+	(t
+	 ;; Functional query 
+	 (let ((,db ,database))
+	   (multiple-value-bind (,result-set ,columns)
+	       (database-query-result-set ,qe ,db
+					  :full-set nil 
+					  :result-types ,result-types)
+	     (when ,result-set
+	       (unwind-protect
+		    (do ((,row (make-list ,columns)))
+			((not (database-store-next-row ,result-set ,db ,row))
+			 nil)
+		      (destructuring-bind ,args ,row
+			,@body))
+		 (database-dump-result-set ,result-set ,db))))))))))
+
+(defun map-query (output-type-spec function query-expression
+		  &key (database *default-database*)
+		  (result-types :auto))
+  "Map the function over all tuples that are returned by the
+query in QUERY-EXPRESSION. The results of the function are
+collected as specified in OUTPUT-TYPE-SPEC and returned like in
+MAP."
+  (typecase query-expression
+    (sql-object-query
+     (map output-type-spec #'(lambda (x) (apply function x))
+	  (query query-expression)))
+    (t
+     ;; Functional query 
+     (macrolet ((type-specifier-atom (type)
+		  `(if (atom ,type) ,type (car ,type))))
+       (case (type-specifier-atom output-type-spec)
+	 ((nil) 
+	  (map-query-for-effect function query-expression database 
+				result-types))
+	 (list 
+	  (map-query-to-list function query-expression database result-types))
+	 ((simple-vector simple-string vector string array simple-array
+			 bit-vector simple-bit-vector base-string
+			 simple-base-string)
+	  (map-query-to-simple output-type-spec function query-expression 
+			       database result-types))
+	 (t
+	  (funcall #'map-query 
+		   (cmucl-compat:result-type-or-lose output-type-spec t)
+		   function query-expression :database database 
+		   :result-types result-types)))))))
+  
+(defun map-query-for-effect (function query-expression database result-types)
+  (multiple-value-bind (result-set columns)
+      (database-query-result-set query-expression database :full-set nil
+				 :result-types result-types)
+    (when result-set
+      (unwind-protect
+	   (do ((row (make-list columns)))
+	       ((not (database-store-next-row result-set database row))
+		nil)
+	     (apply function row))
+	(database-dump-result-set result-set database)))))
+		     
+(defun map-query-to-list (function query-expression database result-types)
+  (multiple-value-bind (result-set columns)
+      (database-query-result-set query-expression database :full-set nil
+				 :result-types result-types)
+    (when result-set
+      (unwind-protect
+	   (let ((result (list nil)))
+	     (do ((row (make-list columns))
+		  (current-cons result (cdr current-cons)))
+		 ((not (database-store-next-row result-set database row))
+		  (cdr result))
+	       (rplacd current-cons (list (apply function row)))))
+	(database-dump-result-set result-set database)))))
+
+
+(defun map-query-to-simple (output-type-spec function query-expression database result-types)
+  (multiple-value-bind (result-set columns rows)
+      (database-query-result-set query-expression database :full-set t
+				 :result-types result-types)
+    (when result-set
+      (unwind-protect
+	   (if rows
+	       ;; We know the row count in advance, so we allocate once
+	       (do ((result
+		     (cmucl-compat:make-sequence-of-type output-type-spec rows))
+		    (row (make-list columns))
+		    (index 0 (1+ index)))
+		   ((not (database-store-next-row result-set database row))
+		    result)
+		 (declare (fixnum index))
+		 (setf (aref result index)
+		       (apply function row)))
+	       ;; Database can't report row count in advance, so we have
+	       ;; to grow and shrink our vector dynamically
+	       (do ((result
+		     (cmucl-compat:make-sequence-of-type output-type-spec 100))
+		    (allocated-length 100)
+		    (row (make-list columns))
+		    (index 0 (1+ index)))
+		   ((not (database-store-next-row result-set database row))
+		    (cmucl-compat:shrink-vector result index))
+		 (declare (fixnum allocated-length index))
+		 (when (>= index allocated-length)
+		   (setq allocated-length (* allocated-length 2)
+			 result (adjust-array result allocated-length)))
+		 (setf (aref result index)
+		       (apply function row))))
+	(database-dump-result-set result-set database)))))

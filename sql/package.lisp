@@ -201,8 +201,6 @@
        #:write-large-object
        #:read-large-object
        #:delete-large-object
-       #:do-query
-       #:map-query
        #:describe-table
        #:create-large-object
        #:write-large-object
@@ -289,7 +287,7 @@
     #:database-underlying-type
    
    .
-   ;; Shared exports for re-export by CLSQL. 
+   ;; Shared exports for re-export by CLSQL-USER. 
    ;; I = Implemented, D = Documented
    ;;  name                                 file       ID
    ;;====================================================
@@ -391,6 +389,7 @@
        #:sql-and-qualifier
        #:sql-escape
        #:sql-query
+       #:sql-object-query
        #:sql-any
        #:sql-all
        #:sql-not
@@ -425,6 +424,9 @@
        #:sql-sum
        #:sql-view-class
        #:sql_slot-value
+
+       #:do-query
+       #:map-query
 
        . 
        #1#
