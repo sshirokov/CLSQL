@@ -1,8 +1,9 @@
 28 Dec 2004 Kevin Rosenberg <kevin@rosenberg.net>
-	* db-mysql/mysql-sql.lisp: Apply patch from Yannick Gingras to
-	implement database-sequence-last. Add support for detecting
-	unsigned integers.
+	* Version 3.1.4
 	* uffi/clsql-uffi.lisp: Add support for unsigned integers
+	* db-mysql/mysql-sql.lisp: Add support for detecting/marking
+	unsigned integers. Apply patch from Yannick Gingras to
+	implement database-sequence-last.
 	
 26 Dec 2004 Kevin Rosenberg <kevin@rosenberg.net>
         * doc/ref-fdml.lisp: Fix variable tag name to varname
