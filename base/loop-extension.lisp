@@ -55,9 +55,8 @@
 
     (cond
       ;; Object query resulting in a list of returned object instances
-      #+ignore
       ((and (consp (first in-phrase))
-	    (consp (second (first in-phrase)))
+	    (string-equal "select" (symbol-name (caar in-phrase)))
 	    (eq 'quote (first (second (first in-phrase))))
 	    (symbolp (second (second (first in-phrase)))))
 
@@ -67,6 +66,7 @@
 	 `(((,variable nil ,@(and data-type (list data-type)))
 	    (,result-var ,(first in-phrase))
 	    (,step-var nil))
+	   ()
 	   ()
 	   ()
 	   (if (null ,result-var)
@@ -160,11 +160,38 @@
 
     (cond
       ;; Object query resulting in a list of returned object instances
-      ((and (consp (car in-phrase))
-	    (consp (second (car in-phrase)))
-	    (eq 'quote (first (second (car in-phrase))))
-	    (symbolp (second (second (car in-phrase)))))
-       (loop-error "object query not yet supported"))
+      ((and (string-equal "select" (symbol-name (car in-phrase)))
+	    (eq 'quote (first (second in-phrase)))
+	    (symbolp (second (second in-phrase))))
+
+       (let ((result-var (gensym "LOOP-RECORD-RESULT-"))
+	     (step-var (gensym "LOOP-RECORD-STEP-")))
+	 (values
+	  t
+	  nil
+	  `(,@(mapcar (lambda (v) `(,v nil)) iter-var)
+	    (,result-var ,in-phrase)
+	    (,step-var nil))
+	  ()
+	  ()
+	  ()
+	  `((if (null ,result-var)
+		t
+		(progn
+		  (setq ,step-var (first ,result-var))
+		  (setq ,result-var (rest ,result-var))
+		  nil)))
+	  `(,iter-var ,step-var)
+	  `((if (null ,result-var)
+		t
+		(progn
+		  (setq ,step-var (first ,result-var))
+		  (setq ,result-var (rest ,result-var))
+		  nil)))
+	   `(,iter-var ,step-var)
+	   ()
+	   ()
+	   )))
       
       ((consp iter-var)
        (let ((query-var (gensym "LOOP-RECORD-"))

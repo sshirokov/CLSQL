@@ -1,4 +1,5 @@
 4 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.10.10-pre
 	* sql/metaclasses.lisp: Properly store specified-type from
 	direct-slot-definition and then store translated type in
 	effective-slot-definition
@@ -7,10 +8,10 @@
 	* base/basic-sql.lisp: Make :AUTO the default value for
 	:RESULT-TYPES for MAP-QUERY and DO-QUERY.
 	* sql/objects.lisp: Add bigint type
-	* base/loop.lisp: Add placeholder and error message for object
-	iteration. Use :result-type :auto for result-set. Remove 
+	* base/loop.lisp: Add object iteration. Use :result-type
+	:auto for result-set. Remove 
 	duplicate (and non-correct) code for non-list variables by
-	simply making an atom variable into a list.
+	simply making an atom variable into a list. 
 	* test/tests-basic.lisp: Add tests for :result-types for
 	MAP-QUERY and DO-QUERY
 	* test/test-fdml.lisp: Add test for result-types in LOOP
@@ -18,6 +19,8 @@
 	Add test that default :result-types is auto for FDML QUERY.
 	* sql/query.lisp: Set default for :result-types to :auto in
 	FDML QUERY.
+	* test/test-oodml.lisp: Enable OO loop iteration test with
+	slight change.
 	
 4 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* Version 2.10.9

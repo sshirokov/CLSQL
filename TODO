@@ -35,9 +35,6 @@ COMMONSQL SPEC
       o get :target-slot working 
       o implement :retrieval :immediate 
 
-    LOOP
-      o should work with object queries as well as functional ones 
-
  >> Symbolic SQL syntax 
 
       o Complete sql expressions (see operations.lisp)
