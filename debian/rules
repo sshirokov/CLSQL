@@ -129,12 +129,12 @@ binary-arch: build install
 	dh_installdocs
 #	dh_installexamples 
 	dh_installchangelogs ChangeLog
-	dh_link -p $(pkg) ../repositories/clsql $(prefix)/$(clc-source)/clsql
-	dh_link -p $(pkg-base) ../repositories/clsql $(prefix-base)/$(clc-source)/clsql-base
-	dh_link -p $(pkg-mysql) ../repositories/clsql $(prefix-mysql)/$(clc-source)/clsql-mysql
-	dh_link -p $(pkg-pg) ../repositories/clsql $(prefix-pg)/$(clc-source)/clsql-postgresql
-	dh_link -p $(pkg-pg-socket) ../repositories/clsql $(prefix-pg-socket)/$(clc-source)/clsql-postgresql-socket
-	dh_link -p $(pkg-aodbc) ../repositories/clsql $(prefix-aodbc)/$(clc-source)/clsql-aodbc
+	dh_link -p $(pkg) ../repositories/clsql $(clc-source)/clsql
+	dh_link -p $(pkg-base) ../repositories/clsql $(clc-source)/clsql-base
+	dh_link -p $(pkg-mysql) ../repositories/clsql $(clc-source)/clsql-mysql
+	dh_link -p $(pkg-pg) ../repositories/clsql $(clc-source)/clsql-postgresql
+	dh_link -p $(pkg-pg-socket) ../repositories/clsql $(clc-source)/clsql-postgresql-socket
+	dh_link -p $(pkg-aodbc) ../repositories/clsql $(clc-source)/clsql-aodbc
 	dh_strip
 	dh_compress
 	dh_fixperms
