@@ -1,8 +1,9 @@
-;; tester.cl
-;; A test harness for Allegro CL.
+;; ptester.lisp
+;; A test harness based on Franz's tester module
 ;;
 ;; copyright (c) 1985-1986 Franz Inc, Alameda, CA
-;; copyright (c) 1986-2001 Franz Inc, Berkeley, CA - All rights reserved.
+;; copyright (c) 1986-2002 Franz Inc, Berkeley, CA - All rights reserved.
+;; copyright (c) 2001-2003 Kevin Rosenberg (portability changes)
 ;;
 ;; This code is free software; you can redistribute it and/or
 ;; modify it under the terms of the version 2.1 of
@@ -24,11 +25,12 @@
 ;; Place, Suite 330, Boston, MA  02111-1307  USA
 ;;
 ;;;; from the original ACL 6.1 sources:
-;; $Id: acl-compat-tester.lisp,v 1.1 2003/05/02 03:08:58 kevin Exp $
+;; Id: tester.cl,v 2.2.12.1 2001/06/05 18:45:10 layer Exp
 
+;; $Id: ptester.lisp,v 1.1 2003/07/20 18:31:22 kevin Exp $
 
-(defpackage :util.test
-  (:use :common-lisp)
+(defpackage #:ptester
+  (:use #:cl)
   (:shadow #:test)
   (:export
 ;;;; Control variables:
@@ -48,13 +50,15 @@
    #:with-tests
    ))
 
-(in-package :util.test)
+(in-package #:ptester)
+
+;; Added by Kevin Rosenberg
+
+(define-condition simple-break (error simple-condition) ())
 
 #+cmu
 (unless (find-class 'break nil)
   (define-condition break (simple-condition) ()))
-
-(define-condition simple-break (error simple-condition) ())
 
 ;; the if* macro used in Allegro:
 ;;
@@ -114,8 +118,6 @@
 	      (cond ((not (string-equal lookat "elseif"))
 		     (error "if*: missing elseif clause ")))
 	      (setq state :init)))))
-
-
 
 
 (defvar *break-on-test-failures* nil
@@ -391,27 +393,13 @@ discriminate on new versus known failures."
 
 (defvar *announce-test* nil) ;; if true announce each test that was done
 
-(defmacro errorset (form &optional announce catch-breaks)
-  ;; Evaluate FORM, and if there are no errors and FORM returns
-  ;; values v1,v2,...,vn, then return values t,v1,v2,...,vn.  If an
-  ;; error occurs while evaluating FORM, then return nil immediately.
-  ;; If ANNOUNCE is t, then the error message will be printed out.
-  (if catch-breaks
-      `(handler-case (values-list (cons t (multiple-value-list ,form)))
-         (error (condition)
-           (declare (ignorable condition))
-           ,@(if announce `((format *error-output* "~&Error: ~a~%" condition)))
-           nil)
-         (simple-break (condition)
-           (declare (ignorable condition))
-           ,@(if announce `((format *error-output* "~&Warning: ~a~%" condition))
-)
-           nil))
-    `(handler-case (values-list (cons t (multiple-value-list ,form)))
-       (error (condition)
-         (declare (ignorable condition))
-         ,@(if announce `((format *error-output* "~&Error: ~a~%" condition)))
-         nil))))
+(defmacro errorset (form) ;subset of test-values-errorset
+  `(handler-case
+    (values-list (cons t (multiple-value-list ,form)))
+    (error (cond)
+     (format *error-output* "~&An error occurred: ~a~%" cond)
+     nil)))
+
 
 (defun test-check (&key (predicate #'eql)
 			expected-result test-results test-form
@@ -428,12 +416,13 @@ discriminate on new versus known failures."
   (flet ((check (expected-result result)
 	   (let* ((results
 		   (multiple-value-list
-		    (errorset (funcall predicate expected-result result) t)))
+		    (errorset (funcall predicate expected-result result))))
 		  (failed (null (car results))))
-	     (if* failed
-		then (setq predicate-failed t)
-		     nil
-		else (cadr results)))))
+	     (if failed
+		 (progn
+		   (setq predicate-failed t)
+		   nil)
+		 (cadr results)))))
     (when (conditionp test-results)
       (setq condition test-results)
       (setq test-results nil))
@@ -569,18 +558,18 @@ Reason: the format-arguments were incorrect.~%")
 	     (*test-unexpected-failures* 0))
 	 (format *error-output* "Begin ~a test~%" ,g-name)
 	 (if* *break-on-test-failures*
-	    then (doit)
-	    else (handler-case (doit)
-		   (error (c)
-		     (format
-		      *error-output*
-		      "~
+	      then (doit)
+	      else (handler-case (doit)
+		     (error (c)
+		       (format
+			*error-output*
+			"~
 ~&Test ~a aborted by signalling an uncaught error:~%~a~%"
-		      ,g-name c))))
+			,g-name c))))
 	 #+allegro
 	 (let ((state (sys:gsgc-switch :print)))
 	   (setf (sys:gsgc-switch :print) nil)
-	   (format t "~&**********************************~%" ,g-name)
+	   (format t "~&**********************************~%")
 	   (format t "End ~a test~%" ,g-name)
 	   (format t "Errors detected in this test: ~s " *test-errors*)
 	   (unless (zerop *test-unexpected-failures*)
@@ -589,12 +578,11 @@ Reason: the format-arguments were incorrect.~%")
 	   (setf (sys:gsgc-switch :print) state))
 	 #-allegro
 	 (progn
-	   (format t "~&**********************************~%" ,g-name)
+	   (format t "~&**********************************~%")
 	   (format t "End ~a test~%" ,g-name)
-	   (format t "Errors detected in this test: ~s " *test-errors*)
+	   (format t "Errors detected in this test: ~D " *test-errors*)
 	   (unless (zerop *test-unexpected-failures*)
-	     (format t "UNEXPECTED: ~s" *test-unexpected-failures*))
-	   (format t "~%Successes this test:~s~%" *test-successes*))
-	 ))))
+	     (format t "UNEXPECTED: ~D" *test-unexpected-failures*))
+	   (format t "~%Successes this test:~D~%" *test-successes*))))))
 
 (provide :tester #+module-versions 1.1)

@@ -65,7 +65,7 @@ Description: CLSQL database backend, PostgreSQL
 
 Package: cl-sql-tests
 Architecture: all
-Depends: cl-sql-base, cl-sql-postgresql, cl-sql-postgresql-socket, cl-sql-mysql
+Depends: cl-sql-base, cl-sql-postgresql, cl-sql-postgresql-socket, cl-sql-mysql, cl-rt, cl-tester
 Suggests: acl-installer, libmyodbc, unixodbc,cl-sql-aodbc 
 Description: Testing suite for CLSQL
  This package contains a test suite for CLSQL. It requires manual

@@ -7,7 +7,7 @@
 ;;;; Author:        Kevin M. Rosenberg
 ;;;; Date Started:  Apr 2003
 ;;;;
-;;;; $Id: clsql-tests.asd,v 1.3 2003/06/06 21:59:09 kevin Exp $
+;;;; $Id: clsql-tests.asd,v 1.4 2003/07/20 18:31:22 kevin Exp $
 ;;;; *************************************************************************
 
 (in-package #:cl-user)
@@ -27,10 +27,10 @@
   ((:module tests
 	    :components
 	    ((:file "rt")
-	     (:file "acl-compat-tester")
+	     (:file "ptester")
 	     (:file "package" :depends-on ("rt"))
 ;;	     (:file "tables" :depends-on ("package")))
-	     (:file "tests" :depends-on ("package" "acl-compat-tester")))
+	     (:file "tests" :depends-on ("package" "ptester")))
 	    )))
 
 (defmethod perform ((o test-op) (c (eql (find-system 'clsql-tests))))
