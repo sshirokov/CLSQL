@@ -643,7 +643,8 @@
 				:attribute (gethash :home-key tdbi) 
 				:table jc-view-table))
 			  :where jq
-			  :result-types :auto)))
+			  :result-types :auto
+			  :database (view-database object))))
 	   (mapcar #'(lambda (i)
 		       (let* ((instance (car i))
 			      (jcc (make-instance jc :view-database (view-database instance))))
