@@ -1,3 +1,8 @@
+24 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
+        * db-oracle/oracle-sql.lisp: Add declaration so that SBCL runs efficiently.
+	* tests/test-init.lisp: capitalize odbc backend name in banner
+	* CONTRIBUTORS: Add note about Marcus' excellent work
+ 	
 24 May 2004: Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* db-postgresql-socket/postgresql-socket-sql.lisp: replace 
 	CLSQL-SIMPLE-WARNING with SQL-WARNING. 
@@ -23,7 +28,7 @@
 	* sql/ooddl.lisp: NEW FILE: ooddl from objects.lisp (deleted). 
 	* sql/oodml.lisp: NEW FILE: oodml from objects.lisp (deleted). 
 	
-23 May 2004 Kevin Rosenberg
+23 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.10.22 released
 	* sql/kmr-mop.lisp, sql/objects.lisp: Since SBCL is the only implementation that
 	has reversed class slots, change the default for ordered-class-slots so that slots
@@ -35,7 +40,7 @@
 	in many cases expects integers.
 	* test/test-fdml.lisp: Accomodate that Oracle returns doubles for computed columns
 	
-22 May 2004 Kevin Rosenberg
+22 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.10.21 released
 	* sql/sequences.lisp: Move generic sequence functions here from db-sqlite,
 	db-odbc, and db-aodbc.

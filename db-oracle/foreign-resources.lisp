@@ -39,10 +39,10 @@
 	  (cons res (gethash type *foreign-resource-hash*)))))
 
 (defmacro acquire-foreign-resource (type &optional size)
-  `(let ((res (%get-resource ',type ,size)))
+  `(let ((res (%get-resource ,type ,size)))
      (unless res
        (setf res (make-foreign-resource
-		  :type ',type :sizeof ,size
+		  :type ,type :sizeof ,size
 		  :buffer (uffi:allocate-foreign-object ,type ,size)))
        (%insert-foreign-resource ',type res))
      (claim-foreign-resource res)))

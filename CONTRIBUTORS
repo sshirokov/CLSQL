@@ -1,10 +1,10 @@
 CLSQL Contributors
 ------------------
 Kevin Rosenberg (main author CLSQL)
+Marcus Pearce <m.t.pearce@city.ac.uk> (initial port of USQL to CLSQL, many excellent commits)
 Pierre Mai (original author MaiSQL from which CLSQL was based)
-Marcus Pearce <m.t.pearce@city.ac.uk> (initial port of USQL to CLSQL)
 Aurelio Bignoli (SQLite backend)
-Marc Battyani
+Marc Battyani (Large object support for postgresql, initial connection pool code)
 
 
 USQL Contributors

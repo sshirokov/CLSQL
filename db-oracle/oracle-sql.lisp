@@ -31,8 +31,11 @@ Setting this constant to a moderate value should make it less
 likely that we'll have to worry about the CMUCL limit."))
 
 
+(uffi:def-type vp-type :pointer-void)
+(uffi:def-type vpp-type (* :pointer-void))
+
 (defmacro deref-vp (foreign-object)
-  `(uffi:deref-pointer ,foreign-object :pointer-void))
+  `(the vp-type (uffi:deref-pointer (the vpp-type ,foreign-object) :pointer-void)))
 
 ;; constants - from OCI?
 
@@ -298,30 +301,6 @@ the length of that format.")
 		      table))))
     (mapcar #'car (database-query query database nil nil))))
 
-(defmethod list-all-table-columns (table (db oracle-database))
-  (declare (string table))
-  (let* ((sql-stmt (concatenate
-		    'simple-string
-		    "select "
-		    "'',"
-		    "all_tables.OWNER,"
-		    "'',"
-		    "user_tab_columns.COLUMN_NAME,"
-		    "user_tab_columns.DATA_TYPE from user_tab_columns,"
-		    "all_tables where all_tables.table_name = '" table "'"
-		    " and user_tab_columns.table_name = '" table "'"))
-	 (preresult (database-query sql-stmt db :auto nil)))
-    ;; PRERESULT is like RESULT except that it has a name instead of
-    ;; type codes in the fifth column of each row. To fix this, we
-    ;; destructively modify PRERESULT.
-    (dolist (preresult-row preresult)
-      (setf (fifth preresult-row)
-	    (if (find (fifth preresult-row)
-		      #("NUMBER" "DATE")
-		      :test #'string=)
-		2 ; numeric
-	        1))) ; string
-    preresult))
 
 (defmethod database-list-attributes (table (database oracle-database) &key owner)
   (let ((query
@@ -603,20 +582,24 @@ the length of that format.")
 ;; debugging only
             
 
+(uffi:def-type byte-pointer (* :byte))
+(uffi:def-type ulong-pointer (* :unsigned-long))
+(uffi:def-type void-pointer-pointer (* :void-pointer))
+
 (defun make-query-cursor-cds (database stmthp result-types field-names)
   (declare (optimize (safety 3) #+nil (speed 3))
 	   (type oracle-database database)
 	   (type pointer-pointer-void stmthp))
   (with-slots (errhp) database
     (uffi:with-foreign-objects ((dtype-foreign :unsigned-short)
-			   (parmdp ':pointer-void)
-			   (precision :byte)
-			   (scale :byte)
-			   (colname '(* :unsigned-char))
-			   (colnamelen :unsigned-long)
-			   (colsize :unsigned-long)
-			   (colsizesize :unsigned-long)
-			   (defnp ':pointer-void))
+				(parmdp :pointer-void)
+				(precision :byte)
+				(scale :byte)
+				(colname '(* :unsigned-char))
+				(colnamelen :unsigned-long)
+				(colsize :unsigned-long)
+				(colsizesize :unsigned-long)
+				(defnp ':pointer-void))
       (let ((buffer nil)
 	    (sizeof nil))
 	(do ((icolumn 0 (1+ icolumn))
@@ -637,6 +620,7 @@ the length of that format.")
 			+oci-attr-data-type+
 			(deref-vp errhp))
 	  (let ((dtype (uffi:deref-pointer dtype-foreign :unsigned-short)))
+	    (declare (fixnum dtype))
 	    (case dtype
 	      (#.SQLT-DATE
 	       (setf buffer (acquire-foreign-resource :unsigned-char
@@ -668,11 +652,11 @@ the length of that format.")
 		  (t
 		   (setf buffer (acquire-foreign-resource :double +n-buf-rows+)
 			 sizeof 8                   ;; sizeof(double)
-			 dtype #.SQLT-FLT))))          )
+			 dtype #.SQLT-FLT)))))
 	      ;; Default to SQL-STR
-	      (t		
-	       (setf (uffi:deref-pointer colsize :unsigned-long) 0
-		     dtype #.SQLT-STR)
+	      (t
+	       (setf (uffi:deref-pointer colsize :unsigned-long) 0)
+	       (setf dtype #.SQLT-STR)
 	       (oci-attr-get (deref-vp parmdp)
 			     +oci-dtype-param+ 
 			     colsize
@@ -842,7 +826,9 @@ the length of that format.")
 	(setf (slot-value db 'clsql-sys::state) :open)
         (database-execute-command
 	 (format nil "ALTER SESSION SET NLS_DATE_FORMAT='~A'" (date-format db)) db)
-	(let ((server-version (caar (database-query "SELECT BANNER FROM V$VERSION WHERE BANNER LIKE '%Oracle%'" db nil nil))))
+	(let ((server-version
+	       (caar (database-query
+		      "SELECT BANNER FROM V$VERSION WHERE BANNER LIKE '%Oracle%'" db nil nil))))
 	  (setf (slot-value db 'server-version) server-version
 		(slot-value db 'major-server-version) (major-client-version-from-string
 						       server-version)))
@@ -1048,28 +1034,6 @@ the length of that format.")
 			     (deref-vp (errhp database))
 			     0))
   t)
-
-(defparameter *constraint-types*
-  '(("NOT-NULL" . "NOT NULL")))
-
-(defmethod database-output-sql ((str string) (database oracle-database))
-  (if (and (null (position #\' str))
-	   (null (position #\\ str)))
-      (format nil "'~A'" str)
-    (let* ((l (length str))
-	   (buf (make-string (+ l 3))))
-      (setf (aref buf 0) #\')
-      (do ((i 0 (incf i))
-	   (j 1 (incf j)))
-	  ((= i l) (setf (aref buf j) #\'))
-	(if (= j (- (length buf) 1))
-	    (setf buf (adjust-array buf (+ (length buf) 1))))
-	(cond ((eql (aref str i) #\')
-	       (setf (aref buf j) #\')
-	       (incf j)))
-	(setf (aref buf j) (aref str i)))
-      buf)))
-
 
 ;; Specifications
 

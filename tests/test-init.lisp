@@ -482,7 +482,7 @@
 	  (machine-type)
 	  db-type
 	  (if (not (eq db-type *test-database-underlying-type*))
-	      (format nil " with underlying type ~A" 
+	      (format nil " with underlying type ~:@(~A~)" 
 		      *test-database-underlying-type*)
 	      "")
 	  ))

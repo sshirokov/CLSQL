@@ -220,7 +220,7 @@
   (valuep      :pointer-void)
   (value_sz      :long)
   (dty      :unsigned-short)         
-  (indp      :pointer-void)
+  (indp      (* :short))
   (rlenp      (* :unsigned-short))          
   (rcodep      (* :unsigned-short))          
   (mode     :unsigned-long))
