@@ -7,7 +7,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.7 2002/04/07 08:48:54 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.8 2002/04/07 08:59:29 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -28,15 +28,10 @@ LD=gcc
 #SHARED_LD_OPT=-G
 #LD=ld
 
-# Set to the directory where you have installed mysql's library
-#MYSQL_DIR=/opt/mysql
-#MYSQL_LIB=$(MYSQL_DIR)/lib/mysql
-MYSQL_DIR=/usr
-MYSQL_LIB=$(MYSQL_DIR)/lib
-
-MYSQL_LIB_FILE=$(MYSQL_LIB)/libmysqlclient.so
-MYSQL_INCLUDE=$(MYSQL_DIR)/include/mysql
-
+# May need to change to the directory where you have installed mysql's library
+vpath %.so /usr/lib /usr/local/lib /opt/mysql/lib/mysql
+vpath %.h /usr/include /usr/include/mysql /usr/local/include /usr/local/include/mysql /opt/mysql/include/mysql
+INCLUDE_DIRS=-I/usr/include/mysql -I/usr/local/include/mysql -I/opt/mysql/include/mysql -I/usr/include -I/usr/local/include
 
 # Nothing to configure beyond this point
 
@@ -47,12 +42,15 @@ shared_lib=$(base).so
 
 .PHONY: all clean distclean
 
-all: $(shared_lib)
+all: compile
 
-$(shared_lib): $(source) Makefile $(MYSQL_LIB_FILE)
-	$(CC) ${SHARED_CC_OPT} -I $(MYSQL_INCLUDE) -c $(source) -o $(object)
-	$(LD) ${SHARED_LD_OPT} $(object) $(MYSQL_LIB_FILE) -o $(shared_lib)
-	@rm $(object)
+compile: $(shared_lib)
+
+$(object): $(source) mysql.h
+	$(CC) ${SHARED_CC_OPT} $(INCLUDE_DIRS) -c $< -o $@
+
+$(shared_lib): $(object) -lmysqlclient
+	$(LD) ${SHARED_LD_OPT} $^ -o $@
 
 clean:
 	@rm -f $(object) $(shared_lib) *~
