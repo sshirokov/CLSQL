@@ -131,6 +131,7 @@ install: build
 		l=`echo $$p | sed -e "s/^cl-/cl/;"` ;\
 		sed -e "s/%%/$$l/;" debian/prerm.template > debian/$$p.prerm ;\
 		sed -e "s/%%/$$l/;" debian/postinst.template > debian/$$p.postinst ;\
+		chmod +x debian/$$p.prerm debian/$$p.prerm; \
 	done
 
 

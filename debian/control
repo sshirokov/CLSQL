@@ -2,7 +2,7 @@ Source: cl-sql
 Section: devel
 Priority: extra
 Maintainer: Kevin M. Rosenberg <kevin@rosenberg.net>
-Uploaders: Adam Di Carlo <aph@debian.org>
+Uploaders: Adam Di Carlo <aph@debian.org>, Barak A. Pearlmutter <bap@debian.org>
 Build-Depends-Indep: debhelper (>= 4.0.0)
 Standards-Version: 3.5.6
 
