@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.17 2003/05/16 18:05:23 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.18 2003/05/16 18:07:37 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -184,7 +184,7 @@
     (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
 	     (type char-ptr-def s))
     (let* ((len (strlen s))
-	   (len4 (float len 4))
+	   (len4 (floor len 4))
 	   (str (make-string len)))
       (declare (fixnum len)
 	       (type (simple-array (signed-byte 32) (*)) str))
