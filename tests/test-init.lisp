@@ -90,12 +90,12 @@
 
 (def-view-class company ()
   ((companyid
-    :db-type :key
+    :db-kind :key
     :db-constraints :not-null
     :type integer
     :initarg :companyid)
    (groupid
-    :db-type :key
+    :db-kind :key
     :db-constraints :not-null
     :type integer
     :initarg :groupid)
