@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.8 2003/05/15 07:45:17 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.9 2003/05/16 08:04:02 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -145,3 +145,51 @@
 	(code-char (uffi:deref-array s '(:array :unsigned-char) i)))
       (incf i))
     str))
+
+#-allegro
+(defun native-to-string (s)
+  (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
+	   (type char-ptr-def s))
+  (let* ((len (strlen s))
+	 (str (make-string len)))
+    (declare (fixnum len)
+	     (simple-string str))
+    (do ((i 0))
+	((= i len))
+      (declare (fixnum i))
+      (setf (schar str i)
+	(code-char (uffi:deref-array s '(:array :unsigned-char) i)))
+      (incf i))
+    str))
+
+#+allegro
+(excl:ics-target-case
+ (:-ics
+  (defun native-to-string (s)
+    (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
+	     (type char-ptr-def s))
+    (let* ((len (strlen s))
+	   (str (make-string len)))
+      (declare (fixnum len)
+	       (simple-string str))
+      (do ((i 0))
+	  ((= i len))
+	(declare (fixnum i))
+	(setf (schar str i)
+	      (code-char (uffi:deref-array s '(:array :unsigned-char) i)))
+	(incf i))
+    str)))
+ (:+ics
+  (defun native-to-string (s)
+  (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
+	   (type char-ptr-def s))
+  (let* ((len (strlen s))
+	 (str (make-string len)))
+    (declare (fixnum len)
+	     (type (simple-array (unsigned-byte 8) (*)) str))
+    (do ((i 0))
+	((= i len))
+      (declare (fixnum i))
+      (setf (aref str i) (uffi:deref-array s '(:array :unsigned-char) i))
+      (incf i))
+    str))))
