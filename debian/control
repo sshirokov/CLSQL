@@ -27,7 +27,8 @@ Architecture: any
 Depends: common-lisp-controller (>= 3.37), cl-uffi, cl-sql-base
 Recommends: cl-sql-backend
 Description: Common UFFI functions for CLSQL database backends
- This package provides an interface to several UFFI functions used by multiple CLSQL database backends.
+ This package provides an interface to several UFFI functions used by multiple
+ CLSQL database backends.
 
 Package: cl-sql-mysql
 Architecture: any
