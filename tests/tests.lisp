@@ -55,7 +55,7 @@
 	  (setf (pgsql-socket-spec specs) 
 		(cadr (assoc :postgresql-socket config)))
 	  specs))
-      (error "CLSQL tester config file ~S not found" path)))
+      (warn "CLSQL tester config file ~S not found" path)))
 
 (defmethod mysql-table-test ((test conn-specs))
   (test-table (mysql-spec test) :mysql))
