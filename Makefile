@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.17 2002/04/28 11:00:11 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.18 2002/05/13 03:24:41 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -20,17 +20,18 @@ DOCSUBDIRS:=doc
 
 include Makefile.common
 
-.PHONY: all libs clean distclean doc tagcvs dist wwwdist
-
 LIBSUBDIRS=interfaces/mysql interfaces/clsql-uffi
 .PHONY: subdirs $(LIBSUBDIRS)
 
+.PHONY: all
 all: $(LIBSUBDIRS)
 
 $(LIBSUBDIRS):
 	$(MAKE) -C $@
 
+.PHONY: distclean
 distclean: clean
+	@$(MAKE) -C doc $@
 
 VERSION=$(shell cat VERSION)
 DISTDIR=$(PKG)-$(VERSION)
@@ -45,28 +46,11 @@ SOURCE_FILES=interfaces sql cmucl-compat doc test-suite Makefile VERSION \
 VERSION_UNDERSCORE=$(shell cat VERSION | tr . _)
 TAG=dist_$(VERSION_UNDERSCORE)
 
-tagcvs:
-	@cvs -q rtag -d $(TAG) $(PKG) > /dev/null
-	@cvs -q tag -F $(TAG) > /dev/null
+.PHONY: doc
+doc:
+	$(MAKE) -C doc
 
-dist: distclean tagcvs
+.PHONY:dist
+dist: clean
 	@$(MAKE) -C doc $@
-	@rm -fr $(DISTDIR) $(DIST_TARBALL) $(DIST_ZIP)
-	@mkdir $(DISTDIR)
-	@cp -a $(SOURCE_FILES) $(DISTDIR)
-	@find $(DISTDIR) -type d -name CVS | xargs rm -r
-	@find $(DISTDIR) -type f -name .cvsignore -exec rm {} \;
-	@find $(DISTDIR) -type f -and -name \*.tex -or -name \*.aux -or \
-		 -name \*.log -or -name \*.out -or -name \*.dvi -or \
-		 -name \*~ -or -name \*.ps -or -name test.config | xargs rm -f
-	@tar czf $(DIST_TARBALL) $(DISTDIR)
-	@find $(DISTDIR) -type f -name \*.cl -or -name \*.list -or \
-		-name \*.system -or -name Makefile -or -name ChangeLog -or \
-		-name COPYRIGHT -or -name TODO -or -name README -or -name INSTALL \
-		-or -name NEWS -or -name \*.sgml -or -name COPYING\* -or -name catalog \
-		| xargs unix2dos
-	@zip -rq $(DIST_ZIP) $(DISTDIR)
-	@rm -r $(DISTDIR)
 
-wwwdist: dist
-	@./copy

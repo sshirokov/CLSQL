@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.11 2002/05/13 02:57:25 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.12 2002/05/13 03:19:52 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -59,7 +59,7 @@ CHECK=nsgmls -s -C ${CATALOG} || exit 1
 
 .PHONY: check
 check:
-	$(CHECK)
+	@$(CHECK)
 
 html: $(DOCFILES)
 	@$(CHECK)
