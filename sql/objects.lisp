@@ -245,11 +245,14 @@ superclass of the newly-defined View Class."
 (defun slot-type (slotdef)
   (specified-type slotdef))
 
+(defvar *update-context* nil)
+
 (defmethod update-slot-from-db ((instance standard-db-object) slotdef value)
   (declare (optimize (speed 3) #+cmu (extensions:inhibit-warnings 3)))
-  (let ((slot-reader (view-class-slot-db-reader slotdef))
-        (slot-name   (slot-definition-name slotdef))
-        (slot-type   (slot-type slotdef)))
+  (let* ((slot-reader (view-class-slot-db-reader slotdef))
+	 (slot-name   (slot-definition-name slotdef))
+	 (slot-type   (slot-type slotdef))
+	 (*update-context* (cons (type-of instance) slot-name)))
     (cond ((and value (null slot-reader))
            (setf (slot-value instance slot-name)
                  (read-sql-value value (delistify slot-type)
@@ -312,75 +315,6 @@ superclass of the newly-defined View Class."
 	     (update-slot-from-db obj slot-def values)))
       (mapc #'update-slot slotdeflist values)
       obj))
-
-
-(defun synchronize-keys (src srckey dest destkey)
-  (let ((skeys (if (listp srckey) srckey (list srckey)))
-	(dkeys (if (listp destkey) destkey (list destkey))))
-    (mapcar #'(lambda (sk dk)
-		(setf (slot-value dest dk)
-		      (typecase sk
-			(symbol
-			 (slot-value src sk))
-			(t sk))))
-	    skeys dkeys)))
-
-(defun desynchronize-keys (dest destkey)
-  (let ((dkeys (if (listp destkey) destkey (list destkey))))
-    (mapcar #'(lambda (dk)
-		(setf (slot-value dest dk) nil))
-	    dkeys)))
-
-(defmethod add-to-relation ((target standard-db-object)
-			    slot-name
-			    (value standard-db-object))
-  (let* ((objclass (class-of target))
-	 (sdef (or (slotdef-for-slot-with-class slot-name objclass)
-                   (error "~s is not an known slot on ~s" slot-name target)))
-	 (dbinfo (view-class-slot-db-info sdef))
-	 (join-class (gethash :join-class dbinfo))
-	 (homekey (gethash :home-key dbinfo))
-	 (foreignkey (gethash :foreign-key dbinfo))
-	 (to-many (gethash :set dbinfo)))
-    (unless (equal (type-of value) join-class)
-      (error 'clsql-type-error :slotname slot-name :typespec join-class
-             :value value))
-    (when (gethash :target-slot dbinfo)
-      (error "add-to-relation does not work with many-to-many relations yet."))
-    (if to-many
-	(progn
-	  (synchronize-keys target homekey value foreignkey)
-	  (if (slot-boundp target slot-name)
-              (unless (member value (slot-value target slot-name))
-                (setf (slot-value target slot-name)
-                      (append (slot-value target slot-name) (list value))))
-              (setf (slot-value target slot-name) (list value))))
-        (progn
-          (synchronize-keys value foreignkey target homekey)
-          (setf (slot-value target slot-name) value)))))
-
-(defmethod remove-from-relation ((target standard-db-object)
-			    slot-name (value standard-db-object))
-  (let* ((objclass (class-of target))
-	 (sdef (slotdef-for-slot-with-class slot-name objclass))
-	 (dbinfo (view-class-slot-db-info sdef))
-	 (homekey (gethash :home-key dbinfo))
-	 (foreignkey (gethash :foreign-key dbinfo))
-	 (to-many (gethash :set dbinfo)))
-    (when (gethash :target-slot dbinfo)
-      (error "remove-relation does not work with many-to-many relations yet."))
-    (if to-many
-	(progn
-	  (desynchronize-keys value foreignkey)
-	  (if (slot-boundp target slot-name)
-	      (setf (slot-value target slot-name)
-		    (remove value
-			    (slot-value target slot-name)
-                            :test #'equal))))
-        (progn
-          (desynchronize-keys target homekey)
-          (setf (slot-value target slot-name)
-                nil)))))
 
 (defgeneric update-record-from-slot (object slot &key database)
   (:documentation
@@ -607,7 +541,8 @@ database that INSTANCE is associated with, or the value of
          (res (apply #'select (append (mapcar #'cdr sels)
                                       (list :from  view-table
                                             :where view-qual)))))
-    (get-slot-values-from-view instance (mapcar #'car sels) (car res))))
+    (when res
+      (get-slot-values-from-view instance (mapcar #'car sels) (car res)))))
 
 (defgeneric update-slot-from-record (instance slot &key database)
   (:documentation
@@ -842,9 +777,9 @@ DATABASE-NULL-VALUE on the type of the slot."))
 (defmethod read-sql-value (val (type (eql 'symbol)) database)
   (declare (ignore database))
   (when (< 0 (length val))
-    (if (find #\: val)
-        (read-from-string val)
-        (intern (string-upcase val) "KEYWORD"))))
+    (unless (string= val "NIL")
+      (intern (string-upcase val)
+              (symbol-package *update-context*)))))
 
 (defmethod read-sql-value (val (type (eql 'integer)) database)
   (declare (ignore database))
@@ -871,17 +806,17 @@ DATABASE-NULL-VALUE on the type of the slot."))
 ;; ------------------------------------------------------------
 ;; Logic for 'faulting in' :join slots
 
-(defun fault-join-slot-raw (class instancex slot-def)
+(defun fault-join-slot-raw (class object slot-def)
   (let* ((dbi (view-class-slot-db-info slot-def))
 	 (jc (gethash :join-class dbi)))
-    (let ((jq (join-qualifier class instance slot-def)))
+    (let ((jq (join-qualifier class object slot-def)))
       (when jq 
         (select jc :where jq)))))
 
-(defun fault-join-slot (class instance slot-def)
+(defun fault-join-slot (class object slot-def)
   (let* ((dbi (view-class-slot-db-info slot-def))
 	 (ts (gethash :target-slot dbi))
-	 (res (fault-join-slot-raw class instance slot-def)))
+	 (res (fault-join-slot-raw class object slot-def)))
     (when res
       (cond
 	((and ts (gethash :set dbi))
@@ -933,6 +868,8 @@ DATABASE-NULL-VALUE on the type of the slot."))
                 (apply #'sql-and jc)
                 jc))))))
 
+(defmethod postinitialize ((self t))
+  )
 
 (defun find-all (view-classes &rest args &key all set-operation distinct from
                  where group-by having order-by order-by-descending offset limit
@@ -1016,9 +953,6 @@ DATABASE-NULL-VALUE on the type of the slot."))
     (setf obj (get-slot-values-from-view obj slots values))
     (postinitialize obj)
     obj))
-
-(defmethod postinitialize ((self t))
-  )
 
 (defun select (&rest select-all-args)
   "Selects data from database given the constraints specified. Returns
