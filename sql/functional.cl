@@ -8,7 +8,7 @@
 ;;;;
 ;;;; Copyright (c) 1999-2001 Pierre R. Mai
 ;;;;
-;;;; $Id: functional.cl,v 1.5 2002/05/04 09:27:12 marc.battyani Exp $
+;;;; $Id: functional.cl,v 1.6 2002/05/11 14:31:10 marc.battyani Exp $
 ;;;;
 ;;;; This file is part of CLSQL. 
 ;;;;
@@ -88,7 +88,12 @@
   "Evaluate the body in an environment, where `db-var' is bound to the
 database connection given by `connection-spec' and `connect-args'.
 The connection is automatically closed or released to the pool on exit from the body."
-  `(let ((,db-var (connect ,connection-spec ,@connect-args)))
-    (unwind-protect
-	 (let ((,db-var ,db-var)) ,@body)
-      (disconnect :database ,db-var))))
+  (let ((result (gensym "result-")))
+    (unless db-var (setf db-var '*default-database*))
+    `(let ((,db-var (connect ,connection-spec ,@connect-args))
+	   (,result nil))
+      (unwind-protect
+	   (let ((,db-var ,db-var))
+	     (setf ,result (progn ,@body)))
+	(disconnect :database ,db-var))
+      ,result)))
