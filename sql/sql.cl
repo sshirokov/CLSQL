@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: sql.cl,v 1.11 2002/03/29 08:34:44 kevin Exp $
+;;;; $Id: sql.cl,v 1.12 2002/04/19 20:25:20 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -270,5 +270,20 @@ specified in output-type-spec and returned like in MAP."
 		    ,@body))
 	     (database-dump-result-set ,result-set ,db)))))))
 
+;;; Marc Battyani : Large objects support
 
+(defun create-large-object (&key (database *default-database*))
+  "Creates a new large object in the database and returns the object identifier"
+  (database-create-large-object database))
 
+(defun write-large-object (object-id data &key (database *default-database*))
+  "Writes data to the large object"
+  (database-write-large-object object-id data database))
+
+(defun read-large-object (object-id &key (database *default-database*))
+  "Reads the large object content"
+  (database-read-large-object object-id database))
+
+(defun delete-large-object (object-id &key (database *default-database*))
+  "Deletes the large object in the database"
+  (database-delete-large-object object-id database))

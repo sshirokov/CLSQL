@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.cl,v 1.12 2002/03/29 09:37:24 kevin Exp $
+;;;; $Id: postgresql-sql.cl,v 1.13 2002/04/19 20:25:20 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -274,3 +274,56 @@
           finally
             (incf (postgresql-result-set-tuple-index result-set))
             (return list)))))
+
+;;; Large objects support (Marc B)
+
+(defmethod database-create-large-object ((database postgresql-database))
+  (lo-create (database-conn-ptr database)
+	     (logior postgresql::+INV_WRITE+ postgresql::+INV_READ+)))
+
+;; (MB)the begin/commit/rollback stuff will be removed when with-transaction wil be implemented
+(defmethod database-write-large-object ( object-id (data string) (database postgresql-database))
+  (let ((ptr (database-conn-ptr database))
+	(length (length data))
+	(result nil)
+	(fd nil))
+    (unwind-protect
+       (progn 
+	 (database-execute-command "begin" database)
+	 (setf fd (lo-open ptr object-id postgresql::+INV_WRITE+))
+	 (when (>= fd 0)
+	   (when (= (lo-write ptr fd data length) length)
+	     (setf result t))))
+      (progn
+	(when (and fd (>= fd 0))
+	  (lo-close ptr fd))
+	(database-execute-command (if result "commit" "rollback") database)))
+    result))
+
+;; (MB) the begin/commit/rollback stuff will be removed when with-transaction wil be implemented
+(defmethod database-read-large-object (object-id (database postgresql-database))
+  (let ((ptr (database-conn-ptr database))
+	(buffer nil)
+	(result nil)
+	(length 0)
+	(fd nil))
+    (unwind-protect
+       (progn
+	 (database-execute-command "begin" database)
+	 (setf fd (lo-open ptr object-id postgresql::+INV_READ+))
+	 (when (>= fd 0)
+	   (setf length (lo-lseek ptr fd 0 2))
+	   (lo-lseek ptr fd 0 0)
+	   (when (> length 0)
+	     (setf buffer (uffi:allocate-foreign-string length :type '(:unsigned :byte)))
+	     (when (= (lo-read ptr fd buffer length) length)
+	       (setf result (uffi:convert-from-foreign-string
+			     buffer :length length :null-terminated-p nil))))))
+      (progn
+	(when buffer (uffi:free-foreign-object buffer))
+	(when (and fd (>= fd 0)) (lo-close ptr fd))
+	(database-execute-command (if result "commit" "rollback") database)))
+    result))
+
+(defmethod database-delete-large-object (object-id (database postgresql-database))
+  (lo-unlink (database-conn-ptr database) object-id))

@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: tester-clsql.cl,v 1.4 2002/04/10 04:57:28 kevin Exp $
+;;;; $Id: tester-clsql.cl,v 1.5 2002/04/19 20:25:20 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -23,7 +23,7 @@
 ;;;
 ;;; ((:mysql ("localhost" "a-mysql-db" "user1" "secret"))
 ;;;  (:aodbc ("my-dsn" "a-user" "pass"))
-;;;  (:paostgresql ("localhost" "another-db" "user2" "dont-tell"))
+;;;  (:postgresql ("localhost" "another-db" "user2" "dont-tell"))
 ;;;  (:postgresql-socket ("pg-server" "a-db-name" "user" "secret-password")))
 
 

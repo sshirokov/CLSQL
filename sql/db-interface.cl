@@ -9,7 +9,7 @@
 ;;;;                onShoreD to support UncommonSQL front-end 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: db-interface.cl,v 1.5 2002/04/01 05:27:55 kevin Exp $
+;;;; $Id: db-interface.cl,v 1.6 2002/04/19 20:25:20 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai, and onShoreD
@@ -159,3 +159,16 @@ the given lisp type and parameters."))
   (:documentation "Return the unique ID of a database object."))
 
  
+;;; Large objects support (Marc Battyani)
+
+(defgeneric database-create-large-object (database)
+  (:documentation "Creates a new large object in the database and returns the object identifier"))
+
+(defgeneric database-write-large-object (object-id (data string) database)
+  (:documentation "Writes data to the large object"))
+
+(defgeneric database-read-large-object (object-id database)
+  (:documentation "Reads the large object content"))
+
+(defgeneric database-delete-large-object (object-id database)
+  (:documentation "Deletes the large object in the database"))

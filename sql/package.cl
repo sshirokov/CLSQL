@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: package.cl,v 1.6 2002/04/07 15:23:10 kevin Exp $
+;;;; $Id: package.cl,v 1.7 2002/04/19 20:25:20 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -51,6 +51,13 @@
      #:database-sequence-next
     
      #:sql-escape
+     
+     ;; Large objects (Marc B)
+     #:database-create-large-object
+     #:database-write-large-object
+     #:database-read-large-object
+     #:database-delete-large-object
+     
      ;; Shared exports for re-export by CLSQL
      .
      #1=(#:clsql-condition
@@ -123,6 +130,11 @@
 	 #:drop-sequence
 	 #:sequence-next
 	 
+	 ;; Large objects (Marc B)
+	 #:create-large-object
+	 #:write-large-object
+	 #:read-large-object
+	 #:delete-large-object
 	 ))
     (:documentation "This is the INTERNAL SQL-Interface package of CLSQL."))
 

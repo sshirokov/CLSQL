@@ -24,7 +24,7 @@
 ;; Place, Suite 330, Boston, MA  02111-1307  USA
 ;;
 ;;;; from the original ACL 6.1 sources:
-;; $Id: acl-compat-tester.cl,v 1.1 2002/04/08 02:46:43 kevin Exp $
+;; $Id: acl-compat-tester.cl,v 1.2 2002/04/19 20:25:20 marc.battyani Exp $
 
 
 (defpackage :util.test
@@ -50,6 +50,7 @@
 
 (in-package :util.test)
 
+#-lispworks
 (unless (find-class 'break nil)
   (define-condition break (simple-condition) ()))
 

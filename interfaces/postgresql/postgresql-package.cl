@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-package.cl,v 1.6 2002/03/29 09:37:24 kevin Exp $
+;;;; $Id: postgresql-package.cl,v 1.7 2002/04/19 20:25:20 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -69,6 +69,15 @@
      #:PQgetisnull
      #:PQclear
      #:PQisBusy
+     
+     ;;Large Objects (Marc B)
+     #:lo-create
+     #:lo-open
+     #:lo-write
+     #:lo-read
+     #:lo-lseek
+     #:lo-close
+     #:lo-unlink
      )
     (:documentation "This is the low-level interface to PostgreSQL."))
 

@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-api.cl,v 1.5 2002/03/29 09:37:24 kevin Exp $
+;;;; $Id: postgresql-api.cl,v 1.6 2002/04/19 20:25:20 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -200,5 +200,68 @@
 (declaim (inline PQisBusy))
 (uffi:def-function ("PQisBusy" PQisBusy)
   ((conn pgsql-conn))
+  :module "postgresql"
+  :returning :int)
+
+
+;;; Large objects support (MB)
+
+(defconstant +INV_ARCHIVE+ 65536)         ; fe-lobj.c
+(defconstant +INV_WRITE+   131072)
+(defconstant +INV_READ+    262144)
+
+(declaim (inline lo-creat))
+(uffi:def-function ("lo_creat" lo-create)
+  ((conn pgsql-conn)
+   (mode :int))
+  :module "postgresql"
+  :returning pgsql-oid)
+
+(declaim (inline lo-open))
+(uffi:def-function ("lo_open" lo-open)
+  ((conn pgsql-conn)
+   (oid pgsql-oid)
+   (mode :int))
+  :module "postgresql"
+  :returning :int)
+
+(declaim (inline lo-write))
+(uffi:def-function ("lo_write" lo-write)
+  ((conn pgsql-conn)
+   (fd :int)
+   (data :cstring)
+   (size :int))
+  :module "postgresql"
+  :returning :int)
+
+(declaim (inline lo-read))
+(uffi:def-function ("lo_read" lo-read)
+  ((conn pgsql-conn)
+   (fd :int)
+   (data (* :unsigned-char))
+   (size :int))
+  :module "postgresql"
+  :returning :int)
+
+(declaim (inline lo-lseek))
+(uffi:def-function ("lo_lseek" lo-lseek)
+  ((conn pgsql-conn)
+   (fd :int)
+   (offset :int)
+   (whence :int))
+  :module "postgresql"
+  :returning :int)
+
+(declaim (inline lo-close))
+(uffi:def-function ("lo_close" lo-close)
+  ((conn pgsql-conn)
+   (fd :int))
+  :module "postgresql"
+  :returning :int)
+
+(declaim (inline lo-unlink))
+(uffi:def-function ("lo_unlink" lo-unlink)
+  ((conn pgsql-conn)
+   (oid pgsql-oid))
   :module "postgresql"
   :returning :int)
