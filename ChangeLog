@@ -1,11 +1,35 @@
 15 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
-	* sql/classes.lisp: SELECT now accepts table identifiers as strings 
-	for CommonSQL compliance. Add support for qualified sql identifiers 
-	with aliased table names. 
-	* tests/test-fdml.lisp: added tests for table identifiers as strings 
-	in SELECT and for aliased definitions. 
-	* tests/test-syntax.lisp: added tests for alias definitions. 
-
+	* sql/operations.lisp: make MINUS operator a synonym for EXCEPT. Add 
+	COALESCE operator and make NVL a synonym for this. Make ANY, SOME, 
+	ALL and EXISTS generate function expressions so they output the 
+	correct SQL. 
+	* sql/classes.lisp: SELECT now generates appropriate SQL when 
+	passed the SET-OPERATION and ALL keyword arguments. 
+	* sql/classes.lisp: the ORDER-BY keyword argument to SELECT now 
+	accepts ordering constraints as pairs of the form (column direction) 
+	where direction may be :ASC or :DESC. 
+	* tests/test-syntax.lisp: added tests for MINUS and COALESCE/NVL. 
+	Correct tests for ANY, SOME, ALL and EXISTS. 
+	* tests/test-fdml.lisp: added test for COALESCE. 
+	* sql/sql.lisp: MAP-QUERY now applies FUNCTION to QUERY-EXPRESSION 
+	using funcall unless QUERY-EXPRESSION returns one column and its 
+	FLATP slot is not nil in which case apply is used. 
+	* tests/test-basic.lisp: modified calls to MAP-QUERY to reflect the 
+	changes. 
+	* TODO: remove items done. 
+	* db-postgresql/postgresql-sql.lisp: no need to reverse results in 
+	DATABASE-LIST-ATTRIBUTES. 
+	* db-postgresql-socket/postgresql-socket-sql.lisp: no need to reverse
+	results in DATABASE-LIST-ATTRIBUTES. 	
+	
+15 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
+        * sql/classes.lisp: SELECT now accepts table identifiers as strings 
+        for CommonSQL compliance. Add support for qualified sql identifiers 
+        with aliased table names. 
+        * tests/test-fdml.lisp: added tests for table identifiers as strings 
+        in SELECT and for aliased definitions. 
+        * tests/test-syntax.lisp: added tests for alias definitions. 
+	
 15 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* sql/sql.lisp: PRINT-QUERY now calls QUERY with result-types and 
 	field-names set to nil. 

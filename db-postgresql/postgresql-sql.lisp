@@ -444,16 +444,15 @@
                            owner-clause)
                    database nil nil))))
     (if result
-	(reverse
-         (remove-if #'(lambda (it) (member it '("cmin"
-                                                "cmax"
-                                                "xmax"
-                                                "xmin"
-						"oid"
-                                                "ctid"
-						;; kmr -- added tableoid
-						"tableoid") :test #'equal)) 
-		    result)))))
+        (remove-if #'(lambda (it) (member it '("cmin"
+                                               "cmax"
+                                               "xmax"
+                                               "xmin"
+                                               "oid"
+                                               "ctid"
+                                               ;; kmr -- added tableoid
+                                               "tableoid") :test #'equal)) 
+                   result))))
 
 (defmethod database-attribute-type (attribute (table string)
 				    (database postgresql-database)

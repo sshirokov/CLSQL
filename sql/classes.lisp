@@ -439,6 +439,9 @@
     (let ((subs (if (consp (car sub-expressions))
                     (car sub-expressions)
                     sub-expressions)))
+      (when (= (length subs) 1)
+        (output-sql operator database)
+        (write-char #\Space *sql-stream*))
       (do ((sub subs (cdr sub)))
           ((null (cdr sub)) (output-sql (car sub) database))
         (output-sql (car sub) database)
@@ -568,12 +571,15 @@ uninclusive, and the args from that keyword to the end."
 
 (defmethod output-sql ((query sql-query) database)
   (with-slots (distinct selections from where group-by having order-by
-                        order-by-descending limit offset inner-join on)
+                        order-by-descending limit offset inner-join on
+                        all set-operation) 
       query
     (when *in-subselect*
       (write-string "(" *sql-stream*))
     (write-string "SELECT " *sql-stream*)
-    (when distinct
+    (when all 
+      (write-string "ALL " *sql-stream*))
+    (when (and distinct (not all))
       (write-string "DISTINCT " *sql-stream*)
       (unless (eql t distinct)
         (write-string "ON " *sql-stream*)
@@ -609,9 +615,15 @@ uninclusive, and the args from that keyword to the end."
       (if (listp order-by)
           (do ((order order-by (cdr order)))
               ((null order))
-            (output-sql (car order) database)
-            (when (cdr order)
-              (write-char #\, *sql-stream*)))
+            (let ((item (car order)))
+              (typecase item 
+                (cons 
+                 (output-sql (car item) database)
+                 (format *sql-stream* " ~A" (cadr item)))
+                (t 
+                 (output-sql item database)))
+              (when (cdr order)
+                (write-char #\, *sql-stream*))))
           (output-sql order-by database)))
     (when order-by-descending
       (write-string " ORDER BY " *sql-stream*)
@@ -630,7 +642,10 @@ uninclusive, and the args from that keyword to the end."
       (write-string " OFFSET " *sql-stream*)
       (output-sql offset database))
     (when *in-subselect*
-      (write-string ")" *sql-stream*)))
+      (write-string ")" *sql-stream*))
+    (when set-operation 
+      (write-char #\Space *sql-stream*)
+      (output-sql set-operation database)))
   t)
 
 (defmethod output-sql ((query sql-object-query) database)

@@ -37,16 +37,16 @@
   (apply #'make-query args))
 
 (defsql sql-any (:symbol "any") (&rest rest)
-  (make-instance 'sql-value-exp
-		 :modifier 'any :components rest))
+  (make-instance 'sql-function-exp
+		 :name 'any :args rest))
 
 (defsql sql-some (:symbol "some") (&rest rest)
-  (make-instance 'sql-value-exp
-		 :modifier 'some :components rest))
+  (make-instance 'sql-function-exp
+		 :name 'some :args rest))
 
 (defsql sql-all (:symbol "all") (&rest rest)
-  (make-instance 'sql-value-exp
-		 :modifier 'all :components rest))
+  (make-instance 'sql-function-exp
+		 :name 'all :args rest))
 
 (defsql sql-not (:symbol "not") (&rest rest)
   (make-instance 'sql-value-exp
@@ -65,8 +65,8 @@
 		 :operator 'except :sub-expressions rest))
 
 (defsql sql-minus (:symbol "minus") (&rest rest)
-  (make-instance 'sql-value-exp
-		 :modifier 'minus :components rest))
+  (make-instance 'sql-set-exp 
+		 :operator 'except :sub-expressions rest))
 
 (defsql sql-limit (:symbol "limit") (&rest rest)
   (make-instance 'sql-query-modifier-exp 
@@ -95,8 +95,8 @@
 		 :components '|NOT NULL|))
 
 (defsql sql-exists (:symbol "exists") (&rest rest)
-  (make-instance 'sql-value-exp
-		 :modifier 'exists :components rest))
+  (make-instance 'sql-function-exp
+		 :name 'exists :args rest))
 
 (defsql sql-* (:symbol "*") (&rest rest)
   (if (zerop (length rest))
@@ -137,7 +137,7 @@
 
 (defsql sql-in (:symbol "in") (&rest rest)
   (make-instance 'sql-relational-exp
-		 :operator 'in :sub-expressions rest))
+                 :operator 'in :sub-expressions rest))
 
 (defsql sql-concat (:symbol "concat") (&rest rest)
   (make-instance 'sql-relational-exp
@@ -219,3 +219,10 @@
   (make-instance 'sql-query-modifier-exp :modifier 'distinct 
 		 :components rest))
 
+(defsql sql-coalesce (:symbol "coalesce") (&rest rest)
+  (make-instance 'sql-function-exp
+		 :name 'coalesce :args rest))
+
+(defsql sql-nvl (:symbol "nvl") (&rest rest)
+  (make-instance 'sql-function-exp
+		 :name 'coalesce :args rest))

@@ -109,7 +109,7 @@
 
     (deftest :BASIC/MAP/1
 	(let ((results '())
-	      (rows (map-query 'vector #'list "select * from TYPE_TABLE" 
+	      (rows (map-query 'vector #'identity "select * from TYPE_TABLE" 
 			       :result-types nil)))
 	  (declare (type (simple-array list (*)) rows))
 	  (dotimes (i (length rows) results)
@@ -128,7 +128,7 @@
     
     (deftest :BASIC/MAP/2
 	(let ((results '())
-	      (rows (map-query 'list #'list "select * from TYPE_TABLE" 
+	      (rows (map-query 'list #'identity "select * from TYPE_TABLE" 
 			       :result-types nil)))
 	  (dotimes (i (length rows) results)
 	    (push
@@ -146,7 +146,7 @@
     
     (deftest :BASIC/MAP/3
 	    (let ((results '())
-	      (rows (map-query 'list #'list "select * from TYPE_TABLE" 
+	      (rows (map-query 'list #'identity "select * from TYPE_TABLE" 
 			       :result-types :auto)))
 	      (dotimes (i (length rows) results)
 		(push

@@ -392,6 +392,11 @@
   :order-by '(["table" last-name])
   :result-types nil :field-names nil)
  (("Vladamir" "Lenin") ("Vladamir" "Putin")))
+
+(deftest :fdml/select/27 
+ (clsql:select [coalesce [managerid] 10] :from [employee] :order-by [emplid]
+  :field-names nil :result-types nil :flatp t)
+ ("10" "1" "1" "1" "1" "1" "1" "1" "1" "1"))
   
 ;(deftest :fdml/select/11
 ;    (clsql:select [emplid] :from [employee]

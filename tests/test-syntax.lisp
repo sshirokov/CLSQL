@@ -73,7 +73,7 @@
 
 (deftest :syntax/subquery/1
     (clsql:sql [any '(3 4)])
-  "(ANY ((3,4)))")
+ "ANY((3,4))")
 
 (deftest :syntax/subquery/2
     (clsql:sql [in [foo] '(foo bar baz)])
@@ -81,15 +81,15 @@
 
 (deftest :syntax/subquery/3
     (clsql:sql [all '(foo bar baz)])
-  "(ALL ((FOO,BAR,BAZ)))")
+  "ALL((FOO,BAR,BAZ))")
 
 (deftest :syntax/subquery/4
     (clsql:sql [exists '(foo bar baz)])
-  "(EXISTS ((FOO,BAR,BAZ)))")
+  "EXISTS((FOO,BAR,BAZ))")
 
 (deftest :syntax/subquery/5
     (clsql:sql [some '(foo bar baz)])
-  "(SOME ((FOO,BAR,BAZ)))")
+  "SOME((FOO,BAR,BAZ))")
 
 
 (deftest :syntax/aggregate/1 
@@ -241,6 +241,15 @@
  "GROUP BY FOO")
 
 
+(deftest :syntax/coalesce/1 
+    (clsql:sql [coalesce [foo] [bar] "not specified"])
+ "COALESCE(FOO,BAR,'not specified')")
+
+(deftest :syntax/coalesce/2
+    (clsql:sql [nvl [foo] "not specified"])
+ "COALESCE(FOO,'not specified')")
+
+
 (deftest :syntax/sets/1 
     (clsql:sql [union [select [foo] :from [bar]] [select [baz] :from [bar]]])
  "SELECT FOO FROM BAR UNION SELECT BAZ FROM BAR")
@@ -251,6 +260,10 @@
 
 (deftest :syntax/sets/3
     (clsql:sql [except [select [foo] :from [bar]] [select [baz] :from [bar]]])
+ "SELECT FOO FROM BAR EXCEPT SELECT BAZ FROM BAR")
+
+(deftest :syntax/sets/4
+    (clsql:sql [minus [select [foo] :from [bar]] [select [baz] :from [bar]]])
  "SELECT FOO FROM BAR EXCEPT SELECT BAZ FROM BAR")
 
 
