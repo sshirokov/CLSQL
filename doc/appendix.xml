@@ -240,7 +240,7 @@
 	<title>Connection Specification</title>
 	<sect3>
 	  <title>Syntax of connection-spec</title>
-	  <synopsis>(<replaceable>host</replaceable> <replaceable>db</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable>)</synopsis>
+	  <synopsis>(<replaceable>host</replaceable> <replaceable>db</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable> &amp;optional <replaceable>port</replaceable>)</synopsis>
 	</sect3>
 	<sect3>
 	  <title>Description of connection-spec</title>
@@ -275,6 +275,13 @@
 		  use for authentication, or <symbol>nil</symbol> if
 		  the authentication record has an empty password
 		  field.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>port</parameter></term>
+	      <listitem>
+		<para>String representing the port to use for
+		  communication with the MySQL server.</para>
 	      </listitem>
 	    </varlistentry>
 	  </variablelist>

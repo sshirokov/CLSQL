@@ -95,16 +95,28 @@
   :mysql)
 
 (defmethod database-name-from-spec (connection-spec (database-type (eql :mysql)))
-  (check-connection-spec connection-spec database-type (host db user password))
-  (destructuring-bind (host db user password) connection-spec
+  (check-connection-spec connection-spec database-type
+			 (host db user password &optional port))
+  (destructuring-bind (host db user password &optional port) connection-spec
     (declare (ignore password))
     (concatenate 'string 
-		 (if host host "localhost")
+		 (etypecase host
+		   (null "localhost")
+		   (pathname (namestring host))
+		   (string host))
+		 (if port 
+		     (concatenate 'string
+				  ":"
+				  (etypecase port
+				    (integer (write-to-string port))
+				    (string port)))
+		     "")
 		 "/" db "/" user)))
 
 (defmethod database-connect (connection-spec (database-type (eql :mysql)))
-  (check-connection-spec connection-spec database-type (host db user password))
-  (destructuring-bind (host db user password) connection-spec
+  (check-connection-spec connection-spec database-type
+			 (host db user password &optional port))
+  (destructuring-bind (host db user password &optional port) connection-spec
     (let ((mysql-ptr (mysql-init (uffi:make-null-pointer 'mysql-mysql)))
 	  (socket nil))
       (if (uffi:null-pointer-p mysql-ptr)
@@ -123,7 +135,12 @@
 		(if (uffi:null-pointer-p 
 		     (mysql-real-connect 
 		      mysql-ptr host-native user-native password-native
-		      db-native 0 socket-native 0))
+		      db-native
+		      (etypecase port
+			(null 0)
+			(integer port)
+			(string (parse-integer port)))
+		      socket-native 0))
 		    (progn
 		      (setq error-occurred t)
 		      (error 'sql-connection-error
@@ -403,11 +420,12 @@
 	   database :auto nil))))
 
 (defmethod database-create (connection-spec (type (eql :mysql)))
-  (destructuring-bind (host name user password) connection-spec
+  (destructuring-bind (host name user password &optional port) connection-spec
     (multiple-value-bind (output status)
-	(clsql-sys:command-output "mysqladmin create -u~A -p~A -h~A ~A"
+	(clsql-sys:command-output "mysqladmin create -u~A -p~A -h~A~@[ -P~A~] ~A"
 				       user password 
 				       (if host host "localhost")
+				       port name
 				       name)
       (if (or (not (eql 0 status))
 	      (and (search "failed" output) (search "error" output)))
@@ -418,12 +436,12 @@
 	t))))
 
 (defmethod database-destroy (connection-spec (type (eql :mysql)))
-  (destructuring-bind (host name user password) connection-spec
+  (destructuring-bind (host name user password &optional port) connection-spec
     (multiple-value-bind (output status)
-	(clsql-sys:command-output "mysqladmin drop -f -u~A -p~A -h~A ~A"
+	(clsql-sys:command-output "mysqladmin drop -f -u~A -p~A -h~A~@[ -P~A~] ~A"
 				       user password 
 				       (if host host "localhost")
-				       name)
+				       port name)
       (if (or (not (eql 0 status))
 	      (and (search "failed" output) (search "error" output)))
 	  (error 'sql-database-error
@@ -438,9 +456,9 @@
     t))
 
 (defmethod database-list (connection-spec (type (eql :mysql)))
-  (destructuring-bind (host name user password) connection-spec
+  (destructuring-bind (host name user password &optional port) connection-spec
     (declare (ignore name))
-    (let ((database (database-connect (list host "mysql" user password) type)))
+    (let ((database (database-connect (list host "mysql" user password port) type)))
       (unwind-protect
 	   (progn
 	     (setf (slot-value database 'clsql-sys::state) :open)

@@ -1,4 +1,11 @@
+06 Apr 2005 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.1.9
+	* db-mysql/mysql-sql.lisp: Add port to connection specification
+	based on patch from Dave Watson
+	* doc/appendix.xml: Document MySQL port parameter to connection spec
+
 03 Apr 2005 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.1.8
 	* sql/time.lisp: Patch from Keith James for parsing ISO-8601 timestamps
 	
 18 Mar 2005 Kevin Rosenberg <kevin@rosenberg.net>
