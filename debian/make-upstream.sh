@@ -5,35 +5,6 @@
 
 set -e # abort on error
 
-usage () {
-    progname="`basename \"$0\"`"
-
-    cat >&2 <<EOF
-Usage: $progname [options]
-Creates upstream archives
-Options:
-  -c   Commit and tag CVS tree with current version numbers
-  -t   Tag CVS tree with current version numbers
-  -f   Force creation of upstream archive, even if exists'
-  -h   Print this brief help
-EOF
-}
-
-opt_force=0
-
-# Command line
-while [ $# != 0 ]; do
-    value="`echo x\"$1\" | sed -e 's/^x-.//'`"
-    case "$1" in
-        -h)  usage; exit 0           ;;
-        -c)  opt_commit=1; opt_tag=1 ;;
-        -t)  opt_tag=1               ;;
-	-f)  opt_force=1             ;;
-         *)  usage; exit 0           ;;
-    esac
-    shift
-done
-
 PKG=clsql
 DEBPKG=cl-sql
 
@@ -49,17 +20,7 @@ if [ -z "${VERSION}" ]; then
   exit 1
 fi
 
-if [ ! -z ${opt_commit} ]; then
-    cvs commit -m 'Auto commit for Debian build'
-fi
-
-if [ ! -z ${opt_tag} ]; then
-    UPSTREAM_TAG=upstream_version_`echo ${VERSION} | tr . _`
-    echo "(Re-)tagging with Upstream tag '${UPSTREAM_TAG}'"
-    cvs -q rtag -d $UPSTREAM_TAG $PKG > /dev/null
-    cvs -q tag -F $UPSTREAM_TAG > /dev/null
-
-fi
+cvs commit -m 'Auto commit for Debian build'
 
 if [ -f ${PACKAGE_DIR}/${DEBPKG}_${VERSION}.orig.tar.gz ]; then
   echo "File ${PACKAGE_DIR}/${DEBPKG}_${VERSION}.orig.tar.gz already exists."
