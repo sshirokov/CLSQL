@@ -1,6 +1,8 @@
 cl-sql (0.7.2-1) unstable; urgency=low
 
   * New upstream version.
+  
+  * Add the text of the LLGPL to the copyright file.
 
  -- Kevin M. Rosenberg <kevin@rosenberg.net>  Fri,  5 Jul 2002 11:06:21 -0600
 
