@@ -1,3 +1,6 @@
+10 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* db-mysql/mysql-loader.lisp: Remove load of unnecessary zlib library
+	
 9 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.11.7 released
 	* uffi/clsql-uffi-loader.lisp: Apply patch from Edi Weitz

@@ -26,19 +26,6 @@
      "/sw/lib/clsql/")
    :drive-letters '("C")))
 
-(defparameter *libz-library-path* 
-  (uffi:find-foreign-library
-   '("libz" "zlibwapi" "zlib")
-   `(,(make-pathname :directory (pathname-directory *load-truename*))
-     #+64bit "/usr/lib64/"
-     "/usr/lib/"
-     "/sw/lib/"
-     "/usr/local/lib/"
-     "/bin/"
-     "/mysql/lib/dll32/"
-     "/mysql/lib/opt/")
-   :drive-letters '("C")))
-  
 (defvar *mysql-library-candidate-names*
     '("libmysqlclient" "libmysql"))
 
@@ -69,7 +56,6 @@ set to the right path before compiling or loading the system.")
 				    *mysql-library-candidate-drive-letters*)))
     (unless (probe-file mysql-path)
       (error "Can't find mysql client library to load"))
-    (uffi:load-foreign-library *libz-library-path*) 
     (uffi:load-foreign-library mysql-path
 			       :module "mysql" 
 			       :supporting-libraries 
