@@ -2,8 +2,10 @@ cl-sql (0.8.0-1) unstable; urgency=low
 
   * New upstream, restructure directories for improved Common Lisp
     Controller v3 compatibility.
+  * New binary package: cl-sql-uffi (handles common UFFI tasks for
+    some of the database backends).
 
- -- Kevin M. Rosenberg <kevin@rosenberg.net>  Wed, 31 Jul 2002 19:34:52 -0600
+ -- Kevin M. Rosenberg <kevin@rosenberg.net>  Fri,  2 Aug 2002 05:52:38 -0600
 
 cl-sql (0.7.6-2) unstable; urgency=low
 
