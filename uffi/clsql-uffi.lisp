@@ -54,7 +54,9 @@
 	   (:int64
 	    (if (eq :int64 (nth i auto-list))
 		:int64
-		t))
+	      t))
+	   (:blob
+	    :blob)
 	   (t
 	    t))
 	 new-types))))
@@ -116,7 +118,11 @@
 		  (high32 (uffi:deref-pointer high32-ptr :int)))
 	      (if (zerop high32)
 		  low32
-		  (make-64-bit-integer high32 low32)))))
+		(make-64-bit-integer high32 low32)))))
+	 (:blob
+	  (if length
+	      (uffi:convert-from-foreign-usb8 char-ptr length)
+	    (error "Can't return blob since length is not specified.")))
 	 (t
           (if length
 	      (uffi:convert-from-foreign-string char-ptr :locale :none
