@@ -653,7 +653,7 @@
     <refsect1>
       <title>Syntax</title>
       <synopsis>
-      <function>sql-operation</function> <parameter>operation</parameter> <function>&amp;rest</function> <parameter>args</parameter> => <returnvalue>result</returnvalue></synopsis>
+      <function>sql-operation</function> <parameter>operator</parameter> <function>&amp;rest</function> <parameter>args</parameter> => <returnvalue>result</returnvalue></synopsis>
       <synopsis>
       <function>sql-operation</function> 'function <parameter>func</parameter> <function>&amp;rest</function> <parameter>args</parameter> => <returnvalue>result</returnvalue></synopsis>
     </refsect1>
@@ -661,7 +661,7 @@
       <title>Arguments and Values</title>
       <variablelist>
         <varlistentry>
-          <term><parameter>operation</parameter></term>
+          <term><parameter>operator</parameter></term>
           <listitem>
             <para>A symbol denoting an SQL operator.</para>
           </listitem>
@@ -689,9 +689,9 @@
     <refsect1>
       <title>Description</title>
       <para>Returns an SQL expression constructed from the supplied
-      SQL operator or function <parameter>operation</parameter> and
+      SQL operator or function <parameter>operator</parameter> and
       its arguments <parameter>args</parameter>. If
-      <parameter>operation</parameter> is passed the symbol 'function
+      <parameter>operator</parameter> is passed the symbol 'function
       then the first value in <parameter>args</parameter> is taken to
       be a valid SQL function and the remaining values in
       <parameter>args</parameter> its arguments.
@@ -728,7 +728,7 @@
       <title>Exceptional Situations</title>
       <para>An error of type <link
       linkend="sql-user-error"><function>sql-user-error</function></link>
-      is signalled if <parameter>operation</parameter> is not a symbol
+      is signalled if <parameter>operator</parameter> is not a symbol
       representing a supported SQL operator.</para>
     </refsect1>
     <refsect1>
@@ -757,13 +757,13 @@
     <refsect1>
       <title>Syntax</title>
       <synopsis>
-      <function>sql-operator</function> <parameter>operation</parameter> => <returnvalue>result</returnvalue></synopsis>
+      <function>sql-operator</function> <parameter>operator</parameter> => <returnvalue>result</returnvalue></synopsis>
     </refsect1>
     <refsect1>
       <title>Arguments and Values</title>
       <variablelist>
         <varlistentry>
-          <term><parameter>operation</parameter></term>
+          <term><parameter>operator</parameter></term>
           <listitem>
             <para>A symbol denoting an SQL operator.</para>
           </listitem>
@@ -779,9 +779,9 @@
     </refsect1>
     <refsect1>
       <title>Description</title>
-      <para>Returns the Lisp symbol corresponding to the SQL operation
-      represented by the symbol <parameter>operation</parameter>. If 
-      <parameter>operation</parameter> does not represent a supported 
+      <para>Returns the Lisp symbol corresponding to the SQL operator
+      represented by the symbol <parameter>operator</parameter>. If 
+      <parameter>operator</parameter> does not represent a supported 
       SQL operator or is not a symbol, nil is returned. 
       </para>
     </refsect1>

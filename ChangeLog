@@ -1,3 +1,16 @@
+13 Jun 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* sql/syntax.lisp: updated docstrings. 
+	* sql/package.lisp: exported DATABASE-NAME-FROM-SPEC from CLSQL 
+	package.
+	* sql/database.lisp: add docstrings for CREATE-DATABASE, 
+	DESTROY-DATABASE, TRUNCATE-DATABASE and LIST-DATABASES. Replace 
+	CLSQL-GENERIC-ERROR signalled in RECONNECT with SQL-CONNECTION-ERROR. 
+	* doc/ref-syntax.xml, doc/global-index.xml: minor tidying. 
+	* doc/ref-connect.xml: document connection/initialisation. 
+	* doc/ref-fdml.xml: move TRUNCATE-DATABASE reference entry here. 
+	* doc/TODO: remove items done. 
+	* Makefile: add db-oracle to to SUBDIRS. 
+
 13 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/oodml.lisp: Add new serialization functions:
 	WRITE-INSTANCE-TO-STREAM and READ-INSTANCE-FROM-STREAM

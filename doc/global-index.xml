@@ -42,6 +42,7 @@
     <member><link hovertext="(CREATE-VIEW-FROM-CLASS VIEW-CLASS-NAME &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="create-view-from-class">CREATE-VIEW-FROM-CLASS</link></member>
     <member><link hovertext="(defclass DATABASE ()(...))" linkend="database">DATABASE</link></member>
     <member><link hovertext="(DATABASE-NAME (OBJ DATABASE)) [reader]" linkend="database-name">DATABASE-NAME</link></member>
+    <member><link hovertext="(DATABASE-NAME-FROM-SPEC CONNECTION-SPEC DATABASE-TYPE) [generic function]" linkend="database-name-from-spec">DATABASE-NAME-FROM-SPEC</link></member>
     <member><link hovertext="(DATABASE-TYPE (OBJ DATABASE)) [reader]" linkend="database-type">DATABASE-TYPE</link></member>
     <member><link hovertext="(DEF-VIEW-CLASS CLASS SUPERS SLOTS &amp;REST CL-OPTIONS) [macro]" linkend="def-view-class">DEF-VIEW-CLASS</link></member>
     <member><link hovertext="(DELETE-INSTANCE-RECORDS OBJECT) [generic]" linkend="delete-instance-records">DELETE-INSTANCE-RECORDS</link></member>
@@ -99,8 +100,8 @@
     <member><link hovertext="(SET-SEQUENCE-POSITION NAME POSITION &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="set-sequence-position">SET-SEQUENCE-POSITION</link></member>
     <member><link hovertext="(SQL &amp;REST ARGS) [function]" linkend="sql">SQL</link></member>
     <member><link hovertext="(SQL-EXPRESSION &amp;KEY STRING TABLE ALIAS ATTRIBUTE TYPE) [function]" linkend="sql-expression">SQL-EXPRESSION</link></member>
-    <member><link hovertext="(SQL-OPERATION OPERATION &amp;REST REST) [function]" linkend="sql-operation">SQL-OPERATION</link></member>
-    <member><link hovertext="(SQL-OPERATOR OPERATION) [function]" linkend="sql-operator">SQL-OPERATOR</link></member>
+    <member><link hovertext="(SQL-OPERATION OPERATOR &amp;REST ARGS) [function]" linkend="sql-operation">SQL-OPERATION</link></member>
+    <member><link hovertext="(SQL-OPERATOR OPERATOR) [function]" linkend="sql-operator">SQL-OPERATOR</link></member>
     <member><link hovertext="(SQL-RECORDING-P &amp;KEY (TYPE :COMMANDS) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="sql-recording-p">SQL-RECORDING-P</link></member>
     <member><link hovertext="(SQL-STREAM &amp;KEY (TYPE :COMMANDS) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="sql-stream">SQL-STREAM</link></member>
     <member><link hovertext="(START-SQL-RECORDING &amp;KEY (TYPE :COMMANDS) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="start-sql-recording">START-SQL-RECORDING</link></member>

@@ -104,7 +104,6 @@
      #:check-connection-spec
      #:database-initialize-database-type
      #:database-type-load-foreign
-     #:database-name-from-spec
      #:database-connect
      #:database-disconnect
      #:database-query
@@ -257,6 +256,7 @@
          #:find-database               
          #:status                      
          ;; CLSQL Extensions 
+         #:database-name-from-spec
          #:database-type 
          #:with-database
          #:with-default-database
@@ -265,7 +265,6 @@
          #:create-database
          #:destroy-database
          #:probe-database
-         #:truncate-database
 
          ;; I/O Recording (recording.lisp) 
          #:add-sql-stream             
@@ -317,6 +316,7 @@
 	 #:map-query                    
 	 #:loop
          ;; CLSQL Extensions 
+         #:truncate-database
          #:for-each-row
 	 #:prepare-sql
 	 #:bind-parameter

@@ -134,17 +134,23 @@ reader syntax is disabled."
 ;; Exported functions for dealing with SQL syntax 
 
 (defun sql (&rest args)
-  "Returns an SQL string generated from the SQL expressions
-ARGS. The expressions are translated into SQL strings and then
-concatenated with a single space delimiting each expression."
+  "Returns an SQL string generated from the expressions ARGS. The
+expressions are translated into SQL strings and then concatenated
+with a single space delimiting each expression. An error of type
+SQL-USER-ERROR is signalled if any element in ARGS is not of the
+supported types (a symbol, string, number or symbolic SQL
+expression) or a list or vector containing only these supported
+types."
   (format nil "~{~A~^ ~}" (mapcar #'sql-output args)))
 
 (defun sql-expression (&key string table alias attribute type)
-  "Returns an SQL expression constructed from the supplied arguments
-which may be combined as follows: ATTRIBUTE and TYPE; ATTRIBUTE;
-ALIAS or TABLE and ATTRIBUTE and TYPE; ALIAS or TABLE and
-ATTRIBUTE; TABLE, ATTRIBUTE and TYPE; TABLE and ATTRIBUTE; TABLE
-and ALIAS; TABLE; and STRING."
+  "Returns an SQL expression constructed from the supplied
+arguments which may be combined as follows: ATTRIBUTE and TYPE;
+ATTRIBUTE; ALIAS or TABLE and ATTRIBUTE and TYPE; ALIAS or TABLE
+and ATTRIBUTE; TABLE, ATTRIBUTE and TYPE; TABLE and ATTRIBUTE;
+TABLE and ALIAS; TABLE; and STRING. An error of type
+SQL-USER-ERROR is signalled if an unsupported combination of
+keyword arguments is specified."
   (cond
     (string
      (make-instance 'sql :string string))
@@ -156,24 +162,29 @@ and ALIAS; TABLE; and STRING."
      (make-instance 'sql-ident-table :name table
                     :table-alias alias))))
 
-(defun sql-operator (operation)
-  "Returns the Lisp symbol corresponding to the SQL operation
-  represented by the symbol OPERATION."
-  (typecase operation
+(defun sql-operator (operator)
+  "Returns the Lisp symbol corresponding to the SQL operator
+  represented by the symbol OPERATOR. If OPERATOR does not
+  represent a supported SQL operator or is not a symbol, nil is
+  returned."
+  (typecase operator
     (string nil)
-    (symbol (values (gethash (symbol-name-default-case (symbol-name operation))
+    (symbol (values (gethash (symbol-name-default-case (symbol-name operator))
                              *sql-op-table*)))))
 
-(defun sql-operation (operation &rest rest)
-  "Returns an SQL expression constructed from the supplied SQL
-operator or function OPERATION and its arguments REST. If
-OPERATION is passed the symbol FUNCTION then the first value in
-REST is taken to be a valid SQL function and the remaining values
-in REST its arguments."
-  (if (sql-operator operation)
-      (apply (symbol-function (sql-operator operation)) rest)
+(defun sql-operation (operator &rest args)
+  "Returns an SQL expression constructed from the supplied symbol
+OPERATOR representing an SQL operator or function and its
+arguments ARGS. An error of type SQL-USER-ERROR is signalled if
+OPERATOR is not a symbol representing a supported SQL
+operator. If OPERATOR is passed the symbol FUNCTION then the
+first value in ARGS must be a string representing a valid SQL
+function and the remaining values in ARGS its arguments as
+strings."
+  (if (sql-operator operator)
+      (apply (symbol-function (sql-operator operator)) args)
       (error 'sql-user-error 
              :message 
-             (format nil "~A is not a recognized SQL operator." operation))))
+             (format nil "~A is not a recognized SQL operator." operator))))
 
 

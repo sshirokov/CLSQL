@@ -1,8 +1,6 @@
 DOCUMENTATION TO DO LIST
 
-1. Variances from CommonSQL
-
- - Ideally, this will be extremely minimal
+1. Variances from CommonSQL (Ideally, this will be extremely minimal) 
 
  - The SQL syntax state functions are macros in CLSQL. 
 
@@ -48,10 +46,6 @@ DOCUMENTATION TO DO LIST
 
  - transactions: START-TRANSACTION and IN-TRANSACTION-P. 
 
- - FIND-DATABASE: :db-type keyword arg. 
-
- - CONNECT: :make-default and :pool keyword args. 
-
  - Tranactions: AUTOCOMMIT
 
 4. Documenting lower level, non-CommonSQL functions (some of this is already 
@@ -59,8 +53,6 @@ DOCUMENTATION TO DO LIST
 
  - connection pools
  - database-query-result-set 
- - with-default-database, with-database, create-database, probe-database, 
-   destroy-database, list-databases. 
  
 
 5. Notes on any peculiarities of each of the backends (e.g., unsupported 

@@ -120,9 +120,9 @@ be taken from this pool."
                (restart-case
 		   (error 'sql-connection-error
 			  :message
-			  "There is an existing connection ~A to database ~A."
+			  (format nil "There is an existing connection ~A to database ~A."
 			  old-db
-			  (database-name old-db))
+			  (database-name old-db)))
                  (create-new ()
                    :report "Create a new connection."
                    (setq result
@@ -214,7 +214,7 @@ database connection cannot be closed, an error is signalled."
 	       (let ((db (find-database database :errorp nil)))
 		 (when (null db)
 		   (if (and database error)
-		       (error 'clsql-generic-error
+		       (error 'sql-connection-error
 			      :message
 			      (format nil "Unable to find database with connection-spec ~A." database))
 		       (return-from reconnect nil)))
@@ -276,29 +276,38 @@ database is printed."
     (values)))
 
 (defun create-database (connection-spec &key database-type)
+  "This function creates a database in the database system specified
+by DATABASE-TYPE."
   (when (stringp connection-spec)
     (setq connection-spec (string-to-list-connection-spec connection-spec)))
   (database-create connection-spec database-type))
 
 (defun probe-database (connection-spec &key database-type)
+  "This function tests for the existence of a database in the database
+system specified by DATABASE-TYPE."
   (when (stringp connection-spec)
     (setq connection-spec (string-to-list-connection-spec connection-spec)))
   (database-probe connection-spec database-type))
 
 (defun destroy-database (connection-spec &key database-type)
+  "This function destroys a database in the database system specified
+by DATABASE-TYPE."
   (when (stringp connection-spec)
     (setq connection-spec (string-to-list-connection-spec connection-spec)))
   (database-destroy connection-spec database-type))
 
 (defun list-databases (connection-spec &key database-type)
+  "This function returns a list of databases existing in the database
+system specified by DATABASE-TYPE."
   (when (stringp connection-spec)
     (setq connection-spec (string-to-list-connection-spec connection-spec)))
   (database-list connection-spec database-type))
 
 (defmacro with-database ((db-var connection-spec &rest connect-args) &body body)
-  "Evaluate the body in an environment, where `db-var' is bound to the
-database connection given by `connection-spec' and `connect-args'.
-The connection is automatically closed or released to the pool on exit from the body."
+  "Evaluate the body in an environment, where DB-VAR is bound to the
+database connection given by CONNECTION-SPEC and CONNECT-ARGS.  The
+connection is automatically closed or released to the pool on exit
+from the body."
   (let ((result (gensym "result-")))
     (unless db-var (setf db-var '*default-database*))
     `(let ((,db-var (connect ,connection-spec ,@connect-args))
