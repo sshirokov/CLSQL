@@ -63,7 +63,9 @@ error is signalled."
                    :message
 		   (format nil "There exists ~A database called ~A."
 			   (if (zerop count) "no" "more than one")
-			   database)))))))
+			   database)))))
+    (null
+     (error "A database must be specified rather than NIL."))))
 
 
 (defun connect (connection-spec

@@ -135,7 +135,7 @@
 #+mysql-client-v4.1
 (uffi:def-struct mysql-field
     (name (* :char))
-  (org_table (* :char))
+  (org_name (* :char))
   (table (* :char))
   (org_table (* :char))
   (db (* :char))

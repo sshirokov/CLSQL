@@ -1,3 +1,9 @@
+03 Dec 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* db-mysql/mysql-api.lisp: Commit patch from Paul Werkowski
+	to fix structure name.
+	* sql/database.lisp: More specific error message with trying
+	to use a database value of NIL.
+	
 11 Nov 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.1.1
 	* sql/generic-postgresql.lisp: Commit patch from Chris Capel to
