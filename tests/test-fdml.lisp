@@ -337,16 +337,16 @@
    "Josef Stalin" "Leon Trotsky" "Boris Yeltsin"))
 
 (deftest :fdml/loop/2
-    (loop for emplid
+    (loop for (emplid)
       being each tuple in
       [select [emplid] :from [address] :order-by [emplid]]
-      collect emplid)
-  ((1) (2)))
+     collect emplid)
+  (1 2))
 
 (deftest :fdml/loop/3
     (loop for emplid
       being each tuple in
-      [select [emplid] :from [address] :order-by [emplid] :flatp t]
+      [select [emplid] :from [address] :order-by [emplid]]
       collect emplid)
   (1 2))
 
