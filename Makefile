@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.16 2002/04/28 10:58:07 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.17 2002/04/28 11:00:11 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -29,12 +29,6 @@ all: $(LIBSUBDIRS)
 
 $(LIBSUBDIRS):
 	$(MAKE) -C $@
-
-clean:
-	@rm -f $(PKG)-*.tar.gz $(PKG)-*.zip
-	@find . -type d -name .bin |xargs rm -rf 
-	@find . -type f -name "#*" -or -name \*~ -exec rm {} \;
-	@for i in $(LIBSUBDIRS) ; do $(MAKE) -C $$i $@ ; done
 
 distclean: clean
 
