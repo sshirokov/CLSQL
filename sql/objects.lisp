@@ -560,8 +560,6 @@ strings."
   (case (database-underlying-type database)
     ((:postgresql :postgresql-socket)
      "TIMESTAMP WITHOUT TIME ZONE")
-    (:mysql
-     "DATETIME")
     (t "TIMESTAMP")))
 
 (defmethod database-get-type-specifier ((type (eql 'duration)) args database)
@@ -637,11 +635,8 @@ strings."
     (prin1-to-string val)))
 
 (defmethod database-output-sql-as-type ((type (eql 'boolean)) val database)
-  (case (database-underlying-type database)
-    (:mysql
-     (if val 1 0))
-    (t
-     (if val "t" "f"))))
+  (declare (ignore database))
+  (if val "t" "f"))
 
 (defmethod database-output-sql-as-type ((type (eql 'string)) val database)
   (declare (ignore database))
@@ -717,10 +712,6 @@ strings."
 
 (defmethod read-sql-value (val (type (eql 'boolean)) database)
   (case (database-underlying-type database)
-    (:mysql
-     (etypecase val
-       (string (if (string= "0" val) nil t))
-       (integer (if (zerop val) nil t))))
     (:postgresql
      (if (eq :odbc (database-type database))
 	 (if (string= "0" val) nil t)

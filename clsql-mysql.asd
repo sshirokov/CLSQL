@@ -90,4 +90,5 @@
 	     (:file "mysql-loader" :depends-on ("mysql-package" "mysql"))
 	     (:file "mysql-client-info" :depends-on ("mysql-loader"))
 	     (:file "mysql-api" :depends-on ("mysql-client-info"))
-	     (:file "mysql-sql" :depends-on ("mysql-api"))))))
+	     (:file "mysql-sql" :depends-on ("mysql-api"))
+	     (:file "mysql-objects" :depends-on ("mysql-sql"))))))

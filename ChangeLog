@@ -3,11 +3,14 @@
 	* sql/classes.lisp: honor case of string tables when outputting queries 
 	* sql/objects.lisp: Add database type to default database-get-type-specifier method
 	* sql/sql.lisp:  Add database type to default database-abort-transaction method
+	* db-mysql/mysql-objects.lisp: New file
+	* sql/objects.lisp: Move MySQL specific code to mysql-objects.lisp
 	* sql/utils.lisp: Add GETENV function which will be used to get ORACLE_HOME
 	from environment
 	* test/test-fdml.lisp: String table names are now case sensitive, so convert to
 	default db case for FDML/SELECT/25
 
+>>>>>>> .r9445
 22 May 2004 Kevin Rosenberg
 	* Version 2.10.20 released: Oracle backend now fails 6 out of 200 tests
 	* TODO: Added 2 variances from CommonSQL. Add tests for owner phrases
