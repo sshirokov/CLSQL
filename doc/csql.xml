@@ -5,15 +5,16 @@
 %myents;
 ]>
 
-<chapter id="usql">
-  <title>UncommonSQL</title>
+<chapter id="csql">
+  <title>&commonsql; Tutorial</title>
+  <subtitle>Based on the &usql; Tutorial</subtitle>
 
-  <sect1 id="usql-intro">
+  <sect1 id="csql-intro">
     <title>Introduction</title>
 
     <para>
       The goal of this tutorial is to guide a new developer thru the
-      process of creating a set of &usql; classes providing a
+      process of creating a set of &clsql; classes providing a
       Object-Oriented interface to persistent data stored in an &sql;
       database.  We will assume that the reader is familiar with how
       &sql; works, how relations (tables) should be structured, and
@@ -22,7 +23,7 @@
     </para>
 
     <para>
-      &usql; provides two different interfaces to &sql; databases, a
+      &clsql; provides two different interfaces to &sql; databases, a
       Functional interface, and an Object-Oriented interface.  The
       Functional interface consists of a special syntax for embedded
       &sql; expressions in Lisp, and provides lisp functions for &sql;
@@ -35,11 +36,11 @@
     </para>
 
     <para>
-      &usql; is based on the CommonSQL package from Xanalys, so the
+      &clsql; is based on the CommonSQL package from Xanalys, so the
       documentation that Xanalys makes available online is useful for
-      &usql; as well.  It is suggested that developers new to &usql; check
-      their documentation out, as any differences between CommonSQL
-      and &usql; are minor. Xanalys makes the following documents
+      &clsql; as well.  It is suggested that developers new to &clsql; read
+      their documentation as well, as any differences between CommonSQL
+      and &clsql; are minor. Xanalys makes the following documents
       available:
     </para>
 
@@ -47,8 +48,9 @@
       <listitem>
 	<para>
 	  <ulink url="http://www.lispworks.com/reference/lw43/LWUG/html/lwuser-167.htm">
-	    <citetitle>Xanalys LispWorks User Guide - The CommonSQL Package
-</citetitle>
+	    <citetitle>Xanalys &lw; User Guide - The &commonsql;
+	    Package
+	    </citetitle>
 	  </ulink>
 	</para>
       </listitem>
@@ -56,7 +58,8 @@
       <listitem>
 	<para>
 	  <ulink url="http://www.lispworks.com/reference/lw43/LWRM/html/lwref-383.htm">
-	    <citetitle>Xanalys LispWorks Reference Manual - The SQL Package</citetitle>
+	    <citetitle>Xanalys &lw; Reference Manual - The SQL
+	    Package</citetitle>
 	  </ulink>
 	</para>
       </listitem>
@@ -64,7 +67,7 @@
       <listitem>
 	<para>
 	<ulink url="http://www.ravenbrook.com/doc/2002/09/13/common-sql/">
-	  <citetitle>CommonSQL Tutorial by Nick Levine</citetitle>
+	  <citetitle>&commonsql; Tutorial by Nick Levine</citetitle>
 	</ulink>
 	</para>
       </listitem>
@@ -72,10 +75,10 @@
   </sect1>
 
   <sect1>
-    <title>Data Modeling with UncommonSQL</title>
+    <title>Data Modeling with &clsql;</title>
 
     <para>
-      Before we can create, query and manipulate &usql; objects, we
+      Before we can create, query and manipulate &clsql; objects, we
       need to define our data model as noted by Philip Greenspun
       <footnote>
 	<para>
@@ -89,27 +92,28 @@
     </para>
 
     <para>
-      When data modeling, you are telling the RDBMS the following: 
+      When data modeling, you are telling the relational database
+      management system (RDBMS) the following:
     </para>
 
     <itemizedlist>
       <listitem>
-	<para>What elements of the data you will store</para>
+	<para>What elements of the data you will store.</para>
       </listitem> 
       <listitem>
-	<para>How large each element can be</para>
+	<para>How large each element can be.</para>
       </listitem>
       <listitem>
-	<para>What kind of information each element can contain</para>
+	<para>What kind of information each element can contain.</para>
       </listitem>
       <listitem>
-	<para>What elements may be left blank</para> 
+	<para>What elements may be left blank.</para> 
       </listitem>
       <listitem>
-	<para>Which elements are constrained to a fixed range</para>
+	<para>Which elements are constrained to a fixed range.</para>
       </listitem>
       <listitem>
-	<para>Whether and how various tables are to be linked</para>
+	<para>Whether and how various tables are to be linked.</para>
       </listitem>
     </itemizedlist>
 
@@ -117,7 +121,7 @@
       With &sql; database one would do this by defining a set of
       relations, or tables, followed by a set of queries for joining
       the tables together in order to construct complex records.
-      However, with &usql; we do this by defining a set of CLOS
+      However, with &clsql; we do this by defining a set of CLOS
       classes, specifying how they will be turned into tables, and how
       they can be joined to one another via relations between their
       attributes.  The &sql; tables, as well as the queries for
@@ -152,12 +156,12 @@ This is of course the canonical &sql; tutorial example, "The Org Chart".
 </para>
 
 <para>
-In &usql;, we would have two "view classes" (a fancy word for a class
+In &clsql;, we would have two "view classes" (a fancy word for a class
 mapped into a database).  They would be defined as follows:
 </para>
 
 <programlisting>
-(clsql-usql:def-view-class employee ()
+(clsql:def-view-class employee ()
   ((emplid
     :db-kind :key
     :db-constraints :not-null
@@ -183,7 +187,7 @@ mapped into a database).  They would be defined as follows:
     :nulls-ok t))
   (:base-table employee))
 
-(clsql-usql:def-view-class company ()
+(clsql:def-view-class company ()
   ((companyid
     :db-type :key
     :db-constraints :not-null
@@ -267,7 +271,7 @@ mapped into a database).  They would be defined as follows:
 <para>
   In our example each table as a primary key attribute, which is
   required to be unique.  We indicate that a slot is part of the
-  primary key (&usql; supports multi-field primary keys) by specifying
+  primary key (&clsql; supports multi-field primary keys) by specifying
   the <symbol>:db-kind</symbol> key slot option.
 </para>
 
@@ -275,7 +279,7 @@ mapped into a database).  They would be defined as follows:
   The &sql; type of a slot when it is mapped into the database is
   determined by the <symbol>:type</symbol> slot option.  The argument
   for the <symbol>:type</symbol> option is a Common Lisp datatype.
-  The &usql; framework will determine the appropriate mapping
+  The &clsql; framework will determine the appropriate mapping
   depending on the database system the table is being created in.  If
   we really wanted to determine what &sql; type was used for a slot,
   we could specify a <symbol>:db-type</symbol> option like
@@ -293,7 +297,7 @@ mapped into a database).  They would be defined as follows:
 </para>
   </sect1>
 
-<sect1 id="usql-rel">
+<sect1 id="csql-rel">
 <title>Class Relations</title> 
 
 <para>
@@ -336,7 +340,7 @@ SELECT company_name FROM company, employee
 </programlisting>
 
 <para>
-With &usql; however we do not need to write out such queries because
+With &clsql; however we do not need to write out such queries because
 our view classes can maintain the relations between employees and
 companies, and employees to their managers for us.  We can then access
 these relations like we would any other attribute of an employee or
@@ -404,7 +408,7 @@ manager:
 </programlisting>
 
 <para>
-&usql; join slots can represent one-to-one, one-to-many, and
+&clsql; join slots can represent one-to-one, one-to-many, and
 many-to-many relations.  Above we only have one-to-one and one-to-many
 relations, later we will explain how to model many-to-many relations.
 First, let's go over the slot definitions and the available options.
@@ -414,7 +418,7 @@ First, let's go over the slot definitions and the available options.
 In order for a slot to be a join, we must specify that it's
 <symbol>:db-kind</symbol> <symbol>:join</symbol>, as opposed to
 <symbol>:base</symbol> or <symbol>:key</symbol>.  Once we do that, we
-still need to tell &usql; how to create the join statements for the
+still need to tell &clsql; how to create the join statements for the
 relation.  This is what the <symbol>:db-info</symbol> option does.  It
 is a list of keywords and values.  The available keywords are:
 </para>
@@ -449,13 +453,13 @@ is a list of keywords and values.  The available keywords are:
 </itemizedlist>
 
 <para>
-There are other :join-info options available in &usql;, but we will
+There are other :join-info options available in &clsql;, but we will
 save those till we get to the many-to-many relation examples.
 </para>
 
 </sect1>
 
-<sect1 id="usql-creat">
+<sect1 id="csql-creat">
 <title>Object Creation</title>
 
 <para>
@@ -465,14 +469,14 @@ first need to create our tables in the database:
 </para>
 
 <para>
-Note: the file <filename>doc/usql-tutorial.lisp</filename> contains
+Note: the file <filename>doc/clsql-tutorial.lisp</filename> contains
 view class definitions which you can load into your list at this point
 in order to play along at home.
 </para>
 
 <programlisting>
-(clsql-usql:create-view-from-class 'employee)
-(clsql-usql:create-view-from-class 'company)
+(clsql:create-view-from-class 'employee)
+(clsql:create-view-from-class 'company)
 </programlisting>
 
 <para>
@@ -505,9 +509,9 @@ In order to insert an objects into the database we use the
 </para>
 
 <programlisting>
-(clsql-usql:update-records-from-instance employee1)
-(clsql-usql:update-records-from-instance employee2)
-(clsql-usql:update-records-from-instance company1)
+(clsql:update-records-from-instance employee1)
+(clsql:update-records-from-instance employee2)
+(clsql:update-records-from-instance company1)
 </programlisting>
 
 <para>
@@ -520,25 +524,25 @@ the home-key and foreign-key slots in both objects in the relation.
 
 <programlisting>
 ;; Lenin manages Stalin (for now)
-(clsql-usql:add-to-relation employee2 'manager employee1)
+(clsql:add-to-relation employee2 'manager employee1)
 
 ;; Lenin and Stalin both work for Widgets Inc.
-(clsql-usql:add-to-relation company1 'employees employee1)
-(clsql-usql:add-to-relation company1 'employees employee2)
+(clsql:add-to-relation company1 'employees employee1)
+(clsql:add-to-relation company1 'employees employee2)
 
 ;; Lenin is president of Widgets Inc.
-(clsql-usql:add-to-relation company1 'president employee1)
+(clsql:add-to-relation company1 'president employee1)
 </programlisting>
 
 <para>
   After you make any changes to an object, you have to specifically
-  tell &usql; to update the &sql; database.  The
+  tell &clsql; to update the &sql; database.  The
   <function>UPDATE-RECORDS-FROM-INSTANCE</function> method will write
   all of the changes you have made to the object into the database.
 </para>
 
 <para>
-  Since &usql; objects re just normal CLOS objects, we can manipulate
+  Since &clsql; objects are just normal CLOS objects, we can manipulate
   their slots just like any other object.  For instance, let's say
   that Lenin changes his email because he was getting too much spam
   from the German Socialists.
@@ -549,8 +553,8 @@ the home-key and foreign-key slots in both objects in the relation.
 ;; database.  Get a new object representing Lenin from the database
 ;; and print the email
 
-;; This lets us use the functional &usql; interface with [] syntax
-(clsql-usql:locally-enable-sql-reader-syntax)
+;; This lets us use the functional &clsql; interface with [] syntax
+(clsql:locally-enable-sql-reader-syntax)
 
 (format t "The email address of ~A ~A is ~A"
 	(first-name employee1)
@@ -560,9 +564,9 @@ the home-key and foreign-key slots in both objects in the relation.
 (setf (employee-email employee1) "lenin-nospam@soviets.org")
 
 ;; Update the database
-(clsql-usql:update-records-from-instance employee1)
+(clsql:update-records-from-instance employee1)
 
-(let ((new-lenin (car (clsql-usql:select 'employee
+(let ((new-lenin (car (clsql:select 'employee
 	                :where [= [slot-value 'employee 'emplid] 1]))))
       (format t "His new email is ~A"
 	  (employee-email new-lenin)))
@@ -571,19 +575,19 @@ the home-key and foreign-key slots in both objects in the relation.
 <para>
   Everything except for the last <function>LET</function> expression
   is already familiar to us by now.  To understand the call to
-  <function>CLSQL-USQL:SELECT</function> we need to discuss the
+  <function>CLSQL:SELECT</function> we need to discuss the
   Functional &sql; interface and it's integration with the Object
-  Oriented interface of &usql;.
+  Oriented interface of &clsql;.
 </para>
 
 </sect1>
 
-<sect1 id="usql-find">
+<sect1 id="csql-find">
 <title>Finding Objects</title>
 
 <para>
   Now that we have our objects in the database, how do we get them out
-  when we need to work with them?  &usql; provides a functional
+  when we need to work with them?  &clsql; provides a functional
   interface to &sql;, which consists of a special Lisp reader macro
   and some functions.  The special syntax allows us to embed &sql; in
   lisp expressions, and lisp expressions in &sql;, with ease.
@@ -594,7 +598,7 @@ the home-key and foreign-key slots in both objects in the relation.
 </para>
 
 <programlisting>
-(clsql-usql:locally-enable-sql-reader-syntax)
+(clsql:locally-enable-sql-reader-syntax)
 </programlisting>
 
 <para>
@@ -608,31 +612,31 @@ the home-key and foreign-key slots in both objects in the relation.
 
 <programlisting>
 ;; an attribute or table name
-[foo] => #&lt;CLSQL-USQL-SYS::SQL-IDENT-ATTRIBUTE FOO>
+[foo] => #&lt;CLSQL-SYS::SQL-IDENT-ATTRIBUTE FOO>
 
 ;; a attribute identifier with table qualifier
-[foo bar] => #&lt;CLSQL-USQL-SYS::SQL-IDENT-ATTRIBUTE FOO.BAR>
+[foo bar] => #&lt;CLSQL-SYS::SQL-IDENT-ATTRIBUTE FOO.BAR>
 
 ;; a attribute identifier with table qualifier
 [= "Lenin" [first_name]] =>
-   #&lt;CLSQL-USQL-SYS::SQL-RELATIONAL-EXP ('Lenin' = FIRST_NAME)>
+   #&lt;CLSQL-SYS::SQL-RELATIONAL-EXP ('Lenin' = FIRST_NAME)>
 
 [&lt; [emplid] 3] =>
-   #&lt;CLSQL-USQL-SYS::SQL-RELATIONAL-EXP (EMPLID &lt; 3)>
+   #&lt;CLSQL-SYS::SQL-RELATIONAL-EXP (EMPLID &lt; 3)>
 
 [and [&lt; [emplid] 2] [= [first_name] "Lenin"]] =>
-   #&lt;CLSQL-USQL-SYS::SQL-RELATIONAL-EXP ((EMPLID &lt; 2) AND
+   #&lt;CLSQL-SYS::SQL-RELATIONAL-EXP ((EMPLID &lt; 2) AND
                                      (FIRST_NAME = 'Lenin'))>
 
 
 ;; If we want to reference a slot in an object we can us the
 ;;  SLOT-VALUE sql extension
 [= [slot-value 'employee 'emplid] 1] =>
-   #&lt;CLSQL-USQL-SYS::SQL-RELATIONAL-EXP (EMPLOYEE.EMPLID = 1)>
+   #&lt;CLSQL-SYS::SQL-RELATIONAL-EXP (EMPLOYEE.EMPLID = 1)>
 
 [= [slot-value 'employee 'emplid]
    [slot-value 'company 'presidentid]] =>
-   #&lt;CLSQL-USQL-SYS::SQL-RELATIONAL-EXP (EMPLOYEE.EMPLID = COMPANY.PRESIDENTID)>
+   #&lt;CLSQL-SYS::SQL-RELATIONAL-EXP (EMPLOYEE.EMPLID = COMPANY.PRESIDENTID)>
 </programlisting>
 
 <para>
@@ -647,7 +651,7 @@ the home-key and foreign-key slots in both objects in the relation.
   Since we can now formulate &sql; relational expression which can be
   used as qualifiers, like we put after the <symbol>WHERE</symbol>
   keyword in &sql; statements, we can start querying our objects.
-  &usql; provides a function <symbol>SELECT</symbol> which can return
+  &clsql; provides a function <symbol>SELECT</symbol> which can return
   use complete objects from the database which conform to a qualifier,
   can be sorted, and various other &sql; operations.
 </para>
@@ -665,19 +669,19 @@ the home-key and foreign-key slots in both objects in the relation.
 
 <programlisting>
 ;; all employees
-(clsql-usql:select 'employee)
+(clsql:select 'employee)
 ;; all companies
-(clsql-usql:select 'company)
+(clsql:select 'company)
 
 ;; employees named Lenin
-(clsql-usql:select 'employee :where [= [slot-value 'employee 'last-name]
+(clsql:select 'employee :where [= [slot-value 'employee 'last-name]
 				"Lenin"])
 
-(clsql-usql:select 'company :where [= [slot-value 'company 'name]
+(clsql:select 'company :where [= [slot-value 'company 'name]
 			       "Widgets Inc."])
 
 ;; Employees of Widget's Inc.
-(clsql-usql:select 'employee
+(clsql:select 'employee
 	    :where [and [= [slot-value 'employee 'companyid]
 			   [slot-value 'company 'companyid]]
 			[= [slot-value 'company 'name]
@@ -697,7 +701,7 @@ the home-key and foreign-key slots in both objects in the relation.
 
 </sect1>
 
-<sect1 id="usql-del">
+<sect1 id="csql-del">
 <title>Deleting Objects</title>
 
 <para>
@@ -720,15 +724,15 @@ the home-key and foreign-key slots in both objects in the relation.
 
 </sect1>
 
-<sect1 id="usql-concl">
+<sect1 id="csql-concl">
 <title>Conclusion</title>
 
 <para>
-  There are alot more nooks and crannies to &usql;, some of which are
+  There are many nooks and crannies to &clsql;, some of which are
   covered in the Xanalys documents we refered to earlier, some are
   not.  The best documentation at this time is still the source code
-  for &usql; itself and the inline documentation for it's various
-  function.
+  for &clsql; itself and the inline documentation for its various
+  functions.
 </para>
 
 </sect1>

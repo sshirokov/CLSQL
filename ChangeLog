@@ -1,9 +1,6 @@
 06 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* With for Marcus Pearce's excellent work, I've merged
-	his clsql-usql port into the code base. Added the USQL
-	documentation to the XML documentation.
-	* The CLSQL and CLSQL-USQL high-level interfaces can now
-	both be loaded and imported into the same package.
+	his clsql-usql port into clsql. 
 
 02 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Integrate patch from Marcus Pearce <ek735@soi.city.ac.uk>

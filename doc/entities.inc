@@ -7,6 +7,7 @@
 <!ENTITY maisql "<application><emphasis>MaiSQL</emphasis></application>">
 <!ENTITY sql "<application>SQL</application>">
 <!ENTITY usql "<application>UncommonSQL</application>">
+<!ENTITY commonsql "<application>CommonSQL</application>">
 <!ENTITY mysql "<application>MySQL</application>">
 <!ENTITY postgresql "<application>PostgreSQL</application>">
 <!ENTITY sqlite "<application>SQLite</application>">
