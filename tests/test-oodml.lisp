@@ -526,13 +526,14 @@
                   (progn 
                     (setf (slot-value emp1 'height) 1.0E0)
                     (clsql:update-record-from-slot emp1 'height)
-                    (car (clsql:select [height] :from [employee] 
-                                       :where [= [emplid] 1] 
-                                       :flatp t 
-                                       :field-names nil)))
+                    (= (car (clsql:select [height] :from [employee] 
+                                          :where [= [emplid] 1] 
+                                          :flatp t 
+                                          :field-names nil))
+                       1))
                 (setf (slot-value emp1 'height) height)
                 (clsql:update-record-from-slot emp1 'height)))
-          1.0d0)
+         t)
 
         (deftest :oodml/float/2
             (let* ((emp1 (car (select 'employee 
@@ -545,13 +546,14 @@
                   (progn 
                     (setf (slot-value emp1 'height) 1.0S0)
                     (clsql:update-record-from-slot emp1 'height)
-                    (car (clsql:select [height] :from [employee] 
-                                       :where [= [emplid] 1] 
-                                       :flatp t 
-                                       :field-names nil)))
+                    (= (car (clsql:select [height] :from [employee] 
+                                          :where [= [emplid] 1] 
+                                          :flatp t 
+                                          :field-names nil))
+                       1))
                 (setf (slot-value emp1 'height) height)
                 (clsql:update-record-from-slot emp1 'height)))
-          1.0d0)
+         t)
 
         (deftest :oodml/float/3
             (let* ((emp1 (car (select 'employee 
@@ -564,13 +566,14 @@
                   (progn 
                     (setf (slot-value emp1 'height) 1.0F0)
                     (clsql:update-record-from-slot emp1 'height)
-                    (car (clsql:select [height] :from [employee] 
-                                       :where [= [emplid] 1] 
-                                       :flatp t 
-                                       :field-names nil)))
+                    (= (car (clsql:select [height] :from [employee] 
+                                          :where [= [emplid] 1] 
+                                          :flatp t 
+                                          :field-names nil))
+                       1))
                 (setf (slot-value emp1 'height) height)
                 (clsql:update-record-from-slot emp1 'height)))
-          1.0d0)
+          t)
 
         (deftest :oodml/float/4
             (let* ((emp1 (car (select 'employee 
@@ -583,13 +586,14 @@
                   (progn 
                     (setf (slot-value emp1 'height) 1.0D0)
                     (clsql:update-record-from-slot emp1 'height)
-                    (car (clsql:select [height] :from [employee] 
-                                       :where [= [emplid] 1] 
-                                       :flatp t  
-                                       :field-names nil)))
+                    (= (car (clsql:select [height] :from [employee] 
+                                          :where [= [emplid] 1] 
+                                          :flatp t  
+                                          :field-names nil))
+                       1))
                 (setf (slot-value emp1 'height) height)
                 (clsql:update-record-from-slot emp1 'height)))
-          1.0d0)
+         t)
 
         (deftest :oodml/float/5
             (let* ((emp1 (car (select 'employee 
@@ -602,13 +606,14 @@
                   (progn 
                     (setf (slot-value emp1 'height) 1.0L0)
                     (clsql:update-record-from-slot emp1 'height)
-                    (car (clsql:select [height] :from [employee] 
-                                       :where [= [emplid] 1] 
-                                       :flatp t 
-                                       :field-names nil)))
+                    (= (car (clsql:select [height] :from [employee] 
+                                          :where [= [emplid] 1] 
+                                          :flatp t 
+                                          :field-names nil))
+                       1))
                 (setf (slot-value emp1 'height) height)
                 (clsql:update-record-from-slot emp1 'height)))
-          1.0d0)
+         t)
 
 	))
 
