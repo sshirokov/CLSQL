@@ -4,13 +4,12 @@
 ;;;;
 ;;;; Name:          transactions.cl
 ;;;; Purpose:       Transaction support
-;;;; Programmers:   Kevin M. Rosenberg, Marc Battyani
+;;;; Programmers:   Marc Battyani
 ;;;; Date Started:  Apr 2002
 ;;;;
-;;;; $Id: transactions.cl,v 1.2 2002/05/07 10:19:13 marc.battyani Exp $
+;;;; $Id: transactions.cl,v 1.3 2002/05/10 08:05:48 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
-;;;; and Copyright (c) 2000-2002 by onShore Development
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
@@ -25,7 +24,7 @@
 (defclass transaction ()
   ((commit-hooks :initform () :accessor commit-hooks)
    (rollback-hooks :initform () :accessor rollback-hooks)
-   (aborted :initform nil :accessor aborted)))
+   (status :initform nil :accessor status))) ;can be nil :rolled-back or :commited
 
 (defmethod database-start-transaction ((database closed-database))
   (signal-closed-database-error database))
@@ -37,33 +36,35 @@
     (let ((transaction (transaction database)))
       (setf (commit-hooks transaction) nil
 	    (rollback-hooks transaction) nil
-	    (aborted transaction) nil)
+	    (status transaction) nil)
       (execute-command "BEGIN" :database database))))
 
-(defmethod database-end-transaction ((database closed-database) commit)
+(defmethod database-end-transaction ((database closed-database))
   (signal-closed-database-error database))
 
-(defmethod database-end-transaction (database commit)
-  (when (not commit)
-    (setf (aborted (transaction database)) t))
+(defmethod database-end-transaction (database)
   (if (> (transaction-level database) 0)
     (when (zerop (decf (transaction-level database)))
       (let ((transaction (transaction database)))
-	(if (aborted transaction)
-	  (unwind-protect
-	       (execute-command "ROLLBACK" :database database)
-	    (map nil #'funcall (rollback-hooks database)))
+	(if (eq (status transaction) :commited)
 	  (progn
 	    (execute-command "COMMIT" :database database)
-	    (map nil #'funcall (commit-hooks transaction))))))
+	    (map nil #'funcall (commit-hooks transaction)))
+	  (unwind-protect ;status is not :commited
+	       (execute-command "ROLLBACK" :database database)
+	    (map nil #'funcall (rollback-hooks database))))))
     (warn "Continue without commit."
 	  'clsql-simple-error
 	  :format-control "Cannot commit transaction against ~A because there is no transaction in progress."
 	  :format-arguments (list database))))
 
-(defun abort-transaction (database)
-  (when (transaction database)
-    (setf (aborted (transaction database)) t)))
+(defun rollback-transaction (database)
+  (when (and (transaction database)(not (status (transaction database))))
+    (setf (status (transaction database)) :rolled-back)))
+
+(defun commit-transaction (database)
+  (when (and (transaction database)(not (status (transaction database))))
+    (setf (status (transaction database)) :commited)))
 
 (defun add-transaction-commit-hook (database abort-hook)
   (when (transaction database)
@@ -73,16 +74,12 @@
   (when (transaction database)
     (push rollback-hook (rollback-hooks (transaction database)))))
 
-(defmacro with-transaction ((&key (database '*default-database*) abort-function)
-			    &rest body)
-  (let ((db (gensym "db"))
-	(commit (gensym "commit-")))
-    `(let ((,db ,database)
-	   (,commit nil))
+(defmacro with-transaction ((&key (database '*default-database*)) &rest body)
+  (let ((db (gensym "db-")))
+    `(let ((,db ,database))
       (unwind-protect
-        (progn
-          (database-start-transaction ,db)
-          (setf ,commit t)
-          ,@body
-          (setf ,commit nil))
-	(database-end-transaction ,db ,commit)))))
+	   (progn
+	     (start-transaction ,db)
+	     ,@body
+	     (commit-transaction ,db))
+	(database-end-transaction ,db)))))

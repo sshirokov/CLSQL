@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.cl,v 1.15 2002/04/27 20:58:11 kevin Exp $
+;;;; $Id: postgresql-sql.cl,v 1.16 2002/05/10 08:05:48 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -285,23 +285,22 @@
   (lo-create (database-conn-ptr database)
 	     (logior postgresql::+INV_WRITE+ postgresql::+INV_READ+)))
 
-;; (MB)the begin/commit/rollback stuff will be removed when with-transaction wil be implemented
-(defmethod database-write-large-object ( object-id (data string) (database postgresql-database))
+(defmethod database-write-large-object (object-id (data string) (database postgresql-database))
   (let ((ptr (database-conn-ptr database))
 	(length (length data))
 	(result nil)
 	(fd nil))
-    (unwind-protect
-       (progn 
-	 (database-execute-command "begin" database)
-	 (setf fd (lo-open ptr object-id postgresql::+INV_WRITE+))
-	 (when (>= fd 0)
-	   (when (= (lo-write ptr fd data length) length)
-	     (setf result t))))
-      (progn
-	(when (and fd (>= fd 0))
-	  (lo-close ptr fd))
-	(database-execute-command (if result "commit" "rollback") database)))
+    (with-transaction (:database database)
+       (unwind-protect
+	  (progn 
+	    (setf fd (lo-open ptr object-id postgresql::+INV_WRITE+))
+	    (when (>= fd 0)
+	      (when (= (lo-write ptr fd data length) length)
+		(setf result t))))
+	 (progn
+	   (when (and fd (>= fd 0))
+	     (lo-close ptr fd))
+	   )))
     result))
 
 ;; (MB) the begin/commit/rollback stuff will be removed when with-transaction wil be implemented

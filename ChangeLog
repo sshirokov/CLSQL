@@ -1,3 +1,10 @@
+10 May 2002 Marc Battyani (marc.battyani@fractalconcept.com)
+	* sql/classes.cl:
+	* sql/transactions.cl:
+	Added transaction support. Functions/macros added:
+	with-transaction, commit-transaction, rollback-transaction,
+	add-transaction-commit-hook, add-transaction-rollback-hook
+
 04 May 2002 Marc Battyani (marc.battyani@fractalconcept.com)
 	* sql/sql.cl:
 	* sql/pool.cl:
