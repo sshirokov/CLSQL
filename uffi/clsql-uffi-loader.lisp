@@ -20,7 +20,7 @@
 
 (defvar *clsql-uffi-library-filename* 
   (uffi:find-foreign-library
-   "uffi"
+   '(#+64bit "uffi64" "uffi")
    `(,clsql-uffi-system::*library-file-dir*
      "/usr/lib/clsql/")
    :drive-letters '("C")))
