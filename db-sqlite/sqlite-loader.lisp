@@ -36,9 +36,9 @@ set to the right path before compiling or loading the system.")
    t
   #-clisp
   (let ((libpath (uffi:find-foreign-library
-		  "libsqlite"
+		  '("libsqlite" "sqlite")
 		  '(#+64bit "/usr/lib64/"
-		    "/usr/lib/" "/usr/local/lib/")
+		    "/usr/lib/" "/usr/local/lib/" "/bin/")
 		  :drive-letters '("C" "D" "E"))))
     (if (uffi:load-foreign-library libpath
 				   :module "sqlite"
