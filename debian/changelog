@@ -1,3 +1,9 @@
+cl-sql (1.7.4-1) unstable; urgency=low
+
+  * New upstream (closes: 207813)
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sun, 31 Aug 2003 02:19:45 -0600
+
 cl-sql (1.7.3-1) unstable; urgency=low
 
   * New upstream
@@ -5,7 +11,7 @@ cl-sql (1.7.3-1) unstable; urgency=low
   is preventing entire source package from moving into testing since
   acl-pro-installer is only supported on x86 and ppc.
   
- -- Kevin M. Rosenberg <kmr@debian.org>  Wed, 20 Aug 2003 10:57:50 -0600
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sun, 31 Aug 2003 02:19:31 -0600
 
 cl-sql (1.7.2-1) unstable; urgency=low
 
