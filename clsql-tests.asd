@@ -40,8 +40,6 @@
 			   (:file "test-syntax")))))
 
 (defmethod perform ((o test-op) (c (eql (find-system 'clsql-tests))))
-  (error "Automated performing of test-op is not yet supported.")
-  #+ignore
   (unless (funcall (intern (symbol-name '#:run-tests)
 			   (find-package '#:clsql-tests)))
     (error "test-op failed")))

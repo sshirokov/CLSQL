@@ -18,6 +18,9 @@
 
 #.(clsql:locally-enable-sql-reader-syntax)
 
+(setq *rt-oodml*
+      '(
+	
 (deftest :oodml/select/1
     (mapcar #'(lambda (e) (slot-value e 'last-name))
             (clsql:select 'employee :order-by [last-name]))
@@ -237,5 +240,6 @@
 ;          collect (slot-value e 'last-name))
 ;  ("Lenin" "Stalin" "Trotsky"))
 
+))
 
 #.(clsql:restore-sql-reader-syntax-state)

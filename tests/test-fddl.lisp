@@ -18,6 +18,9 @@
 
 #.(clsql:locally-enable-sql-reader-syntax)
 
+(setq *rt-fddl*
+      '(
+      
 ;; list current tables 
 (deftest :fddl/table/1
     (apply #'values 
@@ -207,5 +210,7 @@
           (clsql:sequence-next [foo])
         (clsql:drop-sequence [foo] :if-does-not-exist :ignore)))
   6)
+
+))
 
 #.(clsql:restore-sql-reader-syntax-state)

@@ -17,7 +17,9 @@
 
 #.(clsql:locally-enable-sql-reader-syntax)
 
-
+(setq *rt-syntax*
+      '(
+	
 (deftest :syntax/generic/1
     (clsql:sql "foo")
   "'foo'")
@@ -158,5 +160,7 @@
                                              :attribute 'baz)
                         (clsql:sql table)])))
   "(BETWEEN(THISTIME.BAR,(HIP * HOP),42) AND (THISTIME.BAZ LIKE 'THISTIME') AND BETWEEN(NEXTTIME.BAR,(HIP * HOP),43) AND (NEXTTIME.BAZ LIKE 'NEXTTIME') AND BETWEEN(SOMETIME.BAR,(HIP * HOP),44) AND (SOMETIME.BAZ LIKE 'SOMETIME') AND BETWEEN(NEVER.BAR,(HIP * HOP),45) AND (NEVER.BAZ LIKE 'NEVER'))")
-  
+
+))
+
 #.(clsql:restore-sql-reader-syntax-state)

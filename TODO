@@ -1,7 +1,6 @@
 GENERAL 
 
-* test on (and port to) openmcl and mcl. SCL no longer affordable to
-  individuals;
+* test on mcl. SCL no longer affordable to individuals;
 * implement remaining functions for CLSQL AODBC backend;
 * port Oracle and ODBC backend to UFFI.
 

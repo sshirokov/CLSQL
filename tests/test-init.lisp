@@ -1,7 +1,7 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; ======================================================================
 ;;;; File:    test-init.lisp
-;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>
+;;;; Authors: Marcus Pearce <m.t.pearce@city.ac.uk>, Kevin Rosenberg
 ;;;; Created: 30/03/2004
 ;;;; Updated: $Id$
 ;;;; ======================================================================
@@ -13,13 +13,35 @@
 ;;;;
 ;;;; ======================================================================
 
+;;; This test suite looks for a configuration file named ".clsql-test.config"
+;;; located in the users home directory.
+;;;
+;;; This file contains a single a-list that specifies the connection
+;;; specs for each database type to be tested. For example, to test all
+;;; platforms, a sample "test.config" may look like:
+;;;
+;;; ((:mysql ("localhost" "a-mysql-db" "user1" "secret"))
+;;;  (:aodbc ("my-dsn" "a-user" "pass"))
+;;;  (:postgresql ("localhost" "another-db" "user2" "dont-tell"))
+;;;  (:postgresql-socket ("pg-server" "a-db-name" "user" "secret-password"))
+;;;  (:sqlite ("path-to-sqlite-db")))
+
 (in-package #:clsql-tests)
 
+(defvar *config-pathname*
+  (make-pathname :defaults (user-homedir-pathname)
+		 :name ".clsql-test"
+		 :type "config"))
+
+(defvar *rt-connection*)
+(defvar *rt-fddl*)
+(defvar *rt-fdml*)
+(defvar *rt-ooddl*)
+(defvar *rt-oodml*)
+(defvar *rt-syntax*)
+
 (defvar *test-database-type* nil)
-(defvar *test-database-server* "")
-(defvar *test-database-name* "")
-(defvar *test-database-user* "")
-(defvar *test-database-password* "")
+(defvar *test-database-user* nil)
 
 (defclass thing ()
   ((extraterrestrial :initform nil :initarg :extraterrestrial)))
@@ -216,30 +238,13 @@
                                   :last-name "Putin"
                                   :email "putin@soviet.org"))
 
-(defun test-database-connection-spec ()
-  (let ((dbserver *test-database-server*)
-        (dbname *test-database-name*)
-        (dbpassword *test-database-password*)
-        (dbtype *test-database-type*)
-        (username *test-database-user*))
-    (case dbtype
-      (:postgresql
-       `("" ,dbname ,username ,dbpassword))
-      (:postgresql-socket
-       `(,dbserver ,dbname ,username ,dbpassword))
-      (:mysql
-       `("" ,dbname ,username ,dbpassword))
-      (:sqlite
-       `(,dbname))
-      (:oracle
-       `(,username ,dbpassword ,dbname))
-      (t
-       (error "Unrecognized database type: ~A" dbtype)))))
-
-(defun test-connect-to-database (database-type)
+(defun test-connect-to-database (database-type spec)
   (setf *test-database-type* database-type)
+  (when (>= (length spec) 3)
+    (setq *test-database-user* (third spec)))
+
   ;; Connect to the database
-  (clsql:connect (test-database-connection-spec)
+  (clsql:connect spec
                 :database-type database-type
                 :make-default t
                 :if-exists :old))
@@ -306,11 +311,51 @@
   (clsql:update-records-from-instance employee10)
   (clsql:update-records-from-instance company1))
 
-(defun run-tests (backend)
-  (format t "~&Running CLSQL tests with ~A backend.~%" backend)
-  (test-connect-to-database backend)
-  (test-initialise-database)
-  (rtest:do-tests))
+(defclass conn-specs ()
+  ((aodbc-spec :accessor aodbc :initform nil)
+   (mysql-spec :accessor mysql :initform nil)
+   (pgsql-spec :accessor postgresql :initform nil)
+   (pgsql-socket-spec :accessor postgresql-socket :initform nil)
+   (sqlite-spec :accessor sqlite :initform nil))
+  (:documentation "Connection specifications for CLSQL testing"))
 
+(defun run-tests ()
+  (let ((specs (read-specs)))
+    (unless specs
+      (warn "Not running tests because test configuration file is missing")
+      (return-from run-tests :skipped))
+    (dolist (accessor '(postgresql postgresql-socket sqlite aodbc mysql))
+      (unless (find-package (symbol-name accessor))
+	(asdf:operate 'asdf:load-op
+		      (intern (concatenate 'string
+					   (symbol-name '#:clsql-)
+					   (symbol-name accessor)))))
+      (rt:rem-all-tests)
+      (dolist (test (append *rt-connection* *rt-fddl* *rt-fdml*
+			    *rt-ooddl* *rt-oodml* *rt-syntax*))
+	(eval test))
 
+      (let ((spec (funcall accessor specs))
+	    (backend (intern (symbol-name accessor) (find-package :keyword))))
+	(when spec
+	  (format t "~&Running CLSQL tests with ~A backend.~%" backend)
+	  (test-connect-to-database backend spec)
+	  (test-initialise-database)
+	  (rtest:do-tests))))))
+
+(defun read-specs (&optional (path *config-pathname*))
+  (if (probe-file path)
+      (with-open-file (stream path :direction :input)
+	(let ((config (read stream))
+	      (specs (make-instance 'conn-specs)))
+	  (setf (aodbc specs) (cadr (assoc :aodbc config)))
+	  (setf (mysql specs) (cadr (assoc :mysql config)))
+	  (setf (postgresql specs) (cadr (assoc :postgresql config)))
+	  (setf (postgresql-socket specs) 
+		(cadr (assoc :postgresql-socket config)))
+	  (setf (sqlite specs) (cadr (assoc :sqlite config)))
+	  specs))
+      (progn
+	(warn "CLSQL tester config file ~S not found" path)
+	nil)))
 

@@ -1,28 +1,15 @@
 * RUNNING THE REGRESSION SUITE
 
-Just load clsql.asd or put it somewhere where ASDF can find it
+Create a .clsql-tests.config file in your home directory.
+See test-init.lisp for the structure of the data.
+
+Load clsql.asd or put it somewhere where ASDF can find it
 and call:
 
-(asdf:oos 'asdf:load-op 'clsql)
+(asdf:oos 'asdf:test-op 'clsql)
 
-You'll then need to load a CLSQL backend before you can do anything. 
-
-To run the regression tests load clsql-tests.asd or put it
-somewhere where ASDF can find it, edit the file tests/test-init.lisp
-and set the following variables to appropriate values:
-
-    *test-database-server*
-    *test-database-name*
-    *test-database-user*
-    *test-database-password* 
-
-And then call:
-
-(asdf:oos 'asdf:load-op 'clsql-tests)
-(clsql-tests:run-tests BACKEND)
-
-where BACKEND is the CLSQL database interface to use (currently one of
-:postgresql, :postgresql-socket, :sqlite or :mysql).
+The test suite will then automatically run on all of the backends that
+you have defined in .clsql-tests.config
 
 * REGRESSION TEST SUITE GOALS
 

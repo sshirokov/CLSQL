@@ -18,6 +18,9 @@
 
 #.(clsql:locally-enable-sql-reader-syntax)
 
+(setq *rt-fdml*
+      '(
+	
 ;; inserts a record using all values only and then deletes it 
 (deftest :fdml/insert/1
     (progn
@@ -391,5 +394,7 @@
                   results)
             (apply #'values (nreverse results)))))))
   nil nil ("lenin@soviet.org"))
+
+))
 
 #.(clsql:restore-sql-reader-syntax-state)

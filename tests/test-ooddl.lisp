@@ -19,6 +19,9 @@
 
 #.(clsql:locally-enable-sql-reader-syntax)
 
+(setq *rt-ooddl*
+      '(
+	
 ;; Ensure slots inherited from standard-classes are :virtual
 (deftest :ooddl/metaclass/1
     (values 
@@ -84,4 +87,7 @@
       fail-index)
   -1)
 
+))
+
 #.(clsql:restore-sql-reader-syntax-state)
+
