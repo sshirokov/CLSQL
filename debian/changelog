@@ -1,4 +1,4 @@
-cl-sql (2.11.6-2) unstable; urgency=low
+cl-sql (2.11.7-1) unstable; urgency=low
 
   * New upstream
   * Move to contrib section (closes:253360)
