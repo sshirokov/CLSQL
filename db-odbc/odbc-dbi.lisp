@@ -331,7 +331,7 @@ This makes the functions db-execute-command and db-query thread safe."
                ;;(%dispose-column-ptrs inactive-query)
                (setf column-count 0
 		     width +max-precision+
-		     hstmt (%new-statement-handle hdbc)
+		     ;; KMR hstmt (%new-statement-handle hdbc)
                      (fill-pointer column-names) 0
                      (fill-pointer column-c-types) 0
                      (fill-pointer column-sql-types) 0

@@ -56,36 +56,37 @@ as possible second argument) to the desired representation of date/time/timestam
   
 (defun handle-error (henv hdbc hstmt)
   (let ((sql-state (allocate-foreign-string 256))
-	(error-message (allocate-foreign-string $SQL_MAX_MESSAGE_LENGTH)))
+	(error-message (allocate-foreign-string #.$SQL_MAX_MESSAGE_LENGTH)))
     (with-foreign-objects ((error-code :long)
 			   (msg-length :short))
       (SQLError henv hdbc hstmt sql-state
 		error-code error-message
-		$SQL_MAX_MESSAGE_LENGTH msg-length)
-      (values
-       (prog1
-	   (convert-from-foreign-string error-message)
-	 (free-foreign-object error-message))
-       (prog1 
-	   (convert-from-foreign-string sql-state)
-	 (free-foreign-object error-message))
-       (deref-pointer msg-length :short) 
-       (deref-pointer error-code :long)))))
+		#.$SQL_MAX_MESSAGE_LENGTH msg-length)
+      (let ((err (convert-from-foreign-string error-message))
+	    (state (convert-from-foreign-string sql-state)))
+	
+	(free-foreign-object error-message)
+	(free-foreign-object sql-state)
+	(values
+	 err
+	 state
+	 (deref-pointer msg-length :short) 
+	 (deref-pointer error-code :long))))))
 
 (defun sql-state (henv hdbc hstmt)
   (let ((sql-state (allocate-foreign-string 256))
-	(error-message (allocate-foreign-string $SQL_MAX_MESSAGE_LENGTH)))
+	(error-message (allocate-foreign-string #.$SQL_MAX_MESSAGE_LENGTH)))
     (with-foreign-objects ((error-code :long)
 			   (msg-length :short))
       (SQLError henv hdbc hstmt sql-state error-code
-		error-message $SQL_MAX_MESSAGE_LENGTH msg-length)
-      (free-foreign-object error-message)
-      (prog1
-	  (convert-from-foreign-string sql-state) 
-	(free-foreign-object sql-state)))
-    ;; test this: return a keyword for efficiency
-    ;;(%cstring-to-keyword sql-state)
-    ))
+		error-message #.$SQL_MAX_MESSAGE_LENGTH msg-length)
+      (let ((state (convert-from-foreign-string sql-state))) 
+	(free-foreign-object error-message)
+	(free-foreign-object sql-state)
+	state
+	;; test this: return a keyword for efficiency
+	;;(%cstring-to-keyword state)
+	))))
 
 (defmacro with-error-handling ((&key henv hdbc hstmt (print-info t))
                                    odbc-call &body body)
@@ -273,9 +274,9 @@ as possible second argument) to the desired representation of date/time/timestam
 	 (with-error-handling 
 	     (:hdbc hdbc)
 	     (SQLGetInfo hdbc info-type info-ptr 1023 info-length-ptr)
-	   (prog1
-	       (convert-from-foreign-string info-ptr)
-	     (free-foreign-object info-ptr))))))
+	   (let ((info (convert-from-foreign-string info-ptr)))
+	     (free-foreign-object info-ptr)
+	     info)))))
     ;; those returning a word
     ((#.$SQL_ACTIVE_CONNECTIONS
       #.$SQL_ACTIVE_STATEMENTS
@@ -424,7 +425,7 @@ as possible second argument) to the desired representation of date/time/timestam
   (let ((column-name-ptr (allocate-foreign-string 256)))
     (with-foreign-objects ((column-name-length-ptr :short)
 			   (column-sql-type-ptr :short)
-			   (column-precision-ptr :long)
+			   (column-precision-ptr :unsigned-long)
 			   (column-scale-ptr :short)
 			   (column-nullable-p-ptr :short))
       (with-error-handling (:hstmt hstmt)
@@ -439,14 +440,14 @@ as possible second argument) to the desired representation of date/time/timestam
 	  (values
 	   column-name
 	   (deref-pointer column-sql-type-ptr :short)
-	   (deref-pointer column-precision-ptr :long)
+	   (deref-pointer column-precision-ptr :unsigned-long)
 	   (deref-pointer column-scale-ptr :short)
 	   (deref-pointer column-nullable-p-ptr :short)))))))
     
 ;; parameter counting is 1-based
 (defun %describe-parameter (hstmt parameter-nr)
   (with-foreign-objects ((column-sql-type-ptr :short)
-			 (column-precision-ptr :long)
+			 (column-precision-ptr :unsigned-long)
 			 (column-scale-ptr :short)
 			 (column-nullable-p-ptr :short))
     (with-error-handling 
@@ -458,7 +459,7 @@ as possible second argument) to the desired representation of date/time/timestam
                         column-nullable-p-ptr)
       (values
        (deref-pointer column-sql-type-ptr :short)
-       (deref-pointer column-precision-ptr :long)
+       (deref-pointer column-precision-ptr :unsigned-long)
        (deref-pointer column-scale-ptr :short)
        (deref-pointer column-nullable-p-ptr :short)))))
 
@@ -471,11 +472,11 @@ as possible second argument) to the desired representation of date/time/timestam
 	  (SQLColAttributes hstmt column-nr descriptor-type descriptor-info-ptr
 			    256 descriptor-length-ptr
 			    numeric-descriptor-ptr)
-	(values
-	 (prog1
-	     (convert-from-foreign-string descriptor-info-ptr)
-	   (free-foreign-object descriptor-info-ptr))
-	 (deref-pointer numeric-descriptor-ptr :long))))))
+	(let ((desc (convert-from-foreign-string descriptor-info-ptr)))
+	  (free-foreign-object descriptor-info-ptr)
+	  (values
+	   desc
+	   (deref-pointer numeric-descriptor-ptr :long)))))))
   
 (defun %prepare-describe-columns (hstmt table-qualifier table-owner 
                                    table-name column-name)
@@ -515,14 +516,21 @@ as possible second argument) to the desired representation of date/time/timestam
 				     description-ptr
 				     1024
 				     description-length-ptr))))
-	(unless (= res $SQL_NO_DATA_FOUND)
-	  (values 
-	   (prog1 
-	       (convert-from-foreign-string name-ptr)
-	     (free-foreign-object name-ptr))
-	   (prog1
-	       (convert-from-foreign-string description-ptr)
-	     (free-foreign-object description-ptr))))))))
+	(cond
+	  ((= res $SQL_NO_DATA_FOUND)
+	   (let ((name (convert-from-foreign-string name-ptr))
+		 (desc (convert-from-foreign-string description-ptr)))
+	     (free-foreign-object name-ptr)
+	     (free-foreign-object description-ptr)
+	     (values
+	      name
+	      desc)))
+	  (t
+	   (free-foreign-object name-ptr)
+	   (free-foreign-object description-ptr)
+	   nil))))))
+	   
+
 
 (defun sql-to-c-type (sql-type)
   (ecase sql-type

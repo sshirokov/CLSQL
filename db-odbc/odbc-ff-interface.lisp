@@ -123,24 +123,24 @@
      (hdbc sql-handle)          ; HDBC        hdbc
      (hstmt sql-handle)         ; HSTMT       hstmt
      (*szSqlState string-ptr)   ; UCHAR  FAR *szSqlState
-     (*pfNativeError :pointer-void)      ; SDWORD FAR *pfNativeError
+     (*pfNativeError (* :long))      ; SDWORD FAR *pfNativeError
      (*szErrorMsg string-ptr)   ; UCHAR  FAR *szErrorMsg
      (cbErrorMsgMax :short)     ; SWORD       cbErrorMsgMax
-     (*pcbErrorMsg :pointer-void)        ; SWORD  FAR *pcbErrorMsg
+     (*pcbErrorMsg (* :short))        ; SWORD  FAR *pcbErrorMsg
      )
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLNumResultCols"
     ((hstmt sql-handle)         ; HSTMT       hstmt
-     (*pccol :pointer-void)              ; SWORD  FAR *pccol
+     (*pccol (* :short))              ; SWORD  FAR *pccol
      )
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLRowCount"
     ((hstmt sql-handle)         ; HSTMT       hstmt
-     (*pcrow :pointer-void)              ; SDWORD FAR *pcrow
+     (*pcrow (* :long))              ; SDWORD FAR *pcrow
      )
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
@@ -150,11 +150,11 @@
      (icol :short)              ; UWORD       icol
      (*szColName string-ptr)    ; UCHAR  FAR *szColName
      (cbColNameMax :short)      ; SWORD       cbColNameMax
-     (*pcbColName :pointer-void)         ; SWORD  FAR *pcbColName
-     (*pfSqlType :pointer-void)          ; SWORD  FAR *pfSqlType
-     (*pcbColDef :pointer-void)          ; UDWORD FAR *pcbColDef
-     (*pibScale :pointer-void)           ; SWORD  FAR *pibScale
-     (*pfNullable :pointer-void)         ; SWORD  FAR *pfNullable
+     (*pcbColName (* :short))         ; SWORD  FAR *pcbColName
+     (*pfSqlType (* :short))          ; SWORD  FAR *pfSqlType
+     (*pcbColDef (* :unsigned-long))          ; UDWORD FAR *pcbColDef
+     (*pibScale (* :short))           ; SWORD  FAR *pibScale
+     (*pfNullable (* :short))         ; SWORD  FAR *pfNullable
      )
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
@@ -163,10 +163,10 @@
     ((hstmt sql-handle)         ; HSTMT       hstmt
      (icol :short)              ; UWORD       icol
      (fDescType :short)         ; UWORD       fDescType
-     (rgbDesc :cstring)             ; PTR         rgbDesc
+     (rgbDesc string-ptr)             ; PTR         rgbDesc
      (cbDescMax :short)         ; SWORD       cbDescMax
-     (*pcbDesc :cstring)            ; SWORD  FAR *pcbDesc
-     (*pfDesc :pointer-void)             ; SDWORD FAR *pfDesc
+     (*pcbDesc (* :short))            ; SWORD  FAR *pcbDesc
+     (*pfDesc (* :long))             ; SDWORD FAR *pfDesc
      )
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
@@ -191,7 +191,7 @@
      (fCType :short)            ; SWORD       fCType
      (rgbValue :pointer-void)            ; PTR         rgbValue
      (cbValueMax :long)         ; SDWORD      cbValueMax
-     (*pcbValue :pointer-void)           ; SDWORD FAR *pcbValue
+     (*pcbValue (* :long))           ; SDWORD FAR *pcbValue
      )
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
@@ -214,10 +214,10 @@
 (def-function "SQLDescribeParam"
     ((hstmt sql-handle)         ; HSTMT       hstmt
      (ipar :short)              ; UWORD       ipar
-     (*pfSqlType :pointer-void)          ; SWORD  FAR *pfSqlType
-     (*pcbColDef :pointer-void)          ; UDWORD FAR *pcbColDef
-     (*pibScale :pointer-void)           ; SWORD  FAR *pibScale
-     (*pfNullable :pointer-void)         ; SWORD  FAR *pfNullable
+     (*pfSqlType (* :short))          ; SWORD  FAR *pfSqlType
+     (*pcbColDef (* :unsigned-long))          ; UDWORD FAR *pcbColDef
+     (*pibScale (* :short))           ; SWORD  FAR *pibScale
+     (*pfNullable (* :short))         ; SWORD  FAR *pfNullable
      )
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API

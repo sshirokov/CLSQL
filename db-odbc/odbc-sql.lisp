@@ -52,6 +52,7 @@
 	  db)
     (clsql-error (e)
       (error e))
+    #+ignore
     (error () 	;; Init or Connect failed
       (error 'clsql-connect-error
 	     :database-type database-type
@@ -133,6 +134,7 @@
 	 (length column-names)
 	 nil ;; not able to return number of rows with odbc
 	 ))
+    #+ignore
     (error ()
       (error 'clsql-sql-error
 	     :database database
