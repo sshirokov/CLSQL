@@ -133,7 +133,7 @@
     (let ((count (caar (clsql:query "SELECT COUNT(*) FROM EMPLOYEE WHERE (EMAIL LIKE '%org')" :field-names nil))))
       (if (stringp count)
 	  (nth-value 0 (parse-integer count))
-	count))
+	  (nth-value 0 (truncate count))))
   10)
 
 (deftest :fdml/query/2
@@ -155,29 +155,38 @@
   t)
   
 (deftest :fdml/query/5
- (clsql:query (clsql:sql [select [first-name] [sum [emplid]] :from [employee]] 
-	     	      	[group-by [first-name]] [order-by [sum [emplid]]])
-              :field-names nil :result-types nil)
- (("Josef" "2") ("Leon" "3") ("Nikita" "4") ("Leonid" "5") ("Yuri" "6")
-  ("Konstantin" "7") ("Mikhail" "8") ("Boris" "9") ("Vladamir" "11")))
+    (let ((res (clsql:query (clsql:sql [select [first-name] [sum [emplid]] :from [employee]] 
+				       [group-by [first-name]] [order-by [sum [emplid]]])
+			    :field-names nil :result-types nil)))
+      (mapcar (lambda (p) (list (car p) (truncate (read-from-string (second p)))))
+	      res))
+  (("Josef" 2) ("Leon" 3) ("Nikita" 4) ("Leonid" 5) ("Yuri" 6)
+  ("Konstantin" 7) ("Mikhail" 8) ("Boris" 9) ("Vladamir" 11)))
 
 (deftest :fdml/query/6
- (clsql:query (clsql:sql [union [select [emplid] :from [employee]] 
-			 [select [groupid] :from [company]]])
-              :field-names nil :result-types nil :flatp t)
- ("1" "2" "3" "4" "5" "6" "7" "8" "9" "10"))
+    (let ((res (clsql:query (clsql:sql [union [select [emplid] :from [employee]] 
+				       [select [groupid] :from [company]]])
+			    :field-names nil :result-types nil :flatp t)))
+      (values (every #'stringp res)
+	      (mapcar #'(lambda (f) (truncate (read-from-string f))) res)))
+  t (1 2 3 4 5 6 7 8 9 10))
 
 (deftest :fdml/query/7
- (clsql:query (clsql:sql [intersect [select [emplid] :from [employee]] 
-			 [select [groupid] :from [company]]])
-              :field-names nil :result-types nil :flatp t)
- ("1"))
+    (let ((res (car (clsql:query (clsql:sql [intersect [select [emplid] :from [employee]] 
+					    [select [groupid] :from [company]]])
+				 :field-names nil :result-types nil :flatp t))))
+      (values (stringp res)
+	      (nth-value 0 (truncate (read-from-string res)))))
+  t 1)
 
 (deftest :fdml/query/8
- (clsql:query (clsql:sql [except [select [emplid] :from [employee]] 
-			 [select [groupid] :from [company]]])
-              :field-names nil :result-types nil :flatp t)
- ("2" "3" "4" "5" "6" "7" "8" "9" "10")) 
+    (let ((res (clsql:query (clsql:sql [except [select [emplid] :from [employee]] 
+				       [select [groupid] :from [company]]])
+			    :field-names nil :result-types nil :flatp t)))
+      (values (every #'stringp res)
+	      (mapcar #'(lambda (f) (truncate (read-from-string f))) res)))
+  t (2 3 4 5 6 7 8 9 10))
+
 
 (deftest :fdml/execute-command/1
     (values
@@ -222,13 +231,15 @@
   "Yuri"))
 
 (deftest :fdml/select/3
-    (clsql:select [first-name] [count [*]] :from [employee]
-			  :result-types nil 
-			  :group-by [first-name]
-			  :order-by [first-name]
-			  :field-names nil)
- (("Boris" "1") ("Josef" "1") ("Konstantin" "1") ("Leon" "1") ("Leonid" "1")
-  ("Mikhail" "1") ("Nikita" "1") ("Vladamir" "2") ("Yuri" "1")))
+    (let ((res (clsql:select [first-name] [count [*]] :from [employee]
+			     :result-types nil 
+			     :group-by [first-name]
+			     :order-by [first-name]
+			     :field-names nil)))
+      (mapcar (lambda (p) (list (car p) (truncate (read-from-string (second p)))))
+	      res))
+  (("Boris" 1) ("Josef" 1) ("Konstantin" 1) ("Leon" 1) ("Leonid" 1)
+   ("Mikhail" 1) ("Nikita" 1) ("Vladamir" 2) ("Yuri" 1)))
 
 (deftest :fdml/select/4
     (clsql:select [last-name] :from [employee] 
@@ -260,14 +271,20 @@
  (1 1 1 1 1 1 1 1 1 1))
 
 (deftest :fdml/select/7
-    (clsql:select [max [emplid]] :from [employee] :flatp t 
-		  :field-names nil :result-types nil)
-  ("10"))
+    (let ((result (car (clsql:select [max [emplid]] :from [employee] :flatp t 
+				     :field-names nil :result-types nil))))
+      (values 
+       (stringp result)
+       (nth-value 0 (truncate (read-from-string result)))))
+  t 10)
 
 (deftest :fdml/select/8
-    (clsql:select [min [emplid]] :from [employee] :flatp t 
-		  :field-names nil :result-types nil)
-  ("1"))
+    (let ((result (car (clsql:select [min [emplid]] :from [employee] :flatp t 
+				     :field-names nil :result-types nil))))
+      (values
+       (stringp result)
+       (nth-value 0 (truncate (read-from-string result)))))
+  t 1)
 
 (deftest :fdml/select/9
     (subseq 
@@ -395,15 +412,19 @@
  (("Vladamir" "Lenin") ("Vladamir" "Putin")))
 
 (deftest :fdml/select/27 
- (clsql:select [coalesce [managerid] 10] :from [employee] :order-by [emplid]
-  :field-names nil :result-types nil :flatp t)
- ("10" "1" "1" "1" "1" "1" "1" "1" "1" "1"))
+    (mapcar
+     (lambda (f) (truncate (read-from-string f)))
+     (clsql:select [coalesce [managerid] 10] :from [employee] :order-by [emplid]
+		   :field-names nil :result-types nil :flatp t))
+  (10 1 1 1 1 1 1 1 1 1))
   
 (deftest :fdml/select/28 
- (loop for column in `([*] [emplid]) collect         
-      (clsql:select [count column] :from [employee] 
-                    :flatp t :result-types nil :field-names nil))
- (("10") ("10")))
+    (mapcar
+     (lambda (f) (truncate (read-from-string (car f))))
+     (loop for column in `([*] [emplid]) collect         
+	   (clsql:select [count column] :from [employee] 
+			 :flatp t :result-types nil :field-names nil)))
+ (10 10))
 
 (deftest :fdml/select/29 
  (clsql:select [first-name] [last-name] :from [employee] 

@@ -1,4 +1,5 @@
 23 May 2004 Kevin Rosenberg
+	* Version 2.10.22 released
 	* sql/kmr-mop.lisp, sql/objects.lisp: Since SBCL is the only implementation that
 	has reversed class slots, change the default for ordered-class-slots so that slots
 	are now in the same order an in the def-view-class.
@@ -7,7 +8,8 @@
 	* db-oracle/oracle-sql.lisp: Add missing database qualifier. Return NUMBER (double)
 	for computed fields, this will require some adjustment to the test suite which
 	in many cases expects integers.
-
+	* test/test-fdml.lisp: Accomodate that Oracle returns doubles for computed columns
+	
 22 May 2004 Kevin Rosenberg
 	* Version 2.10.21 released
 	* sql/sequences.lisp: Move generic sequence functions here from db-sqlite,
@@ -29,7 +31,6 @@
 	* test/test-fdml.lisp: String table names are now case sensitive, so convert to
 	default db case for FDML/SELECT/25
 
->>>>>>> .r9445
 22 May 2004 Kevin Rosenberg
 	* Version 2.10.20 released: Oracle backend now fails 6 out of 200 tests
 	* TODO: Added 2 variances from CommonSQL. Add tests for owner phrases

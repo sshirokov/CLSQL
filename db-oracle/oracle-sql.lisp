@@ -930,6 +930,7 @@ the length of that format.")
 		 )
     database :auto nil)))
 
+;; FIXME: use lock
 (defmethod database-set-sequence-position (name position (database oracle-database))
   (let* ((next (database-sequence-next name database))
 	 (incr (- position next)))
@@ -1022,7 +1023,8 @@ the length of that format.")
       list)))
 
 (defmethod clsql-sys:database-start-transaction ((database oracle-database))
-  (call-next-method))
+  (call-next-method)
+  )
 
 ;;(with-slots (svchp errhp) database
 ;;    (osucc (oci-trans-start (uffi:deref-pointer svchp)
