@@ -1,3 +1,9 @@
+cl-sql (1.2.3-1) unstable; urgency=low
+
+  * New upstream
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Thu, 14 Nov 2002 11:52:32 -0700
+
 cl-sql (1.2.2-1) unstable; urgency=low
 
   * Remove 'load-compiled-op from .asd file
