@@ -76,7 +76,7 @@
   #+allegro (mp:make-process-lock :name name)
   #+cmu (mp:make-lock name)
   #+lispworks (mp:make-lock :name name)
-  #+openmcl (ccl:make-lock :name name)
+  #+openmcl (ccl:make-lock name)
   #+sb-thread (sb-thread:make-mutex :name name)
   #+scl (thread:make-lock name)
   #-(or allegro cmu lispworks openmcl sb-thread scl) (declare (ignore name))
