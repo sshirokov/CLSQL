@@ -8,7 +8,7 @@
 ;;;;
 ;;;; Copyright (c) 1999-2001 Pierre R. Mai
 ;;;;
-;;;; $Id: functional.cl,v 1.1 2002/08/01 03:06:26 kevin Exp $
+;;;; $Id: functional.cl,v 1.8 2002/09/17 17:16:43 kevin Exp $
 ;;;;
 ;;;; This file is part of CLSQL. 
 ;;;;

@@ -7,7 +7,7 @@
 ;;;; Programmers:   Marc Battyani
 ;;;; Date Started:  Apr 2002
 ;;;;
-;;;; $Id: transactions.cl,v 1.1 2002/08/01 03:06:26 kevin Exp $
+;;;; $Id: transactions.cl,v 1.7 2002/09/17 17:16:43 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
