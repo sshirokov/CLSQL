@@ -1,3 +1,6 @@
+31 Jul 2002 Kevin Rosenberg (kevin@rosenberg.net)
+        * Restructure directories for Common Lisp Controller v3 compatibility
+	
 25 Jul 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* Also change case of logical host in loader files
 	* Rework handling of logical pathnames
