@@ -29,13 +29,13 @@
 
     <!-- To resolve short stylesheet references -->
     <uri
-        name="docbook.xsl"
+        name="docbook_html.xsl"
         uri="docbook/docbook-xsl/html/docbook.xsl" />
     <uri 
-        name="chunk.xsl"
+        name="docbook_chunk.xsl"
         uri="docbook/docbook-xsl/html/chunk.xsl" />
     <uri
-        name="fo-docbook.xsl"
+        name="docbook_fo.xsl"
         uri="docbook/docbook-xsl/fo/docbook.xsl" />
 
   </group>

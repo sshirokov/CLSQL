@@ -15,11 +15,28 @@
 # (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ##############################################################################
 
-OS:=debian
 DOCFILE_BASE_DEFAULT:=clsql
 DOCFILE_EXT_DEFAULT:=xml
 
+
 # Standard docfile processing
+
+DEBIAN=expr "`cat /etc/issue`" : '.*Debian.*'
+SUSE=expr "`cat /etc/issue`" : '.*SuSE.*'
+REDHAT=expr "`cat /etc/issue`" : '.*RedHat.*'
+
+ifneq (${DEBIAN},0)
+OS:=debian
+else
+  ifneq (${SUSE},0)
+    OS=suse
+  else   
+    ifneq (${REDHAT},0)
+      OS=redhat
+    endif
+  endif
+endif
+
 
 ifndef DOCFILE_BASE
 DOCFILE_BASE=${DOCFILE_BASE_DEFAULT}
@@ -35,6 +52,7 @@ PDFFILE:=${DOCFILE_BASE}.pdf
 PSFILE:=${DOCFILE_BASE}.ps
 DVIFILE:=${DOCFILE_BASE}.dvi
 TXTFILE:=${DOCFILE_BASE}.txt
+HTMLFILE:=${DOCFILE_BASE}.html
 TMPFILES:=${DOCFILE_BASE}.aux ${DOCFILE_BASE}.out ${DOCFILE_BASE}.log
 DOCFILES:=$(shell echo *.xml *.xsl)
 
@@ -60,7 +78,7 @@ html: html.tar.gz
 html.tar.gz: $(DOCFILES) Makefile 
 	@rm -rf html
 	@mkdir html
-	@XML_CATALOG_FILES="$(CATALOG)" xsltproc --xinclude --output html/ html.xsl $(DOCFILE)
+	@XML_CATALOG_FILES="$(CATALOG)" xsltproc --xinclude --output html/ html_chunk.xsl $(DOCFILE)
 	@GZIP='-9' tar czf html.tar.gz html 
 
 .PHONY: fo
@@ -91,12 +109,13 @@ ${PSFILE}: ${DOCFILES} Makefile
 txt: ${TXTFILE}
 
 ${TXTFILE}: ${FOFILE}
-	@fop $(FOFILE) -txt $(TXTFILE) > /dev/null
+	@XML_CATALOG_FILES="$(CATALOG)" xsltproc --xinclude --output ${HTMLFILE} html.xsl $(DOCFILE)
+	lynx -dump ${HTMLFILE} > ${TXTFILE}
 
 .PHONY: clean
 clean: 
 	@rm -f *~ *.bak *.orig \#*\# .\#* texput.log
-	@rm -rf html ${PSFILE}
+	@rm -rf html ${PSFILE} ${HTMLFILE}
 	@rm -f ${TMPFILES} ${FOFILE}
 	@rm -f  ${DVIFILE} ${TXTFILE}
 
