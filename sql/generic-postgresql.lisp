@@ -115,7 +115,7 @@
          (result
 	  (mapcar #'car
 		  (database-query
-		   (format nil "SELECT attname FROM pg_class,pg_attribute WHERE pg_class.oid=attrelid AND relname='~A'~A"
+		   (format nil "SELECT attname FROM pg_class,pg_attribute WHERE pg_class.oid=attrelid AND attisdropped = FALSE AND relname='~A'~A"
                            (string-downcase table)
                            owner-clause)
                    database nil nil))))

@@ -1,3 +1,10 @@
+cl-sql (3.1.1-1) unstable; urgency=low
+
+  * New upstream
+  * Rebuild against mysqlclient (closes:280253)
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Fri, 12 Nov 2004 08:09:38 -0700
+
 cl-sql (3.1.0-1) unstable; urgency=low
 
   * New upstream
