@@ -265,9 +265,9 @@ doesn't depend on UFFI."
   (cursor nil)
   (types nil))
 
-(defmethod database-query-result-set (expression (database postgresql-socket-database) 
-				      &key full-set types
-     )
+(defmethod database-query-result-set ((expression string)
+				      (database postgresql-socket-database) 
+				      &key full-set types)
   (declare (ignore full-set))
   (let ((connection (database-connection database)))
     (with-postgresql-handlers (database expression)

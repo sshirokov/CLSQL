@@ -797,7 +797,9 @@ the length of that format.")))
     (prin1 (qc-db qc) stream)))
 
 
-(defmethod database-query-result-set (query-expression (database oracle-database) &optional full-set)
+(defmethod database-query-result-set ((query-expression string)
+				      (database oracle-database) 
+				      &key full-set types)
   )
 
 (defmethod database-dump-result-set (result-set (database oracle-database))

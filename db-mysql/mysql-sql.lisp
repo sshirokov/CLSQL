@@ -225,7 +225,7 @@
   (full-set nil :type boolean))
 
 
-(defmethod database-query-result-set (query-expression 
+(defmethod database-query-result-set ((query-expression string)
 				      (database mysql-database)
 				      &key full-set types)
   (uffi:with-cstring (query-native query-expression)

@@ -112,7 +112,7 @@
   (n-col 0 :type fixnum))
 
 (defmethod database-query-result-set
-    (query-expression (database sqlite-database) &key full-set types)
+    ((query-expression string) (database sqlite-database) &key full-set types)
   (declare (ignore full-set types))
   (handler-case
       (let* ((vm (sqlite:sqlite-compile (sqlite-db database)

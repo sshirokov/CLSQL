@@ -216,7 +216,8 @@
   (num-fields 0 :type integer)
   (tuple-index 0 :type integer))
 
-(defmethod database-query-result-set (query-expression (database postgresql-database) 
+(defmethod database-query-result-set ((query-expression string)
+				      (database postgresql-database) 
                                       &key full-set types)
   (let ((conn-ptr (database-conn-ptr database)))
     (declare (type pgsql-conn-def conn-ptr))

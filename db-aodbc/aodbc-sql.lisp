@@ -101,7 +101,8 @@
   (types nil :type cons)
   (full-set nil :type boolean))
 
-(defmethod database-query-result-set (query-expression (database aodbc-database) 
+(defmethod database-query-result-set ((query-expression string)
+				      (database aodbc-database) 
 				      &key full-set types)
   #+aodbc-v2
   (handler-case 

@@ -1,4 +1,8 @@
 06 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+        * db-*/*-sql.lisp: Ensure that expr in
+	database-query-result-set is a string
+	
+06 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* With for Marcus Pearce's excellent work, I've merged
 	his clsql-usql port into clsql. The original clsql
 	interface is available in the clsql-classic package.
