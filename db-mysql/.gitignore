@@ -1,2 +1,2 @@
-clsql-mysql.so
+mysql.so
 *.fasl*
