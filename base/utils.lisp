@@ -7,7 +7,7 @@
 ;;;; Programmer:   Kevin M. Rosenberg
 ;;;; Date Started: Mar 2002
 ;;;;
-;;;; $Id: utils.cl,v 1.7 2002/09/30 01:57:32 kevin Exp $
+;;;; $Id: utils.lisp,v 1.1 2002/09/30 10:19:01 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;

@@ -9,7 +9,7 @@
 ;;;;                onShoreD to support UncommonSQL front-end 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: db-interface.cl,v 1.6 2002/09/27 15:08:13 kevin Exp $
+;;;; $Id: db-interface.lisp,v 1.1 2002/09/30 10:19:01 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai, and onShoreD

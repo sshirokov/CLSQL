@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: conditions.cl,v 1.5 2002/09/30 06:13:05 kevin Exp $
+;;;; $Id: conditions.lisp,v 1.1 2002/09/30 10:19:01 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -118,8 +118,7 @@ and signal an clsql-invalid-spec-error if they don't match."
 			 (database-name (clsql-exists-condition-old-db c))))
 		(t
 		 (format stream
-			 "  Created new connection ~A to database ~A~%
-although there is an existing connection (~A)."
+			 "  Created new connection ~A to database ~A~%, although there is an existing connection (~A)."
 			 (clsql-exists-condition-new-db c)
 			 (database-name (clsql-exists-condition-new-db c))
 			 (clsql-exists-condition-old-db c)))))))
