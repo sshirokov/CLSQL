@@ -1,6 +1,7 @@
 cl-sql (0.9.1-1) unstable; urgency=low
 
-  * New upstream fixing type in asdf
+  * New upstream fixing typo in clsql.asdf
+  * Fix /usr/share/common-lisp/source/clsql directory structure
 
  -- Kevin M. Rosenberg <kmr@debian.org>  Thu, 19 Sep 2002 15:22:51 -0600
 

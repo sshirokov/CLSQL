@@ -23,7 +23,7 @@ all-pkgs	:= $(pkg) $(pkg-base) $(pkg-uffi) $(pkg-mysql) $(pkg-pg) $(pkg-pg-socke
 UPSTREAM_VER	:= $(shell sed -n -e "s/${pkg} (\(.*\)-[0-9A-Za-z\.]).*/\1/p" < debian/changelog |head -1)
 
 ## Lisp sources
-srcs		:= sql clsql.asd
+srcs		:= $(wildcard sql/*.cl) clsql.asd
 srcs-base	:= $(wildcard base/*.cl) 
 srcs-uffi	:= $(wildcard uffi/*.cl) $(wildcard uffi/*.c)
 srcs-uffi-so	:= $(wildcard uffi/*.so)
