@@ -298,7 +298,9 @@
 
 (defmethod database-probe (connection-spec (type (eql :sqlite)))
   (destructuring-bind (name) connection-spec
-    ;; TODO: Add a test that this file is a real sqlite database 
-    (and (probe-file name) t)))
+    ;; TODO: Add a test that this file is a real sqlite database
+    (or (string-equal ":memory:" name)
+	(and (probe-file name) t))))
+
 
 
