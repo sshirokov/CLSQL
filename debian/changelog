@@ -1,8 +1,8 @@
 cl-sql (0.7.6-1) unstable; urgency=low
 
-  * New upstream version.
+  * New upstream version, improves Common Lisp Controller compatibility.
 
- -- Kevin M. Rosenberg <kevin@rosenberg.net>  Thu, 25 Jul 2002 20:44:58 -0600
+ -- Kevin M. Rosenberg <kevin@rosenberg.net>  Fri, 26 Jul 2002 01:15:07 -0600
 
 cl-sql (0.7.5-1) unstable; urgency=low
 
