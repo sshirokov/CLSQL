@@ -48,6 +48,8 @@
     (signal-no-database-error database))
   (unless (is-database-open database)
     (database-reconnect database))
+  (when (eq :oracle (database-type database))
+    (ignore-errors (execute-command "PURGE RECYCLEBIN" :database database)))
   (when (db-type-has-views? (database-underlying-type database))
     (dolist (view (list-views :database database))
       (drop-view view :database database)))
