@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: mysql-usql.cl,v 1.3 2002/04/07 15:11:04 kevin Exp $
+;;;; $Id: mysql-usql.cl,v 1.4 2002/04/27 21:12:32 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and by onShore Development Inc.
@@ -20,12 +20,13 @@
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :clsql-mysql)
 
+;; Table and attribute introspection
+
 (defmethod database-list-tables ((database mysql-database)
 				 &key (system-tables nil))
   (declare (ignore system-tables))
   (mapcar #'car (database-query "show tables" database :auto)))
     
-
 
 (defmethod database-list-attributes ((table string) (database mysql-database))
   (mapcar #'car
@@ -47,6 +48,7 @@
       (if substr
       (intern (string-upcase substr) :keyword) nil))))
 
+;;; Sequence functions
 
 (defun %sequence-name-to-table (sequence-name)
   (concatenate 'string "_usql_seq_" (sql-escape sequence-name)))
@@ -75,6 +77,22 @@
 		" SET id=LAST_INSERT_ID(id+1)")
    database)
   (mysql:mysql-insert-id (clsql-mysql::database-mysql-ptr database)))
+
+;; Transactions
+
+(defmethod database-start-transaction ((database mysql-database))
+ "Start a transaction in DATABASE."
+ (database-execute-command "BEGIN" database))
+
+(defmethod database-commit-transaction ((database mysql-database))
+  "Commit current transaction in DATABASE."
+  (database-execute-command "COMMIT" database))
+
+(defmethod database-abort-transaction ((database mysql-database))
+  "Abort current transaction in DATABASE."
+  (database-execute-command "ROLLBACK" database))
+
+;; Misc USQL functions
 
 #+ignore
 (defmethod database-output-sql ((expr clsql-sys::sql-typecast-exp) 
