@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: postgresql-usql.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: postgresql-usql.lisp,v 1.2 2003/06/26 15:27:07 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and by onShore Development Inc.
@@ -17,8 +17,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :clsql-postgresql)
+(in-package #:clsql-postgresql)
 
 (defmethod database-list-tables ((database postgresql-database)
                                  &key (system-tables nil))

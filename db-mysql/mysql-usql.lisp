@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: mysql-usql.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: mysql-usql.lisp,v 1.2 2003/06/26 15:27:07 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and by onShore Development Inc.
@@ -17,8 +17,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :clsql-mysql)
+(in-package #:clsql-mysql)
 
 ;; Table and attribute introspection
 
@@ -62,7 +61,7 @@
      database)
     (database-execute-command 
      (concatenate 'string "INSERT INTO " table-name
-		  " VALUES (0)")
+		  " VALUES (-1)")
      database)))
 
 (defmethod database-drop-sequence (sequence-name
