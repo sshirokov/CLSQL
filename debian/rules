@@ -93,7 +93,7 @@ install: build
 
 	# CLC Systems
 	$(INSTALL) $(INSTALLFLAGS) clsql.system $(prefix)/$(clc-systems)/
-	$(INSTALL) $(INSTALLFLAGS) clsql-base.system $(prefix-base)/$(clc-systems)/
+	$(INSTALL) $(INSTALLFLAGS) clsql-base.system clsql-uffi.system $(prefix-base)/$(clc-systems)/
 	$(INSTALL) $(INSTALLFLAGS) clsql-mysql.system $(prefix-mysql)/$(clc-systems)/
 	$(INSTALL) $(INSTALLFLAGS) clsql-postgresql.system $(prefix-pg)/$(clc-systems)/
 	$(INSTALL) $(INSTALLFLAGS) clsql-postgresql-socket.system $(prefix-pg-socket)/$(clc-systems)/
