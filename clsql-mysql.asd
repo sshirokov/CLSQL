@@ -26,15 +26,18 @@
   ())
 
 (defmethod output-files ((o compile-op) (c clsql-mysql-source-file))
-  (let ((found (some #'(lambda (dir)
+  (let* ((library-file-type
+	  (funcall (intern (symbol-name'#:default-foreign-library-type)
+			   (symbol-name '#:uffi))))
+         (found (some #'(lambda (dir)
 			    (probe-file (make-pathname :directory dir
 						       :name (component-name c)
-						       :type "so")))
+						       :type library-file-type)))
 			'((:absolute "usr" "lib" "clsql"))))) 
     (list (if found
 	      found
 	      (make-pathname :name (component-name c)
-			     :type "so"
+			     :type library-file-type
 			     :directory *library-file-dir*)))))
 
 (defmethod perform ((o load-op) (c clsql-mysql-source-file))
