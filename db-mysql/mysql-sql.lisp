@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.lisp,v 1.2 2002/10/14 04:09:02 kevin Exp $
+;;;; $Id: mysql-sql.lisp,v 1.3 2002/10/14 07:10:19 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -186,11 +186,11 @@
 	       :errno (mysql-errno mysql-ptr)
 	       :error (mysql-error-string mysql-ptr))))))
 
-(defstruct mysql-result-set
-  (res-ptr (uffi:make-null-pointer 'mysql-mysql-res)
-	   :type mysql-mysql-res-ptr-def)
-  (types nil)
-  (num-fields nil :type fixnum)
+
+(defstruct mysql-result-set 
+  (res-ptr (uffi:make-null-pointer 'mysql-mysql-res) :type mysql-mysql-res-ptr-def)
+  (types nil :type list)
+  (num-fields 0 :type fixnum)
   (full-set nil :type boolean))
 
 
