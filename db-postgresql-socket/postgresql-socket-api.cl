@@ -9,7 +9,7 @@
 ;;;;                
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-api.cl,v 1.1 2002/09/18 07:43:41 kevin Exp $
+;;;; $Id: postgresql-socket-api.cl,v 1.2 2002/09/29 18:54:17 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -227,7 +227,7 @@ socket interface"
     (uffi:load-foreign-library 
      (uffi:find-foreign-library "libcrypt"
 			   '("/usr/lib/" "/usr/local/lib/" "/lib/"))
-     :supporting-libaries '("c"))
+     :supporting-libraries '("c"))
     (eval '(uffi:def-function "crypt" 
 	    ((key :cstring)
 	     (salt :cstring))

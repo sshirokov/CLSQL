@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-sql.cl,v 1.1 2002/09/18 07:43:41 kevin Exp $
+;;;; $Id: postgresql-socket-sql.cl,v 1.2 2002/09/29 18:54:17 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -176,20 +176,20 @@ doesn't depend on UFFI."
 				      :options options :tty tty
 				      :database db :user user
 				      :password password))
-      (:no-error (connection)
-	;; Success, make instance
-	(make-instance 'postgresql-socket-database
-		       :name (database-name-from-spec connection-spec
-						      database-type)
-		       :connection-spec connection-spec
-		       :connection connection))
       (postgresql-error (c)
 	;; Connect failed
 	(error 'clsql-connect-error
 	       :database-type database-type
 	       :connection-spec connection-spec
 	       :errno (type-of c)
-	       :error (postgresql-condition-message c))))))
+	       :error (postgresql-condition-message c)))
+      (:no-error (connection)
+		 ;; Success, make instance
+		 (make-instance 'postgresql-socket-database
+				:name (database-name-from-spec connection-spec
+							       database-type)
+				:connection-spec connection-spec
+				:connection connection)))))
 
 (defmethod database-disconnect ((database postgresql-socket-database))
   (close-postgresql-connection (database-connection database))
