@@ -12,11 +12,12 @@ plain-pkg	:= clsql
 
 pkg		:= cl-sql
 pkg-base	:= cl-sql-base
+pkg-uffi	:= cl-sql-uffi
 pkg-mysql	:= cl-sql-mysql
 pkg-pg		:= cl-sql-postgresql
 pkg-pg-socket	:= cl-sql-postgresql-socket
 pkg-aodbc	:= cl-sql-aodbc
-all-pkgs	:= $(pkg) $(pkg-base) $(pkg-mysql) $(pkg-pg) $(pkg-pg-socket) $(pkg-aodbc)
+all-pkgs	:= $(pkg) $(pkg-base) $(pkg-uffi) $(pkg-mysql) $(pkg-pg) $(pkg-pg-socket) $(pkg-aodbc)
 
 
 UPSTREAM_VER	:= $(shell sed -n -e "s/${pkg} (\(.*\)-[0-9A-Za-z\.]).*/\1/p" < debian/changelog |head -1)
@@ -81,7 +82,8 @@ install: build
 	dh_installdirs --all  $(clc-systems) $(clc-source)
 
 	dh_installdirs -p $(pkg) $(lispdir-sql)
-	dh_installdirs -p $(pkg-base) $(lispdir-base) $(lispdir-base-uffi) $(sodir-base-uffi)
+	dh_installdirs -p $(pkg-base) $(lispdir-base)
+	dh_installdirs -p $(pkg-uffi) $(lispdir-base-uffi) $(sodir-base-uffi)
 	dh_installdirs -p $(pkg-pg) $(lispdir-pg)
 	dh_installdirs -p $(pkg-pg-socket) $(lispdir-pg-socket)
 	dh_installdirs -p $(pkg-mysql) $(lispdir-mysql) $(sodir-mysql)
@@ -92,9 +94,12 @@ install: build
 
 	# Base
 	dh_install -p $(pkg-base) $(srcs-base) $(lispdir-base)
-	dh_install -p $(pkg-base) $(srcs-base-uffi) $(lispdir-base-uffi)
-	dh_install -p $(pkg-base) $(srcs-base-uffi-so) $(sodir-base-uffi)
 
+	# UFFI
+	dh_install -p $(pkg-uffi) $(srcs-base-uffi) $(lispdir-base-uffi)
+	dh_install -p $(pkg-uffi) $(srcs-base-uffi-so) $(sodir-base-uffi)
+
+	# Backends
 	dh_install -p $(pkg-mysql) $(srcs-mysql) $(lispdir-mysql)
 	dh_install -p $(pkg-mysql) $(srcs-mysql-so) $(sodir-mysql)
 	dh_install -p $(pkg-pg) $(srcs-pg) $(lispdir-pg)
@@ -103,7 +108,8 @@ install: build
 
 	# CLC Systems
 	dh_install -p $(pkg) clsql.system $(clc-systems)
-	dh_install -p $(pkg-base) clsql-base.system clsql-uffi.system $(clc-systems)
+	dh_install -p $(pkg-base) clsql-base.system $(clc-systems)
+	dh_install -p $(pkg-uffi) clsql-uffi.system $(clc-systems)
 	dh_install -p $(pkg-mysql) clsql-mysql.system $(clc-systems)
 	dh_install -p $(pkg-pg) clsql-postgresql.system $(clc-systems)
 	dh_install -p $(pkg-pg-socket) clsql-postgresql-socket.system $(clc-systems)
