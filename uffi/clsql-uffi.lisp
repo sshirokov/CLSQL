@@ -87,9 +87,9 @@
 
 (uffi:def-type char-ptr-def (* :unsigned-char))
 
-(defun convert-raw-field (char-ptr types index)
+(defun convert-raw-field (char-ptr types index &optional length)
   (declare (optimize (speed 3) (safety 0) (space 0))
-	   (type char-ptr-def char-ptr))
+ 	   (type char-ptr-def char-ptr))
   (let ((type (if (listp types)
 		  (nth index types)
 		  types)))
@@ -110,5 +110,9 @@
 		  low32
 		  (make-64-bit-integer high32 low32)))))
 	 (t
-	  (uffi:convert-from-foreign-string char-ptr :locale :none)))))))
-  
+          (if length
+	      (uffi:convert-from-foreign-string char-ptr :locale :none
+                                                :null-terminated-p nil
+                                                :length length)
+            (uffi:convert-from-foreign-string char-ptr :locale :none))))))))
+

@@ -148,7 +148,8 @@
   (declare (optimize (speed 3) (safety 0) (debug 0) (space 0)))
   (let ((mysql-ptr (database-mysql-ptr database)))
     (uffi:with-cstring (query-native query-expression)
-      (if (zerop (mysql-query mysql-ptr query-native))
+      (if (zerop (mysql-real-query mysql-ptr query-native 
+                                   (length query-expression)))
 	  (let ((res-ptr (mysql-use-result mysql-ptr)))
 	    (if res-ptr
 		(unwind-protect
@@ -158,6 +159,7 @@
 				    types num-fields
 				    res-ptr))
 		       (loop for row = (mysql-fetch-row res-ptr)
+                             for lengths = (mysql-fetch-lengths res-ptr)
 			     until (uffi:null-pointer-p row)
 			   collect
 			     (do* ((rlist (make-list num-fields))
@@ -170,7 +172,9 @@
 				  (uffi:deref-array row '(:array
 							  (* :unsigned-char))
 						    i)
-				  types i)))))
+				  types i
+                                  (uffi:deref-array lengths '(:array :unsigned-long)
+						    i))))))
 		  (mysql-free-result res-ptr))
 		(error 'clsql-sql-error
 		       :database database
@@ -224,7 +228,8 @@
   (uffi:with-cstring (sql-native sql-expression)
     (let ((mysql-ptr (database-mysql-ptr database)))
       (declare (type mysql-mysql-ptr-def mysql-ptr))
-      (if (zerop (mysql-query mysql-ptr sql-native))
+      (if (zerop (mysql-real-query mysql-ptr sql-native 
+                                   (length sql-expression)))
 	  t
 	(error 'clsql-sql-error
 	       :database database
@@ -246,7 +251,8 @@
   (uffi:with-cstring (query-native query-expression)
     (let ((mysql-ptr (database-mysql-ptr database)))
      (declare (type mysql-mysql-ptr-def mysql-ptr))
-      (if (zerop (mysql-query mysql-ptr query-native))
+      (if (zerop (mysql-real-query mysql-ptr query-native
+                                   (length query-expression)))
 	  (let ((res-ptr (if full-set
 			     (mysql-store-result mysql-ptr)
 			   (mysql-use-result mysql-ptr))))
@@ -286,6 +292,7 @@
 (defmethod database-store-next-row (result-set (database mysql-database) list)
   (let* ((res-ptr (mysql-result-set-res-ptr result-set))
 	 (row (mysql-fetch-row res-ptr))
+         (lengths (mysql-fetch-lengths res-ptr))
 	 (types (mysql-result-set-types result-set)))
     (declare (type mysql-mysql-res-ptr-def res-ptr)
 	     (type mysql-row-def row))
@@ -297,7 +304,8 @@
 		  (convert-raw-field
 		   (uffi:deref-array row '(:array (* :unsigned-char)) i)
 		   types
-		   i)))
+		   i
+                   (uffi:deref-array lengths :unsigned-long i))))
       list)))
 
 

@@ -1,3 +1,9 @@
+cl-sql (1.8.7-1) unstable; urgency=low
+
+  * New upstream
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Tue, 25 Nov 2003 06:30:05 -0700
+
 cl-sql (1.8.5-1) unstable; urgency=low
 
   * Fix loading on db-mysql/mysql.so on non-linux platforms
