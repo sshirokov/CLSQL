@@ -18,7 +18,6 @@
   ((emplid
     :db-kind :key
     :db-constraints :not-null
-    :nulls-ok nil
     :type integer
     :initarg :emplid)
    (first-name
@@ -32,7 +31,6 @@
    (email
     :accessor employee-email
     :type (string 100)
-    :nulls-ok t
     :initarg :email)
    (companyid
     :type integer)
@@ -45,7 +43,6 @@
 			  :set nil))
    (managerid
     :type integer
-    :nulls-ok t
     :initarg :managerid)
    (manager
     :accessor employee-manager
