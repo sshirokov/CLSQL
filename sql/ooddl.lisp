@@ -21,6 +21,9 @@
   (:metaclass standard-db-class)
   (:documentation "Superclass for all CLSQL View Classes."))
 
+(defparameter *default-string-length* 255
+  "The length of a string which does not have a user-specified length.")
+
 (defvar *db-auto-sync* nil 
   "A non-nil value means that creating View Class instances or
   setting their slots automatically creates/updates the

@@ -50,33 +50,49 @@
 
   <refentry id="default-varchar-length">
     <refnamediv>
-      <refname>*DEFAULT-VARCHAR-LENGTH*</refname>
-      <refpurpose><!-- purpose --></refpurpose>
+      <refname>*DEFAULT-STRING-LENGTH*</refname>
+      <refpurpose>Default length of SQL strings</refpurpose>
       <refclass>Variable</refclass>
     </refnamediv>
     <refsect1>
       <title>Value Type</title>
       <para>
-        <!-- value type --> 
+        Fixnum
       </para> 
     </refsect1>
     <refsect1>
       <title>Initial Value</title>
-      <para><symbol>nil</symbol></para>
+      <para><symbol>255</symbol></para>
     </refsect1>
     <refsect1>
-      <title>Description</title>
-      <!-- description --> 
+      <title>Description</title> 
+      <para>
+	If a slot of a class defined by
+	<function>DEF-VIEW-CLASS</function> is of the type
+	<symbol>STRING</symbol> or <symbol>VARCHAR</symbol> and does
+	not have a length specified, then the value of this variable
+	is used as SQL length.
+      </para>
     </refsect1>
     <refsect1>
       <title>Examples</title>
       <screen>
-        <!-- examples --> 
+	(let ((*default-string-length* 80))
+	  (def-view-class s80 ()
+            ((a :type string)
+	     (b :type (string 80))
+	     (c :type varchar))))
+	  (create-view-from-class 's80)   
       </screen>
+      <para>
+	The above code causes a SQL table to be created with the SQL command
+      </para>
+      <screen>CREATE TABLE (A VARCHAR(80), B CHAR(80), C VARCHAR(80))</screen>
     </refsect1>
     <refsect1>
       <title>Affected By</title>
-      <para>None.</para>
+      <para>Some SQL backends do not support <symbol>VARCHAR</symbol>
+      lengths greater than 255 .</para>
     </refsect1>
     <refsect1>
       <title>See Also</title>
@@ -84,14 +100,14 @@
     </refsect1>
     <refsect1>
       <title>Notes</title>
-      <para>None.</para>
+      <para>This is a CLSQL extension to the CommonSQL API.</para>
     </refsect1>
   </refentry>
 
   <refentry id="create-view-from-class">
     <refnamediv>
       <refname>CREATE-VIEW-FROM-CLASS</refname>
-      <refpurpose><!-- purpose --></refpurpose>
+      <refpurpose>Create a SQL table from Lisp class</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
     <refsect1>
@@ -121,7 +137,7 @@
     <refsect1>
       <title>Side Effects</title>
       <para>
-        <!-- side effects --> 
+	Causes a table to be created in the SQL database.
       </para>
     </refsect1>
     <refsect1>

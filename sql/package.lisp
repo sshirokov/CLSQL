@@ -343,7 +343,7 @@
 	 #:bigint
 	 #:varchar
 	 #:generalized-boolean
-	 #:*default-varchar-length*
+	 #:*default-string-length*
 
 	 ;; OODML (oodml.lisp) 
 	 #:instance-refreshed               

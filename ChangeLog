@@ -1,3 +1,10 @@
+1 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* doc/ref-ooddl.lisp: Add documentation
+	* doc/ooddl.lisp: Move *DEFAULT-VARCHAR-LENGTH* from oodml.lisp
+	and rename to *DEFAULT-STRING-LENGTH*. Add docstring.
+	* doc/oodml.lisp: Rename references to new name of
+	*DEFAULT-STRING-LENGTH*
+
 1 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* doc/ref-transaction.xml: document transaction handling. 
 	* sql/transaction.lisp: ensure that COMMIT, ROLLBACK and 
@@ -9,11 +16,9 @@
 30 Jun 2004 Marcus Pearce <m.t.pearce@city.ac.uk>
 	* doc/ref-fdml.xml: document the FDML. 
 	* doc/ref-fddl.xml: move documentation for TRUNCATE-DATABASE here. 
-	* sql/fdml.lisp: move TRUNCATE-DATABASE to sql/fddl.lisp. 
-	* sql/fddl.lisp: move TRUNCATE-DATABASE here from sql/fdml.lisp 
-	and add docstring. 
-	* doc/TODO: removed items done. 
-
+	* sql/ooddl.lisp: moved *default-varchar-length* to here from 
+	oodml.lisp and renamed to *default-string-length*
+	
 23 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/oodml.lisp: Add keyword :transactions to def-view-from-class
 	to allow specifying transactionless table creation
