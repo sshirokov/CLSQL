@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.10 2002/05/13 01:57:02 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.11 2002/05/13 02:57:25 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -46,29 +46,33 @@ DVIFILE=${DOCFILE_BASE}.dvi
 TMPFILES=${DOCFILE_BASE}.aux ${DOCFILE_BASE}.out ${DOCFILE_BASE}.log
 DOCFILES=$(shell echo *.sgml)
 
-.PHONY: all dist check html tex pdf ps clean distclean
+.PHONY: all
+all: html pdf 
 
-all: html pdf
-
+.PHONY: dist
 dist: html pdf
+
+.PHONY: doc
+doc: html pdf
 
 CHECK=nsgmls -s -C ${CATALOG} || exit 1
 
+.PHONY: check
 check:
+	$(CHECK)
+
+html: $(DOCFILES)
 	@$(CHECK)
+	@( rm -rf html ; mkdir html; cd html ; jade -t sgml -c ../${CATALOG} -d ${DSSSL_HTML} ../${DOCFILE} > /dev/null; ln -s book1.html index.html; cd ..)
 
-html: html/book1.htm
-
-html/book1.htm: ${DOCFILES} 
-	@$(CHECK)
-	@( rm -rf html ; mkdir html; cd html ; jade -t sgml -c ../${CATALOG} -d ${DSSSL_HTML} ../${DOCFILE} > /dev/null; cd ..)
-
+.PHONY: tex
 tex: ${TEXFILE}
 
 ${TEXFILE}: ${DOCFILES}
-	$(CHECK)
+	@$(CHECK)
 	@jade -t tex -c ${CATALOG} -d ${DSSSL_PRINT} ${DOCFILE} > /dev/null
 
+.PHONY: pdf
 pdf: ${PDFFILE}
 
 ${PDFFILE}: ${TEXFILE}
@@ -77,25 +81,28 @@ ${PDFFILE}: ${TEXFILE}
 	@pdfjadetex -interaction=batchmode '\pdfcompresslevel=9' '\input ${TEXFILE}' > /dev/null
 	@pdfjadetex -interaction=batchmode '\pdfcompresslevel=9' '\input ${TEXFILE}' > /dev/null
 
+.PHONY: dvi
 dvi: ${DVIFILE}
 
 ${DVIFILE}: ${TEXFILE}
-	jadetex ${TEXFILE} > /dev/null
-	jadetex ${TEXFILE} > /dev/null
-	jadetex ${TEXFILE} > /dev/null
-	jadetex ${TEXFILE} > /dev/null
+	@jadetex ${TEXFILE} > /dev/null
+	@jadetex ${TEXFILE} > /dev/null
+	@jadetex ${TEXFILE} > /dev/null
+	@jadetex ${TEXFILE} > /dev/null
 
+.PHONY: ps
 ps: ${PSFILE}
 
 ${PSFILE}: ${DVIFILE}
 	@dvips -o ${PSFILE} ${DVIFILE} > /dev/null
 
-clean:
-	@rm -rf html
-	@rm -f ${PSFILE} ${PDFFILE} ${DVIFILE} ${TEXFILE}
+.PHONY: clean
+clean: 
+	@rm -f *~ *.bak *.orig \#*\# .\#*
 	@rm -f ${TMPFILES}
+	@rm -f  ${DVIFILE} ${TEXFILE}
 
+.PHONY: distclean
 distclean: clean
-	@rm -f *~ .#* *.bak *.orig
-
-
+	@rm -rf html
+	@rm -f ${PSFILE} ${PDFFILE}
