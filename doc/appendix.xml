@@ -12,7 +12,7 @@
       <title>PostgreSQL</title>
       <sect2>
 	<title>Libraries</title>
-	<para>The PostgreSQL back-end needs access to the PostgreSQL C 
+	<para>The PostgreSQL back-end requires the PostgreSQL C 
 	  client library (<filename>libpq.so</filename>).  The
 	  location of this library is specified via 
 	  <symbol>*postgresql-so-load-path*</symbol>, which defaults
@@ -209,7 +209,7 @@
     <title>MySQL</title>
     <sect2>
       <title>Libraries</title>
-      <para>The &mysql; back-end needs access to the &mysql; C 
+      <para>The &mysql; back-end requires the &mysql; C 
 	client library (<filename>libmysqlclient.so</filename>).
 	The location of this library is specified 
 	via <symbol>*mysql-so-load-path*</symbol>, which defaults
@@ -399,8 +399,8 @@
       <title>&sqlite;</title>
       <sect2>
 	<title>Libraries</title> <para>The &sqlite; back-end requires
-	access to the &sqlite; shared library file. Its default file
-	name is <filename>/usr/lib/libsqlite.so</filename>.</para>
+	the &sqlite; shared library file. Its default file name is
+	<filename>/usr/lib/libsqlite.so</filename>.</para>
       </sect2>
       <sect2>
 	<title>Initialization</title>
@@ -427,6 +427,65 @@
 	      <listitem>
 		<para>String representing the filename of the &sqlite;
 		database file.</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</sect3>
+      </sect2>
+    </sect1>
+
+  <sect1 id="oracle">
+    <title>Oracle</title>
+    <sect2>
+      <title>Libraries</title>
+      <para>The &oracle; back-end requires the &oracle; OCI client
+      library. (<filename>libclntsh.so</filename>).  The location of
+      this library is specified relative to the
+      <symbol>ORACLE_HOME</symbol> value in the operating system
+      environment. &clsql; has tested sucessfully using the client
+      library from Oracle 9i and Oracle 10g server installations as
+      well as Oracle's 10g Instant Client library.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Initialization</title>
+      <para>
+	Use 
+	<screen>
+(asdf:operate 'asdf:load-op 'clsql-oracle)
+	</screen>
+	to load the &oracle; back-end.  The database type for the Oracle
+	back-end is <symbol>:oracle</symbol>.
+      </para>
+      </sect2>
+      <sect2>
+	<title>Connection Specification</title>
+	<sect3>
+	  <title>Syntax of connection-spec</title>
+	  <synopsis>(<replaceable>global-name</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable>)</synopsis>
+	</sect3>
+	<sect3>
+	  <title>Description of connection-spec</title>
+	  <variablelist>
+	    <varlistentry>
+	      <term><parameter>global-name</parameter></term>
+	      <listitem>
+		<para>String representing the global name of the Orace database.
+		  This is looked up through the tnsnames.ora file.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>user</parameter></term>
+	      <listitem>
+		<para>String representing the user name to use for
+		  authentication.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>password</parameter></term>
+	      <listitem>
+		<para>String representing the password to
+		  use for authentication..</para>
 	      </listitem>
 	    </varlistentry>
 	  </variablelist>
