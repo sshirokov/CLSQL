@@ -1,7 +1,7 @@
-cl-sql (0.7.7-1) unstable; urgency=low
+cl-sql (0.8.0-1) unstable; urgency=low
 
-  * New upstream, rework logical pathnames for improved Common Lisp
-    Controller compatibility.
+  * New upstream, restructure directories for improved Common Lisp
+    Controller v3 compatibility.
 
  -- Kevin M. Rosenberg <kevin@rosenberg.net>  Wed, 31 Jul 2002 19:34:52 -0600
 
