@@ -947,26 +947,27 @@ as possible second argument) to the desired representation of date/time/timestam
     (unwind-protect
 	 (with-foreign-objects ((dsn-len :short)
 				(desc-len :short))
-	   (with-error-handling (:henv henv)
-	     (let ((res
-		    (SQLDataSources henv $SQL_FETCH_FIRST dsn
-				    (1+ $SQL_MAX_DSN_LENGTH)
-				    dsn-len desc 256 desc-len)))
-	       (when (or (eql res $SQL_SUCCESS)
-			 (eql res $SQL_SUCCESS_WITH_INFO))
-		 (push (convert-from-foreign-string dsn) results))
-
-	       (do ((res (SQLDataSources henv $SQL_FETCH_NEXT dsn
-					 (1+ $SQL_MAX_DSN_LENGTH)
-					 dsn-len desc 256 desc-len)
+	   (let ((res (with-error-handling (:henv henv)
+			(SQLDataSources henv $SQL_FETCH_FIRST dsn
+					(1+ $SQL_MAX_DSN_LENGTH)
+					dsn-len desc 256 desc-len))))
+	     (when (or (eql res $SQL_SUCCESS)
+		       (eql res $SQL_SUCCESS_WITH_INFO))
+	       (push (convert-from-foreign-string dsn) results))
+	     
+	     (do ((res (with-error-handling (:henv henv)
 			 (SQLDataSources henv $SQL_FETCH_NEXT dsn
 					 (1+ $SQL_MAX_DSN_LENGTH)
-					 dsn-len desc 256 desc-len)))
-		   ((not (or (eql res $SQL_SUCCESS)
-			     (eql res $SQL_SUCCESS_WITH_INFO))))
-		 (push (convert-from-foreign-string dsn) results)))))
+					 dsn-len desc 256 desc-len))
+		       (with-error-handling (:henv henv)
+			 (SQLDataSources henv $SQL_FETCH_NEXT dsn
+					 (1+ $SQL_MAX_DSN_LENGTH)
+					 dsn-len desc 256 desc-len))))
+		 ((not (or (eql res $SQL_SUCCESS)
+			   (eql res $SQL_SUCCESS_WITH_INFO))))
+	       (push (convert-from-foreign-string dsn) results))))
       (progn
 	(free-foreign-object dsn)
 	(free-foreign-object desc)))
     (nreverse results)))
-		
+

@@ -435,7 +435,7 @@ This makes the functions db-execute-command and db-query thread safe."
         (dotimes (col-nr count)
           (let ((data-ptr (aref column-data-ptrs col-nr))
                 (out-len-ptr (aref column-out-len-ptrs col-nr)))
-	    ;; free-statment unbind frees theses
+	    ;; free-statment :unbind frees these
 	    #+ignore (when data-ptr (uffi:free-foreign-object data-ptr))
 	    #+ignore (when out-len-ptr (uffi:free-foreign-object out-len-ptr)))))
       (cond ((null hstmt)
