@@ -1,3 +1,9 @@
+cl-sql (1.8.3-1) unstable; urgency=low
+
+  * More documentation, darwin changes
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Thu, 13 Nov 2003 09:24:30 -0700
+
 cl-sql (1.8.2-1) unstable; urgency=low
 
   * Documentation fixes, MacOSX changes
