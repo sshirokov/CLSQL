@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.6 2002/04/06 19:54:14 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.7 2002/04/07 03:57:04 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -13,7 +13,7 @@
 # as governed by the terms of the Lisp Lesser GNU Public License
 # (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 
-PACKAGE=clsql
+PKG=clsql
 
 all: libs
 
@@ -22,19 +22,18 @@ libs:
 	(cd interfaces/clsql-uffi; make)
 
 clean:
-	@rm -f $(PACKAGE)-*.tar.gz $(PACKAGE)-*.zip
+	@rm -f $(PKG)-*.tar.gz $(PKG)-*.zip
 	@find . -type d -name .bin |xargs rm -rf 
 	@find . -type f -name \*.a -or -name \*.so |xargs rm -rf 
 
 realclean: clean
-	@find . -type f -name \*~ -exec rm {} \;
-	@find . -type f -name "#*#" -exec rm {} \;
+	@find . -type f -name "#*" -or -name \*~ -exec rm {} \;
 
 docs:
 	@(cd doc; make dist-doc)
 
 VERSION=$(shell cat VERSION)
-DISTDIR=$(PACKAGE)-$(VERSION)
+DISTDIR=$(PKG)-$(VERSION)
 DIST_TARBALL=$(DISTDIR).tar.gz
 DIST_ZIP=$(DISTDIR).zip
 SOURCE_FILES=interfaces sql cmucl-compat doc test-suite Makefile VERSION \
@@ -43,7 +42,14 @@ SOURCE_FILES=interfaces sql cmucl-compat doc test-suite Makefile VERSION \
 	clsql.system clsql-aodbc.system clsql-mysql.system \
 	clsql-postgresql.system clsql-postgresql-socket.system
 
-dist: realclean docs
+VERSION_UNDERSCORE=$(shell cat VERSION | tr . _)
+TAG=dist_$(VERSION_UNDERSCORE)
+
+tagcvs:
+	cvs rtag -d $(TAG) $(PKG)
+	cvs tag -F $(TAG)
+
+dist: realclean docs tagcvs
 	@rm -fr $(DISTDIR) $(DIST_TARBALL) $(DIST_ZIP)
 	@mkdir $(DISTDIR)
 	@cp -a $(SOURCE_FILES) $(DISTDIR)
