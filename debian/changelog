@@ -1,3 +1,9 @@
+cl-sql (2.0.0-2) unstable; urgency=low
+
+  * Change from libmysqlclient10 to libmysqlclient
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Fri,  2 Apr 2004 14:10:09 -0700
+
 cl-sql (2.0.0-1) unstable; urgency=low
 
   * New upstream, integrating patch from Marcus Pearce
