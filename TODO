@@ -12,10 +12,6 @@ TESTS TO ADD
 
 COMMONSQL SPEC
 
-* Missing: 
-
-  UPDATE-OBJECT-JOINS 
-
 * Incompatible 
 
  >> The functional sql interface 
@@ -34,8 +30,16 @@ COMMONSQL SPEC
 
       o variables (e.g., table identifiers) should be instantiated at runtime 
 
-OPTIMIZATIONS
 
+VARIANCES FROM COMMONSQL
+
+UPDATE-OBJECT-JOINS:
+ Rather than simply reading the values for each
+ object, to meet CommonSQL spec need to generate a single
+ query to read values for all objects, up to max-len count.
+
+OPTIMIZATIONS
+ 
 * Revisit result-type list creation,perhaps caching
 
 POSSIBLE EXTENSIONS

@@ -25,7 +25,8 @@
 	* db-mysql/mysql-api.lisp: Fix int vs. long slots in foreign
 	structures found by testing with AllegroCL 7.0b AMD64.
 	* db-*/*-loader.lisp: Load 64-bit libraries on 64-bit platorms
-	* sql/objects.lisp: Initial caching support for SELECT
+	* sql/objects.lisp: Simple implementation of UPDATE-OBJECT-JOINS.
+	Initial caching support for SELECT
 	* tests/test-oodml.lisp: Avoid using cache when testing select.
 	* sql/kmr-mop.lisp: Explicitly check slot order and
 	store as a cl:*feature*

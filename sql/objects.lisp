@@ -806,15 +806,28 @@ superclass of the newly-defined View Class."
 
 (defun update-object-joins (objects &key (slots t) (force-p t)
 			    class-name (max-len *default-update-objects-max-len*))
-  "Updates the remote join slots, that is those slots defined without :retrieval :immediate."
+  "Updates the remote join slots, that is those slots defined without
+:retrieval :immediate."
   (when objects
     (unless class-name
-      (class-name (class-of (first objects))))
+      (setq class-name (class-name (class-of (first objects)))))
     (let* ((class (find-class class-name))
 	   (deferred-joins (generate-retrieval-joins-list class :deferred)))
-      (when deferred-joins
-	(warn "not yet implemented.")
-	))))
+      (cond
+	(deferred-joins
+	    (mapcar
+	     #'(lambda (slotdef)
+		 ;; FIXME: Rather than simply reading the values for each
+		 ;; object, to meet CommonSQL spec need to generate a single
+		 ;; query to read values for all objects, up to max-len count
+		 (mapcar
+		  #'(lambda (object)
+		      (slot-value object (slot-definition-name slotdef)))
+		  objects))
+	     deferred-joins))
+	(t
+	 (warn "Class ~A does not have any deferred join slots." class-name)))
+      )))
 
   
 (defun fault-join-slot-raw (class object slot-def)
