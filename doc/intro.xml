@@ -216,7 +216,7 @@
        all &clsql; systems.
 
 	<screen>
-(push #P"/usr/share/lisp/clsql/" asdf:*central-repository*)
+(push #P"/usr/share/lisp/clsql/" asdf:*central-registry*)
 (asdf:operate 'asdf:load-op 'clsql-base)              ; base CLSQL package
 (asdf:operate 'asdf:load-op 'clsql-mysql)             ; MySQL interface
 (asdf:operate 'asdf:load-op 'clsql-postgresql)        ; PostgreSQL interface
