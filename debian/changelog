@@ -1,3 +1,9 @@
+cl-sql (0.9.3-1) unstable; urgency=low
+
+  * push onto cl:*features* if loaded with 'asdf:load-compiled-op
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Fri, 20 Sep 2002 00:07:25 -0600
+
 cl-sql (0.9.2-1) unstable; urgency=low
 
   * Add information fields to .asd files

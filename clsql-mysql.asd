@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-mysql.asd,v 1.8 2002/09/20 01:40:54 kevin Exp $
+;;;; $Id: clsql-mysql.asd,v 1.9 2002/09/20 06:37:39 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -15,8 +15,6 @@
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
-
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 
 (in-package :asdf)
 

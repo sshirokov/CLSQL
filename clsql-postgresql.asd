@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-postgresql.asd,v 1.8 2002/09/20 01:40:54 kevin Exp $
+;;;; $Id: clsql-postgresql.asd,v 1.9 2002/09/20 06:37:39 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -41,4 +41,3 @@
 (defmethod source-file-type  ((c cl-source-file)
 			      (s (eql (find-system :clsql-postgresql)))) 
    "cl")
-

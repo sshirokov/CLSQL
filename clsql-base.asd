@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql-base.asd,v 1.12 2002/09/20 01:40:54 kevin Exp $
+;;;; $Id: clsql-base.asd,v 1.13 2002/09/20 06:37:39 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -18,7 +18,7 @@
 
 (in-package :asdf)
 
-(defsystem clsql-base
+(defsystem :clsql-base
   :name "cl-sql-base"
   :author "Kevin M. Rosenberg <kmr@debian.org>"
   :version "0.9.2"
@@ -27,21 +27,23 @@
   :description "Common Lisp SQL Base Package"
   :long-description "cl-sql-base package provides the low-level interface for the database drivers."
 
-
   :perform (load-op :after (op clsql-base)
-		      (pushnew :clsql-base cl:*features*))
-    :components
-    ((:module :base
-	      :components
-	      ((:file "cmucl-compat")
-	       (:file "package")
-	       (:file "utils" :depends-on ("package"))
-	       (:file "classes" :depends-on ("package"))
-	       (:file "conditions" :depends-on ("classes"))
-	       (:file "db-interface" :depends-on ("conditions"))
-	       (:file "initialize" :depends-on ("db-interface"))))))
+		    (pushnew :clsql-base cl:*features*))
+  :components
+  ((:module :base
+	    :components
+	    ((:file "cmucl-compat")
+	     (:file "package")
+	     (:file "utils" :depends-on ("package"))
+	     (:file "classes" :depends-on ("package"))
+	     (:file "conditions" :depends-on ("classes"))
+	     (:file "db-interface" :depends-on ("conditions"))
+	     (:file "initialize" :depends-on ("db-interface"))))))
 
 (defmethod source-file-type  ((c cl-source-file)
 			      (s (eql (find-system :clsql-base)))) 
    "cl")
 
+(when (ignore-errors (find-class 'load-compiled-op))
+  (defmethod perform :after ((op load-compiled-op) (c (eql (find-system :clsql-base))))
+    (pushnew :clsql-base cl:*features*)))
