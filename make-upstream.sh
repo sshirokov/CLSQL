@@ -67,6 +67,7 @@ cp -a ${TOPDIR} ${DISTDIR}
 echo "Cleaning distribution directory ${DISTDIR}"
 cd ${DISTDIR}
 rm -f upload.sh make-debian.sh make-upstream.sh cvsbp-prepare.sh 
+rm -f test-suite/test.config
 rm -f `find . -type f -name .cvsignore`
 rm -rf `find . -type d -name CVS`
 rm -f `find . -type f -name '*~' -or -name '.#*'  -or -name '#*#' -or -name ".*~"`

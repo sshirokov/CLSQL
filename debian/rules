@@ -80,7 +80,7 @@ install: build
 	# Base
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-base) $(prefix-base)/$(clc-repos)/clsql/base
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-base-uffi) $(prefix-base)/$(clc-repos)/clsql/interfaces/clsql-uffi
-	chmod +x $(wildcard $(prefix-base)/$(clc-repos)/clsql/interfaces/clsql-uffi/*.so)
+	chmod +x $(prefix-base)/$(clc-repos)/clsql/interfaces/clsql-uffi/*.so
 
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-mysql) $(prefix-mysql)/$(clc-repos)/clsql/interfaces/mysql
 	chmod +x $(wildcard $(prefix-mysql)/$(clc-repos)/clsql/interfaces/mysql/*.so)
