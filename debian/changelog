@@ -1,6 +1,7 @@
-cl-sql (0.8.3-1) unstable; urgency=low
+cl-sql (0.8.3-1) unstable; urgency=high
 
   * Add .asd definition files to upstream for ASDF users
+  * Ready for release to sarge
 
  -- Kevin M. Rosenberg <kmr@debian.org>  Sat, 17 Aug 2002 20:54:35 -0600
 
