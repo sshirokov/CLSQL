@@ -1,4 +1,4 @@
-l;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
+;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
@@ -7,7 +7,7 @@ l;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.25 2003/05/22 15:44:30 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.26 2003/05/22 15:47:02 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
