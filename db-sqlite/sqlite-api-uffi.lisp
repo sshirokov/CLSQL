@@ -52,6 +52,7 @@
 	   ;;; Types.
 	   #:sqlite-row
 	   #:sqlite-row-pointer
+	   #:sqlite-row-pointer-type
 	   #:sqlite-vm-pointer))
 
 (in-package #:sqlite)

@@ -16,8 +16,8 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package :cl-user)
+(in-package #:cl-user)
 
-(defpackage :clsql-sqlite
-  (:use :common-lisp :clsql-base-sys)
+(defpackage #:clsql-sqlite
+  (:use #:common-lisp #:clsql-base-sys)
   (:export #:sqlite-database))

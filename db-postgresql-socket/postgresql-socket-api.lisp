@@ -310,7 +310,6 @@ socket interface"
 (defvar *postgresql-server-socket-timeout* 60
   "Timeout in seconds for reads from the PostgreSQL server.")
 
-
 #+(or cmu scl)
 (defun open-postgresql-socket (host port)
   (etypecase host
@@ -323,6 +322,26 @@ socket interface"
     (string
      (ext:connect-to-inet-socket host port))))
 
+#+sbcl
+(defun open-postgresql-socket (host port)
+  (etypecase host
+    (pathname
+     ;; Directory to unix-domain socket
+     (sb-bsd-sockets:socket-connect
+      (namestring
+       (make-pathname :name ".s.PGSQL" :type (princ-to-string port)
+		      :defaults host))))
+    (string
+     (let ((sock (make-instance 'sb-bsd-sockets:inet-socket
+				:type :stream
+				:protocol :tcp)))
+       (sb-bsd-sockets:socket-connect 
+	sock 
+	(sb-bsd-sockets:host-ent-address
+	 (sb-bsd-sockets:get-host-by-name host)) 
+	port)
+       sock))))
+
 #+(or cmu scl)
 (defun open-postgresql-socket-stream (host port)
   (system:make-fd-stream
@@ -334,11 +353,10 @@ socket interface"
 
 #+sbcl
 (defun open-postgresql-socket-stream (host port)
-  (sb-sys:make-fd-stream
-   (open-postgresql-socket host port)
-   :input t :output t :element-type '(unsigned-byte 8)
-   :buffering :none
-   :timeout *postgresql-server-socket-timeout*))
+  (sb-bsd-sockets:socket-make-stream
+   (open-postgresql-socket host port) :input t :output t 
+   :element-type '(unsigned-byte 8)))
+  
 
 #+allegro
 (defun open-postgresql-socket-stream (host port)

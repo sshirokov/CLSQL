@@ -1,9 +1,10 @@
 GENERAL 
 
-* test on (and port to) scl, mcl and openmcl; 
-* implement remaining functions for CLSQL AODBC backend; 
-* port UncommonSQL ODBC and Oracle backends to CLSQL. 
-
+* test on (and port to) openmcl and mcl. SCL no longer affordable to
+  individuals;
+* implement remaining functions for CLSQL AODBC backend;
+* port Oracle and ODBC backend to UFFI.
+* port postgresql-socket backend to OpenMCL
 
 COMMONSQL SPEC
 

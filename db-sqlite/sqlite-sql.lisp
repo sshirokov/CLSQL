@@ -78,7 +78,7 @@
   (handler-case
       (multiple-value-bind (data row-n col-n)
 	  (sqlite:sqlite-get-table (sqlite-db database) query-expression)
-	#-clisp (declare (type sqlite:sqlite-row-pointer data))
+	#-clisp (declare (type sqlite:sqlite-row-pointer-type data))
 	(if (= row-n 0)
 	    nil
 	    (prog1
@@ -103,7 +103,7 @@
   (vm (sqlite:make-null-vm)
       :type sqlite:sqlite-vm-pointer)
   (first-row (sqlite:make-null-row)
-	     :type sqlite:sqlite-row-pointer)
+	     :type sqlite:sqlite-row-pointer-type)
   (n-col 0 :type fixnum))
 #+clisp
 (defstruct sqlite-result-set
@@ -124,7 +124,7 @@
 	(multiple-value-bind (n-col cols col-names)
 	    (sqlite:sqlite-step vm)
 	  (declare (ignore col-names)
-		   #-clisp (type sqlite:sqlite-row-pointer cols)
+		   #-clisp (type sqlite:sqlite-row-pointer-type cols)
 		   )
 	  (setf (sqlite-result-set-first-row result-set) cols
 		(sqlite-result-set-n-col result-set) n-col)
@@ -156,7 +156,7 @@
 		  (multiple-value-bind (n new-row col-names)
 		      (sqlite:sqlite-step (sqlite-result-set-vm result-set))
 		    (declare (ignore n col-names)
-			     #-clisp (type sqlite:sqlite-row-pointer new-row)
+			     #-clisp (type sqlite:sqlite-row-pointer-type new-row)
 			     )
 		    (if (sqlite:null-row-p new-row)
 			(return-from database-store-next-row nil)
