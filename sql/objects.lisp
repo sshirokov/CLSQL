@@ -170,7 +170,8 @@ superclass of the newly-defined View Class."
       ,@(if (find :metaclass `,cl-options :key #'car)
 	    `,cl-options
 	    (cons '(:metaclass clsql-sys::standard-db-class) `,cl-options)))
-    (finalize-inheritance (find-class ',class))))
+    (finalize-inheritance (find-class ',class))
+    (find-class ',class)))
 
 (defun keyslots-for-class (class)
   (slot-value class 'key-slots))
@@ -464,6 +465,10 @@ superclass of the newly-defined View Class."
   (if args
       (format nil "INT(~A)" (car args))
       "INT"))
+
+(deftype bigint () 
+  "An integer larger than a 32-bit integer, this width may vary by SQL implementation."
+  'integer)
 
 (defmethod database-get-type-specifier ((type (eql 'bigint)) args database)
   (declare (ignore args database))

@@ -61,7 +61,7 @@ pair."))
   (values))
 
 (defmacro do-query (((&rest args) query-expression
-		     &key (database '*default-database*) (result-types nil))
+		     &key (database '*default-database*) (result-types :auto))
 		    &body body)
   "Repeatedly executes BODY within a binding of ARGS on the
 attributes of each record resulting from QUERY-EXPRESSION. The
@@ -94,7 +94,7 @@ default value of DATABASE is *DEFAULT-DATABASE*."
 
 (defun map-query (output-type-spec function query-expression
 		  &key (database *default-database*)
-		  (result-types nil))
+		  (result-types :auto))
   "Map the function over all tuples that are returned by the
 query in QUERY-EXPRESSION. The results of the function are
 collected as specified in OUTPUT-TYPE-SPEC and returned like in

@@ -373,7 +373,8 @@
        #:set-sequence-position             ; table      xx
        ;;OODDL
        #:view-table                        ; metaclass  x
-       #:universal-time                    ; objects    xx 
+       #:universal-time    		   ; objects    xx 
+       #:bigint
        ;;OODML
        #:add-to-relation                   ; objects    x
        #:remove-from-relation              ; objects    x

@@ -2,21 +2,15 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          loop-extension.lisp
-;;;; Purpose:       Extensions to the Loop macro for CMUCL
-;;;; Programmer:    Pierre R. Mai
+;;;; Name: loop-extension.lisp
+;;;; Purpose: Extensions to the Loop macro for CLSQL
 ;;;;
-;;;; Copyright (c) 1999-2001 Pierre R. Mai
+;;;; Copyright (c) 2001-2004 Kevin Rosenberg and (c) 1999-2001 Pierre R. Mai
 ;;;;
 ;;;; $Id$
-;;;;
-;;;; The functions in this file were orignally distributed in the
-;;;; MaiSQL package in the file sql/sql.cl
 ;;;; *************************************************************************
 
 (in-package #:cl-user)
-
-;;;; MIT-LOOP extension
 
 #+(or allegro sbcl)
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -56,6 +50,10 @@
     (unless from-phrase
       (setq from-phrase '(clsql-base:*default-database*)))
     (cond
+      ;; Object query resulting in a list of returned object instances
+      ((consp in-phrase)
+       (error "object query not yet supported"))
+      
       ((consp variable)
        (let ((query-var (ansi-loop::loop-gentemp 'loop-record-))
 	     (db-var (ansi-loop::loop-gentemp 'loop-record-database-))
@@ -147,7 +145,12 @@
       (error "Missing OF or IN iteration path."))
     (unless from-phrase
       (setq from-phrase '(clsql-base:*default-database*)))
+
     (cond
+      ;; Object query resulting in a list of returned object instances
+      ((consp in-phrase)
+       (error "Object query not yet supported."))
+      
       ((consp iter-var)
        (let ((query-var (gensym "LOOP-RECORD-"))
 	     (db-var (gensym "LOOP-RECORD-DATABASE-"))
