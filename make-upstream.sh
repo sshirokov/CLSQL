@@ -19,6 +19,8 @@ Options:
 EOF
 }
 
+opt_force=0
+
 # Command line
 while [ $# != 0 ]; do
     value="`echo x\"$1\" | sed -e 's/^x-.//'`"
