@@ -41,8 +41,9 @@ Description: CLSQL database backend, MySQL
 
 Package: cl-sql-aodbc
 Architecture: all
-Depends: cl-sql-base (>= ${Source-Version}), acl-pro-installer
+Depends: cl-sql-base (>= ${Source-Version})
 Provides: cl-sql-backend
+Suggests: acl-pro-installer
 Description: CLSQL database backend, AODBC
  This package enables you to use the CLSQL data access package
  with AllegroCL's AODBC databases.

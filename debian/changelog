@@ -1,3 +1,12 @@
+cl-sql (1.7.3-1) unstable; urgency=low
+
+  * New upstream
+  * Avoid depending on acl-pro-installer for cl-sql-adobc since that
+  is preventing entire source package from moving into testing since
+  acl-pro-installer is only supported on x86 and ppc.
+  
+ -- Kevin M. Rosenberg <kmr@debian.org>  Wed, 20 Aug 2003 10:57:50 -0600
+
 cl-sql (1.7.2-1) unstable; urgency=low
 
   * New upstream
