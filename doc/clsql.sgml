@@ -15,10 +15,10 @@
 <!ENTITY lw "<application>Lispworks</application>">
 <!ENTITY acl "<application>AllegroCL</application>">
 <!ENTITY cl "<application>ANSI Common Lisp</application>">
-<!ENTITY t "<constant>T</constant>">
-<!ENTITY nil "<constant>NIL</constant>">
+<!ENTITY t "<symbol>T</symbol>">
+<!ENTITY nil "<symbol>NIL</symbol>">
 <!ENTITY null "<constant>NULL</constant>">
-<!ENTITY c "<computeroutput>C</computeroutput>">
+<!ENTITY c "<symbol>C</symbol>">
 <!ENTITY defsystem "<application>defsystem</application>">
 <!ENTITY bookinfo SYSTEM "bookinfo.sgml">
 <!ENTITY preface SYSTEM "preface.sgml">

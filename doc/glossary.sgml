@@ -50,6 +50,12 @@
       <para>An object of type <type>database</type>.</para>
     </glossdef>
   </glossentry>
+  <glossentry id="gloss-field-types">
+    <glossterm>Field Types Specifier</glossterm>
+    <glossdef>
+      <para>A value that specifies the type of each field in a query.</para>
+    </glossdef>
+  </glossentry>
   <glossentry id="gloss-sql">
     <glossterm>Structured Query Language
       (<acronym>SQL</acronym>)

@@ -1804,6 +1804,47 @@
 	    </listitem>
 	  </varlistentry>
 	  <varlistentry>
+	    <term><parameter>types</parameter></term>
+	    <listitem>
+	      <para>A 
+		<glossterm linkend="gloss-field-types">field type
+		  specififier</glossterm>. The default is &nil;.
+		</para>
+		<para>
+		  The purpose of this argument is cause &clsql; to
+		  import SQL numeric fields into numeric Lisp objects
+		  rather than strings. This reduces the cost of
+		  allocating a temporary string and the &clsql; users'
+		  inconvenience of converting number strings into number
+		  objects.
+		</para>
+		<para>
+		  A value of <symbol>:auto</symbol> causes &clsql;
+		  to automatically convert the SQL field into a
+		  numeric format where applicable. The default value of
+		  &nil; causes all fields to be returned as strings
+		  regardless of the SQL type. Otherwise a list is expected
+		  which has a element for each field that specifies the
+		  conversion. If the list is shorter than the number
+		  of fields, the a value of <symbol>t</symbol> is
+		  assumed for the field.  If the list is longer than
+		  the number of fields, the extra elements are
+		  ignored.
+		  <simplelist type="vert">
+		    <member><symbol>:int</symbol> Field is imported as a
+		      32-bit signed integer.
+		    </member>
+		    <member><symbol>:double</symbol> Field is imported as a
+		      double-float number.
+		    </member>
+		    <member><symbol>t</symbol> Field is imported as a
+		      string.
+		    </member>
+		  </simplelist>
+		</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
 	    <term><returnvalue>result</returnvalue></term>
 	    <listitem>
 	      <para>A list representing the result set obtained.  For
@@ -1927,6 +1968,17 @@
 		<glossterm linkend="gloss-database-object">database
 		  object</glossterm>. This will default to the value
 		of <symbol>*default-database*</symbol>.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>types</parameter></term>
+	    <listitem>
+	      <para>
+		A <glossterm linkend="gloss-field-types">field type specififier</glossterm>. 
+		The default is &nil;. See <link
+		linkend="query"><function>query</function></link>
+		for the semantics of this argument.  
+	      </para>
 	    </listitem>
 	  </varlistentry>
 	  <varlistentry>
@@ -2077,6 +2129,17 @@
 		<glossterm linkend="gloss-database-object">database
 		  object</glossterm>. This will default to
 		<symbol>*default-database*</symbol>.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>types</parameter></term>
+	    <listitem>
+	      <para>
+		A <glossterm linkend="gloss-field-types">field type specififier</glossterm>. 
+		The default is &nil;. See <link
+		linkend="query"><function>query</function></link>
+		for the semantics of this argument.  
+	      </para>
 	    </listitem>
 	  </varlistentry>
 	  <varlistentry>
