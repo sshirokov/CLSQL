@@ -12,7 +12,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-sys)
+(in-package #:clsql)
 
 ;; Keep a hashtable for mapping symbols to sql generator functions,
 ;; for use by the bracketed reader syntax.

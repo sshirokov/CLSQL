@@ -13,7 +13,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-sys)
+(in-package #:clsql)
 
 (defvar +empty-string+ "''")
 
@@ -149,12 +149,19 @@
     (if (and (not qualifier) (not type))
 	(write-string (sql-escape (convert-to-db-default-case 
 				   (symbol-name name) database)) *sql-stream*)
+	;;; KMR: The TYPE field is used by CommonSQL for type conversion -- it
+      ;;; should not be output in SQL statements
+      #+ignore
       (format *sql-stream* "~@[~A.~]~A~@[ ~A~]"
 	      (when qualifier
-		  (convert-to-db-default-case (sql-escape qualifier) database))
+		(convert-to-db-default-case (sql-escape qualifier) database))
 	      (sql-escape (convert-to-db-default-case name database))
 	      (when type
-		  (convert-to-db-default-case (symbol-name type) database))))
+		(convert-to-db-default-case (symbol-name type) database)))
+      (format *sql-stream* "~@[~A.~]~A"
+	      (when qualifier
+		(convert-to-db-default-case (sql-escape qualifier) database))
+	      (sql-escape (convert-to-db-default-case name database))))
     t))
 
 (defmethod output-sql-hash-key ((expr sql-ident-attribute) database)

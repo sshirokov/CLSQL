@@ -29,7 +29,7 @@
 
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defpackage #:clsql-sys
+  (defpackage #:clsql
     (:use #:common-lisp #:clsql-base
 	  #+clsql-sbcl-mop #:sb-mop
 	  #+clsql-cmucl-mop #:mop
@@ -435,15 +435,9 @@
 (setf *packages-for-warn-on-redefinition* 
       (delete "SQL" *packages-for-warn-on-redefinition* :test 'string=))
 
-(defpackage #:clsql
-  (:use #:common-lisp)
-  (:import-from #:clsql-sys . #2#)
-  (:export . #2#)
-  (:documentation "This is the SQL-Interface package of CLSQL."))
-
 (defpackage #:clsql-user
   (:use #:common-lisp)
-  (:import-from #:clsql-sys . #2#)
+  (:import-from #:clsql . #2#)
   (:export . #2#)
   (:documentation "This is the user package with CLSQL symbols."))
 

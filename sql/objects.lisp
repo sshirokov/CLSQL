@@ -13,7 +13,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-sys)
+(in-package #:clsql)
 
 (defclass standard-db-object ()
   ((view-database :initform nil :initarg :view-database :reader view-database
@@ -169,7 +169,7 @@ superclass of the newly-defined View Class."
     (defclass ,class ,supers ,slots 
       ,@(if (find :metaclass `,cl-options :key #'car)
 	    `,cl-options
-	    (cons '(:metaclass clsql-sys::standard-db-class) `,cl-options)))
+	    (cons '(:metaclass clsql::standard-db-class) `,cl-options)))
     (finalize-inheritance (find-class ',class))
     (find-class ',class)))
 

@@ -160,7 +160,7 @@
   (truncate-database :database *default-database*)
   
   (setf *test-database-underlying-type*
-	(clsql-sys:database-underlying-type *default-database*))
+	(clsql:database-underlying-type *default-database*))
   
   *default-database*)
 

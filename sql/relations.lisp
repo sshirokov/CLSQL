@@ -12,7 +12,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-sys)
+(in-package #:clsql)
 
 
 (defun synchronize-keys (src srckey dest destkey)

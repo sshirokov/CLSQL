@@ -26,25 +26,25 @@
 ;; Ensure slots inherited from standard-classes are :virtual
 (deftest :ooddl/metaclass/1
     (values 
-     (clsql-sys::view-class-slot-db-kind
-      (clsql-sys::slotdef-for-slot-with-class 'extraterrestrial
+     (clsql::view-class-slot-db-kind
+      (clsql::slotdef-for-slot-with-class 'extraterrestrial
                                              (find-class 'person)))
-     (clsql-sys::view-class-slot-db-kind
-      (clsql-sys::slotdef-for-slot-with-class 'hobby (find-class 'person))))
+     (clsql::view-class-slot-db-kind
+      (clsql::slotdef-for-slot-with-class 'hobby (find-class 'person))))
   :virtual :virtual)
 
 ;; Ensure all slots in view-class are view-class-effective-slot-definition
 (deftest :ooddl/metaclass/2
     (values
      (every #'(lambda (slotd)
-                (typep slotd 'clsql-sys::view-class-effective-slot-definition))
-            (clsql-sys::class-slots (find-class 'person)))
+                (typep slotd 'clsql::view-class-effective-slot-definition))
+            (clsql::class-slots (find-class 'person)))
      (every #'(lambda (slotd)
-                (typep slotd 'clsql-sys::view-class-effective-slot-definition))
-            (clsql-sys::class-slots (find-class 'employee)))
+                (typep slotd 'clsql::view-class-effective-slot-definition))
+            (clsql::class-slots (find-class 'employee)))
      (every #'(lambda (slotd)
-                (typep slotd 'clsql-sys::view-class-effective-slot-definition))
-            (clsql-sys::class-slots (find-class 'company))))
+                (typep slotd 'clsql::view-class-effective-slot-definition))
+            (clsql::class-slots (find-class 'company))))
   t t t)
 
 (deftest :ooddl/join/1

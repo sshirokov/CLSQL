@@ -12,10 +12,9 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-sys)
+(in-package #:clsql)
   
 ;;; Basic operations on databases
-
 
 (defmethod database-query-result-set ((expr %sql-expression) database
                                       &key full-set result-types)
