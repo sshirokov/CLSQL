@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.5 2002/04/07 09:24:22 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.6 2002/04/23 21:25:51 kevin Exp $
 #
 # This file, part of UFFI, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -13,26 +13,17 @@
 # as governed by the terms of the Lisp Lesser GNU Public License
 # (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 
-
-
-# Set to DSSSL
-# For RedHat 6.x
-#DSSSL_HTML=/usr/lib/sgml/stylesheets/nwalsh-modular/html/docbook.dsl
-#DSSL_PRINT=/usr/lib/sgml/stylesheets/nwalsh-modular/print/docbook.dsl
-
-# For RedHat 7.2
-DSSSL_HTML=/usr/share/sgml/docbook/dsssl-stylesheets-1.64/html/docbook.dsl 
-DSSSL_PRINT=/usr/share/sgml/docbook/dsssl-stylesheets-1.64/print/docbook.dsl
-
-# Latest version
-DSSSL_HTML=/usr/share/sgml/docbook/dsssl-stylesheets-1.76/html/docbook.dsl 
-DSSSL_PRINT=/usr/share/sgml/docbook/dsssl-stylesheets-1.76/print/docbook.dsl
-
-# Custom version
-DSSSL_HTML=../dsssl/html/docbook.dsl
-DSSSL_PRINT=dsssl/print/docbook.dsl
+# System variable to select catalog file
+SYSTEM=debian
+# SYSTEM=redhat
 
 # Nothing to configure beyond this point
+
+CATALOG=catalog.$(SYSTEM)
+
+# Custom DSSSL's
+DSSSL_HTML=../dsssl/html/docbook.dsl
+DSSSL_PRINT=dsssl/print/docbook.dsl
 
 DOCFILE_BASE_DEFAULT=clsql
 DOCFILE_EXT_DEFAULT=sgml
