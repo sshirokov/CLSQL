@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-api.lisp,v 1.3 2003/06/08 12:48:55 kevin Exp $
+;;;; $Id: mysql-api.lisp,v 1.4 2003/06/24 01:12:57 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -17,9 +17,6 @@
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
-
-(eval-when (:compile-toplevel)
-  (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0))))
 
 (in-package #:mysql)
 
