@@ -62,7 +62,7 @@
 	  (sqlite:sqlite-get-table (sqlite-db database) sql-expression)
 	(sqlite:sqlite-free-table data)
 	(unless (= row-n 0)
-	  (error 'clsql-simple-warning
+	  (error 'sql-warning
 		 :format-control
 		 "Result set not empty: ~@(~A~) row~:P, ~@(~A~) column~:P "
 		 :format-arguments (list row-n col-n))))

@@ -1,7 +1,7 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id$
+;;;; $Id: 
 ;;;;
 ;;;; The CLSQL Functional Data Manipulation Language (FDML). 
 ;;;;
@@ -21,11 +21,30 @@
   (database-query-result-set (sql-output expr database) database
                              :full-set full-set :result-types result-types))
 
+(defmethod execute-command ((sql-expression string)
+                            &key (database *default-database*))
+  (record-sql-command sql-expression database)
+  (let ((res (database-execute-command sql-expression database)))
+    (record-sql-result res database))
+  (values))
+
 (defmethod execute-command ((expr %sql-expression)
                             &key (database *default-database*))
   (execute-command (sql-output expr database) :database database)
   (values))
 
+(defmethod query ((query-expression string) &key (database *default-database*)
+                  (result-types :auto) (flatp nil) (field-names t))
+  (record-sql-command query-expression database)
+  (multiple-value-bind (rows names) 
+      (database-query query-expression database result-types field-names)
+    (let ((result (if (and flatp (= 1 (length (car rows))))
+                      (mapcar #'car rows)
+                    rows)))
+      (record-sql-result result database)
+      (if field-names
+	  (values result names)
+	result))))
 
 (defmethod query ((expr %sql-expression) &key (database *default-database*)
                   (result-types :auto) (flatp nil) (field-names t))
@@ -544,5 +563,23 @@ computed for each field."
 	    (format nil "~A ~A" (lisp->sql-name (car o))
 		    (lisp->sql-name (cadr o))))))
 
+
+;;; Large objects support
+
+(defun create-large-object (&key (database *default-database*))
+  "Creates a new large object in the database and returns the object identifier"
+  (database-create-large-object database))
+
+(defun write-large-object (object-id data &key (database *default-database*))
+  "Writes data to the large object"
+  (database-write-large-object object-id data database))
+
+(defun read-large-object (object-id &key (database *default-database*))
+  "Reads the large object content"
+  (database-read-large-object object-id database))
+
+(defun delete-large-object (object-id &key (database *default-database*))
+  "Deletes the large object in the database"
+  (database-delete-large-object object-id database))
 
 

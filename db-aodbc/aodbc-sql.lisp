@@ -57,7 +57,7 @@
 	  (dbi:connect :user user
 		       :password password
 		       :data-source-name dsn))
-      (clsql-error (e)
+      (sql-error (e)
 	(error e))
       (error () 	;; Init or Connect failed
 	(error 'sql-connection-error

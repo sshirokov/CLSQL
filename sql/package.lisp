@@ -148,6 +148,9 @@
      #:database-get-type-specifier
      #:read-sql-value
      #:database-output-sql-as-type
+     #:*loaded-database-types*
+     #:reload-database-types
+     #:is-database-open
 
      ;; Large objects 
      #:database-create-large-object
@@ -182,17 +185,6 @@
      #:convert-to-db-default-case
      #:ensure-keyword
      #:getenv
-     
-     #:*loaded-database-types*
-     #:reload-database-types
-     #:*connect-if-exists*
-     #:connected-databases
-     #:database
-     #:find-database
-     #:is-database-open
-     #:database-type                     ; database   x
-
-     ;; utils.lisp
      #:number-to-sql-string
      #:float-to-sql-string
      #:sql-escape-quotes
@@ -203,289 +195,294 @@
      #:generic-odbc-database
      
      .
-     ;; Shared exports for re-export by CLSQL package. 
-     ;; I = Implemented, D = Documented
-     ;;  name                                 file       ID
-     ;;====================================================
-     #1=(;;------------------------------------------------
-	 ;; CommonSQL API 
-	 ;;------------------------------------------------
-	 ;;FDML 
-	 #:select                            ; objects    xx
-	 #:cache-table-queries               ; 
-	 #:*cache-table-queries-default*     ; 
-	 #:delete-records                    ; sql        xx
-	 #:insert-records                    ; sql        xx
-	 #:update-records                    ; sql        xx
-	 #:execute-command                   ; sql        xx
-	 #:query                             ; sql        xx
-	 #:print-query                       ; sql        xx
-	 #:do-query                          ; sql        xx
-	 #:map-query                         ; sql        xx
-	 #:for-each-row
-	 #:loop
 
-	 ;; conditions
+     ;; Shared exports for re-export by CLSQL package. 
+     #1=(
+
+	 ;; Condition system (conditions.lisp) 
 	 #:sql-user-error
 	 #:sql-database-error
 	 #:sql-database-data-error
 	 #:sql-connection-error
 	 #:sql-temporary-error
+         #:sql-timeout-error 
+         #:sql-fatal-error 
 	 #:sql-error-error-id
 	 #:sql-error-secondary-error-id
 	 #:sql-error-database-message
-
 	 ;; CLSQL Extensions
 	 #:sql-condition
 	 #:sql-error
 	 #:sql-warning
 	 #:sql-database-warning
-	 
-	 ;;FDDL
-	 #:create-table                      ; table      xx
-	 #:drop-table                        ; table      xx
-	 #:list-tables                       ; table      xx
-	 #:table-exists-p                    ; table      xx 
-	 #:list-attributes                   ; table      xx
-	 #:attribute-type                    ; table      xx
-	 #:list-attribute-types		     ; table      xx
-	 #:*cache-table-queries-default*     ; table      xx 
-	 #:create-view                       ; table      xx
-	 #:drop-view                         ; table      xx
-	 #:create-index                      ; table      xx		
-	 #:drop-index                        ; table      xx		
-	 #:truncate-database
-	 ;;OODDL
-	 #:standard-db-object                ; objects    xx
-	 #:def-view-class                    ; objects    xx
-	 #:create-view-from-class            ; objects    xx
-	 #:drop-view-from-class              ; objects    xx
-	 ;;OODML
-	 #:instance-refreshed                ; objects    xx 
-	 #:update-objects-joins              ; objects    xx
-	 #:*default-update-objects-max-len*  ; objects    xx
-	 #:update-slot-from-record           ; objects    xx
-	 #:update-instance-from-records      ; objects    xx
-	 #:update-records-from-instance      ; objects    xx
-	 #:update-record-from-slot           ; objects    xx
-	 #:update-record-from-slots          ; objects    xx
-	 #:list-classes                      ; objects    xx
-	 #:delete-instance-records           ; objects    xx
-	 ;;Symbolic SQL Syntax 
-	 #:sql                               ; syntax     xx
-	 #:sql-expression                    ; syntax     xx
-	 #:sql-operation                     ; syntax     xx
-	 #:sql-operator                      ; syntax     xx  	
-	 #:disable-sql-reader-syntax         ; syntax     xx
-	 #:enable-sql-reader-syntax          ; syntax     xx
-	 #:locally-disable-sql-reader-syntax ; syntax     xx
-	 #:locally-enable-sql-reader-syntax  ; syntax     xx
-	 #:restore-sql-reader-syntax-state   ; syntax     xx
-	 
-	 ;;FDDL 
-	 #:list-views                        ; table      xx
-	 #:view-exists-p                     ; table      xx
-	 #:list-indexes                      ; table      xx
-	 #:list-table-indexes                ; table      xx
-	 #:index-exists-p                    ; table      xx
-	 #:create-sequence                   ; table      xx
-	 #:drop-sequence                     ; table      xx
-	 #:list-sequences                    ; table      xx
-	 #:sequence-exists-p                 ; table      xx
-	 #:sequence-next                     ; table      xx
-	 #:sequence-last                     ; table      xx
-	 #:set-sequence-position             ; table      xx
-	 ;;OODDL
-	 #:view-table                        ; metaclass  x
-	 #:universal-time                    ; objects    xx 
+         #:*backend-warning-behavior*
+
+         ;; Connection/initialisation (base-classes.lisp, database.lisp, 
+         ;;   initialize.lisp)
+         #:*default-database-type*       
+         #:*default-database*	         
+         #:*initialized-database-types*
+         #:initialize-database-type
+         #:connect                     
+         #:disconnect		       
+         #:*connect-if-exists*	       
+         #:connected-databases	       
+         #:database		       
+         #:database-name               
+         #:reconnect                   
+         #:find-database               
+         #:status                      
+         ;; CLSQL Extensions 
+         #:with-database
+         #:with-default-database
+         #:disconnect-pooled
+         #:list-databases
+         #:create-database
+         #:destroy-database
+         #:probe-database
+         #:truncate-database
+
+         ;; I/O Recording (recording.lisp) 
+         #:add-sql-stream             
+         #:delete-sql-stream	      
+         #:list-sql-streams	      
+         #:sql-recording-p	      
+         #:sql-stream			
+         #:start-sql-recording		
+         #:stop-sql-recording		
+         ;; CLSQL Extensions 
+         #:record-sql-command
+         #:record-sql-result
+
+	 ;; FDDL (fddl.lisp) 
+	 #:create-table                   
+	 #:drop-table                     
+	 #:list-tables                    
+	 #:table-exists-p                 
+	 #:list-attributes                
+	 #:attribute-type                 
+	 #:list-attribute-types		  
+	 #:*cache-table-queries-default*  
+	 #:create-view                    
+	 #:drop-view                      
+	 #:create-index                   
+	 #:drop-index                     
+         ;; CLSQL Extensions 
+         #:describe-table
+	 #:list-views                  
+	 #:view-exists-p               
+	 #:list-indexes                
+	 #:list-table-indexes          
+	 #:index-exists-p              
+	 #:create-sequence             
+	 #:drop-sequence               
+	 #:list-sequences              
+	 #:sequence-exists-p           
+	 #:sequence-next               
+	 #:sequence-last               
+	 #:set-sequence-position       
+
+         ;; FDML (fdml.lisp) 
+	 #:select 
+	 #:cache-table-queries     
+	 #:*cache-table-queries-default*
+	 #:delete-records               
+	 #:insert-records               
+	 #:update-records               
+	 #:execute-command              
+	 #:query                        
+	 #:print-query                  
+	 #:do-query                     
+	 #:map-query                    
+	 #:loop
+         ;; CLSQL Extensions 
+         #:for-each-row
+
+         ;; Transaction handling (transaction.lisp) 
+         #:with-transaction
+         #:commit                        
+         #:rollback			 
+         ;; CLSQL Extensions 
+         #:commit-transaction
+         #:rollback-transaction
+         #:add-transaction-commit-hook
+         #:add-transaction-rollback-hook
+         #:start-transaction             
+         #:in-transaction-p              
+         #:database-start-transaction
+         #:database-abort-transaction
+         #:database-commit-transaction
+         #:transaction-level
+         #:transaction
+
+	 ;;  OODDL (ooddl.lisp) 
+	 #:standard-db-object               
+	 #:def-view-class                   
+	 #:create-view-from-class           
+	 #:drop-view-from-class             
+	 #:list-classes                     
+	 #:universal-time    
+         ;; CLSQL Extensions 
+	 #:view-table        
 	 #:bigint
-	 ;;OODML
-	 #:*db-auto-sync*                    ; objects    xx              
+
+	 ;; OODML (oodml.lisp) 
+	 #:instance-refreshed               
+	 #:update-objects-joins             
+	 #:*default-update-objects-max-len* 
+	 #:update-slot-from-record          
+	 #:update-instance-from-records     
+	 #:update-records-from-instance     
+	 #:update-record-from-slot          
+	 #:update-record-from-slots         
+	 #:delete-instance-records          
+	 ;; CLSQL Extensions 
+	 #:*db-auto-sync*    
+
+	 ;; Symbolic SQL Syntax (syntax.lisp) 
+	 #:sql                              
+	 #:sql-expression                   
+	 #:sql-operation                    
+	 #:sql-operator                     
+	 #:disable-sql-reader-syntax        
+	 #:enable-sql-reader-syntax         
+	 #:locally-disable-sql-reader-syntax
+	 #:locally-enable-sql-reader-syntax 
+	 #:restore-sql-reader-syntax-state  
 	 
-	 ;; conditions
-	 #:clsql-condition
-	 #:clsql-error
-	 #:clsql-simple-error
-	 #:clsql-simple-warning
-	 
-	 ;;-----------------------------------------------
-	 ;; Symbolic Sql Syntax 
-	 ;;-----------------------------------------------
-	 #:sql-and-qualifier
-	 #:sql-escape
+	 ;; SQL operations (operations.lisp) 
 	 #:sql-query
 	 #:sql-object-query
 	 #:sql-any
+         #:sql-some 
 	 #:sql-all
 	 #:sql-not
 	 #:sql-union
-	 #:sql-intersection
+	 #:sql-intersect
 	 #:sql-minus
-	 #:sql-group-by
-	 #:sql-having
+         #:sql-except 
+         #:sql-order-by 
 	 #:sql-null
-	 #:sql-not-null
-	 #:sql-exists
 	 #:sql-*
 	 #:sql-+
 	 #:sql-/
+         #:sql--
 	 #:sql-like
-	 #:sql-uplike
 	 #:sql-and
 	 #:sql-or
 	 #:sql-in
-	 #:sql-||
-	 #:sql-is
+	 #:sql-concat
+         #:sql-substr 
 	 #:sql-=
-	 #:sql-==
 	 #:sql-<
-       #:sql->
-       #:sql->=
-       #:sql-<=
-       #:sql-count
-       #:sql-max
-       #:sql-min
-       #:sql-avg
-       #:sql-sum
-       #:sql-view-class
-       #:sql_slot-value
+         #:sql->
+         #:sql->=
+         #:sql-<=
+         #:sql-<>
+         #:sql-count
+         #:sql-max
+         #:sql-min
+         #:sql-avg
+         #:sql-sum
+         #:sql-function 
+         #:sql-between 
+         #:sql-distinct 
+         #:sql-nvl 
+         #:sql-slot-value
+         ;; CLSQL Extensions 
+         #:sql-limit 
+	 #:sql-group-by
+	 #:sql-having
+	 #:sql-not-null
+	 #:sql-exists
+	 #:sql-uplike
+	 #:sql-is
+	 #:sql-==
+         #:sql-the 
+         #:sql-coalesce 
+         #:sql-view-class
 
-
-
-       ;; time.lisp
-       #:bad-component
-       #:current-day
-     #:current-month
-     #:current-year
-     #:day-duration
-     #:db-timestring
-     #:decode-duration
-     #:decode-time
-     #:duration
-     #:duration+
-     #:duration<
-     #:duration<=
-     #:duration=
-     #:duration>
-     #:duration>=
-     #:duration-day
-     #:duration-hour
-     #:duration-minute
-     #:duration-month
-     #:duration-second
-     #:duration-year
-     #:duration-reduce 
-     #:duration-timestring
-     #:extract-roman 
-     #:format-duration
-     #:format-time
-     #:get-time
-     #:utime->time
-     #:interval-clear
-     #:interval-contained
-     #:interval-data
-     #:interval-edit
-     #:interval-end
-     #:interval-match
-     #:interval-push
-     #:interval-relation
-     #:interval-start
-     #:interval-type
-     #:make-duration
-     #:make-interval
-     #:make-time
-     #:merged-time
-     #:midnight
-     #:month-name
-     #:parse-date-time
-     #:parse-timestring
-     #:parse-yearstring
-     #:print-date
-     #:roll
-     #:roll-to
-     #:time
-     #:time+
-     #:time-
-     #:time-by-adding-duration
-     #:time-compare
-     #:time-difference
-     #:time-dow
-     #:time-element
-     #:time-max
-     #:time-min
-     #:time-mjd
-     #:time-msec
-     #:time-p
-     #:time-sec
-     #:time-well-formed
-     #:time-ymd
-     #:time<
-     #:time<=
-     #:time=
-     #:time>
-     #:time>=
-     #:timezone
-     #:universal-time
-     #:wall-time
-     #:wall-timestring
-     #:week-containing
-     #:gregorian-to-mjd
-     #:mjd-to-gregorian
-
-     ;; recording.lisp -- SQL I/O Recording 
-     #:record-sql-command
-     #:record-sql-result
-     #:add-sql-stream                 ; recording  xx
-     #:delete-sql-stream	          ; recording  xx
-     #:list-sql-streams	          ; recording  xx
-     #:sql-recording-p	          ; recording  xx
-     #:sql-stream			  ; recording  xx
-     #:start-sql-recording		  ; recording  xx
-     #:stop-sql-recording		  ; recording  xx
-
-     ;; database.lisp -- Connection
-     #:*default-database-type*	          ; clsql-base xx
-     #:*default-database*	          ; classes    xx
-     #:*initialized-database-types*
-     #:initialize-database-type
-     #:connect			          ; database   xx
-     #:disconnect		          ; database   xx
-     #:*connect-if-exists*	          ; database   xx
-     #:connected-databases	          ; database   xx
-     #:database		          ; database   xx
-     #:database-name                     ; database   xx
-     #:reconnect                         ; database
-     #:find-database                     ; database   xx
-     #:status                            ; database   xx
-     #:with-database
-     #:with-default-database
-     #:disconnect-pooled
-     #:create-database
-     #:destroy-database
-     #:probe-database
-     #:list-databases
-     
-     #:describe-table
-     #:*backend-warning-behavior*
-     
-     ;; Transactions
-     #:with-transaction
-     #:commit-transaction
-     #:rollback-transaction
-     #:add-transaction-commit-hook
-     #:add-transaction-rollback-hook
-     #:commit                            ; transact   xx
-     #:rollback			  ; transact   xx
-     #:with-transaction		  ; transact   xx		.
-     #:start-transaction                 ; transact   xx
-     #:in-transaction-p                  ; transact   xx
-     #:database-start-transaction
-     #:database-abort-transaction
-     #:database-commit-transaction
-     #:transaction-level
-     #:transaction
-       ))
-  (:documentation "This is the INTERNAL SQL-Interface package of CLSQL."))
+         ;; Time handling (time.lisp) 
+         #:bad-component
+         #:current-day
+         #:current-month
+         #:current-year
+         #:day-duration
+         #:db-timestring
+         #:decode-duration
+         #:decode-time
+         #:duration
+         #:duration+
+         #:duration<
+         #:duration<=
+         #:duration=
+         #:duration>
+         #:duration>=
+         #:duration-day
+         #:duration-hour
+         #:duration-minute
+         #:duration-month
+         #:duration-second
+         #:duration-year
+         #:duration-reduce 
+         #:duration-timestring
+         #:extract-roman 
+         #:format-duration
+         #:format-time
+         #:get-time
+         #:utime->time
+         #:interval-clear
+         #:interval-contained
+         #:interval-data
+         #:interval-edit
+         #:interval-end
+         #:interval-match
+         #:interval-push
+         #:interval-relation
+         #:interval-start
+         #:interval-type
+         #:make-duration
+         #:make-interval
+         #:make-time
+         #:merged-time
+         #:midnight
+         #:month-name
+         #:parse-date-time
+         #:parse-timestring
+         #:parse-yearstring
+         #:print-date
+         #:roll
+         #:roll-to
+         #:time
+         #:time+
+         #:time-
+         #:time-by-adding-duration
+         #:time-compare
+         #:time-difference
+         #:time-dow
+         #:time-element
+         #:time-max
+         #:time-min
+         #:time-mjd
+         #:time-msec
+         #:time-p
+         #:time-sec
+         #:time-well-formed
+         #:time-ymd
+         #:time<
+         #:time<=
+         #:time=
+         #:time>
+         #:time>=
+         #:timezone
+         #:universal-time
+         #:wall-time
+         #:wall-timestring
+         #:week-containing
+         #:gregorian-to-mjd
+         #:mjd-to-gregorian
+         ))
+    (:documentation "This is the INTERNAL SQL-Interface package of CLSQL."))
 
 
 (defpackage #:clsql

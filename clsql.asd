@@ -36,35 +36,41 @@ oriented interface."
 			:components
 			((:file "cmucl-compat")
 			 (:file "package")
-			 (:file "utils" :depends-on ("package" "db-interface"))
+			 (:file "kmr-mop" :depends-on ("package"))
 			 (:file "base-classes" :depends-on ("package"))
-			 (:file "conditions" :depends-on ("base-classes"))
-			 (:file "db-interface" :depends-on ("conditions"))
-			 (:file "initialize" :depends-on ("db-interface" "utils"))
-			 (:file "loop-extension" :depends-on ("db-interface"))
-			 (:file "time" :depends-on ("package"))
+                         (:file "conditions" :depends-on ("base-classes"))
+                         (:file "db-interface" :depends-on ("conditions"))
+			 (:file "time" :depends-on ("package" "conditions"))
+			 (:file "utils" :depends-on ("package" "db-interface"))
+                         (:file "generics" :depends-on ("package"))))
+               (:module :database 
+                        :pathname "" 
+                        :components 
+                        ((:file "initialize")
 			 (:file "database" :depends-on ("initialize"))
-			 (:file "recording" :depends-on ("time" "database"))
-			 (:file "basic-sql" :depends-on ("database" "cmucl-compat"))
-			 (:file "pool" :depends-on ("basic-sql"))
-			 (:file "transaction" :depends-on ("basic-sql"))
-			 (:file "kmr-mop" :depends-on ("package"))))
-	       (:module :core
+			 (:file "recording" :depends-on ("database"))
+			 (:file "pool"))
+                        :depends-on (:base))
+	       (:module :syntax
 			:pathname ""
-			:components ((:file "generics")
-				     (:file "classes" :depends-on ("generics"))
-				     (:file "operations" :depends-on ("classes"))
+			:components ((:file "expressions")
+				     (:file "operations" 
+                                            :depends-on ("expressions"))
 				     (:file "syntax" :depends-on ("operations")))
-			:depends-on (:base))
+			:depends-on (:database))
 	       (:module :functional
 			:pathname ""
-			:components ((:file "sql")
-				     (:file "table" :depends-on ("sql")))
-			:depends-on (:core))
+			:components ((:file "fdml")
+                                     (:file "transaction" :depends-on ("fdml"))
+                                     (:file "loop-extension" 
+                                            :depends-on ("fdml"))
+				     (:file "fddl" :depends-on ("fdml")))
+			:depends-on (:syntax))
 	       (:module :object
 			:pathname ""
 		       :components ((:file "metaclasses")
-				    (:file "objects" :depends-on ("metaclasses")))
+                                    (:file "ooddl" :depends-on ("metaclasses"))
+				    (:file "oodml" :depends-on ("ooddl")))
 		       :depends-on (:functional))
 	       (:module :generic
 			:pathname ""

@@ -14,10 +14,6 @@
 
 (in-package #:clsql-sys)
 
-(setf (documentation 'database-name 'function)
-      "Returns the name of a database.")
-
-;;; Database handling
 
 (defvar *connect-if-exists* :error
   "Default value for the if-exists keyword argument in calls to

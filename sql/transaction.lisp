@@ -47,7 +47,7 @@
         (when (zerop (decf (transaction-level database)))
           (execute-command "COMMIT" :database database)
           (map nil #'funcall (commit-hooks (transaction database))))
-        (warn 'clsql-simple-warning
+        (warn 'sql-warning
               :format-control "Cannot commit transaction against ~A because there is no transaction in progress."
               :format-arguments (list database))))
 
@@ -57,7 +57,7 @@
           (unwind-protect 
                (execute-command "ROLLBACK" :database database)
             (map nil #'funcall (rollback-hooks (transaction database)))))
-        (warn 'clsql-simple-warning
+        (warn 'sql-warning
               :format-control "Cannot abort transaction against ~A because there is no transaction in progress."
               :format-arguments (list database))))
 

@@ -51,4 +51,5 @@ are a list of ACTION specified for table and any cached value of list-attributes
 	      "<unbound>")
 	    (database-state object))))
 
-
+(setf (documentation 'database-name 'function)
+      "Returns the name of a database.")

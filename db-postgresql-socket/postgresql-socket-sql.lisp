@@ -182,7 +182,7 @@ doesn't depend on UFFI."
     (handler-case
 	(handler-bind ((postgresql-warning
 			(lambda (c)
-			  (warn 'clsql-simple-warning
+			  (warn 'sql-warning
 				:format-control "~A"
 				:format-arguments
 				(list (princ-to-string c))))))

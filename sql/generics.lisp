@@ -18,6 +18,38 @@
 
 (in-package #:clsql-sys)
 
+
+;; FDML 
+
+(defgeneric execute-command (expression &key database)
+  (:documentation
+   "Executes the SQL command EXPRESSION, which may be an SQL
+expression or a string representing any SQL statement apart from
+a query, on the supplied DATABASE which defaults to
+*DEFAULT-DATABASE*."))
+
+
+(defgeneric query (query-expression &key database result-types flatp field-names)
+  (:documentation
+   "Executes the SQL query expression QUERY-EXPRESSION, which may
+be an SQL expression or a string, on the supplied DATABASE which
+defaults to *DEFAULT-DATABASE*. RESULT-TYPES is a list of symbols
+which specifies the lisp type for each field returned by
+QUERY-EXPRESSION. If RESULT-TYPES is nil all results are returned
+as strings whereas the default value of :auto means that the lisp
+types are automatically computed for each field. FIELD-NAMES is t
+by default which means that the second value returned is a list
+of strings representing the columns selected by
+QUERY-EXPRESSION. If FIELD-NAMES is nil, the list of column names
+is not returned as a second value. FLATP has a default value of
+nil which means that the results are returned as a list of
+lists. If FLATP is t and only one result is returned for each
+record selected by QUERY-EXPRESSION, the results are returned as
+elements of a list."))
+
+
+;; OODML 
+
 (defgeneric update-record-from-slot (object slot &key database)
   (:documentation
    "Updates the value stored in the column represented by the

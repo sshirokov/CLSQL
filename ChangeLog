@@ -1,3 +1,28 @@
+24 May 2004: Marcus Pearce (m.t.pearce@city.ac.uk) 
+	* db-postgresql-socket/postgresql-socket-sql.lisp: replace 
+	CLSQL-SIMPLE-WARNING with SQL-WARNING. 
+	* db-sqlite/sqlite-sql.lisp: replace CLSQL-SIMPLE-WARNING with 
+	SQL-WARNING. 
+	* db-aodbc/aodbc-sql.lisp: replace CLSQL-ERROR with SQL-ERROR. 
+	* clsql.asd: reworked module structure in package definition and 
+	file names to better reflect component functionality. 
+	* sql/package.lisp: added SQL-FATAL-ERROR and SQL-TIMEOUT-ERROR to 
+	exports list. Removed duplicate and obsolete exports. Exported 
+	remaining SQL operations: SQL-SOME, SQL-<>, SQL-BETWEEN, SQL-DISTINCT, 
+	SQL-NVL and SQL-FUNCTION. Organised exports by functionality/file and 
+	according to whether they are specified by CommonSQL or CLSQL 
+	extensions. 
+	* sql/transaction.lisp: replace CLSQL-SIMPLE-WARNING with 
+	SQL-WARNING. 
+	* sql/generics.lisp: moved generics for QUERY and EXECUTE-COMMAND 
+	here from basic-sql.lisp. 
+	* sql/expressions.lisp: NEW FILE: renamed from classes.lisp (deleted). 
+	* sql/fddl.lisp: NEW FILE: renamed from table.lisp (deleted). 
+	* sql/fdml.lisp: NEW FILE: merger of basic-sql.lisp and sql.lisp
+	(both deleted). 
+	* sql/ooddl.lisp: NEW FILE: ooddl from objects.lisp (deleted). 
+	* sql/oodml.lisp: NEW FILE: oodml from objects.lisp (deleted). 
+	
 23 May 2004 Kevin Rosenberg
 	* Version 2.10.22 released
 	* sql/kmr-mop.lisp, sql/objects.lisp: Since SBCL is the only implementation that
