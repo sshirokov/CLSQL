@@ -7,7 +7,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.2 2002/04/01 05:27:55 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.3 2002/04/01 17:33:48 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -22,7 +22,9 @@ AR=ar
 # you'll need to modify these for other compilers
 CC=gcc
 SHARED_CC_OPT=-fpic
-SHARED_LD_OPT=-shared
+
+SHARED_LD_OPT=-shared # For Linux
+#SHARED_LD_OPT=-r # For FreeBSD and Solaris
 
 # If you are using Solaris, these are the correct values
 # for creating a shared library

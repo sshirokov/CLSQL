@@ -139,7 +139,10 @@ files for Microsoft Windows are supplied with the distribution.</para>
 <para>To build the libraries on a GNU or Solaris, use the shell and
 change to the root directory of &clsql;. You may need to edit the file
 <filename>interfaces/mysql/Makefile</filename> to specify the location of your
-MySQL installation. Then, you can give the command
+MySQL installation. The default Makefiles are setup for shared library
+linking on Linux. If you are using FreeBSD or Solaris, you will need
+to change the linker setting as instructed in the Makefile. 
+Then, you can give the command
 <programlisting>
 make libs
 </programlisting>
