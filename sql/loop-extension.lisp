@@ -8,7 +8,7 @@
 ;;;;
 ;;;; Copyright (c) 1999-2001 Pierre R. Mai
 ;;;;
-;;;; $Id: loop-extension.lisp,v 1.2 2002/10/21 07:45:50 kevin Exp $
+;;;; $Id$
 ;;;;
 ;;;; The functions in this file were orignally distributed in the
 ;;;; MaiSQL package in the file sql/sql.cl

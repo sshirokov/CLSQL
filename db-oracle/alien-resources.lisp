@@ -1,5 +1,5 @@
 ;;; -*- Mode: Lisp -*-
-;;; $Id: alien-resources.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;; $Id$
 
 ;;; This is copyrighted software.  See documentation for terms.
 ;;; 

@@ -8,7 +8,7 @@
 ;;;;
 ;;;; Copyright (c) 1999-2001 Pierre R. Mai
 ;;;;
-;;;; $Id: functional.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id$
 ;;;;
 ;;;; This file is part of CLSQL. 
 ;;;;

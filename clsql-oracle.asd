@@ -1,7 +1,7 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; This is copyrighted software.  See interfaces/oracle/* files for terms.
 ;;;; 
-;;;; $Id: clsql-oracle.asd,v 1.13 2003/05/07 02:45:08 kevin Exp $
+;;;; $Id$
 
 (defpackage #:clsql-oracle-system (:use #:asdf #:cl))
 (in-package #:clsql-oracle-system)

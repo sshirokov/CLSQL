@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg 
 ;;;; Date Started:  May 2002
 ;;;;
-;;;; $Id: initialize.lisp,v 1.2 2002/10/16 11:51:04 kevin Exp $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai

@@ -7,7 +7,7 @@
 ;;;; Programmers:   Marc Battyani
 ;;;; Date Started:  Apr 2002
 ;;;;
-;;;; $Id: transactions.lisp,v 1.2 2002/10/14 15:25:15 kevin Exp $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;

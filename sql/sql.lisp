@@ -7,7 +7,7 @@
 ;;;; Authors:      Kevin M. Rosenberg based on code by Pierre R. Mai 
 ;;;; Date Started: Feb 2002
 ;;;;
-;;;; $Id: sql.lisp,v 1.6 2003/07/23 19:33:38 kevin Exp $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai

@@ -7,7 +7,7 @@
 ;;;; Author:        Kevin M. Rosenberg
 ;;;; Date Started:  Apr 2003
 ;;;;
-;;;; $Id: package.lisp,v 1.4 2003/07/20 18:31:22 kevin Exp $
+;;;; $Id$
 ;;;; *************************************************************************
 
 (in-package #:cl-user)

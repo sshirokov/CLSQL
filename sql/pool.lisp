@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg, Marc Battyani
 ;;;; Date Started:  Apr 2002
 ;;;;
-;;;; $Id: pool.lisp,v 1.5 2003/08/08 09:04:13 kevin Exp $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002-2003 by Kevin M. Rosenberg
 ;;;;
