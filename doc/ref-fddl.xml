@@ -109,6 +109,18 @@
 => 
 (table-exists-p [foo]) 
 => T 
+
+(create-table [foo] '(([bar] integer :not-null :unique :primary-key) 
+                      ([baz] string :not-null :unique)))
+=> 
+(table-exists-p [foo])
+=> T
+
+(create-table [foo] '(([bar] integer :not-null) ([baz] string :not-null))
+              :constraints '("UNIQUE (bar,baz)" "PRIMARY KEY (bar)"))
+=> 
+(table-exists-p [foo])
+=> T
       </screen>
     </refsect1>
     <refsect1>

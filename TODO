@@ -11,12 +11,15 @@ TESTS TO ADD
 * Add test case for return type of (setf slot-value-using-class)
 * symbol slot
 * generalized-boolean slot
+* column and table constraints in CREATE-TABLE and DEF-VIEW-CLASS. 
 
 OPTIMIZATIONS
  
 * Revisit result-type list creation, perhaps caching
 * Rework LIST-ATTRIBUTE-TYPES and LIST-INDEXES such that they exhibit their 
   current behaviours using single database queries.  
+* Possible use of cached attribute type information for operations which 
+  insert/update records as mentioned in the CommonSQL user guide. 
 
 POSSIBLE EXTENSIONS
 

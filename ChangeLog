@@ -4,7 +4,12 @@
 	View Class slot option. 
 	* sql/ooddl.lisp: fix bug preventing the :DB-CONSTRAINTS View Class 
 	slot option accepting a list of constraints [reported by Travis Cross]. 
-
+	* doc/ref-fddl.xml: add some examples of specifying column and 
+	table constraints to the documentation for CREATE-TABLE. 
+	* TODO: add note about adding tests for table/column constraints. Add 
+	optimisation note about using cached attribute types in insert/update
+	operations. 
+	
 3 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* doc/appendix.xml: add notes about idiosyncrasies/unsupported 
 	features and so on the documentation for each backend. 
