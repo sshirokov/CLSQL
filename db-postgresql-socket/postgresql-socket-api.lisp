@@ -600,8 +600,9 @@ connection, if it is still open."
 				   :connection connection :message message))))
 	  (#.+notice-response-message+
 	   (let ((message (read-socket-value-string socket)))
-	     (warn 'postgresql-warning
-		   :connection connection :message message)))
+	     (unless (eq :ignore clsql-base:*backend-warning-behavior*)
+	       (warn 'postgresql-warning
+		     :connection connection :message message))))
 	  (#.+notification-response-message+
 	   (let ((pid (read-socket-value-int32 socket))
 		 (message (read-socket-value-string socket)))

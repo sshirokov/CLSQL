@@ -20,6 +20,10 @@
 
 (in-package #:clsql-base)
 
+(defvar *backend-warning-behavior* :warn
+  "Action to perform on warning messages from backend. Default is to :warn. May also be
+set to :error to signal an error or :ignore/nil to silently ignore the warning.")
+
 ;;; Conditions
 (define-condition clsql-condition ()
   ())
@@ -94,15 +98,20 @@ and signal an clsql-invalid-spec-error if they don't match."
 
 (define-condition clsql-sql-error (clsql-error)
   ((database :initarg :database :reader clsql-sql-error-database)
-   (expression :initarg :expression :reader clsql-sql-error-expression)
-   (errno :initarg :errno :reader clsql-sql-error-errno)
-   (error :initarg :error :reader clsql-sql-error-error))
+   (message :initarg :message :initarg nil :reader clsql-sql-error-message)
+   (expression :initarg :expression :initarg nil :reader clsql-sql-error-expression)
+   (errno :initarg :errno :initarg nil :reader clsql-sql-error-errno)
+   (error :initarg :error :initarg nil :reader clsql-sql-error-error))
   (:report (lambda (c stream)
-	     (format stream "While accessing database ~A~%  with expression ~S:~%  Error ~D / ~A~%  has occurred."
-		     (clsql-sql-error-database c)
-		     (clsql-sql-error-expression c)
-		     (clsql-sql-error-errno c)
-		     (clsql-sql-error-error c)))))
+	     (if (clsql-sql-error-message c)
+		 (format stream "While accessing database ~A~%, Error~%  ~A~%  has occurred."
+			 (clsql-sql-error-database c)
+			 (clsql-sql-error-message c))
+	       (format stream "While accessing database ~A~%  with expression ~S:~%  Error ~D / ~A~%  has occurred."
+		       (clsql-sql-error-database c)
+		       (clsql-sql-error-expression c)
+		       (clsql-sql-error-errno c)
+		       (clsql-sql-error-error c))))))
 
 (define-condition clsql-database-warning (clsql-warning)
   ((database :initarg :database :reader clsql-database-warning-database)
@@ -198,3 +207,4 @@ and signal an clsql-invalid-spec-error if they don't match."
   (:report (lambda (c stream)
 	     (format stream "Invalid SQL syntax: ~A"
 		     (clsql-sql-syntax-error-reason c)))))
+

@@ -132,7 +132,8 @@
        #:clsql-closed-error-database
        #:clsql-type-error
        #:clsql-sql-syntax-error
-
+       #:*backend-warning-behavior*
+       
        ;; db-interface
        #:check-connection-spec
        #:database-initialize-database-type

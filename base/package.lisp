@@ -119,6 +119,7 @@
      #:clsql-type-error
      #:clsql-odbc-error
      #:clsql-odbc-error-message
+     #:*backend-warning-behavior*
      
      #:*loaded-database-types*
      #:reload-database-types

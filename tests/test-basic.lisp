@@ -45,7 +45,11 @@
 	    (destructuring-bind (int float bigint str) row
 	      (push (list (integerp int)
 			  (typep float 'double-float)
-			  (integerp bigint)
+			  (if (and (eq :odbc *test-database-type*)
+				   (eq :postgresql *test-database-underlying-type*))
+			      ;; ODBC/Postgresql returns bigints as strings
+			      (stringp bigint)
+			    (integerp bigint))
 			  (stringp str))
 		    results))))
       ((t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t)))

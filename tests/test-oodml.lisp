@@ -54,10 +54,17 @@
                          :order-by [last-name]))
   ("Vladamir Lenin" "Vladamir Putin"))
 
-;; sqlite fails this because it is typeless 
 (deftest :oodml/select/5
     (length (clsql:select 'employee :where [married] :flatp t))
   3)
+
+(deftest :oodml/select/6
+    (slot-value (caar (clsql:select 'employee :where [= 1 [emplid]])) 'married)
+  t)
+
+(deftest :oodml/select/7
+    (slot-value (caar (clsql:select 'employee :where [= 4 [emplid]])) 'married)
+  nil)
 
 ;; tests update-records-from-instance 
 (deftest :oodml/update-records/1

@@ -1,4 +1,17 @@
 3 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.10.8
+	* base/conditions.lisp: Add *backend-warning-behavior*
+	special variable.
+	* db-postgresql-socket/postgresql-socket-sql.lisp:
+	Honor value of *backend-warning-behavior*
+	* tests/test-fdml.lisp: Remove test of raw boolean value
+	since different backends handle this differently.
+	* tests/test-oodml.lisp: Add test for boolean slot value
+	* tests/test-init.lisp: Use *backend-warning-behavior*
+	to suppress warnings from postgresql about implicitly
+	creating primary key in tables.
+	
+3 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.7
 	* db-odbc/odbc-dbi.lisp: Convert TINYINT to integers when
 	result-types is :auto

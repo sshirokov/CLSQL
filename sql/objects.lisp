@@ -665,9 +665,9 @@ superclass of the newly-defined View Class."
        (string (if (string= "0" val) nil t))
        (integer (if (zerop val) nil t))))
     (:postgresql
-     (if (database-type :odbc)
+     (if (eq :odbc (database-type database))
 	 (if (string= "0" val) nil t)
-	 (equal "t" val)))
+       (equal "t" val)))
     (t
      (equal "t" val))))
 

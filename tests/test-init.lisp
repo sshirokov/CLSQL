@@ -156,8 +156,12 @@
 (defun test-initialise-database ()
   (test-basic-initialize)
   
-  (clsql:create-view-from-class 'employee)
-  (clsql:create-view-from-class 'company)
+  (let ((*backend-warning-behavior*
+	 (if (member *test-database-type* '(:postgresql :postgresql-socket))
+	     :ignore
+	   :warn)))
+    (clsql:create-view-from-class 'employee)
+    (clsql:create-view-from-class 'company))
 
   (setf company1 (make-instance 'company
 		   :companyid 1
@@ -255,7 +259,7 @@
 		     :first-name "Vladamir"
 		     :last-name "Putin"
 		     :email "putin@soviet.org"))
-
+  
   ;; sleep to ensure birthdays are no longer at current time
   (sleep 2) 
 

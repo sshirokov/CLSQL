@@ -276,23 +276,17 @@
 
 (deftest :fdml/select/13
      (multiple-value-bind (results field-names) 
-	 (clsql:select [emplid] [last-name] [married] :from [employee] 
+	 (clsql:select [emplid] [last-name] :from [employee] 
 		       :where [= [emplid] 1])
        (values results (mapcar #'string-downcase field-names)))
- ((1 "Lenin" "t"))
- ("emplid" "last_name" "married"))
+ ((1 "Lenin"))
+ ("emplid" "last_name"))
 
 (deftest :fdml/select/14
      (floatp (car (clsql:select [height] :from [employee] :where [= [emplid] 1] 
 				:flatp t)))
   t)
 
-(deftest :fdml/select/15
-    (clsql:select [married] :from [employee] 
-     :where [= [emplid] 4]
-     :field-names nil)
- (("f")))
- 
 ;(deftest :fdml/select/11
 ;    (clsql:select [emplid] :from [employee]
 ;                :where [= [emplid] [any [select [companyid] :from [company]]]]

@@ -104,8 +104,17 @@ doesn't depend on UFFI."
 
 
 (defun convert-to-clsql-warning (database condition)
-  (warn 'clsql-database-warning :database database
-	:message (postgresql-condition-message condition)))
+  (ecase *backend-warning-behavior*
+    (:warn
+     (warn 'clsql-database-warning :database database
+	   :message (postgresql-condition-message condition)))
+    (:error
+     (error 'clsql-sql-error :database database
+	    :message (format nil "Warning upgraded to error: ~A" 
+			     (postgresql-condition-message condition))))
+    ((:ignore nil)
+     ;; do nothing
+     )))
 
 (defun convert-to-clsql-error (database expression condition)
   (error 'clsql-sql-error :database database
@@ -127,7 +136,6 @@ doesn't depend on UFFI."
 		       (lambda (c)
 			 (convert-to-clsql-error
 			  ,database-var ,expression-var c))))
-	 ;; KMR - removed double @@
 	 ,@body))))
 
 (defmethod database-initialize-database-type ((database-type
@@ -239,23 +247,23 @@ doesn't depend on UFFI."
 	  (wait-for-query-results connection)
 	(when (eq status :cursor)
 	  (loop
-	      (multiple-value-bind (row stuff)
-		  (skip-cursor-row result)
-		(unless row
-		  (setq status :completed result stuff)
-		  (return)))))
+	    (multiple-value-bind (row stuff)
+		(skip-cursor-row result)
+	      (unless row
+		(setq status :completed result stuff)
+		(return)))))
 	(cond
-	  ((null status)
-	   t)
-	  ((eq status :completed)
-	   (unless (null (wait-for-query-results connection))
+	 ((null status)
+	  t)
+	 ((eq status :completed)
+	  (unless (null (wait-for-query-results connection))
 	     (close-postgresql-connection connection)
 	     (error 'clsql-sql-error
 		    :database database
 		    :expression expression
 		    :errno 'multiple-results
 		    :error "Received multiple results for command."))
-	   result)
+	  result)
 	  (t
 	   (close-postgresql-connection connection)
 	   (error 'clsql-sql-error
