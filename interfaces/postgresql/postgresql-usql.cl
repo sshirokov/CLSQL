@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: postgresql-usql.cl,v 1.2 2002/04/07 15:11:04 kevin Exp $
+;;;; $Id: postgresql-usql.cl,v 1.3 2002/05/15 17:03:43 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and by onShore Development Inc.
@@ -84,6 +84,9 @@
      (concatenate 'string "SELECT NEXTVAL ('" (sql-escape sequence-name) "')")
      database nil))))
 
+;; Functions depending upon high-level USQL classes/functions
+
+#|
 (defmethod database-output-sql ((expr clsql-sys::sql-typecast-exp) 
 				(database postgresql-database))
   (with-slots (clsql-sys::modifier clsql-sys::components)
@@ -103,3 +106,4 @@
     (make-instance 'clsql-sys::sql-typecast-exp
                    :modifier 'int8
                    :components val)))
+|#
