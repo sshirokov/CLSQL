@@ -24,10 +24,14 @@
     </sect2>
     <sect2>
       <title>Initialization</title>
-      <para>Use 
-	<screen>(mk:load-system :clsql-mysql)</screen>
+      <para>
+	Use 
+	<screen>
+(asdf:operate 'asdf:load-op 'clsql-mysql)
+	</screen>
 	to load the MySQL back-end.  The database type for the MySQL
-	back-end is <symbol>:mysql</symbol>.</para>
+	back-end is <symbol>:mysql</symbol>.
+      </para>
       </sect2>
       <sect2>
 	<title>Connection Specification</title>
@@ -91,7 +95,9 @@
       <sect2>
 	<title>Initialization</title>
 	<para>Use 
-	  <screen>(mk:load-system :clsql-postgresql)</screen>
+	  <screen>
+(asdf:operate 'adsf:load-op 'clsql-postgresql)
+	</screen>
 	  to load the PostgreSQL back-end.  The database type for the
 	  PostgreSQL back-end is <symbol>:postgresql</symbol>.</para>
       </sect2>
@@ -99,15 +105,23 @@
 	<title>Connection Specification</title>
 	<sect3>
 	  <title>Syntax of connection-spec</title>
-	  <synopsis>(<replaceable>host</replaceable> <replaceable>db</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable> &amp;optional <replaceable>port</replaceable> <replaceable>options</replaceable> <replaceable>tty</replaceable>)</synopsis>
+	  <synopsis>(<replaceable>host</replaceable>
+	  <replaceable>db</replaceable>
+	  <replaceable>user</replaceable>
+	  <replaceable>password</replaceable> &amp;optional
+	  <replaceable>port</replaceable>
+	  <replaceable>options</replaceable>
+	  <replaceable>tty</replaceable>)</synopsis>
 	</sect3>
 	<sect3>
 	  <title>Description of connection-spec</title>
-	  <para>For every parameter in the connection-spec,
+	  <para>
+	    For every parameter in the connection-spec,
 	    <symbol>nil</symbol> indicates that the PostgreSQL default
 	    environment variables (see PostgreSQL documentation) will
 	    be used, or if those are unset, the compiled-in defaults
-	    of the C client library are used.</para>
+	    of the C client library are used.
+	  </para>
 	  <variablelist>
 	    <varlistentry>
 	      <term><parameter>host</parameter></term>
@@ -179,17 +193,27 @@
       </sect2>
       <sect2>
 	<title>Initialization</title>
-	<para>Use 
-	  <screen>(mk:load-system :clsql-postgresql-socket)</screen>
-	  to load the PostgreSQL Socket back-end.  The database type for the
-	  PostgreSQL Socket back-end is 
-	  <symbol>:postgresql-socket</symbol>.</para>
+	<para>
+	  Use 
+	  <screen>
+(asdf:operate 'asdf:load-op 'clsql-postgresql-socket)
+	</screen>
+	  to load the PostgreSQL Socket back-end.  The database type
+	  for the PostgreSQL Socket back-end is
+	  <symbol>:postgresql-socket</symbol>.
+	</para>
       </sect2>
       <sect2>
 	<title>Connection Specification</title>
 	<sect3>
 	  <title>Syntax of connection-spec</title>
-	  <synopsis>(<replaceable>host</replaceable> <replaceable>db</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable> &amp;optional <replaceable>port</replaceable> <replaceable>options</replaceable> <replaceable>tty</replaceable>)</synopsis>
+	  <synopsis>(<replaceable>host</replaceable>
+	  <replaceable>db</replaceable>
+	  <replaceable>user</replaceable>
+	  <replaceable>password</replaceable> &amp;optional
+	  <replaceable>port</replaceable>
+	  <replaceable>options</replaceable>
+	  <replaceable>tty</replaceable>)</synopsis>
 	</sect3>
 	<sect3>
 	  <title>Description of connection-spec</title>
@@ -269,16 +293,22 @@
       </sect2>
       <sect2>
 	<title>Initialization</title>
-	<para>Use 
-	  <screen>(mk:load-system :clsql-aodbc)</screen>
+	<para>
+	  Use 
+	  <screen>
+(asdf:operate 'asdf:load-op 'clsql-aodbc)
+	  </screen>
 	  to load the MySQL back-end.  The database type for the AODBC
-	  back-end is <symbol>:aodbc</symbol>.</para>
+	  back-end is <symbol>:aodbc</symbol>.
+	</para>
       </sect2>
       <sect2>
 	<title>Connection Specification</title>
 	<sect3>
 	  <title>Syntax of connection-spec</title>
-	  <synopsis>(<replaceable>dsn</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable>)</synopsis>
+	  <synopsis>(<replaceable>dsn</replaceable>
+	  <replaceable>user</replaceable>
+	  <replaceable>password</replaceable>)</synopsis>
 	</sect3>
 	<sect3>
 	  <title>Description of connection-spec</title>

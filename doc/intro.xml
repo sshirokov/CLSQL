@@ -23,14 +23,14 @@
     <title>History</title>
     <para>
       &clsql; is written by Kevin M. Rosenberg and based substantially
-      on Pierre R. Mai's excellent &maisql; package. The main changes from &maisql;
-      are:
+      on Pierre R. Mai's excellent &maisql; package. The main changes
+      from &maisql; are:
       <itemizedlist>
 	<listitem>
-	  <para>Optimized loading of integer and floating-point fields.</para>
+	  <para>port from the &cmucl; FFI to &uffi;.</para>
 	</listitem>
 	<listitem>
-	  <para>port from the &cmucl; FFI to &uffi;.</para>
+	  <para>Optimized loading of integer and floating-point fields.</para>
 	</listitem>
 	<listitem>
 	  <para>new &acl; ODBC interface back-end.</para>
@@ -39,7 +39,8 @@
 	  <para>compatibility layer for &cmucl; specific code.</para>
 	</listitem>
 	<listitem>
-	  <para>much improved robustness for the &mysql; back-end.</para>
+	  <para>much improved robustness for the &mysql; back-end
+	  along with version 4 client library support.</para>
 	</listitem>
 	<listitem>
 	  <para>improved system loading.</para>
@@ -59,34 +60,30 @@
     
     <sect2>
       <title>&asdf;</title>
-      <para> &clsql; uses &asdf; to compile and load its
-	components.  &asdf; is included in the <ulink
-	url="http://cclan.sourceforge.net"><citetitle>&cclan;</citetitle></ulink> collection.
+      <para>
+	&clsql; uses &asdf; to compile and load its components.
+	&asdf; is included in the <ulink
+	url="http://cclan.sourceforge.net"><citetitle>&cclan;</citetitle></ulink>
+	collection.
       </para>
     </sect2>
     
     <sect2>
       <title>&uffi;</title>
-      <para>&clsql; uses <ulink
-	url="http://uffi.med-info.com/"><citetitle>&uffi;</citetitle></ulink>
-	as a <emphasis>Foreign Function Interface</emphasis> (<glossterm
-	linkend="gloss-ffi">FFI</glossterm>) to support multiple &cl;
-	implementations.
+      <para>
+	&clsql; uses <ulink
+	url="http://uffi.b9.com/"><citetitle>&uffi;</citetitle></ulink>
+	as a <emphasis>Foreign Function Interface</emphasis>
+	(<glossterm linkend="gloss-ffi">FFI</glossterm>) to support
+	multiple &cl; implementations.
       </para> 
-      
-      <para>You can download &uffi; from its FTP <ulink
-	url="ftp://ftp.med-info.com/pub/uffi/"><citetitle>site</citetitle></ulink>. There
-	are zip files for Microsoft Windows systems and gzipped tar files for
-	other systems.
-      </para>
     </sect2>
     
     <sect2>
       <title>&md5;</title>
       <para>&clsql;'s postgresql-socket interface uses Pierre Mai's 
 	<ulink url="ftp://clsql.b9.com/">md5</ulink>
-	module. If you plan to use
-	this interface please download the md5 module from ftp://clsql.b9.com.
+	module.
       </para>       
     </sect2>
     <sect2>
@@ -100,7 +97,7 @@
 	<listitem><para>&lw; v4.3 on Debian Linux and Microsoft Windows XP.</para></listitem>
 	<listitem><para>&cmucl; 18e on Debian Linux, FreeBSD 4.5, and Solaris 2.8.</para></listitem>
 	<listitem><para>&sbcl; 0.8.5 on Debian Linux.</para></listitem>
-	<listitem><para>&scl; 1.2 on Debian Linux.</para></listitem>
+	<listitem><para>&scl; 1.1.1 on Debian Linux.</para></listitem>
 	<listitem><para>&openmcl; 0.14 on Debian Linux PowerPC.</para></listitem>
       </itemizedlist>
     </sect2>
@@ -111,9 +108,11 @@
 	Currently, &clsql; supports the following databases:
       </para>
       <itemizedlist mark="opencircle">
-	<listitem><para>&mysql; v3.23.51.</para></listitem>
-	<listitem><para>&postgresql; v7.2 with both direct API and TCP socket connections.</para></listitem>
-	<listitem><para>Allegro's ODBC interface (&aodbc;) using iODBC ODBC manager.</para></listitem>
+	<listitem><para>&mysql; v3.23.51 and v4.0.15.</para></listitem>
+	<listitem><para>&postgresql; v7.2 with both direct API and TCP
+	socket connections.</para></listitem>
+	<listitem><para>Allegro's ODBC interface (&aodbc;) using iODBC
+	ODBC manager.</para></listitem>
       </itemizedlist>
     </sect2>
     
@@ -139,7 +138,7 @@
 	implementations do not support 64-bit integers. Thus, C helper
 	libraries are required to break these 64-bit integers into two compatible
 	32-bit integers. The helper libraries reside in the directories
-	<filename>uffi/</filename> and <filename>db-mysql</filename>.
+	<filename>uffi</filename> and <filename>db-mysql</filename>.
       </para>
       
       <sect3>
@@ -156,10 +155,15 @@
       <sect3>
 	<title>&unix;</title>
 	<para>
-	  Files named <filename>Makefile</filename> are supplied for building the libraries
-	  under &unix;. However, the <filename>.asd</filename> automatically invoke
-	  the makefiles when necessary. So, manual building of the helper libraries
-	  is not necessary on &unix;.
+	  Files named <filename>Makefile</filename> are supplied for
+	  building the libraries under &unix;. Loading the
+	  <filename>.asd</filename> files automatically invokes
+	  <application>make</application> when necessary. So, manual
+	  building of the helper libraries is not necessary on most
+	  &unix; systems. However, the location of the &mysql; library
+	  files and include files may need to adjusted in
+	  <filename>db-mysql/Makefile</filename> on non-Debian
+	  systems.
 	</para>
       </sect3>
       
@@ -183,13 +187,14 @@
    <sect2>
      <title>Load &md5; module</title>
      <para>
-       If you plan to use the  clsql-postgresql-socket interface, you must load the md5 module.
-       Unzip or untar the cl-md5 distribution, which creates a directory for the cl-md5 files.
-       Add that directory to &asdf;'s <varname>asdf:*central-registry*</varname>. 
-       You can do that by pushing the pathname of the directory onto this variable.
-        The following example code assumes the cl-md5 files reside in the
-       <filename>/usr/share/lisp/cl-md5/</filename> 
-       directory.
+       If you plan to use the clsql-postgresql-socket interface, you
+       must load the md5 module.  Unzip or untar the cl-md5
+       distribution, which creates a directory for the cl-md5 files.
+       Add that directory to &asdf;'s
+       <varname>asdf:*central-registry*</varname>.  You can do that by
+       pushing the pathname of the directory onto this variable.  The
+       following example code assumes the cl-md5 files reside in the
+       <filename>/usr/share/lisp/cl-md5/</filename> directory.
        <screen>
 (push #P"/usr/share/lisp/cl-md5/" asdf:*central-registry*)
 (asdf:operate 'asdf:load-op :md5)
@@ -200,21 +205,24 @@
    <sect2>
      <title>Load &clsql; modules</title>
      <para>
-       Unzip or untar the &clsql; distribution which creates a directory
-       for the &clsql; files. Add that directory to &asdf;'s <varname>asdf:*central-registry*</varname>.
-       You can do that by pushing the pathname of the directory onto this variable.
-       The following example code assumes the &clsql; files reside in the
-       <filename>/usr/share/lisp/clsql/</filename> 
-       directory. You need to load, at a minimum,
-       the main <symbol>:clsql</symbol> system and at least one interface system.
+       Unzip or untar the &clsql; distribution which creates a
+       directory for the &clsql; files. Add that directory to &asdf;'s
+       <varname>asdf:*central-registry*</varname>.  You can do that by
+       pushing the pathname of the directory onto this variable.  The
+       following example code assumes the &clsql; files reside in the
+       <filename>/usr/share/lisp/clsql/</filename> directory. You need
+       to load, at a minimum, the main <symbol>clsql</symbol> system
+       and at least one interface system. The below example show loading
+       all &clsql; systems.
+
 	<screen>
 (push #P"/usr/share/lisp/clsql/" asdf:*central-repository*)
-(asdf:operate 'asdf:load-op 'clsql-base)        ; base clsql package
-(asdf:operate 'asdf:load-op 'clsql-mysql)       ; MySQL interface
-(asdf:operate 'asdf:load-op 'clsql-postgresql)  ; PostgreSQL interface
+(asdf:operate 'asdf:load-op 'clsql-base)              ; base CLSQL package
+(asdf:operate 'asdf:load-op 'clsql-mysql)             ; MySQL interface
+(asdf:operate 'asdf:load-op 'clsql-postgresql)        ; PostgreSQL interface
 (asdf:operate 'asdf:load-op 'clsql-postgresql-socket) ; Socket PGSQL interface
-(asdf:operate 'asdf:load-op 'clsql-aodbc)       ; Allegro ODBC interface
-(asdf:operate 'asdf:load-op 'clsql)             ; main clsql package
+(asdf:operate 'asdf:load-op 'clsql-aodbc)             ; Allegro ODBC interface
+(asdf:operate 'asdf:load-op 'clsql)                   ; main CLSQL package
 	</screen>
       </para>
     </sect2>
@@ -222,12 +230,13 @@
     <sect2>
       <title>Run test suite</title>
       <para>
-	After loading &clsql;, you can execute the test suite. A configuration
-	file named <filename>.clsql-test.config</filename> must be created
-	in your home directory. There are instructures on the format of that file
-	in the <filename>tests/tests.lisp</filename> file in the &clsql;
-	source directory. After creating that file, you can run the test suite
-	with &asdf;:
+	After loading &clsql;, you can execute the test suite. A
+	configuration file named
+	<filename>.clsql-test.config</filename> must be created in
+	your home directory. There are instructures on the format of
+	that file in the <filename>tests/tests.lisp</filename> file in
+	the &clsql; source directory. After creating that file, you
+	can run the test suite with &asdf;:
 	<screen>
 	  (asdf:operate 'asdf:test-op 'clsql)
         </screen>

@@ -24,7 +24,7 @@
   "Contains a list of database types which have been defined/loaded.")
 
 (defmethod database-type-load-foreign (x)
-  (error "No generic function defined for database-type-load-foreign with parameters of %S" x))
+  (error "No generic function defined for database-type-load-foreign with parameters of ~S" x))
 
 (defmethod database-type-load-foreign :after (database-type)
   (when (database-type-library-loaded database-type)
@@ -35,8 +35,7 @@
   (mapc #'database-type-load-foreign *loaded-database-types*))
 
 (defvar *default-database-type* nil
-  "Specifies the default type of database.  Currently only :mysql is
-supported.")
+  "Specifies the default type of database.")
 
 (defvar *initialized-database-types* nil
   "Contains a list of database types which have been initialized by calls

@@ -1,6 +1,6 @@
-<?xml version='1.0' ?>   <!-- -*- DocBook -*- -->
+<?xml version='1.0' ?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-               "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
 <!ENTITY % myents SYSTEM "entities.xml">
 %myents;
 ]>
@@ -8,9 +8,9 @@
 <glossary id="glossary">
   <note>
     <para>This glossary is still very thinly populated, and not all
-      references in the main text have been properly linked and
-      coordinated with this glossary.  This will hopefully change in
-      future revisions.
+    references in the main text have been properly linked and
+    coordinated with this glossary.  This will hopefully change in
+    future revisions.
     </para>
   </note>
   <glossentry>
@@ -39,7 +39,7 @@
   </glossentry>
   <glossentry id="gloss-ffi">
     <glossterm>Foreign Function Interface 
-      (<acronym>FFI</acronym>)
+    (<acronym>FFI</acronym>)
     </glossterm>
     <glossdef>
       <para>
@@ -63,7 +63,7 @@
   </glossentry>
   <glossentry id="gloss-sql">
     <glossterm>Structured Query Language
-      (<acronym>SQL</acronym>)
+    (<acronym>SQL</acronym>)
     </glossterm>
     <glossdef>
       <para>
@@ -76,12 +76,12 @@
     <glossterm>SQL Expression</glossterm>
     <glossdef>
       <para>Either a string containing a valid SQL statement, or
-	an object of type <type>sql-expression</type>.
-	<note>
-	  <para>This has not been implemented yet, so only strings
-	    are valid SQL expressions for the moment.
-	  </para>
-	</note>
+      an object of type <type>sql-expression</type>.
+      <note>
+	<para>This has not been implemented yet, so only strings
+	are valid SQL expressions for the moment.
+	</para>
+      </note>
       </para>
     </glossdef>
   </glossentry>
