@@ -1,7 +1,7 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id: 
+;;;; $Id: $
 ;;;;
 ;;;; The CLSQL Functional Data Definition Language (FDDL)
 ;;;; including functions for schema manipulation. Currently supported

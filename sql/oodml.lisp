@@ -1,7 +1,7 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id: 
+;;;; $Id: $
 ;;;;
 ;;;; The CLSQL Object Oriented Data Manipulation Language (OODML).
 ;;;;
