@@ -103,7 +103,8 @@
 			(t :string))))
       (loop for type in result-types
 	    collect (case type
-		      ((:int :integer :tinyint :long) :int32)
+		      ((:int :integer :tinyint) :int32)
+		      (:long #+(or x86-64 64bit) :int64 #-(or x86-64 64bit) :int32)
 		      (:bigint :int64)
 		      ((:float :double) :double)
 		      ((:numeric) :number)

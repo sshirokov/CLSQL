@@ -174,8 +174,9 @@
       (loop for type in raw-types
 	    collect
 	    (case type
-	      ((:int :integer :tinyint :long)
+	      ((:int :integer :tinyint)
 	       :int32)
+	      (:long #+(or x86-64 64bit) :int64 #-(or x86-64 64bit) :int32)
 	      (:bigint
 	       :int64)
 	      ((:float :double)
