@@ -1,4 +1,6 @@
 14 May 2002 Kevin Rosenberg (kevin@rosenberg.net)
+	* clsql-base.system: Added base package that can be used without
+	high-level SQL commands. Used for adding support for UncommonSQL.
 	* *.system: Reworked logical pathnames to be more consistent with
 	Common Lisp Controller.
 	* debian/*: Completed initial Debian support
