@@ -254,3 +254,7 @@ the given lisp type and parameters."))
 (defmethod database-abort-transaction :before ((database database))
   (unless (is-database-open database)
     (signal-closed-database-error database)))
+
+(defgeneric describe-table (table &key database)
+  (:documentation "Describes a table, returns a list of name/type for columns in table"))
+

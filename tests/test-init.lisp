@@ -7,6 +7,11 @@
 ;;;;
 ;;;; Initialisation utilities for running regression tests on CLSQL. 
 ;;;;
+;;;; This file is part of CLSQL.
+;;;;
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; ======================================================================
 
 (in-package #:clsql-tests)
@@ -124,12 +129,6 @@
 		 :make-default t
 		 :if-exists :old))
 
-(defmacro with-ignore-errors (&rest forms)
-  `(progn
-     ,@(mapcar
-	(lambda (x) (list 'ignore-errors x))
-	forms)))
-
 (defparameter company1 nil)
 (defparameter employee1 nil)
 (defparameter employee2 nil)
@@ -144,9 +143,8 @@
 
 (defun test-initialise-database ()
   ;; Create the tables for our view classes
-  (ignore-errors
-   (clsql:drop-view-from-class 'employee)
-   (clsql:drop-view-from-class 'company))
+  (ignore-errors (clsql:drop-view-from-class 'employee))
+  (ignore-errors (clsql:drop-view-from-class 'company))
   (clsql:create-view-from-class 'employee)
   (clsql:create-view-from-class 'company)
 

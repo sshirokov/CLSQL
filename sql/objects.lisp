@@ -16,24 +16,19 @@
 (in-package #:clsql-sys)
 
 (defclass standard-db-object ()
-  ((view-database
-    :initform nil
-    :initarg :view-database
+  ((view-database :initform nil :initarg :view-database :reader view-database
     :db-kind :virtual))
   (:metaclass standard-db-class)
   (:documentation "Superclass for all CLSQL View Classes."))
 
-(defmethod view-database ((self standard-db-object))
-  (slot-value self 'view-database))
-
 (defvar *db-deserializing* nil)
 (defvar *db-initializing* nil)
 
-(defmethod slot-value-using-class ((class standard-db-class) instance slot)
+(defmethod slot-value-using-class ((class standard-db-class) instance slot-def)
   (declare (optimize (speed 3)))
   (unless *db-deserializing*
-    (let* ((slot-name (%svuc-slot-name slot))
-	   (slot-object (%svuc-slot-object slot class))
+    (let* ((slot-name (%svuc-slot-name slot-def))
+	   (slot-object (%svuc-slot-object slot-def class))
 	   (slot-kind (view-class-slot-db-kind slot-object)))
       (when (and (eql slot-kind :join)
                  (not (slot-boundp instance slot-name)))
@@ -50,8 +45,7 @@
   (call-next-method))
 
 (defmethod initialize-instance :around ((class standard-db-object)
-                                        &rest all-keys
-                                        &key &allow-other-keys)
+                                        &rest all-keys &key &allow-other-keys)
   (declare (ignore all-keys))
   (let ((*db-deserializing* t))
     (call-next-method)))
@@ -125,9 +119,7 @@ which defines that view. The argument DATABASE has a default value of
   (let ((tclass (find-class view-class-name)))
     (if tclass
         (let ((*default-database* database))
-          (%uninstall-class tclass)
-          (delete-records :from [clsql_object_v]
-                          :where [= [name] (sql-escape view-class-name)]))
+          (%uninstall-class tclass))
         (error "Class ~s not found." view-class-name)))
   (values))
 
@@ -251,11 +243,7 @@ superclass of the newly-defined View Class."
       list))
 
 (defun slot-type (slotdef)
-  (let ((slot-type (specified-type slotdef)))
-    (if (listp slot-type)
-        (cons (find-symbol (symbol-name (car slot-type)) :clsql-sys)
-              (cdr slot-type))
-        (find-symbol (symbol-name slot-type) :clsql-sys))))
+  (specified-type slotdef))
 
 (defmethod update-slot-from-db ((instance standard-db-object) slotdef value)
   (declare (optimize (speed 3) #+cmu (extensions:inhibit-warnings 3)))
@@ -526,9 +514,6 @@ associated with that database."))
         (setf (slot-value obj 'view-database) database))
     (values)))
 
-;; Perhaps the slot class is not correct in all CLOS implementations,
-;; tho I have not run across a problem yet.
-
 (defmethod handle-cascade-delete-rule ((instance standard-db-object)
 				       (slot
                                         view-class-effective-slot-definition))
@@ -666,14 +651,14 @@ value.  If nulls are allowed for the column, the slot's value will be
 nil, otherwise its value will be set to the result of calling
 DATABASE-NULL-VALUE on the type of the slot."))
 
-(defmethod update-slot-with-null ((instance standard-db-object)
+(defmethod update-slot-with-null ((object standard-db-object)
 				  slotname
 				  slotdef)
   (let ((st (slot-type slotdef))
         (allowed (slot-value slotdef 'nulls-ok)))
     (if allowed
-        (setf (slot-value instance slotname) nil)
-        (setf (slot-value instance slotname)
+        (setf (slot-value object slotname) nil)
+        (setf (slot-value object slotname)
               (database-null-value st)))))
 
 (defvar +no-slot-value+ '+no-slot-value+)
@@ -886,7 +871,7 @@ DATABASE-NULL-VALUE on the type of the slot."))
 ;; ------------------------------------------------------------
 ;; Logic for 'faulting in' :join slots
 
-(defun fault-join-slot-raw (class instance slot-def)
+(defun fault-join-slot-raw (class instancex slot-def)
   (let* ((dbi (view-class-slot-db-info slot-def))
 	 (jc (gethash :join-class dbi)))
     (let ((jq (join-qualifier class instance slot-def)))
@@ -909,7 +894,7 @@ DATABASE-NULL-VALUE on the type of the slot."))
 	((and (not ts) (gethash :set dbi))
 	 res)))))
 
-(defun join-qualifier (class instance slot-def)
+(defun join-qualifier (class object slot-def)
     (declare (ignore class))
     (let* ((dbi (view-class-slot-db-info slot-def))
 	   (jc (find-class (gethash :join-class dbi)))
@@ -918,8 +903,8 @@ DATABASE-NULL-VALUE on the type of the slot."))
 	   (foreign-keys (gethash :foreign-key dbi))
 	   (home-keys (gethash :home-key dbi)))
       (when (every #'(lambda (slt)
-		       (and (slot-boundp instance slt)
-                            (not (null (slot-value instance slt)))))
+		       (and (slot-boundp object slt)
+                            (not (null (slot-value object slt)))))
 		   (if (listp home-keys) home-keys (list home-keys)))
 	(let ((jc
                (mapcar #'(lambda (hk fk)
@@ -934,7 +919,7 @@ DATABASE-NULL-VALUE on the type of the slot."))
                                               (t fk))
                                             (typecase hk
                                               (symbol
-                                               (slot-value instance hk))
+                                               (slot-value object hk))
                                               (t
                                                hk)))))
                        (if (listp home-keys)
@@ -1051,6 +1036,7 @@ tuples."
                        target-args))))
     (multiple-value-bind (target-args qualifier-args)
         (query-get-selections select-all-args)
+      ;; (cmsg "Qual args = ~s" qualifier-args)
       (if (select-objects target-args)
           (apply #'find-all target-args qualifier-args)
           (let ((expr (apply #'make-query select-all-args)))

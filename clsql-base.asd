@@ -38,7 +38,7 @@
 	     (:file "package")
 	     (:file "utils" :depends-on ("package"))
 	     (:file "classes" :depends-on ("package"))
-	     (:file "conditions" :depends-on ("classes"))
+	     (:file "conditions" :depends-on ("classes" "utils"))
 	     (:file "db-interface" :depends-on ("conditions"))
 	     (:file "initialize" :depends-on ("db-interface"))
 	     (:file "loop-extension" :depends-on ("db-interface"))

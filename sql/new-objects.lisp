@@ -28,14 +28,15 @@
 (defmethod slot-value-using-class ((class standard-db-class) instance slot-def)
   (declare (optimize (speed 3)))
   (unless *db-deserializing*
-    (let ((slot-name (slot-definition-name slot-def))
-          (slot-kind (view-class-slot-db-kind slot-def)))
+    (let* ((slot-name (%svuc-slot-name slot-def))
+	   (slot-object (%svuc-slot-object slot-def class))
+	   (slot-kind (view-class-slot-db-kind slot-object)))
       (when (and (eql slot-kind :join)
                  (not (slot-boundp instance slot-name)))
         (let ((*db-deserializing* t))
           (setf (slot-value instance slot-name)
                 (fault-join-slot class instance slot-def))))))
-  (call-next-method))
+    (call-next-method))
 
 (defmethod (setf slot-value-using-class) :around (new-value (class standard-db-class) instance slot-def)
   (declare (ignore new-value))
@@ -87,8 +88,6 @@
               (database-output-sql keylist database)))))
 
 
-
-
 (defun create-view-from-class (view-class-name
                                &key (database *default-database*))
   "Creates a view in DATABASE based on VIEW-CLASS-NAME which defines
@@ -97,9 +96,7 @@ the view. The argument DATABASE has a default value of
   (let ((tclass (find-class view-class-name)))
     (if tclass
         (let ((*default-database* database))
-          (%install-class tclass database)
-          #+noschema (ensure-schema-version-table database)
-          #+noschema (update-schema-version-records view-class-name :database database))
+          (%install-class tclass database))
         (error "Class ~s not found." view-class-name)))
   (values))
 
@@ -130,10 +127,7 @@ which defines that view. The argument DATABASE has a default value of
   (let ((tclass (find-class view-class-name)))
     (if tclass
         (let ((*default-database* database))
-          (%uninstall-class tclass)
-	  #+nil
-          (delete-records :from [clsql_object_v]
-                          :where [= [name] (sql-escape view-class-name)]))
+          (%uninstall-class tclass))
         (error "Class ~s not found." view-class-name)))
   (values))
 
@@ -257,13 +251,7 @@ superclass of the newly-defined View Class."
       list))
 
 (defun slot-type (slotdef)
-  (specified-type slotdef)
-  #+ignore
-  (let ((slot-type (specified-type slotdef)))
-    (if (listp slot-type)
-        (cons (find-symbol (symbol-name (car slot-type)) :clsql-sys)
-              (cdr slot-type))
-        (find-symbol (symbol-name slot-type) :clsql-sys))))
+  (specified-type slotdef))
 
 (defvar *update-context* nil)
 
@@ -404,7 +392,6 @@ superclass of the newly-defined View Class."
           (setf (slot-value target slot-name)
                 nil)))))
 
-
 (defgeneric update-record-from-slot (object slot &key database)
   (:documentation
    "The generic function UPDATE-RECORD-FROM-SLOT updates an individual
@@ -473,7 +460,6 @@ names are derived from the view class definition."))
           (t
            (error "Unable to update records"))))
   t)
-
 
 (defgeneric update-records-from-instance (object &key database)
   (:documentation

@@ -35,10 +35,10 @@
   (let ((l (gensym)))
     `(let ((,l ,lock))
       #+allegro (mp:with-process-lock (,l) ,@body)
-      #+cmu `(mp:with-lock-held (,lock) ,@body)
-      #+openmcl (ccl:with-lock-grabbed (,lock) ,@body)
+      #+cmu (mp:with-lock-held (,l) ,@body)
+      #+openmcl (ccl:with-lock-grabbed (,l) ,@body)
       #+lispworks (mp:with-lock (,l) ,@body)
-      #+sb-thread (sb-thread:with-recursive-lock (,lock) ,@body)
+      #+sb-thread (sb-thread:with-recursive-lock (,l) ,@body)
       ))
 
   #+scl `(thread:with-lock-held (,lock ,desc) ,@body)

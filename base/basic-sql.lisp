@@ -60,8 +60,7 @@ pair."))
   (values))
 
 
-(defun describe-table (table &key (database *default-database*))
-  "Return list of 2-element lists containing table name and type."
+(defmethod describe-table ((table string) &key (database *default-database*))
   (database-describe-table database table))
 
 (defmacro do-query (((&rest args) query-expression

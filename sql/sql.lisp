@@ -255,6 +255,12 @@ condition is true."
         (write-char #\) *sql-stream*)))
   t)
 
+(defmethod describe-table ((table sql-create-table)
+			   &key (database *default-database*))
+  (database-describe-table
+   database
+   (string-downcase (symbol-name (slot-value table 'name)))))
+
 #+nil
 (defmethod add-storage-class ((self database) (class symbol) &key (sequence t))
   (let ((tablename (view-table (find-class class))))

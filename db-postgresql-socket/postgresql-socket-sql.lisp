@@ -467,12 +467,7 @@ doesn't depend on UFFI."
                                    and a.attnum > 0
                                    and a.attrelid = c.oid
                                    and a.atttypid = t.oid"
-           (sql-escape (string-downcase 
-			(etypecase table
-			  (string table)
-			  (clsql-base-sys::sql-create-table
-			   (symbol-name 
-			    (slot-value table 'clsql-base-sys::name)))))))
+           (sql-escape (string-downcase table)))
    database :auto))
 
 (when (clsql-base-sys:database-type-library-loaded :postgresql-socket)

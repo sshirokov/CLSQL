@@ -1,4 +1,13 @@
 10 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.6.4
+	* test/test-init.lisp: Properly handle object
+	creation. Close database after use.
+	* sql/sql.lisp: Make DESCRIBE-TABLE a generic
+	function so can have methods specialized on
+	table being a string or an sql-table object.
+	* base/pool.lisp: Really CMUCL locking
+	
+10 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.6.3
 	* test/test-init.lisp: Signal correctly
 	if any errors occurred in any test suite
