@@ -1,18 +1,19 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
-;;;; ======================================================================
-;;;; File:    table.lisp
-;;;; Updated: <04/04/2004 12:05:03 marcusp>
-;;;; ======================================================================
+;;;; *************************************************************************
 ;;;;
-;;;; Description ==========================================================
-;;;; ======================================================================
+;;;; $Id$
 ;;;;
 ;;;; The CLSQL Functional Data Definition Language (FDDL)
 ;;;; including functions for schema manipulation. Currently supported
 ;;;; SQL objects include tables, views, indexes, attributes and
 ;;;; sequences.
 ;;;;
-;;;; ======================================================================
+;;;; This file is part of CLSQL.
+;;;;
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
 
 (in-package #:clsql-sys)
 

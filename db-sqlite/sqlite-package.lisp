@@ -7,7 +7,7 @@
 ;;;; Programmer:    Aurelio Bignoli
 ;;;; Date Started:  Aug 2003
 ;;;;
-;;;; $Id: sqlite-package.lisp,v 1.2 2003/11/27 20:23:26 aurelio Exp $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2003 by Aurelio Bignoli
 ;;;;

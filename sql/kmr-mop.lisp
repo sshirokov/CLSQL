@@ -7,14 +7,14 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Apr 2003
 ;;;;
-;;;; $Id: mop.lisp 8573 2004-01-29 23:30:50Z kevin $
+;;;; $Id$
+;;;;
+;;;; This file imports MOP symbols into the CLSQL-MOP package and then
+;;;; re-exports into CLSQL-SYS them to hide differences in
+;;;; MOP implementations.
 ;;;;
 ;;;; This file was extracted from the KMRCL utilities
 ;;;; *************************************************************************
-
-;;; This file imports MOP symbols into the CLSQL-MOP package and then
-;;; re-exports into CLSQL-SYS them to hide differences in
-;;; MOP implementations.
 
 (in-package #:clsql-sys)
 

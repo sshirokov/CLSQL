@@ -7,7 +7,7 @@
 ;;;; Authors:  Aurelio Bignoli and Marcus Pearce
 ;;;; Created:  Aug 2003
 ;;;;
-;;;; $Id: sqlite-sql.lisp,v 1.5 2004/03/09 20:57:44 aurelio Exp $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2003 by Aurelio Bignoli and
 ;;;; Marcus Pearce

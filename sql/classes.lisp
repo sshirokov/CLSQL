@@ -1,18 +1,19 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
-;;;; ======================================================================
-;;;; $Id: $
-;;;; ======================================================================
+;;;; *************************************************************************
 ;;;;
-;;;; Description ==========================================================
-;;;; ======================================================================
+;;;; $Id$
 ;;;;
 ;;;; Classes defining SQL expressions and methods for formatting the
 ;;;; appropriate SQL commands.
 ;;;;
-;;;; ======================================================================
+;;;; This file is part of CLSQL.
+;;;;
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
 
 (in-package #:clsql-sys)
-
 
 (defvar +empty-string+ "''")
 

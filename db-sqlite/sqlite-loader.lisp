@@ -7,7 +7,7 @@
 ;;;; Programmer:    Aurelio Bignoli
 ;;;; Date Started:  Nov 2003
 ;;;;
-;;;; $Id: sqlite-loader.lisp,v 1.2 2003/12/03 14:07:31 aurelio Exp $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2003 by Aurelio Bignoli
 ;;;;

@@ -1,17 +1,16 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
-;;;; ======================================================================
-;;;; File:    package.lisp
-;;;; Authors: Marcus Pearce <m.t.pearce@city.ac.uk> and Kevin Rosenberg
-;;;; Created: 30/03/2004
-;;;; Updated: $Id: $
-;;;; ======================================================================
+;;;; *************************************************************************
 ;;;;
-;;;; Description ==========================================================
-;;;; ======================================================================
+;;;; $Id$
 ;;;;
 ;;;; Package definitions for CLSQL. 
 ;;;;
-;;;; ======================================================================
+;;;; This file is part of CLSQL.
+;;;;
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
 
 (in-package #:cl-user)
 

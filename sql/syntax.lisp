@@ -1,17 +1,19 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
-;;;; ======================================================================
-;;;; File:    package.lisp
-;;;; Updated: <04/04/2004 12:05:16 marcusp>
-;;;; ======================================================================
+;;;; *************************************************************************
 ;;;;
-;;;; Description ==========================================================
-;;;; ======================================================================
+;;;; $Id$
 ;;;;
 ;;;; CLSQL square bracket symbolic query syntax. Functions for
 ;;;; enabling and disabling the syntax and for building SQL
 ;;;; expressions using the syntax.
 ;;;;
-;;;; ======================================================================
+;;;; This file is part of CLSQL.
+;;;;
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
+
 
 (in-package #:clsql-sys)
 

@@ -7,7 +7,7 @@
 ;;;; Created: 30/03/2004
 ;;;; Updated: <04/04/2004 12:34:41 marcusp>
 ;;;;
-;;;; $Id: clsql-classic.asd 8847 2004-04-07 14:38:14Z kevin $
+;;;; $Id$
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License

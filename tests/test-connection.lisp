@@ -3,7 +3,7 @@
 ;;;; File:    test-connection.lisp
 ;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>
 ;;;; Created: 30/03/2004
-;;;; Updated: $Id: $
+;;;; Updated: $Id$
 ;;;; ======================================================================
 ;;;;
 ;;;; Description ==========================================================

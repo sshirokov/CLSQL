@@ -7,7 +7,7 @@
 ;;;; Programmers:   Aurelio Bignoli and Kevin Rosenberg
 ;;;; Date Started:  Nov 2003
 ;;;;
-;;;; $Id: sqlite-api-uffi.lisp,v 1.5 2004/03/09 20:57:19 aurelio Exp $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2003 by Aurelio Bignoli
 ;;;;

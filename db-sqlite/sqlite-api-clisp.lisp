@@ -17,7 +17,7 @@
 ;; Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 ;; MA 02111-1307 USA
 
-;; $Id: sqlite.lisp,v 1.4 2003/11/28 21:02:43 aurelio Exp $
+;; $Id$
 
 (in-package :cl-user)
 

@@ -7,7 +7,7 @@
 ;;;; Programmer:    Aurelio Bignoli
 ;;;; Date Started:  Aug 2003
 ;;;;
-;;;; $Id: clsql-sqlite.asd,v 1.5 2004/03/09 20:55:11 aurelio Exp $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2003 by Aurelio Bignoli
 ;;;;

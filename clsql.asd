@@ -7,7 +7,7 @@
 ;;;; Authors:  Marcus Pearce and Kevin M. Rosenberg
 ;;;; Created:  March 2004
 ;;;;
-;;;; $Id: clsql-classic.asd 8847 2004-04-07 14:38:14Z kevin $
+;;;; $Id$
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
