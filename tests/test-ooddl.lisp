@@ -89,6 +89,18 @@
       fail-index)
   -1)
 
+(deftest :ooddl/time/3
+    (progn
+      (when (member *test-database-underlying-type* '(:postgresql :postgresql-socket))
+	(clsql:execute-command "set datestyle to 'iso'"))
+      (let ((dbobj (car (clsql:select 'employee :where [= [emplid] 10]
+				      :flatp t))))
+	(list
+	 (eql *test-start-utime* (slot-value dbobj 'bd-utime))
+	 (clsql:time= (slot-value dbobj 'birthday)
+		      (clsql:utime->time (slot-value dbobj 'bd-utime))))))
+  (t t))
+
 ))
 
 #.(clsql:restore-sql-reader-syntax-state)

@@ -6,7 +6,6 @@ TESTS TO ADD
 * :db-constraint tests
 * test *db-auto-sync* 
 * for-each-row macro
-* universal-time 
 * owner phrases for postgresql and oracle backends
 * Number and Char field types
 

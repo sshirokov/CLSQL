@@ -524,7 +524,7 @@
        (read-from-string val)))
     (number val)))
 
-(defmethod read-sql-value (val (type (eql 'univeral-time)) database db-type)
+(defmethod read-sql-value (val (type (eql 'universal-time)) database db-type)
   (declare (ignore database db-type))
   (unless (eq 'NULL val)
     (etypecase val

@@ -86,7 +86,7 @@
                     (clsql:list-attributes [employee]
 					   :owner *test-database-user*))
             #'string<))
-  "birthday" "ecompanyid" "email" "emplid" "first_name" "groupid" "height"
+  "bd_utime" "birthday" "ecompanyid" "email" "emplid" "first_name" "groupid" "height"
   "last_name" "managerid" "married")
 
 (deftest :fddl/attributes/2
@@ -96,7 +96,7 @@
                     (clsql:list-attribute-types [employee]
                                                :owner *test-database-user*))
             #'string<))
-  "birthday" "ecompanyid" "email" "emplid" "first_name" "groupid" "height"
+  "bd_utime" "birthday" "ecompanyid" "email" "emplid" "first_name" "groupid" "height"
   "last_name" "managerid" "married")
 
 ;; Attribute types are vendor specific so need to test a range
@@ -118,6 +118,9 @@
     (and (member (clsql:attribute-type [height] [employee]) '(:float :float8 :number)) t)
   t)
 
+(deftest :fddl/attributes/7
+    (and (member (clsql:attribute-type [bd_utime] [employee]) '(:bigint :int8 :number)) t)
+  t)
 
 
 ;; create a view, test for existence, drop it and test again

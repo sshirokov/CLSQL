@@ -24,10 +24,10 @@
 	
 ;; inserts a record using all values only and then deletes it 
 (deftest :fdml/insert/1
-    (progn
+    (let ((now (get-universal-time)))
       (clsql:insert-records :into [employee] 
-                           :values `(11 1 "Yuri" "Gagarin" "gagarin@soviet.org"
-                                     1 1 1.85 t ,(clsql:get-time)))
+       :values `(11 1 "Yuri" "Gagarin" "gagarin@soviet.org"
+		    1 1 1.85 t ,(clsql:utime->time now) ,now))
       (values 
        (clsql:select [first-name] [last-name] [email]
                     :from [employee] :where [= [emplid] 11])

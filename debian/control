@@ -86,8 +86,7 @@ Depends: cl-sql (>= ${Source-Version}), cl-sql-uffi (>= ${Source-Version})
 Provides: cl-sql-backend
 Description: CLSQL database backend, Oracle
  This package enables you to use the CLSQL data access package
- with Oracle databases.  This package requires the Oracle Instant
- Client libraries to operate.
+ with Oracle databases.
  CLSQL is a Common Lisp interface to SQL databases.
 
 Package: cl-sql-tests

@@ -3,7 +3,7 @@ cl-sql (2.11.2-1) unstable; urgency=low
   * New upstream
   * Add cl-sql-oracle binary package	
 
- -- Kevin M. Rosenberg <kmr@debian.org>  Wed, 26 May 2004 09:10:12 -0600
+ -- Kevin M. Rosenberg <kmr@debian.org>  Thu, 27 May 2004 04:47:27 -0600
 
 cl-sql (2.11.1-1) unstable; urgency=low
 
