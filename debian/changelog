@@ -1,3 +1,9 @@
+cl-sql (1.4.5-1) unstable; urgency=low
+
+  * Documentation updates for cl-md5 module from Gisle Slensminde
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Tue, 29 Apr 2003 04:03:16 -0600
+
 cl-sql (1.4.4-1) unstable; urgency=low
 
   * Move unwind-protect mysql backend
