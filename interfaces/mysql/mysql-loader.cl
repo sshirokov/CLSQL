@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-loader.cl,v 1.10 2002/05/14 16:15:24 kevin Exp $
+;;;; $Id: mysql-loader.cl,v 1.11 2002/05/14 16:16:54 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -87,7 +87,7 @@ set to the right path before compiling or loading the system.")
 				    (append *mysql-supporting-libraries*)))
 	(setq *mysql-library-loaded* t)
       (warn "Unable to load MySQL client library ~A or CLSQL-MySQL library ~A"
-	    mysql-path clsql-mysql-library-filename))))
+	    mysql-path *clsql-mysql-library-filename*))))
 
 
 (clsql-sys:database-type-load-foreign :mysql)
