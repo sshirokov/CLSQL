@@ -1,3 +1,8 @@
-Added :types specifier to optimize querys with
-integer (32 and 64 bit) and double field types.
+- Added optional field types specifier for queries
+to optimize query times, reduce garbage, reduce
+programmer effort to convert strings to numbers.
+
+- New test suite using XPTest
+
+- Documentation improvements
 

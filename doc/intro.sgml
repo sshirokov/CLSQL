@@ -152,7 +152,7 @@ in the root directory of &clsql; to build the libraries
     <sect2>
       <title>Load &uffi;</title>
       <para>
-	Unpack the appropriate &uffi; version for your system which creates a directory
+	Unzip or untar the &uffi; distribution which creates a directory
 for the &uffi; files. Add that directory to Defsystem's <varname>mk:*central-registry*</varname>.
 You can do that by either pushing the pathname of the directory onto this variable, or
 use the new <function>add-registry-location</function> present in the newest versions of
@@ -161,6 +161,27 @@ use the new <function>add-registry-location</function> present in the newest ver
 	<programlisting>
 (mk:add-registry-location #P"/usr/local/src/lisp/uffi")
 (mk:load-system :uffi)
+        </programlisting>
+      </para>
+    </sect2>
+
+    <sect2>
+      <title>Load &clsql; modules</title>
+      <para>
+	Unzip or untar the &clsql; distribution which creates a directory
+for the &clsql; files. Add that directory to Defsystem's <varname>mk:*central-registry*</varname>.
+You can do that by either pushing the pathname of the directory onto this variable, or
+use the new <function>add-registry-location</function> present in the newest versions of
+&defsystem;. The following example code assumes the &clsql; files reside in the
+<filename>/usr/local/src/lisp/clsql</filename> directory. You need to load, at a minimum,
+the main <symbol>:clsql</symbol> system and at least one interface system.
+	<programlisting>
+(mk:add-registry-location #P"/usr/local/src/lisp/clsql")
+(mk:load-system :clsql)              ; main clsql package
+(mk:load-system :clsql-mysql)       ; MySQL interface
+(mk:load-system :clsql-postgresql)  ; PostgreSQL interface
+(mk:load-system :clsql-postgresql-socket) ; Socket PGSQL interface
+(mk:load-system :clsql-aodbc)       ; Allegro ODBC interface
         </programlisting>
       </para>
     </sect2>

@@ -4,6 +4,8 @@
 
 	* test-suite/xptest-clsql.cl
 	Added testint for 64-bit integers
+
+	* Additons to installation docs
 	
 26 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* interfaces/postgresql-socket/postgresql-socket-api.cl:
