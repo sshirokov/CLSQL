@@ -8,6 +8,7 @@ usr/share/common-lisp/repositories/clsql
 usr/share/doc
 usr/share/doc/cl-sql
 usr/share/doc/cl-sql/html
+usr/share/doc/cl-sql/test-suite
 
 
 

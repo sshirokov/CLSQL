@@ -83,6 +83,9 @@ install: build
 	$(INSTALL) $(INSTALLFLAGS) clsql-postgresql.system $(prefix-pg)/$(clc-systems)/
 	$(INSTALL) $(INSTALLFLAGS) clsql-postgresql-socket.system $(prefix-pg-socket)/$(clc-systems)/
 
+	# Test suite
+	$(INSTALL) $(INSTALLFLAGS) test-suite/tester-clsql.cl test-suite/acl-compat-tester.cl $(prefix)/$(doc-dir)/test-suite
+
 	# Documentation
 	$(INSTALL) $(INSTALLFLAGS) doc/html/* $(doc-dir)/html
 	cp doc/clsql.pdf doc/cl-sql.pdf
