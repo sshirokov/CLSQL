@@ -41,16 +41,25 @@
     (dotimes (i num-fields)
       (declare (fixnum i))
       (let* ((field (uffi:deref-array field-vec '(:array mysql-field) i))
-	     (type (uffi:get-slot-value field 'mysql-field 'type)))
+	     (flags (uffi:get-slot-value field 'mysql-field 'flags))
+	     (unsigned (plusp (logand flags 32)))
+ 	     (type (uffi:get-slot-value field 'mysql-field 'type)))
 	(push
 	 (case type
 	   ((#.mysql-field-types#tiny 
 	     #.mysql-field-types#short
-	     #.mysql-field-types#int24
-	     #.mysql-field-types#long)
-	    :int32)
-	   (#.mysql-field-types#longlong
-	    :int64)
+	     #.mysql-field-types#int24)
+	    (if unsigned
+		:uint32
+	      :int32))
+	   (#.mysql-field-types#long
+	    (if unsigned
+		:uint
+	      :int))
+	    (#.mysql-field-types#longlong
+	     (if unsigned
+		 :uint64
+	       :int64))
 	   ((#.mysql-field-types#double
 	     #.mysql-field-types#float
 	     #.mysql-field-types#decimal)
@@ -523,7 +532,7 @@
 	  (dotimes (i num-fields)
 	    (declare (fixnum i))
 	    (let* ((field (uffi:deref-array field-vec '(:array mysql-field) i))
-		   (type (uffi:get-slot-value field mysql-field 'type))
+		   (type (uffi:get-slot-value field 'mysql-field 'type))
 		   (binding (uffi:deref-array output-bind '(:array mysql-bind) i)))
 	      (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer-type) type)
 	      

@@ -57,6 +57,8 @@
 	      t))
 	   (:blob
 	    :blob)
+	   (:uint
+	    :uint)
 	   (t
 	    t))
 	 new-types))))
@@ -64,6 +66,12 @@
 (uffi:def-function "atoi"
     ((str (* :unsigned-char)))
   :returning :int)
+
+(uffi:def-function ("strtoul" c-strtoul)
+    ((str (* :unsigned-char))
+     (endptr (* :unsigned-char))
+     (radix :int))
+  :returning :unsigned-long)
 
 (uffi:def-function "atol"
     ((str (* :unsigned-char)))
@@ -97,6 +105,11 @@
 
 (uffi:def-type char-ptr-def (* :unsigned-char))
 
+(defun strtoul (char-ptr)
+  (declare (optimize (speed 3) (safety 0) (space 0))
+ 	   (type char-ptr-def char-ptr))
+  (c-strtoul char-ptr uffi:+null-cstring-pointer+ 10))
+
 (defun convert-raw-field (char-ptr types index &optional length)
   (declare (optimize (speed 3) (safety 0) (space 0))
  	   (type char-ptr-def char-ptr))
@@ -110,9 +123,15 @@
        (case type
 	 (:double
 	  (atof char-ptr))
-	 ((:int32 :int)
+	 (:int
+	  (atol char-ptr))
+	 (:int32
 	  (atoi char-ptr))
-	 (:int64
+	 (:uint32
+	  (strtoul char-ptr))
+	 (:uint
+	  (strtoul char-ptr))
+	 ((:int64 :uint64)
 	  (uffi:with-foreign-object (high32-ptr :unsigned-int)
 	    (let ((low32 (atol64 char-ptr high32-ptr))
 		  (high32 (uffi:deref-pointer high32-ptr :unsigned-int)))
