@@ -35,7 +35,7 @@
 	    ((:file "odbc-package")
 	     (:file "odbc-loader" :depends-on ("odbc-package"))
 	     (:file "odbc-constants" :depends-on ("odbc-loader"))
-	     (:file "odbc-ff-interface" :depends-on ("odbc-loader"))
+	     (:file "odbc-ff-interface" :depends-on ("odbc-constants"))
 	     (:file "odbc-api" :depends-on ("odbc-ff-interface" "odbc-constants"))
 	     (:file "odbc-dbi" :depends-on ("odbc-api"))
 	     (:file "odbc-sql" :depends-on ("odbc-dbi"))))))

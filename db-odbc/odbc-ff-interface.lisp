@@ -21,7 +21,7 @@
 (def-foreign-type sql-handle :pointer-void)
 (def-foreign-type sql-handle-ptr '(* sql-handle))
 (def-foreign-type string-ptr '(* :unsigned-char))
-(def-type long-ptr-type '(* :int))
+(def-type long-ptr-type '(* #.$ODBC-LONG-TYPE))
 
 
 (def-function "SQLAllocEnv"

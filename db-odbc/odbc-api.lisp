@@ -63,7 +63,7 @@ as possible second argument) to the desired representation of date/time/timestam
 (defun handle-error (henv hdbc hstmt)
   (let ((sql-state (allocate-foreign-string 256))
 	(error-message (allocate-foreign-string #.$SQL_MAX_MESSAGE_LENGTH)))
-    (with-foreign-objects ((error-code :long)
+    (with-foreign-objects ((error-code #.$ODBC-LONG-TYPE)
 			   (msg-length :short))
       (SQLError henv hdbc hstmt sql-state
 		error-code error-message
@@ -76,12 +76,12 @@ as possible second argument) to the desired representation of date/time/timestam
 	 err
 	 state
 	 (deref-pointer msg-length :short) 
-	 (deref-pointer error-code :long))))))
+	 (deref-pointer error-code #.$ODBC-LONG-TYPE))))))
 
 (defun sql-state (henv hdbc hstmt)
   (let ((sql-state (allocate-foreign-string 256))
 	(error-message (allocate-foreign-string #.$SQL_MAX_MESSAGE_LENGTH)))
-    (with-foreign-objects ((error-code :long)
+    (with-foreign-objects ((error-code #.$ODBC-LONG-TYPE)
 			   (msg-length :short))
       (SQLError henv hdbc hstmt sql-state error-code
 		error-message #.$SQL_MAX_MESSAGE_LENGTH msg-length)
@@ -232,12 +232,16 @@ as possible second argument) to the desired representation of date/time/timestam
       (SQLFetch hstmt)))
 
 (defun %new-statement-handle (hdbc)
-  (with-foreign-object (hstmt-ptr 'sql-handle)
-    (with-error-handling 
-      (:hdbc hdbc)
-      (SQLAllocStmt hdbc hstmt-ptr) 
-      (deref-pointer hstmt-ptr 'sql-handle))))
-
+  (let ((statement-handle
+	 (with-foreign-object (hstmt-ptr 'sql-handle)
+	   (with-error-handling 
+	       (:hdbc hdbc)
+	     (SQLAllocStmt hdbc hstmt-ptr) 
+	     (deref-pointer hstmt-ptr 'sql-handle)))))
+    (if (uffi:null-pointer-p statement-handle)
+	(error "Received null statement handle.")
+	statement-handle)))
+	
 (defun %sql-get-info (hdbc info-type)
   (ecase info-type
     ;; those return string
@@ -367,7 +371,7 @@ as possible second argument) to the desired representation of date/time/timestam
       #.$SQL_TIMEDATE_FUNCTIONS
       #.$SQL_TXN_ISOLATION_OPTION
       #.$SQL_UNION)
-     (with-foreign-objects ((info-ptr :long)
+     (with-foreign-objects ((info-ptr #.$ODBC-LONG-TYPE)
 			    (info-length-ptr :short))
        (with-error-handling 
          (:hdbc hdbc)
@@ -376,7 +380,7 @@ as possible second argument) to the desired representation of date/time/timestam
 		     info-ptr
 		     255
 		     info-length-ptr)
-         (deref-pointer info-ptr :long)))
+         (deref-pointer info-ptr #.$ODBC-LONG-TYPE)))
      )
     ;; those returning a long integer
     ((#.$SQL_DEFAULT_TXN_ISOLATION
@@ -390,12 +394,12 @@ as possible second argument) to the desired representation of date/time/timestam
       #.$SQL_MAX_CHAR_LITERAL_LEN
       #.$SQL_ACTIVE_ENVIRONMENTS
       )
-     (with-foreign-objects ((info-ptr :long)
+     (with-foreign-objects ((info-ptr #.$ODBC-LONG-TYPE)
 			    (info-length-ptr :short))
        (with-error-handling 
          (:hdbc hdbc)
          (SQLGetInfo hdbc info-type info-ptr 255 info-length-ptr)
-         (deref-pointer info-ptr :long))))))
+         (deref-pointer info-ptr #.$ODBC-LONG-TYPE))))))
      
 (defun %sql-exec-direct (sql hstmt henv hdbc)
   (with-cstring (sql-ptr sql)
@@ -420,17 +424,17 @@ as possible second argument) to the desired representation of date/time/timestam
       (deref-pointer columns-nr-ptr :short))))
 
 (defun result-rows-count (hstmt)
-  (with-foreign-objects ((row-count-ptr :long))
+  (with-foreign-objects ((row-count-ptr #.$ODBC-LONG-TYPE))
     (with-error-handling (:hstmt hstmt)
                          (SQLRowCount hstmt row-count-ptr)
-      (deref-pointer row-count-ptr :long))))
+      (deref-pointer row-count-ptr #.$ODBC-LONG-TYPE))))
 
 ;; column counting is 1-based
 (defun %describe-column (hstmt column-nr)
   (let ((column-name-ptr (allocate-foreign-string 256)))
     (with-foreign-objects ((column-name-length-ptr :short)
 			   (column-sql-type-ptr :short)
-			   (column-precision-ptr :unsigned-long)
+			   (column-precision-ptr #.$ODBC-ULONG-TYPE)
 			   (column-scale-ptr :short)
 			   (column-nullable-p-ptr :short))
       (with-error-handling (:hstmt hstmt)
@@ -445,14 +449,14 @@ as possible second argument) to the desired representation of date/time/timestam
 	  (values
 	   column-name
 	   (deref-pointer column-sql-type-ptr :short)
-	   (deref-pointer column-precision-ptr :unsigned-long)
+	   (deref-pointer column-precision-ptr #.$ODBC-ULONG-TYPE)
 	   (deref-pointer column-scale-ptr :short)
 	   (deref-pointer column-nullable-p-ptr :short)))))))
     
 ;; parameter counting is 1-based
 (defun %describe-parameter (hstmt parameter-nr)
   (with-foreign-objects ((column-sql-type-ptr :short)
-			 (column-precision-ptr :unsigned-long)
+			 (column-precision-ptr #.$ODBC-ULONG-TYPE)
 			 (column-scale-ptr :short)
 			 (column-nullable-p-ptr :short))
     (with-error-handling 
@@ -464,14 +468,14 @@ as possible second argument) to the desired representation of date/time/timestam
                         column-nullable-p-ptr)
       (values
        (deref-pointer column-sql-type-ptr :short)
-       (deref-pointer column-precision-ptr :unsigned-long)
+       (deref-pointer column-precision-ptr #.$ODBC-ULONG-TYPE)
        (deref-pointer column-scale-ptr :short)
        (deref-pointer column-nullable-p-ptr :short)))))
 
 (defun %column-attributes (hstmt column-nr descriptor-type)
   (let ((descriptor-info-ptr (allocate-foreign-string 256)))
     (with-foreign-objects ((descriptor-length-ptr :short)
-			   (numeric-descriptor-ptr :long))
+			   (numeric-descriptor-ptr #.$ODBC-LONG-TYPE))
       (with-error-handling
 	  (:hstmt hstmt) 
 	  (SQLColAttributes hstmt column-nr descriptor-type descriptor-info-ptr
@@ -481,7 +485,7 @@ as possible second argument) to the desired representation of date/time/timestam
 	  (free-foreign-object descriptor-info-ptr)
 	  (values
 	   desc
-	   (deref-pointer numeric-descriptor-ptr :long)))))))
+	   (deref-pointer numeric-descriptor-ptr #.$ODBC-LONG-TYPE)))))))
   
 (defun %prepare-describe-columns (hstmt table-qualifier table-owner 
                                    table-name column-name)
@@ -556,7 +560,7 @@ as possible second argument) to the desired representation of date/time/timestam
 (def-type byte-pointer-type '(* :byte))
 (def-type short-pointer-type '(* :short))
 (def-type int-pointer-type '(* :int))
-(def-type long-pointer-type '(* :long))
+(def-type long-pointer-type '(* #.$ODBC-LONG-TYPE))
 (def-type float-pointer-type '(* :float))
 (def-type double-pointer-type '(* :double))
 (def-type string-pointer-type '(* :unsigned-char))
@@ -575,7 +579,7 @@ as possible second argument) to the desired representation of date/time/timestam
 
 (defun get-cast-long (ptr)
   (locally (declare (type long-pointer-type ptr))
-    (deref-pointer ptr :long)))
+    (deref-pointer ptr #.$ODBC-LONG-TYPE)))
 
 (defun get-cast-single-float (ptr)
   (locally (declare (type float-pointer-type ptr))
@@ -611,7 +615,7 @@ as possible second argument) to the desired representation of date/time/timestam
 
 (defun read-data (data-ptr c-type sql-type out-len-ptr result-type)
   (declare (type long-ptr-type out-len-ptr))
-  (let* ((out-len (deref-pointer out-len-ptr :long))
+  (let* ((out-len (deref-pointer out-len-ptr #.$ODBC-LONG-TYPE))
 	 (value
 	  (cond ((= out-len $SQL_NULL_DATA)
 		 *null*)
@@ -685,7 +689,7 @@ as possible second argument) to the desired representation of date/time/timestam
          (long-p (= size +max-precision+))
          (data-ptr
           (case c-type ;; add more?
-            (#.$SQL_C_SLONG (uffi:allocate-foreign-object :long))
+            (#.$SQL_C_SLONG (uffi:allocate-foreign-object #.$ODBC-LONG-TYPE))
             (#.$SQL_C_DATE (allocate-foreign-object 'sql-c-date))
             (#.$SQL_C_TIME (allocate-foreign-object 'sql-c-time))
             (#.$SQL_C_TIMESTAMP (allocate-foreign-object 'sql-c-timestamp))
@@ -702,7 +706,7 @@ as possible second argument) to the desired representation of date/time/timestam
                   (break "SQL type is ~A, precision ~D, size ~D, C type is ~A" 
                          sql-type precision size c-type))
                 (uffi:allocate-foreign-object :byte (1+ size)))))
-         (out-len-ptr (uffi:allocate-foreign-object :long)))
+         (out-len-ptr (uffi:allocate-foreign-object #.$ODBC-LONG-TYPE)))
     (values c-type data-ptr out-len-ptr size long-p)))
 
 (defun fetch-all-rows (hstmt &key free-option flatp)
@@ -776,10 +780,10 @@ as possible second argument) to the desired representation of date/time/timestam
 
 ;; depending on option, we return a long int or a string; string not implemented
 (defun get-connection-option (hdbc option)
-  (with-foreign-object (param-ptr :long)
+  (with-foreign-object (param-ptr #.$ODBC-LONG-TYPE)
     (with-error-handling (:hdbc hdbc)
                          (SQLGetConnectOption hdbc option param-ptr)
-      (deref-pointer param-ptr :long))))
+      (deref-pointer param-ptr #.$ODBC-LONG-TYPE))))
 
 (defun set-connection-option (hdbc option param)
   (with-error-handling (:hdbc hdbc)
@@ -797,12 +801,12 @@ as possible second argument) to the desired representation of date/time/timestam
     (SQLSetPos hstmt row option lock)))
 
 (defun %sql-extended-fetch (hstmt fetch-type row)
-  (with-foreign-objects ((row-count-ptr :unsigned-long)
+  (with-foreign-objects ((row-count-ptr #.$ODBC-ULONG-TYPE)
 			 (row-status-ptr :short))
     (with-error-handling (:hstmt hstmt)
       (SQLExtendedFetch hstmt fetch-type row row-count-ptr
 			row-status-ptr)
-      (values (deref-pointer row-count-ptr :unsigned-long)
+      (values (deref-pointer row-count-ptr #.$ODBC-ULONG-TYPE)
               (deref-pointer row-status-ptr :short)))))
 
 ; column-nr is zero-based
@@ -828,7 +832,7 @@ as possible second argument) to the desired representation of date/time/timestam
   (declare (type long-ptr-type out-len-ptr))
   (let* ((res (%sql-get-data hstmt column-nr c-type data-ptr 
                              +max-precision+ out-len-ptr))
-         (out-len (deref-pointer out-len-ptr :long))
+         (out-len (deref-pointer out-len-ptr #.$ODBC-LONG-TYPE))
          (offset 0))
     (case out-len
       (#.$SQL_NULL_DATA
@@ -870,7 +874,7 @@ as possible second argument) to the desired representation of date/time/timestam
                            "01004"))
                do (setf res (%sql-get-data hstmt column-nr c-type data-ptr 
                                            +max-precision+ out-len-ptr)
-                        out-len (deref-pointer out-len-ptr :long)))
+                        out-len (deref-pointer out-len-ptr #.$ODBC-LONG-TYPE)))
          (if (= sql-type $SQL_DECIMAL)
              (let ((*read-base* 10))
                (read-from-string str))

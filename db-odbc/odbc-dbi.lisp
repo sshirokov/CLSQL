@@ -554,10 +554,10 @@ This makes the functions db-execute-command and db-query thread safe."
   (ecase sql-type
     ((#.odbc::$SQL_CHAR #.odbc::$SQL_VARCHAR #.odbc::$SQL_LONGVARCHAR) :string)
     ((#.odbc::$SQL_NUMERIC #.odbc::$SQL_DECIMAL #.odbc::$SQL_BIGINT) :string) ; ??
-    (#.odbc::$SQL_INTEGER :long)
+    (#.odbc::$SQL_INTEGER #.odbc::$ODBC-LONG-TYPE)
     (#.odbc::$SQL_SMALLINT :short)
-    ((#.odbc::$SQL_FLOAT #.odbc::$SQL_DOUBLE) :long)
-    (#.odbc::$SQL_REAL :long)
+    ((#.odbc::$SQL_FLOAT #.odbc::$SQL_DOUBLE) #.odbc::$ODBC-LONG-TYPE)
+    (#.odbc::$SQL_REAL #.odbc::$ODBC-LONG-TYPE)
     (#.odbc::$SQL_DATE 'sql-c-date)
     (#.odbc::$SQL_TIME 'sql-c-time)
     (#.odbc::$SQL_TIMESTAMP 'sql-c-timestamp)

@@ -551,16 +551,18 @@
       (values (nreverse test-forms) (nreverse skip-tests))))
 
 
-(defun rl ()
+(defun rapid-load (type)
   "Rapid load for interactive testing."
   (when *default-database*
       (disconnect :database *default-database*))
-  (test-connect-to-database :postgresql (car (postgresql-spec (read-specs))))
+  (test-connect-to-database type (car (db-type-spec type (read-specs))))
   (test-initialise-database))
 
+(defun rl ()
+  (rapid-load :postgresql))
+
 (defun rlm ()
-  "Rapid load for interactive testing."
-  (when *default-database*
-      (disconnect :database *default-database*))
-  (test-connect-to-database :mysql (car (mysql-spec (read-specs))))
-  (test-initialise-database))
+  (rapid-load :mysql))
+
+(defun rlo ()
+  (rapid-load :odbc))

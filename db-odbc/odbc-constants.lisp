@@ -18,6 +18,10 @@
 
 (in-package #:odbc)
 
+;; on SuSE AMD64 9.0, unixODBC is compiled with with SQLLEN being 4 bytes long
+(defconstant $ODBC-LONG-TYPE :int)
+(defconstant $ODBC-ULONG-TYPE :unsigned-int)
+
 (defconstant $ODBCVER	#x0210)
 
 ;; generally useful constants
