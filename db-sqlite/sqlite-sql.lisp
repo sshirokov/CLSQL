@@ -282,3 +282,21 @@
 
 (defmethod database-sequence-last (sequence-name (database sqlite-database))
   (declare (ignore sequence-name)))
+
+(defmethod database-create (connection-spec (type (eql :sqlite)))
+  (declare (ignore connection-spec))
+  ;; databases are created automatically by SQLite
+  t)
+
+(defmethod database-destroy (connection-spec (type (eql :sqlite)))
+  (destructuring-bind (name) connection-spec
+    (if (probe-file name)
+	(delete-file name)
+	nil)))
+
+(defmethod database-probe (connection-spec (type (eql :sqlite)))
+  (destructuring-bind (name) connection-spec
+    ;; TODO: Add a test that this file is a real sqlite database 
+    (and (probe-file name) t)))
+
+

@@ -81,6 +81,8 @@
 	(warn "CLSQL test config file ~S not found" path)
 	nil)))
 
+(defgeneric test-table (spec type))
+
 (defmethod test-table (spec type)
   (when spec
     (let ((db (clsql:connect spec :database-type type :if-exists :new)))
@@ -139,9 +141,9 @@
 	     )
 	(disconnect :database db)))))
 
-(defmethod mysql-low-level ((test conn-specs))
+(defun mysql-low-level (specs)
   #-clisp
-  (let ((spec (mysql-spec test)))
+  (let ((spec (mysql-spec specs)))
     (when spec
       (let ((db (clsql-mysql::database-connect spec :mysql)))
 	(clsql-mysql::database-execute-command "DROP TABLE IF EXISTS test_clsql" db)
@@ -281,5 +283,7 @@
 	(let ((spec (db-type-spec db-type specs)))
 	  (when spec
 	    (db-type-ensure-system db-type)
+	    (ignore-errors (destroy-database spec db-type))
+	    (ignore-errors (create-database spec db-type))
 	    (test-table spec db-type))))))
   t)

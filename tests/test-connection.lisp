@@ -1,7 +1,7 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; ======================================================================
 ;;;; File:    test-connection.lisp
-;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>
+;;;; Authors: Marcus Pearce <m.t.pearce@city.ac.uk>, Kevin Rosenberg
 ;;;; Created: 30/03/2004
 ;;;; Updated: $Id$
 ;;;; ======================================================================
@@ -24,5 +24,15 @@
                      :db-type (clsql:database-type clsql:*default-database*))))
       (eql (clsql:database-type database) *test-database-type*))
   t)
+
+(deftest :connection/2
+    (clsql-base-sys::string-to-list-connection-spec 
+     "localhost/dbname/user/passwd")
+  ("localhost" "dbname" "user" "passwd"))
+
+(deftest :connection/3
+    (clsql-base-sys::string-to-list-connection-spec 
+     "dbname/user@hostname")
+  ("hostname" "dbname" "user"))
 
 ))

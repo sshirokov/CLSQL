@@ -206,6 +206,21 @@ of full is NIL."
           (print-separator total-size))))
     (values)))
 
+(defun create-database (connection-spec &key database-type)
+  (when (stringp connection-spec)
+    (setq connection-spec (string-to-list-connection-spec connection-spec)))
+  (database-create connection-spec database-type))
+
+(defun probe-database (connection-spec &key database-type)
+  (when (stringp connection-spec)
+    (setq connection-spec (string-to-list-connection-spec connection-spec)))
+  (database-probe connection-spec database-type))
+
+(defun destroy-database (connection-spec &key database-type)
+  (when (stringp connection-spec)
+    (setq connection-spec (string-to-list-connection-spec connection-spec)))
+  (database-destory connection-spec database-type))
+
 
 (defmacro with-database ((db-var connection-spec &rest connect-args) &body body)
   "Evaluate the body in an environment, where `db-var' is bound to the
@@ -227,3 +242,4 @@ The connection is automatically closed or released to the pool on exit from the 
   `(progv '(*default-database*)
        (list ,database)
      ,@body))
+

@@ -151,6 +151,8 @@ doesn't depend on UFFI."
     (declare (ignore password options tty))
     (concatenate 'string 
       (etypecase host
+	(null
+	 "localhost")
 	(pathname (namestring host))
 	(string host))
       (when port 
@@ -427,27 +429,27 @@ doesn't depend on UFFI."
       database nil)))))
   
 
-;; Functions depending upon high-level CommonSQL classes/functions
-#|
-(defmethod database-output-sql ((expr clsql-sys::sql-typecast-exp) 
-				(database postgresql-socket-database))
-  (with-slots (clsql-sys::modifier clsql-sys::components)
-    expr
-    (if clsql-sys::modifier
-        (progn
-          (clsql-sys::output-sql clsql-sys::components database)
-          (write-char #\: clsql-sys::*sql-stream*)
-          (write-char #\: clsql-sys::*sql-stream*)
-          (write-string (symbol-name clsql-sys::modifier) 
-			clsql-sys::*sql-stream*)))))
+(defmethod database-create (connection-spec (type (eql :postgresql-socket)))
+  (error 'clsql-access-error
+	 :connection-spec connection-spec
+	 :database-type type
+	 :error "Unable to create databases on a socket connection."))
 
-(defmethod database-output-sql-as-type ((type (eql 'integer)) val
-					(database postgresql-socket-database))
-  (when val   ;; typecast it so it uses the indexes
-    (make-instance 'clsql-sys::sql-typecast-exp
-                   :modifier 'int8
-                   :components val)))
-|#
+(defmethod database-destroy (connection-spec (type (eql :postgresql-socket)))
+  (error 'clsql-access-error
+	 :connection-spec connection-spec
+	 :database-type type
+	 :error "Unable to create databases on a socket connection."))
+
+(defmethod database-probe (connection-spec (type (eql :postgresql-socket)))
+  (destructuring-bind (host name user password) connection-spec
+    (let ((database (database-connect (list host "template1" user password)
+				      type)))
+      (unwind-protect
+	   (find name (database-query "select datname from pg_database" 
+				      database :auto)
+		 :key #'car :test #'string-equal)
+	(database-disconnect database)))))
 
 (when (clsql-base-sys:database-type-library-loaded :postgresql-socket)
   (clsql-base-sys:initialize-database-type :database-type :postgresql-socket))

@@ -1,4 +1,17 @@
 10 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+        * Version 2.5.3 released:
+	* base/database.lisp: Added CREATE-DATABASE,
+	 DESTROY-DATABASE, PROBE-DATABASE commands
+	* base/conditions.lisp: Added CLSQL-ACCESS-ERROR
+	* db-*/*-sql.lisp: Added DATABASE-CREATE,
+	DATABASE-DESTORY, PROBE-DATABASE methods
+	* tests/test-init.lisp, clasic-tests/tests.lisp:
+	Use destroy-database and create-database to ensure 
+	testing with empty database
+	* tests/test-connection.lisp: Add tests for
+	parsing of string connection-specs
+	
+10 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.5.1 released:
 	* tests/*.lisp: Rework so tests are run
 	on multiple backends automatically based

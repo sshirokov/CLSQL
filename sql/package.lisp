@@ -109,11 +109,12 @@
        #:clsql-invalid-spec-error-connection-spec
        #:clsql-invalid-spec-error-database-type
        #:clsql-invalid-spec-error-template
+       #:clsql-access-error
+       #:clsql-access-error-database-type
+       #:clsql-access-error-connection-spec
+       #:clsql-access-error-error
        #:clsql-connect-error
-       #:clsql-connect-error-database-type
-       #:clsql-connect-error-connection-spec
        #:clsql-connect-error-errno
-       #:clsql-connect-error-error
        #:clsql-sql-error
        #:clsql-sql-error-database
        #:clsql-sql-error-expression
@@ -186,6 +187,9 @@
        #:status                            ; database   xx
        #:with-database
        #:with-default-database
+       #:create-database
+       #:destroy-database
+       #:probe-database
 
        ;; pool.lisp
        #:disconnect-pooled

@@ -314,12 +314,19 @@
     (dolist (db-type +all-db-types+)
       (let ((spec (db-type-spec db-type specs)))
 	(when spec
+	  (format t 
+"~&
+*******************************************************************
+***     Running CLSQL tests with ~A backend.
+*******************************************************************
+" db-type)
 	  (db-type-ensure-system db-type)
 	  (rt:rem-all-tests)
+	  (ignore-errors (destroy-database spec :database-type db-type))
+	  (ignore-errors (create-database spec :database-type db-type))
 	  (dolist (test (append *rt-connection* *rt-fddl* *rt-fdml*
 				*rt-ooddl* *rt-oodml* *rt-syntax*))
 	    (eval test))
-	  (format t "~&Running CLSQL tests with ~A backend.~%" db-type)
 	  (test-connect-to-database db-type spec)
 	  (test-initialise-database)
 	  (rtest:do-tests))))))

@@ -57,4 +57,4 @@ a functional and an object oriented interface."
 
 (defmethod perform ((o test-op) (c (eql (find-system 'clsql))))
   (operate 'load-op 'clsql-tests)
-  (operate 'test-op 'clsql-tests))
+  (operate 'test-op 'clsql-tests :force t))

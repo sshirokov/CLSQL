@@ -61,21 +61,30 @@ and signal an clsql-invalid-spec-error if they don't match."
 		     :database-type ,database-type
 		     :template (quote ,template)))))
 
-(define-condition clsql-connect-error (clsql-error)
+(define-condition clsql-access-error (clsql-error)
   ((database-type :initarg :database-type
-		  :reader clsql-connect-error-database-type)
+		  :reader clsql-access-error-database-type)
    (connection-spec :initarg :connection-spec
-		    :reader clsql-connect-error-connection-spec)
-   (errno :initarg :errno :reader clsql-connect-error-errno)
-   (error :initarg :error :reader clsql-connect-error-error))
+		    :reader clsql-access-error-connection-spec)
+   (error :initarg :error :reader clsql-access-error-error))
+  (:report (lambda (c stream)
+	     (format stream "While trying to access database ~A~%  using database-type ~A:~%  Error ~A~%  has occurred."
+		     (database-name-from-spec
+		      (clsql-access-error-connection-spec c)
+		      (clsql-access-error-database-type c))
+		     (clsql-access-error-database-type c)
+		     (clsql-access-error-error c)))))
+
+(define-condition clsql-connect-error (clsql-access-error)
+  ((errno :initarg :errno :reader clsql-connect-error-errno))
   (:report (lambda (c stream)
 	     (format stream "While trying to connect to database ~A~%  using database-type ~A:~%  Error ~D / ~A~%  has occurred."
 		     (database-name-from-spec
-		      (clsql-connect-error-connection-spec c)
-		      (clsql-connect-error-database-type c))
-		     (clsql-connect-error-database-type c)
+		      (clsql-access-error-connection-spec c)
+		      (clsql-access-error-database-type c))
+		     (clsql-access-error-database-type c)
 		     (clsql-connect-error-errno c)
-		     (clsql-connect-error-error c)))))
+		     (clsql-access-error-error c)))))
 
 (define-condition clsql-sql-error (clsql-error)
   ((database :initarg :database :reader clsql-sql-error-database)

@@ -78,7 +78,9 @@
   (check-connection-spec connection-spec database-type (host db user password))
   (destructuring-bind (host db user password) connection-spec
     (declare (ignore password))
-    (concatenate 'string host "/" db "/" user)))
+    (concatenate 'string 
+		 (if host host "localhost")
+		 "/" db "/" user)))
 
 (defmethod database-connect (connection-spec (database-type (eql :mysql)))
   (check-connection-spec connection-spec database-type (host db user password))
@@ -391,28 +393,51 @@
 (defmethod database-sequence-last (sequence-name (database mysql-database))
   (declare (ignore sequence-name)))
 
-;; Functions depending upon high-level CommonSQL classes/functions
-#|
-(defmethod database-output-sql ((expr clsql-sys::sql-typecast-exp) 
-				(database mysql-database))
-  (with-slots (clsql-sys::modifier clsql-sys::components)
-    expr
-    (if clsql-sys::modifier
-        (progn
-          (clsql-sys::output-sql clsql-sys::components database)
-          (write-char #\: sql-sys::*sql-stream*)
-          (write-char #\: sql-sys::*sql-stream*)
-          (write-string (symbol-name clsql-sys::modifier) 
-			clsql-sys::*sql-stream*)))))
 
-(defmethod database-output-sql-as-type ((type (eql 'integer)) val
-					(database mysql-database))
-  ;; typecast it so it uses the indexes
-  (when val
-    (make-instance 'clsql-sys::sql-typecast-exp
-                   :modifier 'int8
-                   :components val)))
-|#
+
+(defmethod database-create (connection-spec (type (eql :mysql)))
+  (destructuring-bind (host name user password) connection-spec
+    (let ((asdf::*verbose-out* (make-string-output-stream)))
+      (unwind-protect
+	   (let* ((status (asdf:run-shell-command
+			   "mysqladmin create -u~A -p~A -h~A ~A"
+			   user password 
+			   (if host host "localhost")
+			   name))
+		  (result (get-output-stream-string asdf::*verbose-out*)))
+	     
+	     (if (search "CREATE DATABASE failed;" result)
+		 (error 'clsql-access-error
+			:connection-spec connection-spec
+			:database-type type
+			:error 
+			(format nil "database-create failed: ~s" result))
+		 t))
+	(close asdf::*verbose-out*)))))
+
+(defmethod database-destory (connection-spec (type (eql :mysql)))
+  (destructuring-bind (host name user password) connection-spec
+    (let ((asdf::*verbose-out* (make-string-output-stream)))
+      (unwind-protect
+	   (let* ((status (asdf:run-shell-command
+			   "mysqladmin drop -f -u~A -p~A -h~A ~A"
+			   user password 
+			   (if host host "localhost")
+			   name))
+		  (result (get-output-stream-string asdf::*verbose-out*)))
+	     
+	     (if (search "DROP DATABASE failed;" result)
+		 (error 'clsql-access-error
+			:connection-spec connection-spec
+			:database-type type
+			:error 
+			(format nil "database-destory failed: ~s" result))
+		 t))
+	(close asdf::*verbose-out*)))))
+
+(defmethod database-probe (connection-spec (type (eql :mysql)))
+  (destructuring-bind (name user password) connection-spec
+    (error "not-yet-implemented")))
 
 (when (clsql-base-sys:database-type-library-loaded :mysql)
   (clsql-base-sys:initialize-database-type :database-type :mysql))

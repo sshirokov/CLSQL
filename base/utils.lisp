@@ -117,8 +117,8 @@
     (cond
       ((and at-pos (> (length str) at-pos))
        ;; Connection spec is SQL*NET format
-       (append (delimited-string-to-list (subseq str 0 at-pos) #\/)
-	       (list (subseq str (1+ at-pos)))))
+       (cons (subseq str (1+ at-pos))
+	     (delimited-string-to-list (subseq str 0 at-pos) #\/)))
       (t
        (delimited-string-to-list str #\/)))))
 

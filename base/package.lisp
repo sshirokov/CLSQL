@@ -39,8 +39,10 @@
      #:database-query-result-set
      #:database-dump-result-set
      #:database-store-next-row
-     
-     ;; For UncommonSQL support
+     #:database-create
+     #:database-destroy
+     #:database-probe
+
      #:database-list-tables
      #:database-list-attributes
      #:database-attribute-type
@@ -75,11 +77,12 @@
 	 #:clsql-invalid-spec-error-connection-spec
 	 #:clsql-invalid-spec-error-database-type
 	 #:clsql-invalid-spec-error-template
+	 #:clsql-access-error
+	 #:clsql-access-error-database-type
+	 #:clsql-access-error-connection-spec
+	 #:clsql-access-error-error
 	 #:clsql-connect-error
-	 #:clsql-connect-error-database-type
-	 #:clsql-connect-error-connection-spec
 	 #:clsql-connect-error-errno
-	 #:clsql-connect-error-error
 	 #:clsql-sql-error
 	 #:clsql-sql-error-database
 	 #:clsql-sql-error-expression
@@ -227,6 +230,9 @@
 	 #:with-database
 	 #:with-default-database
 	 #:disconnect-pooled
+	 #:create-database
+	 #:destroy-database
+	 #:probe-database
 
 	 ;; basic-sql.lisp
 	 #:query

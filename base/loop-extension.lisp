@@ -34,21 +34,14 @@
 		  #:*epilogue*)))
 
 #+allegro
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package '#:ansi-loop)
-    (let ((excl::*enable-package-locked-errors* nil))
-      (rename-package '#:excl '#:excl
-		      (cons '#:ansi-loop
-			    (package-nicknames (find-package '#:excl)))))))
+(defpackage #:ansi-loop 
+  (:import-from #:excl 
+		#:loop-error
+		#:*loop-epilogue*
+		#:*loop-ansi-universe* 
+		#:add-loop-path))
 
-#+lispworks
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (unless (find-package '#:ansi-loop)
-    (rename-package '#:loop '#:loop
-		    (cons '#:ansi-loop
-			  (package-nicknames (find-package '#:loop))))))
-
-#+(or sbcl lispworks)
+#+sbcl
 (defun ansi-loop::loop-gentemp (&optional (pref 'loopva-))
   (gensym (string pref)))
 
@@ -134,6 +127,10 @@
 			  :inclusive-permitted nil)
 
 #+lispworks (in-package loop)
+
+#+lispworks
+(defun loop::loop-gentemp (&optional (pref 'loopva-))
+  (gensym (string pref)))
 
 #+lispworks
 (cl-user::define-loop-method (record records tuple tuples) ansi-loop::clsql-loop-method (in of from))

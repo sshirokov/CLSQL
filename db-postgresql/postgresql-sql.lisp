@@ -93,6 +93,7 @@
     (declare (ignore password options tty))
     (concatenate 'string 
       (etypecase host
+	(null "localhost")
 	(pathname (namestring host))
 	(string host))
       (when port 
@@ -476,28 +477,59 @@
       (concatenate 'string "SELECT LAST_VALUE ('" sequence-name "')")
       database nil)))))
   
+(defmethod database-create (connection-spec (type (eql :postgresql)))
+  (destructuring-bind (host name user password) connection-spec
+    (declare (ignore password))
+    (let ((asdf::*verbose-out* (make-string-output-stream)))
+      (unwind-protect
+	   (let* ((status (asdf:run-shell-command
+			   "su -c ~A createdb -h~A ~A"
+			   user
+			   (if host host "localhost")
+			   name))
+		  (result (get-output-stream-string asdf::*verbose-out*)))
+	     
+	     (if (search "database creation failed: ERROR:" result)
+		 (error 'clsql-access-error
+			:connection-spec connection-spec
+			:database-type type
+			:error 
+			(format nil "database-create failed: ~s" result))
+		 t))
+	(close asdf::*verbose-out*)))))
 
-;; Functions depending upon high-level CommonSQL classes/functions
-#|
-(defmethod database-output-sql ((expr clsql-sys::sql-typecast-exp) 
-				(database postgresql-database))
-  (with-slots (clsql-sys::modifier clsql-sys::components)
-    expr
-    (if clsql-sys::modifier
-        (progn
-          (clsql-sys::output-sql clsql-sys::components database)
-          (write-char #\: clsql-sys::*sql-stream*)
-          (write-char #\: clsql-sys::*sql-stream*)
-          (write-string (symbol-name clsql-sys::modifier) 
-			clsql-sys::*sql-stream*)))))
+(defmethod database-destroy (connection-spec (type (eql :postgresql)))
+  (destructuring-bind (host name user password) connection-spec
+    (declare (ignore password))
+    (let ((asdf::*verbose-out* (make-string-output-stream)))
+      (unwind-protect
+	   (let* ((status (asdf:run-shell-command
+			   "su -c ~A dropdb -h~A ~A"
+			   user 
+			   (if host host "localhost")
+			   name))
+		  (result (get-output-stream-string asdf::*verbose-out*)))
+	     
+	     (if (search "database removal failed: ERROR:" result)
+		 (error 'clsql-access-error
+			:connection-spec connection-spec
+			:database-type type
+			:error 
+			(format nil "database-destroy failed: ~s" result))
+		 t))
+	(close asdf::*verbose-out*)))))
 
-(defmethod database-output-sql-as-type ((type (eql 'integer)) val
-					(database postgresql-database))
-  (when val   ;; typecast it so it uses the indexes
-    (make-instance 'clsql-sys::sql-typecast-exp
-                   :modifier 'int8
-                   :components val)))
-|#
+
+(defmethod database-probe (connection-spec (type (eql :postgresql)))
+  (destructuring-bind (host name user password) connection-spec
+    (let ((database (database-connect (list host "template1" user password)
+				      type)))
+      (unwind-protect
+	   (find name (database-query "select datname from pg_database" 
+				      database :auto)
+		 :key #'car :test #'string-equal)
+	(database-disconnect database)))))
+
 
 (when (clsql-base-sys:database-type-library-loaded :postgresql)
   (clsql-base-sys:initialize-database-type :database-type :postgresql))

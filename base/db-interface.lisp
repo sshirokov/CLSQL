@@ -121,8 +121,19 @@ function should signal a clsql-sql-error."))
    "Returns t and stores the next row in the result set in list or
 returns nil when result-set is finished."))
 
+(defgeneric database-create (connection-spec type)
+  (:documentation
+   "Creates a database, returns T if successfull or signals an error."))
 
-;; Interfaces to support UncommonSQL
+(defgeneric database-probe (connection-spec type)
+  (:documentation
+   "Probes for the existence of a database, returns T if database found or NIL 
+if not found. May signal an error if unable to communicate with database server."))
+
+(defgeneric database-destory (connection-spec type)
+  (:documentation
+   "Destroys a database, returns T if successfull or signals an error
+if unable to destory."))
 
 (defgeneric database-create-sequence (name database)
   (:documentation "Create a sequence in DATABASE."))
