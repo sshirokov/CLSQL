@@ -6,6 +6,9 @@
 	* interfaces/postgresql/postgresql-api.cl
 	Added PQisBusy function
 
+	* interfaces/clsql-uffi/clsql-uffi.cl
+	Fixed sign error for 64-bit processing
+	
 	* Optimizes :types processing if value is nil
 	
 27 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)

@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.cl,v 1.2 2002/03/27 12:09:39 kevin Exp $
+;;;; $Id: clsql-uffi.cl,v 1.3 2002/03/29 09:51:20 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -64,7 +64,7 @@
 (uffi:def-function "atol64"
     ((str (* :unsigned-char))
      (high32 (* :int)))
-  :returning :int)
+  :returning :unsigned-int)
 
 (uffi:def-constant +2^32+ 4294967296)
 (uffi:def-constant +2^32-1+ (1- +2^32+))
