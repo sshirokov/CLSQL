@@ -55,10 +55,10 @@
 
     (cond
       ;; Object query resulting in a list of returned object instances
-      ((and (consp (first in-phrase))
-	    (string-equal "select" (symbol-name (caar in-phrase)))
-	    (eq 'quote (first (second (first in-phrase))))
-	    (symbolp (second (second (first in-phrase)))))
+     ((and (consp (first in-phrase))
+	   (consp (second (first in-phrase)))
+	   (eq 'quote (first (second (first in-phrase))))
+	   (symbolp (second (second (first in-phrase)))))
 
        (let ((result-var (ansi-loop::loop-gentemp
 			      'loop-record-result-))

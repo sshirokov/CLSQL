@@ -1,9 +1,3 @@
-GENERAL 
-
-* port Oracle backend to UFFI.
-* consider adding large object support to mysql and odbc
-* add support for prepared statements. 
-
 TESTS TO ADD
 
 * CACHE-TABLE-QUERIES
@@ -12,6 +6,12 @@ TESTS TO ADD
 * Large object testing
 * Test bigint type
 * :db-constraint tests
+
+POSSIBLE EXTENSIONS
+
+* port Oracle backend to UFFI
+* large object support 
+* add support for prepared statements
 
 COMMONSQL SPEC
 
