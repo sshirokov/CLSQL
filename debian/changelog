@@ -1,3 +1,9 @@
+cl-sql (0.9.4-2) unstable; urgency=low
+
+  * Move documentation to cl-sql package (closes: 162491)
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Thu, 26 Sep 2002 15:20:19 -0600
+
 cl-sql (0.9.4-1) unstable; urgency=low
 
   * Add reader conditionals to .asd file

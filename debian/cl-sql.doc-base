@@ -1,0 +1,15 @@
+Document: cl-sql
+Title: CLSQL Manual
+Author: Kevin M. Rosenberg
+Abstract: Describes the
+ use of the CLSQL Common Lisp library.
+Section: programming
+
+Format: PDF
+Files: /usr/share/doc/cl-sql/cl-sql.pdf.gz
+
+Format: HTML
+Index: /usr/share/doc/cl-sql/html/index.html
+Files: /usr/share/doc/cl-sql/html/*.html
+
+  
