@@ -1,0 +1,32 @@
+DOCUMENTATION TO DO LIST
+
+1. Variances from CommonSQL
+
+ - Ideally, this will be extremely minimal
+
+2. Underdocumented CommonSQL features:
+
+ - Retrieval immediate
+ - SQL operators: ||, SUBSTR, EXCEPT, INTERSECT, UNION ...
+
+2. CLSQL extensions to CommonSQL
+
+ - RESULT-TYPES, FIELD-NAMES keywords for SELECT and QUERY
+
+ - New types such as wall-time, boolean, and bigint
+
+ - SQL operators: group-by, limit, not-null, ==, is, having, the, uplike,
+   sql-view-class (just from a quick scan of operations.lisp)
+
+ - FDDL: list-views, view-exists-p, list-indexes, list-table-indexes,
+   index-exists-p, create-sequence, drop-sequence, list-sequences,
+   sequence-exists-p, sequence-next, sequence-last, set-sequence-position
+
+ - OODML: *db-auto-sync*
+
+4. Documenting lower level, non-CommonSQL functions like connection
+   pools and database-query-result-set. Some of this is already done.
+
+5. Notes on any features unsupported by each of the backends.
+
+
