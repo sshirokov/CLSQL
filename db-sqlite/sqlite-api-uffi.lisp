@@ -94,10 +94,10 @@
 ;;;;
 ;;;; Foreign types definitions.
 ;;;;
-(def-foreign-type errmsg (* :char))
+(def-foreign-type errmsg (* :unsigned-char))
 (def-foreign-type sqlite-db :pointer-void)
 (def-foreign-type sqlite-vm :pointer-void)
-(def-foreign-type string-pointer (* (* :char)))
+(def-foreign-type string-pointer (* (* :unsigned-char)))
 (def-foreign-type sqlite-row-pointer (* string-pointer))
 
 (defvar +null-errmsg-pointer+ (make-null-pointer 'errmsg))
@@ -153,7 +153,7 @@
     ("sqlite_compile" %compile)
     ((db sqlite-db)
      (sql :cstring)
-     (sql-tail (* (* :char)))
+     (sql-tail (* (* :unsigned-char)))
      (vm (* sqlite-vm))
      (error-message (* errmsg)))
   :returning :int)
@@ -163,8 +163,8 @@
     ("sqlite_step" %step)
     ((vm sqlite-vm)
      (cols-n (* :int))
-     (cols (* (* (* :char))))
-     (col-names (* (* (* :char)))))
+     (cols (* (* (* :unsigned-char))))
+     (col-names (* (* (* :unsigned-char)))))
   :returning :int)
 
 (declaim (inline %finalize))
@@ -189,7 +189,7 @@
     ("sqlite_get_table" %get-table)
     ((db sqlite-db)
      (sql :cstring)
-     (result (* (* (* :char))))
+     (result (* (* (* :unsigned-char))))
      (rows-n (* :int))
      (cols-n (* :int))
      (error-message (* errmsg)))
@@ -230,7 +230,7 @@
 (defun sqlite-compile (db sql)
   (with-cstring (sql-native sql)
     (let ((vm (allocate-foreign-object 'sqlite-vm)))
-      (with-foreign-object (sql-tail '(* :char))
+      (with-foreign-object (sql-tail '(* :unsigned-char))
 	(let ((result (%compile db sql-native sql-tail vm +null-errmsg-pointer+)))
 	  (if (= result SQLITE-OK)
 	      vm
@@ -241,8 +241,8 @@
 (defun sqlite-step (vm)
   (declare (type sqlite-vm-pointer vm))
   (with-foreign-object (cols-n :int)
-    (let ((cols (allocate-foreign-object '(* (* :char))))
-	  (col-names (allocate-foreign-object '(* (* :char)))))
+    (let ((cols (allocate-foreign-object '(* (* :unsigned-char))))
+	  (col-names (allocate-foreign-object '(* (* :unsigned-char)))))
       (declare (type sqlite-row-pointer-type cols col-names))
       (let ((result (%step (deref-pointer vm 'sqlite-vm)
 			   cols-n cols col-names)))
@@ -271,7 +271,7 @@
 (defun sqlite-get-table (db sql)
   (declare (type sqlite-db-type db))
   (with-cstring (sql-native sql)
-    (let ((rows (allocate-foreign-object '(* (* :char)))))
+    (let ((rows (allocate-foreign-object '(* (* :unsigned-char)))))
       (declare (type sqlite-row-pointer-type rows))
       (with-foreign-object (rows-n :int)
 	(with-foreign-object (cols-n :int)
@@ -309,7 +309,7 @@
 (defun sqlite-aref (a n)
   (declare (type sqlite-row-pointer-type a))
   (convert-from-foreign-string
-   (deref-array (deref-pointer a 'sqlite-row-pointer) '(:array (* :char)) n)))
+   (deref-array (deref-pointer a 'sqlite-row-pointer) '(:array (* :unsigned-char)) n)))
 
 (declaim (inline sqlite-free-row))
 (defun sqlite-free-row (row)

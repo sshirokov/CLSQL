@@ -1,4 +1,12 @@
 1 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.10.5: SQLite backend now passes all result-types tests
+	* clsql-sqlite.asd: Depend on clsql-uffi system
+	* db-sqlite/sqlite-sql.lisp: Use clsql-uffi:convert-raw-field
+	for efficiency and code reuse. 
+	* db-sqlite/sqlite-api-uffi.lisp: Change (* :char) to (* :unsigned-char)
+	for better cross-implementation compatibility.
+
+1 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.4
 	* sql/tables.lisp: Fix typo in CACHE-TABLE-QUERIES
 	[Marcus Pearce]

@@ -150,7 +150,7 @@
 	    collect
 	    (case type
 	      ((:int :integer :tinyint :long :bigint)
-	       :integer)
+	       :int32)
 	      ((:float :double)
 	       :double)
 	      ((:numeric)
@@ -195,6 +195,13 @@
 	  (loop for i = 0 then (1+ i)
 		for rest on list
 		do (setf (car rest)
+			 #-clisp
+			 (clsql-uffi:convert-raw-field
+			  (uffi:deref-array
+			   (uffi:deref-pointer row 'sqlite:sqlite-row-pointer) '(:array (* :char)) i)
+			  result-types
+			  i)
+			 #+clisp
 			 (let ((type (if result-types
 					 (nth i result-types)
 					 :string))
