@@ -9,7 +9,7 @@
 ;;;;                onShoreD to support UncommonSQL front-end 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: db-interface.cl,v 1.6 2002/04/19 20:25:20 marc.battyani Exp $
+;;;; $Id: db-interface.cl,v 1.7 2002/04/27 20:58:11 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai, and onShoreD
@@ -30,6 +30,14 @@
   (:documentation
    "The internal generic implementation for checking if
 database type library loaded successfully."))
+
+(defgeneric database-type (database-type)
+  (:documentation
+   "Returns database type")
+  (:method (database-type)
+	   (declare (ignore database-type))
+	   (signal-nodb-error database)))
+
 
 (defgeneric database-initialize-database-type (database-type)
   (:documentation

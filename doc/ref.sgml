@@ -10,7 +10,7 @@
 	&clsql;.</para>
     </partintro>
     <!-- Conditions -->
-    <refentry id="maisql-condition">
+    <refentry id="clsql-condition">
       <refnamediv>
 	<refname>CLSQL-CONDITION</refname>
 	<refpurpose>the super-type of all
@@ -22,7 +22,7 @@
 	<title>Class Precedence List</title>
         <para>
 	<simplelist type="inline">
-	  <member><errortype>maisql-condition</errortype></member>
+	  <member><errortype>clsql-condition</errortype></member>
 	  <member><errortype>condition</errortype></member>
 	  <member><errortype>t</errortype></member>
 	</simplelist>
@@ -37,7 +37,7 @@
 	  initialization arguments nor any accessors.</para>
       </refsect1>
     </refentry>
-    <refentry id="maisql-error">
+    <refentry id="clsql-error">
       <refnamediv>
 	<refname>CLSQL-ERROR</refname>
 	<refpurpose>the super-type of all
@@ -49,10 +49,10 @@
 	<title>Class Precedence List</title>
         <para>
 	<simplelist type="inline">
-	  <member><errortype>maisql-error</errortype></member>
+	  <member><errortype>clsql-error</errortype></member>
 	  <member><errortype>error</errortype></member>
 	  <member><errortype>serious-condition</errortype></member>
-	  <member><errortype>maisql-condition</errortype></member>
+	  <member><errortype>clsql-condition</errortype></member>
 	  <member><errortype>condition</errortype></member>
 	  <member><errortype>t</errortype></member>
 	</simplelist>
@@ -68,7 +68,7 @@
 	  initialization arguments nor any accessors.</para>
       </refsect1>
     </refentry>
-    <refentry id="maisql-simple-error">
+    <refentry id="clsql-simple-error">
       <refnamediv>
 	<refname>CLSQL-SIMPLE-ERROR</refname>
 	<refpurpose>Unspecific simple
@@ -79,12 +79,12 @@
 	<title>Class Precedence List</title>
         <para>
 	<simplelist type="inline">
-	  <member><errortype>maisql-simple-error</errortype></member>
+	  <member><errortype>clsql-simple-error</errortype></member>
 	  <member><errortype>simple-condition</errortype></member>
-	  <member><errortype>maisql-error</errortype></member>
+	  <member><errortype>clsql-error</errortype></member>
 	  <member><errortype>error</errortype></member>
 	  <member><errortype>serious-condition</errortype></member>
-	  <member><errortype>maisql-condition</errortype></member>
+	  <member><errortype>clsql-condition</errortype></member>
 	  <member><errortype>condition</errortype></member>
 	  <member><errortype>t</errortype></member>
 	</simplelist>
@@ -99,7 +99,7 @@
 	  <errortype>simple-condition</errortype>.</para>
       </refsect1>
     </refentry>
-    <refentry id="maisql-warning">
+    <refentry id="clsql-warning">
       <refnamediv>
 	<refname>CLSQL-WARNING</refname>
 	<refpurpose>the super-type of all
@@ -111,9 +111,9 @@
 	<title>Class Precedence List</title>
         <para>
 	<simplelist type="inline">
-	  <member><errortype>maisql-warning</errortype></member>
+	  <member><errortype>clsql-warning</errortype></member>
 	  <member><errortype>warning</errortype></member>
-	  <member><errortype>maisql-condition</errortype></member>
+	  <member><errortype>clsql-condition</errortype></member>
 	  <member><errortype>condition</errortype></member>
 	  <member><errortype>t</errortype></member>
 	</simplelist>
@@ -129,7 +129,7 @@
 	  initialization arguments nor any accessors.</para>
       </refsect1>
     </refentry>
-    <refentry id="maisql-simple-warning">
+    <refentry id="clsql-simple-warning">
       <refnamediv>
 	<refname>CLSQL-SIMPLE-WARNING</refname>
 	<refpurpose>Unspecific simple
@@ -140,11 +140,11 @@
 	<title>Class Precedence List</title>
         <para>
 	<simplelist type="inline">
-	  <member><errortype>maisql-simple-warning</errortype></member>
+	  <member><errortype>clsql-simple-warning</errortype></member>
 	  <member><errortype>simple-condition</errortype></member>
-	  <member><errortype>maisql-warning</errortype></member>
+	  <member><errortype>clsql-warning</errortype></member>
 	  <member><errortype>warning</errortype></member>
-	  <member><errortype>maisql-condition</errortype></member>
+	  <member><errortype>clsql-condition</errortype></member>
 	  <member><errortype>condition</errortype></member>
 	  <member><errortype>t</errortype></member>
 	</simplelist>
@@ -161,7 +161,7 @@
       </refsect1>
     </refentry>
     <!-- Specifc Conditions -->
-    <refentry id="maisql-invalid-spec-error">
+    <refentry id="clsql-invalid-spec-error">
       <refnamediv>
 	<refname>CLSQL-INVALID-SPEC-ERROR</refname>
 	<refpurpose>condition representing errors because of invalid
@@ -172,11 +172,11 @@
 	<title>Class Precedence List</title>
         <para>
 	<simplelist type="inline">
-	  <member><errortype>maisql-invalid-spec-error</errortype></member>
-	  <member><errortype>maisql-error</errortype></member>
+	  <member><errortype>clsql-invalid-spec-error</errortype></member>
+	  <member><errortype>clsql-error</errortype></member>
 	  <member><errortype>error</errortype></member>
 	  <member><errortype>serious-condition</errortype></member>
-	  <member><errortype>maisql-condition</errortype></member>
+	  <member><errortype>clsql-condition</errortype></member>
 	  <member><errortype>condition</errortype></member>
 	  <member><errortype>t</errortype></member>
 	</simplelist>
@@ -195,24 +195,24 @@
 	  <segtitle>Description</segtitle>
 	  <seglistitem>
 	    <seg><symbol>:connection-spec</symbol></seg>
-	    <seg><function>maisql-invalid-spec-error-connection-spec</function></seg>
+	    <seg><function>clsql-invalid-spec-error-connection-spec</function></seg>
 	    <seg>The invalid connection specification used.</seg>
 	  </seglistitem>
 	  <seglistitem>
 	    <seg><symbol>:database-type</symbol></seg>
-	    <seg><function>maisql-invalid-spec-error-database-type</function></seg>
+	    <seg><function>clsql-invalid-spec-error-database-type</function></seg>
 	    <seg>The Database type used in the attempt.</seg>
 	  </seglistitem>
 	  <seglistitem>
 	    <seg><symbol>:template</symbol></seg>
-	    <seg><function>maisql-invalid-spec-error-template</function></seg>
+	    <seg><function>clsql-invalid-spec-error-template</function></seg>
 	    <seg>An argument describing the template that a valid
 	      connection specification must match for this database type.</seg>
 	  </seglistitem>
 	</segmentedlist>
       </refsect1>
     </refentry>
-    <refentry id="maisql-connect-error">
+    <refentry id="clsql-connect-error">
       <refnamediv>
 	<refname>CLSQL-CONNECT-ERROR</refname>
 	<refpurpose>condition representing errors during
@@ -223,11 +223,11 @@
 	<title>Class Precedence List</title>
         <para>
 	<simplelist type="inline">
-	  <member><errortype>maisql-connect-error</errortype></member>
-	  <member><errortype>maisql-error</errortype></member>
+	  <member><errortype>clsql-connect-error</errortype></member>
+	  <member><errortype>clsql-error</errortype></member>
 	  <member><errortype>error</errortype></member>
 	  <member><errortype>serious-condition</errortype></member>
-	  <member><errortype>maisql-condition</errortype></member>
+	  <member><errortype>clsql-condition</errortype></member>
 	  <member><errortype>condition</errortype></member>
 	  <member><errortype>t</errortype></member>
 	</simplelist>
@@ -244,32 +244,32 @@
 	  <segtitle>Description</segtitle>
 	  <seglistitem>
 	    <seg><symbol>:database-type</symbol></seg>
-	    <seg><function>maisql-connect-error-database-type</function></seg>
+	    <seg><function>clsql-connect-error-database-type</function></seg>
 	    <seg>Database type for the connection attempt</seg>
 	  </seglistitem>
 	  <seglistitem>
 	    <seg><symbol>:connection-spec</symbol></seg>
-	    <seg><function>maisql-connect-error-connection-spec</function></seg>
+	    <seg><function>clsql-connect-error-connection-spec</function></seg>
 	    <seg>The connection specification used in the
 	      connection attempt.</seg>
 	  </seglistitem>
 	  <seglistitem>
 	    <seg><symbol>:errno</symbol></seg>
-	    <seg><function>maisql-connect-error-errno</function></seg>
+	    <seg><function>clsql-connect-error-errno</function></seg>
 	    <seg>The numeric or symbolic error specification
 	      returned by the database back-end.  The values and
 	      semantics of this are interface specific.</seg>
 	  </seglistitem>
 	  <seglistitem>
 	    <seg><symbol>:error</symbol></seg>
-	    <seg><function>maisql-connect-error-error</function></seg>
+	    <seg><function>clsql-connect-error-error</function></seg>
 	    <seg>A string describing the problem that occurred,
 	      possibly one returned by the database back-end.</seg>
 	  </seglistitem>
 	</segmentedlist>
       </refsect1>
     </refentry>
-    <refentry id="maisql-sql-error">
+    <refentry id="clsql-sql-error">
       <refnamediv>
 	<refname>CLSQL-SQL-ERROR</refname>
 	<refpurpose>condition representing errors during query or
@@ -280,11 +280,11 @@
 	<title>Class Precedence List</title>
         <para>
 	<simplelist type="inline">
-	  <member><errortype>maisql-sql-error</errortype></member>
-	  <member><errortype>maisql-error</errortype></member>
+	  <member><errortype>clsql-sql-error</errortype></member>
+	  <member><errortype>clsql-error</errortype></member>
 	  <member><errortype>error</errortype></member>
 	  <member><errortype>serious-condition</errortype></member>
-	  <member><errortype>maisql-condition</errortype></member>
+	  <member><errortype>clsql-condition</errortype></member>
 	  <member><errortype>condition</errortype></member>
 	  <member><errortype>t</errortype></member>
 	</simplelist>
@@ -303,32 +303,32 @@
 	  <segtitle>Description</segtitle>
 	  <seglistitem>
 	    <seg><symbol>:database</symbol></seg>
-	    <seg><function>maisql-sql-error-database</function></seg>
+	    <seg><function>clsql-sql-error-database</function></seg>
 	    <seg>The database object that was involved in the
 	      incident.</seg>
 	  </seglistitem>
 	  <seglistitem>
 	    <seg><symbol>:expression</symbol></seg>
-	    <seg><function>maisql-sql-error-expression</function></seg>
+	    <seg><function>clsql-sql-error-expression</function></seg>
 	    <seg>The SQL expression whose execution caused the error.</seg>
 	  </seglistitem>
 	  <seglistitem>
 	    <seg><symbol>:errno</symbol></seg>
-	    <seg><function>maisql-sql-error-errno</function></seg>
+	    <seg><function>clsql-sql-error-errno</function></seg>
 	    <seg>The numeric or symbolic error specification
 	      returned by the database back-end.  The values and
 	      semantics of this are interface specific.</seg>
 	  </seglistitem>
 	  <seglistitem>
 	    <seg><symbol>:error</symbol></seg>
-	    <seg><function>maisql-sql-error-error</function></seg>
+	    <seg><function>clsql-sql-error-error</function></seg>
 	    <seg>A string describing the problem that occurred,
 	      possibly one returned by the database back-end.</seg>
 	  </seglistitem>
 	</segmentedlist>
       </refsect1>
     </refentry>
-    <refentry id="maisql-exists-condition">
+    <refentry id="clsql-exists-condition">
       <refnamediv>
 	<refname>CLSQL-EXISTS-CONDITION</refname>
 	<refpurpose>condition indicating situations arising because of 
@@ -339,8 +339,8 @@
 	<title>Class Precedence List</title>
         <para>
 	<simplelist type="inline">
-	  <member><errortype>maisql-exists-condition</errortype></member>
-	  <member><errortype>maisql-condition</errortype></member>
+	  <member><errortype>clsql-exists-condition</errortype></member>
+	  <member><errortype>clsql-condition</errortype></member>
 	  <member><errortype>condition</errortype></member>
 	  <member><errortype>t</errortype></member>
 	</simplelist>
@@ -356,13 +356,13 @@
 	  <function>connect</function>, either a warning, an error or
 	  no condition at all is signalled.  If a warning or error is
 	  signalled, either
-	  <errortype>maisql-exists-warning</errortype> or
-	  <errortype>maisql-exists-error</errortype> is signalled,
+	  <errortype>clsql-exists-warning</errortype> or
+	  <errortype>clsql-exists-error</errortype> is signalled,
 	  which are subtypes of
-	  <errortype>maisql-exists-condition</errortype> and
-	  <errortype>maisql-warning</errortype> or
-	  <errortype>maisql-error</errortype>.
-	  <errortype>maisql-exists-condition</errortype> is never
+	  <errortype>clsql-exists-condition</errortype> and
+	  <errortype>clsql-warning</errortype> or
+	  <errortype>clsql-error</errortype>.
+	  <errortype>clsql-exists-condition</errortype> is never
 	  signalled itself.</para>
 	<para>
 	  The following initialization arguments and accessors exist:</para>
@@ -372,13 +372,13 @@
 	  <segtitle>Description</segtitle>
 	  <seglistitem>
 	    <seg><symbol>:old-db</symbol></seg>
-	    <seg><function>maisql-exists-condition-old-db</function></seg>
+	    <seg><function>clsql-exists-condition-old-db</function></seg>
 	    <seg>The database object that represents the existing
 	      connection.  This slot is always filled.</seg>
 	  </seglistitem>
 	  <seglistitem>
 	    <seg><symbol>:new-db</symbol></seg>
-	    <seg><function>maisql-exists-condition-new-db</function></seg>
+	    <seg><function>clsql-exists-condition-new-db</function></seg>
 	    <seg>The database object that will be used and returned by 
 	      this call to connect, if execution continues normally.
 	      This can be either <symbol>nil</symbol>, indicating that 
@@ -392,7 +392,7 @@
 	</segmentedlist>
       </refsect1>
     </refentry>
-    <refentry id="maisql-exists-warning">
+    <refentry id="clsql-exists-warning">
       <refnamediv>
 	<refname>CLSQL-EXISTS-WARNING</refname>
 	<refpurpose>condition representing warnings arising because of 
@@ -403,11 +403,11 @@
 	<title>Class Precedence List</title>
         <para>
 	<simplelist type="inline">
-	  <member><errortype>maisql-exists-warning</errortype></member>
-	  <member><errortype>maisql-exists-condition</errortype></member>
-	  <member><errortype>maisql-warning</errortype></member>
+	  <member><errortype>clsql-exists-warning</errortype></member>
+	  <member><errortype>clsql-exists-condition</errortype></member>
+	  <member><errortype>clsql-warning</errortype></member>
 	  <member><errortype>warning</errortype></member>
-	  <member><errortype>maisql-condition</errortype></member>
+	  <member><errortype>clsql-condition</errortype></member>
 	  <member><errortype>condition</errortype></member>
 	  <member><errortype>t</errortype></member>
 	</simplelist>
@@ -416,7 +416,7 @@
       <refsect1>
 	<title>Description</title>
 	<para>This condition is a subtype of
-	<errortype>maisql-exists-condition</errortype>, and is
+	<errortype>clsql-exists-condition</errortype>, and is
 	  signalled during calls to <function>connect</function> when
 	  there is an existing connection, and
 	  <parameter>if-exists</parameter> is either
@@ -426,10 +426,10 @@
 	  the existing old database object.</para>
 	<para>
 	  The initialization arguments and accessors are the same as
-	  for <errortype>maisql-exists-condition</errortype>.</para>
+	  for <errortype>clsql-exists-condition</errortype>.</para>
       </refsect1>
     </refentry>
-    <refentry id="maisql-exists-error">
+    <refentry id="clsql-exists-error">
       <refnamediv>
 	<refname>CLSQL-EXISTS-ERROR</refname>
 	<refpurpose>condition representing errors arising because of 
@@ -440,12 +440,12 @@
 	<title>Class Precedence List</title>
         <para>
 	<simplelist type="inline">
-	  <member><errortype>maisql-exists-error</errortype></member>
-	  <member><errortype>maisql-exists-condition</errortype></member>
-	  <member><errortype>maisql-error</errortype></member>
+	  <member><errortype>clsql-exists-error</errortype></member>
+	  <member><errortype>clsql-exists-condition</errortype></member>
+	  <member><errortype>clsql-error</errortype></member>
 	  <member><errortype>error</errortype></member>
 	  <member><errortype>serious-condition</errortype></member>
-	  <member><errortype>maisql-condition</errortype></member>
+	  <member><errortype>clsql-condition</errortype></member>
 	  <member><errortype>condition</errortype></member>
 	  <member><errortype>t</errortype></member>
 	</simplelist>
@@ -454,7 +454,7 @@
       <refsect1>
 	<title>Description</title>
 	<para>This condition is a subtype of
-	<errortype>maisql-exists-condition</errortype>, and is
+	<errortype>clsql-exists-condition</errortype>, and is
 	  signalled during calls to <function>connect</function> when
 	  there is an existing connection, and
 	  <parameter>if-exists</parameter> is <symbol>:error</symbol>.
@@ -464,10 +464,10 @@
 	  action in continuing from this correctable error.</para>
 	<para>
 	  The initialization arguments and accessors are the same as
-	  for <errortype>maisql-exists-condition</errortype>.</para>
+	  for <errortype>clsql-exists-condition</errortype>.</para>
       </refsect1>
     </refentry>
-    <refentry id="maisql-closed-error">
+    <refentry id="clsql-closed-error">
       <refnamediv>
 	<refname>CLSQL-CLOSED-ERROR</refname>
 	<refpurpose>condition representing errors because the database 
@@ -478,11 +478,11 @@
 	<title>Class Precedence List</title>
         <para>
 	<simplelist type="inline">
-	  <member><errortype>maisql-closed-error</errortype></member>
-	  <member><errortype>maisql-error</errortype></member>
+	  <member><errortype>clsql-closed-error</errortype></member>
+	  <member><errortype>clsql-error</errortype></member>
 	  <member><errortype>error</errortype></member>
 	  <member><errortype>serious-condition</errortype></member>
-	  <member><errortype>maisql-condition</errortype></member>
+	  <member><errortype>clsql-condition</errortype></member>
 	  <member><errortype>condition</errortype></member>
 	  <member><errortype>t</errortype></member>
 	</simplelist>
@@ -507,7 +507,7 @@
 	  <segtitle>Description</segtitle>
 	  <seglistitem>
 	    <seg><symbol>:database</symbol></seg>
-	    <seg><function>maisql-closed-error-database</function></seg>
+	    <seg><function>clsql-closed-error-database</function></seg>
 	    <seg>The database object that was involved in the
 	      incident.</seg>
 	  </seglistitem>
@@ -674,7 +674,7 @@
 	  already present.</para>
 	<para>If initialization fails, the function returns
 	  <symbol>nil</symbol>, and/or signals an error of type
-	  <errortype>maisql-error</errortype>.  The kind of action
+	  <errortype>clsql-error</errortype>.  The kind of action
 	  taken depends on the back-end and the cause of the
 	  problem.</para>
       </refsect1>
@@ -724,7 +724,7 @@
 	<title>Exceptional Situations</title>
 	<para>If an error is encountered during the initialization
 	  attempt, the back-end may signal errors of kind
-	  <errortype>maisql-error</errortype>.</para>
+	  <errortype>clsql-error</errortype>.</para>
       </refsect1>
       <refsect1>
 	<title>See Also</title>
@@ -1036,7 +1036,7 @@
 	  <function>disconnect</function>.  All functions and generic
 	  functions that take database objects as arguments will
 	  signal errors of type
-	  <errortype>maisql-closed-error</errortype> when they are
+	  <errortype>clsql-closed-error</errortype> when they are
 	  called on instances of <type>closed-database</type>, with
 	  the exception of <function>database-name</function>, which
 	  will continue to work as for instances of
@@ -1208,7 +1208,7 @@
 	  <parameter>database</parameter>.  If it succeeds, it returns 
 	  the first database found.</para>
 	<para>If it fails to find a matching database, it will signal
-	  an error of type <errortype>maisql-error</errortype> if
+	  an error of type <errortype>clsql-error</errortype> if
 	  <parameter>errorp</parameter> is true.  If
 	  <parameter>errorp</parameter> is <symbol>nil</symbol>, it
 	  will return <symbol>nil</symbol> instead.</para>
@@ -1258,7 +1258,7 @@
       <refsect1>
 	<title>Exceptional Situations</title>
 	<para>Will signal an error of type
-	<errortype>maisql-error</errortype> if no matching database
+	<errortype>clsql-error</errortype> if no matching database
 	  can be found, and <parameter>errorp</parameter> is true.
 	  Will signal an error if the value of
 	  <parameter>database</parameter> is neither an object of type
@@ -1280,6 +1280,7 @@
 	<para>None.</para>
       </refsect1>
     </refentry>
+
     <refentry id="connect">
       <refnamediv>
 	<refname>CONNECT</refname>
@@ -1288,7 +1289,7 @@
       </refnamediv>
       <refsect1>
 	<title>Syntax</title>
-	<synopsis><function>connect</function> <replaceable>connection-spec</replaceable> &amp;key <replaceable>if-exists</replaceable> <replaceable>database-type</replaceable> => <returnvalue>database</returnvalue></synopsis>
+	<synopsis><function>connect</function> <replaceable>connection-spec</replaceable> &amp;key <replaceable>if-exists</replaceable> <replaceable>database-type</replaceable> <replaceable>pool</replaceable> => <returnvalue>database</returnvalue></synopsis>
       </refsect1>
       <refsect1>
 	<title>Arguments and Values</title>
@@ -1314,6 +1315,14 @@
 	      <para>A database type specifier, i.e. a keyword.
 		This defaults to the value of
 		<symbol>*default-database-type*</symbol></para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>pool</parameter></term>
+	    <listitem>
+	      <para>A boolean flag. If &t;, acquire connection from a
+               pool of open connections. If the pool is empty, a new
+               connection is created. The default is &nil;.
 	    </listitem>
 	  </varlistentry>
 	  <varlistentry>
@@ -1350,7 +1359,7 @@
 	      <listitem>
 		<para>This is just like <symbol>:new</symbol>, but
 		  also signals a warning of type
-		  <errortype>maisql-exists-warning</errortype>,
+		  <errortype>clsql-exists-warning</errortype>,
 		  indicating the old and newly created
 		  databases.</para>
 	      </listitem>
@@ -1360,7 +1369,7 @@
 	      <listitem>
 		<para>This will cause <function>connect</function> to
 		  signal a correctable error of type
-		  <errortype>maisql-exists-error</errortype>.  The
+		  <errortype>clsql-exists-error</errortype>.  The
 		  user may choose to proceed, either by indicating
 		  that a new connection shall be created, via the
 		  restart <symbol>create-new</symbol>, or by
@@ -1381,7 +1390,7 @@
 	      <listitem>
 		<para>This is just like <symbol>:old</symbol>, but
 		  also signals a warning of type
-		  <errortype>maisql-exists-warning</errortype>,
+		  <errortype>clsql-exists-warning</errortype>,
 		  indicating the old database used, via the slots
 		  <symbol>old-db</symbol> and
 		  <symbol>new-db</symbol></para>
@@ -1448,11 +1457,11 @@
 	<title>Exceptional Situations</title>
 	<para>If the connection specification is not syntactically or
 	  semantically correct for the given database type, an error
-	  of type <errortype>maisql-invalid-spec-error</errortype> is
+	  of type <errortype>clsql-invalid-spec-error</errortype> is
 	  signalled.  If during the connection attempt an error is
 	  detected (e.g. because of permission problems, network
 	  trouble  or any other cause), an error of type
-	  <errortype>maisql-connect-error</errortype> is
+	  <errortype>clsql-connect-error</errortype> is
 	  signalled.</para>
 	<para>If a connection to the database specified by
 	  <parameter>connection-spec</parameter> exists already,
@@ -1474,6 +1483,7 @@
 	<para>None.</para>
       </refsect1>
     </refentry>
+
     <refentry id="disconnect">
       <refnamediv>
 	<refname>DISCONNECT</refname>
@@ -1482,11 +1492,21 @@
       </refnamediv>
       <refsect1>
 	<title>Syntax</title>
-	<synopsis><function>disconnect</function> &amp;key <replaceable>database</replaceable> => <returnvalue>t</returnvalue></synopsis>
+	<synopsis><function>disconnect</function> &amp;key <replaceable>database</replaceable> <replaceable>pool</replaceable> => <returnvalue>t</returnvalue></synopsis>
       </refsect1>
       <refsect1>
 	<title>Arguments and Values</title>
 	<variablelist>
+	  <varlistentry>
+	    <term><parameter>pool</parameter></term>
+	    <listitem>
+	      <para>A boolean flag indicating whether to put the database into a 
+pool of opened databases. If &t;, rather than terminating the database connection, the
+connection is left open and the connection is placed into a pool of connections. Subsequent
+calls to <link linkend="connect"><function>connect</function></link> can then reuse this connection.
+The default is &nil;.
+	    </listitem>
+	  </varlistentry>
 	  <varlistentry>
 	    <term><parameter>database</parameter></term>
 	    <listitem>
@@ -1508,7 +1528,7 @@
 	  with the exception of <function>database-name</function>.
 	  If the user does pass a  closed database object to any other
 	  &clsql; function, an error of type
-	  <errortype>maisql-closed-error</errortype> is
+	  <errortype>clsql-closed-error</errortype> is
 	  signalled.</para>
       </refsect1>
       <refsect1>
@@ -1545,7 +1565,7 @@
 	<title>Exceptional Situations</title>
 	<para>If during the disconnection attempt an error is
 	  detected (e.g. because of network trouble or any other
-	  cause), an error of type <errortype>maisql-error</errortype> 
+	  cause), an error of type <errortype>clsql-error</errortype> 
 	  might be signalled.</para>
       </refsect1>
       <refsect1>
@@ -1562,6 +1582,65 @@
 	<para>None.</para>
       </refsect1>
     </refentry>
+
+    <refentry id="disconnect-pooled">
+      <refnamediv>
+	<refname>DISCONNECT-POOLED</refname>
+	<refpurpose>closes all pooled database connections</refpurpose>
+	<refclass>Function</refclass>
+      </refnamediv>
+      <refsect1>
+	<title>Syntax</title>
+	<synopsis><function>disconnect-pool</function> => <returnvalue>t</returnvalue></synopsis>
+      </refsect1>
+      <refsect1>
+	<title>Description</title>
+	<para>This function disconnects all database connections
+	that have been placed into the pool. Connections are placed
+	in the pool by calling 
+	<link linkend="disconnect"><function>disconnection</function></link>.
+      </refsect1>
+      <refsect1>
+	<title>Examples</title>
+	<programlisting>
+(disconnect-pool)
+=> T
+	</programlisting>
+      </refsect1>
+      <refsect1>
+	<title>Side Effects</title>
+	<para>Database connections will be closed and entries in the pool are removed.
+      </refsect1>
+      <refsect1>
+	<title>Affected by</title>
+	<para>
+	<simplelist>
+	  <member><function>disconnect</function></member>
+	</simplelist>
+	</para>
+      </refsect1>
+      <refsect1>
+	<title>Exceptional Situations</title>
+	<para>If during the disconnection attempt an error is
+	  detected (e.g. because of network trouble or any other
+	  cause), an error of type <errortype>clsql-error</errortype> 
+	  might be signalled.</para>
+      </refsect1>
+      <refsect1>
+	<title>See Also</title>
+	<para>
+	<simplelist>
+	  <member><link linkend="connect"><function>connect</function></link></member>
+	  <member><link linkend="connect"><function>closed-database</function></link></member>
+	</simplelist>
+	</para>
+      </refsect1>
+      <refsect1>
+	<title>Notes</title>
+	<para>None.</para>
+      </refsect1>
+    </refentry>
+
     <refentry id="database-name-from-spec">
       <refnamediv>
 	<refname>DATABASE-NAME-FROM-SPEC</refname>
@@ -1654,7 +1733,7 @@
 	<para>If the value of <parameter>connection-spec</parameter>
 	  is not a valid connection specification for the given
 	  database type, an error of type
-	  <errortype>maisql-invalid-spec-error</errortype> might be
+	  <errortype>clsql-invalid-spec-error</errortype> might be
 	  signalled.</para>
       </refsect1>
       <refsect1>
@@ -1710,7 +1789,7 @@
 	  <parameter>sql-expression</parameter> in the
 	  <parameter>database</parameter> specified.  If the execution 
 	  succeeds it will return <symbol>t</symbol>, otherwise an
-	  error of type <errortype>maisql-sql-error</errortype> will
+	  error of type <errortype>clsql-sql-error</errortype> will
 	  be signalled.</para>
       </refsect1>
       <refsect1>
@@ -1756,7 +1835,7 @@
 	<title>Exceptional Situations</title>
 	<para>If the execution of  the SQL statement leads to any
 	  errors, an error of type
-	  <errortype>maisql-sql-error</errortype> is signalled.</para>
+	  <errortype>clsql-sql-error</errortype> is signalled.</para>
       </refsect1>
       <refsect1>
 	<title>See Also</title>
@@ -1863,7 +1942,7 @@
 	  <parameter>database</parameter> specified.  If the execution 
 	  succeeds it will return the result set returned by the
 	  database, otherwise an error of type
-	  <errortype>maisql-sql-error</errortype> will 
+	  <errortype>clsql-sql-error</errortype> will 
 	  be signalled.</para>
       </refsect1>
       <refsect1>
@@ -1906,7 +1985,7 @@
 	<title>Exceptional Situations</title>
 	<para>If the execution of  the SQL query leads to any
 	  errors, an error of type
-	  <errortype>maisql-sql-error</errortype> is signalled.</para>
+	  <errortype>clsql-sql-error</errortype> is signalled.</para>
       </refsect1>
       <refsect1>
 	<title>See Also</title>
@@ -2067,7 +2146,7 @@
 	<title>Exceptional Situations</title>
 	<para>If the execution of  the SQL query leads to any
 	  errors, an error of type
-	  <errortype>maisql-sql-error</errortype> is signalled.</para>
+	  <errortype>clsql-sql-error</errortype> is signalled.</para>
 	<para>An error of type <errortype>type-error</errortype> must
 	  be signaled if the <parameter>output-type-spec</parameter> is
 	  not a recognizable subtype of <type>list</type>, not a
@@ -2201,7 +2280,7 @@
 	<title>Exceptional Situations</title>
 	<para>If the execution of  the SQL query leads to any
 	  errors, an error of type
-	  <errortype>maisql-sql-error</errortype> is signalled.</para>
+	  <errortype>clsql-sql-error</errortype> is signalled.</para>
 	<para>If the number of variable names in
 	  <parameter>args</parameter> and the number of attributes in
 	  the tuples in the result set don't match up, an error is
@@ -2338,7 +2417,7 @@
 	<title>Exceptional Situations</title>
 	<para>If the execution of  the SQL query leads to any
 	  errors, an error of type
-	  <errortype>maisql-sql-error</errortype> is signalled.</para>
+	  <errortype>clsql-sql-error</errortype> is signalled.</para>
 	<para>Otherwise, any of the exceptional situations of
 	  <function>loop</function> applies.</para>
       </refsect1>
@@ -2416,7 +2495,7 @@
 	  initialization by returning <symbol>t</symbol> from their
 	  method, and <symbol>nil</symbol> otherwise.  Methods for
 	  this generic function are allowed to signal errors of type
-	  <errortype>maisql-error</errortype> or subtypes thereof.
+	  <errortype>clsql-error</errortype> or subtypes thereof.
 	  They may also signal other types of conditions, if
 	  appropriate, but have to document this.</para>
       </refsect1>
@@ -2435,7 +2514,7 @@
       </refsect1>
       <refsect1>
 	<title>Exceptional Situations</title>
-	<para>Conditions of type <errortype>maisql-error</errortype>
+	<para>Conditions of type <errortype>clsql-error</errortype>
 	  or other conditions may be signalled, depending on the
 	  database back-end.</para>
       </refsect1>

@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.cl,v 1.14 2002/04/23 18:28:02 kevin Exp $
+;;;; $Id: postgresql-sql.cl,v 1.15 2002/04/27 20:58:11 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -87,6 +87,9 @@
   ((conn-ptr :accessor database-conn-ptr :initarg :conn-ptr
 	     :type pgsql-conn-def)))
 
+(defmethod database-type ((database postgresql-database))
+  :postgresql)
+
 (defmethod database-name-from-spec (connection-spec (database-type
 						     (eql :postgresql)))
   (check-connection-spec connection-spec database-type
@@ -125,6 +128,7 @@
 	(make-instance 'postgresql-database
 		       :name (database-name-from-spec connection-spec
 						      database-type)
+		       :connection-spec connection-spec
 		       :conn-ptr connection)))))
 
 

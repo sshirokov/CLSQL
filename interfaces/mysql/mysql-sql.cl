@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.cl,v 1.18 2002/03/30 05:07:02 kevin Exp $
+;;;; $Id: mysql-sql.cl,v 1.19 2002/04/27 20:58:11 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -90,6 +90,9 @@
   ((mysql-ptr :accessor database-mysql-ptr :initarg :mysql-ptr
 	      :type mysql-mysql-ptr-def)))
 
+(defmethod database-type ((database mysql-database))
+  :mysql)
+
 (defmethod database-name-from-spec (connection-spec (database-type (eql :mysql)))
   (check-connection-spec connection-spec database-type (host db user password))
   (destructuring-bind (host db user password) connection-spec
@@ -129,6 +132,7 @@
 		  (make-instance 'mysql-database
 		    :name (database-name-from-spec connection-spec
 						   database-type)
+		    :connection-spec connection-spec
 		    :mysql-ptr mysql-ptr))
 	      (when error-occurred (mysql-close mysql-ptr)))))))))
 

@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: package.cl,v 1.7 2002/04/19 20:25:20 marc.battyani Exp $
+;;;; $Id: package.cl,v 1.8 2002/04/27 20:58:11 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -57,6 +57,9 @@
      #:database-write-large-object
      #:database-read-large-object
      #:database-delete-large-object
+     
+     ;; Pooled connections
+     #:disconnect-pooled
      
      ;; Shared exports for re-export by CLSQL
      .

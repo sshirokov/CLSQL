@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.7 2002/04/23 21:32:25 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.8 2002/04/27 20:58:11 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -95,7 +95,7 @@ clean:
 	@rm -f ${PSFILE} ${PDFFILE} ${DVIFILE} ${TEXFILE}
 	@rm -f ${TMPFILES}
 
-realclean: clean
-	@rm -f *~
+distclean: clean
+	@rm -f *~ .#* *.bak *.orig
 
 

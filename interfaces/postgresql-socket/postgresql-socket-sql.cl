@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-sql.cl,v 1.10 2002/03/29 09:37:24 kevin Exp $
+;;;; $Id: postgresql-socket-sql.cl,v 1.11 2002/04/27 20:58:11 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -137,16 +137,19 @@ doesn't depend on UFFI."
 	 ;; KMR - removed double @@
 	 ,@body))))
 
-(defmethod database-initialize-database-type
-    ((database-type (eql :postgresql-socket)))
+(defmethod database-initialize-database-type ((database-type
+					       (eql :postgresql-socket)))
   t)
 
 (defclass postgresql-socket-database (database)
   ((connection :accessor database-connection :initarg :connection
 	       :type postgresql-connection)))
 
-(defmethod database-name-from-spec
-    (connection-spec (database-type (eql :postgresql-socket)))
+(defmethod database-type ((database postgresql-socket-database))
+  :postgresql-socket)
+
+(defmethod database-name-from-spec (connection-spec
+				    (database-type (eql :postgresql-socket)))
   (check-connection-spec connection-spec database-type
 			 (host db user password &optional port options tty))
   (destructuring-bind (host db user password &optional port options tty)
@@ -154,8 +157,8 @@ doesn't depend on UFFI."
     (declare (ignore password options tty))
     (concatenate 'string host (if port ":") (if port port) "/" db "/" user)))
 
-(defmethod database-connect
-    (connection-spec (database-type (eql :postgresql-socket)))
+(defmethod database-connect (connection-spec 
+			     (database-type (eql :postgresql-socket)))
   (check-connection-spec connection-spec database-type
 			 (host db user password &optional port options tty))
   (destructuring-bind (host db user password &optional
@@ -178,6 +181,7 @@ doesn't depend on UFFI."
 	(make-instance 'postgresql-socket-database
 		       :name (database-name-from-spec connection-spec
 						      database-type)
+		       :connection-spec connection-spec
 		       :connection connection))
       (postgresql-error (c)
 	;; Connect failed

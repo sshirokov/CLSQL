@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: sql.cl,v 1.12 2002/04/19 20:25:20 marc.battyani Exp $
+;;;; $Id: sql.cl,v 1.13 2002/04/27 20:58:11 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -95,56 +95,59 @@ initialized, as indicated by `*initialized-database-types*'."
 
 (defun connect (connection-spec
 		&key (if-exists *connect-if-exists*)
-		(database-type *default-database-type*))
+		(database-type *default-database-type*)
+		(pool nil))
   "Connects to a database of the given database-type, using the type-specific
 connection-spec.  if-exists is currently ignored."
   (let* ((db-name (database-name-from-spec connection-spec database-type))
 	 (old-db (find-database db-name nil))
 	 (result nil))
-    (if old-db
-	(case if-exists
-	  (:new
-	   (setq result
-		 (database-connect connection-spec database-type)))
-	  (:warn-new
-	   (setq result
-		 (database-connect connection-spec database-type))
-	   (warn 'clsql-exists-warning :old-db old-db :new-db result))
-	  (:error
-	   (restart-case
-	       (error 'clsql-exists-error :old-db old-db)
-	     (create-new ()
-	       :report "Create a new connection."
-	       (setq result
-		     (database-connect connection-spec database-type)))
-	     (use-old ()
-	       :report "Use the existing connection."
-	       (setq result old-db))))
-	  (:warn-old
-	   (setq result old-db)
-	   (warn 'clsql-exists-warning :old-db old-db :new-db old-db))
-	  (:old
-	   (setq result old-db)))
+    (if pool
+	(setq result (acquire-from-pool connection-spec database-type))
+      (if old-db
+	  (case if-exists
+	    (:new
+	     (setq result
+	       (database-connect connection-spec database-type)))
+	    (:warn-new
+	     (setq result
+	       (database-connect connection-spec database-type))
+	     (warn 'clsql-exists-warning :old-db old-db :new-db result))
+	    (:error
+	     (restart-case
+		 (error 'clsql-exists-error :old-db old-db)
+	       (create-new ()
+		   :report "Create a new connection."
+		 (setq result
+		   (database-connect connection-spec database-type)))
+	       (use-old ()
+		   :report "Use the existing connection."
+		 (setq result old-db))))
+	    (:warn-old
+	     (setq result old-db)
+	     (warn 'clsql-exists-warning :old-db old-db :new-db old-db))
+	    (:old
+	     (setq result old-db)))
 	(setq result
-	      (database-connect connection-spec database-type)))
+	  (database-connect connection-spec database-type))))
     (when result
       (pushnew result *connected-databases*)
       (setq *default-database* result)
       result)))
 
 
-
-(defun disconnect (&key (database *default-database*))
+(defun disconnect (&key (database *default-database*)
+		   (pool nil))
   "Closes the connection to database. Resets *default-database* if that
 database was disconnected and only one other connection exists."
-  (when (database-disconnect database)
-    (setq *connected-databases* (delete database *connected-databases*))
-    (when (eq database *default-database*)
-      (setq *default-database* (car *connected-databases*)))
-    (change-class database 'closed-database)
-    t))
-
-
+  (if pool
+      (release-to-pool database)
+    (when (database-disconnect database)
+      (setq *connected-databases* (delete database *connected-databases*))
+      (when (eq database *default-database*)
+	(setq *default-database* (car *connected-databases*)))
+      (change-class database 'closed-database)
+      t)))
 
 ;;; Basic operations on databases
 
