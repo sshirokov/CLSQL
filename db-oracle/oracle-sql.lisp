@@ -778,6 +778,8 @@ the length of that format.")
         ;; oci-handle-alloc((dvoid *)encvhp, (dvoid **)&stmthp, OCI_HTYPE_STMT, 0, 0);
         ;;#+nil
 	)
+      ;; Actually, oci-server-version returns the client version, not the server versions
+      ;; will use "SELECT VERSION FROM V$INSTANCE" to get actual server version.
       (let (db server-version)
 	(uffi:with-foreign-object (buf '(:array :unsigned-char #.+errbuf-len+))
 	  (oci-server-version (deref-vp svchp)
