@@ -1,3 +1,9 @@
+cl-sql (1.7.5-1) unstable; urgency=low
+
+  * Another fix for previous bug (closes: 207813)
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Wed,  3 Sep 2003 12:21:19 -0600
+
 cl-sql (1.7.4-1) unstable; urgency=low
 
   * New upstream (closes: 207813)

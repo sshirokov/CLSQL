@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-sql.lisp,v 1.3 2003/08/31 08:22:16 kevin Exp $
+;;;; $Id: postgresql-socket-sql.lisp,v 1.4 2003/09/03 18:23:57 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -155,10 +155,11 @@ doesn't depend on UFFI."
 	(pathname (namestring host))
 	(string host))
       (when port 
-	(concatenate ":"
-	  (etypecase port
-	    (integer (write-to-string port))
-	    (string port))))
+	(concatenate 'string
+		     ":"
+		     (etypecase port
+		       (integer (write-to-string port))
+		       (string port))))
       "/" db "/" user)))
 
 (defmethod database-connect (connection-spec 
