@@ -13,7 +13,7 @@ pkg-base	:= cl-sql-base
 pkg-mysql	:= cl-sql-mysql
 pkg-pg		:= cl-sql-postgresql
 pkg-pg-socket	:= cl-sql-postgresql-socket
-pkg-mysql	:= cl-sql-aodbc
+pkg-aodbc	:= cl-sql-aodbc
 all-pkgs	:= $(pkg) $(pkg-base) $(pkg-mysql) $(pkg-pg) $(pkg-pg-socket) $(pkg-aodbc)
 
 prefix		:= debian/$(pkg)
@@ -28,7 +28,7 @@ srcs		:= sql/pool.cl sql/sql.cl sql/transactions.cl sql/utils.cl sql/functional.
 srcs-cmucl-compat := $(wildcard cmucl-compat/*.cl)
 srcs-base	:= sql/package.cl sql/db-interface.cl sql/classes.cl sql/conditions.cl
 srcs-base-uffi	:= $(wildcard interfaces/clsql-uffi/*.cl) $(wildcard interfaces/clsql-uffi/*.so)
-srcs-mysql	:= $(wildcard interfaces/mysql/*.cl) $(wildcards interfaces/mysl/*.so)
+srcs-mysql	:= $(wildcard interfaces/mysql/*.cl) $(wildcards interfaces/mysql/*.so)
 srcs-pg		:= $(wildcard interfaces/postgresql/*.cl)
 srcs-pg-socket	:= $(wildcard interfaces/postgresql-socket/*.cl)
 srcs-aodbc	:= $(wildcard interfaces/aodbc/*.cl)
