@@ -13,9 +13,8 @@
     <surname>Rosenberg</surname>
   </author>
   <printhistory>
-    <simpara>Release $Name:  $</simpara>
-    <simpara>File $Date: 2002/03/23 14:04:50 $</simpara>
-    <simpara>$Id: bookinfo.sgml,v 1.1 2002/03/23 14:04:50 kevin Exp $</simpara>
+    <simpara>File $Date: 2002/03/23 14:34:36 $</simpara>
+    <simpara>$Id: bookinfo.sgml,v 1.2 2002/03/23 14:34:36 kevin Exp $</simpara>
   </printhistory>
   <copyright>
     <year>1999</year>
@@ -26,9 +25,8 @@
   <legalnotice>
     <itemizedlist>
       <listitem>
-	<para>&clsql; is Copyright &copy;
-	  1999-2001 by Pierre R. Mai and Copyright &copy; 2002 by
-	  Kevin M. Rosenberg.</para>
+	<para>&clsql; is Copyright &copy; 2002 by Kevin M. Rosenberg and
+	Copyright &copy; 1999-2001 by Pierre R. Mai.</para>
        </listitem>
        <listitem>
 	 <para><application>Allegro CL</application>&reg; is a registered

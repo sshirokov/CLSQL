@@ -112,24 +112,28 @@ files for Microsoft Windows are supplied with the distribution.</para>
 edit <filename>Makefile</filename> or <filename>Makefile.msvc</filename> to
 correctly specify the location of your &mysql; installation. On UNIX systems, use
 the command:
-<programlisting>make</programlisting>. On a Microsoft Windows system,
-use the command: <programlisting>nmake /f
-Makefile.msvc</programlisting>.</para>
+<programlisting>make</programlisting>
+On a Microsoft Windows system,
+use the command: 
+<programlisting>
+nmake /f
+Makefile.msvc
+</programlisting></para>
     </sect2>
 
     <sect2>
       <title>Load &uffi;</title>
       <para>
 	Unpack the appropriate &uffi; version for your system which creates a directory
-for the &uffi; files. Add that directory to &defsystem; <varname>*central-registry*</varname>.
+for the &uffi; files. Add that directory to Defsystem's <varname>mk:*central-registry*</varname>.
 You can do that by either pushing the pathname of the directory onto this variable, or
 use the new <function>add-registry-location</function> present in the newest versions of
-&defsystem;. The below example code assumes the &uffi; files reside in the
+&defsystem;. The following example code assumes the &uffi; files reside in the
 <filename>/usr/local/src/lisp/uffi</filename> directory.
-	<computeroutput>
+	<programlisting>
 	(mk:add-registry-location #P"/usr/local/src/lisp/uffi")
 	(mk:load-system :uffi)
-        </computeroutput>
+        </programlisting>
       </para>
     </sect2>
 
