@@ -479,45 +479,37 @@
   
 (defmethod database-create (connection-spec (type (eql :postgresql)))
   (destructuring-bind (host name user password) connection-spec
-    (declare (ignore password))
-    (let ((asdf::*verbose-out* (make-string-output-stream)))
-      (unwind-protect
-	   (let* ((status (asdf:run-shell-command
-			   "su -c ~A createdb -h~A ~A"
-			   user
-			   (if host host "localhost")
-			   name))
-		  (result (get-output-stream-string asdf::*verbose-out*)))
-	     
-	     (if (search "database creation failed: ERROR:" result)
-		 (error 'clsql-access-error
-			:connection-spec connection-spec
-			:database-type type
-			:error 
-			(format nil "database-create failed: ~s" result))
-		 t))
-	(close asdf::*verbose-out*)))))
+    (declare (ignore user password))
+    (multiple-value-bind (output status)
+	(clsql-base-sys:command-output "createdb -h~A ~A"
+				       (if host host "localhost")
+				       name)
+      (if (or (not (zerop status))
+	      (search "database creation failed: ERROR:" output))
+	  (error 'clsql-access-error
+		 :connection-spec connection-spec
+		 :database-type type
+		 :error 
+		 (format nil "database-create failed: ~A" 
+			 output))
+	t))))
 
 (defmethod database-destroy (connection-spec (type (eql :postgresql)))
   (destructuring-bind (host name user password) connection-spec
-    (declare (ignore password))
-    (let ((asdf::*verbose-out* (make-string-output-stream)))
-      (unwind-protect
-	   (let* ((status (asdf:run-shell-command
-			   "su -c ~A dropdb -h~A ~A"
-			   user 
-			   (if host host "localhost")
-			   name))
-		  (result (get-output-stream-string asdf::*verbose-out*)))
-	     
-	     (if (search "database removal failed: ERROR:" result)
-		 (error 'clsql-access-error
-			:connection-spec connection-spec
-			:database-type type
-			:error 
-			(format nil "database-destroy failed: ~s" result))
-		 t))
-	(close asdf::*verbose-out*)))))
+    (declare (ignore user password))
+    (multiple-value-bind (output status)
+	(clsql-base-sys:command-output "dropdb -h~A ~A"
+				       (if host host "localhost")
+				       name)
+      (if (or (not (zerop status))
+	      (search "database removal failed: ERROR:" output))
+	  (error 'clsql-access-error
+		 :connection-spec connection-spec
+		 :database-type type
+		 :error 
+		 (format nil "database-destory failed: ~A" 
+			 output))
+	t))))
 
 
 (defmethod database-probe (connection-spec (type (eql :postgresql)))
@@ -525,9 +517,11 @@
     (let ((database (database-connect (list host "template1" user password)
 				      type)))
       (unwind-protect
-	   (find name (database-query "select datname from pg_database" 
-				      database :auto)
-		 :key #'car :test #'string-equal)
+	  (when
+	      (find name (database-query "select datname from pg_database" 
+					 database :auto)
+		    :key #'car :test #'string-equal)
+	    t)
 	(database-disconnect database)))))
 
 

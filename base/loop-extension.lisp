@@ -18,30 +18,16 @@
 
 ;;;; MIT-LOOP extension
 
-#+sbcl 
+#+(or allegro sbcl)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defpackage #:ansi-loop 
-    (:import-from #:sb-loop 
+    (:import-from #+sbcl #:sb-loop #+allegro #:excl
 		  #:loop-error
 		  #:*loop-epilogue*
 		  #:*loop-ansi-universe* 
 		  #:add-loop-path)))
 
-#+lispworks
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defpackage #:ansi-loop 
-    (:import-from #:loop
-		  #:*epilogue*)))
-
-#+allegro
-(defpackage #:ansi-loop 
-  (:import-from #:excl 
-		#:loop-error
-		#:*loop-epilogue*
-		#:*loop-ansi-universe* 
-		#:add-loop-path))
-
-#+sbcl
+#+(or allegro sbcl)
 (defun ansi-loop::loop-gentemp (&optional (pref 'loopva-))
   (gensym (string pref)))
 
@@ -129,16 +115,13 @@
 #+lispworks (in-package loop)
 
 #+lispworks
-(defun loop::loop-gentemp (&optional (pref 'loopva-))
-  (gensym (string pref)))
+(cl-user::define-loop-method (record records tuple tuples) clsql-loop-method 
+  (in of from))
 
 #+lispworks
-(cl-user::define-loop-method (record records tuple tuples) ansi-loop::clsql-loop-method (in of from))
-
-#+lispworks
-(defun ansi-loop::clsql-loop-method (method-name iter-var iter-var-data-type 
-				     prep-phrases inclusive? allowed-preps 
-				     method-specific-data)
+(defun clsql-loop-method (method-name iter-var iter-var-data-type 
+			  prep-phrases inclusive? allowed-preps 
+			  method-specific-data)
   (let ((in-phrase nil)
 	(from-phrase nil))
     (loop for (prep . rest) in prep-phrases
@@ -163,11 +146,10 @@
       (setq from-phrase '(clsql-base-sys:*default-database*)))
     (cond
       ((consp iter-var)
-       (let ((query-var (ansi-loop::loop-gentemp 'loop-record-))
-	     (db-var (ansi-loop::loop-gentemp 'loop-record-database-))
-	     (result-set-var (ansi-loop::loop-gentemp
-			      'loop-record-result-set-))
-	     (step-var (ansi-loop::loop-gentemp 'loop-record-step-)))
+       (let ((query-var (gensym 'loop-record-))
+	     (db-var (gensym 'loop-record-database-))
+	     (result-set-var (gensym 'loop-record-result-set-))
+	     (step-var (gensym 'loop-record-step-)))
 	 (values
 	  t
 	  nil
@@ -194,10 +176,9 @@
 	  ()
 	  ())))
       (t
-       (let ((query-var (ansi-loop::loop-gentemp 'loop-record-))
-	     (db-var (ansi-loop::loop-gentemp 'loop-record-database-))
-	     (result-set-var (ansi-loop::loop-gentemp
-			      'loop-record-result-set-)))
+       (let ((query-var (gensym 'loop-record-))
+	     (db-var (gensym 'loop-record-database-))
+	     (result-set-var (gensym 'loop-record-result-set-)))
 	 (values
 	  t
 	  nil

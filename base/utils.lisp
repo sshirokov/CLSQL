@@ -113,7 +113,7 @@
     (setq pos (1+ end))))
 
 (defun string-to-list-connection-spec (str)
-  (let ((at-pos (position-char #\@ str)))
+  (let ((at-pos (position-char #\@ str 0 (length str))))
     (cond
       ((and at-pos (> (length str) at-pos))
        ;; Connection spec is SQL*NET format
@@ -122,3 +122,83 @@
       (t
        (delimited-string-to-list str #\/)))))
 
+#+allegro
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (unless (find-package '#:excl.osi)
+    (require 'osi)))
+
+(defun command-output (control-string &rest args)
+  ;; Concatenates output and error since Lispworks combines
+  ;; these, thus CLSQL can't depend upon separate results
+  (multiple-value-bind (output error status)
+      (apply #'%command-output control-string args)
+    (values
+     (concatenate 'string (if output output "") 
+		  (if error error ""))
+     status)))
+
+;; From KMRCL
+(defun %command-output (control-string &rest args)
+  "Interpolate ARGS into CONTROL-STRING as if by FORMAT, and
+synchronously execute the result using a Bourne-compatible shell, 
+returns (VALUES string-output error-output exit-status)"
+  (let ((command (apply #'format nil control-string args)))
+    #+sbcl
+    (let ((process (sb-ext:run-program  
+		    "/bin/sh"
+		    (list "-c" command)
+		    :input nil :output :stream :error :stream)))
+      (values
+       (sb-impl::process-output process)
+       (sb-impl::process-error process)
+       (sb-impl::process-exit-code process)))
+    
+    #+(or cmu scl)
+    (let ((process (ext:run-program  
+		    "/bin/sh"
+		    (list "-c" command)
+		    :input nil :output :stream :error :stream)))
+      (values
+       (ext::process-output process)
+       (ext::process-error process)
+       (ext::process-exit-code process)))    
+
+    #+allegro
+    (multiple-value-bind (output error status)
+	(excl.osi:command-output command :whole t)
+      (values output error status))
+    
+    #+lispworks
+    ;; BUG: Lispworks combines output and error streams
+    (let ((output (make-output-string-stream)))
+      (unwind-protect
+	  (let ((status 
+		 (system:call-system-showing-output
+		  command
+		  :shell-type "/bin/sh"
+		  :output-stream output)))
+	    (values (get-output-string output) nil status))
+	(close output)))
+    
+    #+clisp		
+    ;; BUG: CLisp doesn't allow output to user-specified stream
+    (values
+     nil
+     nil
+     (ext:run-shell-command  command :output :terminal :wait t))
+    
+    #+openmcl
+    (let ((process (ccl:run-program  
+		    "/bin/sh"
+		    (list "-c" command)
+		    :input nil :output :stream :error :stream
+		    :wait t)))
+      (values
+       (get-output-stream-string (ccl::external-process-output-stream process))
+       (get-output-stream-string (ccl::external-process-error-stream process))
+       (nth-value 1 (ccl::external-process-status process))))    
+	   
+    #-(or openmcl clisp lispworks allegro scl cmu sbcl)
+    (error "COMMAND-OUTPUT not implemented for this Lisp")
+
+    ))

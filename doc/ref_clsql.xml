@@ -1650,6 +1650,238 @@ The default is &nil;.
       </refsect1>
     </refentry>
 
+    <refentry id="create_db">
+      <refnamediv>
+	<refname>CREATE-DATABASE</refname>
+	<refpurpose>create a database</refpurpose>
+	<refclass>Function</refclass>
+      </refnamediv>
+      <refsect1>
+	<title>Syntax</title>
+	<synopsis><function>create-database</function> <replaceable>connection-spec</replaceable> &amp;key <replaceable>database-type</replaceable> => <returnvalue>success</returnvalue></synopsis>
+      </refsect1>
+      <refsect1>
+	<title>Arguments and Values</title>
+	<variablelist>
+	  <varlistentry>
+	    <term><parameter>connection-spec</parameter></term>
+	    <listitem>
+	      <para>A connection specification</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>database-type</parameter></term>
+	    <listitem>
+	      <para>A database type specifier, i.e. a keyword.
+		This defaults to the value of
+		<symbol>*default-database-type*</symbol></para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>success</parameter></term>
+	    <listitem>
+	      <para>A boolean flag. If &t;, a new database wa
+	      successfully created.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </refsect1>
+      <refsect1>
+	<title>Description</title>
+	<para>This function creates a database in the database system
+	specified by <parameter>database-type</parameter>.
+	</para>
+      </refsect1>
+      <refsect1>
+	<title>Examples</title>
+	<screen>
+(create-database '("localhost" "new" "dent" "dent") :database-type :mysql)
+=> T
+
+(create-database '("localhost" "new" "dent" "badpasswd") :database-type :mysql)
+Error: While trying to access database localhost/new/dent
+  using database-type MYSQL:
+  Error database-create failed: mysqladmin: connect to server at 'localhost' failed
+error: 'Access denied for user: 'root@localhost' (Using password: YES)'
+  has occurred.
+  [condition type: CLSQL-ACCESS-ERROR]
+	</screen>
+      </refsect1>
+      <refsect1>
+	<title>Side Effects</title>
+	<para>A database will be created on the filesystem of the host.</para>
+      </refsect1>
+      <refsect1>
+	<title>Exceptional Situations</title>
+	<para>An exception will be thrown if the database system does
+	not allow new databases to be created or if database creation
+	fails. Currently, only the <symbol>:postgresql-socket</symbol>
+	does not allow new databases to be created.</para>
+      </refsect1>
+      <refsect1>
+	<title>Notes</title>
+	<para>This function may invoke the operating systems
+	functions.  Thus, some database systems may require the
+	administration functions to be available in the current
+	<symbol>PATH</symbol>. At this time, the
+	<symbol>:mysql</symbol> backend requires
+	<filename>mysqladmin</filename> and the
+	<symbol>:postgresql</symbol> backend requires
+	<filename>createdb</filename>.</para>
+      </refsect1>
+    </refentry>
+
+    <refentry id="destroy_db">
+      <refnamediv>
+	<refname>DESTROY-DATABASE</refname>
+	<refpurpose>destroys a database</refpurpose>
+	<refclass>Function</refclass>
+      </refnamediv>
+      <refsect1>
+	<title>Syntax</title>
+	<synopsis><function>destroy-database</function> <replaceable>connection-spec</replaceable> &amp;key <replaceable>database-type</replaceable> => <returnvalue>success</returnvalue></synopsis>
+      </refsect1>
+      <refsect1>
+	<title>Arguments and Values</title>
+	<variablelist>
+	  <varlistentry>
+	    <term><parameter>connection-spec</parameter></term>
+	    <listitem>
+	      <para>A connection specification</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>database-type</parameter></term>
+	    <listitem>
+	      <para>A database type specifier, i.e. a keyword.
+		This defaults to the value of
+		<symbol>*default-database-type*</symbol></para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>success</parameter></term>
+	    <listitem>
+	      <para>A boolean flag. If &t;, a new database wa
+	      successfully destroyed.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </refsect1>
+      <refsect1>
+	<title>Description</title>
+	<para>This function destroy a database in the database system
+	specified by <parameter>database-type</parameter>.
+	</para>
+      </refsect1>
+      <refsect1>
+	<title>Examples</title>
+	<screen>
+(destroy-database '("localhost" "new" "dent" "dent") :database-type :postgresql)
+=> T
+
+(destroy-database '("localhost" "new" "dent" "dent") :database-type :postgresql)
+Error: While trying to access database localhost/test2/root
+  using database-type POSTGRESQL:
+  Error database-destory failed: dropdb: database removal failed: ERROR:  database "test2" does not exist
+  has occurred.
+  [condition type: CLSQL-ACCESS-ERROR]
+	</screen>
+      </refsect1>
+      <refsect1>
+	<title>Side Effects</title>
+	<para>A database will be removed from the filesystem of the host.</para>
+      </refsect1>
+      <refsect1>
+	<title>Exceptional Situations</title>
+	<para>An exception will be thrown if the database system does not
+	allow databases to be removed, the database does not exist, or
+	if database removal fails. Currently, only the
+	<symbol>:postgresql-socket</symbol> does not allow 
+	databases to be destroyed.</para>
+      </refsect1>
+      <refsect1>
+	<title>Notes</title>
+	<para>This function may invoke the operating systems
+	functions.  Thus, some database systems may require the
+	administration functions to be available in the current
+	<symbol>PATH</symbol>. At this time, the
+	<symbol>:mysql</symbol> backend requires
+	<filename>mysqladmin</filename> and the
+	<symbol>:postgresql</symbol> backend requires
+	<filename>dropdb</filename>.</para>
+      </refsect1>
+    </refentry>
+
+    <refentry id="probe_db">
+      <refnamediv>
+	<refname>PROBE-DATABASE</refname>
+	<refpurpose>tests for existance of a database</refpurpose>
+	<refclass>Function</refclass>
+      </refnamediv>
+      <refsect1>
+	<title>Syntax</title>
+	<synopsis><function>probe-database</function> <replaceable>connection-spec</replaceable> &amp;key <replaceable>database-type</replaceable> => <returnvalue>success</returnvalue></synopsis>
+      </refsect1>
+      <refsect1>
+	<title>Arguments and Values</title>
+	<variablelist>
+	  <varlistentry>
+	    <term><parameter>connection-spec</parameter></term>
+	    <listitem>
+	      <para>A connection specification</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>database-type</parameter></term>
+	    <listitem>
+	      <para>A database type specifier, i.e. a keyword.
+		This defaults to the value of
+		<symbol>*default-database-type*</symbol></para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>success</parameter></term>
+	    <listitem>
+	      <para>A boolean flag. If &t;, the database exists
+	      in the database system.
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </refsect1>
+      <refsect1>
+	<title>Description</title>
+	<para>This function tests for the existance of a database in
+	the database system specified by
+	<parameter>database-type</parameter>.
+	</para>
+      </refsect1>
+      <refsect1>
+	<title>Examples</title>
+	<screen>
+(probe-database '("localhost" "new" "dent" "dent") :database-type :postgresql)
+=> T
+	</screen>
+      </refsect1>
+      <refsect1>
+	<title>Side Effects</title>
+	<para>None</para>
+      </refsect1>
+      <refsect1>
+	<title>Exceptional Situations</title>
+	<para>An exception maybe thrown if the database system does
+	not receive administrator-level authentication. This function
+	may need to read the administrative table of the database
+	system.</para>
+      </refsect1>
+      <refsect1>
+	<title>Notes</title>
+	<para>None.</para>
+      </refsect1>
+    </refentry>
+
     <refentry id="database-name-from-spec">
       <refnamediv>
 	<refname>DATABASE-NAME-FROM-SPEC</refname>

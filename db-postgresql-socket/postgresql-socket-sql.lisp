@@ -446,9 +446,11 @@ doesn't depend on UFFI."
     (let ((database (database-connect (list host "template1" user password)
 				      type)))
       (unwind-protect
-	   (find name (database-query "select datname from pg_database" 
-				      database :auto)
-		 :key #'car :test #'string-equal)
+	  (when
+	      (find name (database-query "select datname from pg_database" 
+					 database :auto)
+		    :key #'car :test #'string-equal)
+	    t)
 	(database-disconnect database)))))
 
 (when (clsql-base-sys:database-type-library-loaded :postgresql-socket)

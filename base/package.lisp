@@ -65,6 +65,8 @@
      #:database-write-large-object
      #:database-read-large-object
      #:database-delete-large-object
+
+     #:command-output
      
      ;; Shared exports for re-export by CLSQL-BASE
      .

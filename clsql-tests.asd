@@ -40,6 +40,7 @@
 			   (:file "test-syntax")))))
 
 (defmethod perform ((o test-op) (c (eql (find-system 'clsql-tests))))
+  (operate 'load-op 'clsql)
   (unless (funcall (intern (symbol-name '#:run-tests)
 			   (find-package '#:clsql-tests)))
     (error "test-op failed")))

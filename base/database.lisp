@@ -219,7 +219,7 @@ of full is NIL."
 (defun destroy-database (connection-spec &key database-type)
   (when (stringp connection-spec)
     (setq connection-spec (string-to-list-connection-spec connection-spec)))
-  (database-destory connection-spec database-type))
+  (database-destroy connection-spec database-type))
 
 
 (defmacro with-database ((db-var connection-spec &rest connect-args) &body body)

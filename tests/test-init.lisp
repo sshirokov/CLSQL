@@ -321,7 +321,7 @@
 *******************************************************************
 " db-type)
 	  (db-type-ensure-system db-type)
-	  (rt:rem-all-tests)
+	  (regression-test:rem-all-tests)
 	  (ignore-errors (destroy-database spec :database-type db-type))
 	  (ignore-errors (create-database spec :database-type db-type))
 	  (dolist (test (append *rt-connection* *rt-fddl* *rt-fdml*

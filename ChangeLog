@@ -1,8 +1,14 @@
 10 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
-        * Version 2.5.3 released:
-	* base/database.lisp: Added CREATE-DATABASE,
-	 DESTROY-DATABASE, PROBE-DATABASE commands
+        * Version 2.6.0 released: New API functions
+	CREATE-DATABASE, DESTORY-DATABASE, PROBE-DATABASE
+	* doc/ref_clsql.xml: Document new functions
+	* base/database.lisp: New API functions
 	* base/conditions.lisp: Added CLSQL-ACCESS-ERROR
+	* base/utils.lisp: Fix use of position-char.
+	Add COMMAND-OUTPUT used by backends for running
+	shell commands.
+	* base/loop-extension.lisp: Rework packages
+	for Lispworks and Allegro
 	* db-*/*-sql.lisp: Added DATABASE-CREATE,
 	DATABASE-DESTORY, PROBE-DATABASE methods
 	* tests/test-init.lisp, clasic-tests/tests.lisp:
