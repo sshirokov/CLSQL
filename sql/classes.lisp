@@ -679,6 +679,7 @@ uninclusive, and the args from that keyword to the end."
 
 ;; Here's a real warhorse of a function!
 
+(declaim (inline listify))
 (defun listify (x)
   (if (atom x)
       (list x)

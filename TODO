@@ -22,10 +22,6 @@ COMMONSQL SPEC
     SELECT 
       o keyword arg :refresh should function as advertised 
 
-    DEF-VIEW-CLASS
-      o Rework functioning of :immediate to be conformant. It 
-     works as expect with target-slot, but not without target-slot
-
  >> Symbolic SQL syntax 
 
       o Complete sql expressions (see operations.lisp)

@@ -103,22 +103,32 @@
 	     (employee-addresses employee2))
 	  ((t t 2 2 2)))
 
-	;; :retrieval :immediate should be boundp before accessed
+	;; test retrieval is deferred
 	(deftest :oodm/retrieval/1
+	    (every #'(lambda (e) (not (slot-boundp e 'company)))
+	     (select 'employee :flatp t))
+	  t)
+
+	;; :retrieval :immediate should be boundp before accessed
+	(deftest :oodm/retrieval/2
 	    (every #'(lambda (ea) (slot-boundp ea 'address))
 	     (select 'employee-address :flatp t))
 	  t)
 
-	(deftest :oodm/retrieval/2
+	(deftest :oodm/retrieval/3
 	    (mapcar #'(lambda (ea) (typep (slot-value ea 'address) 'address))
 	     (select 'employee-address :flatp t))
 	  (t t t t t))
 
-	;; test retrieval is deferred
-	(deftest :oodm/retrieval/3
-	    (every #'(lambda (e) (not (slot-boundp e 'company)))
-	     (select 'employee :flatp t))
+	(deftest :oodm/retrieval/4
+	    (every #'(lambda (ea) (slot-boundp (slot-value ea 'address) 'addressid))
+	     (select 'employee-address :flatp t))
 	  t)
+
+	(deftest :oodm/retrieval/5	    
+	    (mapcar #'(lambda (ea) (slot-value (slot-value ea 'address) 'street-number))
+	     (select 'employee-address :flatp t :order-by [aaddressid]))
+	  (10 10 nil nil nil))
 
 	;; tests update-records-from-instance 
 	(deftest :oodml/update-records/1
