@@ -5,7 +5,7 @@ pkg=%%
 
 case "$1" in
     configure)
-	cl-only-compatible $pkg allegro cmucl lispworks openmcl
+	clc-only-compatible $pkg allegro cmucl lispworks openmcl
 	register-common-lisp-source $pkg
 	;;
     abort-upgrade|abort-remove|abort-deconfigure)
