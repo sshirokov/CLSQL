@@ -124,9 +124,7 @@
     :db-info (:join-class employee
 			  :home-key (companyid groupid)
 			  :foreign-key (ecompanyid groupid)
-			  :set t)))
-  (:base-table company))
-
+			  :set t))))
 
 (def-view-class address ()
   ((addressid
@@ -150,7 +148,8 @@
     :column "zip"
     :type integer
     :void-value 0
-    :initarg :postal-code)))
+    :initarg :postal-code))
+  (:base-table addr))
 
 ;; many employees can reside at many addressess
 (def-view-class employee-address ()

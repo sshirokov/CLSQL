@@ -290,7 +290,7 @@
 (deftest :fdml/select/15
     (multiple-value-bind (rows field-names)
 	(clsql:select [addressid] [street-number] [street-name] [city_field] [zip] 
-	 :from [address]
+	 :from [addr]
 	 :where [= 1 [addressid]])
       (values
        rows
@@ -354,14 +354,14 @@
 (deftest :fdml/loop/2
     (loop for (addressid)
       being each tuple in
-      [select [addressid] :from [address] :order-by [addressid]]
+      [select [addressid] :from [addr] :order-by [addressid]]
      collect addressid)
   (1 2))
 
 (deftest :fdml/loop/3
     (loop for addressid
       being each tuple in
-      [select [addressid] :from [address] :order-by [addressid]]
+      [select [addressid] :from [addr] :order-by [addressid]]
       collect addressid)
   (1 2))
 
