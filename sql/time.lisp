@@ -1085,25 +1085,32 @@ formatted date string."
 
 
 (defun syntax-parse-iso-8601 (string)
-  (let (year month day hour minute second gmt-sec-offset)
+  ;; use strlen to determine if fractional seconds are present in timestamp
+  (let ((strlen (length string))
+	year month day hour minute second gmt-sec-offset)
     (handler-case
         (progn
-          (setf year   (parse-integer (subseq string 0 4))
-                month  (parse-integer (subseq string 5 7))
-                day    (parse-integer (subseq string 8 10))
-                hour   (if (<= 13 (length string))
-                           (parse-integer (subseq string 11 13))
-                           0)
-                minute (if (<= 16 (length string))
-                           (parse-integer (subseq string 14 16))
-                           0)
-                second (if (<= 19 (length string))
-                           (parse-integer (subseq string 17 19))
-                           0)
-                gmt-sec-offset (if (<= 22 (length string))
-                                   (* 60 60
-                                      (parse-integer (subseq string 19 22)))
-                                   0))
+	  (setf year           (parse-integer string :start 0 :end 4)
+                month          (parse-integer string :start 5 :end 7)
+                day            (parse-integer string :start 8 :end 10)
+                hour           (if (<= 13 strlen)
+                                   (parse-integer string :start 11 :end 13)
+				   0)
+                minute         (if (<= 16 strlen)
+                                   (parse-integer string :start 14 :end 16)
+				   0)
+                second         (if (<= 19 strlen)
+                                   (parse-integer string :start 17 :end 19)
+				   0)
+                gmt-sec-offset (if (<= 20 strlen)
+                                   (let ((skip-to (or (position #\+ string :start 19)
+                                                      (position #\- string :start 19))))
+                                     (if skip-to
+                                         (* 60 60
+                                            (parse-integer string :start skip-to
+							   :end (+ skip-to 3)))
+					 0))
+				   0))
           (unless (< 0 year)
             (error 'iso-8601-syntax-error
                    :bad-component '(year . 0)))
