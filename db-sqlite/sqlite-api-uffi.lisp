@@ -291,7 +291,7 @@
 ;;;;
 (declaim (inline make-null-row))
 (defun make-null-row ()
-  +null-char-char-pointer)
+  +null-char-char-pointer+)
 
 (declaim (inline make-null-vm))
 (defun make-null-vm ()
