@@ -5,6 +5,11 @@
 	increase CommonSQL conformance.
 	* tests/test-init.lisp: Change a :column attribute
 	to test symbols as value
+	* sql/relations.lisp: Remove functions since they don't support
+	many to many relationships.
+	* examples/clsql-tutorial.lisp, doc/csql.lisp: Remove use
+	of add-to-relations function and replace with explicit field settings.
+	* base/classes.lisp: Remove obsolute query-stream. Add record-caches slot.
 	
 9 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.15

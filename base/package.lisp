@@ -143,7 +143,7 @@
      #:conn-pool
      #:command-recording-stream
      #:result-recording-stream
-     #:query-recording-stream
+     #:record-caches
      #:view-classes
      #:database-type
      #:database-state

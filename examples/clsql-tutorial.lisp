@@ -45,7 +45,8 @@
 			  :set nil))
    (managerid
     :type integer
-    :nulls-ok t)
+    :nulls-ok t
+    :initarg :managerid)
    (manager
     :accessor employee-manager
     :db-kind :join
@@ -65,7 +66,8 @@
     :type (string 100)
     :initarg :name)
    (presidentid
-    :type integer)
+    :type integer
+    :initarg :presidentid)
    (president
     :reader president
     :db-kind :join
@@ -105,41 +107,34 @@
 
 
 ;; Create some instances of our view classes
+(defvar company1 (make-instance 'company
+			      :companyid 1
+			      :name "Widgets Inc."
+			      ;; Lenin is president of Widgets Inc.
+			      :presidentid 1))
+
 (defvar employee1 (make-instance 'employee
 			       :emplid 1
 			       :first-name "Vladamir"
 			       :last-name "Lenin"
-			       :email "lenin@soviet.org"))
-
-(defvar company1 (make-instance 'company
-			      :companyid 1
-			      :name "Widgets Inc."))
-			      
+			       :email "lenin@soviet.org"
+			       :companyid 1))
 
 (defvar employee2 (make-instance 'employee
 			       :emplid 2
 			       :first-name "Josef"
 			       :last-name "Stalin"
-			       :email "stalin@soviet.org"))
-
-;; Lenin manages Stalin (for now)
-(clsql:add-to-relation employee2 'manager employee1)
-
-;; Lenin and Stalin both work for Widgets Inc.
-(clsql:add-to-relation company1 'employees employee1)
-(clsql:add-to-relation company1 'employees employee2)
-
-;; Lenin is president of Widgets Inc.
-(clsql:add-to-relation company1 'president employee1)
+			       :email "stalin@soviet.org"
+			       :companyid 1
+			       ;; Lenin manages Stalin (for now)
+			       :managerid 1))
 
 (clsql:update-records-from-instance employee1)
 (clsql:update-records-from-instance employee2)
 (clsql:update-records-from-instance company1)
 
-;; lets us use the functional
-;; sql interface 
+;; lets use the functional sql interface 
 (clsql:locally-enable-sql-reader-syntax)
-
 
 (format t "The email address of ~A ~A is ~A"
 	(first-name employee1)

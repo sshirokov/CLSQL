@@ -31,7 +31,7 @@
    (state :initform :closed :reader database-state)
    (command-recording-stream :accessor command-recording-stream :initform nil)
    (result-recording-stream :accessor result-recording-stream :initform nil)
-   (query-recording-stream :accessor query-recording-stream :initform nil)
+   (record-caches :accessor record-caches :initform nil)
    (view-classes :accessor database-view-classes :initform nil)
    (schema :accessor database-schema :initform nil)
    (transaction-level :initform 0 :accessor transaction-level)

@@ -52,8 +52,7 @@ a functional and an object oriented interface."
 	       (:module :object
 			:pathname ""
 		       :components ((:file "metaclasses")
-				    (:file "objects" :depends-on ("metaclasses"))
-				    (:file "relations" :depends-on ("objects")))
+				    (:file "objects" :depends-on ("metaclasses")))
 		       :depends-on (:functional))))))
      
 

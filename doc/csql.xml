@@ -177,10 +177,12 @@ mapped into a database).  They would be defined as follows:
     :nulls-ok t
     :initarg :email)
    (companyid
-    :type integer)
+    :type integer
+    :initarg :companyid)
    (managerid
     :type integer
-    :nulls-ok t))
+    :nulls-ok t
+    :initarg :managerid))
   (:base-table employee))
 
 (clsql:def-view-class company ()
@@ -193,7 +195,8 @@ mapped into a database).  They would be defined as follows:
     :type (string 100)
     :initarg :name)
    (presidentid
-    :type integer))
+    :type integer
+    :initarg :presidentid))
   (:base-table company))
 </programlisting>
 
@@ -479,22 +482,25 @@ any other CLOS object:
 </para>
 
 <programlisting>
+(defvar company1 (make-instance 'company
+			      :companyid 1
+			      :presidentid 1
+			      :name "Widgets Inc."))
+			      
 (defvar employee1 (make-instance 'employee
 			       :emplid 1
 			       :first-name "Vladamir"
 			       :last-name "Lenin"
-			       :email "lenin@soviet.org"))
-
-(defvar company1 (make-instance 'company
-			      :companyid 1
-			      :name "Widgets Inc."))
-			      
+			       :email "lenin@soviet.org"
+			       :companyid 1))
 
 (defvar employee2 (make-instance 'employee
 			       :emplid 2
 			       :first-name "Josef"
 			       :last-name "Stalin"
-			       :email "stalin@soviet.org"))
+			       :email "stalin@soviet.org"
+			       :companyid 1
+			       :managerid 1))
 </programlisting>
 
 <para>
@@ -506,26 +512,6 @@ In order to insert an objects into the database we use the
 (clsql:update-records-from-instance employee1)
 (clsql:update-records-from-instance employee2)
 (clsql:update-records-from-instance company1)
-</programlisting>
-
-<para>
-Now we can set up some of the relations between employees and
-companies, and their managers.  The
-<function>ADD-TO-RELATION</function> method provides us with an easy
-way of doing that.  It will update both the relation slot, as well as
-the home-key and foreign-key slots in both objects in the relation.
-</para>
-
-<programlisting>
-;; Lenin manages Stalin (for now)
-(clsql:add-to-relation employee2 'manager employee1)
-
-;; Lenin and Stalin both work for Widgets Inc.
-(clsql:add-to-relation company1 'employees employee1)
-(clsql:add-to-relation company1 'employees employee2)
-
-;; Lenin is president of Widgets Inc.
-(clsql:add-to-relation company1 'president employee1)
 </programlisting>
 
 <para>
