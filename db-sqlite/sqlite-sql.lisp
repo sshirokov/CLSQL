@@ -131,7 +131,7 @@
 		(values result-set n-col nil)
 		(values result-set n-col)))))
     (sqlite:sqlite-error (err)
-      (error 'sql-database-error
+      (error 'sql-database-data-error
 	     :database database
 	     :expression query-expression
 	     :error-id (sqlite:sqlite-error-code err)
