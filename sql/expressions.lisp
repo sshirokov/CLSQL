@@ -374,6 +374,7 @@
                        :test (lambda (tab1 tab2)
                                (equal (slot-value tab1 'name)
                                       (slot-value tab2 'name))))))
+(defvar *in-subselect* nil)
 
 (defmethod output-sql ((expr sql-function-exp) database)
   (with-slots (name args)
@@ -563,8 +564,6 @@ uninclusive, and the args from that keyword to the end."
 			   :limit limit :offset offset
 			   :group-by group-by :having having :order-by order-by
 			   :inner-join inner-join :on on))))))
-
-(defvar *in-subselect* nil)
 
 (defmethod output-sql ((query sql-query) database)
   (with-slots (distinct selections from where group-by having order-by
