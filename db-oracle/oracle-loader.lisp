@@ -16,21 +16,29 @@
 
 (in-package #:clsql-oracle)
 
-(defparameter *oracle-lib-path*
+(defparameter *oracle-home*
   (let ((oracle-home (getenv "ORACLE_HOME")))
     (when oracle-home
-      (make-pathname :directory 
-		     (append 
-		      (pathname-directory
-		       (parse-namestring (concatenate 'string oracle-home "/")))
-			(list "lib"))))))
+      (parse-namestring (concatenate 'string oracle-home "/"))))
+  "Pathname of ORACLE_HOME as set in user environment.")
 
 (defparameter *oracle-client-library-path* 
     (uffi:find-foreign-library
-     "libclntsh"
-     `(,@(when *load-truename* (list (make-pathname :directory (pathname-directory *load-truename*))))
-       ,@(when *oracle-lib-path* (list *oracle-lib-path*))
-       "/usr/lib/oracle/10.1.0.2/client/lib/")
+     '("libclntsh" "oci")
+     `(,@(when *load-truename*
+	   (list (make-pathname
+		  :directory (pathname-directory *load-truename*))))
+	 ,@(when *oracle-home*
+	     (list
+	      (make-pathname :defaults *oracle-home*
+			     :directory 
+			     (append (pathname-directory *oracle-home*)
+				     (list "lib")))
+	      (make-pathname :defaults *oracle-home*
+			     :directory 
+			     (append (pathname-directory *oracle-home*)
+				     (list "bin")))))
+	 "/usr/lib/oracle/10.1.0.2/client/lib/")
      :drive-letters '("C")))
 
 (defvar *oracle-supporting-libraries* '("c")

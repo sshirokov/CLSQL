@@ -591,9 +591,23 @@
       library. (<filename>libclntsh.so</filename>).  The location of
       this library is specified relative to the
       <symbol>ORACLE_HOME</symbol> value in the operating system
-      environment. &clsql; has tested sucessfully using the client
-      library from Oracle 9i and Oracle 10g server installations as
-      well as Oracle's 10g Instant Client library.
+      environment.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Library Versions</title>
+      <para>
+	&clsql; has tested sucessfully using the client library from
+	Oracle 9i and Oracle 10g server installations as well as
+	Oracle's 10g Instant Client library. For Oracle 8 and earlier
+	versions, there is vestigial support by pushing the symbol
+	<symbol>:oci7</symbol> onto <symbol>cl:*features*</symbol>
+	prior to loading the <filename>clsql-oracle</filename> &asdf;
+	system.
+	<screen>
+	  (push :oci7 cl:*features*)
+	  (asdf:operate 'asdf:load-op 'clsql-oracle)
+	</screen>
       </para>
     </sect2>
     <sect2>
