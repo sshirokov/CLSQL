@@ -71,7 +71,10 @@ default value of T, which specifies that minimum sizes are
 computed. The output stream is given by STREAM, which has a default
 value of T. This specifies that *STANDARD-OUTPUT* is used."
   (flet ((compute-sizes (data)
-           (mapcar #'(lambda (x) (apply #'max (mapcar #'length x)))
+           (mapcar #'(lambda (x) 
+                       (apply #'max (mapcar #'(lambda (y) 
+                                                (if (null y) 3 (length y)))
+                                            x)))
                    (apply #'mapcar (cons #'list data))))
          (format-record (record control sizes)
            (format stream "~&~?" control
@@ -80,7 +83,8 @@ value of T. This specifies that *STANDARD-OUTPUT* is used."
     (let* ((query-exp (etypecase query-exp
                         (string query-exp)
                         (sql-query (sql-output query-exp database))))
-           (data (query query-exp :database database))
+           (data (query query-exp :database database :result-types nil 
+                        :field-names nil))
            (sizes (if (or (null sizes) (listp sizes)) sizes 
                       (compute-sizes (if titles (cons titles data) data))))
            (formats (if (or (null formats) (not (listp formats)))

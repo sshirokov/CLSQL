@@ -1,3 +1,18 @@
+15 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
+	* sql/sql.lisp: PRINT-QUERY now calls QUERY with result-types and 
+	field-names set to nil. 
+	* sql/sql.lisp: PRINT-QUERY now computes column sizes correctly 
+	with null attribute values. 
+	* sql/operations.lisp: modify SQL concatenation operator to accept 
+	unescaped || symbol.  
+	* sql/syntax.lisp: modify sql reader macro function to accept 
+	unescaped sql concatenation operator. 
+	* tests/test-fdml.lisp: unescape sql concatenation operator. 
+	* tests/test-syntax.lisp: unescape sql concatenation operator. 
+	* TODO: remove items done. Add notes about SQLITE/MYSQL backends. 
+	Note to add test for universal-time. Note about difference from 
+	CommonSQL in transaction handling. 
+
 13 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* tests/test-init.lisp: Add deferred-employee-address
 	class

@@ -9,6 +9,7 @@ TESTS TO ADD
 * test *db-auto-sync* 
 * test SELECT caching
 * for-each-row macro
+* universal-time 
 
 COMMONSQL SPEC
 
@@ -26,7 +27,6 @@ COMMONSQL SPEC
          nvl (Oracle specific) 
          userenv (Oracle specific) 
 	 minus (Oracle specific: does the same as EXCEPT) 
-	 || 
 
       o variables (e.g., table identifiers) should be instantiated at runtime 
 
@@ -56,7 +56,9 @@ MYSQL
 drop-index:   requires a table to be specified with the :from keyword parameter
 views:        mysql does not support views  
 queries:      nested subqueries are not supported
+syntax:       doesn't support the sql concatenation operator (||). 
 
 SQLITE 
 
-create-view: column-list parameter not supported 
+create-view:  column-list parameter not supported 
+syntax:       doesn't support the sql SUBSTRING operator. 

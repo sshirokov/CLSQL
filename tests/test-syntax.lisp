@@ -209,7 +209,7 @@
 
 
 (deftest :syntax/concat/1 
-    (clsql:sql [\|\| [foo] [bar] [baz]])
+    (clsql:sql [|| [foo] [bar] [baz]])
  "(FOO || BAR || BAZ)")
 
 

@@ -84,9 +84,11 @@ syntax is disabled."
 (defun sql-reader-open (stream char)
   (declare (ignore char))
   (let ((sqllist (read-delimited-list #\] stream t)))
-    (if (sql-operator (car sqllist))
-	(cons (sql-operator (car sqllist)) (cdr sqllist))
-      (apply #'generate-sql-reference sqllist))))
+    (cond ((string= (write-to-string (car sqllist)) "||")
+           (cons (sql-operator 'concat) (cdr sqllist)))
+          ((sql-operator (car sqllist))
+           (cons (sql-operator (car sqllist)) (cdr sqllist)))
+          (t (apply #'generate-sql-reference sqllist)))))
 
 ;; Internal function that disables the close syntax when leaving sql context.
 (defun disable-sql-close-syntax ()
