@@ -12,6 +12,7 @@ usage () {
 Usage: $progname [options]
 Creates upstream archives
 Options:
+  -c   Commit and tag CVS tree with current version numbers
   -t   Tag CVS tree with current version numbers
   -h   Print this brief help
 EOF
@@ -22,6 +23,7 @@ while [ $# != 0 ]; do
     value="`echo x\"$1\" | sed -e 's/^x-.//'`"
     case "$1" in
         -h)  usage; exit 0           ;;
+        -c)  opt_commit=1; opt_tag=1 ;;
         -t)  opt_tag=1               ;;
          *)  usage; exit 0           ;;
     esac
@@ -37,6 +39,10 @@ VERSION=`sed -n -e "s/${DEBPKG} (\(.*\)-[0-9.]).*/\1/p" < debian/changelog  |hea
 PACKAGE_DIR=/usr/local/src/Packages/${DEBPKG}
 DISTDIR=${PKG}-${VERSION}
 DEBDIR=${DEBPKG}-${VERSION}
+
+if [ ! -z ${opt_commit} ]; then
+    cvs commit -m 'Debian build'
+fi
 
 if [ ! -z ${opt_tag} ]; then
     UPSTREAM_TAG=upstream_version_`echo ${VERSION} | tr . _`

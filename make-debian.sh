@@ -8,7 +8,6 @@ PACKAGE_DIR=/usr/local/src/Packages/${DEBPKG}
 export CVSROOT=`cat CVS/Root`
 
 echo "Building Debian files"
-cvs com -m 'debian build'
 cvs-buildpackage -rfakeroot -kkevin@rosenberg.net -H${TOPDIR}/cvsbp-prepare.sh -i.pdf -F -d ${DEBPKG} $*
 
 rm -rf ${PACKAGE_DIR}/${DEBPKG}-${DEBVERSION}
