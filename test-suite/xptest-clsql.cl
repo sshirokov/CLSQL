@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: xptest-clsql.cl,v 1.3 2002/03/27 09:21:46 kevin Exp $
+;;;; $Id: xptest-clsql.cl,v 1.4 2002/03/27 10:48:21 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -26,8 +26,8 @@
 (def-test-fixture clsql-fixture ()
   ((aodbc-spec :accessor aodbc-spec)
    (mysql-spec :accessor mysql-spec)
-   (postgresql-spec :accessor postgresql-spec)
-   (postgresql-socket-spec :accessor postgresql-socket-spec))
+   (pgsql-spec :accessor pgsql-spec)
+   (pgsql-socket-spec :accessor pgsql-socket-spec))
   (:documentation "Test fixture for CLSQL testing"))
 
 (defvar *config-pathname* (make-pathname :name "test"
@@ -40,31 +40,47 @@
 	  (setq config (read stream)))
 	(setf (aodbc-spec fix) (cadr (assoc :aodbc config)))
 	(setf (mysql-spec fix) (cadr (assoc :mysql config)))
-	(setf (postgresql-spec fix) (cadr (assoc :postgresql config)))
-	(setf (postgresql-socket-spec fix) 
+	(setf (pgsql-spec fix) (cadr (assoc :postgresql config)))
+	(setf (pgsql-socket-spec fix) 
 	      (cadr (assoc :postgresql-socket config))))
       (error "XPTest Config file ~S not found" *config-pathname*)))
 
 (defmethod teardown ((fix clsql-fixture))
   t)
 
-(defmethod mysql-test ((test clsql-fixture))
-  (let ((spec (mysql-spec test)))
-    (when spec
-      (let ((db (clsql:connect spec :database-type :mysql 
-			       :if-exists :new)))
-	(unwind-protect
-	     (progn
-	       (create-test-table db)
-	       (query "select * from test_clsql" 
-		      :database db
-		      :types :auto)
-	       (map-query 'vector #'list "select * from test_clsql" 
-			  :database db
-			  :types :auto)
-	       (drop-test-table db)
-	       )
-	  (disconnect :database db))))))
+(defmethod mysql-table-test ((test clsql-fixture))
+  (test-table (mysql-spec test) :mysql))
+
+(defmethod aodbc-table-test ((test clsql-fixture))
+  (test-table (aodbc-spec test) :aodbc))
+
+(defmethod pgsql-table-test ((test clsql-fixture))
+  (test-table (pgsql-spec test) :postgresql))
+
+(defmethod pgsql-socket-table-test ((test clsql-fixture))
+  (test-table (pgsql-socket-spec test) :postgresql-socket))
+
+
+(defmethod test-table (spec type)
+  (when spec
+    (let ((db (clsql:connect spec :database-type type :if-exists :new)))
+      (unwind-protect
+	   (progn
+	     (create-test-table db)
+	     (dolist (row (query "select * from test_clsql" :database db :types :auto))
+	       (test-table-row row :auto))
+	     (dolist (row (query "select * from test_clsql" :database db :types nil))
+	       (test-table-row row nil))
+	     (loop for row across (map-query 'vector #'list "select * from test_clsql" 
+					     :database db :types :auto)
+		   do (test-table-row row :auto))
+	     (loop for row across (map-query 'vector #'list "select * from test_clsql" 
+					     :database db :types nil)
+		   do (test-table-row row nil))
+	     (drop-test-table db)
+	     )
+	(disconnect :database db)))))
+
 
 (defmethod mysql-low-level ((test clsql-fixture))
   (let ((spec (mysql-spec test)))
@@ -93,30 +109,81 @@
 		   :test-thunk 'mysql-low-level
 		   :description "A test of MySQL low-level interface")
      ("MySQL Test" 'clsql-fixture
-		   :test-thunk 'mysql-test
-		   :description "A test of MySQL")))
+		   :test-thunk 'mysql-table-test
+		   :description "A test of MySQL")
+     ("PostgreSQL Test" 'clsql-fixture
+		   :test-thunk 'pgsql-table-test
+		   :description "A test of PostgreSQL tables")     
+     ("PostgreSQL Socket Table Test" 'clsql-fixture
+		   :test-thunk 'pgsql-socket-table-test
+		   :description "A test of PostgreSQL Socket tables")
+  ))
 
+#+allegro 
+(add-test (make-test-case "AODBC table test" 'clsql-fixture
+			  :test-thunk 'aodbc-table-test
+			  :description "Test AODBC table")
+	  clsql-test-suite)
 
 ;;;; Testing functions
+
+(defun transform1 (i)
+  (* i (abs (/ i 2)) (expt 10 (* 2 i))))
 
 (defun create-test-table (db)
   (ignore-errors
     (clsql:execute-command 
      "DROP TABLE test_clsql" :database db))
   (clsql:execute-command 
-   "CREATE TABLE test_clsql (n integer, n_pi float, n_pi_str CHAR(20))" 
+   "CREATE TABLE test_clsql (t_int integer, t_float float, t_str CHAR(20))" 
    :database db)
   (dotimes (i 11)
-    (let ((n (- i 5)))
+    (let* ((test-int (- i 5))
+	   (test-flt (transform1 test-int)))
       (clsql:execute-command
        (format nil "INSERT INTO test_clsql VALUES (~a,~a,'~a')"
-	       n (clsql:float-to-sql-string (* pi n))
-	       (clsql:float-to-sql-string (* pi n)))
+	       test-int
+	       (number-to-sql-string test-flt)
+	       (number-to-sql-string test-flt))
        :database db))))
+
+(defun parse-double (num-str)
+  (let ((*read-default-float-format* 'double-float))
+    (read-from-string num-str)))
+
+(defun test-table-row (row types)
+  (unless (and (listp row)
+	       (= 3 (length row)))
+    (failure "Row ~S is incorrect format" row))
+  (destructuring-bind (int float str) row
+    (cond
+      ((eq types :auto)
+       (unless (and (integerp int)
+		    (typep float 'double-float)
+		    (stringp str))
+	 (failure "Incorrect field type for row ~S" row)))
+       ((null types)
+	(unless (and (stringp int)
+		     (stringp float)
+		     (stringp str))
+	  (failure "Incorrect field type for row ~S" row))
+	  (setq int (parse-integer int))
+	  (setq float (parse-double float)))
+       ((listp types)
+	)
+       (t 
+	(failure "Invalid types field (~S) passed to test-table-row" types)))
+#+ignore
+    (unless (= float (transform1 int))
+      (failure "Wrong float value ~A for int ~A (row ~S)" float int row))
+#+ignore
+    (unless (= float (parse-double str))
+      (failure "Wrong string value ~A" str))))
+
 
 (defun drop-test-table (db)
   (clsql:execute-command "DROP TABLE test_clsql"))
 
-(report-result (run-test clsql-test-suite) :verbose t)
+(report-result (run-test clsql-test-suite :handle-errors nil) :verbose t)
 
 
