@@ -46,9 +46,19 @@
   (declare (ignore metaclass slot-name))
   )
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defclass %slot-order-test-class ()
+    ((a)
+     (b)))
+  (finalize-inheritance (find-class '%slot-order-test-class))
+  (let ((slots (class-slots (find-class '%slot-order-test-class))))
+    (ecase (slot-definition-name (first slots))
+      (a)
+      (b (pushnew :mop-slot-order-reversed cl:*features*)))))
+       
 (defun ordered-class-slots (class)
-  #+(or cmu18 sbcl) (class-slots class)
-  #-(or cmu18 sbcl) (reverse (class-slots class)))
+  #+mop-slot-order-reversed (class-slots class)
+  #-mop-slot-order-reversed (reverse (class-slots class)))
 
 ;; Lispworks has symbol for slot rather than the slot instance
 (defun %svuc-slot-name (slot)
