@@ -19,36 +19,36 @@ pkg-aodbc	:= cl-sql-aodbc
 all-pkgs	:= $(pkg) $(pkg-base) $(pkg-mysql) $(pkg-pg) $(pkg-pg-socket) $(pkg-aodbc)
 
 
-UPSTREAM_VER	:= $(shell sed -n -e "s/${pkg} (\(.*\)-[0-9.]).*/\1/p" < debian/changelog |head -1)
+UPSTREAM_VER	:= $(shell sed -n -e "s/${pkg} (\(.*\)-[0-9A-Za-z\.]).*/\1/p" < debian/changelog |head -1)
 
 ## Lisp sources
-srcs		:= $(wildcard sql/*.cl)
-srcs-base	:= $(wildcard base/*.cl)
-srcs-base-uffi	:= $(wildcard interfaces/clsql-uffi/*.cl) 
-srcs-base-uffi-so:= $(wildcard interfaces/clsql-uffi/*.so)
-srcs-mysql	:= $(wildcard interfaces/mysql/*.cl)
-srcs-mysql-so	:=  $(wildcard interfaces/mysql/*.so)
-srcs-pg		:= $(wildcard interfaces/postgresql/*.cl)
-srcs-pg-socket	:= $(wildcard interfaces/postgresql-socket/*.cl)
-srcs-aodbc	:= $(wildcard interfaces/aodbc/*.cl)
+srcs		:= $(wildcard clsql/*.cl)
+srcs-base	:= $(wildcard clsql-base/*.cl)
+srcs-base-uffi	:= $(wildcard clsql-uffi/*.cl) 
+srcs-base-uffi-so:= $(wildcard clsql-uffi/*.so)
+srcs-mysql	:= $(wildcard clsql-mysql/*.cl)
+srcs-mysql-so	:=  $(wildcard clsql-mysql/*.so)
+srcs-pg		:= $(wildcard clsql-postgresql/*.cl)
+srcs-pg-socket	:= $(wildcard clsql-postgresql-socket/*.cl)
+srcs-aodbc	:= $(wildcard clsql-aodbc/*.cl)
 
 clc-base	:= usr/share/common-lisp
 clc-source	:= $(clc-base)/source
 clc-systems	:= $(clc-base)/systems
 doc-dir		:= usr/share/doc/cl-sql-base
 
-clc-clsql	:= $(clc-source)/$(plain-pkg)-$(UPSTREAM_VER)
+#clc-clsql	:= $(clc-source)/$(plain-pkg)-$(UPSTREAM_VER)
+clc-clsql	:= $(clc-source)/$(plain-pkg)
 
-lispdir		:= $(clc-clsql)
-lispdir-sql	:= $(clc-clsql)/sql
-lispdir-base	:= $(clc-clsql)/base
-lispdir-base-uffi := $(clc-clsql)/interfaces/clsql-uffi
+lispdir-sql	:= $(clc-source)/clsql
+lispdir-base	:= $(clc-source)/clsql-base
+lispdir-base-uffi := $(clc-source)/clsql-uffi
 sodir-base-uffi := usr/lib/clsql
-lispdir-mysql	:= $(clc-clsql)/interfaces/mysql
+lispdir-mysql	:= $(clc-source)/clsql-mysql
 sodir-mysql	:= usr/lib/clsql
-lispdir-pg	:= $(clc-clsql)/interfaces/postgresql
-lispdir-pg-socket := $(clc-clsql)/interfaces/postgresql-socket
-lispdir-aodbc	:= $(clc-clsql)/interfaces/aodbc
+lispdir-pg	:= $(clc-source)/clsql-postgresql
+lispdir-pg-socket := $(clc-source)/clsql-postgresql-socket
+lispdir-aodbc	:= $(clc-source)/clsql-aodbc
 
 
 configure: configure-stamp
@@ -148,12 +148,12 @@ binary-arch: build install
 	dh_installdocs
 #	dh_installexamples 
 	dh_installchangelogs ChangeLog
-	dh_link -p $(pkg-base) $(clc-clsql) $(clc-source)/clsql
-	dh_link -p $(pkg-base) $(clc-clsql) $(clc-source)/clsql-base
-	dh_link -p $(pkg-mysql) $(clc-clsql) $(clc-source)/clsql-mysql
-	dh_link -p $(pkg-pg) $(clc-clsql) $(clc-source)/clsql-postgresql
-	dh_link -p $(pkg-pg-socket) $(clc-clsql) $(clc-source)/clsql-postgresql-socket
-	dh_link -p $(pkg-aodbc) $(clc-clsql) $(clc-source)/clsql-aodbc
+#	dh_link -p $(pkg-base) $(clc-clsql) $(clc-source)/clsql
+#	dh_link -p $(pkg-base) $(clc-clsql) $(clc-source)/clsql-base
+#	dh_link -p $(pkg-mysql) $(clc-clsql) $(clc-source)/clsql-mysql
+#	dh_link -p $(pkg-pg) $(clc-clsql) $(clc-source)/clsql-postgresql
+#	dh_link -p $(pkg-pg-socket) $(clc-clsql) $(clc-source)/clsql-postgresql-socket
+#	dh_link -p $(pkg-aodbc) $(clc-clsql) $(clc-source)/clsql-aodbc
 	dh_strip
 	dh_compress
 	dh_fixperms
