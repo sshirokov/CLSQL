@@ -104,12 +104,24 @@ the length of that format.")
     :reader server-version
     :documentation
     "Version string of Oracle server.")
-   (major-version-number
+   (major-server-version
     :type (or null fixnum)
-    :initarg :major-version-number
-    :reader major-version-number
+    :initarg :major-server-version
+    :reader major-server-version
     :documentation
-    "The major version number of Oracle, should be 8, 9, or 10")))
+    "The major version number of the Oracle server, should be 8, 9, or 10")
+   (client-version 
+    :type string
+    :initarg :client-version
+    :reader client-version
+    :documentation
+    "Version string of Oracle client.")
+   (major-client-version
+    :type (or null fixnum)
+    :initarg :major-client-version
+    :reader major-client-version
+    :documentation
+    "The major version number of the Oracle client, should be 8, 9, or 10")))
 
 
 ;;; Handle the messy case of return code=+oci-error+, querying the
@@ -780,13 +792,13 @@ the length of that format.")
 	)
       ;; Actually, oci-server-version returns the client version, not the server versions
       ;; will use "SELECT VERSION FROM V$INSTANCE" to get actual server version.
-      (let (db server-version)
+      (let (db client-version)
 	(uffi:with-foreign-object (buf '(:array :unsigned-char #.+errbuf-len+))
 	  (oci-server-version (deref-vp svchp)
 			      (deref-vp errhp)
 			      (uffi:char-array-to-pointer buf)
 			      +errbuf-len+ +oci-htype-svcctx+)
-	  (setf server-version (uffi:convert-from-foreign-string buf)))
+	  (setf client-version (uffi:convert-from-foreign-string buf)))
 	(setq db (make-instance 'oracle-database
 				:name (database-name-from-spec connection-spec
 							       database-type)
@@ -796,10 +808,9 @@ the length of that format.")
 				:svchp svchp
 				:dsn data-source-name
 				:user user
-				:server-version server-version
-				:major-version-number (major-version-from-string
-						       server-version)))
-
+				:client-version client-version
+				:major-client-version (major-client-version-from-string
+						       client-version)))
 	(oci-logon (deref-vp envhp)
 		   (deref-vp errhp) 
 		   svchp
@@ -810,16 +821,32 @@ the length of that format.")
 	;; :date-format-length (1+ (length date-format)))))
 	(setf (slot-value db 'clsql-sys::state) :open)
         (database-execute-command
-	 (format nil "alter session set NLS_DATE_FORMAT='~A'" (date-format db)) db)
+	 (format nil "ALTER SESSION SET NLS_DATE_FORMAT='~A'" (date-format db)) db)
+	(let ((server-version (caar (database-query "SELECT VERSION FROM V$INSTANCE" db nil nil))))
+	  (setf (slot-value db 'server-version) server-version
+		(slot-value db 'major-server-version) (major-server-version-from-string 
+						       server-version)))
         db))))
 
 
-(defun major-version-from-string (str)
+(defun major-client-version-from-string (str)
   (cond 
     ((search " 10g " str)
      10)
-    ((search "Oracle9i  " str)
-     10)))
+    ((search "Oracle9i " str)
+     9)
+    ((search "Oracle8" str)
+     8)))
+
+(defun major-server-version-from-string (str)
+  (when (> (length str) 2)
+    (cond 
+      ((string= "10." (subseq str 0 3))
+       10)
+      ((string= "9." (subseq str 0 2))
+       9)
+      ((string= "8." (subseq str 0 2))
+       8))))
 
 
 ;; Close a database connection.

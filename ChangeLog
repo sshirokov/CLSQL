@@ -3,7 +3,7 @@
 	* sql/sql.lisp: Ensure recyclebin is purged for oracle in 
 	TRUNCATE-DATABASE
 	* db-oracle/oracle-sql.lisp: Add sequence functions, fix use of
-	of owner phrases
+	of owner phrases. Obtain server and client versions.
 	* db-oracle/oracle-objects.lisp: Fix type specifiers
 	* tests/test-fddl.lisp: Allow :varchar2 and :number as data types
 	* tests/test-init.lisp: Properly get username from Oracle connection-spec

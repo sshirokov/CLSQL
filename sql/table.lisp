@@ -72,9 +72,9 @@ an error is signalled if IF-DOES-NOT-EXIST is :error."
     (let ((expr (concatenate 'string "DROP TABLE " table-name)))
       (when (and (find-package 'clsql-oracle)
 		 (eq :oracle (database-type database))
-		 (eql 9 (slot-value database 
-				    (intern (symbol-name '#:major-version-number)
-					    (symbol-name '#:clsql-oracle)))))
+		 (eql 10 (slot-value database 
+				     (intern (symbol-name '#:major-server-version)
+					     (symbol-name '#:clsql-oracle)))))
 	(setq expr (concatenate 'string expr " PURGE")))
 
       (execute-command expr :database database))))

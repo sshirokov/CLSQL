@@ -579,7 +579,8 @@
   (when *default-database*
       (disconnect :database *default-database*))
   (test-connect-to-database type (car (db-type-spec type (read-specs))))
-  (test-initialise-database))
+  (test-initialise-database)
+  *default-database*)
 
 (defun rl ()
   (rapid-load :postgresql))
