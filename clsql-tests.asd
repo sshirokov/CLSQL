@@ -25,7 +25,7 @@
     :version ""
     :licence ""
     :description "A regression test suite for CLSQL."
-    :depends-on (clsql ptester rt)
+    :depends-on (clsql rt)
     :components 
     ((:module tests
 	      :serial t

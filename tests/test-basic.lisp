@@ -35,51 +35,122 @@
 	       )))))
 
 (defun test-basic-forms ()
-  nil)
+  (append
+   (test-basic-forms-untyped)
+   '(
+     (deftest BASIC/TYPE/1
+	(let ((results '()))
+	  (dolist (row (query "select * from TYPE_TABLE" :result-types :auto)
+		    results)
+	    (destructuring-bind (int float bigint str) row
+	      (push (list (integerp int)
+			  (typep float 'double-float)
+			  (if (member *test-database-type* '(:odbc :aodbc))  
+			      t
+			    (integerp bigint))
+			  (stringp str))
+		    results))))
+      ((t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t)))
+    
+
+     (deftest BASIC/TYPE/2
+	 (let ((results '()))
+	   (dolist (row (query "select * from TYPE_TABLE" :result-types :auto)
+		     results)
+	     (destructuring-bind (int float bigint str) row
+	       (push (list (double-float-equal 
+			    (transform-float-1 int)
+			    float)
+			   (double-float-equal
+			    (parse-double str)
+			    float))
+		     results))))
+       ((t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t)))
+     )))
 
 (defun test-basic-forms-untyped ()
-  nil)
+  '((deftest BASIC/SELECT/1
+	(let ((rows (query "select * from TYPE_TABLE" :result-types :auto)))
+	  (values 
+	   (length rows)
+	   (length (car rows))))
+      11 4)
+    
+    (deftest BASIC/SELECT/2
+	(let ((results '()))
+	  (dolist (row (query "select * from TYPE_TABLE" :result-types nil)
+		    results)
+	    (destructuring-bind (int float bigint str) row
+	      (push (list (stringp int)
+			  (stringp float)
+			  (stringp bigint)
+			  (stringp str))
+		    results))))
+      ((t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t)))
+    
+    (deftest BASIC/SELECT/3
+	(let ((results '()))
+	  (dolist (row (query "select * from TYPE_TABLE" :result-types nil)
+		    results)
+	    (destructuring-bind (int float bigint str) row
+	      (push (list (double-float-equal 
+			   (transform-float-1 (parse-integer int))
+			   (parse-double float))
+			  (double-float-equal
+			   (parse-double str)
+			   (parse-double float)))
+		    results))))
+      ((t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t)))
 
+    (deftest BASIC/MAP/1
+	(let ((results '())
+	      (rows (map-query 'vector #'list "select * from TYPE_TABLE" 
+			       :result-types nil)))
+	  (dotimes (i (length rows) results)
+	    (push
+	     (list
+	      (listp (aref rows i))
+	      (length (aref rows i))
+	      (eql (- i 5)
+		   (parse-integer (first (aref rows i)) 
+				  :junk-allowed nil))
+	      (double-float-equal
+	       (transform-float-1 (parse-integer (first (aref rows i))))
+	       (parse-double (second (aref rows i)))))
+	     results)))
+      ((t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t)))
+    
+    (deftest BASIC/MAP/2
+	(let ((results '())
+	      (rows (map-query 'list #'list "select * from TYPE_TABLE" 
+			       :result-types nil)))
+	  (dotimes (i (length rows) results)
+	    (push
+	     (list
+	      (listp (nth i rows))
+	      (length (nth i rows))
+	      (eql (- i 5)
+		   (parse-integer (first (nth i rows)) 
+				  :junk-allowed nil))
+	      (double-float-equal
+	       (transform-float-1 (parse-integer (first (nth i rows))))
+	       (parse-double (second (nth i rows)))))
+	     results)))
+      ((t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t)))
 
-(defun %test-basic-forms ()
-  (dolist (row (query "select * from TYPE_TABLE" :result-types :auto))
-    (test-table-row row :auto))
-  (dolist (row (query "select * from TYPE_TABLE" :result-types nil))
-    (test-table-row row nil))
-  (loop for row across (map-query 'vector #'list "select * from TYPE_TABLE" 
-				  :result-types :auto)
-	do (test-table-row row :auto))
-  (loop for row across (map-query 'vector #'list "select * from TYPE_TABLE" 
-				  :result-types nil)
-	do (test-table-row row nil))
-  (loop for row in (map-query 'list #'list "select * from TYPE_TABLE" 
-			      :result-types nil)
-	do (test-table-row row nil))
-  (loop for row in (map-query 'list #'list "select * from TYPE_TABLE" 
-			      :result-types :auto)
-	do (test-table-row row :auto))
-  (test (map-query nil #'list "select * from TYPE_TABLE" 
-		   :result-types :auto)
-	nil
-	:fail-info "Expected NIL result from map-query nil")
-  (do-query ((int float bigint str) "select * from TYPE_TABLE")
-    (test-table-row (list int float bigint str) nil))
-  (do-query ((int float bigint str) "select * from TYPE_TABLE" :result-types :auto)
-    (test-table-row (list int float bigint str) :auto)))
-
-
-(defun %test-basic-forms-untyped ()
-  (dolist (row (query "select * from TYPE_TABLE" :result-types nil))
-    (test-table-row row nil))
-  (loop for row across (map-query 'vector #'list "select * from TYPE_TABLE" 
-				  :result-types nil)
-	do (test-table-row row nil))
-  (loop for row in (map-query 'list #'list "select * from TYPE_TABLE" 
-			      :result-types nil)
-	do (test-table-row row nil))
-  
-  (do-query ((int float bigint str) "select * from TYPE_TABLE")
-    (test-table-row (list int float bigint str) nil)))
+    (deftest BASIC/DO/1
+	(let ((results '()))
+	  (do-query ((int float bigint str) "select * from TYPE_TABLE")
+	    (push (list (double-float-equal 
+			 (transform-float-1 (parse-integer int))
+			 (parse-double float))
+			(double-float-equal
+			 (parse-double str)
+			 (parse-double float)))
+		  results))
+	  results)
+      ((t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t)))
+    ))
 
 
 ;;;; Testing functions
@@ -90,61 +161,12 @@
 (defun transform-bigint-1 (i)
   (* i (expt 10 (* 3 (abs i)))))
 
-
-
 (defun parse-double (num-str)
   (let ((*read-default-float-format* 'double-float))
     (coerce (read-from-string num-str) 'double-float)))
 
 (defun test-table-row (row types)
-  (test (and (listp row)
-	     (= 4 (length row)))
-	t
-	:fail-info 
-	(format nil "Row ~S is incorrect format" row))
-  (destructuring-bind (int float bigint str) row
-    (cond
-      ((eq types :auto)
-       (test (and (integerp int)
-		  (typep float 'double-float)
-		  (or (member *test-database-type* 
-			      '(:odbc :aodbc))  ;; aodbc considers bigints as strings
-		      (integerp bigint)) 
-		  (stringp str))
-	     t
-	     :fail-info 
-	     (format nil "Incorrect field type for row ~S (types :auto)" row)))
-       ((null types)
-	(test (and (stringp int)
-		     (stringp float)
-		     (stringp bigint)
-		     (stringp str))
-	      t
-	      :fail-info 
-	      (format nil "Incorrect field type for row ~S (types nil)" row))
-	(when (stringp int)
-	  (setq int (parse-integer int)))
-	(setq bigint (parse-integer bigint))
-	(when (stringp float)
-	  (setq float (parse-double float))))
-       ((listp types)
-	(error "NYI")
-	)
-       (t 
-	(test t nil
-	      :fail-info
-	      (format nil "Invalid types field (~S) passed to test-table-row" types))))
-    (unless (eq *test-database-type* :sqlite)		; SQLite is typeless.
-      (test (transform-float-1 int)
-	    float
-	    :test #'double-float-equal
-	    :fail-info 
-	    (format nil "Wrong float value ~A for int ~A (row ~S)" float int row)))
-    (test float
-	  (parse-double str)
-	  :test #'double-float-equal
-	  :fail-info (format nil "Wrong string value ~A for double ~A~%Row: ~S"
-			     str float row))))
+)
 
 
 (defun double-float-equal (a b)

@@ -5,10 +5,13 @@
 	* sql/objects.lisp: Change database-type to database-underlying-type
 	so that actual database engine is properly identified
 	* db-odbc/odbc-api.lisp: Have default *time-conversion-function*
-	return an ISO timestring for compatibility with other drivers
+	return an ISO timestring for compatibility with other drivers.
+	Workaround bug in MyODBC for LIST-TABLE-INDEXES
 	* test/test-fdml.lisp: Accomodate that odbc-postgresql driver
 	returns floating-point values for floor and truncate operations 
-	* db-aodbc/aodbc-sql: Implement DATABASE-LIST-VIEWS
+	* db-aodbc/aodbc-sql.lisp: Implement DATABASE-LIST-VIEWS
+	* tests/test-basic.lisp: Port to regression tester
+	* test/test-init.lisp: Output to *report-stream*
 	
 21 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.9.2: Improvments in database capability introspection

@@ -16,6 +16,7 @@
 
 (in-package #:clsql-tests)
 
+(defvar *report-stream*)
 (defvar *rt-connection*)
 (defvar *rt-fddl*)
 (defvar *rt-fdml*)
@@ -299,7 +300,13 @@
 
 (defvar *error-count* 0)
 
-(defun run-tests ()
+(defun run-tests-append-report-file (report-file)
+  (with-open-file (out report-file :direction :output
+		       :if-exists :append
+		       :if-does-not-exist :create)
+    (run-tests out)))
+    
+(defun run-tests (&optional (*report-stream* *standard-output*))
   (let ((specs (read-specs))
 	(*error-count* 0))
     (unless specs
@@ -307,8 +314,10 @@
       (return-from run-tests :skipped))
     (load-necessary-systems specs)
     (dolist (db-type +all-db-types+)
-      (when (db-type-spec db-type specs)
-	(do-tests-for-backend db-type)))
+      (unless (and (eq db-type :aodbc)
+		   (not (member :allegro cl:*features*)))
+	(when (db-type-spec db-type specs)
+	  (do-tests-for-backend db-type))))
     (zerop *error-count*)))
 
 (defun load-necessary-systems (specs)
@@ -317,38 +326,50 @@
       (db-type-ensure-system db-type))))
 
 (defun do-tests-for-backend (db-type)
-  (format t 
-	  "~&
-*******************************************************************
-***     Running CLSQL tests with ~A backend.
-*******************************************************************
-" db-type)
-  
   (test-connect-to-database db-type)
+
   (unwind-protect
       (multiple-value-bind (test-forms skip-tests)
 	  (compute-tests-for-backend db-type *test-database-underlying-type*)
 	
+  (format *report-stream* 
+	  "~&
+******************************************************************************
+***     CLSQL Test Suite begun at ~A
+***     ~A
+***     ~A
+***     Database ~A backend~A.
+******************************************************************************
+" 
+(clsql-base:format-time nil (clsql-base:utime->time (get-universal-time)))
+(lisp-implementation-type)
+(lisp-implementation-version)
+db-type
+(if (not (eq db-type *test-database-underlying-type*))
+    (format nil " with underlying type ~A" *test-database-underlying-type*)
+    "")
+)
+  
 	(test-initialise-database)
 
 	(regression-test:rem-all-tests)
 	(dolist (test-form test-forms)
 	  (eval test-form))
 	
-	(let ((remaining (rtest:do-tests)))
+	(let ((remaining (rtest:do-tests *report-stream*)))
 	  (when (consp remaining)
 	    (incf *error-count* (length remaining))))
 	
-	(format t "~&Tests skipped for ~A:" db-type)
+	(format *report-stream* "~&Tests skipped:")
 	(if skip-tests
 	    (dolist (skipped skip-tests)
-	      (format t "~&   ~20A ~A~%" (car skipped) (cdr skipped)))
-	  (format t " None~%")))
+	      (format *report-stream*
+		      "~&   ~20A ~A~%" (car skipped) (cdr skipped)))
+	  (format *report-stream* " None~%")))
     (disconnect)))
 
 
 (defun compute-tests-for-backend (db-type db-underlying-type)
-  (declare (ignore db-type))
   (let ((test-forms '())
 	(skip-tests '()))
     (dolist (test-form (append
