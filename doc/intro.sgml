@@ -29,7 +29,7 @@ are:
 <para>compatibility layer for &cmucl; specific code.</para>
 </listitem>
 <listitem>
-<para>improved robustness of the &mysql; back-end.</para>
+<para>much improved robustness for the &mysql; back-end.</para>
 </listitem>
 <listitem>
 <para>improved system loading.</para>

@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-sql.cl,v 1.1 2002/03/23 14:04:53 kevin Exp $
+;;;; $Id: postgresql-socket-sql.cl,v 1.2 2002/03/24 18:08:27 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -110,7 +110,7 @@
   (close-postgresql-connection (database-connection database))
   t)
 
-(defmethod database-query (expression (database postgresql-socket-database))
+(defmethod database-query (expression (database postgresql-socket-database) field-types)
   (let ((connection (database-connection database)))
     (with-postgresql-handlers (database expression)
       (start-query-execution connection expression)
@@ -169,8 +169,14 @@
 		  :errno 'missing-result
 		  :error "Didn't receive completion for command.")))))))
 
-(defmethod database-query-result-set
-    (expression (database postgresql-socket-database) &optional full-set)
+(defstruct postgresql-socket-result-set
+  (done nil)
+  (cursor nil)
+  (field-types nil :type cons))
+
+(defmethod database-query-result-set (expression (database postgresql-socket-database) 
+				      &key full-set field-types
+     )
   (declare (ignore full-set))
   (let ((connection (database-connection database)))
     (with-postgresql-handlers (database expression)
@@ -184,23 +190,27 @@
 		 :expression expression
 		 :errno 'missing-result
 		 :error "Didn't receive result cursor for query."))
-	(values (cons nil cursor)
+	(values (make-postgresql-socket-result-set
+		 :done nil 
+		 :cursor cursor)
 		(length (postgresql-cursor-fields cursor)))))))
 
-(defmethod database-dump-result-set
-    (result-set (database postgresql-socket-database))
-  (if (car result-set)
+(defmethod database-dump-result-set (result-set
+				     (database postgresql-socket-database))
+  (if (postgresql-socket-result-set-done result-set)
       t
       (with-postgresql-handlers (database)
-	(loop while (skip-cursor-row (cdr result-set))
-	  finally (setf (car result-set) t)))))
+	(loop while (skip-cursor-row 
+		     (postgresql-socket-result-set-cursor result-set))
+	  finally (setf (postgresql-socket-result-set-done result-set) t)))))
 
-(defmethod database-store-next-row
-    (result-set (database postgresql-socket-database) list)
-  (let ((cursor (cdr result-set)))
+(defmethod database-store-next-row (result-set
+				    (database postgresql-socket-database)
+				    list)
+  (let ((cursor (postgresql-socket-result-set-cursor result-set)))
     (with-postgresql-handlers (database)
       (if (copy-cursor-row cursor list)
 	  t
 	  (prog1 nil
-	    (setf (car result-set) t)
+	    (setf (postgresql-socket-result-set-done result-set) t)
 	    (wait-for-query-results (database-connection database)))))))

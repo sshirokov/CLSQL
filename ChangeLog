@@ -1,3 +1,11 @@
+24 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
+
+	* Added field-types parameter to query, database-query,
+	database-query-result-set, map-query. Haven't added code
+	to utilize field types, yet.
+
+	* Changed postgresql-socket result set from cons to a structure
+	
 23 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	
 	* doc/ref.sgml: Updated MAP-QUERY example to use

@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.cl,v 1.3 2002/03/24 04:01:26 kevin Exp $
+;;;; $Id: mysql-sql.cl,v 1.4 2002/03/24 18:08:27 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -98,7 +98,8 @@
 (defstruct mysql-result-set
   (res-ptr (uffi:make-null-pointer 'mysql-mysql-res)
 	   :type mysql-mysql-res-ptr-def)
-  (full-set nil))
+  (field-types nil :type cons)
+  (full-set nil :type boolean))
 
 (defmethod database-dump-result-set (result-set (database mysql-database))
   (mysql-free-result (mysql-result-set-res-ptr result-set))
@@ -133,7 +134,7 @@
 
 
 
-(defmethod database-query (query-expression (database mysql-database))
+(defmethod database-query (query-expression (database mysql-database) field-types)
   (with-slots (mysql-ptr) database
     (uffi:with-cstring (query-native query-expression)
        (if (zerop (mysql-query mysql-ptr query-native))
@@ -160,9 +161,8 @@
 		:error (mysql-error-string mysql-ptr))))))
 
 
-(defmethod database-query-result-set (query-expression 
-				      (database mysql-database)
-				      &optional full-set)
+(defmethod database-query-result-set (query-expression (database mysql-database)
+				      &key full-set field-types)
   (uffi:with-cstring (query-native query-expression)
     (let ((mysql-ptr (database-mysql-ptr database)))
      (declare (type mysql-mysql-ptr-def mysql-ptr))

@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.cl,v 1.2 2002/03/23 17:07:40 kevin Exp $
+;;;; $Id: postgresql-sql.cl,v 1.3 2002/03/24 18:08:27 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -99,7 +99,7 @@
   (setf (database-conn-ptr database) nil)
   t)
 
-(defmethod database-query (query-expression (database postgresql-database))
+(defmethod database-query (query-expression (database postgresql-database) field-types)
   (let ((conn-ptr (database-conn-ptr database)))
     (declare (type pgsql-conn-def conn-ptr))
     (uffi:with-cstring (query-native query-expression)
@@ -161,16 +161,16 @@
                               (PQresultErrorMessage result)))))
           (PQclear result))))))
 
-(defstruct postgresql-result-set
+(defstruct postgresql-result-sset
   (res-ptr (uffi:make-null-pointer 'pgsql-result) 
 	   :type pgsql-result-def)
-  (num-tuples 0)
-  (num-fields 0)
-  (tuple-index 0))
+  (field-types nil :type cons) 
+  (num-tuples 0 :type integer)
+  (num-fields 0 :type integer)
+  (tuple-index 0 :type integer))
 
-(defmethod database-query-result-set (query-expression 
-                                      (database postgresql-database) 
-                                      &optional full-set)
+(defmethod database-query-result-set (query-expression (database postgresql-database) 
+                                      &key full-set field-types)
   (let ((conn-ptr (database-conn-ptr database)))
     (declare (type pgsql-conn-def conn-ptr))
     (uffi:with-cstring (query-native query-expression)

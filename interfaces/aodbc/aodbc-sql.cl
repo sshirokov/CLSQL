@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: aodbc-sql.cl,v 1.2 2002/03/24 04:01:26 kevin Exp $
+;;;; $Id: aodbc-sql.cl,v 1.3 2002/03/24 18:08:27 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -60,7 +60,7 @@
   (setf (database-aodbc-conn database) nil)
   t)
 
-(defmethod database-query (query-expression (database aodbc-database))
+(defmethod database-query (query-expression (database aodbc-database) field-types) 
   (handler-case
       (dbi:sql query-expression :db (database-aodbc-conn database))
     (error ()
@@ -83,11 +83,11 @@
 
 (defstruct aodbc-result-set
   (query nil)
-  (full-set nil))
+  (field-types nil :type cons)
+  (full-set nil :type boolean))
 
-(defmethod database-query-result-set (query-expression
-				      (database aodbc-database) 
-				      &optional full-set)
+(defmethod database-query-result-set (query-expression (database aodbc-database) 
+				      &key full-set field-types)
   (handler-case 
       (multiple-value-bind (query column-names)
 	  (dbi:sql query-expression 
