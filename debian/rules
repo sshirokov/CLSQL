@@ -46,7 +46,7 @@ clc-source	:= $(clc-base)/source
 clc-systems	:= $(clc-base)/systems
 doc-dir		:= $(prefix)/usr/share/doc/cl-sql
 
-clc-clsql	:= $(clc-source)/$(pkg)-$(UPSTREAM_VER)	
+clc-clsql	:= $(clc-source)/$(pkg)-$(UPSTREAM_VER)
 
 lispdir		:= $(prefix)/$(clc-clsql)
 lispdir-sql	:= $(prefix)/$(clc-clsql)/sql
