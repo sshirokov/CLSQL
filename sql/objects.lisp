@@ -425,30 +425,12 @@ superclass of the newly-defined View Class."
       (get-slot-values-from-view instance (list slot-def) (car res)))))
 
 
-(defmethod database-null-value ((type t))
-  (cond
-    ((subtypep type 'string) nil)
-    ((subtypep type 'integer) nil)
-    ((subtypep type 'list) nil)
-    ((subtypep type 'boolean) nil)
-    ((eql type t) nil)
-    ((subtypep type 'symbol) nil)
-    ((subtypep type 'keyword) nil)
-    ((subtypep type 'wall-time) nil)
-    ((subtypep type 'duration) nil)
-    ((subtypep type 'money) nil)
-    (t
-     (error "Unable to handle null for type ~A" type))))
-
 (defmethod update-slot-with-null ((object standard-db-object)
 				  slotname
 				  slotdef)
   (let ((st (slot-type slotdef))
-        (allowed (slot-value slotdef 'nulls-ok)))
-    (if allowed
-        (setf (slot-value object slotname) nil)
-        (setf (slot-value object slotname)
-              (database-null-value st)))))
+        (void-value (slot-value slotdef 'void-value)))
+    (setf (slot-value object slotname) void-value)))
 
 (defvar +no-slot-value+ '+no-slot-value+)
 

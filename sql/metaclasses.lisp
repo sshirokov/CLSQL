@@ -56,8 +56,8 @@
 
 ;;; Lispworks 4.2 and before requires special processing of extra slot and class options
 
-(defvar +extra-slot-options+ '(:column :db-kind :db-reader :nulls-ok :db-constraints
-				    :db-writer :db-type :db-info))
+(defvar +extra-slot-options+ '(:column :db-kind :db-reader :void-value :db-constraints
+			       :db-writer :db-info))
 (defvar +extra-class-options+ '(:base-table))
 
 (dolist (slot-option +extra-slot-options+)
@@ -287,13 +287,12 @@ column definition in the database.")
     :initform nil
     :documentation
     "A single constraint or list of constraints for this column")
-   (nulls-ok
-    :accessor view-class-slot-nulls-ok
-    :initarg :nulls-ok
+   (void-value
+    :accessor view-class-slot-void-value
+    :initarg :void-value
     :initform nil
     :documentation
-    "If t, all sql NULL values retrieved from the database become nil; if nil,
-all NULL values retrieved are converted by DATABASE-NULL-VALUE")
+    "Value to store is the SQL value is NULL. Default is NIL.")
    (db-info
     :accessor view-class-slot-db-info
     :initarg :db-info
@@ -443,8 +442,8 @@ which does type checking before storing a value in a slot."
              (when (slot-boundp sd 'db-type)
                (view-class-slot-db-type sd)))
        
-       (setf (slot-value slotd 'nulls-ok)
-             (view-class-slot-nulls-ok sd))
+       (setf (slot-value slotd 'void-value)
+             (view-class-slot-void-value sd))
        
        ;; :db-kind slot value defaults to :base (store slot value in
        ;; database)

@@ -84,11 +84,6 @@ your application needs to take action when a View Class instance has
 been updated by (select ... :refresh t) then add an INSTANCE-REFRESH
 method specializing on your subclass of STANDARD-DB-OBJECT."))
 
-(defgeneric database-null-value (type)
-  (:documentation 
-   "Return an expression of type TYPE which SQL NULL values will be
-converted into."))
-
 (defgeneric update-slot-with-null (instance slotname slotdef)
   (:documentation "Called to update a slot when its column has a NULL
 value.  If nulls are allowed for the column, the slot's value will be

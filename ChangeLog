@@ -1,4 +1,11 @@
 1 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.10.6-pre1
+	* sql/metaclasses.lisp: Add void-value slot
+	* doc/csql.xml: Update def-view-class documentation
+	* test/test-init.lisp: Change old :db-type to :db-kind.
+	Remove old :nulls-ok attributes.
+
+1 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.5: SQLite backend now passes all result-types tests
 	* clsql-sqlite.asd: Depend on clsql-uffi system
 	* db-sqlite/sqlite-sql.lisp: Use clsql-uffi:convert-raw-field

@@ -34,24 +34,22 @@
   ((extraterrestrial :initform nil :initarg :extraterrestrial)))
 
 (def-view-class person (thing)
-  ((height :db-kind :base :accessor height :type float :nulls-ok t
+  ((height :db-kind :base :accessor height :type float
            :initarg :height)
-   (married :db-kind :base :accessor married :type boolean :nulls-ok t
+   (married :db-kind :base :accessor married :type boolean
             :initarg :married)
-   (birthday :nulls-ok t :type clsql-base:wall-time :initarg :birthday)
+   (birthday :type clsql-base:wall-time :initarg :birthday)
    (hobby :db-kind :virtual :initarg :hobby :initform nil)))
   
 (def-view-class employee (person)
   ((emplid
     :db-kind :key
     :db-constraints :not-null
-    :nulls-ok nil
     :type integer
     :initarg :emplid)
    (groupid
     :db-kind :key
     :db-constraints :not-null
-    :nulls-ok nil
     :type integer
     :initarg :groupid)
    (first-name
@@ -65,7 +63,6 @@
    (email
     :accessor employee-email
     :type (string 100)
-    :nulls-ok t
     :initarg :email)
    (companyid
     :type integer)
@@ -77,8 +74,7 @@
 			  :foreign-key companyid
 			  :set nil))
    (managerid
-    :type integer
-    :nulls-ok t)
+    :type integer)
    (manager
     :accessor employee-manager
     :db-kind :join

@@ -247,16 +247,14 @@ mapped into a database).  They would be defined as follows:
 
   <listitem>
     <para>
-      <symbol>:db-type</symbol> - A string which will be used as the
+      <symbol>:column-</symbol> - A string which will be used as the
       type specifier for this slots column definition in the database.
       </para></listitem>
 
   <listitem>
     <para>
-      <symbol>:nulls-ok</symbol> - If &t;, all &sql; &null; values
-      retrieved from the database become nil; if &nil;, all &null;
-      values retrieved are converted by
-      <function>DATABASE-NULL-VALUE</function>. </para></listitem>
+      <symbol>:void-value</symbol> - The Lisp value to return if the
+      field is &null;. The default is &nil;.</para></listitem>
 
   <listitem>
     <para>
