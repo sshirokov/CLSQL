@@ -2,8 +2,8 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          clsql.asd
-;;;; Purpose:       System definition for CLSQL
+;;;; Name:          clsql-classic.asd
+;;;; Purpose:       System definition for CLSQL-CLASSIC
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
@@ -16,12 +16,12 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(defpackage #:clsql-system (:use #:asdf #:cl))
-(in-package #:clsql-system)
+(defpackage #:clsql-classic-system (:use #:asdf #:cl))
+(in-package #:clsql-classic-system)
 
 #+(or allegro lispworks cmu sbcl openmcl mcl scl)
-(defsystem clsql
-  :name "clsql"
+(defsystem clsql-classic
+  :name "clsql-classic"
   :author "Kevin Rosenberg <kevin@rosenberg.net>"
   :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
   :version "2.1.x"
@@ -30,7 +30,7 @@
   :long-description "cl-sql package provides the high-level interface for the CLSQL system."
   
   :components
-  ((:module :sql
+  ((:module :classic
 	    :components
 	    ((:file "package")
 	     (:file "sql" :depends-on ("package"))
@@ -41,6 +41,6 @@
   )
 
 #+(or allegro lispworks cmu sbcl openmcl mcl scl)
-(defmethod perform ((o test-op) (c (eql (find-system :clsql))))
-  (oos 'load-op 'clsql-tests)
-  (oos 'test-op 'clsql-tests))
+(defmethod perform ((o test-op) (c (eql (find-system :clsql-classic))))
+  (oos 'load-op 'clsql-classic-tests)
+  (oos 'test-op 'clsql-classic-tests))
