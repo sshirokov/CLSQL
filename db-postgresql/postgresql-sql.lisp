@@ -96,7 +96,17 @@
   (destructuring-bind (host db user password &optional port options tty)
       connection-spec
     (declare (ignore password options tty))
-    (concatenate 'string host (if port ":") (if port port) "/" db "/" user)))
+    (concatenate 'string 
+      (etypecase host
+	(pathname (namestring host))
+	(string host))
+      (when port 
+	(concatenate 'string
+		     ":"
+		     (etypecase port
+		       (integer (write-to-string port))
+		       (string port))))
+      "/" db "/" user)))
 
 
 (defmethod database-connect (connection-spec (database-type (eql :postgresql)))
