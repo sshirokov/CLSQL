@@ -668,7 +668,8 @@
 		   (list instance jcc)))
 	     (select (sql-expression :attribute (gethash :foreign-key tdbi) :table jc-view-table)
 		     :from (sql-expression :table jc-view-table)
-		     :where jq)))))))
+		     :where jq
+		     :database (view-database object))))))))
 
 
 ;;; Remote Joins

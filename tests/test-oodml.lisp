@@ -454,7 +454,7 @@
 		 (every #'(lambda (dea) (typep (slot-value dea 'address) 'address)) dea-list)
 		 (mapcar #'(lambda (dea) (slot-value (slot-value dea 'address) 'addressid)) dea-list))))
 	  t t t t (1 1 2 2 2))
-	
+
 	(deftest :oodml/uoj/2
 	    (progn
 	      (clsql:update-objects-joins (list company1))

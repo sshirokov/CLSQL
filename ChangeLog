@@ -1,3 +1,7 @@
+08 Feb 2005 Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/oodml.lisp: Use explicit database in fault-join-target-slot
+	[Patch from Walter Pelissero]
+	
 29 Jan 2005 Kevin Rosenberg <kevin@rosenberg.net>
 	* db-postgresql/postgresql-loader.lisp: Add additional
 	directories to Fink on darwin [patch from Cyrus Harmon].
