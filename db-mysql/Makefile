@@ -7,7 +7,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.1 2002/08/01 03:06:26 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.1 2002/09/18 07:43:40 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #

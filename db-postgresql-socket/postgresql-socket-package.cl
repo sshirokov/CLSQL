@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-package.cl,v 1.1 2002/08/01 03:06:26 kevin Exp $
+;;;; $Id: postgresql-socket-package.cl,v 1.1 2002/09/18 07:43:41 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;

@@ -23,15 +23,15 @@ all-pkgs	:= $(pkg) $(pkg-base) $(pkg-uffi) $(pkg-mysql) $(pkg-pg) $(pkg-pg-socke
 UPSTREAM_VER	:= $(shell sed -n -e "s/${pkg} (\(.*\)-[0-9A-Za-z\.]).*/\1/p" < debian/changelog |head -1)
 
 ## Lisp sources
-srcs		:= clsql clsql.asd
-srcs-base	:= clsql-base clsql-base.asd
-srcs-base-uffi	:= clsql-uffi clsql-uffi.asd
-srcs-base-uffi-so:= $(wildcard clsql-uffi/*.so)
-srcs-mysql	:= clsql-mysql clsql-mysql.asd
+srcs		:= sql clsql.asd
+srcs-base	:= $(wildcard base/*.cl) 
+srcs-uffi	:= $(wildcard clsql-uffi/*.cl) $(wildcard clsql-uffi/*.c)
+srcs-uffi-so:= $(wildcard clsql-uffi/*.so)
+srcs-mysql	:= $(wildcard clsql-mysql/*.cl) $(wildcard clsql-mysql/*.c)
 srcs-mysql-so	:=  $(wildcard clsql-mysql/*.so)
-srcs-pg		:= clsql-postgresql clsql-postgresql.asd
-srcs-pg-socket	:= clsql-postgresql-socket clsql-postgresql-socket.asd
-srcs-aodbc	:= clsql-aodbc clsql-aodbc.asd
+srcs-pg		:= $(wildcard clsql-postgresql/*.cl)
+srcs-pg-socket	:= $(wildcard clsql-postgresql-socket/*.cl)
+srcs-aodbc	:= $(wildcard clsql-aodbc/*.cl)
 
 clc-base	:= usr/share/common-lisp
 clc-source	:= $(clc-base)/source
@@ -40,15 +40,22 @@ doc-dir		:= usr/share/doc/cl-sql-base
 
 clc-clsql	:= $(clc-source)/$(plain-pkg)
 
-lispdir-sql	:= $(clc-source)/clsql
-lispdir-base	:= $(clc-source)/clsql-base
-lispdir-base-uffi := $(clc-source)/clsql-uffi
-sodir-base-uffi := usr/lib/clsql
-lispdir-mysql	:= $(clc-source)/clsql-mysql
+clc-sql		:= $(clc-source)/clsql
+lispdir-sql	:= $(clc-sql)/sql
+clc-base	:= $(clc-source)/clsql-base
+lispdir-base	:= $(clc-base)/base
+clc-uffi	 := $(clc-source)/clsql-uffi
+lispdir-uffi := $(clc-uffi)/clsql-uffi
+sodir-uffi := usr/lib/clsql
+clc-mysql	:= $(clc-source)/clsql-mysql
+lispdir-mysql	:= $(clc-mysql)/clsql-mysql
 sodir-mysql	:= usr/lib/clsql
-lispdir-pg	:= $(clc-source)/clsql-postgresql
-lispdir-pg-socket := $(clc-source)/clsql-postgresql-socket
-lispdir-aodbc	:= $(clc-source)/clsql-aodbc
+clc-pg		:= $(clc-source)/clsql-postgresql
+lispdir-pg	:= $(clc-pg)/clsql-postgresql
+clc-socket := $(clc-source)/clsql-postgresql-socket
+lispdir-pg-socket := $(clc-pg-socket)/clsql-postgresql-socket
+clc-aodbc	:= $(clc-source)/clsql-aodbc
+lispdir-aodbc	:= $(clc-aodbc)/clsql-aodbc
 
 
 configure: configure-stamp
@@ -81,7 +88,7 @@ install: build
 	dh_installdirs --all  $(clc-systems) $(clc-source)
 	dh_installdirs -p $(pkg) $(lispdir-sql)
 	dh_installdirs -p $(pkg-base) $(lispdir-base)
-	dh_installdirs -p $(pkg-uffi) $(lispdir-base-uffi) $(sodir-base-uffi)
+	dh_installdirs -p $(pkg-uffi) $(lispdir-uffi) $(sodir-uffi)
 	dh_installdirs -p $(pkg-pg) $(lispdir-pg)
 	dh_installdirs -p $(pkg-pg-socket) $(lispdir-pg-socket)
 	dh_installdirs -p $(pkg-mysql) $(lispdir-mysql) $(sodir-mysql)
@@ -89,29 +96,36 @@ install: build
 
 	# Main package
 	dh_install -p $(pkg) $(srcs) $(lispdir-sql)
+	dh_install -p $(pkg) clsql.asd $(clc-clsql)
 
 	# Base
 	dh_install -p $(pkg-base) $(srcs-base) $(lispdir-base)
+	dh_install -p $(pkg-base) clsql-base.asd $(clc-base)
 
 	# UFFI
-	dh_install -p $(pkg-uffi) $(srcs-base-uffi) $(lispdir-base-uffi)
-	dh_install -p $(pkg-uffi) $(srcs-base-uffi-so) $(sodir-base-uffi)
+	dh_install -p $(pkg-uffi) $(srcs-uffi) $(lispdir-uffi)
+	dh_install -p $(pkg-uffi) $(srcs-uffi-so) $(sodir-uffi)
+	dh_install -p $(pkg-uffi) clsql-uffi.asd $(clc-uffi)
 
 	# Backends
 	dh_install -p $(pkg-mysql) $(srcs-mysql) $(lispdir-mysql)
+	dh_install -p $(pkg-mysql) clsql-mysql.asd $(clc-mysql)
 	dh_install -p $(pkg-mysql) $(srcs-mysql-so) $(sodir-mysql)
 	dh_install -p $(pkg-pg) $(srcs-pg) $(lispdir-pg)
+	dh_install -p $(pkg-pg) clsql-postgresql.asd $(clc-pg)
 	dh_install -p $(pkg-pg-socket) $(srcs-pg-socket) $(lispdir-pg-socket)
+	dh_install -p $(pkg-pg-socket) clsql-postgresql-socket.asd $(clc-pg-socket)
 	dh_install -p $(pkg-aodbc) $(srcs-aodbc) $(lispdir-aodbc)
+	dh_install -p $(pkg-aodbc) clsql-aodbc.asd $(clc-aodbc)
 
 	# CLC Systems
-	dh_link -p $(pkg) $(lispdir-sql)/clsql.asd $(clc-systems)/clsql.asd
-	dh_link -p $(pkg-base) $(lispdir-base)/clsql-base.asd $(clc-systems)/clsql-base.asd
-	dh_link -p $(pkg-uffi) $(lispdir-base-uffi)/clsql-uffi.asd $(clc-systems)/clsql-uffi.asd
-	dh_link -p $(pkg-mysql) $(lispdir-mysql)/clsql-mysql.asd $(clc-systems)/clsql-mysql.asd
-	dh_link -p $(pkg-pg) $(lispdir-pg)/clsql-postgresql.asd $(clc-systems)/clsql-postgresql.asd
-	dh_link -p $(pkg-pg-socket) $(lispdir-pg-socket)/clsql-postgresql-socket.asd $(clc-systems)/clsql-postgresql-socket.asd
-	dh_link -p $(pkg-aodbc) $(lispdir-aodbc)/clsql-aodbc.asd $(clc-systems)/clsql-aodbc.asd
+	dh_link -p $(pkg) $(clc-clsql)/clsql.asd $(clc-systems)/clsql.asd
+	dh_link -p $(pkg-base) $(clc-base)/clsql-base.asd $(clc-systems)/clsql-base.asd
+	dh_link -p $(pkg-uffi) $(clc-uffi)/clsql-uffi.asd $(clc-systems)/clsql-uffi.asd
+	dh_link -p $(pkg-mysql) $(clc-mysql)/clsql-mysql.asd $(clc-systems)/clsql-mysql.asd
+	dh_link -p $(pkg-pg) $(clc-pg)/clsql-postgresql.asd $(clc-systems)/clsql-postgresql.asd
+	dh_link -p $(pkg-pg-socket) $(clc-pg-socket)/clsql-postgresql-socket.asd $(clc-systems)/clsql-postgresql-socket.asd
+	dh_link -p $(pkg-aodbc) $(clc-aodbc)/clsql-aodbc.asd $(clc-systems)/clsql-aodbc.asd
 
 	# Test suite
 	dh_installdirs -p $(pkg) $(doc-dir)/html $(doc-dir)/test-suite

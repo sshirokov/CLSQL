@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.22 2002/08/01 03:09:17 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.23 2002/09/18 07:43:40 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -15,7 +15,7 @@
 
 PKG	:= clsql
 DEBPKG	:= cl-sql
-SUBDIRS	:= clsql clsql-uffi clsql-base clsql-mysql clsql-aodbc \
+SUBDIRS	:= sql clsql-uffi base clsql-mysql clsql-aodbc \
 	   clsql-postgresql clsql-postgresql-socket 
 DOCSUBDIRS:=doc
 
@@ -29,10 +29,6 @@ all: $(LIBSUBDIRS)
 
 $(LIBSUBDIRS):
 	$(MAKE) -C $@
-
-.PHONY: distclean
-distclean: clean
-	@$(MAKE) -C doc $@
 
 SOURCE_FILES=interfaces sql cmucl-compat doc test-suite Makefile VERSION \
 	COPYING.CLSQL COPYING.MaiSQL README INSTALL ChangeLog NEWS TODO \
