@@ -105,7 +105,7 @@ output format.  In order to extract date strings from output buffers
 holding multiple date strings in fixed-width fields, we need to know
 the length of that format.")
    (server-version 
-    :type string
+    :type (or null string)
     :initarg :server-version
     :reader server-version
     :documentation
@@ -117,7 +117,7 @@ the length of that format.")
     :documentation
     "The major version number of the Oracle server, should be 8, 9, or 10")
    (client-version 
-    :type string
+    :type (or null string)
     :initarg :client-version
     :reader client-version
     :documentation
