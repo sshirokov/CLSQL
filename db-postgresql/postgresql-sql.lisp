@@ -158,6 +158,9 @@
                  :message (tidy-error-message (PQerrorMessage conn-ptr))))
         (unwind-protect
             (case (PQresultStatus result)
+	      ;; User gave a command rather than a query 
+              (#.pgsql-exec-status-type#command-ok
+               nil)
               (#.pgsql-exec-status-type#empty-query
                nil)
               (#.pgsql-exec-status-type#tuples-ok

@@ -18,8 +18,9 @@
 
 (defvar *report-stream* *standard-output* "Stream to send text report.")
 (defvar *sexp-report-stream* nil "Stream to send sexp report.")
-(defvar *rt-connection*)
+(defvar *rt-internal*)
 (defvar *rt-basic*)
+(defvar *rt-connection*)
 (defvar *rt-fddl*)
 (defvar *rt-fdml*)
 (defvar *rt-ooddl*)
@@ -552,7 +553,7 @@
 (defun compute-tests-for-backend (db-type db-underlying-type)
   (let ((test-forms '())
 	(skip-tests '()))
-    (dolist (test-form (append *rt-connection* *rt-basic* *rt-fddl* *rt-fdml*
+    (dolist (test-form (append *rt-internal* *rt-connection* *rt-basic* *rt-fddl* *rt-fdml*
 			       *rt-ooddl* *rt-oodml* *rt-syntax*))
       (let ((test (second test-form)))
 	(cond

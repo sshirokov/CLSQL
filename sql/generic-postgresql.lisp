@@ -213,12 +213,102 @@
            (sql-escape (string-downcase table)))
    database :auto nil))
 
+;;; Prepared statements
 
-;; Capabilities
+(defvar *next-prepared-id-num* 0)
+(defun next-prepared-id ()
+  (let ((num (incf *next-prepared-id-num*)))
+    (format nil "CLSQL_PS_~D" num)))
+
+(defclass postgresql-stmt ()
+  ((database :initarg :database :reader database)
+   (id :initarg :id :reader id)
+   (bindings :initarg :bindings :reader bindings)
+   (field-names :initarg :field-names :accessor stmt-field-names)
+   (result-types :initarg :result-types :reader result-types)))
+
+(defun clsql-type->postgresql-type (type)
+  (case type
+    (:string "VARCHAR")
+    ((:int :integer) "INT4")
+    (:short "INT2")
+    ((:number :numeric :float) "NUMERIC")
+    (:bigint "INT8")))
+
+(defun prepared-sql-to-postgresql-sql (sql)
+  ;; FIXME: Convert #\? to "$n". Don't convert within strings
+  (declare (simple-string sql))
+  (with-output-to-string (out)
+    (do ((len (length sql))
+	 (param 0)
+	 (in-str nil)
+	 (pos 0 (1+ pos)))
+	((= len pos))
+      (declare (fixnum len param pos))
+      (let ((c (schar sql pos)))
+	(declare (character c))
+	(cond
+	 ((or (char= c #\") (char= c #\'))
+	  (setq in-str (not in-str))
+	  (write-char c out))
+	 ((and (char= c #\?) (not in-str))
+	  (write-char #\$ out) 
+	  (write-string (write-to-string (incf param)) out))
+	 (t
+	  (write-char c out)))))))
+
+(defmethod database-prepare (sql-stmt types (database generic-postgresql-database) result-types field-names)
+  (let ((id (next-prepared-id)))
+    (database-execute-command
+     (format nil "PREPARE ~A (~{~A~^,~}) AS ~A"
+	     id
+	     (mapcar #'clsql-type->postgresql-type types)
+	     (prepared-sql-to-postgresql-sql sql-stmt))
+     database)
+    (make-instance 'postgresql-stmt
+		   :id id
+		   :database database
+		   :result-types result-types
+		   :field-names field-names
+		   :bindings (make-list (length types)))))
+
+(defmethod database-bind-parameter ((stmt postgresql-stmt) position value)
+  (setf (nth (1- position) (bindings stmt)) value)) 
+
+(defun binding-to-param (binding)
+  (typecase binding
+    (string
+     (concatenate 'string "'" (sql-escape-quotes binding) "'"))
+    (t
+     binding)))
+
+(defmethod database-run-prepared ((stmt postgresql-stmt))
+  (with-slots (database id bindings field-names result-types) stmt
+    (let ((query (format nil "EXECUTE ~A (~{~A~^,~})"
+			 id (mapcar #'binding-to-param bindings))))
+      (cond
+       ((and field-names (not (consp field-names)))
+	(multiple-value-bind (res names)
+	    (database-query query database result-types field-names)
+	  (setf field-names names)
+	  (values res names)))
+       (field-names
+	(values (nth-value 0 (database-query query database result-types nil))
+		field-names))
+       (t
+	(database-query query database result-types field-names))))))
+
+;;; Capabilities
 
 (defmethod db-type-has-fancy-math? ((db-type (eql :postgresql)))
   t)
 
 (defmethod db-type-default-case ((db-type (eql :postgresql)))
   :lower)
+
+(defmethod db-type-has-prepared-stmt? ((db-type (eql :postgresql)))
+  t)
+
+(defmethod db-type-has-prepared-stmt? ((db-type (eql :postgresql-socket)))
+  t)
 

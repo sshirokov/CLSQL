@@ -415,10 +415,8 @@ computed for each field."
       (database-query-result-set query-expression database :full-set nil
 				 :result-types result-types)
     (let ((flatp (and (= columns 1) 
-                      (typecase query-expression 
-                        (string t) 
-                        (sql-query 
-                         (slot-value query-expression 'flatp))))))
+		      (typep query-expression 'sql-query)
+		      (slot-value query-expression 'flatp))))
       (when result-set
         (unwind-protect
              (do ((row (make-list columns)))
@@ -434,10 +432,8 @@ computed for each field."
       (database-query-result-set query-expression database :full-set nil
 				 :result-types result-types)
     (let ((flatp (and (= columns 1) 
-                      (typecase query-expression 
-                        (string t) 
-                        (sql-query 
-                         (slot-value query-expression 'flatp))))))
+		      (typep query-expression 'sql-query)
+		      (slot-value query-expression 'flatp))))
       (when result-set
         (unwind-protect
              (let ((result (list nil)))
@@ -456,10 +452,8 @@ computed for each field."
       (database-query-result-set query-expression database :full-set t
 				 :result-types result-types)
     (let ((flatp (and (= columns 1) 
-                      (typecase query-expression 
-                        (string t) 
-                        (sql-query
-                         (slot-value query-expression 'flatp))))))
+		      (typep query-expression 'sql-query)
+		      (slot-value query-expression 'flatp))))
       (when result-set
         (unwind-protect
              (if rows
@@ -583,3 +577,30 @@ computed for each field."
   (database-delete-large-object object-id database))
 
 
+;;; Prepared statements
+
+(defun prepare-sql (sql-stmt types &key (database *default-database*) (result-types :auto) field-names)
+  "Prepares a SQL statement for execution. TYPES contains a
+list of UFFI primitive types corresponding to the input parameters. Returns a
+prepared-statement object."
+  (unless (db-type-has-prepared-stmt? (database-type database))
+    (error 'sql-user-error 
+	   :message
+	   (format nil
+		   "Database backend type ~:@(~A~) does not support prepared statements."
+		   (database-type database))))
+
+  (database-prepare sql-stmt types database result-types field-names))
+
+(defun bind-parameter (prepared-stmt position value)
+  "Sets the value of a parameter is in prepared statement."
+  (database-bind-parameter prepared-stmt position value)
+  value)
+
+(defun run-prepared-sql (prepared-stmt)
+  "Execute the prepared sql statment. All input parameters must be bound."
+  (database-run-prepared prepared-stmt))
+
+(defun free-prepared-sql (prepared-stmt)
+  "Delete the objects associated with a prepared statement."
+  (database-free-prepared prepared-stmt))

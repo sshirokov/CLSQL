@@ -98,6 +98,7 @@
 	     results)))
       ((t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t)))
     
+   
     (deftest :basic/map/2
 	(let ((results '())
 	      (rows (map-query 'list #'identity "select * from TYPE_TABLE" 
@@ -133,6 +134,15 @@
 		 results)))
       ((t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t)))
 
+    ;; confirm that a query on a single element returns a list of one element
+    (deftest :basic/map/4
+	(let ((rows (map-query 'list #'identity "select t_int from TYPE_TABLE" 
+			       :result-types nil)))
+	  (values
+	   (consp (first rows))
+	   (length (first rows))))
+      t 1)
+    
     (deftest :basic/do/1
 	(let ((results '()))
 	  (do-query ((int float str) "select * from TYPE_TABLE" :result-types nil)

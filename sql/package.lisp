@@ -140,6 +140,7 @@
      #:db-type-has-views?
      #:db-type-has-bigint?
      #:db-type-has-union?
+     #:db-type-has-prepared-stmt?
      #:db-type-has-subqueries?
      #:db-type-has-boolean-where?
      #:db-type-transaction-capable?
@@ -163,6 +164,12 @@
      #:write-large-object
      #:read-large-object
      #:delete-large-object
+
+     ;; Prepared statments
+     #:database-prepare
+     #:database-run-prepared
+     #:database-bind-parameter
+     #:database-free-prepared
 
      ;; accessors for database class
      #:name
@@ -301,6 +308,10 @@
 	 #:loop
          ;; CLSQL Extensions 
          #:for-each-row
+	 #:prepare-sql
+	 #:bind-parameter
+	 #:run-prepared-sql
+	 #:free-prepared-sql
 
          ;; Transaction handling (transaction.lisp) 
          #:with-transaction
@@ -318,7 +329,7 @@
          #:database-commit-transaction
          #:transaction-level
          #:transaction
-	 #:autocommit
+	 #:set-autocommit
 
 	 ;;  OODDL (ooddl.lisp) 
 	 #:standard-db-object               

@@ -178,8 +178,6 @@
     (loop for row in rows
 	collect (fourth row))))
 
-
-
 (defmethod database-attribute-type ((attribute string) (table string) (database generic-odbc-database)
 				    &key (owner nil))
   (declare (ignore owner))

@@ -22,3 +22,7 @@
 (defconstant SQL_HANDLE_STMT 3)
 (defconstant SQL_NTS -3)
 
+(defconstant SQL_ERROR -1)
+(defconstant SQL_SUCCESS 0)
+(defconstant SQL_SUCCESS_WITH_INFO 1)
+

@@ -22,7 +22,7 @@
 (defconstant $ODBC-LONG-TYPE :int)
 (defconstant $ODBC-ULONG-TYPE :unsigned-int)
 
-(defconstant $ODBCVER	#x0210)
+;; (defconstant $ODBCVER	#x0210)
 
 ;; generally useful constants
 (defconstant $SQL_SPEC_MAJOR 2)		;; Major version of specification 
@@ -802,7 +802,6 @@
 
 (defconstant $SQL_POSITION 0) ;; 1.0 FALSE
 (defconstant $SQL_REFRESH 1)  ;; 1.0 TRUE
-; #if (ODBCVER >= #x0200))
 (defconstant $SQL_UPDATE 2)
 (defconstant $SQL_DELETE 3)
 (defconstant $SQL_ADD 4)

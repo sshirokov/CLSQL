@@ -115,8 +115,10 @@ are called."
 transaction."
   (and database (transaction database) (= (transaction-level database) 1)))
 
-(defun autocommit (&key (database *default-database*) (set :unspecified))
-  "Returns whether autocommit is currently active."
-  (unless (eq set :unspecified)
-    (setf (database-autocommit database) set))
-  (database-autocommit database))
+(defun set-autocommit (value &key (database *default-database*))
+  "Sets autocommit on or off. Returns old value of of autocommit flag."
+  (let ((old-value (database-autocommit database)))
+    (setf (database-autocommit database) value)
+    (database-autocommit database)
+    old-value))
+

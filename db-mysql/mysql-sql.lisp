@@ -459,6 +459,10 @@
   (let ((tuple (car (database-query "SHOW VARIABLES LIKE 'HAVE_INNODB'" database :auto nil))))
     (and tuple (string-equal "YES" (second tuple)))))
 
+(defmethod db-type-has-prepared-stmt? ((db-type (eql :mysql)))
+  #+mysql-client-v4.1 t
+  #-mysql-client-v4.1 nil)
+
 (when (clsql-sys:database-type-library-loaded :mysql)
   (clsql-sys:initialize-database-type :database-type :mysql))
 

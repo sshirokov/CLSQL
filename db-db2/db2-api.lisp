@@ -52,32 +52,21 @@
 			     :returning ,c-return)))
        (defun ,lisp-cli-fn (,@ll &key database nulls-ok)
 	 (let ((result (funcall %lisp-cli-fn ,@ll)))
-	   #+ignore
 	   (case result
-	     (#.+oci-success+
-	      +oci-success+)
-	     (#.+oci-error+
-	      (handle-oci-error :database database :nulls-ok nulls-ok))
-	     (#.+oci-no-data+
-	      (error 'sql-database-error :message "OCI No Data Found"))
-	     (#.+oci-success-with-info+
-	      (error 'sql-database-error :message "internal error: unexpected +oci-success-with-info"))
-	     (#.+oci-no-data+
-	      (error 'sql-database-error :message "OCI No Data"))
-	     (#.+oci-invalid-handle+
-	      (error 'sql-database-error :message "OCI Invalid Handle"))
-	     (#.+oci-need-data+
-	      (error 'sql-database-error :message "OCI Need Data"))
-	     (#.+oci-still-executing+
-	      (error 'sql-temporary-error :message "OCI Still Executing"))
-	     (#.+oci-continue+
-	      (error 'sql-database-error :message "OCI Continue"))
-	     (1804
-	      (error 'sql-database-error :message "Check CLI_HOME and NLS settings."))
+	     (#.SQL_SUCCESS
+	      SQL_SUCCESS)
+	     (#.SQL_SUCCESS_WITH_INFO
+	      (format *standard-output* "sucess with info")
+	      SQL_SUCCESS)
+	     (#.SQL_ERROR
+	      (error 'sql-database-error
+		     :error-id result
+		     :message
+		     (format nil "DB2 error" result)))
 	     (t
 	      (error 'sql-database-error
 		     :message
-		     (format nil "OCI unknown error, code=~A" result)))))))))
+		     (format nil "DB2 unknown error, code=~A" result)))))))))
   
 
 (defmacro def-raw-cli-routine
@@ -90,11 +79,21 @@
 	 (funcall %lisp-cli-fn ,@ll)))))
 
 
-(def-cli-routine ("SQLAllocHandle" sql-allocate-handle)
+(def-cli-routine ("SQLAllocHandle" sql-alloc-handle)
     :int
   (fHandleType cli-smallint)
   (hInput cli-handle)
   (phOuput (* cli-handle)))
+
+(def-cli-routine ("SQLConnect" sql-connect)
+    :int
+  (hDb cli-handle)
+  (server :cstring)
+  (server-len cli-smallint)
+  (user :cstring)
+  (user-len cli-smallint)
+  (password :cstring)
+  (passwd-len cli-smallint))
 
 
 ;;; CLI Functions needed

@@ -307,6 +307,12 @@ of TYPE_NAME (keyword) PRECISION SCALE NULLABLE.")
 	   t)
   (:documentation "T [default] if database can supports transactions."))
 
+(defgeneric db-type-has-prepared-stmt? (db-type)
+  (:method ((db-type t))
+    nil)
+  (:documentation "T if database backend supports prepared statements."))
+
+
 ;;; Large objects support (Marc Battyani)
 
 (defgeneric database-create-large-object (database)
@@ -321,6 +327,38 @@ of TYPE_NAME (keyword) PRECISION SCALE NULLABLE.")
 (defgeneric database-delete-large-object (object-id database)
   (:documentation "Deletes the large object in the database"))
 
+;; Prepared statements
+
+(defgeneric database-prepare (stmt types database result-types field-names)
+  (:method (stmt types (database t))
+    (declare (ignore stmt types))
+    (signal-no-database-error database))
+  (:method (stmt types (database database))
+    (declare (ignore stmt types))
+    (error 'sql-database-error
+	   :message
+	   (format nil "DATABASE-PREPARE not implemented for ~S" database)))
+  (:documentation "Prepare a statement for later execution."))
+
+(defgeneric database-bind-parameter (prepared-stmt position value)
+  (:method ((pstmt t) position value)
+    (declare (ignore position value))
+    (error 'sql-database-error
+	   :message
+	   (format nil "database-bind-paremeter not implemented for ~S" pstmt)))
+  (:documentation "Bind a parameter for a prepared statement."))
+
+(defgeneric database-run-prepared (prepared-stmt)
+  (:method ((pstmt t))
+    (error 'sql-database-error
+	   :message (format nil "database-run-prepared not specialized for ~S" pstmt)))
+  (:documentation "Execute a prepared statement."))
+
+(defgeneric database-free-prepared (prepared-stmt)
+  (:method ((pstmt t))
+    ;; nothing to do by default
+    nil)
+  (:documentation "Free the resources of a prepared statement."))
 
 ;; Checks for closed database
 
