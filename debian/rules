@@ -86,7 +86,12 @@ install: build
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-pg-socket) $(prefix-pg-socket)/$(clc-repos)/clsql/interfaces/postgresql-socket
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-aodbc) $(prefix-aodbc)/$(clc-repos)/clsql/interfaces/aodbc
 
-	dh_link ../repositories/clsql $(prefix-base)/$(clc-source)/clsql
+	dh_link ../repositories/clsql $(prefix)/$(clc-source)/clsql
+	dh_link ../repositories/clsql $(prefix-base)/$(clc-source)/clsql-base
+	dh_link ../repositories/clsql $(prefix-mysql)/$(clc-source)/clsql-mysql
+	dh_link ../repositories/clsql $(prefix-pg)/$(clc-source)/clsql-postgresql
+	dh_link ../repositories/clsql $(prefix-pg-socket)/$(clc-source)/clsql-postgresql-socket
+	dh_link ../repositories/clsql $(prefix-aodbc)/$(clc-source)/clsql-aodbc
 
 	# CLC Systems
 	$(INSTALL) $(INSTALLFLAGS) clsql.system $(prefix)/$(clc-systems)/
