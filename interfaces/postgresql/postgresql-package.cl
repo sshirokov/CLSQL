@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-package.cl,v 1.3 2002/03/24 04:37:09 kevin Exp $
+;;;; $Id: postgresql-package.cl,v 1.4 2002/03/25 14:13:41 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -39,6 +39,11 @@
      #:pgsql-conn
      #:pgsql-result
 
+     #:pgsql-ftype#bytea
+     #:pgsql-ftype#int2
+     #:pgsql-ftype#int4
+     #:pgsql-ftype#float4
+     #:pgsql-ftype#float8
      ;; Functions
      #:PQsetdbLogin
      #:PQlogin

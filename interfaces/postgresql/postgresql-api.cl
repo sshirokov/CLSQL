@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-api.cl,v 1.2 2002/03/24 22:25:51 kevin Exp $
+;;;; $Id: postgresql-api.cl,v 1.3 2002/03/25 14:13:41 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -53,6 +53,14 @@
 (uffi:def-foreign-type pgsql-conn :pointer-void)
 (uffi:def-foreign-type pgsql-result :pointer-void)
 
+(uffi:def-enum pgsql-ftype
+    ((:bytea 17)
+     (:int2 21)
+     (:int4 23)
+     (:float4 700)
+     (:float8 701)))
+  
+    
 ;;(declaim (inline PQsetdbLogin)) ;; causes compile error in LW 4.2.0
 (uffi:def-function ("PQsetdbLogin" PQsetdbLogin)
   ((pghost :cstring)

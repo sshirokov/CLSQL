@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.cl,v 1.7 2002/03/25 06:07:06 kevin Exp $
+;;;; $Id: mysql-sql.cl,v 1.8 2002/03/25 14:13:41 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -41,14 +41,15 @@
 
 ;;; Field conversion functions
 
-(defun canonicalize-field-types  (types num-fields)
-  (if (listp types)
-      (let ((length-types (length types))
-	    new-types)
-	(loop for i from 0 below num-fields
+(defun canonicalize-field-types (types num-fields res-ptr)
+  (cond
+   ((if (listp types)
+	(let ((length-types (length types))
+	      (new-types '()))
+	  (loop for i from 0 below num-fields
 	      do
-	      (if (>= i length-types)
-		  (push t new-types) ;; types is shorted than num-fields
+		(if (>= i length-types)
+		    (push t new-types) ;; types is shorted than num-fields
 		  (push
 		   (case (nth i types)
 		     ((:int :long :double t)
@@ -56,10 +57,33 @@
 		     (t
 		      t))
 		   new-types)))
-	(nreverse new-types))
-      (if (eq types :auto)
-	  :auto
-	  nil)))
+	  (nreverse new-types))))
+   ((eq types :auto)
+    (let ((new-types '())
+	  #+ignore (field-vec (mysql-fetch-fields res-ptr)))
+      (dotimes (i num-fields)
+	(declare (fixnum i))
+	(let* ((field (mysql-fetch-field-direct res-ptr i))
+	       #+ignore
+	       (field-test (uffi:deref-array field-vec 'mysql-field-vector i))
+	       (type (uffi:get-slot-value field 'mysql-field 'type)))
+	  (push
+	   (case type
+	     ((#.mysql-field-types#tiny 
+	       #.mysql-field-types#short
+	       #.mysql-field-types#int24
+	       #.mysql-field-types#long)
+	      :int)
+	     ((#.mysql-field-types#double
+	       #.mysql-field-types#float
+	       #.mysql-field-types#decimal)
+	      :double)
+	     (otherwise
+	      t))
+	   new-types)))
+      (nreverse new-types)))
+   (t
+    nil)))
 
 (uffi:def-function "atoi"
     ((str :cstring))
@@ -156,7 +180,8 @@
 	     (if res-ptr
 		 (let ((num-fields (mysql-num-fields res-ptr)))
 		   (setq field-types (canonicalize-field-types 
-				      field-types num-fields))
+				      field-types num-fields
+				      res-ptr))
 		   (unwind-protect
 			(loop for row = (mysql-fetch-row res-ptr)
 			      until (uffi:null-pointer-p row)
@@ -216,7 +241,8 @@
 				    :full-set full-set
 				    :field-types
 				    (canonicalize-field-types 
-				     field-types num-fields)))) 
+				     field-types num-fields
+				     res-ptr)))) 
 		  (if full-set
 		      (values result-set
 			      num-fields

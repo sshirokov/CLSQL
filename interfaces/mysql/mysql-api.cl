@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-api.cl,v 1.1 2002/03/23 17:10:47 kevin Exp $
+;;;; $Id: mysql-api.cl,v 1.2 2002/03/25 14:13:41 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -121,6 +121,7 @@
 ;;; MYSQL-ROWS
 
 (uffi:def-array-pointer mysql-row (* :unsigned-char))
+(uffi:def-array-pointer mysql-field-vector (* mysql-field))
 
 (uffi:def-foreign-type mysql-field-offset :unsigned-int)
 
@@ -444,6 +445,19 @@
 (declaim (inline mysql-fetch-field))
 (uffi:def-function "mysql_fetch_field"
   ((res (* mysql-mysql-res)))
+  :module "mysql"
+  :returning (* mysql-field))
+
+(declaim (inline mysql-fetch-fields))
+(uffi:def-function "mysql_fetch_fields"
+  ((res (* mysql-mysql-res)))
+  :module "mysql"
+  :returning mysql-field-vector)
+
+(declaim (inline mysql-fetch-field-direct))
+(uffi:def-function "mysql_fetch_field_direct"
+  ((res (* mysql-mysql-res))
+   (field-num :unsigned-int))
   :module "mysql"
   :returning (* mysql-field))
 

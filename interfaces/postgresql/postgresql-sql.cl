@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.cl,v 1.7 2002/03/25 06:07:06 kevin Exp $
+;;;; $Id: postgresql-sql.cl,v 1.8 2002/03/25 14:13:41 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -30,14 +30,15 @@
 
 ;;; Field conversion functions
 
-(defun canonicalize-field-types  (types num-fields)
-  (if (listp types)
-      (let ((length-types (length types))
-	    new-types)
-	(loop for i from 0 below num-fields
+(defun canonicalize-field-types (types num-fields res-ptr)
+  (cond
+   ((if (listp types)
+	(let ((length-types (length types))
+	      (new-types '()))
+	  (loop for i from 0 below num-fields
 	      do
-	      (if (>= i length-types)
-		  (push t new-types) ;; types is shorted than num-fields
+		(if (>= i length-types)
+		    (push t new-types) ;; types is shorted than num-fields
 		  (push
 		   (case (nth i types)
 		     ((:int :long :double t)
@@ -45,10 +46,28 @@
 		     (t
 		      t))
 		   new-types)))
-	(nreverse new-types))
-      (if (eq types :auto)
-	  :auto
-	  nil)))
+	  (nreverse new-types))))
+   ((eq types :auto)
+    (let ((new-types '()))
+      (dotimes (i num-fields)
+	(declare (fixnum i))
+	(let* ((type (PQftype res-ptr i)))
+	  (push
+	   (case type
+	     ((#.pgsql-ftype#bytea
+	       #.pgsql-ftype#int2
+	       #.pgsql-ftype#int4)
+	      :int)
+	     ((#.pgsql-ftype#float4
+	       #.pgsql-ftype#float8)
+	      :double)
+	     (otherwise
+	      t))
+	   new-types)))
+      (nreverse new-types)))
+   (t
+    nil)))
+
 
 (uffi:def-function "atoi"
     ((str :cstring))
@@ -165,7 +184,8 @@
               (#.pgsql-exec-status-type#tuples-ok
 	       (let ((num-fields (PQnfields result)))
 		 (setq field-types
-		       (canonicalize-field-types field-types num-fields))
+		   (canonicalize-field-types field-types num-fields
+					     result))
 		 (loop for tuple-index from 0 below (PQntuples result)
 		       collect
 		       (loop for i from 0 below num-fields
@@ -242,7 +262,8 @@
                         :num-tuples (PQntuples result)
 			:field-types (canonicalize-field-types 
 				      field-types
-				      (PQnfields result)))))
+				      (PQnfields result)
+				      result))))
 	     (if full-set
 		 (values result-set
 			 (PQnfields result)
