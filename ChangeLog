@@ -2,6 +2,8 @@
 	* tests/README: Fix filename [reported by Bill Clementson]
 	* sql/transactions.lisp: Apply return value patch from
 	Edi Weitz for WITH-TRANSACTION
+	* tests/README: Remove ptester package requirement (as noted
+	by Bill Clementson)
 	
 03 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.11.5 released

@@ -6,8 +6,8 @@ contains a single assoc-list that specifies the connection specs for
 each database type to be tested. There is an example file in
 contained in CLSQL's examples directory.
 
-These tests require the downloading of the rtest and ptester packages
-from http://files.b9.com/.
+These tests require the downloading of the rt package from
+http://files.b9.com/.
 
 Load clsql.asd or put it somewhere where ASDF can find it
 and call:
