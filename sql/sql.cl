@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: sql.cl,v 1.10 2002/03/29 08:23:38 kevin Exp $
+;;;; $Id: sql.cl,v 1.11 2002/03/29 08:34:44 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -34,6 +34,10 @@
 
 (defvar *loaded-database-types* nil
   "Contains a list of database types which have been defined/loaded.")
+
+(defmethod database-type-load-foreign :after (database-type)
+  (when (database-type-library-loaded database-type)
+     (pushnew database-type *loaded-database-types*)))
 
 (defun reload-database-types ()
   "Reloads any foreign code for the loaded database types after a dump."
