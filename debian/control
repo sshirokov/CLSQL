@@ -44,7 +44,7 @@ Description: CLSQL database backend, MySQL
 
 Package: cl-sql-aodbc
 Architecture: all
-Depends: cl-sql-base (>= ${Source-Version})
+Depends: cl-sql-base (>= ${Source-Version}), cl-sql-mysql, cl-sql-postgresql
 Provides: cl-sql-backend
 Suggests: acl-pro-installer
 Description: CLSQL database backend, AODBC
@@ -54,7 +54,7 @@ Description: CLSQL database backend, AODBC
 
 Package: cl-sql-odbc
 Architecture: all
-Depends: cl-sql-base (>= ${Source-Version}),unixodbc-dev
+Depends: cl-sql-base (>= ${Source-Version}), unixodbc-dev, cl-sql-mysql, cl-sql-postgresql
 Provides: cl-sql-backend
 Suggests: acl-pro-installer
 Description: CLSQL database backend, ODBC

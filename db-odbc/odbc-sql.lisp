@@ -318,6 +318,23 @@
 (defmethod database-list-table-indexes (table (database odbc-database)
 					&key (owner nil))
   (declare (ignore owner))
+  (if (eq :mysql (database-odbc-db-type database))
+      (mysql-workaround-bug-list-table-indexes table database)
+      (odbc-list-table-indexes table database)))
+
+(defun mysql-workaround-bug-list-table-indexes (table database)
+  ;; MyODBC 3.52 does not properly return results from SQLStatistics
+  (do ((results nil)
+       (rows (database-query 
+	      (format nil "SHOW INDEX FROM ~A" (string-upcase table))
+	      database nil)
+	     (cdr rows)))
+      ((null rows) (nreverse results))
+    (let ((col (nth 2 (car rows))))
+      (unless (find col results :test #'string-equal)
+	(push col results)))))
+
+(defun odbc-list-table-indexes (table database)
   (multiple-value-bind (rows col-names)
       (odbc-dbi:list-table-indexes 
        (string-downcase table)

@@ -952,7 +952,7 @@ as possible second argument) to the desired representation of date/time/timestam
        hstmt
        +null-ptr+ 0
        +null-ptr+ 0
-       table-cs (length table) ;;$SQL_NTS
+       table-cs $SQL_NTS
        (if unique $SQL_INDEX_UNIQUE $SQL_INDEX_ALL)
        (if ensure $SQL_ENSURE $SQL_QUICK)))))
 

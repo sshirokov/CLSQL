@@ -174,7 +174,8 @@ specification of a table to drop the index from."
        (unless (index-exists-p index-name :database database)
          (return-from drop-index)))
       (:error t))
-    (unless (db-type-use-column-on-drop-index? (database-underlying-type database))
+    (unless (db-type-use-column-on-drop-index? 
+	     (database-underlying-type database))
       (setq on nil))
     (execute-command (format nil "DROP INDEX ~A~A" index-name
                              (if (null on) ""
