@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql-base.asd,v 1.8 2002/09/06 10:56:13 kevin Exp $
+;;;; $Id: clsql-base.asd,v 1.9 2002/09/06 11:08:19 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -38,16 +38,16 @@
     :pathname #.(format nil "~A:clsql-base;" 
       #+common-lisp-controller "cl-library"
       #-common-lisp-controller "clsql")
-  :perform (load-op :after (op clsql-base)
-		    (pushnew :clsql-base cl:*features*))
-  :components ((:file "cmucl-compat")
-	       (:file "package")
-	       (:file "utils" :depends-on ("package"))
-	       (:file "classes" :depends-on ("package"))
-	       (:file "conditions" :depends-on ("classes"))
-	       (:file "db-interface" :depends-on ("conditions"))
-	       (:file "initialize" :depends-on ("db-interface")))
-  )
+    :perform (load-op :after (op clsql-base)
+		      (pushnew :clsql-base cl:*features*))
+    :components ((:file "cmucl-compat")
+		 (:file "package")
+		 (:file "utils" :depends-on ("package"))
+		 (:file "classes" :depends-on ("package"))
+		 (:file "conditions" :depends-on ("classes"))
+		 (:file "db-interface" :depends-on ("conditions"))
+		 (:file "initialize" :depends-on ("db-interface")))
+    )
 
 (defmethod source-file-type  ((c cl-source-file)
 			      (s (eql (find-system 'clsql-base)))) 
