@@ -1,12 +1,17 @@
-;;; -*- Mode: Lisp -*-
-;;; $Id$
-
-;;; MaiSQL --- Common Lisp Interface Layer to SQL Databases
-;;; This is copyrighted software.  See documentation for terms.
-;;; 
-;;; oracle-sql.lisp --- SQL-Interface implementation for Oracle
-;;;
-;;; derived from postgresql.lisp
+;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
+;;;; *************************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          oracle-sql.lisp
+;;;;
+;;;; $Id$
+;;;;
+;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;;
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
 
 (in-package #:clsql-oracle)
 

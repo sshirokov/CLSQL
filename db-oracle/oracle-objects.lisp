@@ -1,4 +1,19 @@
-(in-package :clsql-oracle)
+;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
+;;;; *************************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          oracle-objects.lisp
+;;;;
+;;;; $Id$
+;;;;
+;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;;
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
+
+(in-package #:clsql-oracle)
 
 (defparameter *oracle-default-varchar2-length* "512")
 
@@ -77,13 +92,13 @@
 
 ;;; LOCAL-TIME stuff that needs to go into hooks
 #+local-time
-(defmethod clsql-sys::database-get-type-specifier
+(defmethod clsql::database-get-type-specifier
   ((type (eql 'local-time::local-time)) args (database oracle-database))
   (declare (ignore args))
   "DATE")
 
 #+local-time
-(defmethod clsql-sys::database-get-type-specifier
+(defmethod clsql::database-get-type-specifier
   ((type (eql 'local-time::duration))
    args
    (database oracle-database))

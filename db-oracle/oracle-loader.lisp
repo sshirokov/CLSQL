@@ -1,12 +1,20 @@
-;;; -*- Mode: Lisp -*-
-;;; $Id$
-;;;
-;;; MaiSQL --- Common Lisp Interface Layer to SQL Databases
-;;; This is copyrighted software.  See documentation for terms.
-;;; 
-;;; oracle-loader.cl --- Foreign Object Loader for Oracle
+;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
+;;;; *************************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          oracle-loader.lisp
+;;;; Purpose:       Foreign library loader for CLSQL Oracle interface
+;;;;
+;;;; $Id$
+;;;;
+;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;;
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
 
-(in-package :clsql-oracle)
+(in-package #:clsql-oracle)
 
 ;; Load the foreign library
 

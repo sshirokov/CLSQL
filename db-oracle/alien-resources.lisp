@@ -1,16 +1,19 @@
-;;; -*- Mode: Lisp -*-
-;;; $Id$
+;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
+;;;; *************************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          alien-resources.lisp
+;;;;
+;;;; $Id$
+;;;;
+;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;;
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
 
-;;; This is copyrighted software.  See documentation for terms.
-;;; 
-;;; oracle-sql.lisp --- SQL-Interface implementation for Oracle
-;;;
-;;; derived from postgresql.lisp
-
-(in-package :clsql-oracle)
-
-(declaim (optimize (speed 3)
-		   (debug 1)))
+(in-package #:clsql-oracle)
 
 (defparameter *alien-resource-hash* (make-hash-table :test #'equal))
 
@@ -32,7 +35,7 @@
      (unless res
        (setf res (make-alien-resource
 		  :type ',type :sizeof ,size
-		  :buffer (make-alien ,type ,size)))
+		  :buffer (alien:make-alien ,type ,size)))
        (%insert-alien-resource ',type res))
      (claim-alien-resource res)))
 	       

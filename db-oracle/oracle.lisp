@@ -1,13 +1,18 @@
-;;; -*- Mode: Lisp -*-
-;;; $Id$
-
-;;; MaiSQL --- Common Lisp Interface Layer to SQL Databases
-;;; This is copyrighted software.  See documentation for terms.
-;;; 
-;;; oracle.lisp --- FFI interface to Oracle on Unix
-;;;
-;;; The present content of this file is orented specifically towards
-;;; Oracle 8.0.5.1 under Linux, linking against libclntsh.so
+;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
+;;;; *************************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          oracle.lisp
+;;;; Purpose:       Package definition for CLSQL Oracle interface
+;;;;
+;;;; $Id$
+;;;;
+;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;;
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
 
 (in-package #:clsql-oracle)
 
