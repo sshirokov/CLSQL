@@ -691,7 +691,7 @@ as possible second argument) to the desired representation of date/time/timestam
 	    (#.$SQL_C_FLOAT (uffi:allocate-foreign-object :float))
             (#.$SQL_C_DOUBLE (uffi:allocate-foreign-object :double))
             (#.$SQL_C_BIT (uffi:allocate-foreign-object :byte))
-            (#.$SQL_C_STINYINT (uffi:allocate-foreign-object :short))
+            (#.$SQL_C_STINYINT (uffi:allocate-foreign-object :byte))
             (#.$SQL_C_SSHORT (uffi:allocate-foreign-object :short))
             (#.$SQL_C_CHAR (uffi:allocate-foreign-string (1+ size)))
             (#.$SQL_C_BINARY (uffi:allocate-foreign-string (1+ (* 2 size))))
