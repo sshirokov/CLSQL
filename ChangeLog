@@ -4,7 +4,9 @@
 	* sql/objects.lisp: Make SELECT a normal function.
 	SELECT now accepts type-modified database identifiers, such as
         [foo :string] which means that the values in column foo are returned 
-        as Lisp strings.
+        as Lisp strings. Add new *update-records-on-make-instance* special
+	variable controlling automatic creation of new instances.
+	* sql/packages.lisp: Export *update-records-on-make-instance* 
 	* test/test-fdml.lisp: Add tests for type-modified
 	database identifiers.
 	

@@ -21,6 +21,10 @@
   (:metaclass standard-db-class)
   (:documentation "Superclass for all CLSQL View Classes."))
 
+(defvar *update-records-on-make-instance* nil
+  "When T, UPDATE-RECORDS-FROM-INSTANCE will be automatically called
+when a new instance of a view-class is created.")
+
 (defvar *db-deserializing* nil)
 (defvar *db-initializing* nil)
 
@@ -39,17 +43,19 @@
               (setf (slot-value instance slot-name) nil))))))
   (call-next-method))
 
+#+ignore ;; not currently used
 (defmethod (setf slot-value-using-class) (new-value (class standard-db-class)
 					  instance slot)
   (declare (ignore new-value instance slot))
   (call-next-method))
 
-(defmethod initialize-instance :around ((object standard-db-object)
+(defmethod initialize-instance ((object standard-db-object)
 					&rest all-keys &key &allow-other-keys)
   (declare (ignore all-keys))
   (let ((*db-initializing* t))
     (call-next-method)
-    (unless *db-deserializing*
+    (when (and *update-records-on-make-instance*
+	       (not *db-deserializing*))
       #+nil (created-object object)
       (update-records-from-instance object))))
 

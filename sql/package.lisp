@@ -350,6 +350,8 @@
        #:locally-enable-sql-reader-syntax  ; syntax     xx
        #:restore-sql-reader-syntax-state   ; syntax     xx
 
+       #:*update-records-on-make-instance* 
+       
        ;;------------------------------------------------
        ;; Miscellaneous Extensions
        ;;------------------------------------------------
