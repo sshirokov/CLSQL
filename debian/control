@@ -13,7 +13,7 @@ Description: SQL Interface for Common Lisp
  on multiple Common Lisp implementations.
 
 Package: cl-sql-base
-Architecture: any
+Architecture: all
 Depends: common-lisp-controller (>= 3.37) 
 Recommends: cl-sql-backend
 Description: SQL Interface for Common Lisp
