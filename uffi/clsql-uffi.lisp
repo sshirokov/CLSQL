@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.6 2003/05/15 07:33:21 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.7 2003/05/15 07:39:42 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -130,7 +130,8 @@
   :returning :unsigned-int)
 
 (defun native-to-string (s)
-  (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0)))
+  (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
+	   (type char-ptr-def s))
   (let* ((len (strlen s))
 	 (str (make-string len)))
     (declare (fixnum len)
