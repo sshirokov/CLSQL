@@ -338,6 +338,24 @@
         (length (clsql:list-tables :owner nil))))
   t) 
 
-))
+(deftest :fddl/cache-table-queries/1 
+ (list 
+  (gethash "EMPLOYEE" (clsql-sys::attribute-cache clsql:*default-database*))
+  (progn 
+    (clsql:cache-table-queries "EMPLOYEE" :action t)
+    (gethash "EMPLOYEE" (clsql-sys::attribute-cache clsql:*default-database*)))
+  (progn 
+    (clsql:list-attribute-types "EMPLOYEE")
+    (not 
+     (null 
+      (cadr 
+       (gethash "EMPLOYEE" 
+                (clsql-sys::attribute-cache clsql:*default-database*))))))
+  (progn 
+    (clsql:cache-table-queries "EMPLOYEE" :action :flush)
+    (gethash "EMPLOYEE" (clsql-sys::attribute-cache clsql:*default-database*))))
+ (NIL (T NIL) T (T NIL)))
+
+  ))
 
 #.(clsql:restore-sql-reader-syntax-state)
