@@ -9,6 +9,9 @@
 	rather than read-from-string.
 	* */*.lisp: Merge clsql-base-sys and clsql-base packages
 	into clsql-base package
+	* classic/sql.lisp: Move large object support into base, leaving
+	classic without any functionality that is provided in the clsql
+	system.
 	
 1 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.5: SQLite backend now passes all result-types tests

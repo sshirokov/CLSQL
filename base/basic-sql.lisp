@@ -166,5 +166,21 @@ specified in output-type-spec and returned like in MAP."
 		       (apply function row))))
 	(database-dump-result-set result-set database)))))
 
+;;; Large objects support
 
+(defun create-large-object (&key (database *default-database*))
+  "Creates a new large object in the database and returns the object identifier"
+  (database-create-large-object database))
+
+(defun write-large-object (object-id data &key (database *default-database*))
+  "Writes data to the large object"
+  (database-write-large-object object-id data database))
+
+(defun read-large-object (object-id &key (database *default-database*))
+  "Reads the large object content"
+  (database-read-large-object object-id database))
+
+(defun delete-large-object (object-id &key (database *default-database*))
+  "Deletes the large object in the database"
+  (database-delete-large-object object-id database))
 

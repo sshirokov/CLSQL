@@ -203,6 +203,10 @@
        #:do-query
        #:map-query
        #:describe-table
+       #:create-large-object
+       #:write-large-object
+       #:read-large-object
+       #:delete-large-object
 
        
        ;; recording.lisp -- SQL I/O Recording 

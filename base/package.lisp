@@ -60,11 +60,15 @@
      #:database-list-table-indexes
      #:database-list-views
      
-     ;; Large objects (Marc B)
+     ;; Large objects 
      #:database-create-large-object
      #:database-write-large-object
      #:database-read-large-object
      #:database-delete-large-object
+     #:create-large-object
+     #:write-large-object
+     #:read-large-object
+     #:delete-large-object
 
      #:command-output
      #:make-process-lock
