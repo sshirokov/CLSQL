@@ -11,7 +11,8 @@ WORK_DIR=/usr/local/src/Work/${PKG}
 echo "Building Debian files"
 export CVSROOT=`cat CVS/Root`
 pushd ${WORK_DIR} > /dev/null
-cvs-buildpackage -rfakeroot -kkevin@rosenberg.net -F -d ${DEBPKG} -uc -us -sa -i.cvsignore $*
+cvs-buildpackage -rfakeroot -kkevin@rosenberg.net -F -d ${DEBPKG} -uc -us -sa -i -H${WORK_DIR}/debian/cvsbp-prepare.sh $*
+
 popd > /dev/null
 
 echo "Checking package with lintian"

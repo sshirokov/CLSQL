@@ -18,12 +18,6 @@ pkg-pg-socket	:= cl-sql-postgresql-socket
 pkg-aodbc	:= cl-sql-aodbc
 all-pkgs	:= $(pkg) $(pkg-base) $(pkg-mysql) $(pkg-pg) $(pkg-pg-socket) $(pkg-aodbc)
 
-prefix		:= debian/$(pkg)
-prefix-base	:= debian/$(pkg-base)
-prefix-mysql	:= debian/$(pkg-mysql)
-prefix-pg	:= debian/$(pkg-pg)
-prefix-pg-socket := debian/$(pkg-pg-socket)
-prefix-aodbc	:= debian/$(pkg-aodbc)
 
 UPSTREAM_VER	:= $(shell sed -n -e "s/${pkg} (\(.*\)-[0-9.]).*/\1/p" < debian/changelog |head -1)
 
@@ -38,28 +32,23 @@ srcs-pg		:= $(wildcard interfaces/postgresql/*.cl)
 srcs-pg-socket	:= $(wildcard interfaces/postgresql-socket/*.cl)
 srcs-aodbc	:= $(wildcard interfaces/aodbc/*.cl)
 
-INSTALL	:= install
-INSTALLFLAGS	:= -g root -o root -m 0644
-INSTALLEXECFLAGS	:= -g root -o root -m 0755
-INSTALLDIRFLAGS	:= -d -g root -o root -m 0755
-
 clc-base	:= usr/share/common-lisp
 clc-source	:= $(clc-base)/source
 clc-systems	:= $(clc-base)/systems
-doc-dir		:= $(prefix-base)/usr/share/doc/cl-sql-base
+doc-dir		:= usr/share/doc/cl-sql-base
 
 clc-clsql	:= $(clc-source)/$(plain-pkg)-$(UPSTREAM_VER)
 
-lispdir		:= $(prefix)/$(clc-clsql)
-lispdir-sql	:= $(prefix)/$(clc-clsql)/sql
-lispdir-base	:= $(prefix-base)/$(clc-clsql)/base
-lispdir-base-uffi := $(prefix-base)/$(clc-clsql)/interfaces/clsql-uffi
-sodir-base-uffi := $(prefix-base)/usr/lib/clsql
-lispdir-mysql	:= $(prefix-mysql)/$(clc-clsql)/interfaces/mysql
-sodir-mysql	:= $(prefix-mysql)/usr/lib/clsql
-lispdir-pg	:= $(prefix-pg)/$(clc-clsql)/interfaces/postgresql
-lispdir-pg-socket := $(prefix-pg-socket)/$(clc-clsql)/interfaces/postgresql-socket
-lispdir-aodbc	:= $(prefix-aodbc)/$(clc-clsql)/interfaces/aodbc
+lispdir		:= $(clc-clsql)
+lispdir-sql	:= $(clc-clsql)/sql
+lispdir-base	:= $(clc-clsql)/base
+lispdir-base-uffi := $(clc-clsql)/interfaces/clsql-uffi
+sodir-base-uffi := usr/lib/clsql
+lispdir-mysql	:= $(clc-clsql)/interfaces/mysql
+sodir-mysql	:= usr/lib/clsql
+lispdir-pg	:= $(clc-clsql)/interfaces/postgresql
+lispdir-pg-socket := $(clc-clsql)/interfaces/postgresql-socket
+lispdir-aodbc	:= $(clc-clsql)/interfaces/aodbc
 
 
 configure: configure-stamp
@@ -91,48 +80,48 @@ install: build
 	dh_clean -k
 	dh_installdirs --all  $(clc-systems) $(clc-source)
 
-	$(INSTALL) $(INSTALLDIRFLAGS) $(lispdir) $(lispdir-base) \
-		$(lispdir-base-uffi) $(lispdir-pg) $(lispdir-pg-socket) \
-		$(lispdir-mysql) $(lispdir-sql) $(lispdir-aodbc) \
-		$(sodir-base-uffi) $(sodir-mysql)
+	dh_installdirs -p $(pkg) $(lispdir-sql)
+	dh_installdirs -p $(pkg-base) $(lispdir-base) $(lispdir-base-uffi) $(sodir-base-uffi)
+	dh_installdirs -p $(pkg-pg) $(lispdir-pg)
+	dh_installdirs -p $(pkg-pg-socket) $(lispdir-pg-socket)
+	dh_installdirs -p $(pkg-mysql) $(lispdir-mysql) $(sodir-mysql)
+	dh_installdirs -p $(pkg-aodbc) $(lispdir-aodbc)
 
 	# Main package
-	$(INSTALL) $(INSTALLDIRFLAGS) $(lispdir) $(lispdir-int)
-	$(INSTALL) $(INSTALLFLAGS) $(srcs) $(lispdir-sql)
+	dh_install -p $(pkg) $(srcs) $(lispdir-sql)
 
 	# Base
-	$(INSTALL) $(INSTALLFLAGS) $(srcs-base) $(lispdir-base)
-	$(INSTALL) $(INSTALLFLAGS) $(srcs-base-uffi) $(lispdir-base-uffi)
-	$(INSTALL) $(INSTALLEXECFLAGS) $(srcs-base-uffi-so) $(sodir-base-uffi)
+	dh_install -p $(pkg-base) $(srcs-base) $(lispdir-base)
+	dh_install -p $(pkg-base) $(srcs-base-uffi) $(lispdir-base-uffi)
+	dh_install -p $(pkg-base) $(srcs-base-uffi-so) $(sodir-base-uffi)
 
-	$(INSTALL) $(INSTALLFLAGS) $(srcs-mysql) $(lispdir-mysql)
-	$(INSTALL) $(INSTALLEXECFLAGS) $(srcs-mysql-so) $(sodir-mysql)
-	$(INSTALL) $(INSTALLFLAGS) $(srcs-pg) $(lispdir-pg)
-	$(INSTALL) $(INSTALLFLAGS) $(srcs-pg-socket) $(lispdir-pg-socket)
-	$(INSTALL) $(INSTALLFLAGS) $(srcs-aodbc) $(lispdir-aodbc)
+	dh_install -p $(pkg-mysql) $(srcs-mysql) $(lispdir-mysql)
+	dh_install -p $(pkg-mysql) $(srcs-mysql-so) $(sodir-mysql)
+	dh_install -p $(pkg-pg) $(srcs-pg) $(lispdir-pg)
+	dh_install -p $(pkg-pg-socket) $(srcs-pg) $(lispdir-pg-socket)
+	dh_install -p $(pkg-pg-socket) $(srcs-aodbc) $(lispdir-pg-aodbc)
 
 	# CLC Systems
-	$(INSTALL) $(INSTALLFLAGS) clsql.system $(prefix)/$(clc-systems)
-	$(INSTALL) $(INSTALLFLAGS) clsql-base.system clsql-uffi.system $(prefix-base)/$(clc-systems)
-	$(INSTALL) $(INSTALLFLAGS) clsql-mysql.system $(prefix-mysql)/$(clc-systems)
-	$(INSTALL) $(INSTALLFLAGS) clsql-postgresql.system $(prefix-pg)/$(clc-systems)
-	$(INSTALL) $(INSTALLFLAGS) clsql-postgresql-socket.system $(prefix-pg-socket)/$(clc-systems)
-	$(INSTALL) $(INSTALLFLAGS) clsql-aodbc.system $(prefix-aodbc)/$(clc-systems)
+	dh_install -p $(pkg) $(INSTALLFLAGS) clsql.system $(clc-systems)
+	dh_install -p $(pkg-base) clsql-base.system clsql-uffi.system $(clc-systems)
+	dh_install -p $(pkg-mysql) clsql-mysql.system $(clc-systems)
+	dh_install -p $(pkg-pg) clsql-postgresql.system $(clc-systems)
+	dh_install -p $(pkg-pg-socket) clsql-postgresql-socket.system $(clc-systems)
+	dh_install -p $(pkg-aodbc) clsql-aodbc.system $(clc-systems)
 
 	# Test suite
-	$(INSTALL) $(INSTALLDIRFLAGS) $(doc-dir)/html $(doc-dir)/test-suite
- 
-	$(INSTALL) $(INSTALLFLAGS) test-suite/tester-clsql.cl test-suite/acl-compat-tester.cl $(doc-dir)/test-suite
+	dh_installdirs -p $(pkg) $(doc-dir)/html $(doc-dir)/test-suite
+	dh_install -p $(pkg) test-suite/tester-clsql.cl test-suite/acl-compat-tester.cl $(doc-dir)/test-suite
 
 	# Documentation
 	rm -rf doc/html
 	(cd doc; tar xzf html.tar.gz; cd ..)
-	$(INSTALL) $(INSTALLFLAGS) doc/html/* $(doc-dir)/html
+	dh_install -p $(pkg) doc/html $(doc-dir)
 	rm -rf doc/html
 	cp doc/clsql.pdf doc/cl-sql.pdf
 	rm -f doc/cl-sql.pdf.gz
 	gzip doc/cl-sql.pdf
-	$(INSTALL) $(INSTALLFLAGS) doc/cl-sql.pdf.gz $(doc-dir)
+	dh_install -p $(pkg) doc/cl-sql.pdf.gz $(doc-dir)
 	rm -f doc/cl-sql.pdf.gz
 
 #	From UncommonSQL Debian package: build prerm postinst from templates
