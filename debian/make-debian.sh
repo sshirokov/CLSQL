@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 PKG=clsql
 DEBPKG=cl-sql
 
@@ -8,7 +10,9 @@ WORK_DIR=/usr/local/src/Work/${PKG}
 
 echo "Building Debian files"
 export CVSROOT=`cat CVS/Root`
+pushd ${WORK_DIR} > /dev/null
 cvs-buildpackage -rfakeroot -kkevin@rosenberg.net -F -d ${DEBPKG} -uc -us -sa -i.cvsignore $*
+popd > /dev/null
 
 echo "Checking package with lintian"
 DEBVERSION=`sed -n -e "s/${DEBPKG} (\(.*\)).*/\1/p" < ${WORK_DIR}/debian/changelog  |head -1`
