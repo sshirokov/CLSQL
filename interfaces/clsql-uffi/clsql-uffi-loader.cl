@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi-loader.cl,v 1.6 2002/05/14 16:05:43 kevin Exp $
+;;;; $Id: clsql-uffi-loader.cl,v 1.7 2002/05/14 16:07:56 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -21,8 +21,7 @@
 
 (defvar *clsql-uffi-library-filename* 
   (uffi:find-foreign-library
-   :names "clsql-uffi"
-   :directories 
+   "clsql-uffi"
    `(,(translate-logical-pathname 
        "CL-LIBRARY:clsql;interfaces;clsql-uffi;clsql-uffi.so")
      "/usr/share/common-lisp/source/clsql/interfaces/clsql-uffi/")))
