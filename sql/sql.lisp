@@ -27,12 +27,28 @@
   (execute-command (sql-output expr database) :database database)
   (values))
 
+(defmethod explain ((expr %sql-expression) &key (database *default-database*))
+  (let ((expression (sql-output expr database)))
+    (format *standard-output* "explain: ~S~%" expression)
+    (execute-command (concatenate 'string "explain " expression))))
 
 
 (defmethod query ((expr %sql-expression) &key (database *default-database*)
                   (result-types nil) (flatp nil))
   (query (sql-output expr database) :database database :flatp flatp
          :result-types result-types))
+
+(defun truncate-database (database)
+  (unless (typep database 'database)
+    (clsql-base-sys::signal-no-database-error database))
+  (unless (is-database-open database)
+    (database-reconnect database))
+  (dolist (table (list-tables database))
+    (drop-table table database))
+  (dolist (index (list-indexes database))
+    (drop-index index database))
+  (dolist (seq (list-sequences database))
+    (drop-sequence seq database)))
 
 (defun print-query (query-exp &key titles (formats t) (sizes t) (stream t)
 			      (database *default-database*))
@@ -91,11 +107,11 @@ table INTO. The default value of DATABASE is *DEFAULT-DATABASE*."
 			    (vals nil)
 			    (av-pairs nil)
 			    (subquery nil))
-  (if (null into)
+  (unless into
       (error 'clsql-sql-syntax-error :reason ":into keyword not supplied"))
-  (let ((ins (make-instance 'sql-insert :into into)))
+  (let ((insert (make-instance 'sql-insert :into into)))
     (with-slots (attributes values query)
-      ins
+      insert
       (cond ((and vals (not attrs) (not query) (not av-pairs))
 	     (setf values vals))
 	    ((and vals attrs (not subquery) (not av-pairs))
@@ -112,7 +128,7 @@ table INTO. The default value of DATABASE is *DEFAULT-DATABASE*."
 	    (t
 	     (error 'clsql-sql-syntax-error
                     :reason "bad or ambiguous keyword combination.")))
-      ins)))
+      insert)))
     
 (defun delete-records (&key (from nil)
                             (where nil)
@@ -124,12 +140,11 @@ from which the records are to be removed, and defaults to
   (let ((stmt (make-instance 'sql-delete :from from :where where)))
     (execute-command stmt :database database)))
 
-(defun update-records (table &key
-			   (attributes nil)
-			   (values nil)
-			   (av-pairs nil)
-			   (where nil)
-			   (database *default-database*))
+(defun update-records (table &key (attributes nil)
+			    (values nil)
+			    (av-pairs nil)
+			    (where nil)
+			    (database *default-database*))
   "Changes the values of existing fields in TABLE with columns
 specified by ATTRIBUTES and VALUES (or AV-PAIRS) where the WHERE
 condition is true."
@@ -216,6 +231,7 @@ condition is true."
            "No type conversion to SQL for ~A is defined for DB ~A."
            :format-arguments (list (type-of thing) (type-of database)))))
 
+
 (defmethod output-sql-hash-key ((arg vector) &optional database)
   (list 'vector (map 'list (lambda (arg)
                              (or (output-sql-hash-key arg database)
@@ -224,7 +240,7 @@ condition is true."
 
 (defmethod output-sql (expr &optional (database *default-database*))
   (write-string (database-output-sql expr database) *sql-stream*)
-  t)
+  (values))
 
 (defmethod output-sql ((expr list) &optional (database *default-database*))
   (if (null expr)
@@ -239,4 +255,11 @@ condition is true."
         (write-char #\) *sql-stream*)))
   t)
 
-
+#+nil
+(defmethod add-storage-class ((self database) (class symbol) &key (sequence t))
+  (let ((tablename (view-table (find-class class))))
+    (unless (tablep tablename)
+      (create-view-from-class class)
+      (when sequence
+        (create-sequence-from-class class)))))
+ 

@@ -1,7 +1,25 @@
 10 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.6.2: New CLSQL API functions:
+	DESCRIBE-TABLE AND TRUNCATE-DATABASE
+	Currently, this are only supported on :postgresql
+	and :postgresql-socket
+	* base/database.lisp: automatically load ASDF system
+	in CONNECT if not already loaded
+	* base/tests.lisp: disconnect database after testing 
+	* base/*.lisp: Remove CLOSED-DATABASE type in favor
+	of storing open/closed status in slot of database
+	* base/pool.lisp: Support locks for CMUCL, OpenMCL, SBCL
+	* db-postgresql/postgresql-sql.lisp: add DATABASE-RECONNECT,
+	DATABASE-DESCRIBE-TABLE
+	* db-sqlite/sqlite-sql.lisp: Add missing slots in database
+	* base/conditions: Remove duplicate condition
+	* db-*/*-sql.lisp: Fill new database slot DATABASE-TYPE
+	* base/recording.lisp: Add new :QUERY type for recording
+	
+10 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.6.1: documentation fixes, merged
 	classic-tests into tests
- 	
+
 10 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
         * Version 2.6.0 released: New API functions
 	CREATE-DATABASE, DESTORY-DATABASE, PROBE-DATABASE
