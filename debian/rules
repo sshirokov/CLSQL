@@ -85,7 +85,7 @@ install: build
 	dh_testdir
 	dh_testroot
 	dh_clean -k
-	dh_installdirs --all -i $(clc-systems) $(clc-source)
+	dh_installdirs --all  $(clc-systems) $(clc-source)
 
 	$(INSTALL) $(INSTALLDIRFLAGS) $(lispdir) $(lispdir-base) \
 		$(lispdir-base-uffi) $(lispdir-pg) $(lispdir-pg-socket) \
