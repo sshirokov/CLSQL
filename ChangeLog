@@ -1,6 +1,8 @@
 02 Sep 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* TODO: Add note about ODBC on Windows
-
+	* db-odbc/odbc-loader.lisp: Add /winnt/system32/ to
+	search directories
+	
 02 Sep 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* examples/clsql-tutorial.lisp: added missing initarg for the COMPANYID
 	slot of the employee View Class definition [reported by Franz Deuzer]. 

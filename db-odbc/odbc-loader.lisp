@@ -23,12 +23,13 @@
    '("odbc32" "libodbc" "libiodbc")
    `(,(make-pathname :directory (pathname-directory *load-truename*))
      #+64bit "/usr/lib64/"
-      "/usr/lib/"
-      "/sw/lib/"
-      "/usr/local/lib/"
-      "/home/kevin/debian/src/clsql/db-odbc/"
-      "/windows/system32/"
-      "/odbc/lib/opt/")
+     "/usr/lib/"
+     "/sw/lib/"
+     "/usr/local/lib/"
+     "/home/kevin/debian/src/clsql/db-odbc/"
+     "/windows/system32/"
+     "/winnt/system32/"
+     "/odbc/lib/opt/")
    :drive-letters '("C")))
   
 (defvar *odbc-supporting-libraries* '("c")
