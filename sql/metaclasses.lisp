@@ -37,7 +37,7 @@
 ;; ------------------------------------------------------------
 ;; metaclass: view-class
 
-(defclass view-metaclass (standard-class)
+(defclass standard-db-class (standard-class)
   ((view-table
     :accessor view-table
     :initarg :view-table)
@@ -91,7 +91,7 @@
 
 #+lispworks 
 (defmethod clos::canonicalize-defclass-slot :around
-  ((prototype view-metaclass) slot)
+  ((prototype standard-db-class) slot)
  "\\lw\\ signals an error on unknown slot options; so this method
 removes any extra allowed options before calling the default method
 and returns the canonicalized extra options concatenated to the result
@@ -121,7 +121,7 @@ of the default method.  The extra allowed options are the value of the
 
 #+lispworks 
 (defmethod clos::canonicalize-class-options :around
-    ((prototype view-metaclass) class-options)
+    ((prototype standard-db-class) class-options)
   "\\lw\\ signals an error on unknown class options; so this method
 removes any extra allowed options before calling the default method
 and returns the canonicalized extra options concatenated to the result
@@ -145,7 +145,7 @@ of the default method.  The extra allowed options are the value of the
     result))
 
 
-(defmethod validate-superclass ((class view-metaclass)
+(defmethod validate-superclass ((class standard-db-class)
 				(superclass standard-class))
   t)
 
@@ -178,13 +178,13 @@ of the default method.  The extra allowed options are the value of the
       (pop-arg mylist))
     newlist))
 
-(defmethod initialize-instance :around ((class view-metaclass)
+(defmethod initialize-instance :around ((class standard-db-class)
                                         &rest all-keys
 					&key direct-superclasses base-table
                                         schemas version qualifier
 					&allow-other-keys)
   (let ((root-class (find-class 'standard-db-object nil))
-	(vmc (find-class 'view-metaclass)))
+	(vmc (find-class 'standard-db-class)))
     (setf (view-class-qualifier class)
           (car qualifier))
     (if root-class
@@ -210,13 +210,13 @@ of the default method.  The extra allowed options are the value of the
     (register-metaclass class (nth (1+ (position :direct-slots all-keys))
                                    all-keys))))
 
-(defmethod reinitialize-instance :around ((class view-metaclass)
+(defmethod reinitialize-instance :around ((class standard-db-class)
                                           &rest all-keys
                                           &key base-table schemas version
                                           direct-superclasses qualifier
                                           &allow-other-keys)
   (let ((root-class (find-class 'standard-db-object nil))
-	(vmc (find-class 'view-metaclass)))
+	(vmc (find-class 'standard-db-class)))
     (setf (view-table class)
           (table-name-from-arg (sql-escape (or (and base-table
                                                     (if (listp base-table)
@@ -284,9 +284,9 @@ of the default method.  The extra allowed options are the value of the
 					   (ordered-class-slots class)))))
 
 #+(or allegro openmcl)
-(defmethod finalize-inheritance :after ((class view-metaclass))
+(defmethod finalize-inheritance :after ((class standard-db-class))
   ;; KMRL for slots without a type set, openmcl sets type-predicate to ccl:false
-  ;; for view-metaclass
+  ;; for standard-db-class
   #+openmcl
   (mapcar 
    #'(lambda (s)
@@ -437,13 +437,13 @@ all NULL values retrieved are converted by DATABASE-NULL-VALUE")
 						standard-effective-slot-definition)
   ())
 
-(defmethod direct-slot-definition-class ((class view-metaclass)
+(defmethod direct-slot-definition-class ((class standard-db-class)
                                          #+kmr-normal-dsdc &rest
                                          initargs)
   (declare (ignore initargs))
   (find-class 'view-class-direct-slot-definition))
 
-(defmethod effective-slot-definition-class ((class view-metaclass)
+(defmethod effective-slot-definition-class ((class standard-db-class)
 					    #+kmr-normal-esdc &rest
 					    initargs)
   (declare (ignore initargs))
@@ -455,7 +455,7 @@ all NULL values retrieved are converted by DATABASE-NULL-VALUE")
   (class-precedence-list class))
 
 #-(or sbcl cmu)
-(defmethod compute-slots ((class view-metaclass))
+(defmethod compute-slots ((class standard-db-class))
   "Need to sort order of class slots so they are the same across
 implementations."
   (let ((slots (call-next-method))
@@ -506,7 +506,7 @@ which does type checking before storing a value in a slot."
 ;; what kind of database value (if any) is stored there, generates and
 ;; verifies the column name.
 
-(defmethod compute-effective-slot-definition ((class view-metaclass)
+(defmethod compute-effective-slot-definition ((class standard-db-class)
 					      #+kmr-normal-cesd slot-name
 					      direct-slots)
   #+kmr-normal-cesd (declare (ignore slot-name))

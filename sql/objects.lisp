@@ -20,7 +20,7 @@
     :initform nil
     :initarg :view-database
     :db-kind :virtual))
-  (:metaclass view-metaclass)
+  (:metaclass standard-db-class)
   (:documentation "Superclass for all CLSQL View Classes."))
 
 (defmethod view-database ((self standard-db-object))
@@ -29,7 +29,7 @@
 (defvar *db-deserializing* nil)
 (defvar *db-initializing* nil)
 
-(defmethod slot-value-using-class ((class view-metaclass) instance slot)
+(defmethod slot-value-using-class ((class standard-db-class) instance slot)
   (declare (optimize (speed 3)))
   (unless *db-deserializing*
     (let ((slot-name (%slot-name slot))
@@ -43,7 +43,7 @@
               (setf (slot-value instance slot-name) nil))))))
   (call-next-method))
 
-(defmethod (setf slot-value-using-class) (new-value (class view-metaclass)
+(defmethod (setf slot-value-using-class) (new-value (class standard-db-class)
 					  instance slot)
   (declare (ignore new-value instance slot))
   (call-next-method))
@@ -92,7 +92,7 @@
 ;; Build the database tables required to store the given view class
 ;;
 
-(defmethod database-pkey-constraint ((class view-metaclass) database)
+(defmethod database-pkey-constraint ((class standard-db-class) database)
   (let ((keylist (mapcar #'view-class-slot-column (keyslots-for-class class))))
     (when keylist 
       (format nil "CONSTRAINT ~APK PRIMARY KEY~A"
@@ -144,7 +144,7 @@ the view. The argument DATABASE has a default value of
         (error "Class ~s not found." view-class-name)))
   (values))
 
-(defmethod %install-class ((self view-metaclass) database &aux schemadef)
+(defmethod %install-class ((self standard-db-class) database &aux schemadef)
   (dolist (slotdef (ordered-class-slots self))
     (let ((res (database-generate-column-definition (class-name self)
                                                     slotdef database)))
@@ -218,7 +218,7 @@ SUPERS is nil then STANDARD-DB-OBJECT automatically becomes the
 superclass of the newly-defined View Class."
   `(progn
      (defclass ,class ,supers ,slots ,@options
-	       (:metaclass view-metaclass))
+	       (:metaclass standard-db-class))
      (finalize-inheritance (find-class ',class))))
 
 (defun keyslots-for-class (class)

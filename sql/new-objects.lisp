@@ -16,62 +16,12 @@
 (in-package #:clsql-sys)
 
 
-;; utils
-
-(defun replaced-string-length (str repl-alist)
-  (declare (simple-string str)
-	   (optimize (speed 3) (safety 0) (space 0)))
-    (do* ((i 0 (1+ i))
-	  (orig-len (length str))
-	  (new-len orig-len))
-	 ((= i orig-len) new-len)
-      (declare (fixnum i orig-len new-len))
-      (let* ((c (char str i))
-	     (match (assoc c repl-alist :test #'char=)))
-	(declare (character c))
-	(when match
-	  (incf new-len (1- (length
-			     (the simple-string (cdr match)))))))))
-
-
-(defun substitute-chars-strings (str repl-alist)
-  "Replace all instances of a chars with a string. repl-alist is an assoc
-list of characters and replacement strings."
-  (declare (simple-string str)
-	   (optimize (speed 3) (safety 0) (space 0)))
-  (do* ((orig-len (length str))
-	(new-string (make-string (replaced-string-length str repl-alist)))
-	(spos 0 (1+ spos))
-	(dpos 0))
-      ((>= spos orig-len)
-       new-string)
-    (declare (fixnum spos dpos) (simple-string new-string))
-    (let* ((c (char str spos))
-	   (match (assoc c repl-alist :test #'char=)))
-      (declare (character c))
-      (if match
-	  (let* ((subst (cdr match))
-		 (len (length subst)))
-	    (declare (fixnum len)
-		     (simple-string subst))
-	    (dotimes (j len)
-	      (declare (fixnum j))
-	      (setf (char new-string dpos) (char subst j))
-	      (incf dpos)))
-	(progn
-	  (setf (char new-string dpos) c)
-	  (incf dpos))))))
-
-(defun string-replace (procstr match-char subst-str) 
-  "Substitutes a string for a single matching character of a string"
-  (substitute-chars-strings procstr (list (cons match-char subst-str))))
-
 
 (defclass standard-db-object ()
   ((stored :db-kind :virtual
            :initarg :stored
            :initform nil))
-  (:metaclass view-metaclass)
+  (:metaclass standard-db-class)
   (:documentation "Superclass for all CLSQL View Classes."))
 
 (defvar *deserializing* nil)
@@ -86,7 +36,7 @@ list of characters and replacement strings."
       #+nil (created-object object)
       (update-records-from-instance object))))
 
-(defmethod slot-value-using-class ((class view-metaclass) instance slot-def)
+(defmethod slot-value-using-class ((class standard-db-class) instance slot-def)
   (declare (optimize (speed 3)))
   (unless *deserializing*
     (let ((slot-name (%slot-def-name slot-def))
@@ -98,7 +48,7 @@ list of characters and replacement strings."
                 (fault-join-slot class instance slot-def))))))
   (call-next-method))
 
-(defmethod (setf slot-value-using-class) :around (new-value (class view-metaclass) instance slot-def)
+(defmethod (setf slot-value-using-class) :around (new-value (class standard-db-class) instance slot-def)
   (declare (ignore new-value))
   (let* ((slot-name (%slot-def-name slot-def))
          (slot-kind (view-class-slot-db-kind slot-def))
@@ -140,7 +90,7 @@ list of characters and replacement strings."
 ;; Build the database tables required to store the given view class
 ;;
 
-(defmethod database-pkey-constraint ((class view-metaclass) database)
+(defmethod database-pkey-constraint ((class standard-db-class) database)
   (let ((keylist (mapcar #'view-class-slot-column (keyslots-for-class class))))
     (when keylist 
       (format nil "CONSTRAINT ~APK PRIMARY KEY~A"
@@ -196,7 +146,7 @@ the view. The argument DATABASE has a default value of
         (error "Class ~s not found." view-class-name)))
   (values))
 
-(defmethod %install-class ((self view-metaclass) database &aux schemadef)
+(defmethod %install-class ((self standard-db-class) database &aux schemadef)
   (dolist (slotdef (ordered-class-slots self))
     (let ((res (database-generate-column-definition (class-name self)
                                                     slotdef database)))
@@ -271,7 +221,7 @@ SUPERS is nil then STANDARD-DB-OBJECT automatically becomes the
 superclass of the newly-defined View Class."
   `(progn
      (defclass ,class ,supers ,slots ,@options
-	       (:metaclass view-metaclass))
+	       (:metaclass standard-db-class))
      (finalize-inheritance (find-class ',class))))
 
 (defun keyslots-for-class (class)
@@ -780,9 +730,8 @@ DATABASE-NULL-VALUE on the type of the slot."))
   (declare (ignore database))
   (progv '(*print-circle* *print-array*) '(t t)
     (let ((escaped (prin1-to-string val)))
-      (setf escaped (string-replace #\Null " " escaped))
-      escaped)))
-
+      (clsql-base-sys::substitute-char-string
+       escaped #\Null " "))))
 
 (defmethod database-output-sql-as-type ((type (eql 'symbol)) val database)
   (declare (ignore database))

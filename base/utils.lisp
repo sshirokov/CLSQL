@@ -238,3 +238,53 @@ returns (VALUES string-output error-output exit-status)"
     `(let ((,insym ,obj))
        (or ,@(mapcar #'(lambda (c) `(eql ,insym ,c))
                      choices)))))
+
+;; From KMRCL
+(defun substitute-char-string (procstr match-char subst-str) 
+  "Substitutes a string for a single matching character of a string"
+  (substitute-chars-strings procstr (list (cons match-char subst-str))))
+
+(defun replaced-string-length (str repl-alist)
+  (declare (simple-string str)
+	   (optimize (speed 3) (safety 0) (space 0)))
+    (do* ((i 0 (1+ i))
+	  (orig-len (length str))
+	  (new-len orig-len))
+	 ((= i orig-len) new-len)
+      (declare (fixnum i orig-len new-len))
+      (let* ((c (char str i))
+	     (match (assoc c repl-alist :test #'char=)))
+	(declare (character c))
+	(when match
+	  (incf new-len (1- (length
+			     (the simple-string (cdr match)))))))))
+
+
+(defun substitute-chars-strings (str repl-alist)
+  "Replace all instances of a chars with a string. repl-alist is an assoc
+list of characters and replacement strings."
+  (declare (simple-string str)
+	   (optimize (speed 3) (safety 0) (space 0)))
+  (do* ((orig-len (length str))
+	(new-string (make-string (replaced-string-length str repl-alist)))
+	(spos 0 (1+ spos))
+	(dpos 0))
+      ((>= spos orig-len)
+       new-string)
+    (declare (fixnum spos dpos) (simple-string new-string))
+    (let* ((c (char str spos))
+	   (match (assoc c repl-alist :test #'char=)))
+      (declare (character c))
+      (if match
+	  (let* ((subst (cdr match))
+		 (len (length subst)))
+	    (declare (fixnum len)
+		     (simple-string subst))
+	    (dotimes (j len)
+	      (declare (fixnum j))
+	      (setf (char new-string dpos) (char subst j))
+	      (incf dpos)))
+	(progn
+	  (setf (char new-string dpos) c)
+	  (incf dpos))))))
+
