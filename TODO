@@ -49,10 +49,6 @@ COMMONSQL SPEC
     LIST-ATTRIBUTE-TYPES
       o should return list of (attribute datatype precision scale nullable) 	
 
-    LOOP 
-      o Port to lispworks. Potentially useful documentation:
-        http://www.lispworks.com/reference/lcl50/loop/loop-52.html 
-
 
  >> The object-oriented sql interface
 

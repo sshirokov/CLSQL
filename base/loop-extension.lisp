@@ -84,9 +84,10 @@
 			      'loop-record-result-set-))
 	     (step-var (ansi-loop::loop-gentemp 'loop-record-step-)))
 	 (push `(when ,result-set-var
-		 (clsql-base-sys:database-dump-result-set ,result-set-var ,db-var))
+		  (clsql-base-sys:database-dump-result-set ,result-set-var ,db-var))
 	       ansi-loop::*loop-epilogue*)
-	 `(((,variable nil ,data-type) (,query-var ,(first in-phrase))
+	 `(((,variable nil ,@(and data-type (list data-type)))
+	    (,query-var ,(first in-phrase))
 	    (,db-var ,(first from-phrase))
 	    (,result-set-var nil)
 	    (,step-var nil))
@@ -109,7 +110,8 @@
 	 (push `(when ,result-set-var
 		 (clsql-base-sys:database-dump-result-set ,result-set-var ,db-var))
 	       ansi-loop::*loop-epilogue*)
-	 `(((,variable nil ,data-type) (,query-var ,(first in-phrase))
+	 `(((,variable nil ,@(and data-type (list data-type)))
+	    (,query-var ,(first in-phrase))
 	    (,db-var ,(first from-phrase))
 	    (,result-set-var nil))
 	   ((multiple-value-bind (%rs %cols)
@@ -169,48 +171,57 @@
 	     (result-set-var (ansi-loop::loop-gentemp
 			      'loop-record-result-set-))
 	     (step-var (ansi-loop::loop-gentemp 'loop-record-step-)))
-	 #+ignore
-	 (push `(when ,result-set-var
-		 (clsql-base-sys:database-dump-result-set ,result-set-var ,db-var))
-	       ansi-loop::*epilogue*)
-	 `(((,iter-var nil ,iter-var-data-type) (,query-var ,(first in-phrase))
+	 (values
+	  t
+	  nil
+	  `(,@(mapcar (lambda (v) `(,v nil)) iter-var)
+	    (,query-var ,in-phrase)
 	    (,db-var ,(first from-phrase))
 	    (,result-set-var nil)
 	    (,step-var nil))
-	   ((multiple-value-bind (%rs %cols)
+	  `((multiple-value-bind (%rs %cols)
 		(clsql-base-sys:database-query-result-set ,query-var ,db-var)
 	      (setq ,result-set-var %rs ,step-var (make-list %cols))))
-	   ()
-	   ()
-	   (not (clsql-base-sys:database-store-next-row ,result-set-var ,db-var ,step-var))
-	   (,iter-var ,step-var)
-	   (not ,result-set-var)
-	   ()
-	   (not (clsql-base-sys:database-store-next-row ,result-set-var ,db-var ,step-var))
-	   (,iter-var ,step-var))))
+	  ()
+	  ()
+	  `((unless (clsql-base-sys:database-store-next-row ,result-set-var ,db-var ,step-var)
+	      (when ,result-set-var
+		(clsql-base-sys:database-dump-result-set ,result-set-var ,db-var))
+	      t))
+	  `(,iter-var ,step-var)
+	  `((unless (clsql-base-sys:database-store-next-row ,result-set-var ,db-var ,step-var)
+	      (when ,result-set-var
+		(clsql-base-sys:database-dump-result-set ,result-set-var ,db-var))
+	      t))
+	  `(,iter-var ,step-var)
+	  ()
+	  ())))
       (t
        (let ((query-var (ansi-loop::loop-gentemp 'loop-record-))
 	     (db-var (ansi-loop::loop-gentemp 'loop-record-database-))
 	     (result-set-var (ansi-loop::loop-gentemp
 			      'loop-record-result-set-)))
-	 #+ignore
-	 (push `(when ,result-set-var
-		 (clsql-base-sys:database-dump-result-set ,result-set-var ,db-var))
-	       ansi-loop::*epilogue*)
-	 `(((,iter-var nil ,iter-var-data-type) (,query-var ,(first in-phrase))
+	 (values
+	  t
+	  nil
+	  `((,iter-var nil ,iter-var-data-type) (,query-var ,in-phrase)
 	    (,db-var ,(first from-phrase))
 	    (,result-set-var nil))
-	   ((multiple-value-bind (%rs %cols)
+	  `((multiple-value-bind (%rs %cols)
 		(clsql-base-sys:database-query-result-set ,query-var ,db-var)
 	      (setq ,result-set-var %rs ,iter-var (make-list %cols))))
+	  ()
+	  ()
+	  `((unless (clsql-base-sys:database-store-next-row ,result-set-var ,db-var ,iter-var)
+	      (when ,result-set-var
+		(clsql-base-sys:database-dump-result-set ,result-set-var ,db-var))
+	      t))
 	   ()
-	   ()
-	   (not (clsql-base-sys:database-store-next-row ,result-set-var ,db-var ,iter-var))
-	   ()
-	   (not ,result-set-var)
-	   ()
-	   (not (clsql-base-sys:database-store-next-row ,result-set-var ,db-var ,iter-var))
-	   ()))))))
-
-
+	  `((unless (clsql-base-sys:database-store-next-row ,result-set-var ,db-var ,iter-var)
+	      (when ,result-set-var
+		(clsql-base-sys:database-dump-result-set ,result-set-var ,db-var))
+	      t))
+	  ()
+	  ()
+	  ()))))))
 

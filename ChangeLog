@@ -1,4 +1,12 @@
 09 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+        * Version 2.5.0 released:
+	All tests for CLSQL and CLSQL-CLASSIC pass
+	on all platforms.
+	* base/loop-extension.lisp: Add Lispworks
+	loop-extension. Improve type specifying on
+	other platforms.
+	
+09 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.4.2 released:
 	loop extension now supported on Allegro, all
 	CLSQL-TESTS pass on Allegro.
