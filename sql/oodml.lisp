@@ -367,15 +367,10 @@
   (declare (ignore database args db-type))
   "INT8")
 
-(deftype raw-string (&optional len)
-  "A string which is not trimmed when retrieved from the database"
+#+ignore
+(deftype char (&optional len)
+  "A lisp type for the SQL CHAR type."
   `(string ,len))
-
-(defmethod database-get-type-specifier ((type (eql 'raw-string)) args database db-type)
-  (declare (ignore database db-type))
-  (if args
-      (format nil "VARCHAR(~A)" (car args))
-      "VARCHAR"))
 
 (defmethod database-get-type-specifier ((type (eql 'float)) args database db-type)
   (declare (ignore database db-type))
@@ -392,6 +387,23 @@
 (defmethod database-get-type-specifier ((type (eql 'boolean)) args database db-type)
   (declare (ignore args database db-type))
   "BOOL")
+
+(defmethod database-get-type-specifier ((type (eql 'number)) args database db-type)
+  (declare (ignore database db-type))
+  (cond
+   ((and (consp args) (= (length args) 2))
+    (format nil "NUMBER(~D,~D)" (first args) (second args)))
+   ((and (consp args) (= (length args) 1))
+    (format nil "NUMBER(~D)" (first args)))
+   (t
+    "NUMBER")))
+
+(defmethod database-get-type-specifier ((type (eql 'char)) args database db-type)
+  (declare (ignore database db-type))
+  (if args
+      (format nil "CHAR(~D)" (first args))
+    "CHAR"))
+
 
 (defmethod database-output-sql-as-type (type val database db-type)
   (declare (ignore type database db-type))
@@ -465,10 +477,6 @@
   (declare (ignore database db-type))
   val)
 
-(defmethod read-sql-value (val (type (eql 'raw-string)) database db-type)
-  (declare (ignore database db-type))
-  val)
-
 (defmethod read-sql-value (val (type (eql 'keyword)) database db-type)
   (declare (ignore database db-type))
   (when (< 0 (length val))
@@ -510,6 +518,14 @@
 (defmethod read-sql-value (val (type (eql 'boolean)) database db-type)
   (declare (ignore database db-type))
   (equal "t" val))
+
+(defmethod read-sql-value (val (type (eql 'number)) database db-type)
+  (declare (ignore database db-type))
+  (etypecase val
+    (string
+     (unless (string-equal "NIL" val)
+       (read-from-string val)))
+    (number val)))
 
 (defmethod read-sql-value (val (type (eql 'univeral-time)) database db-type)
   (declare (ignore database db-type))

@@ -36,7 +36,7 @@
 (defun %insert-foreign-resource (type res)
   (let ((resource (gethash type *foreign-resource-hash*)))
     (setf (gethash type *foreign-resource-hash*)
-	  (cons res (gethash type *foreign-resource-hash*)))))
+	  (cons res resource))))
 
 (defmacro acquire-foreign-resource (type &optional size)
   `(let ((res (%get-resource ,type ,size)))

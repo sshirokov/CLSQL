@@ -177,7 +177,8 @@
      #:database-type
      #:database-state
      #:attribute-cache
-   
+     #:database-autocommit
+
      ;; utils.lisp
      #:without-interrupts
      #:make-process-lock
@@ -317,6 +318,7 @@
          #:database-commit-transaction
          #:transaction-level
          #:transaction
+	 #:autocommit
 
 	 ;;  OODDL (ooddl.lisp) 
 	 #:standard-db-object               

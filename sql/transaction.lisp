@@ -17,12 +17,10 @@
 (defclass transaction ()
   ((commit-hooks :initform () :accessor commit-hooks)
    (rollback-hooks :initform () :accessor rollback-hooks)
-   (status :initform nil :accessor transaction-status))) ; nil or :committed
-
-(defun commit-transaction (database)
-  (when (and (transaction database)
-             (not (transaction-status (transaction database))))
-    (setf (transaction-status (transaction database)) :committed)))
+   (previous-autocommit :initarg :previous-autocommit
+			:reader previous-autocommit)
+   (status :initform nil :accessor transaction-status
+	   :documentation "nil or :committed")))
 
 (defun add-transaction-commit-hook (database commit-hook)
   (when (transaction database)
@@ -34,33 +32,47 @@
 
 (defmethod database-start-transaction ((database database))
   (unless (transaction database)
-    (setf (transaction database) (make-instance 'transaction)))
+    (setf (transaction database) 
+	  (make-instance 'transaction :previous-autocommit
+			 (database-autocommit database))))
+  (setf (database-autocommit database) nil)
   (when (= (incf (transaction-level database) 1))
     (let ((transaction (transaction database)))
       (setf (commit-hooks transaction) nil
             (rollback-hooks transaction) nil
             (transaction-status transaction) nil)
-      (execute-command "BEGIN" :database database))))
+      (unless (eq :oracle (database-underlying-type database))
+	(execute-command "BEGIN" :database database)))))
 
 (defmethod database-commit-transaction ((database database))
-    (if (> (transaction-level database) 0)
-        (when (zerop (decf (transaction-level database)))
-          (execute-command "COMMIT" :database database)
-          (map nil #'funcall (commit-hooks (transaction database))))
+  (with-slots (transaction transaction-level autocommit) database
+    (if (plusp transaction-level)
+        (when (zerop (decf transaction-level))
+	  (execute-command "COMMIT" :database database)
+	  (setf autocommit (previous-autocommit transaction))
+          (map nil #'funcall (commit-hooks transaction)))
         (warn 'sql-warning
-              :format-control "Cannot commit transaction against ~A because there is no transaction in progress."
-              :format-arguments (list database))))
+              :format-control
+	      "Cannot commit transaction against ~A because there is no transaction in progress."
+              :format-arguments (list database)))))
 
 (defmethod database-abort-transaction ((database database))
-    (if (> (transaction-level database) 0)
-        (when (zerop (decf (transaction-level database)))
+  (with-slots (transaction transaction-level autocommit) database
+    (if (plusp transaction-level)
+        (when (zerop (decf transaction-level))
           (unwind-protect 
                (execute-command "ROLLBACK" :database database)
-            (map nil #'funcall (rollback-hooks (transaction database)))))
+	    (setf autocommit (previous-autocommit transaction))
+            (map nil #'funcall (rollback-hooks transaction))))
         (warn 'sql-warning
-              :format-control "Cannot abort transaction against ~A because there is no transaction in progress."
-              :format-arguments (list database))))
+              :format-control
+	      "Cannot abort transaction against ~A because there is no transaction in progress."
+              :format-arguments (list database)))))
 
+(defun mark-transaction-committed (database)
+  (when (and (transaction database)
+             (not (transaction-status (transaction database))))
+    (setf (transaction-status (transaction database)) :committed)))
 
 (defmacro with-transaction ((&key (database '*default-database*)) &rest body)
   "Starts a transaction in the database specified by DATABASE,
@@ -73,7 +85,7 @@ back and otherwise the transaction is committed."
            (progn
              (database-start-transaction ,db)
              ,@body
-             (commit-transaction ,db))
+             (mark-transaction-committed ,db))
         (if (eq (transaction-status (transaction ,db)) :committed)
             (database-commit-transaction ,db)
             (database-abort-transaction ,db))))))
@@ -102,3 +114,9 @@ are called."
 *DEFAULT-DATABASE*, is currently within the scope of a
 transaction."
   (and database (transaction database) (= (transaction-level database) 1)))
+
+(defun autocommit (&key (database *default-database*) (set :unspecified))
+  "Returns whether autocommit is currently active."
+  (unless (eq set :unspecified)
+    (setf (database-autocommit database) set))
+  (database-autocommit database))

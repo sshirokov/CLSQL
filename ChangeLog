@@ -1,12 +1,18 @@
-24 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
+25 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 2.11.0 released: Full Oracle support. All tests pass
         * db-oracle/oracle-sql.lisp: Add declaration so that SBCL runs efficiently.
 	* tests/test-init.lisp: capitalize odbc backend name in banner
 	* CONTRIBUTORS: Add note about Marcus' excellent work
 	* sql/oodml.lisp: Removed old stub function 	
 	* clsql.asd: Use module names in current package rather than keyword package
 	* db-oracle/oracle-sql.lisp: Don't trim trailing spaces. Prevent interrupts
-	in setting sequence position
+	in setting sequence position. Make autocommits more efficient.
 	* tests/test-init.lisp: Skip 2 tests on Oracle which have unsupported syntax 
+	* sql/oodml.lisp: Get rid of undocumented raw-string type. CommonSQL
+	strings are raw (non-trimmed trailing whitespace). Add database-get-type-specifier
+	and read-sql-value for NUMBER and CHAR.
+	* sql/base-classes.lisp: Add autocommit slot
+	* sql/transaction.lisp: Added autocommit processing, mild cleaning.
 	
 24 May 2004: Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* db-postgresql-socket/postgresql-socket-sql.lisp: replace 

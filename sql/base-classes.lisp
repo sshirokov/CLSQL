@@ -29,6 +29,7 @@
    (database-type :initarg :database-type :initform :unknown
 		  :reader database-type)
    (state :initform :closed :reader database-state)
+   (autocommit :initform t :accessor database-autocommit)
    (command-recording-stream :accessor command-recording-stream :initform nil)
    (result-recording-stream :accessor result-recording-stream :initform nil)
    (record-caches :accessor record-caches :initform nil)

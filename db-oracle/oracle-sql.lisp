@@ -139,8 +139,7 @@ the length of that format.")
 
 (defun handle-oci-error (&key database nulls-ok)
   (cond (database
-         (with-slots (errhp)
-	     database
+         (with-slots (errhp) database
            (uffi:with-foreign-objects ((errbuf '(:array :unsigned-char
 						 #.+errbuf-len+))
 				       (errcode :long))
@@ -924,8 +923,8 @@ the length of that format.")
 
 (defmethod database-execute-command (sql-expression (database oracle-database))
   (database-query sql-expression database nil nil)
-  ;; HACK HACK HACK
-  (database-query "commit" database nil nil)
+  (when (database-autocommit database)
+    (oracle-commit database))
   t)
 
 
@@ -993,27 +992,30 @@ the length of that format.")
 	  do (setf (nth i list) (nth i row)))
       list)))
 
-(defmethod clsql-sys:database-start-transaction ((database oracle-database))
+(defmethod database-start-transaction ((database oracle-database))
   (call-next-method)
-  )
-
-;;(with-slots (svchp errhp) database
-;;    (osucc (oci-trans-start (uffi:deref-pointer svchp)
-;;			    (uffi:deref-pointer errhp)
-;;			    60
-;;			    +oci-trans-new+)))
-;;  t)
-  
-
-(defmethod clsql-sys:database-commit-transaction ((database oracle-database))
-  (call-next-method)
+  ;; Not needed with simple transaction
+  #+ignore
   (with-slots (svchp errhp) database
-	      (osucc (oci-trans-commit (deref-vp svchp)
-				       (deref-vp errhp)
-				       0)))
+    (oci-trans-start (deref-vp svchp)
+		     (deref-vp errhp)
+		     60
+		     +oci-trans-new+))
   t)
 
-(defmethod clsql-sys:database-abort-transaction ((database oracle-database))
+
+(defun oracle-commit (database)
+  (with-slots (svchp errhp) database
+    (osucc (oci-trans-commit (deref-vp svchp)
+			     (deref-vp errhp)
+			     0))))
+
+(defmethod database-commit-transaction ((database oracle-database))
+  (call-next-method)
+  (oracle-commit database)
+  t)
+
+(defmethod database-abort-transaction ((database oracle-database))
   (call-next-method)
   (osucc (oci-trans-rollback (deref-vp (svchp database))
 			     (deref-vp (errhp database))
