@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg, Marc Battyani
 ;;;; Date Started:  Apr 2002
 ;;;;
-;;;; $Id: pool.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: pool.lisp,v 1.2 2002/10/21 07:45:50 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -19,7 +19,17 @@
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :clsql-sys)
 
+#-scl
+(defun make-lock (name) (declare (ignore name)) nil)
+
+#-scl
+(defmacro with-lock-held ((lock desc) &body body)
+  (declare (ignore lock desc))
+  `(progn
+     ,@body))
+
 (defvar *db-pool* (make-hash-table :test #'equal))
+(defvar *db-pool-lock* (make-lock "DB Pool lock"))
 
 (defclass conn-pool ()
   ((connection-spec :accessor connection-spec :initarg :connection-spec)
@@ -27,37 +37,47 @@
    (free-connections :accessor free-connections
 		     :initform (make-array 5 :fill-pointer 0 :adjustable t))
    (all-connections :accessor all-connections
-		    :initform (make-array 5 :fill-pointer 0 :adjustable t))))
+		    :initform (make-array 5 :fill-pointer 0 :adjustable t))
+   (lock :accessor conn-pool-lock
+	 :initform (make-lock "Connection pool"))))
 
 (defun acquire-from-conn-pool (pool)
-  (if (zerop (length (free-connections pool)))
-    (let ((conn (connect (connection-spec pool)
-			 :database-type (database-type pool) :if-exists :new)))
-      (vector-push-extend conn (all-connections pool))
-      (setf (conn-pool conn) pool)
-      conn)
-    (vector-pop (free-connections pool))))
+  (or (with-lock-held ((conn-pool-lock pool) "Acquire from pool")
+	(and (plusp (length (free-connections pool)))
+	     (vector-pop (free-connections pool))))
+      (let ((conn (connect (connection-spec pool)
+			   :database-type (database-type pool)
+			   :if-exists :new)))
+	(with-lock-held ((conn-pool-lock pool) "Acquire from pool")
+	  (vector-push-extend conn (all-connections pool))
+	  (setf (conn-pool conn) pool))
+	conn)))
 
 (defun release-to-conn-pool (conn)
-  (vector-push-extend conn (free-connections (conn-pool conn))))
+  (let ((pool (conn-pool conn)))
+    (with-lock-held ((conn-pool-lock pool) "Release to pool")
+      (vector-push-extend conn (free-connections pool)))))
 
 (defun clear-conn-pool (pool)
-  (loop for conn across (all-connections pool)
-	do (setf (conn-pool conn) nil)
-	   (disconnect :database conn))
-  (setf (fill-pointer (free-connections pool)) 0)
-  (setf (fill-pointer (all-connections pool)) 0))
+  (with-lock-held ((conn-pool-lock pool) "Clear pool")
+    (loop for conn across (all-connections pool)
+	  do (setf (conn-pool conn) nil)
+	  (disconnect :database conn))
+    (setf (fill-pointer (free-connections pool)) 0)
+    (setf (fill-pointer (all-connections pool)) 0))
+  nil)
 
 (defun find-or-create-connection-pool (connection-spec database-type)
   "Find connection pool in hash table, creates a new connection pool if not found"
-  (let* ((key (list connection-spec database-type))
-	 (conn-pool (gethash key *db-pool*)))
-    (unless conn-pool
-      (setq conn-pool (make-instance 'conn-pool
-				     :connection-spec connection-spec
-				     :database-type database-type))
-      (setf (gethash key *db-pool*) conn-pool))
-    conn-pool))
+  (with-lock-held (*db-pool-lock* "Find connection")
+    (let* ((key (list connection-spec database-type))
+	   (conn-pool (gethash key *db-pool*)))
+      (unless conn-pool
+	(setq conn-pool (make-instance 'conn-pool
+				       :connection-spec connection-spec
+				       :database-type database-type))
+	(setf (gethash key *db-pool*) conn-pool))
+      conn-pool)))
 
 (defun acquire-from-pool (connection-spec database-type &optional pool)
   (unless (typep pool 'conn-pool)
@@ -69,11 +89,12 @@
 
 (defun disconnect-pooled (&optional clear)
   "Disconnects all connections in the pool"
-  (maphash
-   #'(lambda (key conn-pool)
-       (declare (ignore key))
-       (clear-conn-pool conn-pool))
-   *db-pool*)
-  (when clear (clrhash *db-pool*))
+  (with-lock-held (*db-pool-lock* "Find connection")
+    (maphash
+     #'(lambda (key conn-pool)
+	 (declare (ignore key))
+	 (clear-conn-pool conn-pool))
+     *db-pool*)
+    (when clear (clrhash *db-pool*)))
   t)
 

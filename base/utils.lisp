@@ -7,7 +7,7 @@
 ;;;; Programmer:   Kevin M. Rosenberg
 ;;;; Date Started: Mar 2002
 ;;;;
-;;;; $Id: utils.lisp,v 1.1 2002/09/30 10:19:01 kevin Exp $
+;;;; $Id: utils.lisp,v 1.2 2002/10/21 07:45:50 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -36,16 +36,22 @@
       (substitute #\e #\f str))
      ((find #\d str)
       (substitute #\e #\d str))
+     ((find #\l str)
+      (substitute #\e #\l str))
+     ((find #\s str)
+      (substitute #\e #\S str))
      ((find #\F str)
       (substitute #\e #\F str))
      ((find #\D str)
       (substitute #\e #\D str))
+     ((find #\L str)
+      (substitute #\e #\L str))
      ((find #\S str)
       (substitute #\e #\S str))
      (t
       str))))
 
-  (defun sql-escape (identifier)
+(defun sql-escape (identifier)
   "Change hyphens to underscores, ensure string"
   (let* ((unescaped (etypecase identifier
                       (symbol (symbol-name identifier))

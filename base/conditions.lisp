@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: conditions.lisp,v 1.1 2002/09/30 10:19:01 kevin Exp $
+;;;; $Id: conditions.lisp,v 1.2 2002/10/21 07:45:50 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -55,7 +55,7 @@
 and signal an clsql-invalid-spec-error if they don't match."
   `(handler-case
     (destructuring-bind ,template ,connection-spec 
-      (declare (ignore ,@template))
+      (declare (ignore ,@(remove '&optional template)))
       t)
     (error () (error 'clsql-invalid-spec-error
 		     :connection-spec ,connection-spec

@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: package.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: package.lisp,v 1.2 2002/10/21 07:45:50 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -26,6 +26,7 @@
   (defpackage :clsql-sys
     (:nicknames :clsql)
     (:use :common-lisp :clsql-base-sys)
+    #+scl (:import-from :thread #:make-lock #:with-lock-held)
     (:import-from 
      :clsql-base
      .

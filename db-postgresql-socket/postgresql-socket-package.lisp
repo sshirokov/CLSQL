@@ -2,12 +2,12 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          postgresql-socket-package.cl
+;;;; Name:          postgresql-socket-package.lisp
 ;;;; Purpose:       Package definition for PostgreSQL interface using sockets
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-package.lisp,v 1.2 2002/10/14 04:09:02 kevin Exp $
+;;;; $Id: postgresql-socket-package.lisp,v 1.3 2002/10/21 07:45:50 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;

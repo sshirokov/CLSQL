@@ -8,7 +8,7 @@
 ;;;;
 ;;;; Copyright (c) 1999-2001 Pierre R. Mai
 ;;;;
-;;;; $Id: loop-extension.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: loop-extension.lisp,v 1.2 2002/10/21 07:45:50 kevin Exp $
 ;;;;
 ;;;; The functions in this file were orignally distributed in the
 ;;;; MaiSQL package in the file sql/sql.cl
@@ -18,7 +18,7 @@
 
 ;;;; MIT-LOOP extension
 
-#+cmu
+#+(or cmu scl)
 (defun loop-record-iteration-path (variable data-type prep-phrases)
   (let ((in-phrase nil)
 	(from-phrase nil))
@@ -90,7 +90,7 @@
 	   (not (database-store-next-row ,result-set-var ,db-var ,variable))
 	   ()))))))
 
-#+cmu
+#+(or cmu scl)
 (ansi-loop::add-loop-path '(record records tuple tuples)
 			  'loop-record-iteration-path
 			  ansi-loop::*loop-ansi-universe*

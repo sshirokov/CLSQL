@@ -2,14 +2,14 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          postgresql-socket.cl
+;;;; Name:          postgresql-socket-api.lisp
 ;;;; Purpose:       Low-level PostgreSQL interface using sockets
 ;;;; Programmers:   Kevin M. Rosenberg based on
 ;;;;                Original code by Pierre R. Mai 
 ;;;;                
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-api.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: postgresql-socket-api.lisp,v 1.2 2002/10/21 07:45:50 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -83,117 +83,120 @@ socket interface"
   +ready-for-query-message+ #\Z
   +row-description-message+ #\T))
 
-(defgeneric send-socket-value (type socket value))
+#+scl
+(declaim (inline read-byte write-byte))
 
-(defmethod send-socket-value ((type (eql 'int32)) socket (value integer))
+(defun send-socket-value-int32 (socket value)
+  (declare (type stream socket)
+	   (type (unsigned-byte 32) value))
   (write-byte (ldb (byte 8 24) value) socket)
   (write-byte (ldb (byte 8 16) value) socket)
   (write-byte (ldb (byte 8 8) value) socket)
-  (write-byte (ldb (byte 8 0) value) socket))
+  (write-byte (ldb (byte 8 0) value) socket)
+  nil)
 
-(defmethod send-socket-value ((type (eql 'int16)) socket (value integer))
+(defun send-socket-value-int16 (socket value)
+  (declare (type stream socket)
+	   (type (unsigned-byte 16) value))
   (write-byte (ldb (byte 8 8) value) socket)
-  (write-byte (ldb (byte 8 0) value) socket))
+  (write-byte (ldb (byte 8 0) value) socket)
+  nil)
 
-(defmethod send-socket-value ((type (eql 'int8)) socket (value integer))
-  (write-byte (ldb (byte 8 0) value) socket))
+(defun send-socket-value-int8 (socket value)
+  (declare (type stream socket)
+	   (type (unsigned-byte 8) value))
+  (write-byte (ldb (byte 8 0) value) socket)
+  nil)
 
-(defmethod send-socket-value ((type (eql 'string)) socket (value string))
+(defun send-socket-value-char-code (socket value)
+  (declare (type stream socket)
+	   (type character value))
+  (write-byte (ldb (byte 8 0) (char-code value)) socket)
+  nil)
+
+(defun send-socket-value-string (socket value)
+  (declare (type stream socket)
+	   (type string value))
   (loop for char across value
 	for code = (char-code char)
 	do (write-byte code socket)
-	finally (write-byte 0 socket)))
+	finally (write-byte 0 socket))
+  nil)
 
-(defmethod send-socket-value ((type (eql 'limstring)) socket (value string))
-  (loop for char across value
-	for code = (char-code char)
-	do (write-byte code socket)))
+(defun send-socket-value-limstring (socket value limit)
+  (declare (type stream socket)
+	   (type string value)
+	   (type fixnum limit))
+  (let ((length (length value)))
+    (dotimes (i (min length limit))
+      (let ((code (char-code (char value i))))
+	(write-byte code socket)))
+    (dotimes (i (- limit length))
+      (write-byte 0 socket)))
+  nil)
 
-(defmethod send-socket-value ((type (eql 'byte)) socket (value integer))
-  (write-byte value socket))
 
-(defmethod send-socket-value ((type (eql 'byte)) socket (value character))
-  (write-byte (char-code value) socket))
-
-(defmethod send-socket-value ((type (eql 'byte)) socket value)
-  (write-sequence value socket))
-
-(defgeneric read-socket-value (type socket))
-
-(defmethod read-socket-value ((type (eql 'int32)) socket)
+(defun read-socket-value-int32 (socket)
+  (declare (type stream socket))
+  (declare (optimize (speed 3)))
   (let ((result 0))
+    (declare (type (unsigned-byte 32) result))
     (setf (ldb (byte 8 24) result) (read-byte socket))
     (setf (ldb (byte 8 16) result) (read-byte socket))
     (setf (ldb (byte 8 8) result) (read-byte socket))
     (setf (ldb (byte 8 0) result) (read-byte socket))
     result))
 
-(defmethod read-socket-value ((type (eql 'int16)) socket)
+(defun read-socket-value-int16 (socket)
+  (declare (type stream socket))
   (let ((result 0))
+    (declare (type (unsigned-byte 16) result))
     (setf (ldb (byte 8 8) result) (read-byte socket))
     (setf (ldb (byte 8 0) result) (read-byte socket))
     result))
 
-(defmethod read-socket-value ((type (eql 'int8)) socket)
+(defun read-socket-value-int8 (socket)
+  (declare (type stream socket))
   (read-byte socket))
 
-(defmethod read-socket-value ((type (eql 'string)) socket)
+(defun read-socket-value-string (socket)
+  (declare (type stream socket))
   (with-output-to-string (out)
     (loop for code = (read-byte socket)
 	  until (zerop code)
 	  do (write-char (code-char code) out))))
 
-(defgeneric skip-socket-value (type socket))
-
-(defmethod skip-socket-value ((type (eql 'int32)) socket)
-  (dotimes (i 4) (read-byte socket)))
-
-(defmethod skip-socket-value ((type (eql 'int16)) socket)
-  (dotimes (i 2) (read-byte socket)))
-
-(defmethod skip-socket-value ((type (eql 'int8)) socket)
-  (read-byte socket))
-
-(defmethod skip-socket-value ((type (eql 'string)) socket)
-  (loop until (zerop (read-byte socket))))
 
 (defmacro define-message-sender (name (&rest args) &rest clauses)
-  (loop with socket-var = (gensym)
-	for (type value) in clauses
-	collect
-	`(send-socket-value ',type ,socket-var ,value)
-	into body
-      finally
-	(return
-	  `(defun ,name (,socket-var ,@args)
-	     ,@body))))
-
-(defun pad-limstring (string limit)
-  (let ((result (make-string limit :initial-element #\NULL)))
-    (loop for char across string
-	  for index from 0 below limit
-	  do (setf (char result index) char))
-    result))
+  (let ((socket-var (gensym))
+	(body nil))
+    (dolist (clause clauses)
+      (let* ((type (first clause))
+	     (fn (intern (concatenate 'string (symbol-name '#:send-socket-value-)
+				      (symbol-name type)))))
+	(push `(,fn ,socket-var ,@(rest clause)) body)))
+    `(defun ,name (,socket-var ,@args)
+       ,@(nreverse body))))
 
 (define-message-sender send-startup-message
     (database user &optional (command-line "") (backend-tty ""))
   (int32 296)                           ; Length
   (int32 #x00020000)                    ; Version 2.0
-  (limstring (pad-limstring database 64))
-  (limstring (pad-limstring user 32))
-  (limstring (pad-limstring command-line 64))
-  (limstring (pad-limstring "" 64))     ; Unused
-  (limstring (pad-limstring backend-tty 64)))
+  (limstring database 64)
+  (limstring user 32)
+  (limstring command-line 64)
+  (limstring "" 64)     ; Unused
+  (limstring backend-tty 64))
 
 (define-message-sender send-terminate-message ()
-  (byte #\X))
+  (char-code #\X))
 
 (define-message-sender send-unencrypted-password-message (password)
   (int32 (+ 5 (length password)))
   (string password))
 
 (define-message-sender send-query-message (query)
-  (byte #\Q)
+  (char-code #\Q)
   (string query))
 
 (define-message-sender send-encrypted-password-message (crypted-password)
@@ -208,9 +211,10 @@ socket interface"
 
 
 (defun read-socket-sequence (string stream)
-"KMR -- Added to support reading from binary stream into a string"
-  (declare (optimize (speed 3) (safety 0))
-	   (string string))
+  "KMR -- Added to support reading from binary stream into a string"
+  (declare (string string)
+	   (stream stream)
+	   (optimize (speed 3) (safety 0)))
   (dotimes (i (length string))
     (declare (fixnum i))
     (setf (char string i) (code-char (read-byte stream))))
@@ -219,25 +223,33 @@ socket interface"
 
 ;;; Support for encrypted password transmission
 
-(defvar *crypt-library-loaded* nil)
+#-scl
+(eval-when (compile eval load)
+  (defvar *crypt-library-loaded* nil)
 
-(defun crypt-password (password salt)
-  "Encrypt a password for transmission to a PostgreSQL server."
   (unless *crypt-library-loaded*
     (uffi:load-foreign-library 
      (uffi:find-foreign-library "libcrypt"
 			   '("/usr/lib/" "/usr/local/lib/" "/lib/"))
      :supporting-libraries '("c"))
-    (eval '(uffi:def-function "crypt" 
-	    ((key :cstring)
-	     (salt :cstring))
-	    :returning :cstring))
-    (setq *crypt-library-loaded* t))
-   (uffi:with-cstring (password-cstring password)
-     (uffi:with-cstring (salt-cstring salt)
-       (uffi:convert-from-cstring 
-	(funcall (fdefinition 'crypt) password-cstring salt-cstring)))))
-;;; Condition hierarchy
+    (setq *crypt-library-loaded* t)))
+
+(in-package :postgresql-socket)
+
+(uffi:def-function "crypt" 
+    ((key :cstring)
+     (salt :cstring))
+  :returning :cstring)
+
+(defun crypt-password (password salt)
+  "Encrypt a password for transmission to a PostgreSQL server."
+  (uffi:with-cstring (password-cstring password)
+    (uffi:with-cstring (salt-cstring salt)
+      (uffi:convert-from-cstring 
+       (crypt password-cstring salt-cstring)))))
+
+
+;;;; Condition hierarchy
 
 (define-condition postgresql-condition (condition)
   ((connection :initarg :connection :reader postgresql-condition-connection)
@@ -297,7 +309,7 @@ socket interface"
   "Timeout in seconds for reads from the PostgreSQL server.")
 
 
-#+cmu
+#+(or cmu scl)
 (defun open-postgresql-socket (host port)
   (etypecase host
     (pathname
@@ -309,7 +321,7 @@ socket interface"
     (string
      (ext:connect-to-inet-socket host port))))
 
-#+cmu
+#+(or cmu scl)
 (defun open-postgresql-socket-stream (host port)
   (system:make-fd-stream
    (open-postgresql-socket host port)
@@ -397,9 +409,9 @@ connection, if it is still open."
 				 (postgresql-connection-tty connection))
 	   (force-output socket)
 	   (loop
-	       (case (read-socket-value 'int8 socket)
+	       (case (read-socket-value-int8 socket)
 		 (#.+authentication-message+
-		  (case (read-socket-value 'int32 socket)
+		  (case (read-socket-value-int32 socket)
 		    (0 (return))
 		    ((1 2)
 		     (error 'postgresql-login-error
@@ -423,7 +435,7 @@ connection, if it is still open."
 			    :message
 			    "Postmaster expects unknown authentication method."))))
 		 (#.+error-response-message+
-		  (let ((message (read-socket-value 'string socket)))
+		  (let ((message (read-socket-value-string socket)))
 		    (error 'postgresql-login-error
 			   :connection connection :message message)))
 		 (t
@@ -434,22 +446,22 @@ connection, if it is still open."
 	   ;; Start backend communication
 	   (force-output socket)
 	   (loop
-	       (case (read-socket-value 'int8 socket)
+	       (case (read-socket-value-int8 socket)
 		 (#.+backend-key-message+
 		  (setf (postgresql-connection-pid connection)
-			(read-socket-value 'int32 socket)
+			(read-socket-value-int32 socket)
 			(postgresql-connection-key connection)
-			(read-socket-value 'int32 socket)))
+			(read-socket-value-int32 socket)))
 		 (#.+ready-for-query-message+
 		  (setq socket nil)
 		  (return connection))
 		 (#.+error-response-message+
-		  (let ((message (read-socket-value 'string socket)))
+		  (let ((message (read-socket-value-string socket)))
 		    (error 'postgresql-login-error
 			   :connection connection
 			   :message message)))
 		 (#.+notice-response-message+
-		  (let ((message (read-socket-value 'string socket)))
+		  (let ((message (read-socket-value-string socket)))
 		    (warn 'postgresql-warning :connection connection
 			  :message message)))
 		 (t
@@ -480,14 +492,14 @@ connection, if it is still open."
   (loop with socket = (postgresql-connection-socket connection)
 	while (listen socket)
 	do
-	(case (read-socket-value 'int8 socket)
+	(case (read-socket-value-int8 socket)
 	  (#.+notice-response-message+
-	   (let ((message (read-socket-value 'string socket)))
+	   (let ((message (read-socket-value-string socket)))
 	     (warn 'postgresql-warning :connection connection
 		   :message message)))
 	  (#.+notification-response-message+
-	   (let ((pid (read-socket-value 'int32 socket))
-		 (message (read-socket-value 'string socket)))
+	   (let ((pid (read-socket-value-int32 socket))
+		 (message (read-socket-value-string socket)))
 	     (when (= pid (postgresql-connection-pid connection))
 	       (signal 'postgresql-notification :connection connection
 		       :message message))))
@@ -508,21 +520,21 @@ connection, if it is still open."
 	(cursor-name nil)
 	(error nil))
     (loop
-	(case (read-socket-value 'int8 socket)
+	(case (read-socket-value-int8 socket)
 	  (#.+completed-response-message+
-	   (return (values :completed (read-socket-value 'string socket))))
+	   (return (values :completed (read-socket-value-string socket))))
 	  (#.+cursor-response-message+
-	   (setq cursor-name (read-socket-value 'string socket)))
+	   (setq cursor-name (read-socket-value-string socket)))
 	  (#.+row-description-message+
-	   (let* ((count (read-socket-value 'int16 socket))
+	   (let* ((count (read-socket-value-int16 socket))
 		  (fields
 		   (loop repeat count
 		     collect
 		     (list
-		      (read-socket-value 'string socket)
-		      (read-socket-value 'int32 socket)
-		      (read-socket-value 'int16 socket)
-		      (read-socket-value 'int32 socket)))))
+		      (read-socket-value-string socket)
+		      (read-socket-value-int32 socket)
+		      (read-socket-value-int16 socket)
+		      (read-socket-value-int32 socket)))))
 	     (return
 	       (values :cursor
 		       (make-postgresql-cursor :connection connection
@@ -537,17 +549,17 @@ connection, if it is still open."
 	     (error error))
 	   (return nil))
 	  (#.+error-response-message+
-	   (let ((message (read-socket-value 'string socket)))
+	   (let ((message (read-socket-value-string socket)))
 	     (setq error
 		   (make-condition 'postgresql-error
 				   :connection connection :message message))))
 	  (#.+notice-response-message+
-	   (let ((message (read-socket-value 'string socket)))
+	   (let ((message (read-socket-value-string socket)))
 	     (warn 'postgresql-warning
 		   :connection connection :message message)))
 	  (#.+notification-response-message+
-	   (let ((pid (read-socket-value 'int32 socket))
-		 (message (read-socket-value 'string socket)))
+	   (let ((pid (read-socket-value-int32 socket))
+		 (message (read-socket-value-string socket)))
 	     (when (= pid (postgresql-connection-pid connection))
 	       (signal 'postgresql-notification :connection connection
 		       :message message))))
@@ -567,7 +579,7 @@ connection, if it is still open."
 
 
 (defun read-field (socket type)
-  (let ((length (- (read-socket-value 'int32 socket) 4)))
+  (let ((length (- (read-socket-value-int32 socket) 4)))
     (case type
       ((:int32 :int64)
        (read-integer-from-socket socket length))
@@ -688,7 +700,7 @@ connection, if it is still open."
 	 (fields (postgresql-cursor-fields cursor)))
     (assert (postgresql-connection-open-p connection))
     (loop
-	(let ((code (read-socket-value 'int8 socket)))
+	(let ((code (read-socket-value-int8 socket)))
 	  (case code
 	    (#.+ascii-row-message+
 	     (return
@@ -706,18 +718,18 @@ connection, if it is still open."
 	    (#.+binary-row-message+
 	     (error "NYI"))
 	    (#.+completed-response-message+
-	     (return (values nil (read-socket-value 'string socket))))
+	     (return (values nil (read-socket-value-string socket))))
 	    (#.+error-response-message+
-	     (let ((message (read-socket-value 'string socket)))
+	     (let ((message (read-socket-value-string socket)))
 	       (error 'postgresql-error
 		      :connection connection :message message)))
 	    (#.+notice-response-message+
-	     (let ((message (read-socket-value 'string socket)))
+	     (let ((message (read-socket-value-string socket)))
 	       (warn 'postgresql-warning
 		     :connection connection :message message)))
 	    (#.+notification-response-message+
-	     (let ((pid (read-socket-value 'int32 socket))
-		   (message (read-socket-value 'string socket)))
+	     (let ((pid (read-socket-value-int32 socket))
+		   (message (read-socket-value-string socket)))
 	       (when (= pid (postgresql-connection-pid connection))
 		 (signal 'postgresql-notification :connection connection
 			 :message message))))
@@ -739,7 +751,7 @@ connection, if it is still open."
 	 (fields (postgresql-cursor-fields cursor)))
     (assert (= (length fields) (length sequence)))
     (loop
-	(let ((code (read-socket-value 'int8 socket)))
+	(let ((code (read-socket-value-int8 socket)))
 	  (case code
 	    (#.+ascii-row-message+
 	     (return
@@ -762,18 +774,18 @@ connection, if it is still open."
 	    (#.+binary-row-message+
 	     (error "NYI"))
 	    (#.+completed-response-message+
-	     (return (values nil (read-socket-value 'string socket))))
+	     (return (values nil (read-socket-value-string socket))))
 	    (#.+error-response-message+
-	     (let ((message (read-socket-value 'string socket)))
+	     (let ((message (read-socket-value-string socket)))
 	       (error 'postgresql-error
 		      :connection connection :message message)))
 	    (#.+notice-response-message+
-	     (let ((message (read-socket-value 'string socket)))
+	     (let ((message (read-socket-value-string socket)))
 	       (warn 'postgresql-warning
 		     :connection connection :message message)))
 	    (#.+notification-response-message+
-	     (let ((pid (read-socket-value 'int32 socket))
-		   (message (read-socket-value 'string socket)))
+	     (let ((pid (read-socket-value-int32 socket))
+		   (message (read-socket-value-string socket)))
 	       (when (= pid (postgresql-connection-pid connection))
 		 (signal 'postgresql-notification :connection connection
 			 :message message))))
@@ -787,31 +799,31 @@ connection, if it is still open."
 	 (socket (postgresql-connection-socket connection))
 	 (fields (postgresql-cursor-fields cursor)))
     (loop
-	(let ((code (read-socket-value 'int8 socket)))
+	(let ((code (read-socket-value-int8 socket)))
 	  (case code
 	    (#.+ascii-row-message+
 	     (loop for null-bit across
 		   (read-null-bit-vector socket (length fields))
 		   do
 		   (unless (zerop null-bit)
-		     (let* ((length (read-socket-value 'int32 socket)))
+		     (let* ((length (read-socket-value-int32 socket)))
 		       (loop repeat (- length 4) do (read-byte socket)))))
 	     (return t))
 	    (#.+binary-row-message+
 	     (error "NYI"))
 	    (#.+completed-response-message+
-	     (return (values nil (read-socket-value 'string socket))))
+	     (return (values nil (read-socket-value-string socket))))
 	    (#.+error-response-message+
-	     (let ((message (read-socket-value 'string socket)))
+	     (let ((message (read-socket-value-string socket)))
 	       (error 'postgresql-error
 		      :connection connection :message message)))
 	    (#.+notice-response-message+
-	     (let ((message (read-socket-value 'string socket)))
+	     (let ((message (read-socket-value-string socket)))
 	       (warn 'postgresql-warning
 		     :connection connection :message message)))
 	    (#.+notification-response-message+
-	     (let ((pid (read-socket-value 'int32 socket))
-		   (message (read-socket-value 'string socket)))
+	     (let ((pid (read-socket-value-int32 socket))
+		   (message (read-socket-value-string socket)))
 	       (when (= pid (postgresql-connection-pid connection))
 		 (signal 'postgresql-notification :connection connection
 			 :message message))))
@@ -830,3 +842,6 @@ connection, if it is still open."
 	  collect row
 	  finally
 	  (wait-for-query-results connection))))
+
+#+scl
+(declaim (ext:maybe-inline read-byte write-byte))

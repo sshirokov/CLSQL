@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: sql.lisp,v 1.2 2002/10/14 15:25:15 kevin Exp $
+;;;; $Id: sql.lisp,v 1.3 2002/10/21 07:45:50 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -66,7 +66,7 @@
 		(pool nil))
   "Connects to a database of the given database-type, using the type-specific
 connection-spec.  if-exists is currently ignored.
-If pool is t the the connection will be taken from the general pool,
+If pool is t the connection will be taken from the general pool,
 if pool is a conn-pool object the connection will be taken from this pool.
 "
   (if pool

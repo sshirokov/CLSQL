@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: cmucl-compat.lisp,v 1.2 2002/10/14 04:09:02 kevin Exp $
+;;;; $Id: cmucl-compat.lisp,v 1.3 2002/10/21 07:45:49 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -29,15 +29,15 @@
    ))
 (in-package :cmucl-compat)
 
-#+cmu
+#+(or cmu scl)
 (defmacro required-argument ()
   `(ext:required-argument))
 
-#-cmu
+#-(or cmu scl)
 (defun required-argument ()
   (error "~&A required keyword argument was not supplied"))
 
-#+cmu
+#+(or cmu scl)
 (defmacro shrink-vector (vec len)
   `(lisp::shrink-vector ,vec ,len))
 
@@ -45,7 +45,7 @@
 (defmacro shrink-vector (vec len)
   `(sb-kernel::shrink-vector ,vec ,len))
 
-#-(or cmu sbcl)
+#-(or cmu sbcl scl)
 (defmacro shrink-vector (vec len)
   "Shrinks a vector. Optimized if vector has a fill pointer.
 Needs to be a macro to overwrite value of VEC."
@@ -69,7 +69,7 @@ Needs to be a macro to overwrite value of VEC."
 
 
 
-#-(or cmu sbcl)
+#-(or cmu sbcl scl)
 (defun make-sequence-of-type (type length)
   "Returns a sequence of the given TYPE and LENGTH."
   (declare (fixnum length))
@@ -90,7 +90,7 @@ Needs to be a macro to overwrite value of VEC."
      (make-sequence-of-type (result-type-or-lose type t) length))))
 
 
-#+cmu
+#+(or cmu scl)
 (if (fboundp 'lisp::make-sequence-of-type)
     (defun make-sequence-of-type (type len)
       (lisp::make-sequence-of-type type len))
@@ -101,7 +101,7 @@ Needs to be a macro to overwrite value of VEC."
 (defun make-sequence-of-type (type len)
   (sb-impl::make-sequence-of-type type len))
 
-#-(or cmu sbcl)
+#-(or cmu sbcl scl)
 (defun result-type-or-lose (type nil-ok)
   (unless (or type nil-ok)
     (error "NIL output type invalid for this sequence function"))
@@ -118,7 +118,7 @@ Needs to be a macro to overwrite value of VEC."
      (error "~S is a bad type specifier for sequence functions." type))
     ))
 
-#+cmu
+#+(or cmu scl)
 (defun result-type-or-lose (type nil-ok)
   (lisp::result-type-or-lose type nil-ok))
 
