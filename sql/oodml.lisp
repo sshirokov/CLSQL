@@ -381,7 +381,15 @@
       (format nil "FLOAT(~A)" (car args))
       "FLOAT"))
 
+(deftype generalized-boolean () 
+  "A type which outputs a SQL boolean value, though any lisp type can be stored in the slot."
+  t)
+
 (defmethod database-get-type-specifier ((type (eql 'boolean)) args database db-type)
+  (declare (ignore args database db-type))
+  "BOOL")
+
+(defmethod database-get-type-specifier ((type (eql 'generalized-boolean)) args database db-type)
   (declare (ignore args database db-type))
   "BOOL")
 
@@ -439,6 +447,10 @@
     (prin1-to-string val)))
 
 (defmethod database-output-sql-as-type ((type (eql 'boolean)) val database db-type)
+  (declare (ignore database db-type))
+  (if val "t" "f"))
+
+(defmethod database-output-sql-as-type ((type (eql 'generalized-boolean)) val database db-type)
   (declare (ignore database db-type))
   (if val "t" "f"))
 
@@ -507,6 +519,10 @@
      val)))
 
 (defmethod read-sql-value (val (type (eql 'boolean)) database db-type)
+  (declare (ignore database db-type))
+  (equal "t" val))
+
+(defmethod read-sql-value (val (type (eql 'generalized-boolean)) database db-type)
   (declare (ignore database db-type))
   (equal "t" val))
 

@@ -52,6 +52,11 @@
 			   (db-type (eql :postgresql)))
   (if (string= "0" val) nil t))
 
+(defmethod read-sql-value (val (type (eql 'generalized-boolean))
+			   (database generic-odbc-database)
+			   (db-type (eql :postgresql)))
+  (if (string= "0" val) nil t))
+
   
 ;;; Backend methods
 

@@ -10,7 +10,8 @@ TESTS TO ADD
 * Number and Char field types
 * Add test case for return type of (setf slot-value-using-class)
 * symbol slot
- 
+* generalized-boolean slot
+
 VARIANCES FROM COMMONSQL
 
 CLSQL starts with in transaction AUTOCOMMIT mode. To begin a transaction,

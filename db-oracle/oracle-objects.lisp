@@ -71,6 +71,11 @@
   (declare (ignore args database))
   "CHAR(1)")
 
+(defmethod database-get-type-specifier ((type (eql 'generalized-boolean)) args
+					database (db-type (eql :oracle)))
+  (declare (ignore args database))
+  "CHAR(1)")
+
 (defmethod read-sql-value (val type
 			   database (db-type (eql :oracle)))
   ;;(format t "value is \"~A\" of type ~A~%" val (type-of val))
@@ -92,6 +97,12 @@
   val)
 
 (defmethod read-sql-value (val (type (eql 'boolean))
+			   database (db-type (eql :oracle)))
+  (declare (ignore database))
+  (when (char-equal #\t (schar val 0))
+    t))
+
+(defmethod read-sql-value (val (type (eql 'generalized-boolean))
 			   database (db-type (eql :oracle)))
   (declare (ignore database))
   (when (char-equal #\t (schar val 0))

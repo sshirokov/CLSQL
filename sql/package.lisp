@@ -331,6 +331,7 @@
 	 #:view-table        
 	 #:bigint
 	 #:varchar
+	 #:generalized-boolean
 	 #:*default-varchar-length*
 
 	 ;; OODML (oodml.lisp) 
