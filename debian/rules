@@ -10,7 +10,7 @@ pkg-pg-socket	:= cl-sql-postgresql-socket
 pkg-aodbc	:= cl-sql-aodbc
 pkg-odbc	:= cl-sql-odbc
 pkg-sqlite	:= cl-sql-sqlite
-pkg-sqlite	:= cl-sql-sqlite3
+pkg-sqlite3	:= cl-sql-sqlite3
 pkg-oracle	:= cl-sql-oracle
 pkg-tests	:= cl-sql-tests
 all-pkgs	:= $(pkg) $(pkg-uffi) $(pkg-mysql) $(pkg-pg) $(pkg-pg-socket) $(pkg-aodbc) $(pkg-odbc) $(pkg-sqlite) $(pkg-sqlite3) $(pkg-tests)
@@ -29,7 +29,7 @@ srcs-pg-socket	:= $(wildcard db-postgresql-socket/*.lisp)
 srcs-aodbc	:= $(wildcard db-aodbc/*.lisp)
 srcs-odbc	:= $(wildcard db-odbc/*.lisp)
 srcs-sqlite	:= $(wildcard db-sqlite/*.lisp)
-srcs-sqlite	:= $(wildcard db-sqlite3/*.lisp)
+srcs-sqlite3	:= $(wildcard db-sqlite3/*.lisp)
 srcs-oracle	:= $(wildcard db-oracle/*.lisp)
 srcs-tests	:= $(wildcard tests/*.lisp)
 
