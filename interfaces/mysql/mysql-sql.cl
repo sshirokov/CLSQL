@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.cl,v 1.1 2002/03/23 14:04:52 kevin Exp $
+;;;; $Id: mysql-sql.cl,v 1.2 2002/03/23 17:07:40 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -63,29 +63,29 @@
 		 :connection-spec connection-spec
 		 :errno (mysql-errno mysql-ptr)
 		 :error (mysql-error-string mysql-ptr))
-	(uffi:with-cstring (host-native host)
-	  (uffi:with-cstring (user-native user)
-	    (uffi:with-cstring (password-native password)
-	      (uffi:with-cstring (db-native db)
-		(uffi:with-cstring (socket-native socket)
-		  (let ((error-occurred nil))
-		    (unwind-protect
-			(if (uffi:null-pointer-p 
-			     (mysql-real-connect 
-			      mysql-ptr host-native user-native password-native
-			      db-native 0 socket-native 0))
-			    (progn
-			      (setq error-occurred t)
-			      (error 'clsql-connect-error
-				     :database-type database-type
-				     :connection-spec connection-spec
-				     :errno (mysql-errno mysql-ptr)
-				     :error (mysql-error-string mysql-ptr)))
-			  (make-instance 'mysql-database
-			    :name (database-name-from-spec connection-spec
-							   database-type)
-			    :mysql-ptr mysql-ptr))
-		      (when error-occurred (mysql-close mysql-ptr)))))))))))))
+	(uffi:with-cstrings ((host-native host)
+			    (user-native user)
+			    (password-native password)
+			    (db-native db)
+			    (socket-native socket))
+	  (let ((error-occurred nil))
+	    (unwind-protect
+		(if (uffi:null-pointer-p 
+		     (mysql-real-connect 
+		      mysql-ptr host-native user-native password-native
+		      db-native 0 socket-native 0))
+		    (progn
+		      (setq error-occurred t)
+		      (error 'clsql-connect-error
+			     :database-type database-type
+			     :connection-spec connection-spec
+			     :errno (mysql-errno mysql-ptr)
+			     :error (mysql-error-string mysql-ptr)))
+		  (make-instance 'mysql-database
+		    :name (database-name-from-spec connection-spec
+						   database-type)
+		    :mysql-ptr mysql-ptr))
+	      (when error-occurred (mysql-close mysql-ptr)))))))))
 
 
 (defmethod database-disconnect ((database mysql-database))

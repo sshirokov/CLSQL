@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.cl,v 1.1 2002/03/23 14:04:53 kevin Exp $
+;;;; $Id: postgresql-sql.cl,v 1.2 2002/03/23 17:07:40 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -68,30 +68,30 @@
 			 (host db user password &optional port options tty))
   (destructuring-bind (host db user password &optional port options tty)
       connection-spec
-    (uffi:with-cstring (host-native host)
-      (uffi:with-cstring (user-native user)
-	(uffi:with-cstring (password-native password)
-	  (uffi:with-cstring (db-native db)
-	    (uffi:with-cstring (port-native port)
-	      (uffi:with-cstring (options-native options)
-		(uffi:with-cstring (tty-native tty)
-		  (let ((connection (PQsetdbLogin host-native port-native
-						  options-native tty-native
-						  db-native user-native
-						  password-native)))
-		    (declare (type pgsql-conn-def connection))
-		    (when (not (eq (PQstatus connection) 
-				   pgsql-conn-status-type#connection-ok))
-		      (error 'clsql-connect-error
-			     :database-type database-type
-			     :connection-spec connection-spec
-			     :errno (PQstatus connection)
-			     :error (tidy-error-message 
-				     (PQerrorMessage connection))))
-		    (make-instance 'postgresql-database
-		      :name (database-name-from-spec connection-spec
-						     database-type)
-		      :conn-ptr connection)))))))))))
+    (uffi:with-cstrings ((host-native host)
+			 (user-native user)
+			 (password-native password)
+			 (db-native db)
+			 (port-native port)
+			 (options-native options)
+			 (tty-native tty))
+      (let ((connection (PQsetdbLogin host-native port-native
+				      options-native tty-native
+				      db-native user-native
+				      password-native)))
+	(declare (type pgsql-conn-def connection))
+	(when (not (eq (PQstatus connection) 
+		       pgsql-conn-status-type#connection-ok))
+	  (error 'clsql-connect-error
+		 :database-type database-type
+		 :connection-spec connection-spec
+		 :errno (PQstatus connection)
+		 :error (tidy-error-message 
+			 (PQerrorMessage connection))))
+	(make-instance 'postgresql-database
+		       :name (database-name-from-spec connection-spec
+						      database-type)
+		       :conn-ptr connection)))))
 
 
 (defmethod database-disconnect ((database postgresql-database))
