@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-loader.lisp,v 1.9 2003/05/17 06:11:16 kevin Exp $
+;;;; $Id: mysql-loader.lisp,v 1.10 2003/05/17 07:02:00 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -36,12 +36,13 @@
 
 (defparameter *libz-library-path* 
   (uffi:find-foreign-library
-   "libz"
+   '("libz" "zlib")
    `(,(make-pathname :directory (pathname-directory *load-truename*))
       "/usr/lib/"
       "/sw/lib/"
       "/usr/local/lib/"
-      "/home/kevin/debian/src/clsql/db-mysql/")
+      "/home/kevin/debian/src/clsql/db-mysql/"
+      "/mysql/lib/opt/")
    :drive-letters '("C")))
   
 (defvar *mysql-library-candidate-names*
@@ -72,20 +73,16 @@ set to the right path before compiling or loading the system.")
 				    *mysql-library-candidate-drive-letters*)))
     (unless (probe-file mysql-path)
       (error "Can't find mysql client library to load"))
-    (if	(and
-	 (uffi:load-foreign-library *libz-library-path*) 
-	 (uffi:load-foreign-library mysql-path
-				    :module "mysql" 
-				    :supporting-libraries 
-				    *mysql-supporting-libraries*)
-	 (uffi:load-foreign-library *clsql-mysql-library-path* 
-				    :module "clsql-mysql" 
-				    :supporting-libraries 
-				    (append *mysql-supporting-libraries*)))
-	(setq *mysql-library-loaded* t)
-	#+ignore ;; return value not set
-      (error "Unable to load MySQL client library ~A or CLSQL-MySQL library ~A"
-	    mysql-path *clsql-mysql-library-path*))))
+    (uffi:load-foreign-library *libz-library-path*) 
+    (uffi:load-foreign-library mysql-path
+			       :module "mysql" 
+			       :supporting-libraries 
+			       *mysql-supporting-libraries*)
+    (uffi:load-foreign-library *clsql-mysql-library-path* 
+			       :module "clsql-mysql" 
+			       :supporting-libraries 
+			       (append *mysql-supporting-libraries*)))
+  (setq *mysql-library-loaded* t))
 
 
 (clsql-base-sys:database-type-load-foreign :mysql)
