@@ -175,7 +175,7 @@ make libs
 	directory.
 	<screen>
 (push #P"/usr/share/lisp/uffi/" asdf:*central-registry*)
-(asdf:oos 'asdf:load-op :uffi)
+(asdf:operate 'asdf:load-op :uffi)
 	</screen>
       </para>
     </sect2>
@@ -191,7 +191,7 @@ make libs
        directory.
        <screen>
 (push #P"/usr/share/lisp/cl-md5/" asdf:*central-registry*)
-(asdf:oos 'asdf:load-op :md5)
+(asdf:operate 'asdf:load-op :md5)
        </screen>
      </para>
    </sect2>
