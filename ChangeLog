@@ -181,3 +181,16 @@
 	check for successful loading of foreign libraries.
 	* Modified test-clsql.cl to allow more modularity and
 	automated testing in future release.
+        * mysql/mysql-sql.lisp: Added field types
+	
+01 Jan 2002 Kevin Rosenberg (kevin@rosenberg.net)
+	* mysql/mysql-sql.lisp:
+	- Added support for Allegro CL and Lispworks using UFFI layer
+	- Changed database-connect to use mysql-real-connect. This way,
+	  can avoid using double (unwind-protect)
+	- Changed database-connect to have MySQL library allocate space
+	  for MYSQL structure. This will make the code more robust in
+	  the event that MySQL library changes the size of the mysql-mysql
+	  structure.
+
+
