@@ -1,5 +1,7 @@
 3 Aug 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.0.0 Release
+	* sql/expressions.lisp: Change declaration that
+	caused error on openmcl
 	* db-aodbc/aodbc-sql.lisp: Fix storage location
 	of odbc connection. Specialize database-query since
 	dbi's :types keyword is different than generic-odbc's
