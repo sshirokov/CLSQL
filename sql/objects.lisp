@@ -498,6 +498,10 @@ superclass of the newly-defined View Class."
 	"VARCHAR"
       "VARCHAR(255)")))
 
+(deftype universal-time () 
+  "A positive integer as returned by GET-UNIVERSAL-TIME."
+  '(integer 1 *))
+
 (defmethod database-get-type-specifier ((type (eql 'universal-time)) args database)
   (declare (ignore args database))
   "BIGINT")
