@@ -2,7 +2,7 @@ Document: cl-sql-base
 Title: CLSQL Manual
 Author: Kevin M. Rosenberg
 Abstract: Describes the
- use the CLSQL Common Lisp library.
+ use of the CLSQL Common Lisp library.
 Section: programming
 
 Format: PDF
