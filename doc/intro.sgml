@@ -70,6 +70,11 @@ other systems.</para>
     </sect2>
 
     <sect2>
+      <title>&uffi;</title>
+      <para>&clsql;'s postgresql-socket interface uses Pierre Mai's 
+       <ulink url="ftp://clsql.b9.com/">md5</ulink> module. If you plan to use
+       this interface please download the md5 module from ftp://clsql.b9.com </para>       
+    <sect2>
       <title>Supported Common Lisp Implementation</title>
       <para>
 The implementations that support &clsql; is governed by the supported
@@ -79,7 +84,7 @@ implementations of &uffi;. The following implementations are supported:
 	<listitem><para>&acl; v6.2 on Debian Linux, FreeBSD 4.5, and Microsoft Windows XP.</para></listitem>
 	<listitem><para>&lw; v4.2 on Debian Linux and Microsoft Windows XP.</para></listitem>
 	<listitem><para>&cmucl; 18d on Debian Linux, FreeBSD 4.5, and Solaris 2.8.</para></listitem>
-	<listitem><para>&sbcl; 0.7.8 on Debian Linux.</para></listitem>
+	<listitem><para>&sbcl; 0.7.14 on Debian Linux.</para></listitem>
 	<listitem><para>&scl; 1.1 on Debian Linux.</para></listitem>
 	<listitem><para>&openmcl; 0.13 on Debian Linux PowerPC.</para></listitem>
       </itemizedlist>
@@ -150,8 +155,23 @@ You can do that by pushing the pathname of the directory onto this variable.
  The following example code assumes the &uffi; files reside in the
 <filename>/usr/share/lisp/uffi/</filename> directory.
 	<programlisting>
-(push #P"/usr/share/lisp/uffi/" asdf:*central-repository*)
+(push #P"/usr/share/lisp/uffi/" asdf:*central-registry*)
 (asdf:oos 'asdf:load-op :uffi)
+        </programlisting>
+      </para>
+    </sect2>
+   <sect2>
+      <title>Load &md5; module</title>
+      <para>
+        If you plan to use the  clsql-postgresql-socket interface, you must load the md5 module.
+        Unzip or untar the cl-md5 distribution, which creates a directory for the cl-md5 files.
+        Add that directory to Defsystem's <varname>asdf:*central-registry*</varname>. 
+        You can do that by pushing the pathname of the directory onto this variable.
+        The following example code assumes the cl-md5 files reside in the
+        <filename>/usr/share/lisp/cl-md5/</filename> directory.
+	<programlisting>
+(push #P"/usr/share/lisp/cl-md5/" asdf:*central-registry*)
+(asdf:oos 'asdf:load-op :md5)
         </programlisting>
       </para>
     </sect2>

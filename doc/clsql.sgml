@@ -15,6 +15,7 @@
 <!ENTITY aodbc "<application>AODBC</application>">
 <!ENTITY cmucl "<application>CMUCL</application>">
 <!ENTITY scl "<application>SCL</application>">
+<!ENTITY md5 "<application>MD5</application>">
 <!ENTITY sbcl "<application>SBCL</application>">
 <!ENTITY openmcl "<application>OpenMCL</application>">
 <!ENTITY lw "<application>Lispworks</application>">
