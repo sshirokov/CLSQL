@@ -984,6 +984,10 @@ maximum of MAX-LEN instances updated in each query."
 
 (defmethod instance-refreshed ((instance standard-db-object)))
 
+(defvar *default-caching* t
+  "Controls whether SELECT caches objects by default. The CommonSQL
+specification states caching is on by default.")
+
 (defun select (&rest select-all-args) 
    "Executes a query on DATABASE, which has a default value of
 *DEFAULT-DATABASE*, specified by the SQL expressions supplied
@@ -1042,7 +1046,7 @@ as elements of a list."
        
        (cond
          ((select-objects target-args)
-          (let ((caching (getf qualifier-args :caching t))
+          (let ((caching (getf qualifier-args :caching *default-caching*))
                 (result-types (getf qualifier-args :result-types :auto))
                 (refresh (getf qualifier-args :refresh nil))
                 (database (or (getf qualifier-args :database) *default-database*))

@@ -1,3 +1,11 @@
+28 Sep 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* BUGS: New file. Document suspected SIGPIPE
+	interaction between SBCL and libpq used in
+	postgresql backend.
+	* sql/package.lisp: Export *default-caching*
+	* sql/oodml.lisp: Use *default-caching* to 
+	control default caching behavior.
+	
 21 Sep 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.0.5 release
 	* doc/appendix.xml: Add note about loading Oracle8 version

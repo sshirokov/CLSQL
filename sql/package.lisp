@@ -360,6 +360,7 @@
 	 #:instance-refreshed               
 	 #:update-objects-joins             
 	 #:*default-update-objects-max-len* 
+	 #:*default-caching*
 	 #:update-slot-from-record          
 	 #:update-instance-from-records     
 	 #:update-records-from-instance     
