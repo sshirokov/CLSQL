@@ -1,3 +1,10 @@
+6 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* sql/expressions.lisp: add AUTO-INCREMENT and UNIQUE to the 
+	recognised column constraints for CREATE-TABLE and the :DB-CONSTRAINTS 
+	View Class slot option. 
+	* sql/ooddl.lisp: fix bug preventing the :DB-CONSTRAINTS View Class 
+	slot option accepting a list of constraints [reported by Travis Cross]. 
+
 3 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* doc/appendix.xml: add notes about idiosyncrasies/unsupported 
 	features and so on the documentation for each backend. 

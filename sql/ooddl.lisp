@@ -121,7 +121,7 @@ in DATABASE which defaults to *DEFAULT-DATABASE*."
       (setf cdef (append cdef (list (view-class-slot-db-type slotdef))))
       (let ((const (view-class-slot-db-constraints slotdef)))
         (when const 
-          (setq cdef (append cdef (list const)))))
+          (setq cdef (append cdef (listify const)))))
       cdef)))
 
 
