@@ -209,7 +209,7 @@
 			     (:double
 			      (when val
 				(coerce
-				 (read-from-string (sqlite:sqlite-aref row i))
+				 (read-from-string val)
 				 'double-float)))))))
 	  (sqlite:sqlite-free-row row)
 	  t))))

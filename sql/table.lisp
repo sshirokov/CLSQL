@@ -249,7 +249,7 @@ specifications in table have changed."
 		    ((null action)
 		     (setf (gethash k attribute-cache) (list nil nil)))
 		    ((eq t action)
-		     (setf (gethash k attribute-cache) (list t (second value))))))
+		     (setf (gethash k attribute-cache) (list t (second v))))))
 		attribute-cache))
       ((eq table :default)
        (maphash (lambda (k v)
@@ -260,7 +260,7 @@ specifications in table have changed."
 		      ((null action)
 		       (setf (gethash k attribute-cache) (list nil nil)))
 		      ((eq t action)
-		       (setf (gethash k attribute-cache) (list t (second value)))))))
+		       (setf (gethash k attribute-cache) (list t (second v)))))))
 		attribute-cache))))
   (values))
 		  

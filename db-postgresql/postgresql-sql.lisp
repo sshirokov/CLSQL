@@ -192,7 +192,7 @@
   (let ((names '()))
     (dotimes (i num-fields (nreverse names))
       (declare (fixnum i))
-      (push (uffi:convert-from-foreign-string (PQfname result i)) names))))
+      (push (uffi:convert-from-cstring (PQfname result i)) names))))
 
 (defmethod database-execute-command (sql-expression
                                      (database postgresql-database))
