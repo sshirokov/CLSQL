@@ -18,7 +18,7 @@
       <refnamediv>
 	<refname>DATABASE-INITIALIZE-DATABASE-TYPE</refname>
 	<refpurpose>Back-end part of <link
-	linkend="initialize-database-type"><function>initialize-database-type</function></link>.</refpurpose>
+	linkend="initializye-database-type"><function>initialize-database-type</function></link>.</refpurpose>
 	<refclass>Generic Function</refclass>
       </refnamediv>
       <refsect1>

@@ -1,13 +1,10 @@
 This is the header of the cadabra source file.
 
-;;;; a CMUCL/OCI implementation of a subset of the DBI interface
-;;;;
 ;;;; The original version of this code was copyright (c) 1999-2000 Cadabra Inc.
 ;;;; It was placed in the public domain by Cadabra in January 2000.
 ;;;; 
 ;;;; The implementors of the original version were Winton Davies
 ;;;; <wdavies@cadabra.com> and William Newman <william.newman@airmail.net>.
-;;;; The code will be maintained by Winton Davies.
 
 ;;;; known issues:
 ;;;;   * The code will leak C resources if errors occur in the the wrong

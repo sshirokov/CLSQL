@@ -2,14 +2,14 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          mysql-loader.sql
-;;;; Purpose:       MySQL library loader using UFFI
-;;;; Programmers:   Kevin M. Rosenberg
-;;;; Date Started:  Feb 2002
+;;;; Name:     mysql-loader.sql
+;;;; Purpose:  MySQL library loader using UFFI
+;;;; Author:   Kevin M. Rosenberg
+;;;; Created:  Feb 2002
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
@@ -21,10 +21,9 @@
 (defparameter *clsql-mysql-library-path* 
   (uffi:find-foreign-library
    "mysql"
-   `(,(make-pathname :directory (pathname-directory *load-truename*))
+   `(,clsql-mysql-system::*library-file-dir*
      "/usr/lib/clsql/"
-     "/sw/lib/clsql/"
-     "/home/kevin/debian/src/clsql/db-mysql/")
+     "/sw/lib/clsql/")
    :drive-letters '("C")))
 
 (defparameter *libz-library-path* 
@@ -32,13 +31,12 @@
    '("libz" "zlibwapi" "zlib")
    `(,(make-pathname :directory (pathname-directory *load-truename*))
      #+64bit "/usr/lib64/"
-      "/usr/lib/"
-      "/sw/lib/"
-      "/usr/local/lib/"
-       "/home/kevin/debian/src/clsql/db-mysql/"
+     "/usr/lib/"
+     "/sw/lib/"
+     "/usr/local/lib/"
      "/bin/"
-       "/mysql/lib/dll32/"
-       "/mysql/lib/opt/")
+     "/mysql/lib/dll32/"
+     "/mysql/lib/opt/")
    :drive-letters '("C")))
   
 (defvar *mysql-library-candidate-names*

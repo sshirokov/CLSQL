@@ -2,14 +2,14 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          clsql-uffi-loader.sql
-;;;; Purpose:       library loader using CLSQL UFFI helper library
-;;;; Programmers:   Kevin M. Rosenberg
-;;;; Date Started:  Mar 2002
+;;;; Name:     clsql-uffi-loader.sql
+;;;; Purpose:  Library loader using CLSQL UFFI helper library
+;;;; Author:   Kevin M. Rosenberg
+;;;; Created:  Mar 2002
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
@@ -21,10 +21,8 @@
 (defvar *clsql-uffi-library-filename* 
   (uffi:find-foreign-library
    "uffi"
-   `(,(make-pathname :directory (pathname-directory *load-truename*))
-     "/usr/lib/clsql/"
-     "/opt/lisp/clsql/uffi/"
-     "/home/kevin/debian/src/clsql/uffi/")
+   `(,clsql-uffi-system::*library-file-dir*
+     "/usr/lib/clsql/")
    :drive-letters '("C")))
 
 (defvar *clsql-uffi-supporting-libraries* '("c")
