@@ -1,4 +1,4 @@
-12 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+13 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.6.12
 	* base/transactions.lisp: Add quote for macro
 	expansion of WITH-TRANSACTIONS [Time Howe]
