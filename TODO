@@ -26,17 +26,10 @@ COMMONSQL SPEC
 
       o Complete sql expressions (see operations.lisp)
 
-         substr
-         some 
-         order-by 
-         times 
-         nvl
-         null 
-         distinct
-         except 
-         intersect 
-         between
-         userenv
+         nvl (Oracle specific) 
+         userenv (Oracle specific) 
+	 minus (Oracle specific: does the same as EXCEPT) 
+	 || 
 
       o variables (e.g., table identifiers) should be instantiated at runtime 
 

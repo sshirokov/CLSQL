@@ -154,6 +154,31 @@
      'float)
   t)
   
+(deftest :fdml/query/5
+ (clsql:query (clsql:sql [select [first-name] [sum [emplid]] :from [employee]] 
+	     	      	[group-by [first-name]] [order-by [sum [emplid]]])
+              :field-names nil :result-types nil)
+ (("Josef" "2") ("Leon" "3") ("Nikita" "4") ("Leonid" "5") ("Yuri" "6")
+  ("Konstantin" "7") ("Mikhail" "8") ("Boris" "9") ("Vladamir" "11")))
+
+(deftest :fdml/query/6
+ (clsql:query (clsql:sql [union [select [emplid] :from [employee]] 
+			 [select [groupid] :from [company]]])
+              :field-names nil :result-types nil :flatp t)
+ ("1" "2" "3" "4" "5" "6" "7" "8" "9" "10"))
+
+(deftest :fdml/query/7
+ (clsql:query (clsql:sql [intersect [select [emplid] :from [employee]] 
+			 [select [groupid] :from [company]]])
+              :field-names nil :result-types nil :flatp t)
+ ("1"))
+
+(deftest :fdml/query/8
+ (clsql:query (clsql:sql [except [select [emplid] :from [employee]] 
+			 [select [groupid] :from [company]]])
+              :field-names nil :result-types nil :flatp t)
+ ("2" "3" "4" "5" "6" "7" "8" "9" "10")) 
+
 (deftest :fdml/execute-command/1
     (values
      (clsql:table-exists-p [foo] :owner *test-database-user*)
@@ -312,6 +337,42 @@
     (clsql:select [emplid :string] [last-name] :from [employee] :where [= 1 [emplid]]
      :field-names nil)
   (("1" "Lenin")))
+
+(deftest :fdml/select/19
+    (clsql:select [emplid] :from [employee] :order-by [emplid] 
+                           :where [between [* [emplid] 10] [* 5 10] [* 10 10]]
+                           :field-names nil :result-types nil :flatp t)
+ ("5" "6" "7" "8" "9" "10"))
+
+(deftest :fdml/select/20
+    (clsql:select [emplid] :from [employee] :order-by [emplid] 
+                           :where [not [between [* [emplid] 10] [* 5 10] [* 10 10]]]
+                           :field-names nil :result-types nil :flatp t)
+ ("1" "2" "3" "4"))
+
+(deftest :fdml/select/20 
+  (clsql:select [substr [first-name] 1 4] :from [employee] 
+                :flatp t :order-by [emplid] :field-names nil)
+ ("Vlad" "Jose" "Leon" "Niki" "Leon" "Yuri" "Kons" "Mikh" "Bori" "Vlad"))
+
+(deftest :fdml/select/21 
+  (clsql:select [\|\| [first-name] " " [last-name]] :from [employee]
+                :flatp t :order-by [emplid] :field-names nil)
+ ("Vladamir Lenin" "Josef Stalin" "Leon Trotsky" "Nikita Kruschev"
+ "Leonid Brezhnev" "Yuri Andropov" "Konstantin Chernenko" "Mikhail Gorbachev"
+ "Boris Yeltsin" "Vladamir Putin"))
+
+(deftest :fdml/select/22
+ (clsql:select [emplid] :from [employee] :where [in [emplid] '(1 2 3 4)]
+                        :flatp t :order-by [emplid] :field-names nil
+                        :result-types nil)
+ ("1" "2" "3" "4"))
+
+(deftest :fdml/select/23
+ (clsql:select [distinct [first-name]] :from [employee] :flatp t
+               :order-by [first-name] :field-names nil :result-types nil)
+ ("Boris" "Josef" "Konstantin" "Leon" "Leonid" "Mikhail" "Nikita" "Vladamir"
+  "Yuri"))
 
 ;(deftest :fdml/select/11
 ;    (clsql:select [emplid] :from [employee]

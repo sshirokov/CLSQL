@@ -378,6 +378,72 @@
     (when args (output-sql args database)))
   t)
 
+
+(defclass sql-between-exp (sql-function-exp)
+  () 
+  (:documentation "An SQL between expression."))
+
+(defmethod output-sql ((expr sql-between-exp) database)
+  (with-slots (name args)
+      expr 
+    (output-sql (first args) database)
+    (write-string " BETWEEN " *sql-stream*)
+    (output-sql (second args) database)
+    (write-string " AND " *sql-stream*)
+    (output-sql (third args) database))
+  t)
+
+(defclass sql-query-modifier-exp (%sql-expression) 
+  ((modifier :initarg :modifier :initform nil)
+   (components :initarg :components :initform nil))
+  (:documentation "An SQL query modifier expression."))
+
+(defmethod output-sql ((expr sql-query-modifier-exp) database)
+  (with-slots (modifier components)
+      expr
+    (output-sql modifier database)
+    (write-string " " *sql-stream*)
+    (output-sql (car components) database)
+    (when components 
+      (mapc #'(lambda (comp) 
+		(write-string ", " *sql-stream*)
+		(output-sql comp database))
+	    (cdr components))))
+  t)
+
+(defclass sql-set-exp (%sql-expression)
+  ((operator
+    :initarg :operator
+    :initform nil)
+   (sub-expressions
+    :initarg :sub-expressions
+    :initform nil))
+  (:documentation "An SQL set expression."))
+
+(defmethod collect-table-refs ((sql sql-set-exp))
+  (let ((tabs nil))
+    (dolist (exp (slot-value sql 'sub-expressions))
+      (let ((refs (collect-table-refs exp)))
+        (if refs (setf tabs (append refs tabs)))))
+    (remove-duplicates tabs
+                       :test (lambda (tab1 tab2)
+                               (equal (slot-value tab1 'name)
+                                      (slot-value tab2 'name))))))
+
+(defmethod output-sql ((expr sql-set-exp) database)
+  (with-slots (operator sub-expressions)
+      expr
+    (let ((subs (if (consp (car sub-expressions))
+                    (car sub-expressions)
+                    sub-expressions)))
+      (do ((sub subs (cdr sub)))
+          ((null (cdr sub)) (output-sql (car sub) database))
+        (output-sql (car sub) database)
+        (write-char #\Space *sql-stream*)
+        (output-sql operator database)
+        (write-char #\Space *sql-stream*))))
+  t)
+
 (defclass sql-query (%sql-expression)
   ((selections
     :initarg :selections

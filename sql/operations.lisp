@@ -40,6 +40,10 @@
   (make-instance 'sql-value-exp
 		 :modifier 'any :components rest))
 
+(defsql sql-some (:symbol "some") (&rest rest)
+  (make-instance 'sql-value-exp
+		 :modifier 'some :components rest))
+
 (defsql sql-all (:symbol "all") (&rest rest)
   (make-instance 'sql-value-exp
 		 :modifier 'all :components rest))
@@ -49,33 +53,41 @@
 		 :modifier 'not :components rest))
 
 (defsql sql-union (:symbol "union") (&rest rest)
-  (make-instance 'sql-value-exp
-		 :modifier 'union :components rest))
+  (make-instance 'sql-set-exp
+		 :operator 'union :sub-expressions rest))
 
 (defsql sql-intersect (:symbol "intersect") (&rest rest)
-  (make-instance 'sql-value-exp
-		 :modifier 'intersect :components rest))
+  (make-instance 'sql-set-exp
+		 :operator 'intersect :sub-expressions rest))
+
+(defsql sql-except (:symbol "except") (&rest rest) 
+  (make-instance 'sql-set-exp 
+		 :operator 'except :sub-expressions rest))
 
 (defsql sql-minus (:symbol "minus") (&rest rest)
   (make-instance 'sql-value-exp
 		 :modifier 'minus :components rest))
 
-(defsql sql-group-by (:symbol "group-by") (&rest rest)
-  (make-instance 'sql-value-exp
-		 :modifier 'group-by :components rest))
-
 (defsql sql-limit (:symbol "limit") (&rest rest)
-  (make-instance 'sql-value-exp
+  (make-instance 'sql-query-modifier-exp 
 		 :modifier 'limit :components rest))
 
+(defsql sql-group-by (:symbol "group-by") (&rest rest)
+  (make-instance 'sql-query-modifier-exp 
+		 :modifier '|group by| :components rest))
+
+(defsql sql-order-by (:symbol "order-by") (&rest rest)
+  (make-instance 'sql-query-modifier-exp 
+		 :modifier '|order by| :components rest))
+
 (defsql sql-having (:symbol "having") (&rest rest)
-  (make-instance 'sql-value-exp
+  (make-instance 'sql-query-modifier-exp 
 		 :modifier 'having :components rest))
 
 (defsql sql-null (:symbol "null") (&rest rest)
   (if rest
-      (make-instance 'sql-relational-exp :operator '|IS NULL| 
-                     :sub-expressions (list (car rest)))
+      (make-instance 'sql-relational-exp :operator 'is  
+                     :sub-expressions (list (car rest) nil))
       (make-instance 'sql-value-exp :components 'null)))
 
 (defsql sql-not-null (:symbol "not-null") ()
@@ -89,7 +101,6 @@
 (defsql sql-* (:symbol "*") (&rest rest)
   (if (zerop (length rest))
       (make-instance 'sql-ident :name '*)
-      ;(error 'clsql-sql-syntax-error :reason "'*' with arguments")))
       (make-instance 'sql-relational-exp :operator '* :sub-expressions rest)))
 
 (defsql sql-+ (:symbol "+") (&rest rest)
@@ -128,9 +139,15 @@
   (make-instance 'sql-relational-exp
 		 :operator 'in :sub-expressions rest))
 
-(defsql sql-|| (:symbol "||") (&rest rest)
-    (make-instance 'sql-relational-exp
-		 :operator '|| :sub-expressions rest))
+(defsql sql-concat (:symbol "||") (&rest rest)
+  (make-instance 'sql-relational-exp
+		 :operator '\|\| :sub-expressions rest))
+
+(defsql sql-substr (:symbol "substr") (&rest rest)
+  (if (= (length rest) 3)
+      (make-instance 'sql-function-exp 
+		     :name 'substring :args rest)
+      (error 'clsql-sql-syntax-error "SUBSTR must have 3 arguments.")))
 
 (defsql sql-is (:symbol "is") (&rest rest)
   (make-instance 'sql-relational-exp
@@ -193,9 +210,12 @@
 	(make-instance 'sql-function-exp
                        :name (make-symbol (car args)) :args (cdr args)))
 
-;;(defsql sql-distinct (:symbol "distinct") (&rest rest)
-;;  nil)
+(defsql sql-between (:symbol "between") (&rest rest)
+  (if (= (length rest) 3)
+      (make-instance 'sql-between-exp :name 'between :args rest)
+      (error 'clsql-sql-syntax-error "BETWEEN must have 3 arguments.")))
 
-;;(defsql sql-between (:symbol "between") (&rest rest)
-;;  nil)
+(defsql sql-distinct (:symbol "distinct") (&rest rest)
+  (make-instance 'sql-query-modifier-exp :modifier 'distinct 
+		 :components rest))
 

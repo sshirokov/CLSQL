@@ -1,3 +1,15 @@
+8 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
+	* sql/operations.lisp: complete remaining operations for the sql 
+	syntax: SUBSTR, SOME, ORDER-BY, GROUP-BY, NULL, DISTINCT, EXCEPT, 
+	UNION, INTERSECT, BETWEEN. 
+	* sql/classes.lisp: add new classes: SQL-BETWEEN-EXPRESSION, 
+	SQL-QUERY-MODIFIER-EXPRESSION and SQL-SET-EXPRESSION. 
+	* tests/test-syntax.lisp: add tests for new operations. 
+	* tests/test-fdml.lisp: add tests for queries based on new operations. 
+	* tests/test-init.lisp: add select/20 to tests skipped for sqlite and 
+	select/20, query/5, query/7 and query/8 to tests skipped by mysql. 
+	* TODO: removed entries done. 
+
 8 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* tests/benchmarks.lisp: Add immediate vs. deferred
 	join test.

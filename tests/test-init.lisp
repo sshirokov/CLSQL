@@ -539,11 +539,16 @@
 		(clsql-base::in test :fdml/select/1))
 	   (push (cons test "fancy math not supported") skip-tests))
 	  ((and (eql *test-database-type* :sqlite)
-		(clsql-base::in test :fddl/view/4 :fdml/select/10))
+		(clsql-base::in test :fddl/view/4 :fdml/select/10
+				:fdml/select/20))
 	   (push (cons test "not supported by sqlite") skip-tests))
+	  ((and (eql *test-database-type* :mysql)
+		(clsql-base::in test :fdml/select/21 :fdml/query/5 
+				:fdml/query/7 :fdml/query/8))
+	   (push (cons test "not supported by mysql") skip-tests))
 	  (t
 	   (push test-form test-forms)))))
-    (values (nreverse test-forms) (nreverse skip-tests))))
+      (values (nreverse test-forms) (nreverse skip-tests))))
 
 
 (defun rl ()
