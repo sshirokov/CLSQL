@@ -19,6 +19,10 @@
 (defpackage #:clsql-mysql-system (:use #:asdf #:cl))
 (in-package #:clsql-mysql-system)
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  #+common-lisp-controller (require 'uffi)
+  #-common-lisp-controller (asdf:operate 'asdf:load-op 'uffi))
+
 (defvar *library-file-dir* (append (pathname-directory *load-truename*)
 				   (list "db-mysql")))
 
@@ -43,6 +47,9 @@
 (defmethod perform ((o load-op) (c clsql-mysql-source-file))
   nil) ;;; library will be loaded by a loader file
 
+(defmethod operation-done-p ((o load-op) (c clsql-mysql-source-file))
+  nil) 
+
 (defmethod perform ((o compile-op) (c clsql-mysql-source-file))
   (unless (zerop (run-shell-command
 		  "cd ~A; make"
@@ -50,6 +57,12 @@
 					     :type nil
 					     :directory *library-file-dir*))))
     (error 'operation-error :component c :operation o)))
+
+(defmethod operation-done-p ((o compile-op) (c clsql-mysql-source-file))
+  (let ((lib (make-pathname :defaults (component-pathname c)
+			    :type (uffi:default-foreign-library-type))))
+    (and (probe-file lib)
+	 (> (file-write-date lib) (file-write-date (component-pathname c))))))
 
 ;;; System definition
 

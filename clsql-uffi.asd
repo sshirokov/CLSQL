@@ -53,6 +53,9 @@
 (defmethod perform ((o load-op) (c clsql-uffi-source-file))
   nil) ;;; library will be loaded by a loader file
 
+(defmethod operation-done-p ((o load-op) (c clsql-uffi-source-file))
+  nil) 
+
 (defmethod perform ((o compile-op) (c clsql-uffi-source-file))
   (unless (zerop (run-shell-command
 		  "cd ~A; make"
@@ -61,6 +64,12 @@
 					     :directory *library-file-dir*))))
     (error 'operation-error :component c :operation o)))
 
+(defmethod operation-done-p ((o compile-op) (c clsql-uffi-source-file))
+  (let ((lib (make-pathname :defaults (component-pathname c)
+			    :type (uffi:default-foreign-library-type))))
+    (and (probe-file lib)
+	 (> (file-write-date lib) (file-write-date (component-pathname c))))))
+  
 #+(or allegro lispworks cmu sbcl openmcl mcl scl)
 (defsystem clsql-uffi
   :name "cl-sql-base"

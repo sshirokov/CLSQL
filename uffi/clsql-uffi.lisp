@@ -21,7 +21,7 @@
 
 (defun canonicalize-type-list (types auto-list)
   "Ensure a field type list meets expectations"
-  (declaim (optimize (speed 3) (safety 0)))
+  (declare (optimize (speed 3) (safety 0)))
   (do ((i 0 (1+ i))
        (new-types '())
        (length-types (length types))
