@@ -106,10 +106,6 @@
      (:var-string 253)
      (:string 254)))
 
-#-(or :mysql-client-v3 :mysql-client-v4)
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (pushnew :mysql-client-v3 cl:*features*))
-
 #+:mysql-client-v3
 (uffi:def-struct mysql-field
     (name (* :char))
@@ -367,12 +363,6 @@
 (declaim (inline mysql-get-server-info))
 (uffi:def-function "mysql_get_server_info"
     ((mysql (* mysql-mysql)))
-  :module "mysql"
-  :returning :cstring)
-
-(declaim (inline mysql-get-client-info))
-(uffi:def-function "mysql_get_client_info"
-    ()
   :module "mysql"
   :returning :cstring)
 
