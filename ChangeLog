@@ -1,3 +1,8 @@
+23 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* sql/oodml.lisp: add DATABASE-OUTPUT-SQL-AS-TYPE method specialisation
+	to print floats with the exponent markers removed. 
+	* sql/test-oodml.lisp: add tests for updating records with floats. 
+
 22 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* db-oracle/oracle-sql.lisp: enable :OWNER :ALL in DATABASE-LIST-* for 
 	CommonSQL compatibility. 

@@ -473,12 +473,16 @@
   (declare (ignore database db-type))
   val)
 
-(defmethod database-output-sql-as-type ((type (eql 'char))
-					val database db-type)
+(defmethod database-output-sql-as-type ((type (eql 'char)) val database db-type)
   (declare (ignore database db-type))
   (etypecase val
     (character (write-to-string val))
     (string val)))
+
+(defmethod database-output-sql-as-type ((type (eql 'float)) val database db-type)
+  (declare (ignore database db-type))
+  (let ((*read-default-float-format* (type-of val)))
+    (format nil "~F" val)))
 
 (defmethod read-sql-value (val type database db-type)
   (declare (ignore type database db-type))
