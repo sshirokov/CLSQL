@@ -29,13 +29,14 @@
 
 (defparameter *libz-library-path* 
   (uffi:find-foreign-library
-   '("libz" "zlib")
+   '("libz" "zlibwapi" "zlib")
    `(,(make-pathname :directory (pathname-directory *load-truename*))
      #+64bit "/usr/lib64/"
       "/usr/lib/"
       "/sw/lib/"
       "/usr/local/lib/"
        "/home/kevin/debian/src/clsql/db-mysql/"
+     "/bin/"
        "/mysql/lib/dll32/"
        "/mysql/lib/opt/")
    :drive-letters '("C")))

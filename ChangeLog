@@ -1,8 +1,12 @@
 03 Jun 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* Version 2.11.5 released
 	* examples/clsql-tutorial.lisp: Remove obsolete :nulls-ok attribute,
 	Select connection-spec based on connection type. Bugs reported by
 	Bill Clementson.
-		
+	* uffi/uffi.dll, uffi/uffi.lib: Recompile with Visual Studio 2003
+	* db-mysql/mysql-loader.lisp: Update check for zlibwapi library
+	name on Windows, add \bin\ directory to search path
+	
 31 May 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* db-odbc/odbc-sql.lisp: DB-TYPE replaced with DATABASE-TYPE in 
 	DATABASE-CONNECT. 

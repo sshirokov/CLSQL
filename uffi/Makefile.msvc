@@ -2,14 +2,14 @@
 ###########################################################################
 # FILE IDENTIFICATION
 # 
-#  Name:         Makefile.msvc
-#  Purpose:      Makefile for the CLSQL UFFI helper package (MSVC)
-#  Programer:    Kevin M. Rosenberg
-#  Date Started: Mar 2002
+#  Name:    Makefile.msvc
+#  Purpose: Makefile for the CLSQL UFFI helper package (MSVC)
+#  Author:  Kevin M. Rosenberg
+#  Created: Mar 2002
 #
 #  CVS Id:   $Id: Makefile.msvc,v 1.1 2002/09/18 07:50:01 kevin Exp $
 #
-# This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+# This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
 #
 # CLSQL users are granted the rights to distribute and use this software
 # as governed by the terms of the Lisp Lesser GNU Public License
@@ -17,7 +17,7 @@
 ###########################################################################
 
 
-BASE=clsql-uffi
+BASE=uffi
 
 # Nothing to configure beyond here
 
@@ -30,6 +30,6 @@ $(DLL): $(SRC)
         del $(OBJ) $(BASE).exp
 
 clean:
-        del /q $(DLL)
+        del /q $(DLL) $(BASE).LIB
 
 
