@@ -30,7 +30,7 @@
 
 
 (defvar +null-void-pointer+ (uffi:make-null-pointer :void))
-(defvar +null-void-pointer-pointer+ (uffi:make-null-pointer ':pointer-void))
+(defvar +null-void-pointer-pointer+ (uffi:make-null-pointer :pointer-void))
 
 ;;; Check an OCI return code for erroricity and signal a reasonably
 ;;; informative condition if so.
@@ -261,11 +261,9 @@
     (hndltype  :short))
 
 
-#+nil
-(progn		
-;;; Low-level functions which don't use return checking
-;;;
-;;; KMR: These are currently unused by the backend
+
+;;; Low-level routines that don't do error checking. They are used
+;;; for setting up global environment.
 
 (uffi:def-function "OCIInitialize"
     ((mode :unsigned-long)			; ub4
@@ -282,9 +280,6 @@
      (usermempp (* :pointer-void)))
   :returning :int)
 
-(def-oci-routine ("OCIHandleAlloc" oci-handle-alloc)
-    :int
-)
 
 (uffi:def-function "OCIHandleAlloc" 
     ((parenth      :pointer-void)		; const dvoid *

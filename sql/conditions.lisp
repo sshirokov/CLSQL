@@ -39,7 +39,7 @@ set to :error to signal an error or :ignore/nil to silently ignore the warning."
 		     :initform nil
 		     :reader sql-error-database))
   (:report (lambda (c stream)
-	     (format stream "A database error occurred: ~A / ~A~%  ~A"
+	     (format stream "A database error occurred~A: ~A / ~A~%  ~A"
 		     (if (sql-error-database c)
 			 (format nil " on database ~A" (sql-error-database c))
 			 "")
@@ -93,7 +93,7 @@ set to :error to signal an error or :ignore/nil to silently ignore the warning."
 
 (defun signal-no-database-error (database)
   (error 'sql-database-error 
-	 :message "Not a database: ~A." database))
+	 :message (format nil "Not a database: ~A." database)))
 
 
 ;;; CLSQL Extensions

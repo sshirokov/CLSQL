@@ -162,9 +162,10 @@
   (handler-case
       (sqlite:sqlite-finalize (sqlite-result-set-vm result-set))
     (sqlite:sqlite-error (err)
-      (error 'clsql-simple-error
-	     :format-control "Error finalizing SQLite VM: ~A"
-	     :format-arguments (list (sqlite:sqlite-error-message err))))))
+      (error 'sql-database-error
+	     :message
+	     (format nil "Error finalizing SQLite VM: ~A"
+		     (sqlite:sqlite-error-message err))))))
 
 (defmethod database-store-next-row (result-set (database sqlite-database) list)
   (let ((n-col (sqlite-result-set-n-col result-set))
@@ -184,12 +185,12 @@
 			(return-from database-store-next-row nil)
 			(setf row new-row)))
 		(sqlite:sqlite-error (err)
-		  (error 'clsql-simple-error
-			 :format-control "Error in sqlite-step: ~A"
-			 :format-arguments
-			 (list (sqlite:sqlite-error-message err)))))
+		  (error 'sql-database-error
+			 :message
+			 (format nil "Error in sqlite-step: ~A"
+				 (sqlite:sqlite-error-message err)))))
 
-	      ;; Use the row previously read by database-query-result-set.
+	    ;; Use the row previously read by database-query-result-set.
 	      (setf (sqlite-result-set-first-row result-set)
 		    (sqlite:make-null-row)))
 	  (loop for i = 0 then (1+ i)

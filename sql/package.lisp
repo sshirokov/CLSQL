@@ -229,7 +229,6 @@
 	 #:sql-error-database-message
 
 	 ;; CLSQL Extensions
-	 #:sql-error-database
 	 #:sql-database-warning
 	 #:sql-warning
 	 #:sql-condition

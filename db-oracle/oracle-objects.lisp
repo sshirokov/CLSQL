@@ -22,8 +22,14 @@
   (declare (ignore type args))
   (concatenate 'string "VARCHAR2(" *oracle-default-varchar2-length* ")"))
 
+(defmethod database-get-type-specifier ((type (eql 'integer)) args (database oracle-database))
+  (if args
+      (format nil "NUMBER(~A,~A)"
+	      (or (first args) 38) (or (second args) 0))
+    "INTEGER"))
+
 (defmethod database-get-type-specifier
-  ((type (eql 'integer)) args (database oracle-database))
+  ((type (eql 'bigint)) args (database oracle-database))
   (if args
       (format nil "NUMBER(~A,~A)"
 	      (or (first args) 38) (or (second args) 0))

@@ -852,6 +852,7 @@ superclass of the newly-defined View Class."
 					       :operator 'in
 					       :sub-expressions (list (sql-expression :attribute foreign-key)
 								      keys))
+				      :result-types :auto
 				      :flatp t)))
 	      (dolist (object objects)
 		(when (or force-p (not (slot-boundp object slotdef-name)))
@@ -1013,13 +1014,25 @@ superclass of the newly-defined View Class."
 									     jcs))
 								 immediate-join-classes)
 							 sel-tables)
-						 :test #'tables-equal))))
-      (dolist (ob (listify order-by))
+						 :test #'tables-equal)))
+	   (order-by-slots (mapcar #'(lambda (ob) (if (atom ob) ob (car ob)))
+				   (listify order-by))))
+				    
+				 
+      (when (and order-by-slots (= 1 (length tables)))
+	;; Add explicity table name if not specified and only one selected table
+	(let ((table-name (sql-output (car tables) database)))
+	  (loop for i from 0 below (length order-by-slots)
+	      do (when (typep (nth i order-by-slots) 'sql-ident-attribute)
+		   (unless (slot-value (nth i order-by-slots) 'qualifier)
+		     (setf (slot-value (nth i order-by-slots) 'qualifier) table-name)))))) 
+	
+      (dolist (ob order-by-slots)
 	(when (and ob (not (member ob (mapcar #'cdr fullsels)
 				   :test #'ref-equal)))
 	  (setq fullsels 
-		  (append fullsels (mapcar #'(lambda (att) (cons nil att))
-					   (listify ob))))))
+	    (append fullsels (mapcar #'(lambda (att) (cons nil att))
+				     order-by-slots)))))
       (dolist (ob (listify distinct))
 	(when (and (typep ob 'sql-ident) 
 		   (not (member ob (mapcar #'cdr fullsels) 
@@ -1114,24 +1127,28 @@ ENABLE-SQL-READER-SYNTAX."
 	(cond
 	  ((select-objects target-args)
 	   (let ((caching (getf qualifier-args :caching t))
+		 (result-types (getf qualifier-args :result-types :auto))
 		 (refresh (getf qualifier-args :refresh nil))
 		 (database (or (getf qualifier-args :database) *default-database*)))
 	     (remf qualifier-args :caching)
 	     (remf qualifier-args :refresh)
+	     (remf qualifier-args :result-types)
 	     (cond
 	       ((null caching)
-		(apply #'find-all target-args qualifier-args))
+		(apply #'find-all target-args
+		       (append qualifier-args (list :result-types result-types))))
 	       (t
 		(let ((cached (records-cache-results target-args qualifier-args database)))
 		  (cond
 		    ((and cached (not refresh))
 		     cached)
 		    ((and cached refresh)
-		     (let ((results (apply #'find-all (append (list target-args) qualifier-args `(:instances ,cached)))))
+		     (let ((results (apply #'find-all (append (list target-args) qualifier-args `(:instances ,cached :result-types :auto)))))
 		       (setf (records-cache-results target-args qualifier-args database) results)
 		       results))
 		    (t
-		     (let ((results (apply #'find-all target-args qualifier-args)))
+		     (let ((results (apply #'find-all target-args (append qualifier-args
+									  '(:result-types :auto)))))
 		       (setf (records-cache-results target-args qualifier-args database) results)
 		       results))))))))
 	  (t

@@ -468,7 +468,7 @@
 ***     CLSQL ~A begun at ~A
 ***     ~A
 ***     ~A on ~A
-***     Database ~A backend~A.
+***     Database ~:@(~A~) backend~A.
 ******************************************************************************
 "
 	  report-type

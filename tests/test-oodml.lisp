@@ -110,8 +110,8 @@
                          (clsql:select 'employee :order-by '(([emplid] :asc)) 
                                        :flatp t))
           (mapcar #'(lambda (x) (slot-value x 'emplid))
-                  (clsql:select 'employee :order-by '(([emplid] :desc)) 
-                                :flatp t)))
+	   (clsql:select 'employee :order-by '(([emplid] :desc)) 
+			 :flatp t)))
          (1 2 3 4 5 6 7 8 9 10)
          (10 9 8 7 6 5 4 3 2 1))
 
@@ -154,7 +154,7 @@
 
 	(deftest :oodm/retrieval/8	    
 	    (mapcar #'(lambda (ea) (slot-value (slot-value ea 'address) 'street-number))
-	     (select 'employee-address :flatp t :order-by [aaddressid] :caching nil))
+	     (select 'employee-address :flatp t :order-by [ea_join aaddressid] :caching nil))
 	  (10 10 nil nil nil))
 
 	(deftest :oodm/retrieval/9

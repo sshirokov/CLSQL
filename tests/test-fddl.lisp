@@ -81,7 +81,7 @@
 
 ;; Attribute types are vendor specific so need to test a range
 (deftest :fddl/attributes/3
-    (and (member (clsql:attribute-type [emplid] [employee]) '(:int :integer :int4)) t)
+    (and (member (clsql:attribute-type [emplid] [employee]) '(:int :integer :int4 :number)) t)
   t)
 
 (deftest :fddl/attributes/4

@@ -243,10 +243,11 @@ condition is true."
   (if (or (null thing)
 	  (eq 'null thing))
       "NULL"
-    (error 'clsql-simple-error
-           :format-control
-           "No type conversion to SQL for ~A is defined for DB ~A."
-           :format-arguments (list (type-of thing) (type-of database)))))
+    (error 'sql-user-error
+           :message
+	   (format nil
+		   "No type conversion to SQL for ~A is defined for DB ~A."
+		   (type-of thing) (type-of database)))))
 
 
 (defmethod output-sql-hash-key ((arg vector) database)

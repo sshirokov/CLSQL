@@ -61,11 +61,11 @@ simply returned."
        (if (or (not errorp) (= count 1))
            (values (car matches) count)
            (cerror "Return nil."
-                   'clsql-simple-error
-                   :format-control "There exists ~A database called ~A."
-                   :format-arguments
-                   (list (if (zerop count) "no" "more than one")
-                         database)))))))
+                   'sql-database-error
+                   :message
+		   (format nil "There exists ~A database called ~A."
+			   (if (zerop count) "no" "more than one")
+			   database)))))))
 
 
 (defun connect (connection-spec
