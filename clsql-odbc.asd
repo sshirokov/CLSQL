@@ -20,7 +20,7 @@
 (in-package #:clsql-odbc-system)
 
 #+(or allegro lispworks cmu sbcl openmcl mcl scl)
-(defsystem :clsql-odbc
+(defsystem clsql-odbc
   :name "clsql-odbc"
   :author "Kevin M. Rosenberg <kmr@debian.org>"
   :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
@@ -34,7 +34,9 @@
 	    :components
 	    ((:file "odbc-package")
 	     (:file "odbc-loader" :depends-on ("odbc-package"))
-	     (:file "odbc-api" :depends-on ("odbc-loader"))
+	     (:file "odbc-constants" :depends-on ("odbc-loader"))
+	     (:file "odbc-ff-interface" :depends-on ("odbc-loader"))
+	     (:file "odbc-api" :depends-on ("odbc-ff-interface" "odbc-constants"))
 	     (:file "odbc-dbi" :depends-on ("odbc-api"))
 	     (:file "odbc-sql" :depends-on ("odbc-dbi"))))))
 

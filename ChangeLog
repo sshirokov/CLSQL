@@ -4,7 +4,9 @@
 	expansion of WITH-TRANSACTIONS [Time Howe]
 	* db-sqlite/sqlite-sql.lisp: Support memory database
 	in database-probe [Ng Pheng Siong]
-
+	* db-odbc/*.lisp: Initial port to UFFI of SQL-ODBC.
+	The DBI layer is not finished.
+	
 12 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.6.11
 	* sql/objects.lisp: add :root-class functionality for

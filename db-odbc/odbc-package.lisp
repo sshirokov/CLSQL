@@ -22,6 +22,43 @@
   (:use #:cl #:uffi)
   (:export 
      #:database-library-loaded
+
+     #:*null*
+     #:*trace-sql*
+     #:+max-precision+
+     #:get-cast-long
+     #:%free-statement
+     #:%disconnect
+     #:%commit
+     #:%rollback
+     #:%sql-fetch
+     #:%sql-cancel
+     #:%new-db-connection-handle
+     #:%new-environment-handle
+     #:%sql-driver-connect
+     #:%sql-connect
+     #:disable-autocommit
+     #:enable-autocommit
+     #:%null-ptr
+     #:%sql-free-environment
+     #:%sql-data-sources
+     #:%sql-get-info
+     #:%sql-param-data
+     #:%sql-execute
+     #:%put-str
+     #:%sql-bind-parameter
+     #:%sql-prepare
+     #:sqlfetch
+     #:%bind-column
+     #:%allocate-bindings
+     #:%describe-column
+     #:%describe-columns
+     #:read-data
+     #:read-data-in-chunks
+     #:query-database
+     #:%new-statement-handle
+     #:%sql-exec-direct
+     #:%put-str
      )
   (:documentation "This is the low-level interface ODBC."))
 
