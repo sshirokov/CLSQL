@@ -1,3 +1,12 @@
+07 Apr 2002 Kevin Rosenberg (kevin@rosenberg.net)
+	* src/postgresql-socket/postgresql-socket-api.cl:
+	Fixed find-foreign-function call, eliminated crypt warning
+	* Makefiles:
+	Multiple improvements
+	* sql/usql.cl:
+	Moved functionality from low-level interfaces to this file
+	via generic functions
+	
 06 Apr 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* src/usql.cl:
 	Reinstated commented out sections

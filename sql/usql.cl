@@ -8,7 +8,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: usql.cl,v 1.5 2002/04/06 22:41:37 kevin Exp $
+;;;; $Id: usql.cl,v 1.6 2002/04/07 15:11:21 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and onShore Development Inc
@@ -130,3 +130,16 @@ specifies the database to operation on, defaulting to
    (self stream :type t)
    (write-string (sql-output self) stream)))
 
+
+;; Methods for translating high-level table classes to low-level functions
+
+(defmethod database-list-attributes ((table sql-ident) database)
+  (database-list-attributes (string-downcase
+			     (symbol-name (slot-value table 'name)))
+			    database)
+  )
+
+(defmethod database-attribute-type (attribute (table sql-ident) database)
+  (database-attribute-type attribute (string-downcase
+				      (symbol-name (slot-value table 'name)))
+			   database))
