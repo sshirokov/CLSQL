@@ -25,7 +25,7 @@
 	   (load (make-pathname :name "set-logical" :type "cl"
 				:defaults *load-truename*))
 	   (set-logical-host-for-pathname 
-	    "CL-LIBRARY" 
+	    "cl-library" 
 	    (make-pathname :host (pathname-host *load-truename*)
 			   :device (pathname-device *load-truename*)
 			   :directory parent-dir))))

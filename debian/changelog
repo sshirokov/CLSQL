@@ -1,3 +1,9 @@
+cl-sql (0.7.6-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Kevin M. Rosenberg <kevin@rosenberg.net>  Thu, 25 Jul 2002 20:44:58 -0600
+
 cl-sql (0.7.5-1) unstable; urgency=low
 
   * Fix Build-Depends in control file (closes: 154217)

@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-loader.cl,v 1.20 2002/07/09 19:15:16 kevin Exp $
+;;;; $Id: mysql-loader.cl,v 1.21 2002/07/26 02:47:12 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -30,7 +30,7 @@
    "clsql-mysql"
    `(,(directory-namestring
        (translate-logical-pathname 
-	"CL-LIBRARY:clsql;interfaces;mysql;"))
+	"cl-library:clsql;interfaces;mysql;"))
      "/usr/lib/clsql/")
    :drive-letters '("C" "D" "E" "F" "G")))
   
