@@ -12,7 +12,6 @@ PKG_DIR=/usr/local/src/Packages/${DEBPKG}
 UPSTREAM_DIR=ftp.med-info.com:/home/ftp/pub/${PKG}/.
 FTP_DEBDIR=ftp.med-info.com:/home/ftp/pub/debian/UploadQueue
 
-
 usage () {
     progname="`basename \"$0\"`"
     
@@ -41,8 +40,9 @@ while [ $# != 0 ]; do
     shift
 done
 
-VERSION=`sed -n -e "s/${DEBPKG} (\(.*\)-[0-9.]).*/\1/p" < debian/changelog  |head -1`
-DEBVERSION=`sed -n -e "s/${DEBPKG} (\(.*\)).*/\1/p" < debian/changelog  |head -1`
+CHANGELOG=${WORK_DIR}/debian/changelog
+VERSION=`sed -n -e "s/${DEBPKG} (\(.*\)-[0-9.]).*/\1/p" < ${CHANGELOG}  |head -1`
+DEBVERSION=`sed -n -e "s/${DEBPKG} (\(.*\)).*/\1/p" < ${CHANGELOG}  |head -1`
 
 pushd ${PKG_DIR} > /dev/null
 
