@@ -1,3 +1,10 @@
+cl-sql (1.1.0-1) unstable; urgency=low
+
+  * Add SCL support.
+  * Fix file type in test-suite/tester-clsql.lisp
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Tue, 15 Oct 2002 13:34:41 -0600
+
 cl-sql (1.0.1-1) unstable; urgency=low
 
   * Add defgeneric for generic functions

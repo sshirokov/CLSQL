@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-postgresql-socket.asd,v 1.12 2002/10/14 04:09:02 kevin Exp $
+;;;; $Id: clsql-postgresql-socket.asd,v 1.13 2002/10/16 11:51:04 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -20,7 +20,7 @@
 
 ;;; System definition
 
-#+(or allegro lispworks cmu sbcl openmcl mcl)
+#+(or allegro lispworks cmu sbcl openmcl mcl scl)
 (defsystem :clsql-postgresql-socket
   :name "cl-sql-postgresql-socket"
   :author "Kevin M. Rosenberg <kmr@debian.org>"

@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg 
 ;;;; Date Started:  May 2002
 ;;;;
-;;;; $Id: initialize.lisp,v 1.1 2002/09/30 10:19:01 kevin Exp $
+;;;; $Id: initialize.lisp,v 1.2 2002/10/16 11:51:04 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -22,6 +22,9 @@
 
 (defvar *loaded-database-types* nil
   "Contains a list of database types which have been defined/loaded.")
+
+(defmethod database-type-load-foreign (x)
+  (error "No generic function defined for database-type-load-foreign with parameters of %S" x))
 
 (defmethod database-type-load-foreign :after (database-type)
   (when (database-type-library-loaded database-type)

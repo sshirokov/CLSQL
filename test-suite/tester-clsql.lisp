@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: tester-clsql.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: tester-clsql.lisp,v 1.2 2002/10/16 11:51:04 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -31,8 +31,7 @@
 (in-package :cl-user)
 
 (unless (find-package :util.test)
-  (load (make-pathname :name "acl-compat-tester" :type "cl"
-		       :defaults *load-truename*)))
+  (load (make-pathname :name "acl-compat-tester" :defaults *load-truename*)))
 
 (in-package :clsql-user)
 (use-package :util.test)
