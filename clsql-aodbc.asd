@@ -34,3 +34,6 @@
 	      ((:file "aodbc-package")
 	       (:file "aodbc-sql" :depends-on ("aodbc-package")))))
     :depends-on (:clsql-base))
+
+#-(and allegro (not allegro-cl-trial))
+(defsystem clsql-aodbc)

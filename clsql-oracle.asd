@@ -8,7 +8,7 @@
 
 ;;; System definition
 
-#+(or allegro lispworks cmu sbcl openmcl mcl scl)
+#+cmu
 (defsystem clsql-oracle
   :name "cl-sql-oracle"
   :author "Kevin M. Rosenberg <kmr@debian.org>"
@@ -28,3 +28,6 @@
 	       (:file "oracle-sql" :depends-on ("oracle" "alien-resources"))
 	       (:file "oracle-objects" :depends-on ("oracle-sql")))))
     :depends-on (:clsql-base))
+
+#-cmu
+(defsystem clsql-oracle)
