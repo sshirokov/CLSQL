@@ -968,8 +968,8 @@ superclass of the newly-defined View Class."
 (defun find-all (view-classes 
 		 &rest args
 		 &key all set-operation distinct from where group-by having 
-		      order-by order-by-descending offset limit refresh
-		      flatp result-types inner-join on 
+		      order-by offset limit refresh flatp result-types 
+                      inner-join on 
 		      (database *default-database*)
 		      instances)
   "Called by SELECT to generate object query results when the
@@ -1020,12 +1020,6 @@ superclass of the newly-defined View Class."
 	  (setq fullsels 
 		  (append fullsels (mapcar #'(lambda (att) (cons nil att))
 					   (listify ob))))))
-      (dolist (ob (listify order-by-descending))
-	(when (and ob (not (member ob (mapcar #'cdr fullsels)
-				   :test #'ref-equal)))
-	  (setq fullsels 
-		(append fullsels (mapcar #'(lambda (att) (cons nil att))
-					 (listify ob))))))
       (dolist (ob (listify distinct))
 	(when (and (typep ob 'sql-ident) 
 		   (not (member ob (mapcar #'cdr fullsels) 

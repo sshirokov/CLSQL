@@ -7,6 +7,12 @@
 	behaviour and the ANY and ALL operators in subqueries. 
 	* tests/test-init.lisp: add set-operation and subquery tests to 
 	appropriate skip lists. 
+	* sql/objects.lisp: remove redundant and non CommonSQL compatible 
+	ORDER-BY-DESCENDING keyword argument for SELECT. 
+	* sql/classes.lisp: remove redundant and non CommonSQL compatible 
+	ORDER-BY-DESCENDING keyword argument for SELECT. 
+	* tests/test-oodml.lisp: add test for ORDER-BY keyword to SELECT 
+	with object queries. 
 
 15 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.18

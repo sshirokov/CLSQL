@@ -487,9 +487,6 @@
    (order-by
     :initarg :order-by
     :initform nil)
-   (order-by-descending
-    :initarg :order-by-descending
-    :initform nil)
    (inner-join
     :initarg :inner-join
     :initform nil)
@@ -520,8 +517,7 @@
 
 (defvar *select-arguments*
   '(:all :database :distinct :flatp :from :group-by :having :order-by
-    :order-by-descending :set-operation :where :offset :limit
-    :inner-join :on
+    :set-operation :where :offset :limit :inner-join :on
     ;; below keywords are not a SQL argument, but these keywords may terminate select
     :caching :refresh))
 
@@ -552,7 +548,7 @@ uninclusive, and the args from that keyword to the end."
 			   :flatp flatp :refresh refresh
 			   :exp arglist))
 	  (destructuring-bind (&key all flatp set-operation distinct from where
-				    group-by having order-by order-by-descending
+				    group-by having order-by 
 				    offset limit inner-join on &allow-other-keys)
 	      arglist
 	    (if (null selections)
@@ -564,15 +560,13 @@ uninclusive, and the args from that keyword to the end."
 			   :distinct distinct :from from :where where
 			   :limit limit :offset offset
 			   :group-by group-by :having having :order-by order-by
-			   :order-by-descending order-by-descending
 			   :inner-join inner-join :on on))))))
 
 (defvar *in-subselect* nil)
 
 (defmethod output-sql ((query sql-query) database)
   (with-slots (distinct selections from where group-by having order-by
-                        order-by-descending limit offset inner-join on
-                        all set-operation) 
+                        limit offset inner-join on all set-operation) 
       query
     (when *in-subselect*
       (write-string "(" *sql-stream*))
@@ -625,16 +619,6 @@ uninclusive, and the args from that keyword to the end."
               (when (cdr order)
                 (write-char #\, *sql-stream*))))
           (output-sql order-by database)))
-    (when order-by-descending
-      (write-string " ORDER BY " *sql-stream*)
-      (if (listp order-by-descending)
-          (do ((order order-by-descending (cdr order)))
-              ((null order))
-            (output-sql (car order) database)
-            (when (cdr order)
-              (write-char #\, *sql-stream*)))
-          (output-sql order-by-descending database))
-      (write-string " DESC " *sql-stream*))
     (when limit
       (write-string " LIMIT " *sql-stream*)
       (output-sql limit database))
