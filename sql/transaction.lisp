@@ -32,8 +32,7 @@
   (when (transaction database)
     (push rollback-hook (rollback-hooks (transaction database)))))
 
-(defmethod database-start-transaction (database)
-  (unless database (error 'clsql-no-database-error))
+(defmethod database-start-transaction ((database database))
   (unless (transaction database)
     (setf (transaction database) (make-instance 'transaction)))
   (when (= (incf (transaction-level database) 1))
@@ -43,7 +42,7 @@
             (transaction-status transaction) nil)
       (execute-command "BEGIN" :database database))))
 
-(defmethod database-commit-transaction (database)
+(defmethod database-commit-transaction ((database database))
     (if (> (transaction-level database) 0)
         (when (zerop (decf (transaction-level database)))
           (execute-command "COMMIT" :database database)

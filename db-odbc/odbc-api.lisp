@@ -113,20 +113,20 @@ as possible second argument) to the desired representation of date/time/timestam
           (progn ,result-code ,@body))
          (#.$SQL_INVALID_HANDLE
           (error
-	   'clsql-sys:clsql-odbc-error
-	   :odbc-message "Invalid handle"))
+	   'clsql-sys:sql-database-error
+	   :message "ODBC: Invalid handle"))
          (#.$SQL_STILL_EXECUTING
           (error
-	   'clsql-sys:clsql-odbc-error
-	   :odbc-message "Still executing"))
+	   'clsql-sys:sql-temporary-error
+	   :message "ODBC: Still executing"))
          (#.$SQL_ERROR
           (multiple-value-bind (error-message sql-state)
 	      (handle-error (or ,henv +null-handle-ptr+)
 			    (or ,hdbc +null-handle-ptr+)
 			    (or ,hstmt +null-handle-ptr+))
             (error
-	     'clsql-sys:clsql-odbc-error
-	     :odbc-message error-message
+	     'clsql-sys:sql-database-error
+	     :message error-message
 	     :sql-state sql-state)))
 	 (#.$SQL_NO_DATA_FOUND
 	  (progn ,result-code ,@body))
@@ -138,9 +138,9 @@ as possible second argument) to the desired representation of date/time/timestam
 			    (or ,hdbc +null-handle-ptr+)
 			    (or ,hstmt +null-handle-ptr+))
             (error
-	     'clsql-sys:clsql-odbc-error
-	     :odbc-message error-message
-	     :sql-state sql-state))
+	     'clsql-sys:sql-database-error
+	     :message error-message
+	     :secondary-error-id sql-state))
 	  #+ignore
           (progn ,result-code ,@body))))))
 

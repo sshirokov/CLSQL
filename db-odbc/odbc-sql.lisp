@@ -50,15 +50,14 @@
 				   :data-source-name dsn))))
 	  (store-type-of-connected-database db)
 	  db)
-    (clsql-error (e)
-      (error e))
-    #+ignore
-    (error () 	;; Init or Connect failed
-      (error 'clsql-connect-error
-	     :database-type database-type
-	     :connection-spec connection-spec
-	     :errno nil
-	     :error "Connection failed")))))
+      #+ignore
+      (sql-condition (e)
+	(error e))
+      (error () 	;; Init or Connect failed
+	(error 'sql-connection-error
+	       :database-type database-type
+	       :connection-spec connection-spec
+	       :message "Connection failed")))))
 
 (defmethod database-underlying-type ((database odbc-database))
   (database-odbc-db-type database))
@@ -92,29 +91,27 @@
       (odbc-dbi:sql query-expression :db (database-odbc-conn database)
 		    :result-types result-types
                     :column-names field-names)
-    (clsql-error (e)
-      (error e))
     #+ignore
+    (sql-error (e)
+      (error e))
     (error ()
-      (error 'clsql-sql-error
+      (error 'sql-database-data-error
 	     :database database
 	     :expression query-expression
-	     :errno nil
-	     :error "Query failed"))))
+	     :message "Query failed"))))
 
 (defmethod database-execute-command (sql-expression 
 				     (database odbc-database))
   (handler-case
       (odbc-dbi:sql sql-expression :db (database-odbc-conn database))
-    (clsql-error (e)
-      (error e))
     #+ignore
+    (sql-error (e)
+      (error e))
     (error ()
-      (error 'clsql-sql-error
+      (error 'sql-database-data-error
 	     :database database
 	     :expression sql-expression
-	     :errno nil
-	     :error "Execute command failed"))))
+	     :message "Execute command failed"))))
 
 (defstruct odbc-result-set
   (query nil)
@@ -138,13 +135,11 @@
 	 (length column-names)
 	 nil ;; not able to return number of rows with odbc
 	 ))
-    #+ignore
     (error ()
-      (error 'clsql-sql-error
+      (error 'sql-database-data-error
 	     :database database
 	     :expression query-expression
-	     :errno nil
-	     :error "Query result set failed"))))
+	     :message "Query result set failed"))))
 
 (defmethod database-dump-result-set (result-set (database odbc-database))
   (odbc-dbi:close-query (odbc-result-set-query result-set))

@@ -140,17 +140,16 @@ the length of that format.")
 			    errcode errbuf +errbuf-len+ +oci-htype-error+)
              (let ((subcode (uffi:deref-pointer errcode :long)))
                (unless (and nulls-ok (= subcode +null-value-returned+))
-                 (error 'clsql-sql-error
+                 (error 'sql-database-error
                         :database database
-                        :errno subcode
-			:expression nil
-                        :error (uffi:convert-from-foreign-string errbuf)))))))
+                        :error-id subcode
+                        :message (uffi:convert-from-foreign-string errbuf)))))))
 	(nulls-ok
-	 (error 'clsql-sql-error
+	 (error 'sql-database-error
                 :database database
                 :message "can't handle NULLS-OK without ERRHP"))
 	(t 
-	 (error 'clsql-sql-error
+	 (error 'sql-database-error
                 :database database
                 :message "OCI Error (and no ERRHP available to find subcode)"))))
 
@@ -309,7 +308,7 @@ the length of that format.")
 	   (format nil
 		   "select user_tab_columns,column_name from user_tab_columns where user_tab_columns.table_name='~A'"
 		   table)
-	   database nil nil))))
+	   database nil nil)))
 
 
 ;; Return one row of the table referred to by QC, represented as a

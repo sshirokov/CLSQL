@@ -835,9 +835,9 @@ uninclusive, and the args from that keyword to the end."
   (let ((output (assoc (symbol-name constraint) *constraint-types*
                        :test #'equal)))
     (if (null output)
-        (error 'clsql-sql-syntax-error
-               :reason (format nil "unsupported column constraint '~a'"
-                               constraint))
+        (error 'sql-user-error
+               :message (format nil "unsupported column constraint '~A'"
+				constraint))
         (cdr output))))
 
 (defmethod database-constraint-statement (constraint-list database)
@@ -853,9 +853,9 @@ uninclusive, and the args from that keyword to the end."
                                *constraint-types*
                                :test #'equal)))
             (if (null output)
-                (error 'clsql-sql-syntax-error
-                       :reason (format nil "unsupported column constraint '~a'"
-                                       constraint))
+                (error 'sql-user-error
+                       :message (format nil "unsupported column constraint '~A'"
+					constraint))
                 (setq string (concatenate 'string string (cdr output))))
             (if (< 1 (length constraint))
                 (setq string (concatenate 'string string " "))))))))

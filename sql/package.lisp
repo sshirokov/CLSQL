@@ -180,37 +180,6 @@
      #:convert-to-db-default-case
      #:ensure-keyword
 
-     
-     #:clsql-invalid-spec-error
-     #:clsql-invalid-spec-error-connection-spec
-     #:clsql-invalid-spec-error-database-type
-     #:clsql-invalid-spec-error-template
-     #:clsql-access-error
-     #:clsql-access-error-database-type
-     #:clsql-access-error-connection-spec
-     #:clsql-access-error-error
-     #:clsql-connect-error
-     #:clsql-connect-error-errno
-     #:clsql-sql-error
-     #:clsql-sql-error-database
-     #:clsql-sql-error-expression
-     #:clsql-sql-error-errno
-     #:clsql-sql-error-error
-     #:clsql-database-warning
-     #:clsql-database-warning-database
-     #:clsql-database-warning-message
-     #:clsql-exists-condition
-     #:clsql-exists-condition-new-db
-     #:clsql-exists-condition-old-db
-     #:clsql-exists-warning
-     #:clsql-exists-error
-     #:clsql-closed-error
-     #:clsql-closed-error-database
-     #:clsql-sql-syntax-error
-     #:clsql-type-error
-     #:clsql-odbc-error
-     #:clsql-odbc-error-message
-     
      #:*loaded-database-types*
      #:reload-database-types
      #:*connect-if-exists*
@@ -235,125 +204,140 @@
 	 ;; CommonSQL API 
 	 ;;------------------------------------------------
 	 ;;FDML 
-       #:select                            ; objects    xx
-       #:cache-table-queries               ; 
-       #:*cache-table-queries-default*     ; 
-       #:delete-records                    ; sql        xx
-       #:insert-records                    ; sql        xx
-       #:update-records                    ; sql        xx
-       #:execute-command                   ; sql        xx
-       #:query                             ; sql        xx
-       #:print-query                       ; sql        xx
-       #:do-query                          ; sql        xx
-       #:map-query                         ; sql        xx
-       #:for-each-row
-       #:loop
+	 #:select                            ; objects    xx
+	 #:cache-table-queries               ; 
+	 #:*cache-table-queries-default*     ; 
+	 #:delete-records                    ; sql        xx
+	 #:insert-records                    ; sql        xx
+	 #:update-records                    ; sql        xx
+	 #:execute-command                   ; sql        xx
+	 #:query                             ; sql        xx
+	 #:print-query                       ; sql        xx
+	 #:do-query                          ; sql        xx
+	 #:map-query                         ; sql        xx
+	 #:for-each-row
+	 #:loop
 
-       ;;FDDL
-       #:create-table                      ; table      xx
-       #:drop-table                        ; table      xx
-       #:list-tables                       ; table      xx
-       #:table-exists-p                    ; table      xx 
-       #:list-attributes                   ; table      xx
-       #:attribute-type                    ; table      xx
-       #:list-attribute-types		   ; table      xx
-       #:*cache-table-queries-default*
-       #:create-view                       ; table      xx
-       #:drop-view                         ; table      xx
-       #:create-index                      ; table      xx		
-       #:drop-index                        ; table      xx		
-       #:truncate-database
-       ;;OODDL
-       #:standard-db-object                ; objects    xx
-       #:def-view-class                    ; objects    xx
-       #:create-view-from-class            ; objects    xx
-       #:drop-view-from-class              ; objects    xx
-       ;;OODML
-       #:instance-refreshed                ; objects    xx 
-       #:update-object-joins               ;
-       #:*default-update-objects-max-len*  ; 
-       #:update-slot-from-record   	   ; objects    xx
-       #:update-instance-from-records      ; objects    xx
-       #:update-records-from-instance      ; objects    xx
-       #:update-record-from-slot           ; objects    xx
-       #:update-record-from-slots          ; objects    xx
-       #:list-classes                      ; objects    xx
-       #:delete-instance-records           ; objects    xx
-       ;;Symbolic SQL Syntax 
-       #:sql                               ; syntax     xx
-       #:sql-expression                    ; syntax     xx
-       #:sql-operation                     ; syntax     xx
-       #:sql-operator                      ; syntax     xx  	
-       #:disable-sql-reader-syntax         ; syntax     xx
-       #:enable-sql-reader-syntax          ; syntax     xx
-       #:locally-disable-sql-reader-syntax ; syntax     xx
-       #:locally-enable-sql-reader-syntax  ; syntax     xx
-       #:restore-sql-reader-syntax-state   ; syntax     xx
+	 ;; conditions
+	 #:sql-user-error
+	 #:sql-database-error
+	 #:sql-database-data-error
+	 #:sql-connection-error
+	 #:sql-temporary-error
+	 #:sql-error-error-id
+	 #:sql-error-secondary-error-id
+	 #:sql-error-database-message
 
-       ;;FDDL 
-       #:list-views                        ; table      xx
-       #:view-exists-p                     ; table      xx
-       #:list-indexes                      ; table      xx
-       #:list-table-indexes                ; table      xx
-       #:index-exists-p                    ; table      xx
-       #:create-sequence                   ; table      xx
-       #:drop-sequence                     ; table      xx
-       #:list-sequences                    ; table      xx
-       #:sequence-exists-p                 ; table      xx
-       #:sequence-next                     ; table      xx
-       #:sequence-last                     ; table      xx
-       #:set-sequence-position             ; table      xx
-       ;;OODDL
-       #:view-table                        ; metaclass  x
-       #:universal-time    		   ; objects    xx 
-       #:bigint
-       ;;OODML
-       #:*db-auto-sync*                    ; objects    xx              
-       #:add-to-relation                   ; objects    x
-       #:remove-from-relation              ; objects    x
-       #:read-sql-value                    ; objects    x
-       #:database-output-sql-as-type       ; objects    x
-       #:database-get-type-specifier       ; objects    x
-       #:database-output-sql               ; sql/class  xx
+	 ;; CLSQL Extensions
+	 #:sql-error-database
+	 #:sql-database-warning
+	 #:sql-warning
+	 #:sql-condition
 
-       ;; conditions
-       #:clsql-condition
-       #:clsql-error
-       #:clsql-simple-error
-       #:clsql-warning
-       #:clsql-simple-warning
-
-       ;;-----------------------------------------------
-       ;; Symbolic Sql Syntax 
-       ;;-----------------------------------------------
-       #:sql-and-qualifier
-       #:sql-escape
-       #:sql-query
-       #:sql-object-query
-       #:sql-any
-       #:sql-all
-       #:sql-not
-       #:sql-union
-       #:sql-intersection
-       #:sql-minus
-       #:sql-group-by
-       #:sql-having
-       #:sql-null
-       #:sql-not-null
-       #:sql-exists
-       #:sql-*
-       #:sql-+
-       #:sql-/
-       #:sql-like
-       #:sql-uplike
-       #:sql-and
-       #:sql-or
-       #:sql-in
-       #:sql-||
-       #:sql-is
-       #:sql-=
-       #:sql-==
-       #:sql-<
+	 ;;FDDL
+	 #:create-table                      ; table      xx
+	 #:drop-table                        ; table      xx
+	 #:list-tables                       ; table      xx
+	 #:table-exists-p                    ; table      xx 
+	 #:list-attributes                   ; table      xx
+	 #:attribute-type                    ; table      xx
+	 #:list-attribute-types		   ; table      xx
+	 #:*cache-table-queries-default*
+	 #:create-view                       ; table      xx
+	 #:drop-view                         ; table      xx
+	 #:create-index                      ; table      xx		
+	 #:drop-index                        ; table      xx		
+	 #:truncate-database
+	 ;;OODDL
+	 #:standard-db-object                ; objects    xx
+	 #:def-view-class                    ; objects    xx
+	 #:create-view-from-class            ; objects    xx
+	 #:drop-view-from-class              ; objects    xx
+	 ;;OODML
+	 #:instance-refreshed                ; objects    xx 
+	 #:update-object-joins               ;
+	 #:*default-update-objects-max-len*  ; 
+	 #:update-slot-from-record   	   ; objects    xx
+	 #:update-instance-from-records      ; objects    xx
+	 #:update-records-from-instance      ; objects    xx
+	 #:update-record-from-slot           ; objects    xx
+	 #:update-record-from-slots          ; objects    xx
+	 #:list-classes                      ; objects    xx
+	 #:delete-instance-records           ; objects    xx
+	 ;;Symbolic SQL Syntax 
+	 #:sql                               ; syntax     xx
+	 #:sql-expression                    ; syntax     xx
+	 #:sql-operation                     ; syntax     xx
+	 #:sql-operator                      ; syntax     xx  	
+	 #:disable-sql-reader-syntax         ; syntax     xx
+	 #:enable-sql-reader-syntax          ; syntax     xx
+	 #:locally-disable-sql-reader-syntax ; syntax     xx
+	 #:locally-enable-sql-reader-syntax  ; syntax     xx
+	 #:restore-sql-reader-syntax-state   ; syntax     xx
+	 
+	 ;;FDDL 
+	 #:list-views                        ; table      xx
+	 #:view-exists-p                     ; table      xx
+	 #:list-indexes                      ; table      xx
+	 #:list-table-indexes                ; table      xx
+	 #:index-exists-p                    ; table      xx
+	 #:create-sequence                   ; table      xx
+	 #:drop-sequence                     ; table      xx
+	 #:list-sequences                    ; table      xx
+	 #:sequence-exists-p                 ; table      xx
+	 #:sequence-next                     ; table      xx
+	 #:sequence-last                     ; table      xx
+	 #:set-sequence-position             ; table      xx
+	 ;;OODDL
+	 #:view-table                        ; metaclass  x
+	 #:universal-time    		   ; objects    xx 
+	 #:bigint
+	 ;;OODML
+	 #:*db-auto-sync*                    ; objects    xx              
+	 #:add-to-relation                   ; objects    x
+	 #:remove-from-relation              ; objects    x
+	 #:read-sql-value                    ; objects    x
+	 #:database-output-sql-as-type       ; objects    x
+	 #:database-get-type-specifier       ; objects    x
+	 #:database-output-sql               ; sql/class  xx
+	 
+	 ;; conditions
+	 #:clsql-condition
+	 #:clsql-error
+	 #:clsql-simple-error
+	 #:clsql-simple-warning
+	 
+	 ;;-----------------------------------------------
+	 ;; Symbolic Sql Syntax 
+	 ;;-----------------------------------------------
+	 #:sql-and-qualifier
+	 #:sql-escape
+	 #:sql-query
+	 #:sql-object-query
+	 #:sql-any
+	 #:sql-all
+	 #:sql-not
+	 #:sql-union
+	 #:sql-intersection
+	 #:sql-minus
+	 #:sql-group-by
+	 #:sql-having
+	 #:sql-null
+	 #:sql-not-null
+	 #:sql-exists
+	 #:sql-*
+	 #:sql-+
+	 #:sql-/
+	 #:sql-like
+	 #:sql-uplike
+	 #:sql-and
+	 #:sql-or
+	 #:sql-in
+	 #:sql-||
+	 #:sql-is
+	 #:sql-=
+	 #:sql-==
+	 #:sql-<
        #:sql->
        #:sql->=
        #:sql-<=
@@ -464,11 +448,11 @@
      #:*initialized-database-types*
      #:initialize-database-type
      #:connect			          ; database   xx
+     #:disconnect		          ; database   xx
      #:*connect-if-exists*	          ; database   xx
      #:connected-databases	          ; database   xx
      #:database		          ; database   xx
      #:database-name                     ; database   xx
-     #:disconnect		          ; database   xx
      #:reconnect                         ; database
      #:find-database                     ; database   xx
      #:status                            ; database   xx

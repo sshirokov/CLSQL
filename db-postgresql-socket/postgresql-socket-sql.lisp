@@ -106,10 +106,10 @@ doesn't depend on UFFI."
 (defun convert-to-clsql-warning (database condition)
   (ecase *backend-warning-behavior*
     (:warn
-     (warn 'clsql-database-warning :database database
+     (warn 'sql-database-warning :database database
 	   :message (postgresql-condition-message condition)))
     (:error
-     (error 'clsql-sql-error :database database
+     (error 'sql-database-error :database database
 	    :message (format nil "Warning upgraded to error: ~A" 
 			     (postgresql-condition-message condition))))
     ((:ignore nil)
@@ -117,10 +117,11 @@ doesn't depend on UFFI."
      )))
 
 (defun convert-to-clsql-error (database expression condition)
-  (error 'clsql-sql-error :database database
+  (error 'sql-database-data-error
+	 :database database
 	 :expression expression
-	 :errno (type-of condition)
-	 :error (postgresql-condition-message condition)))
+	 :error-id (type-of condition)
+	 :message (postgresql-condition-message condition)))
 
 (defmacro with-postgresql-handlers
     ((database &optional expression)
@@ -191,11 +192,11 @@ doesn't depend on UFFI."
 				      :password password))
       (postgresql-error (c)
 	;; Connect failed
-	(error 'clsql-connect-error
+	(error 'sql-connection-error
 	       :database-type database-type
 	       :connection-spec connection-spec
-	       :errno (type-of c)
-	       :error (postgresql-condition-message c)))
+	       :error-id (type-of c)
+	       :message (postgresql-condition-message c)))
       (:no-error (connection)
 		 ;; Success, make instance
 		 (make-instance 'postgresql-socket-database
@@ -217,11 +218,11 @@ doesn't depend on UFFI."
 	  (wait-for-query-results connection)
 	(unless (eq status :cursor)
 	  (close-postgresql-connection connection)
-	  (error 'clsql-sql-error
+	  (error 'sql-database-data-error
 		 :database database
 		 :expression expression
-		 :errno 'missing-result
-		 :error "Didn't receive result cursor for query."))
+		 :error-id "missing-result"
+		 :message "Didn't receive result cursor for query."))
 	(setq result-types (canonicalize-types result-types cursor))
         (values
          (loop for row = (read-cursor-row cursor result-types)
@@ -230,11 +231,11 @@ doesn't depend on UFFI."
                finally
                (unless (null (wait-for-query-results connection))
                  (close-postgresql-connection connection)
-                 (error 'clsql-sql-error
+                 (error 'sql-database-data-error
                         :database database
                         :expression expression
-                        :errno 'multiple-results
-                        :error "Received multiple results for query.")))
+                        :error-id "multiple-results"
+                        :message "Received multiple results for query.")))
          (when field-names
 	   (mapcar #'car (postgresql-cursor-fields cursor))))))))
 
@@ -258,19 +259,19 @@ doesn't depend on UFFI."
 	 ((eq status :completed)
 	  (unless (null (wait-for-query-results connection))
 	     (close-postgresql-connection connection)
-	     (error 'clsql-sql-error
+	     (error 'sql-database-data-error
 		    :database database
 		    :expression expression
-		    :errno 'multiple-results
-		    :error "Received multiple results for command."))
+		    :error-id "multiple-results"
+		    :message "Received multiple results for command."))
 	  result)
 	  (t
 	   (close-postgresql-connection connection)
-	   (error 'clsql-sql-error
+	   (error 'sql-database-data-error
 		  :database database
 		  :expression expression
-		  :errno 'missing-result
-		  :error "Didn't receive completion for command.")))))))
+		  :errno "missing-result"
+		  :message "Didn't receive completion for command.")))))))
 
 (defstruct postgresql-socket-result-set
   (done nil)
@@ -288,11 +289,11 @@ doesn't depend on UFFI."
 	  (wait-for-query-results connection)
 	(unless (eq status :cursor)
 	  (close-postgresql-connection connection)
-	  (error 'clsql-sql-error
+	  (error 'sql-database-data-error
 		 :database database
 		 :expression expression
-		 :errno 'missing-result
-		 :error "Didn't receive result cursor for query."))
+		 :error-id "missing-result"
+		 :message "Didn't receive result cursor for query."))
 	(values (make-postgresql-socket-result-set
 		 :done nil 
 		 :cursor cursor

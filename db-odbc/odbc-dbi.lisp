@@ -176,7 +176,8 @@ the query against." ))
      ((zerop count)
       (close-query query)
       (when eof-errorp
-	(error 'clsql-odbc-error :odbc-message "Ran out of data in fetch-row"))
+	(error 'sql-database-data-error
+	       :message "ODBC: Ran out of data in fetch-row"))
       eof-value)
      (t
       (car row)))))

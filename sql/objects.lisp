@@ -317,10 +317,10 @@ superclass of the newly-defined View Class."
          (basetype (if (listp slot-type) (car slot-type) slot-type)))
     (when (and slot-type val)
       (unless (typep val basetype)
-        (error 'clsql-type-error
-               :slotname (slot-definition-name slotdef)
-               :typespec slot-type
-               :value val)))))
+        (error 'sql-user-error
+	       :message
+	       (format nil "Invalid value ~A in slot ~A, not of type ~A."
+		       val (slot-definition-name slotdef) slot-type))))))
 
 ;;
 ;; Called by find-all
@@ -423,7 +423,7 @@ superclass of the newly-defined View Class."
 	(let ((qualifier (key-qualifier-for-instance instance :database vd)))
 	  (delete-records :from vt :where qualifier :database vd)
 	  (setf (slot-value instance 'view-database) nil))
-	(error 'clsql-no-database-error :database nil))))
+	(signal-no-database-error vd))))
 
 (defmethod update-instance-from-records ((instance standard-db-object)
                                          &key (database *default-database*))

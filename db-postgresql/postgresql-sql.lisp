@@ -127,12 +127,12 @@
 	(declare (type pgsql-conn-def connection))
 	(when (not (eq (PQstatus connection) 
 		       pgsql-conn-status-type#connection-ok))
-	  (error 'clsql-connect-error
+	  (error 'sql-connection-error
 		 :database-type database-type
 		 :connection-spec connection-spec
-		 :errno (PQstatus connection)
-		 :error (tidy-error-message 
-			 (PQerrorMessage connection))))
+		 :error-id (PQstatus connection)
+		 :message (tidy-error-message 
+			   (PQerrorMessage connection))))
 	(make-instance 'postgresql-database
 		       :name (database-name-from-spec connection-spec
 						      database-type)
@@ -152,11 +152,10 @@
     (uffi:with-cstring (query-native query-expression)
       (let ((result (PQexec conn-ptr query-native)))
         (when (uffi:null-pointer-p result)
-          (error 'clsql-sql-error
+          (error 'sql-database-data-error
                  :database database
                  :expression query-expression
-                 :errno nil
-                 :error (tidy-error-message (PQerrorMessage conn-ptr))))
+                 :message (tidy-error-message (PQerrorMessage conn-ptr))))
         (unwind-protect
             (case (PQresultStatus result)
               (#.pgsql-exec-status-type#empty-query
@@ -179,12 +178,12 @@
                   (when field-names
                     (result-field-names num-fields result)))))
               (t
-               (error 'clsql-sql-error
+               (error 'sql-database-data-error
                       :database database
                       :expression query-expression
-                      :errno (PQresultStatus result)
-                      :error (tidy-error-message
-                              (PQresultErrorMessage result)))))
+                      :error-id (PQresultStatus result)
+                      :message (tidy-error-message
+				(PQresultErrorMessage result)))))
           (PQclear result))))))
 
 (defun result-field-names (num-fields result)
@@ -201,11 +200,10 @@
     (uffi:with-cstring (sql-native sql-expression)
       (let ((result (PQexec conn-ptr sql-native)))
         (when (uffi:null-pointer-p result)
-          (error 'clsql-sql-error
+          (error 'sql-database-data-error
                  :database database
                  :expression sql-expression
-                 :errno nil
-                 :error (tidy-error-message (PQerrorMessage conn-ptr))))
+                 :message (tidy-error-message (PQerrorMessage conn-ptr))))
         (unwind-protect
             (case (PQresultStatus result)
               (#.pgsql-exec-status-type#command-ok
@@ -215,12 +213,12 @@
                (warn "Strange result...")
                t)
               (t
-               (error 'clsql-sql-error
+               (error 'sql-database-data-error
                       :database database
                       :expression sql-expression
-                      :errno (PQresultStatus result)
-                      :error (tidy-error-message
-                              (PQresultErrorMessage result)))))
+                      :error-id (PQresultStatus result)
+                      :message (tidy-error-message
+				(PQresultErrorMessage result)))))
           (PQclear result))))))
 
 (defstruct postgresql-result-set
@@ -239,11 +237,10 @@
     (uffi:with-cstring (query-native query-expression)
       (let ((result (PQexec conn-ptr query-native)))
         (when (uffi:null-pointer-p result)
-          (error 'clsql-sql-error
+          (error 'sql-database-data-error
                  :database database
                  :expression query-expression
-                 :errno nil
-                 :error (tidy-error-message (PQerrorMessage conn-ptr))))
+                 :message (tidy-error-message (PQerrorMessage conn-ptr))))
         (case (PQresultStatus result)
           ((#.pgsql-exec-status-type#empty-query
             #.pgsql-exec-status-type#tuples-ok)
@@ -263,12 +260,12 @@
 			 (PQnfields result)))))
 	  (t
 	   (unwind-protect
-               (error 'clsql-sql-error
+               (error 'sql-database-data-error
                       :database database
                       :expression query-expression
-                      :errno (PQresultStatus result)
-                      :error (tidy-error-message
-                              (PQresultErrorMessage result)))
+                      :error-id (PQresultStatus result)
+                      :message (tidy-error-message
+				(PQresultErrorMessage result)))
              (PQclear result))))))))
   
 (defmethod database-dump-result-set (result-set (database postgresql-database))
@@ -524,12 +521,10 @@
 				       name)
       (if (or (not (zerop status))
 	      (search "database creation failed: ERROR:" output))
-	  (error 'clsql-access-error
-		 :connection-spec connection-spec
-		 :database-type type
-		 :error 
-		 (format nil "database-create failed: ~A" 
-			 output))
+	  (error 'sql-database-error
+		 :message
+		 (format nil "createdb failed for postgresql backend with connection spec ~A."
+			 connection-spec))
 	t))))
 
 (defmethod database-destroy (connection-spec (type (eql :postgresql)))
@@ -541,12 +536,10 @@
 				       name)
       (if (or (not (zerop status))
 	      (search "database removal failed: ERROR:" output))
-	  (error 'clsql-access-error
-		 :connection-spec connection-spec
-		 :database-type type
-		 :error 
-		 (format nil "database-destory failed: ~A" 
-			 output))
+	  (error 'sql-database-error
+		 :message
+		 (format nil "dropdb failed for postgresql backend with connection spec ~A."
+			 connection-spec))
 	t))))
 
 
@@ -594,11 +587,11 @@
         (declare (type postgresql::pgsql-conn-ptr connection))
         (unless (eq (PQstatus connection) :connection-ok)
           ;; Connect failed
-          (error 'clsql-connect-error
+          (error 'sql-connection-error
                  :database-type :postgresql
                  :connection-spec connection-spec
-                 :errno (PQstatus connection)
-                 :error (PQerrorMessage connection)))
+                 :error-id (PQstatus connection)
+                 :message (PQerrorMessage connection)))
         connection))))
 
 (defmethod database-reconnect ((database postgresql-database))

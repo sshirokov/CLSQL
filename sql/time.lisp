@@ -1013,20 +1013,22 @@ rules"
 ;; ------------------------------------------------------------
 ;; Parsing iso-8601 timestrings 
 
-(define-condition iso-8601-syntax-error (error)
+(define-condition iso-8601-syntax-error (sql-user-error)
   ((bad-component;; year, month whatever
     :initarg :bad-component
-    :reader bad-component)))
+    :reader bad-component))
+  (:report (lambda (c stream)
+	     (format stream "Bad component: ~A " (bad-component c)))))
 
 (defun parse-timestring (timestring &key (start 0) end junk-allowed)
   "parse a timestring and return the corresponding wall-time.  If the
 timestring starts with P, read a duration; otherwise read an ISO 8601
 formatted date string."
-  (declare (ignore junk-allowed))  ;; FIXME
+  (declare (ignore junk-allowed))  
   (let ((string (subseq timestring start end)))
     (if (char= (aref string 0) #\P)
-        (parse-iso-8601-duration string)
-        (parse-iso-8601-time string))))
+	(parse-iso-8601-duration string)
+      (parse-iso-8601-time string))))
 
 (defvar *iso-8601-duration-delimiters*
   '((#\D . :days)

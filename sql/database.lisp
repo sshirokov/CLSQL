@@ -86,7 +86,7 @@ pool is t the connection will be taken from the general pool, if pool
 is a conn-pool object the connection will be taken from this pool."
 
   (unless database-type
-    (error "Must specify a database-type."))
+    (error 'sql-database-error :message "Must specify a database-type."))
   
   (when (stringp connection-spec)
     (setq connection-spec (string-to-list-connection-spec connection-spec)))
@@ -109,10 +109,18 @@ is a conn-pool object the connection will be taken from this pool."
               (:warn-new
                (setq result
                      (database-connect connection-spec database-type))
-               (warn 'clsql-exists-warning :old-db old-db :new-db result))
-              (:error
+               (warn 'sql-warning
+		     :message
+		     (format nil
+			     "Created new connection ~A to database ~A~%, although there is an existing connection (~A)."
+			     result (database-name result) old-db)))
+	      (:error
                (restart-case
-                   (error 'clsql-exists-error :old-db old-db)
+		   (error 'sql-connection-error
+			  :message
+			  "There is an existing connection ~A to database ~A."
+			  old-db
+			  (database-name old-db))
                  (create-new ()
                    :report "Create a new connection."
                    (setq result
@@ -122,7 +130,12 @@ is a conn-pool object the connection will be taken from this pool."
                    (setq result old-db))))
               (:warn-old
                (setq result old-db)
-               (warn 'clsql-exists-warning :old-db old-db :new-db old-db))
+               (warn 'sql-warning
+		     :message
+		     (format nil
+			     "Using existing connection ~A to database ~A."
+			     old-db
+			     (database-name old-db))))
               (:old
                (setq result old-db)))
             (setq result
@@ -163,8 +176,22 @@ this pool."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-
-
+(defmacro check-connection-spec (connection-spec database-type template)
+  "Check the connection specification against the provided template,
+and signal an sql-user-error if they don't match. This function
+is called by database backends."
+  `(handler-case
+    (destructuring-bind ,template ,connection-spec 
+      (declare (ignore ,@(remove '&optional template)))
+      t)
+    (error () 
+     (error 'sql-user-error
+      :message
+      (format nil 
+	      "The connection specification ~A~%is invalid for database type ~A.~%The connection specification must conform to ~A"
+	      ,connection-spec
+	      ,database-type
+	      (quote ,template))))))
 
 (defun reconnect (&key (database *default-database*) (error nil) (force t))
   "Reconnects DATABASE to its underlying RDBMS. If successful, returns

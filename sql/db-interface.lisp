@@ -85,7 +85,7 @@ implications, since many databases will require the query to be
 executed in full to answer this question.  If the query produced no
 results then nil is returned for all values that would have been
 returned otherwise.  If an error occurs during query execution, the
-function should signal a clsql-sql-error."))
+function should signal a sql-database-data-error."))
 
 (defgeneric database-dump-result-set (result-set database)
   (:method (result-set (database t))
@@ -158,13 +158,19 @@ if unable to destory."))
   (:documentation "Select the last value in sequence NAME in DATABASE."))
 
 (defgeneric database-start-transaction (database)
-  (:documentation "Start a transaction in DATABASE."))
+  (:documentation "Start a transaction in DATABASE.")
+  (:method ((database t))
+	   (signal-no-database-error database)))
 
 (defgeneric database-commit-transaction (database)
-  (:documentation "Commit current transaction in DATABASE."))
+  (:documentation "Commit current transaction in DATABASE.")
+  (:method ((database t))
+	   (signal-no-database-error database)))
 
 (defgeneric database-abort-transaction (database)
-  (:documentation "Abort current transaction in DATABASE."))
+  (:documentation "Abort current transaction in DATABASE.")
+  (:method ((database t))
+	   (signal-no-database-error database)))
 
 (defgeneric database-get-type-specifier (type args database)
   (:documentation "Return the type SQL type specifier as a string, for

@@ -133,7 +133,7 @@ reader syntax is disabled."
 			     :params sqlparam
 			     :type sqltype)))))
 	(t
-	 (error 'clsql-sql-syntax-error :reason "bad expression syntax"))))
+	 (error 'sql-user-error :message "bad expression syntax"))))
 
 
 ;; Exported functions for dealing with SQL syntax 

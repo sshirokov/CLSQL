@@ -147,7 +147,7 @@
   (if (= (length rest) 3)
       (make-instance 'sql-function-exp 
 		     :name 'substring :args rest)
-      (error 'clsql-sql-syntax-error "SUBSTR must have 3 arguments.")))
+      (error 'sql-user-error :message "SUBSTR must have 3 arguments.")))
 
 (defsql sql-is (:symbol "is") (&rest rest)
   (make-instance 'sql-relational-exp
@@ -213,7 +213,7 @@
 (defsql sql-between (:symbol "between") (&rest rest)
   (if (= (length rest) 3)
       (make-instance 'sql-between-exp :name 'between :args rest)
-      (error 'clsql-sql-syntax-error "BETWEEN must have 3 arguments.")))
+      (error 'sql-user-error :message "BETWEEN must have 3 arguments.")))
 
 (defsql sql-distinct (:symbol "distinct") (&rest rest)
   (make-instance 'sql-query-modifier-exp :modifier 'distinct 

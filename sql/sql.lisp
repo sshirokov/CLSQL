@@ -120,7 +120,7 @@ table INTO. The default value of DATABASE is *DEFAULT-DATABASE*."
 			    (av-pairs nil)
 			    (subquery nil))
   (unless into
-      (error 'clsql-sql-syntax-error :reason ":into keyword not supplied"))
+      (error 'sql-user-error :message ":into keyword not supplied"))
   (let ((insert (make-instance 'sql-insert :into into)))
     (with-slots (attributes values query)
       insert
@@ -138,8 +138,8 @@ table INTO. The default value of DATABASE is *DEFAULT-DATABASE*."
 	     (setf attributes attrs)
 	     (setf query subquery))
 	    (t
-	     (error 'clsql-sql-syntax-error
-                    :reason "bad or ambiguous keyword combination.")))
+	     (error 'sql-user-error
+                    :message "bad or ambiguous keyword combination.")))
       insert)))
     
 (defun delete-records (&key (from nil)

@@ -45,11 +45,11 @@
 		     :connection-spec connection-spec
 		     :sqlite-db (sqlite:sqlite-open (first connection-spec)))
     (sqlite:sqlite-error (err)
-      (error 'clsql-connect-error
+      (error 'sql-connection-error
 	     :database-type database-type
 	     :connection-spec connection-spec
-	     :errno (sqlite:sqlite-error-code err)
-	     :error (sqlite:sqlite-error-message err)))))
+	     :error-id (sqlite:sqlite-error-code err)
+	     :message (sqlite:sqlite-error-message err)))))
 
 (defmethod database-disconnect ((database sqlite-database))
   (sqlite:sqlite-close (sqlite-db database))
@@ -67,11 +67,11 @@
 		 "Result set not empty: ~@(~A~) row~:P, ~@(~A~) column~:P "
 		 :format-arguments (list row-n col-n))))
     (sqlite:sqlite-error (err)
-      (error 'clsql-sql-error
+      (error 'sql-database-data-error
 	     :database database
 	     :expression sql-expression
-	     :errno (sqlite:sqlite-error-code err)
-	     :error (sqlite:sqlite-error-message err))))
+	     :error-id (sqlite:sqlite-error-code err)
+	     :message (sqlite:sqlite-error-message err))))
   t)
 
 (defstruct sqlite-result-set
@@ -105,11 +105,11 @@
 	      (values (nreverse rows) col-names))
 	  (push new-row rows)))
     (sqlite:sqlite-error (err)
-      (error 'clsql-sql-error
+      (error 'sql-database-data-error
 	     :database database
 	     :expression query-expression
-	     :errno (sqlite:sqlite-error-code err)
-	     :error (sqlite:sqlite-error-message err)))))
+	     :error-id (sqlite:sqlite-error-code err)
+	     :message (sqlite:sqlite-error-message err)))))
 
 (defmethod database-query-result-set ((query-expression string)
 				      (database sqlite-database)
@@ -134,11 +134,11 @@
 		(values result-set n-col nil)
 		(values result-set n-col)))))
     (sqlite:sqlite-error (err)
-      (error 'clsql-sql-error
+      (error 'sql-database-error
 	     :database database
 	     :expression query-expression
-	     :errno (sqlite:sqlite-error-code err)
-	     :error (sqlite:sqlite-error-message err)))))
+	     :error-id (sqlite:sqlite-error-code err)
+	     :message (sqlite:sqlite-error-message err)))))
 
 (defun canonicalize-result-types (result-types n-col col-names)
   (when result-types

@@ -59,11 +59,10 @@
       (clsql-error (e)
 	(error e))
       (error () 	;; Init or Connect failed
-	(error 'clsql-connect-error
+	(error 'sql-connection-error
 	       :database-type database-type
 	       :connection-spec connection-spec
-	       :errno nil
-	       :error "Connection failed")))))
+	       :message "Connection failed")))))
 
 (defmethod database-disconnect ((database aodbc-database))
   #+aodbc-v2
@@ -80,11 +79,10 @@
       (clsql-error (e)
 	(error e))
     (error ()
-      (error 'clsql-sql-error
+      (error 'sql-database-data-error
 	     :database database
 	     :expression query-expression
-	     :errno nil
-	     :error "Query failed"))))
+	     :message "Query failed."))))
 
 (defmethod database-execute-command (sql-expression 
 				     (database aodbc-database))
@@ -94,11 +92,10 @@
       (clsql-error (e)
 	(error e))
     (error ()
-      (error 'clsql-sql-error
+      (error 'sql-database-data-error
 	     :database database
 	     :expression sql-expression
-	     :errno nil
-	     :error "Execute command failed"))))
+	     :error "Execute command failed."))))
 
 (defstruct aodbc-result-set
   (query nil)
@@ -127,11 +124,10 @@
       (clsql-error (e)
 	(error e))
     (error ()
-      (error 'clsql-sql-error
+      (error 'sql-database-data-error
 	     :database database
 	     :expression query-expression
-	     :errno nil
-	     :error "Query result set failed"))))
+	     :error "Query result set failed."))))
 
 (defmethod database-dump-result-set (result-set (database aodbc-database))
   #+aodbc-v2

@@ -16,7 +16,6 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defpackage #:ansi-loop 
     (:import-from #+sbcl #:sb-loop #+allegro #:excl
-		  #:loop-error
 		  #:*loop-epilogue*
 		  #:*loop-ansi-universe* 
 		  #:add-loop-path)))
@@ -34,19 +33,27 @@
 	  (case prep
 	    ((:in :of)
 	     (when in-phrase
-	       (ansi-loop::loop-error
-		"Duplicate OF or IN iteration path: ~S." (cons prep rest)))
+	       (error 'clsql:sql-user-error
+		      :message
+		      (format nil
+			      "Duplicate OF or IN iteration path: ~S."
+			      (cons prep rest))))
 	     (setq in-phrase rest))
 	    ((:from)
 	     (when from-phrase
-	       (ansi-loop::loop-error
-		"Duplicate FROM iteration path: ~S." (cons prep rest)))
+	       (error 'clsql:sql-user-error
+		      :message
+		      (format nil
+			      "Duplicate FROM iteration path: ~S."
+			      (cons prep rest))))
 	     (setq from-phrase rest))
 	    (t
-	     (ansi-loop::loop-error
-	      "Unknown preposition: ~S." prep))))
+	     (error 'clsql:sql-user-error
+		    :message
+		    (format nil"Unknown preposition: ~S." prep)))))
     (unless in-phrase
-      (ansi-loop::loop-error "Missing OF or IN iteration path."))
+      (error 'clsql:sql-user-error 
+	     :message "Missing OF or IN iteration path."))
     (unless from-phrase
       (setq from-phrase '(clsql-sys:*default-database*)))
 
@@ -140,19 +147,24 @@
 	  (cond
 	    ((or (eq prep 'in) (eq prep 'of))
 	     (when in-phrase
-	       (error
-		"Duplicate OF or IN iteration path: ~S." (cons prep rest)))
+	       (error 'clsql:sql-user-error
+		      :message
+		      (format nil "Duplicate OF or IN iteration path: ~S."
+			      (cons prep rest))))
 	     (setq in-phrase rest))
 	    ((eq prep 'from)
 	     (when from-phrase
-	       (error
-		"Duplicate FROM iteration path: ~S." (cons prep rest)))
+	       (error 'clsql:sql-user-error
+		      :message
+		      (format nil "Duplicate FROM iteration path: ~S."
+			      (cons prep rest))))
 	     (setq from-phrase rest))
 	    (t
-	     (error
-	      "Unknown preposition: ~S." prep))))
+	     (error 'clsql:sql-user-error
+		    :message (format nil "Unknown preposition: ~S." prep)))))
     (unless in-phrase
-      (error "Missing OF or IN iteration path."))
+      (error 'clsql:sql-user-error 
+	     :message "Missing OF or IN iteration path."))
     (unless from-phrase
       (setq from-phrase '(clsql:*default-database*)))
 

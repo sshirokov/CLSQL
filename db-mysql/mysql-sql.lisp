@@ -99,11 +99,11 @@
     (let ((mysql-ptr (mysql-init (uffi:make-null-pointer 'mysql-mysql)))
 	  (socket nil))
       (if (uffi:null-pointer-p mysql-ptr)
-	  (error 'clsql-connect-error
+	  (error 'sql-connection-error
 		 :database-type database-type
 		 :connection-spec connection-spec
-		 :errno (mysql-errno mysql-ptr)
-		 :error (mysql-error-string mysql-ptr))
+		 :error-id (mysql-errno mysql-ptr)
+		 :message (mysql-error-string mysql-ptr))
 	(uffi:with-cstrings ((host-native host)
 			    (user-native user)
 			    (password-native password)
@@ -117,11 +117,11 @@
 		      db-native 0 socket-native 0))
 		    (progn
 		      (setq error-occurred t)
-		      (error 'clsql-connect-error
+		      (error 'sql-connect-error
 			     :database-type database-type
 			     :connection-spec connection-spec
-			     :errno (mysql-errno mysql-ptr)
-			     :error (mysql-error-string mysql-ptr)))
+			     :error-id (mysql-errno mysql-ptr)
+			     :message (mysql-error-string mysql-ptr)))
 		  (make-instance 'mysql-database
 		    :name (database-name-from-spec connection-spec
 						   database-type)
@@ -173,16 +173,16 @@
                         (when field-names
                           (result-field-names num-fields res-ptr))))
 		  (mysql-free-result res-ptr))
-		(error 'clsql-sql-error
+		(error 'sql-database-data-error
 		       :database database
 		       :expression query-expression
-		       :errno (mysql-errno mysql-ptr)
-		       :error (mysql-error-string mysql-ptr))))
-	  (error 'clsql-sql-error
+		       :error-id (mysql-errno mysql-ptr)
+		       :message (mysql-error-string mysql-ptr))))
+	  (error 'sql-database-data-error
 		 :database database
 		 :expression query-expression
-		 :errno (mysql-errno mysql-ptr)
-		 :error (mysql-error-string mysql-ptr))))))
+		 :error-id (mysql-errno mysql-ptr)
+		 :message (mysql-error-string mysql-ptr))))))
 
 (defmethod database-execute-command (sql-expression (database mysql-database))
   (uffi:with-cstring (sql-native sql-expression)
@@ -191,11 +191,11 @@
       (if (zerop (mysql-real-query mysql-ptr sql-native 
                                    (length sql-expression)))
 	  t
-	(error 'clsql-sql-error
+	(error 'sql-database-data-error
 	       :database database
 	       :expression sql-expression
-	       :errno (mysql-errno mysql-ptr)
-	       :error (mysql-error-string mysql-ptr))))))
+	       :error-id (mysql-errno mysql-ptr)
+	       :message (mysql-error-string mysql-ptr))))))
 
 
 (defstruct mysql-result-set 
@@ -233,16 +233,16 @@
 			      (mysql-num-rows res-ptr))
 		      (values result-set
 			      num-fields)))
-		(error 'clsql-sql-error
+		(error 'sql-database-data-error
 		     :database database
 		     :expression query-expression
-		     :errno (mysql-errno mysql-ptr)
-		     :error (mysql-error-string mysql-ptr))))
-	(error 'clsql-sql-error
+		     :error-id (mysql-errno mysql-ptr)
+		     :message (mysql-error-string mysql-ptr))))
+	(error 'sql-database-data-error
 	       :database database
 	       :expression query-expression
-	       :errno (mysql-errno mysql-ptr)
-	       :error (mysql-error-string mysql-ptr))))))
+	       :error-id (mysql-errno mysql-ptr)
+	       :message (mysql-error-string mysql-ptr))))))
 
 (defmethod database-dump-result-set (result-set (database mysql-database))
   (mysql-free-result (mysql-result-set-res-ptr result-set))
@@ -398,12 +398,11 @@
 				       name)
       (if (or (not (eql 0 status))
 	      (and (search "failed" output) (search "error" output)))
-	  (error 'clsql-access-error
-		 :connection-spec connection-spec
-		 :database-type type
-		 :error 
-		 (format nil "database-create failed: ~A" output))
-	  t))))
+	  (error 'sql-database-error
+		 :message 
+		 (format nil "mysql database creation failed with connection-spec ~A."
+			 connection-spec))
+	t))))
 
 (defmethod database-destroy (connection-spec (type (eql :mysql)))
   (destructuring-bind (host name user password) connection-spec
@@ -414,11 +413,10 @@
 				       name)
       (if (or (not (eql 0 status))
 	      (and (search "failed" output) (search "error" output)))
-	  (error 'clsql-access-error
-		 :connection-spec connection-spec
-		 :database-type type
-		 :error 
-		 (format nil "database-destroy failed: ~A" output))
+	  (error 'sql-database-error
+		 :message 
+		 (format nil "mysql database deletion failed with connection-spec ~A."
+			 connection-spec))
 	t))))
 
 (defmethod database-probe (connection-spec (type (eql :mysql)))
