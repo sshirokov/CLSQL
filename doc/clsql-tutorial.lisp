@@ -1,5 +1,6 @@
+(asdf:operate 'asdf:load-op 'clsql)
 
-(in-package :cl-user)
+(in-package #:clsql-user)
 
 ;; You must set these variables to appropriate values. 
 (defvar *tutorial-database-type* nil 
@@ -13,7 +14,7 @@
 (defvar *tutorial-database-password* "" 
   "The password if required")
 
-(sql:def-view-class employee ()
+(clsql:def-view-class employee ()
   ((emplid
     :db-kind :key
     :db-constraints :not-null
@@ -54,7 +55,7 @@
 			  :set nil)))
   (:base-table employee))
 
-(sql:def-view-class company ()
+(clsql:def-view-class company ()
   ((companyid
     :db-type :key
     :db-constraints :not-null
@@ -83,7 +84,7 @@
 
 ;; Connect to the database (see the CLSQL documentation for vendor
 ;; specific connection specs).
-(sql:connect `(,*tutorial-database-server* 
+(clsql:connect `(,*tutorial-database-server* 
 	       ,*tutorial-database-name*
 	       ,*tutorial-database-user* 
 	       ,*tutorial-database-password*)
@@ -91,16 +92,16 @@
 
 ;; Record the sql going out, helps us learn what is going
 ;; on behind the scenes
-(sql:start-sql-recording)
+(clsql:start-sql-recording)
 
 ;; Create the tables for our view classes
 ;; First we drop them, ignoring any errors
 (ignore-errors
- (sql:drop-view-from-class 'employee)
- (sql:drop-view-from-class 'company))
+ (clsql:drop-view-from-class 'employee)
+ (clsql:drop-view-from-class 'company))
 
-(sql:create-view-from-class 'employee)
-(sql:create-view-from-class 'company)
+(clsql:create-view-from-class 'employee)
+(clsql:create-view-from-class 'company)
 
 
 ;; Create some instances of our view classes
@@ -122,22 +123,22 @@
 			       :email "stalin@soviet.org"))
 
 ;; Lenin manages Stalin (for now)
-(sql:add-to-relation employee2 'manager employee1)
+(clsql:add-to-relation employee2 'manager employee1)
 
 ;; Lenin and Stalin both work for Widgets Inc.
-(sql:add-to-relation company1 'employees employee1)
-(sql:add-to-relation company1 'employees employee2)
+(clsql:add-to-relation company1 'employees employee1)
+(clsql:add-to-relation company1 'employees employee2)
 
 ;; Lenin is president of Widgets Inc.
-(sql:add-to-relation company1 'president employee1)
+(clsql:add-to-relation company1 'president employee1)
 
-(sql:update-records-from-instance employee1)
-(sql:update-records-from-instance employee2)
-(sql:update-records-from-instance company1)
+(clsql:update-records-from-instance employee1)
+(clsql:update-records-from-instance employee2)
+(clsql:update-records-from-instance company1)
 
 ;; lets us use the functional
 ;; sql interface 
-(sql:locally-enable-sql-reader-syntax)
+(clsql:locally-enable-sql-reader-syntax)
 
 
 (format t "The email address of ~A ~A is ~A"
@@ -148,10 +149,10 @@
 (setf (employee-email employee1) "lenin-nospam@soviets.org")
 
 ;; Update the database
-(sql:update-records-from-instance employee1)
+(clsql:update-records-from-instance employee1)
 
 (let ((new-lenin (car
-		  (sql:select 'employee
+		  (clsql:select 'employee
 			      :where [= [slot-value 'employee 'emplid] 1]))))
   (format t "His new email is ~A"
 	  (employee-email new-lenin)))
@@ -160,19 +161,19 @@
 ;; Some queries
 
 ;; all employees
-(sql:select 'employee)
+(clsql:select 'employee)
 ;; all companies
-(sql:select 'company)
+(clsql:select 'company)
 
 ;; employees named Lenin
-(sql:select 'employee :where [= [slot-value 'employee 'last-name]
+(clsql:select 'employee :where [= [slot-value 'employee 'last-name]
 				"Lenin"])
 
-(sql:select 'company :where [= [slot-value 'company 'name]
+(clsql:select 'company :where [= [slot-value 'company 'name]
 			       "Widgets Inc."])
 
 ;; Employees of Widget's Inc.
-(sql:select 'employee
+(clsql:select 'employee
 	    :where [and [= [slot-value 'employee 'companyid]
 			   [slot-value 'company 'companyid]]
 			[= [slot-value 'company 'name]
