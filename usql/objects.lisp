@@ -215,8 +215,10 @@ database view is queried, and the slots in the resulting View Class
 instances are filled with attribute values from the database. If
 SUPERS is nil then STANDARD-DB-OBJECT automatically becomes the
 superclass of the newly-defined View Class."
-  `(defclass ,class ,supers ,slots ,@options
-    (:metaclass standard-db-class)))
+  `(progn
+     (defclass ,class ,supers ,slots ,@options
+	       (:metaclass standard-db-class))
+     (finalize-inheritance (find-class ',class))))
 
 (defun keyslots-for-class (class)
   (slot-value class 'key-slots))

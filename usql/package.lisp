@@ -172,52 +172,63 @@
        ;; utils
        :sql-escape
 
-	 ;; database.lisp -- Connection
-	 #:*default-database-type*	          ; clsql-base xx
-	 #:*default-database*	          ; classes    xx
-	 #:connect			          ; database   xx
-	 #:*connect-if-exists*	          ; database   xx
-	 #:connected-databases	          ; database   xx
-	 #:database		          ; database   xx
-	 #:database-name                     ; database   xx
-	 #:disconnect		          ; database   xx
-	 #:reconnect                         ; database
-	 #:find-database                     ; database   xx
-	 #:status                            ; database   xx
-	 #:with-database
-	 #:with-default-database
-
-	 ;; basic-sql.lisp
-	 #:query
-	 #:execute-command
-	 #:write-large-object
-	 #:read-large-object
-	 #:delete-large-object
-
-	 ;; Transactions
-	 #:with-transaction
-	 #:commit-transaction
-	 #:rollback-transaction
-	 #:add-transaction-commit-hook
-	 #:add-transaction-rollback-hook
-	 #:commit                            ; transact   xx
-	 #:rollback			  ; transact   xx
-	 #:with-transaction		  ; transact   xx		.
-	 #:start-transaction                 ; transact   xx
-	 #:in-transaction-p                  ; transact   xx
-	 #:database-start-transaction
-	 #:database-abort-transaction
-	 #:database-commit-transaction
-	 #:transaction-level
-	 #:transaction
-	 ))
-  (:export
-   ;; "Private" exports for use by interface packages
-   :check-connection-spec
-   :database-initialize-database-type
-   :database-type-load-foreign
-   :database-name-from-spec
-   :database-connect
+       ;; database.lisp -- Connection
+       #:*default-database-type*	          ; clsql-base xx
+       #:*default-database*	          ; classes    xx
+       #:connect			          ; database   xx
+       #:*connect-if-exists*	          ; database   xx
+       #:connected-databases	          ; database   xx
+       #:database		          ; database   xx
+       #:database-name                     ; database   xx
+       #:disconnect		          ; database   xx
+       #:reconnect                         ; database
+       #:find-database                     ; database   xx
+       #:status                            ; database   xx
+       #:with-database
+       #:with-default-database
+       
+       ;; basic-sql.lisp
+       #:query
+       #:execute-command
+       #:write-large-object
+       #:read-large-object
+       #:delete-large-object
+       
+       ;; recording.lisp -- SQL I/O Recording 
+       #:record-sql-comand
+       #:record-sql-result
+       #:add-sql-stream                 ; recording  xx
+       #:delete-sql-stream	          ; recording  xx
+       #:list-sql-streams	          ; recording  xx
+       #:sql-recording-p	          ; recording  xx
+       #:sql-stream			  ; recording  xx
+       #:start-sql-recording		  ; recording  xx
+       #:stop-sql-recording		  ; recording  xx
+       
+       ;; Transactions
+       #:with-transaction
+       #:commit-transaction
+       #:rollback-transaction
+       #:add-transaction-commit-hook
+       #:add-transaction-rollback-hook
+       #:commit                            ; transact   xx
+       #:rollback			  ; transact   xx
+       #:with-transaction		  ; transact   xx		.
+       #:start-transaction                 ; transact   xx
+       #:in-transaction-p                  ; transact   xx
+       #:database-start-transaction
+       #:database-abort-transaction
+       #:database-commit-transaction
+       #:transaction-level
+       #:transaction
+       ))
+   (:export
+    ;; "Private" exports for use by interface packages
+    :check-connection-spec
+    :database-initialize-database-type
+    :database-type-load-foreign
+    :database-name-from-spec
+    :database-connect
    :database-query
    :database-execute-command
    :database-create-sequence
@@ -238,6 +249,7 @@
    :database-sequence-exists-p
    :database-list-attributes
    :database-attribute-type
+
    .
    ;; Shared exports for re-export by USQL. 
    ;; I = Implemented, D = Documented

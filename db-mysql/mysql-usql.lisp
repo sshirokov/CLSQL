@@ -31,7 +31,7 @@
 ;; MySQL 4.1 does not support views 
 (defmethod database-list-views ((database mysql-database)
                                 &key (owner nil))
-  (declare (ignore owner database))
+  (declare (ignore owner))
   nil)
 
 (defmethod database-list-indexes ((database mysql-database)
@@ -119,7 +119,7 @@
   (mysql:mysql-insert-id (clsql-mysql::database-mysql-ptr database)))
 
 (defmethod database-sequence-last (sequence-name (database mysql-database))
-  (declare (ignore sequence-name database)))
+  (declare (ignore sequence-name)))
 
 ;; Misc USQL functions
 
