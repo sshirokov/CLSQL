@@ -1,4 +1,7 @@
-03 Jun 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+04 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* tests/README: Fix filename [reported by Bill Clementson]
+	
+03 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.11.5 released
 	* examples/clsql-tutorial.lisp: Remove obsolete :nulls-ok attribute,
 	Select connection-spec based on connection type. Bugs reported by

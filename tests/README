@@ -15,7 +15,7 @@ and call:
 (asdf:oos 'asdf:test-op 'clsql)
 
 The test suite will then automatically run on all of the backends that
-you have defined in .clsql-tests.config
+you have defined in .clsql-test.config
 
 * REGRESSION TEST SUITE GOALS
 
