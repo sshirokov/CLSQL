@@ -446,17 +446,25 @@ doesn't depend on UFFI."
 	  (execute-command (format nil "drop database ~A" name))
 	(database-disconnect database)))))
 
+
 (defmethod database-probe (connection-spec (type (eql :postgresql-socket)))
+  (when (find (second connection-spec) (database-list connection-spec type)
+	      :key #'car :test #'string-equal)
+    t))
+
+(defmethod database-list (connection-spec (type (eql :postgresql-socket)))
   (destructuring-bind (host name user password) connection-spec
+    (declare (ignore name))
     (let ((database (database-connect (list host "template1" user password)
 				      type)))
       (unwind-protect
-	  (when
-	      (find name (database-query "select datname from pg_database" 
-					 database :auto)
-		    :key #'car :test #'string-equal)
-	    t)
-	(database-disconnect database)))))
+	   (progn
+	     (setf (slot-value database 'clsql-base-sys::state) :open)
+	     (mapcar #'car (database-query "select datname from pg_database" 
+					   database :auto)))
+	(progn
+	  (database-disconnect database)
+	  (setf (slot-value database 'clsql-base-sys::state) :closed))))))
 
 (defmethod database-describe-table ((database postgresql-socket-database) 
 				    table)

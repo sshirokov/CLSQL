@@ -1,7 +1,9 @@
 19 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
-	* Version 2.7.10
+	* Version 2.8.0: New API function: LIST-DATABASES
 	* base/utils.lisp: Fix command-output on CMUCL/SBCL
-
+	* db-*/*-sql.lisp: Add new database-list function
+	* base/database.lisp: Add new LIST-DATABASES command
+	
 18 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.7.9
 	* db-sqlite/sqlite-sql.lisp: Fix sequence functions.

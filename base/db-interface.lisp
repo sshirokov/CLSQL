@@ -113,9 +113,19 @@ returns nil when result-set is finished."))
    "Creates a database, returns T if successfull or signals an error."))
 
 (defgeneric database-probe (connection-spec type)
+  (:method (spec type)
+    (declare (ignore spec))
+    (warn "database-proe not support for database-type ~A." type))
   (:documentation
    "Probes for the existence of a database, returns T if database found or NIL 
 if not found. May signal an error if unable to communicate with database server."))
+
+(defgeneric database-list (connection-spec type)
+  (:method (spec type)
+    (declare (ignore spec))
+    (warn "database-list not support for database-type ~A." type))
+  (:documentation
+   "Lists all databases found for TYPE. May signal an error if unable to communicate with database server."))
 
 (defgeneric database-destroy (connection-spec database)
   (:documentation "Destroys (drops) a database."))

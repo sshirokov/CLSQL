@@ -246,6 +246,10 @@ of full is NIL."
     (setq connection-spec (string-to-list-connection-spec connection-spec)))
   (database-destroy connection-spec database-type))
 
+(defun list-databases (connection-spec &key database-type)
+  (when (stringp connection-spec)
+    (setq connection-spec (string-to-list-connection-spec connection-spec)))
+  (database-list connection-spec database-type))
 
 (defmacro with-database ((db-var connection-spec &rest connect-args) &body body)
   "Evaluate the body in an environment, where `db-var' is bound to the

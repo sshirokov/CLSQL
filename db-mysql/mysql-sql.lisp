@@ -391,15 +391,21 @@
 	t))))
 
 (defmethod database-probe (connection-spec (type (eql :mysql)))
+  (when (find (second connection-spec) (database-list connection-spec type)
+	      :key #'car :test #'string-equal)
+    t))
+
+(defmethod database-list (connection-spec (type (eql :mysql)))
   (destructuring-bind (host name user password) connection-spec
+    (declare (ignore name))
     (let ((database (database-connect (list host "mysql" user password) type)))
       (unwind-protect
-	  (when
-	      (find name (database-query "select db from db" 
-					 database :auto)
-		    :key #'car :test #'string-equal)
-	    t)
-	(database-disconnect database)))))
+	   (progn
+	     (setf (slot-value database 'clsql-base-sys::state) :open)
+	     (mapcar #'car (database-query "show databases" database :auto)))
+	(progn
+	  (database-disconnect database)
+	  (setf (slot-value database 'clsql-base-sys::state) :closed))))))
 
 
 (when (clsql-base-sys:database-type-library-loaded :mysql)

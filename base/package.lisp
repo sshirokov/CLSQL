@@ -43,6 +43,7 @@
      #:database-create
      #:database-destroy
      #:database-probe
+     #:database-list
      #:database-describe-table
      
      #:database-list-tables
@@ -254,6 +255,7 @@
 	 #:create-database
 	 #:destroy-database
 	 #:probe-database
+	 #:list-databases
 
 	 ;; basic-sql.lisp
 	 #:query
