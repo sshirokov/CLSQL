@@ -1,11 +1,17 @@
-The home site for CLSQL is http://clsql.med-info.com. The package
-may be downloaded from that site.
+Debian Copyright Section
+========================
 
-CLSQL has been packaged by Kevin M. Rosenberg who is also the
-upstream author.
+Upstream Source URL: ftp://clsql.med-info.com
+Upstream Author: Kevin M. Rosenberg <kevin@rosenberg.net>
+Debian Maintainer: (Same as upstream)
 
-Copyright:
+Since the upstream author is the same as the Debian maintainer,
+there should be no divergence between the upstream package and
+the Debian package.
 
+
+Upstream Copyright Statement
+============================
 CLSQL is written and Copyright (c) 2002 by Kevin M. Rosenberg.
 
 CLSQL is licensed under the terms of the Lisp Lesser GNU

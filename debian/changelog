@@ -1,3 +1,9 @@
+cl-sql (0.7.1-2) unstable; urgency=low
+
+  * Additions to the copyright file
+
+ -- Kevin M. Rosenberg <kevin@rosenberg.net>  Fri, 28 Jun 2002 11:17:36 -0600
+
 cl-sql (0.7.1-1) unstable; urgency=low
 
   * Initial Release (closes: 146792).
