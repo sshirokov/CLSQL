@@ -29,7 +29,7 @@ echo "Building Debian files"
 test -s CVS/Root && export CVSROOT=`cat CVS/Root`
 cd ${WORK_DIR}
 cvs com -m 'Autocommit for make-debian'
-cvs-buildpackage -rfakeroot -kkevin@rosenberg.net -F -d ${DEBPKG} -uc -us -sa -i -H${WORK_DIR}/debian/cvsbp-prepare.sh $* > ${BUILD_LOG}
+cvs-buildpackage -rfakeroot -kkevin@rosenberg.net -F -d ${DEBPKG} -uc -us -sa -i -H${WORK_DIR}/debian/cvsbp-prepare.sh $* > ${BUILD_LOG} 2>&1
 
 echo "Checking package"
 test -s ${PACKAGE_DIR}/${DEBPKG}_${DEBVERSION}_*.changes && \
