@@ -248,7 +248,7 @@
   ("lenin@soviet.org"))
 
 (deftest :fdml/select/6
-    (if (db-type-has-fancy-math? *test-database-underlying-type*)
+    (if (clsql-sys:db-type-has-fancy-math? *test-database-underlying-type*)
         (mapcar #'(lambda (s) (parse-integer s :junk-allowed t))
 		(clsql:select [function "trunc" [height]] :from [employee]
 			      :result-types nil 

@@ -164,7 +164,7 @@
   (:base-table "ea_join"))
 
 (defun test-connect-to-database (db-type spec)
-  (when (db-backend-has-create/destroy-db? db-type)
+  (when (clsql-sys:db-backend-has-create/destroy-db? db-type)
     (ignore-errors (destroy-database spec :database-type db-type))
     (ignore-errors (create-database spec :database-type db-type)))
   
@@ -182,7 +182,7 @@
   (truncate-database :database *default-database*)
   
   (setf *test-database-underlying-type*
-	(clsql:database-underlying-type *default-database*))
+	(clsql-sys:database-underlying-type *default-database*))
   
   *default-database*)
 
@@ -447,7 +447,7 @@
 (defun load-necessary-systems (specs)
   (dolist (db-type +all-db-types+)
     (when (db-type-spec db-type specs)
-      (clsql:initialize-database-type :database-type db-type))))
+      (clsql-sys:initialize-database-type :database-type db-type))))
 
 (defun write-report-banner (report-type db-type stream)
   (format stream
@@ -522,28 +522,28 @@
 			       *rt-ooddl* *rt-oodml* *rt-syntax*))
       (let ((test (second test-form)))
 	(cond
-	  ((and (null (db-type-has-views? db-underlying-type))
-		(clsql-base::in test :fddl/view/1 :fddl/view/2 :fddl/view/3 :fddl/view/4))
+	  ((and (null (clsql-sys:db-type-has-views? db-underlying-type))
+		(clsql-sys:in test :fddl/view/1 :fddl/view/2 :fddl/view/3 :fddl/view/4))
 	   (push (cons test "views not supported") skip-tests))
-	  ((and (null (db-type-has-boolean-where? db-underlying-type))
-		(clsql-base::in test :fdml/select/11 :oodml/select/5))
+	  ((and (null (clsql-sys:db-type-has-boolean-where? db-underlying-type))
+		(clsql-sys:in test :fdml/select/11 :oodml/select/5))
 	   (push (cons test "boolean where not supported") skip-tests))
-	  ((and (null (db-type-has-subqueries? db-underlying-type))
-		(clsql-base::in test :fdml/select/5 :fdml/select/10))
+	  ((and (null (clsql-sys:db-type-has-subqueries? db-underlying-type))
+		(clsql-sys:in test :fdml/select/5 :fdml/select/10))
 	   (push (cons test "subqueries not supported") skip-tests))
-	  ((and (null (db-type-transaction-capable? db-underlying-type
+	  ((and (null (clsql-sys:db-type-transaction-capable? db-underlying-type
 						    *default-database*))
-		(clsql-base::in test :fdml/transaction/1 :fdml/transaction/2 :fdml/transaction/3 :fdml/transaction/4))
+		(clsql-sys:in test :fdml/transaction/1 :fdml/transaction/2 :fdml/transaction/3 :fdml/transaction/4))
 	   (push (cons test "transactions not supported") skip-tests))
-	  ((and (null (db-type-has-fancy-math? db-underlying-type))
-		(clsql-base::in test :fdml/select/1))
+	  ((and (null (clsql-sys:db-type-has-fancy-math? db-underlying-type))
+		(clsql-sys:in test :fdml/select/1))
 	   (push (cons test "fancy math not supported") skip-tests))
 	  ((and (eql *test-database-type* :sqlite)
-		(clsql-base::in test :fddl/view/4 :fdml/select/10
+		(clsql-sys:in test :fddl/view/4 :fdml/select/10
 				:fdml/select/21))
 	   (push (cons test "not supported by sqlite") skip-tests))
 	  ((and (eql *test-database-underlying-type* :mysql)
-		(clsql-base::in test :fdml/select/22 :fdml/query/5 
+		(clsql-sys:in test :fdml/select/22 :fdml/query/5 
 				:fdml/query/7 :fdml/query/8))
 	   (push (cons test "not supported by mysql") skip-tests))
 	  (t

@@ -3,7 +3,7 @@
 ;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:    test-basic.lisp
-;;;; Purpose: Tests for clsql-base and result types
+;;;; Purpose: Tests for clsql string-based queries and result types
 ;;;; Author:  Kevin M. Rosenberg
 ;;;; Created: Mar 2002
 ;;;;
@@ -29,9 +29,9 @@
       (clsql:execute-command
        (format nil "INSERT INTO TYPE_TABLE VALUES (~a,~a,~a,'~a')"
 	       test-int
-	       (clsql-base:number-to-sql-string test-flt)
+	       (clsql-sys:number-to-sql-string test-flt)
 	       (transform-bigint-1 test-int)
-	       (clsql-base:number-to-sql-string test-flt)
+	       (clsql-sys:number-to-sql-string test-flt)
 	       )))))
 
 (defun test-basic-forms ()

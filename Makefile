@@ -15,7 +15,7 @@
 
 PKG	:= clsql
 DEBPKG	:= cl-sql
-SUBDIRS	:= sql tests uffi base classic db-mysql db-aodbc db-odbc \
+SUBDIRS	:= sql tests uffi db-mysql db-aodbc db-odbc \
 	   db-postgresql db-postgresql-socket db-sqlite
 DOCSUBDIRS:=doc
 

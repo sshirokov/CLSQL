@@ -15,7 +15,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql)
+(in-package #:clsql-sys)
 
 
 ;; Utilities

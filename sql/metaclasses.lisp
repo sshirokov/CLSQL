@@ -12,7 +12,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql)
+(in-package #:clsql-sys)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (when (>= (length (generic-function-lambda-list

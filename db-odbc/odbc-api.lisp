@@ -27,8 +27,8 @@ May be locally bound to something else if a certain type is necessary.")
 (defvar *time-conversion-function*
     (lambda (universal-time &optional fraction)
       (declare (ignore fraction))
-      (clsql-base:format-time 
-       nil (clsql-base:utime->time universal-time) 
+      (clsql-sys:format-time 
+       nil (clsql-sys:utime->time universal-time) 
        :format :iso)
       #+ignore
       universal-time)
@@ -113,11 +113,11 @@ as possible second argument) to the desired representation of date/time/timestam
           (progn ,result-code ,@body))
          (#.$SQL_INVALID_HANDLE
           (error
-	   'clsql-base:clsql-odbc-error
+	   'clsql-sys:clsql-odbc-error
 	   :odbc-message "Invalid handle"))
          (#.$SQL_STILL_EXECUTING
           (error
-	   'clsql-base:clsql-odbc-error
+	   'clsql-sys:clsql-odbc-error
 	   :odbc-message "Still executing"))
          (#.$SQL_ERROR
           (multiple-value-bind (error-message sql-state)
@@ -125,7 +125,7 @@ as possible second argument) to the desired representation of date/time/timestam
 			    (or ,hdbc +null-handle-ptr+)
 			    (or ,hstmt +null-handle-ptr+))
             (error
-	     'clsql-base:clsql-odbc-error
+	     'clsql-sys:clsql-odbc-error
 	     :odbc-message error-message
 	     :sql-state sql-state)))
 	 (#.$SQL_NO_DATA_FOUND
@@ -138,7 +138,7 @@ as possible second argument) to the desired representation of date/time/timestam
 			    (or ,hdbc +null-handle-ptr+)
 			    (or ,hstmt +null-handle-ptr+))
             (error
-	     'clsql-base:clsql-odbc-error
+	     'clsql-sys:clsql-odbc-error
 	     :odbc-message error-message
 	     :sql-state sql-state))
 	  #+ignore

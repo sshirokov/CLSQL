@@ -18,7 +18,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-base)
+(in-package #:clsql-sys)
 
 (defvar *backend-warning-behavior* :warn
   "Action to perform on warning messages from backend. Default is to :warn. May also be

@@ -3,9 +3,7 @@
 plain-pkg	:= clsql
 
 pkg		:= cl-sql
-pkg-base	:= cl-sql-base
 pkg-uffi	:= cl-sql-uffi
-pkg-classic	:= cl-sql-classic
 pkg-mysql	:= cl-sql-mysql
 pkg-pg		:= cl-sql-postgresql
 pkg-pg-socket	:= cl-sql-postgresql-socket
@@ -13,15 +11,13 @@ pkg-aodbc	:= cl-sql-aodbc
 pkg-odbc	:= cl-sql-odbc
 pkg-sqlite	:= cl-sql-sqlite
 pkg-tests	:= cl-sql-tests
-all-pkgs	:= $(pkg) $(pkg-base) $(pkg-uffi) $(pkg-mysql) $(pkg-pg) $(pkg-pg-socket) $(pkg-aodbc) $(pkg-odbc) $(pkg-sqlite) $(pkg-tests)
+all-pkgs	:= $(pkg) $(pkg-uffi) $(pkg-mysql) $(pkg-pg) $(pkg-pg-socket) $(pkg-aodbc) $(pkg-odbc) $(pkg-sqlite) $(pkg-tests)
 
 
 UPSTREAM_VER	:= $(shell sed -n -e "s/${pkg} (\(.*\)-[0-9A-Za-z\.]).*/\1/p" < debian/changelog |head -1)
 
 ## Lisp sources
 srcs		:= $(wildcard sql/*.lisp) clsql.asd
-srcs-base	:= $(wildcard base/*.lisp) 
-srcs-classic	:= $(wildcard classic/*.lisp) 
 srcs-uffi	:= $(wildcard uffi/*.lisp) $(wildcard uffi/*.c)
 srcs-uffi-so	:= $(wildcard uffi/*.so)
 srcs-mysql	:= $(wildcard db-mysql/*.lisp) $(wildcard db-mysql/*.c)
@@ -42,10 +38,6 @@ clc-clsql	:= $(clc-source)/$(plain-pkg)
 
 clc-sql		:= $(clc-source)/clsql
 lispdir-sql	:= $(clc-sql)/sql
-clc-base	:= $(clc-source)/clsql-base
-lispdir-base	:= $(clc-base)/base
-clc-classic	:= $(clc-source)/clsql-classic
-lispdir-classic := $(clc-classic)/classic
 clc-uffi	:= $(clc-source)/clsql-uffi
 lispdir-uffi 	:= $(clc-uffi)/uffi
 sodir-uffi 	:= usr/lib/clsql
@@ -109,7 +101,6 @@ install: build
 	# Add here commands to install the package into debian/uffi.
 	dh_installdirs --all  $(clc-systems) $(clc-source)
 	dh_installdirs -p $(pkg) $(lispdir-sql)
-	dh_installdirs -p $(pkg-base) $(lispdir-base)
 	dh_installdirs -p $(pkg-uffi) $(lispdir-uffi) $(sodir-uffi)
 	dh_installdirs -p $(pkg-pg) $(lispdir-pg)
 	dh_installdirs -p $(pkg-pg-socket) $(lispdir-pg-socket)
@@ -122,14 +113,6 @@ install: build
 	# Main package
 	dh_install -p $(pkg) $(srcs) $(lispdir-sql)
 	dh_install -p $(pkg) clsql.asd $(clc-clsql)
-
-	# Base
-	dh_install -p $(pkg-base) $(srcs-base) $(lispdir-base)
-	dh_install -p $(pkg-base) clsql-base.asd $(clc-base)
-
-	# Classic
-	dh_install -p $(pkg-classic) $(srcs-classic) $(lispdir-classic)
-	dh_install -p $(pkg-classic) clsql-classic.asd $(clc-classic)
 
 	# UFFI
 	dh_install -p $(pkg-uffi) $(srcs-uffi) $(lispdir-uffi)
@@ -156,8 +139,6 @@ install: build
 
 	# CLC Systems
 	dh_link -p $(pkg) $(clc-clsql)/clsql.asd $(clc-systems)/clsql.asd
-	dh_link -p $(pkg-base) $(clc-base)/clsql-base.asd $(clc-systems)/clsql-base.asd
-	dh_link -p $(pkg-classic) $(clc-classic)/clsql-classic.asd $(clc-systems)/clsql-classic.asd
 	dh_link -p $(pkg-uffi) $(clc-uffi)/clsql-uffi.asd $(clc-systems)/clsql-uffi.asd
 	dh_link -p $(pkg-mysql) $(clc-mysql)/clsql-mysql.asd $(clc-systems)/clsql-mysql.asd
 	dh_link -p $(pkg-pg) $(clc-pg)/clsql-postgresql.asd $(clc-systems)/clsql-postgresql.asd

@@ -48,7 +48,7 @@
     (unless in-phrase
       (ansi-loop::loop-error "Missing OF or IN iteration path."))
     (unless from-phrase
-      (setq from-phrase '(clsql-base:*default-database*)))
+      (setq from-phrase '(clsql-sys:*default-database*)))
 
     (unless (consp variable)
       (setq variable (list variable)))
@@ -65,7 +65,7 @@
 			      'loop-record-result-))
 	     (step-var (ansi-loop::loop-gentemp 'loop-record-step-)))
 	 `(((,variable nil ,@(and data-type (list data-type)))
-	    (,result-var (clsql-base:query ,(first in-phrase)))
+	    (,result-var (clsql-sys:query ,(first in-phrase)))
 	    (,step-var nil))
 	   ()
 	   ()
@@ -94,7 +94,7 @@
 			      'loop-record-result-set-))
 	     (step-var (ansi-loop::loop-gentemp 'loop-record-step-)))
 	 (push `(when ,result-set-var
-		  (clsql-base:database-dump-result-set ,result-set-var ,db-var))
+		  (clsql-sys:database-dump-result-set ,result-set-var ,db-var))
 	       ansi-loop::*loop-epilogue*)
 	 `(((,variable nil ,@(and data-type (list data-type)))
 	    (,query-var ,(first in-phrase))
@@ -102,15 +102,15 @@
 	    (,result-set-var nil)
 	    (,step-var nil))
 	   ((multiple-value-bind (%rs %cols)
-		(clsql-base:database-query-result-set ,query-var ,db-var :result-types :auto)
+		(clsql-sys:database-query-result-set ,query-var ,db-var :result-types :auto)
 	      (setq ,result-set-var %rs ,step-var (make-list %cols))))
 	   ()
 	   ()
-	   (not (clsql-base:database-store-next-row ,result-set-var ,db-var ,step-var))
+	   (not (clsql-sys:database-store-next-row ,result-set-var ,db-var ,step-var))
 	   (,variable ,step-var)
 	   (not ,result-set-var)
 	   ()
-	   (not (clsql-base:database-store-next-row ,result-set-var ,db-var ,step-var))
+	   (not (clsql-sys:database-store-next-row ,result-set-var ,db-var ,step-var))
 	   (,variable ,step-var)))))))
 
 #+(or cmu scl sbcl openmcl allegro)
@@ -154,7 +154,7 @@
     (unless in-phrase
       (error "Missing OF or IN iteration path."))
     (unless from-phrase
-      (setq from-phrase '(clsql-base:*default-database*)))
+      (setq from-phrase '(clsql:*default-database*)))
 
     (unless (consp iter-var)
       (setq iter-var (list iter-var)))
@@ -173,7 +173,7 @@
 	  t
 	  nil
 	  `(,@(mapcar (lambda (v) `(,v nil)) iter-var)
-	      (,result-var (clsql-base:query ,in-phrase))
+	      (,result-var (clsql:query ,in-phrase))
 	      (,step-var nil))
 	  ()
 	  ()
@@ -210,18 +210,18 @@
 	    (,result-set-var nil)
 	    (,step-var nil))
 	  `((multiple-value-bind (%rs %cols)
-		(clsql-base:database-query-result-set ,query-var ,db-var :result-types :auto)
+		(clsql-sys:database-query-result-set ,query-var ,db-var :result-types :auto)
 	      (setq ,result-set-var %rs ,step-var (make-list %cols))))
 	  ()
 	  ()
-	  `((unless (clsql-base:database-store-next-row ,result-set-var ,db-var ,step-var)
+	  `((unless (clsql-sys:database-store-next-row ,result-set-var ,db-var ,step-var)
 	      (when ,result-set-var
-		(clsql-base:database-dump-result-set ,result-set-var ,db-var))
+		(clsql-sys:database-dump-result-set ,result-set-var ,db-var))
 	      t))
 	  `(,iter-var ,step-var)
-	  `((unless (clsql-base:database-store-next-row ,result-set-var ,db-var ,step-var)
+	  `((unless (clsql-sys:database-store-next-row ,result-set-var ,db-var ,step-var)
 	      (when ,result-set-var
-		(clsql-base:database-dump-result-set ,result-set-var ,db-var))
+		(clsql-sys:database-dump-result-set ,result-set-var ,db-var))
 	      t))
 	  `(,iter-var ,step-var)
 	  ()

@@ -18,7 +18,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-base)
+(in-package #:clsql-sys)
 
 
 (defclass database ()

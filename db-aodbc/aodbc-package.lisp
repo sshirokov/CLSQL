@@ -25,6 +25,6 @@
 
 (defpackage #:clsql-aodbc
     (:nicknames #:aodbc)
-    (:use #:cl #:clsql-base)
+    (:use #:common-lisp #:clsql-sys)
     (:export #:aodbc-database)
     (:documentation "This is the CLSQL interface to Allegro's AODBC"))

@@ -20,30 +20,42 @@
 
 (defsystem #:clsql
     :name "CLSQL"
-    :author ""
-    :maintainer ""
-    :version ""
-    :licence ""
-    :description "A high level Common Lisp interface to SQL RDBMS."
-    :long-description "A high level Common Lisp interface to SQL RDBMS
-based on the Xanalys CommonSQL interface for Lispworks. It depends on
-the low-level database interfaces provided by CLSQL and includes both
-a functional and an object oriented interface."
-    :depends-on (clsql-base)
+    :author "Kevin Rosenberg <kevin@rosenberg.net>"
+    :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
+    :licence "Lessor Lisp General Public License"
+    :description "Common Lisp SQL Interface library"
+    :long-description "A Common Lisp interface to SQL RDBMS based on
+the Xanalys CommonSQL interface for Lispworks. It depends on the
+low-level database interfaces as well as a functional and an object
+oriented interface."
     :components
     ((:module sql
 	      :components
-	      ((:module :package
+	      ((:module :base
 			:pathname ""
-			:components ((:file "package")
-				     (:file "kmr-mop" :depends-on ("package"))))
+			:components
+			((:file "cmucl-compat")
+			 (:file "package")
+			 (:file "utils" :depends-on ("package" "db-interface"))
+			 (:file "base-classes" :depends-on ("package"))
+			 (:file "conditions" :depends-on ("base-classes"))
+			 (:file "db-interface" :depends-on ("conditions"))
+			 (:file "initialize" :depends-on ("db-interface" "utils"))
+			 (:file "loop-extension" :depends-on ("db-interface"))
+			 (:file "time" :depends-on ("package"))
+			 (:file "database" :depends-on ("initialize"))
+			 (:file "recording" :depends-on ("time" "database"))
+			 (:file "basic-sql" :depends-on ("database" "cmucl-compat"))
+			 (:file "pool" :depends-on ("basic-sql"))
+			 (:file "transaction" :depends-on ("basic-sql"))
+			 (:file "kmr-mop" :depends-on ("package"))))
 	       (:module :core
 			:pathname ""
 			:components ((:file "generics")
 				     (:file "classes" :depends-on ("generics"))
 				     (:file "operations" :depends-on ("classes"))
 				     (:file "syntax" :depends-on ("operations")))
-			:depends-on (:package))
+			:depends-on (:base))
 	       (:module :functional
 			:pathname ""
 			:components ((:file "sql")

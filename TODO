@@ -8,6 +8,7 @@ TESTS TO ADD
 * :db-constraint tests
 * test *db-auto-sync* 
 * test SELECT caching
+* for-each-row macro
 
 COMMONSQL SPEC
 

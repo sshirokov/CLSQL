@@ -20,7 +20,7 @@
 (in-package #:cl-user)
 
 (defpackage :clsql-postgresql-socket
-    (:use #:common-lisp #:clsql-base #:postgresql-socket)
+    (:use #:common-lisp #:clsql-sys #:postgresql-socket)
     (:export #:postgresql-socket-database)
     (:documentation "This is the CLSQL socket interface to PostgreSQL."))
 
@@ -29,7 +29,7 @@
 ;; interface foreign library loading routines
 
 
-(clsql-base:database-type-load-foreign :postgresql-socket)
+(clsql-sys:database-type-load-foreign :postgresql-socket)
 
 
 ;; Field type conversion
@@ -494,12 +494,12 @@ doesn't depend on UFFI."
 				      type)))
       (unwind-protect
 	   (progn
-	     (setf (slot-value database 'clsql-base::state) :open)
+	     (setf (slot-value database 'clsql-sys::state) :open)
 	     (mapcar #'car (database-query "select datname from pg_database" 
 					   database :auto nil)))
 	(progn
 	  (database-disconnect database)
-	  (setf (slot-value database 'clsql-base::state) :closed))))))
+	  (setf (slot-value database 'clsql-sys::state) :closed))))))
 
 (defmethod database-describe-table ((database postgresql-socket-database) 
 				    table)
@@ -525,5 +525,5 @@ doesn't depend on UFFI."
 (defmethod db-type-default-case ((db-type (eql :postgresql-socket)))
   :lower)
 
-(when (clsql-base:database-type-library-loaded :postgresql-socket)
-  (clsql-base:initialize-database-type :database-type :postgresql-socket))
+(when (clsql-sys:database-type-library-loaded :postgresql-socket)
+  (clsql-sys:initialize-database-type :database-type :postgresql-socket))

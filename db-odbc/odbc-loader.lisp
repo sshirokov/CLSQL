@@ -39,15 +39,15 @@ set to the right path before compiling or loading the system.")
 (defvar *odbc-library-loaded* nil
   "T if foreign library was able to be loaded successfully")
 
-(defmethod clsql-base:database-type-library-loaded ((database-type (eql :odbc)))
+(defmethod clsql-sys:database-type-library-loaded ((database-type (eql :odbc)))
   *odbc-library-loaded*)
 				      
-(defmethod clsql-base:database-type-load-foreign ((database-type (eql :odbc)))
+(defmethod clsql-sys:database-type-load-foreign ((database-type (eql :odbc)))
   (uffi:load-foreign-library *odbc-library-path*
 			     :module "odbc") 
   (setq *odbc-library-loaded* t))
 
-(clsql-base:database-type-load-foreign :odbc)
+(clsql-sys:database-type-load-foreign :odbc)
 
 
 

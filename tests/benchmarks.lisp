@@ -74,9 +74,9 @@
        (mapcar #'(lambda (ea) (slot-value ea 'address)) (select 'employee-address :flatp t))))
 
     (format *report-stream* "~&~%*** JOINED OBJECT QUERY RETRIEVAL DEFERRED ***~%")
-    (let* ((slotdef (find 'address (clsql::class-slots (find-class 'employee-address))
-			  :key #'clsql::slot-definition-name))
-	   (dbi (when slotdef (clsql::view-class-slot-db-info slotdef))))
+    (let* ((slotdef (find 'address (clsql-sys::class-slots (find-class 'employee-address))
+			  :key #'clsql-sys::slot-definition-name))
+	   (dbi (when slotdef (clsql-sys::view-class-slot-db-info slotdef))))
       (setf (gethash :retrieval dbi) :deferred)
       (time
        (dotimes (i (truncate n 10))

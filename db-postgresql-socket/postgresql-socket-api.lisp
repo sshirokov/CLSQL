@@ -27,13 +27,13 @@
      (:float4 700)
      (:float8 701)))
 
-(defmethod clsql-base:database-type-library-loaded ((database-type
+(defmethod clsql-sys:database-type-library-loaded ((database-type
 					  (eql :postgresql-socket)))
   "T if foreign library was able to be loaded successfully. Always true for
 socket interface"
   t)
 
-(defmethod clsql-base:database-type-load-foreign ((database-type (eql :postgresql-socket)))
+(defmethod clsql-sys:database-type-load-foreign ((database-type (eql :postgresql-socket)))
   t)
 
 
@@ -601,7 +601,7 @@ connection, if it is still open."
 				   :connection connection :message message))))
 	  (#.+notice-response-message+
 	   (let ((message (read-socket-value-string socket)))
-	     (unless (eq :ignore clsql-base:*backend-warning-behavior*)
+	     (unless (eq :ignore clsql-sys:*backend-warning-behavior*)
 	       (warn 'postgresql-warning
 		     :connection connection :message message))))
 	  (#.+notification-response-message+

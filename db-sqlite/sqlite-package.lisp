@@ -19,5 +19,5 @@
 (in-package #:cl-user)
 
 (defpackage #:clsql-sqlite
-  (:use #:common-lisp #:clsql-base)
+  (:use #:common-lisp #:clsql-sys)
   (:export #:sqlite-database))

@@ -13,7 +13,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql)
+(in-package #:clsql-sys)
 
 (defclass standard-db-object ()
   ((view-database :initform nil :initarg :view-database :reader view-database
@@ -182,7 +182,7 @@ superclass of the newly-defined View Class."
     (defclass ,class ,supers ,slots 
       ,@(if (find :metaclass `,cl-options :key #'car)
 	    `,cl-options
-	    (cons '(:metaclass clsql::standard-db-class) `,cl-options)))
+	    (cons '(:metaclass clsql-sys::standard-db-class) `,cl-options)))
     (finalize-inheritance (find-class ',class))
     (find-class ',class)))
 
@@ -423,7 +423,7 @@ superclass of the newly-defined View Class."
 	(let ((qualifier (key-qualifier-for-instance instance :database vd)))
 	  (delete-records :from vt :where qualifier :database vd)
 	  (setf (slot-value instance 'view-database) nil))
-	(error 'clsql-base::clsql-no-database-error :database nil))))
+	(error 'clsql-no-database-error :database nil))))
 
 (defmethod update-instance-from-records ((instance standard-db-object)
                                          &key (database *default-database*))
@@ -482,7 +482,7 @@ superclass of the newly-defined View Class."
 
 (defmethod database-get-type-specifier (type args database)
   (declare (ignore type args))
-  (if (clsql-base::in (database-underlying-type database)
+  (if (in (database-underlying-type database)
 			  :postgresql :postgresql-socket)
           "VARCHAR"
           "VARCHAR(255)"))
@@ -506,7 +506,7 @@ superclass of the newly-defined View Class."
                                         database)
   (if args
       (format nil "VARCHAR(~A)" (car args))
-    (if (clsql-base::in (database-underlying-type database) 
+    (if (in (database-underlying-type database) 
 			    :postgresql :postgresql-socket)
 	"VARCHAR"
       "VARCHAR(255)")))
@@ -515,7 +515,7 @@ superclass of the newly-defined View Class."
                                         database)
   (if args
       (format nil "VARCHAR(~A)" (car args))
-    (if (clsql-base::in (database-underlying-type database) 
+    (if (in (database-underlying-type database) 
 			    :postgresql :postgresql-socket)
 	"VARCHAR"
       "VARCHAR(255)")))
@@ -523,7 +523,7 @@ superclass of the newly-defined View Class."
 (defmethod database-get-type-specifier ((type (eql 'string)) args database)
   (if args
       (format nil "VARCHAR(~A)" (car args))
-    (if (clsql-base::in (database-underlying-type database) 
+    (if (in (database-underlying-type database) 
 			    :postgresql :postgresql-socket)
 	"VARCHAR"
       "VARCHAR(255)")))
@@ -587,7 +587,7 @@ superclass of the newly-defined View Class."
   (declare (ignore database))
   (progv '(*print-circle* *print-array*) '(t t)
     (let ((escaped (prin1-to-string val)))
-      (clsql-base::substitute-char-string
+      (substitute-char-string
        escaped #\Null " "))))
 
 (defmethod database-output-sql-as-type ((type (eql 'symbol)) val database)
@@ -667,8 +667,8 @@ superclass of the newly-defined View Class."
 (defmethod read-sql-value (val (type (eql 'symbol)) database)
   (declare (ignore database))
   (when (< 0 (length val))
-    (unless (string= val (clsql-base:symbol-name-default-case "NIL"))
-      (intern (clsql-base:symbol-name-default-case val)
+    (unless (string= val (symbol-name-default-case "NIL"))
+      (intern (symbol-name-default-case val)
               (symbol-package *update-context*)))))
 
 (defmethod read-sql-value (val (type (eql 'integer)) database)

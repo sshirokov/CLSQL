@@ -12,7 +12,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-base)
+(in-package #:clsql-sys)
 
 (setf (documentation 'database-name 'function)
       "Returns the name of a database.")

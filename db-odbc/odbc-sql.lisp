@@ -17,7 +17,7 @@
 ;;;; *************************************************************************
 
 (defpackage #:clsql-odbc
-    (:use #:common-lisp #:clsql-base)
+    (:use #:common-lisp #:clsql-sys)
     (:export #:odbc-database)
     (:documentation "This is the CLSQL interface to ODBC."))
 
@@ -359,5 +359,5 @@
   ;; nothing to do
   t)
 
-(when (clsql-base:database-type-library-loaded :odbc)
-  (clsql-base:initialize-database-type :database-type :odbc))
+(when (clsql-sys:database-type-library-loaded :odbc)
+  (clsql-sys:initialize-database-type :database-type :odbc))

@@ -16,7 +16,7 @@
 ;;;; This file was extracted from the KMRCL utilities
 ;;;; *************************************************************************
 
-(in-package #:clsql)
+(in-package #:clsql-sys)
 
 #+lispworks
 (defun intern-eql-specializer (slot)

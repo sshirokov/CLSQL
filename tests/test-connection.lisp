@@ -22,17 +22,17 @@
 (deftest :connection/1
     (let ((database (clsql:find-database
                      (clsql:database-name clsql:*default-database*)
-                     :db-type (clsql:database-type clsql:*default-database*))))
-      (eql (clsql:database-type database) *test-database-type*))
+                     :db-type (clsql-sys:database-type clsql:*default-database*))))
+      (eql (clsql-sys:database-type database) *test-database-type*))
   t)
 
 (deftest :connection/2
-    (clsql-base::string-to-list-connection-spec 
+    (clsql-sys::string-to-list-connection-spec 
      "localhost/dbname/user/passwd")
   ("localhost" "dbname" "user" "passwd"))
 
 (deftest :connection/3
-    (clsql-base::string-to-list-connection-spec 
+    (clsql-sys::string-to-list-connection-spec 
      "dbname/user@hostname")
   ("hostname" "dbname" "user"))
 

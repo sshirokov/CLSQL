@@ -17,7 +17,7 @@
   :description "Common Lisp SQL Oracle Driver"
   :long-description "cl-sql-oracle package provides a database driver to the Oracle database system."
 
-  :depends-on (clsql-base)
+  :depends-on (clsql)
   :components
     ((:module :db-oracle
 	      :components

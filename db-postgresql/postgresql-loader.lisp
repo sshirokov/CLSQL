@@ -27,11 +27,11 @@ set to the right path before compiling or loading the system.")
 (defvar *postgresql-library-loaded* nil
   "T if foreign library was able to be loaded successfully")
 
-(defmethod clsql-base:database-type-library-loaded ((database-type
+(defmethod clsql-sys:database-type-library-loaded ((database-type
 						    (eql :postgresql)))
   *postgresql-library-loaded*)
 				      
-(defmethod clsql-base:database-type-load-foreign ((database-type
+(defmethod clsql-sys:database-type-load-foreign ((database-type
 						  (eql :postgresql)))
   (let ((libpath (uffi:find-foreign-library 
 		  "libpq"
@@ -51,5 +51,5 @@ set to the right path before compiling or loading the system.")
 	(setq *postgresql-library-loaded* t)
       (warn "Can't load PostgreSQL client library ~A" libpath))))
 
-(clsql-base:database-type-load-foreign :postgresql)
+(clsql-sys:database-type-load-foreign :postgresql)
 

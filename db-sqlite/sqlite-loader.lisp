@@ -47,7 +47,7 @@ set to the right path before compiling or loading the system.")
 	(setq *sqlite-library-loaded* t)
 	(warn "Can't load SQLite library ~A" libpath))))
 
-(clsql-base:database-type-load-foreign :sqlite)
+(clsql-sys:database-type-load-foreign :sqlite)
 
 
     

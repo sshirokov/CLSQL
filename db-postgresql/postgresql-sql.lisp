@@ -16,7 +16,7 @@
 (in-package #:cl-user)
 
 (defpackage #:clsql-postgresql
-    (:use #:common-lisp #:clsql-base #:postgresql #:clsql-uffi)
+    (:use #:common-lisp #:clsql-sys #:postgresql #:clsql-uffi)
     (:export #:postgresql-database)
     (:documentation "This is the CLSQL interface to PostgreSQL."))
 
@@ -520,7 +520,7 @@
   (destructuring-bind (host name user password) connection-spec
     (declare (ignore user password))
     (multiple-value-bind (output status)
-	(clsql-base:command-output "createdb -h~A ~A"
+	(clsql-sys:command-output "createdb -h~A ~A"
 				       (if host host "localhost")
 				       name)
       (if (or (not (zerop status))
@@ -537,7 +537,7 @@
   (destructuring-bind (host name user password) connection-spec
     (declare (ignore user password))
     (multiple-value-bind (output status)
-	(clsql-base:command-output "dropdb -h~A ~A"
+	(clsql-sys:command-output "dropdb -h~A ~A"
 				       (if host host "localhost")
 				       name)
       (if (or (not (zerop status))
@@ -563,12 +563,12 @@
 				      type)))
       (unwind-protect
 	   (progn
-	     (setf (slot-value database 'clsql-base::state) :open)
+	     (setf (slot-value database 'clsql-sys::state) :open)
 	     (mapcar #'car (database-query "select datname from pg_database" 
 					   database nil nil)))
 	(progn
 	  (database-disconnect database)
-	  (setf (slot-value database 'clsql-base::state) :closed))))))
+	  (setf (slot-value database 'clsql-sys::state) :closed))))))
 
 (defmethod database-describe-table ((database postgresql-database) table)
   (database-query 
@@ -618,5 +618,5 @@
 (defmethod db-type-default-case ((db-type (eql :postgresql)))
   :lower)
 
-(when (clsql-base:database-type-library-loaded :postgresql)
-  (clsql-base:initialize-database-type :database-type :postgresql))
+(when (clsql-sys:database-type-library-loaded :postgresql)
+  (clsql-sys:initialize-database-type :database-type :postgresql))

@@ -28,7 +28,7 @@
   :description "Common Lisp SQL AODBC Driver"
   :long-description "cl-sql-aodbc package provides a database driver to AllegroCL's AODBC database interface."
 
-  :depends-on (clsql-base)
+  :depends-on (clsql)
   :components
     ((:module :db-aodbc
 	      :components

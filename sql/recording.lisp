@@ -13,7 +13,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-base)
+(in-package #:clsql-sys)
 
 (defun start-sql-recording (&key (type :commands) (database *default-database*))
   "Begin recording SQL command or result traffic. By default the
