@@ -1,0 +1,2 @@
+scp clsql-*.tar.gz clsql-*.zip ftp.med-info.com:/home/ftp/pub/clsql/.
+ssh ftp.med-info.com "(cd /opt/apache/htdocs/clsql.med-info.com; make)"

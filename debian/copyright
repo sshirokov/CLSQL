@@ -1,20 +1,20 @@
-The home site for UFFI is http://uffi.med-info.com. The package
+The home site for CLSQL is http://clsql.med-info.com. The package
 may be downloaded from that site.
 
-UFFI has been packaged by Kevin M. Rosenberg who is also the
+CLSQL has been packaged by Kevin M. Rosenberg who is also the
 upstream author.
 
 Copyright:
 
-UFFI is written and Copyright (c) 2002 by Kevin M. Rosenberg.
+CLSQL is written and Copyright (c) 2002 by Kevin M. Rosenberg.
 
-UFFI is licensed under the terms of the Lisp Lesser GNU
+CLSQL is licensed under the terms of the Lisp Lesser GNU
 Public License (http://opensource.franz.com/preamble.html), known as
 the LLGPL.  The LLGPL consists of a preamble (see above URL) and the
 LGPL.  Where these conflict, the preamble takes precedence. 
-UFFI is referenced in the preamble as the "LIBRARY."
+CLSQL is referenced in the preamble as the "LIBRARY."
 
-UFFI is distributed in the hope that it will be useful,
+CLSQL is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
 

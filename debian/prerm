@@ -1,12 +1,12 @@
 #! /bin/sh
-# prerm script for uffi
+# prerm script for clsql
 #
 # see: dh_installdeb(1)
 
 set -e
 
 # package name according to lisp
-LISP_PKG=uffi
+LISP_PKG=clsql
 
 # summary of how this script can be called:
 #        * <prerm> `remove'
@@ -23,7 +23,7 @@ LISP_PKG=uffi
 case "$1" in
     remove|upgrade|deconfigure)
 	/usr/sbin/unregister-common-lisp-source ${LISP_PKG}
-	rm -rf /usr/share/common-lisp/source/uffi /usr/share/common-lisp/repositories/uffi
+	rm -rf /usr/share/common-lisp/source/clsql /usr/share/common-lisp/repositories/clsql
         ;;
     failed-upgrade)
         ;;

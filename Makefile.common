@@ -1,0 +1,16 @@
+all:
+	
+
+.PHONY: clean
+clean:
+	@rm -rf .bin
+	@rm -f *.ufsl *.fsl *.fas *.x86f *.sparcf *.fasl 
+	@rm -f *~ *.bak *.orig *.err \#*\# .#*
+	@rm -f *.so *.a
+	@rm -rf debian/cl-sql
+ifneq ($(SUBDIRS)$(DOCSUBDIRS),)
+	@set -e; for i in $(SUBDIRS) $(DOCSUBDIRS); do \
+		$(MAKE) -C $$i $@; done
+endif
+
+.SUFFIXES:            # No default suffixes

@@ -1,12 +1,12 @@
 #! /bin/sh
-# postinst script for uffi
+# postinst script for clsql
 #
 # see: dh_installdeb(1)
 
 set -e
 
 # package name according to lisp
-LISP_PKG=uffi
+LISP_PKG=clsql
 
 # summary of how this script can be called:
 #        * <postinst> `configure' <most-recently-configured-version>
@@ -28,7 +28,7 @@ LISP_PKG=uffi
 
 case "$1" in
     configure)
-	ln -sf ../repositories/uffi /usr/share/common-lisp/source/uffi
+	ln -sf ../repositories/clsql /usr/share/common-lisp/source/clsql
 	/usr/sbin/register-common-lisp-source ${LISP_PKG}
 
     ;;
