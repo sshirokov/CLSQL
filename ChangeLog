@@ -1,3 +1,8 @@
+14 May 2002 Kevin Rosenberg (kevin@rosenberg.net)
+	* *.system: Reworked logical pathnames to be more consistent with
+	Common Lisp Controller.
+	* debian/*: Completed initial Debian support
+	
 10 May 2002 Marc Battyani (marc.battyani@fractalconcept.com)
 	* sql/classes.cl:
 	* sql/transactions.cl:

@@ -38,6 +38,14 @@ PACKAGE_DIR=/usr/local/src/Packages/${DEBPKG}
 DISTDIR=${PKG}-${VERSION}
 DEBDIR=${DEBPKG}-${VERSION}
 
+if [ ! -z ${opt_tag} ]; then
+    UPSTREAM_TAG=upstream_version_`echo ${VERSION} | tr . _`
+    echo "(Re-)tagging with Upstream tag '${UPSTREAM_TAG}'"
+    cvs -q rtag -d $UPSTREAM_TAG $PKG > /dev/null
+    cvs -q tag -F $UPSTREAM_TAG > /dev/null
+
+fi
+
 if [ -f ${PACKAGE_DIR}/${DEBPKG}_${VERSION}.orig.tar.gz ]; then
   echo "File ${PACKAGE_DIR}/${DEBPKG}_${VERSION}.orig.tar.gz already exists."
   echo -n "Are you sure that you want to create a new upstream archive? (y/N): "
@@ -50,13 +58,6 @@ if [ -f ${PACKAGE_DIR}/${DEBPKG}_${VERSION}.orig.tar.gz ]; then
   esac
 fi
 
-if [ ! -z ${opt_tag} ]; then
-    UPSTREAM_TAG=upstream_version_`echo ${VERSION} | tr . _`
-    echo "(Re-)tagging with Upstream tag '${UPSTREAM_TAG}'"
-    cvs -q rtag -d $UPSTREAM_TAG $PKG > /dev/null
-    cvs -q tag -F $UPSTREAM_TAG > /dev/null
-
-fi
 # Prepare for archive
 cd ..
 rm -f ${PKG}_${VERSION}.tar.gz ${DEBPKG}_${VERSION}.orig.tar.gz
