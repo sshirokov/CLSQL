@@ -493,8 +493,8 @@
       
       (let* ((field-vec (mysql-fetch-fields rs))
 	     (num-fields (mysql-num-fields rs))
-	     (input-bind (uffi:allocate-foreign-object mysql-bind (length types)))
-	     (output-bind (uffi:allocate-foreign-object mysql-bind num-fields))
+	     (input-bind (uffi:allocate-foreign-object 'mysql-bind (length types)))
+	     (output-bind (uffi:allocate-foreign-object 'mysql-bind num-fields))
 	     (length-ptr (uffi:allocate-foreign-object :unsigned-long num-fields))
 	     (is-null-ptr (uffi:allocate-foreign-object :byte num-fields))
 	     (mysql-types (mapcar 'clsql-type->mysql-type types)))

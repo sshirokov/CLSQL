@@ -55,8 +55,8 @@
   `(the handle-type (uffi:deref-pointer (the handle-ptr-type ,foreign-object) cli-handle)))
 
 (defun db2-connect (db server user password)
-  (let ((henv (uffi:allocate-foreign-object cli-handle))
-	(hdbc (uffi:allocate-foreign-object cli-handle)))
+  (let ((henv (uffi:allocate-foreign-object 'cli-handle))
+	(hdbc (uffi:allocate-foreign-object 'cli-handle)))
     (sql-alloc-handle SQL_HANDLE_ENV SQL_NULL_HANDLE henv)
     (setf (slot-value db 'henv) henv)
     (setf (slot-value db 'hdbc) hdbc)
