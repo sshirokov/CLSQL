@@ -46,15 +46,9 @@ are:
 
     <sect2>
       <title>&defsystem;</title>
-      <para> &clsql; uses &defsystem to compile and load its
-components.  &defsystem; is included in the <ulink
-url="http://clocc.sourceforge.net"><citetitle>&clocc;</citetitle></ulink> collection. The
-version in the pre-packaged distribution is rather old and
-may not function well. The version in CVS tree tree works quite
-well. For convenience, a copy of the latest &defsystem; at the FTP
-<ulink
-url="ftp://ftp.med-info.com/pub/defsystem/"><citetitle>site</citetitle></ulink>
-of &clsql;.
+      <para> &clsql; uses &asdf; to compile and load its
+components.  &asdf; is included in the <ulink
+url="http://cclan.sourceforge.net"><citetitle>&cclan;</citetitle></ulink> collection.
       </para>
     </sect2>
 
@@ -145,14 +139,13 @@ in the root directory of &clsql; to build the libraries
       <title>Load &uffi;</title>
       <para>
 	Unzip or untar the &uffi; distribution which creates a directory
-for the &uffi; files. Add that directory to Defsystem's <varname>mk:*central-registry*</varname>.
-You can do that by either pushing the pathname of the directory onto this variable, or
-use the new <function>add-registry-location</function> present in the newest versions of
-&defsystem;. The following example code assumes the &uffi; files reside in the
-<filename>/usr/local/src/lisp/uffi</filename> directory.
+for the &uffi; files. Add that directory to Defsystem's <varname>asdf:*central-registry*</varname>.
+You can do that by pushing the pathname of the directory onto this variable.
+ The following example code assumes the &uffi; files reside in the
+<filename>/usr/share/lisp/uffi/</filename> directory.
 	<programlisting>
-(mk:add-registry-location #P"/usr/local/src/lisp/uffi")
-(mk:load-system :uffi)
+(push #P"/usr/share/lisp/uffi/" asdf:*central-repository*)
+(asdf:oos 'asdf:load-op :uffi)
         </programlisting>
       </para>
     </sect2>
@@ -161,19 +154,19 @@ use the new <function>add-registry-location</function> present in the newest ver
       <title>Load &clsql; modules</title>
       <para>
 	Unzip or untar the &clsql; distribution which creates a directory
-for the &clsql; files. Add that directory to Defsystem's <varname>mk:*central-registry*</varname>.
-You can do that by either pushing the pathname of the directory onto this variable, or
-use the new <function>add-registry-location</function> present in the newest versions of
-&defsystem;. The following example code assumes the &clsql; files reside in the
-<filename>/usr/local/src/lisp/clsql</filename> directory. You need to load, at a minimum,
+for the &clsql; files. Add that directory to Defsystem's <varname>asdf:*central-registry*</varname>.
+You can do that by pushing the pathname of the directory onto this variable.
+ The following example code assumes the &clsql; files reside in the
+<filename>/usr/share/lisp/clsql/</filename> directory. You need to load, at a minimum,
 the main <symbol>:clsql</symbol> system and at least one interface system.
 	<programlisting>
-(mk:add-registry-location #P"/usr/local/src/lisp/clsql")
-(mk:load-system :clsql)              ; main clsql package
-(mk:load-system :clsql-mysql)       ; MySQL interface
-(mk:load-system :clsql-postgresql)  ; PostgreSQL interface
-(mk:load-system :clsql-postgresql-socket) ; Socket PGSQL interface
-(mk:load-system :clsql-aodbc)       ; Allegro ODBC interface
+(push #P"/usr/share/lisp/clsql/" asdf:*central-repository*)
+(asdf:oos 'asdf:load-op :clsql-base)        ; base clsql package
+(asdf:oos 'asdf:load-op :clsql-mysql)       ; MySQL interface
+(asdf:oos 'asdf:load-op :clsql-postgresql)  ; PostgreSQL interface
+(asdf:oos 'asdf:load-op :clsql-postgresql-socket) ; Socket PGSQL interface
+(asdf:oos 'asdf:load-op :clsql-aodbc)       ; Allegro ODBC interface
+(asdf:oos 'asdf:load-op :clsql)             ; main clsql package
         </programlisting>
       </para>
     </sect2>
