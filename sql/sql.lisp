@@ -58,7 +58,9 @@
   (dolist (index (list-indexes :database database))
     (drop-index index :database database))
   (dolist (seq (list-sequences :database database))
-    (drop-sequence seq :database database)))
+    (drop-sequence seq :database database))
+  (when (eq :oracle (database-type database))
+    (ignore-errors (execute-command "PURGE RECYCLEBIN" :database database))))
 
 (defun print-query (query-exp &key titles (formats t) (sizes t) (stream t)
 			      (database *default-database*))

@@ -235,39 +235,47 @@ the length of that format.")
 	   (second  (1- (ub 6))))
       (encode-universal-time second minute hour day month year))))
 
-(defun owner-phrase (owner)
-  (if owner
-      (format nil " WHERE OWNER='~A'" owner)
-    ""))
 
 (defmethod database-list-tables ((database oracle-database) &key owner)
-  (mapcar #'car 
-	  (database-query 
-	   (concatenate 'string "select table_name from user_tables"
-			(owner-phrase owner))
-	   database nil nil))
-  #+nil
-  (values (database-query "select TABLE_NAME from all_catalog
-	        where owner not in ('PUBLIC','SYSTEM','SYS','WMSYS','EXFSYS','CTXSYS','WKSYS','WK_TEST','MDSYS','DMSYS','OLAPSYS','ORDSYS','XDB')"
-			  db nil nil)))
+  (let ((query
+	  (if owner
+	      (format nil
+		      "select user_tables.table_name from user_tables,all_tables where user_tables.table_name=all_tables.table_name and all_tables.owner='~:@(~A~)'"
+		      owner)
+	      "select table_name from user_tables")))
+    (mapcar #'car (database-query query database nil nil))))
 
 
-(defmethod database-list-views ((database oracle-database)
-                                 &key owner)
-  (mapcar #'car
-	  (database-query
-	   (concatenate 'string "select view_name from user_views"
-			(owner-phrase owner))
-	   database nil nil)))
-
+(defmethod database-list-views ((database oracle-database) &key owner)
+  (let ((query
+	  (if owner
+	      (format nil
+		      "select user_views.view_name from user_views,all_views where user_views.view_name=all_views.view_name and all_views.owner='~:@(~A~)'"
+		      owner)
+	      "select view_name from user_views")))
+    (mapcar #'car
+	  (database-query query database nil nil))))
 
 (defmethod database-list-indexes ((database oracle-database)
                                   &key (owner nil))
-  (mapcar #'car
-	  (database-query 
-	   (concatenate 'string "select index_name from user_indexes"
-			(owner-phrase owner))
-	   database nil nil)))
+  (let ((query
+	  (if owner
+	      (format nil
+		      "select user_indexes.index_name from user_indexes,all_indexes where user_indexes.index_name=all_indexes.index_name and all_indexes.owner='~:@(~A~)'"
+		      owner)
+	      "select index_name from user_indexes")))
+    (mapcar #'car (database-query query database nil nil))))
+
+(defmethod database-list-table-indexes (table (database oracle-database)
+					&key (owner nil))
+  (let ((query
+	  (if owner
+	      (format nil
+		      "select user_indexes.index_name from user_indexes,all_indexes where user_indexes.table_name='~A' and user_indexes.index_name=all_indexes.index_name and all_indexes.owner='~:@(~A~)'"
+		      table owner)
+	      (format nil "select index_name from user_indexes where table_name='~A'"
+		      table))))
+    (mapcar #'car (database-query query database nil nil))))
 
 (defmethod list-all-table-columns (table (db oracle-database))
   (declare (string table))
@@ -294,32 +302,30 @@ the length of that format.")
 	        1))) ; string
     preresult))
 
-
 (defmethod database-list-attributes (table (database oracle-database) &key owner)
-  (mapcar #'car
-	  (database-query
-	   (format nil
-		   "select column_name from user_tab_columns where table_name='~A'~A"
-		   table
-		   (if owner
-		       (format nil " AND OWNER='~A'" owner)
-		     ""))
-	   database nil nil)))
+  (let ((query
+	  (if owner
+	      (format nil
+		      "select user_tab_columns.column_name from user_tab_columns,all_tables where user_tab_columns.table_name='~A' and all_tables.table_name=user_tab_columns.table_name and all_tables.owner='~:@(~A~)'"
+		      table owner)
+	      (format nil
+		      "select column_name from user_tab_columns where table_name='~A'"
+		      table))))
+    (mapcar #'car (database-query query database nil nil))))
 
 (defmethod database-attribute-type (attribute (table string)
 					 (database oracle-database)
 					 &key (owner nil))
-  (let ((rows
-	 (database-query
-	  (format nil
-		  "select data_type,data_length,data_precision,data_scale,nullable from user_tab_columns where table_name='~A' and column_name='~A'~A"
-		  table attribute
-		  (if owner
-		      (format nil " AND OWNER='~A'" owner)
-		    ""))		  
-	  database :auto nil)))
-    (destructuring-bind (type length precision scale nullable) (car rows)
-      (values (ensure-keyword type) length precision scale 
+  (let ((query 	 
+	 (if owner
+	     (format nil
+		     "select data_type,data_length,data_scale,nullable from user_tab_columns,all_tables where user_tab_columns.table_name='~A' and column_name='~A' and all_tables.table_name=user_tab_columns.table_name and all_tables.owner='~:@(~A~)'"
+		     table attribute owner)
+	     (format nil
+		     "select data_type,data_length,data_scale,nullable from user_tab_columns where table_name='~A' and column_name='~A'"
+		     table attribute))))
+    (destructuring-bind (type length scale nullable) (car (database-query query database :auto nil))
+      (values (ensure-keyword type) length scale 
 	      (if (char-equal #\Y (schar nullable 0)) 1 0)))))
     
 ;; Return one row of the table referred to by QC, represented as a
@@ -872,17 +878,32 @@ the length of that format.")
 
 (defmethod database-sequence-next (sequence-name (database oracle-database))
   (caar
-   (query
+   (database-query
     (concatenate 'string "SELECT "
 		 (sql-escape sequence-name)
 		 ".NEXTVAL FROM dual"
-		 ) :database database)))
+		 )
+    database :auto nil)))
+
+(defmethod database-set-sequence-position (name position database)
+  (let* ((next (database-sequence-next name database))
+	 (incr (- position next)))
+    (database-execute-command
+     (format nil "ALTER SEQUENCE ~A INCREMENT BY ~D" name incr)
+     database)
+    (database-sequence-next name database)
+    (database-execute-command
+     (format nil "ALTER SEQUENCE ~A INCREMENT BY 1" name)
+     database)))
 
 (defmethod database-list-sequences ((database oracle-database) &key owner)
-  (mapcar #'car (database-query 
-		 (concatenate 'string "select sequence_name from user_sequences" 
-			      (owner-phrase owner))
-		 database nil nil)))
+  (let ((query
+	 (if owner
+	     (format nil
+		     "select user_sequences.sequence_name from user_sequences,all_sequences where user_sequences.sequence_name=all_sequences.sequence_name and all_sequences.sequence_owner='~:@(~A~)'"
+		     owner)
+	     "select sequence_name from user_sequences")))
+    (mapcar #'car (database-query query database nil nil))))
 
 (defmethod database-execute-command (sql-expression (database oracle-database))
   (database-query sql-expression database nil nil)

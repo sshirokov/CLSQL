@@ -85,15 +85,17 @@
   t)
 
 (deftest :fddl/attributes/4
-    (clsql:attribute-type [first-name] [employee]) 
-  :varchar 30 nil 1)
+    (multiple-value-bind (type length scale nullable)
+	(clsql:attribute-type [first-name] [employee])
+      (values (clsql-sys:in type :varchar :varchar2) length scale nullable))
+  t 30 nil 1)
 
 (deftest :fddl/attributes/5
-    (and (member (clsql:attribute-type [birthday] [employee]) '(:datetime :timestamp)) t)
+    (and (member (clsql:attribute-type [birthday] [employee]) '(:datetime :timestamp :date)) t)
   t)
 
 (deftest :fddl/attributes/6
-    (and (member (clsql:attribute-type [height] [employee]) '(:float :float8)) t)
+    (and (member (clsql:attribute-type [height] [employee]) '(:float :float8 :number)) t)
   t)
 
 

@@ -51,29 +51,26 @@
   ((type (eql 'string)) args (database oracle-database))
   (if args
       (format nil "VARCHAR2(~A)" (car args))
-    (concatenate 'string "VARCHAR2(" *oracle-default-varchar2-length* ")"))
-  "VARCHAR2(512)")
+    (concatenate 'string "VARCHAR2(" *oracle-default-varchar2-length* ")")))
 
 (defmethod database-get-type-specifier
   ((type (eql 'raw-string)) args (database oracle-database))
   (if args
       (format nil "VARCHAR2(~A)" (car args))
-    (concatenate 'string "VARCHAR2(" *oracle-default-varchar2-length* ")"))
-  "VARCHAR2(256)")
+    (concatenate 'string "VARCHAR2(" *oracle-default-varchar2-length* ")")))
 
 (defmethod database-get-type-specifier
   ((type (eql 'float)) args (database oracle-database))
   (if args
-      (format nil "NUMBER(~A,~A)"
-	      (or (first args) 38) (or (second args) 38))
-    "NUMBER"))
+      (format nil "NUMBER(~A,~A)" (or (first args) 38) (or (second args) 38))
+    "double precision"))
 
 (defmethod database-get-type-specifier
   ((type (eql 'long-float)) args (database oracle-database))
   (if args
       (format nil "NUMBER(~A,~A)"
 	      (or (first args) 38) (or (second args) 38))
-    "NUMBER"))
+    "double precision"))
 
 (defmethod database-get-type-specifier
     ((type (eql 'boolean)) args (database oracle-database))

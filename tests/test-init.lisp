@@ -182,8 +182,10 @@
     (ignore-errors (create-database spec :database-type db-type)))
   
   (setf *test-database-type* db-type)
-  (when (>= (length spec) 3)
-    (setq *test-database-user* (third spec)))
+  (setf *test-database-user*
+    (cond
+     ((eq :oracle db-type) (second spec))
+     ((>= (length spec) 3) (third spec))))
   
   ;; Connect to the database
   (clsql:connect spec

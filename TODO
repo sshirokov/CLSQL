@@ -8,6 +8,7 @@ TESTS TO ADD
 * test *db-auto-sync* 
 * for-each-row macro
 * universal-time 
+* owner phrases for postgresql and oracle backends
 
 COMMONSQL INCOMPATIBILITY
 
