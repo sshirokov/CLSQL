@@ -29,7 +29,7 @@
 
 
 (defmethod query ((expr %sql-expression) &key (database *default-database*)
-                  (result-types nil) (flatp nil) (field-names t))
+                  (result-types :auto) (flatp nil) (field-names t))
   (query (sql-output expr database) :database database :flatp flatp
          :result-types result-types :field-names field-names))
 

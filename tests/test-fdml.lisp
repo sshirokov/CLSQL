@@ -298,6 +298,11 @@
   ((1 10 "Park Place" "Leningrad" 123))
   ("emplid" "street_number" "street_name" "city_field" "zip"))
 
+(deftest :fdml/select/16
+    (clsql:select [emplid] :from [employee] :where [= 1 [emplid]]
+     :field-names nil)
+  ((1)))
+
 ;(deftest :fdml/select/11
 ;    (clsql:select [emplid] :from [employee]
 ;                :where [= [emplid] [any [select [companyid] :from [company]]]]

@@ -49,14 +49,42 @@
       (ansi-loop::loop-error "Missing OF or IN iteration path."))
     (unless from-phrase
       (setq from-phrase '(clsql-base:*default-database*)))
+
+    (unless (consp variable)
+      (setq variable (list variable)))
+
     (cond
       ;; Object query resulting in a list of returned object instances
-      ((and (consp in-phrase)
-	    (consp (car in-phrase))
-	    (consp (second (car in-phrase)))
-	    (eq 'quote (first (second (car in-phrase))))
-	    (symbolp (second (second (car in-phrase)))))
-       (ansi-loop::loop-error "object query not yet supported"))
+      #+ignore
+      ((and (consp (first in-phrase))
+	    (consp (second (first in-phrase)))
+	    (eq 'quote (first (second (first in-phrase))))
+	    (symbolp (second (second (first in-phrase)))))
+
+       (let ((result-var (ansi-loop::loop-gentemp
+			      'loop-record-result-))
+	     (step-var (ansi-loop::loop-gentemp 'loop-record-step-)))
+	 `(((,variable nil ,@(and data-type (list data-type)))
+	    (,result-var ,(first in-phrase))
+	    (,step-var nil))
+	   ()
+	   ()
+	   (if (null ,result-var)
+	       t
+	       (progn
+		 (setq ,step-var (first ,result-var))
+		 (setq ,result-var (rest ,result-var))
+		 nil))
+	   (,variable ,step-var)
+	   (null ,result-var)
+	   ()
+	   (if (null ,result-var)
+	       t
+	       (progn
+		 (setq ,step-var (first ,result-var))
+		 (setq ,result-var (rest ,result-var))
+		 nil))
+	   (,variable ,step-var))))
       
       ((consp variable)
        (let ((query-var (ansi-loop::loop-gentemp 'loop-record-))
@@ -82,30 +110,7 @@
 	   (not ,result-set-var)
 	   ()
 	   (not (clsql-base:database-store-next-row ,result-set-var ,db-var ,step-var))
-	   (,variable ,step-var))))
-      (t
-       (let ((query-var (ansi-loop::loop-gentemp 'loop-record-))
-	     (db-var (ansi-loop::loop-gentemp 'loop-record-database-))
-	     (result-set-var (ansi-loop::loop-gentemp
-			      'loop-record-result-set-)))
-	 (push `(when ,result-set-var
-		 (clsql-base:database-dump-result-set ,result-set-var ,db-var))
-	       ansi-loop::*loop-epilogue*)
-	 `(((,variable nil ,@(and data-type (list data-type)))
-	    (,query-var ,(first in-phrase))
-	    (,db-var ,(first from-phrase))
-	    (,result-set-var nil))
-	   ((multiple-value-bind (%rs %cols)
-		(clsql-base:database-query-result-set ,query-var ,db-var :result-types :auto)
-	      (setq ,result-set-var %rs ,variable (make-list %cols))))
-	   ()
-	   ()
-	   (not (clsql-base:database-store-next-row ,result-set-var ,db-var ,variable))
-	   ()
-	   (not ,result-set-var)
-	   ()
-	   (not (clsql-base:database-store-next-row ,result-set-var ,db-var ,variable))
-	   ()))))))
+	   (,variable ,step-var)))))))
 
 #+(or cmu scl sbcl openmcl allegro)
 (ansi-loop::add-loop-path '(record records tuple tuples)
@@ -150,10 +155,12 @@
     (unless from-phrase
       (setq from-phrase '(clsql-base:*default-database*)))
 
+    (unless (consp iter-var)
+      (setq iter-var (list iter-var)))
+
     (cond
       ;; Object query resulting in a list of returned object instances
-      ((and (consp in-phrase)
-	    (consp (car in-phrase))
+      ((and (consp (car in-phrase))
 	    (consp (second (car in-phrase)))
 	    (eq 'quote (first (second (car in-phrase))))
 	    (symbolp (second (second (car in-phrase)))))
@@ -187,33 +194,6 @@
 		(clsql-base:database-dump-result-set ,result-set-var ,db-var))
 	      t))
 	  `(,iter-var ,step-var)
-	  ()
-	  ())))
-      (t
-       (let ((query-var (gensym "LOOP-RECORD-"))
-	     (db-var (gensym "LOOP-RECORD-DATABASE-"))
-	     (result-set-var (gensym "LOOP-RECORD-RESULT-SET-")))
-	 (values
-	  t
-	  nil
-	  `((,iter-var nil ,iter-var-data-type) (,query-var ,in-phrase)
-	    (,db-var ,(first from-phrase))
-	    (,result-set-var nil))
-	  `((multiple-value-bind (%rs %cols)
-		(clsql-base:database-query-result-set ,query-var ,db-var :result-types :auto)
-	      (setq ,result-set-var %rs ,iter-var (make-list %cols))))
-	  ()
-	  ()
-	  `((unless (clsql-base:database-store-next-row ,result-set-var ,db-var ,iter-var)
-	      (when ,result-set-var
-		(clsql-base:database-dump-result-set ,result-set-var ,db-var))
-	      t))
-	   ()
-	  `((unless (clsql-base:database-store-next-row ,result-set-var ,db-var ,iter-var)
-	      (when ,result-set-var
-		(clsql-base:database-dump-result-set ,result-set-var ,db-var))
-	      t))
-	  ()
 	  ()
 	  ()))))))
 

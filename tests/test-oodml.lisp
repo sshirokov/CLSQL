@@ -287,11 +287,13 @@
                                            "Lenin"]])
  (("Lenin" "Widgets Inc.")))
 
-;(deftest :oodml/iteration/3
-;    (loop for (e) being the tuples in 
-;          [select 'employee :where [married] :order-by [emplid]]
-;          collect (slot-value e 'last-name))
-;  ("Lenin" "Stalin" "Trotsky"))
+#||
+(deftest :oodml/iteration/3
+    (loop for (e) being the tuples in 
+          [select 'employee :where [married] :order-by [emplid]]
+          collect (slot-value e 'last-name))
+  ("Lenin" "Stalin" "Trotsky"))
+||#
 
 ))
 
