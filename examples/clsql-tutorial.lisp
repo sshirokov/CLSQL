@@ -156,7 +156,8 @@
 
 (let ((new-lenin (car
 		  (clsql:select 'employee
-			      :where [= [slot-value 'employee 'emplid] 1]))))
+			      :where [= [slot-value 'employee 'emplid] 1])
+		  :flatp t)))
   (format t "His new email is ~A"
 	  (employee-email new-lenin)))
 
