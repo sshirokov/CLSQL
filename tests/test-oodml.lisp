@@ -50,7 +50,7 @@
 
 ;; sqlite fails this because it is typeless 
 (deftest :oodml/select/5
-    (length (sql:select 'employee :where [married]))
+    (length (clsql:select 'employee :where [married]))
   3)
 
 ;; tests update-records-from-instance 

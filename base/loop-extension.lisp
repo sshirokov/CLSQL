@@ -18,7 +18,20 @@
 
 ;;;; MIT-LOOP extension
 
-#+(or cmu scl)
+#+sbcl 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defpackage #:ansi-loop 
+    (:import-from #:sb-loop 
+		  #:loop-error
+		  #:*loop-epilogue*
+		  #:*loop-ansi-universe* 
+		  #:add-loop-path)))
+  
+#+sbcl 
+(defun ansi-loop::loop-gentemp (&optional (pref 'loopva-))
+  (gensym (string pref)))
+
+#+(or cmu scl sbcl openmcl)
 (defun loop-record-iteration-path (variable data-type prep-phrases)
   (let ((in-phrase nil)
 	(from-phrase nil))
@@ -90,7 +103,7 @@
 	   (not (clsql-base-sys:database-store-next-row ,result-set-var ,db-var ,variable))
 	   ()))))))
 
-#+(or cmu scl)
+#+(or cmu scl sbcl openmcl)
 (ansi-loop::add-loop-path '(record records tuple tuples)
 			  'loop-record-iteration-path
 			  ansi-loop::*loop-ansi-universe*

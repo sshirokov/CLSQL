@@ -203,19 +203,19 @@
   (1 1 1 1 1 1 1 1 1 1))
 
 (deftest :fdml/select/7
-    (sql:select [max [emplid]] :from [employee] :flatp t)
+    (clsql:select [max [emplid]] :from [employee] :flatp t)
   ("10"))
 
 (deftest :fdml/select/8
-    (sql:select [min [emplid]] :from [employee] :flatp t)
+    (clsql:select [min [emplid]] :from [employee] :flatp t)
   ("1"))
 
 (deftest :fdml/select/9
-    (subseq (car (sql:select [avg [emplid]] :from [employee] :flatp t)) 0 3)
+    (subseq (car (clsql:select [avg [emplid]] :from [employee] :flatp t)) 0 3)
   "5.5")
 
 (deftest :fdml/select/10
-    (sql:select [last-name] :from [employee]
+    (clsql:select [last-name] :from [employee]
                 :where [not [in [emplid]
                                 [select [managerid] :from  [company]]]]
                 :flatp t
@@ -234,7 +234,7 @@
   (("Lenin")))
 
 ;(deftest :fdml/select/11
-;    (sql:select [emplid] :from [employee]
+;    (clsql:select [emplid] :from [employee]
 ;                :where [= [emplid] [any [select [companyid] :from [company]]]]
 ;                :flatp t)
 ;  ("1"))

@@ -3,7 +3,8 @@
 	* Fixes for sequences on mysql and sqlite [Marcus Pearce]
 	* Fixes for uffi sqlite backend [Aurelio Bignoli / Kevin Rosenberg]
 	* Fix for schema table [Marcus Pearce]
-	
+	* Add loop extension support for SBCL [Marcus Pearce]
+
 06 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
         * db-*/*-sql.lisp: Ensure that expr in
 	database-query-result-set is a string
