@@ -362,7 +362,7 @@ column definition in the database.")
    (defun compute-class-precedence-list (class)
      (class-precedence-list class))))
 
-#-(or sbcl cmu)
+#-(or sbcl cmu18)
 (defmethod compute-slots ((class standard-db-class))
   "Need to sort order of class slots so they are the same across
 implementations."

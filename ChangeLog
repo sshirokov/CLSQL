@@ -1,4 +1,7 @@
 9 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.10.15
+	* sql/kmr-mop.lisp: Make CMUCL reader macros specific for cmu18
+	since cmu19 has opposite order of class slots.
 	* sql/objects.lisp: Fix (setf slot-value-using-class) for Lispworks
 	* tests/test-fdml.lisp: Renumber SELECT tests to avoid overwriting
 	a previous test
