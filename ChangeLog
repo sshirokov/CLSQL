@@ -1,3 +1,7 @@
+02 Sep 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* examples/clsql-tutorial.lisp: added missing initarg for the COMPANYID
+	slot of the employee View Class definition [reported by Franz Deuzer]. 
+
 01 Sep 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.0.1 Release
 	* tests/test-init.lisp: Add second join class to employee-address

@@ -34,7 +34,8 @@
     :type (string 100)
     :initarg :email)
    (companyid
-    :type integer)
+    :type integer
+    :initarg :companyid)
    (company
     :accessor employee-company
     :db-kind :join
