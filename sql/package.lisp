@@ -154,6 +154,7 @@
        #:database-attribute-type
        #:database-add-attribute
        #:database-type 
+
        ;; initialize
        #:*loaded-database-types*
        #:reload-database-types
@@ -162,7 +163,6 @@
        #:initialize-database-type
        ;; classes
        #:database
-       #:closed-database
        #:database-name
        #:command-recording-stream
        #:result-recording-stream
@@ -190,7 +190,7 @@
        #:create-database
        #:destroy-database
        #:probe-database
-
+       
        ;; pool.lisp
        #:disconnect-pooled
 
@@ -202,10 +202,11 @@
        #:delete-large-object
        #:do-query
        #:map-query
+       #:describe-table
 
+       
        ;; recording.lisp -- SQL I/O Recording 
-       #:record-sql-comand
-       #:record-sql-result
+       #:record-sql-action
        #:add-sql-stream                 ; recording  xx
        #:delete-sql-stream	          ; recording  xx
        #:list-sql-streams	          ; recording  xx
@@ -238,27 +239,28 @@
     #:database-type-load-foreign
     #:database-name-from-spec
     #:database-connect
-   #:database-query
-   #:database-execute-command
-   #:database-create-sequence
-   #:database-drop-sequence
-   #:database-sequence-next
-   #:database-set-sequence-position
-   #:database-query-result-set
-   #:database-dump-result-set
-   #:database-store-next-row
-   #:database-get-type-specifier
-   #:database-list-tables
-   #:database-table-exists-p
-   #:database-list-views
-   #:database-view-exists-p
-   #:database-list-indexes
-   #:database-index-exists-p
-   #:database-list-sequences
-   #:database-sequence-exists-p
-   #:database-list-attributes
-   #:database-attribute-type
-
+    #:database-query
+    #:database-execute-command
+    #:database-create-sequence
+    #:database-drop-sequence
+    #:database-sequence-next
+    #:database-set-sequence-position
+    #:database-query-result-set
+    #:database-dump-result-set
+    #:database-store-next-row
+    #:database-get-type-specifier
+    #:database-list-tables
+    #:database-table-exists-p
+    #:database-list-views
+    #:database-view-exists-p
+    #:database-list-indexes
+    #:database-index-exists-p
+    #:database-list-sequences
+    #:database-sequence-exists-p
+    #:database-list-attributes
+    #:database-attribute-type
+    #:database-describe-table
+   
    .
    ;; Shared exports for re-export by CLSQL. 
    ;; I = Implemented, D = Documented
@@ -292,6 +294,7 @@
        #:drop-view		          ; table      xx
        #:create-index		          ; table      xx		
        #:drop-index		          ; table      xx		
+       #:truncate-database
        ;;OODDL
        #:standard-db-object		  ; objects    xx
        #:def-view-class                    ; objects    xx
@@ -325,8 +328,8 @@
        ;;Initialization
        #:*loaded-database-types*           ; clsql-base xx
        #:reload-database-types             ; clsql-base xx
-       #:closed-database 	          ; database   xx
        #:database-type                     ; database   x
+       #:is-database-open
        #:in-schema                         ; classes    x
        ;;FDDL 
        #:list-views                        ; table      xx
