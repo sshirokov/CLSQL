@@ -23,7 +23,8 @@ OPTIMIZATIONS
 
 POSSIBLE EXTENSIONS
 
-* extend large object support to databases beyond postgresql, improve large object api
+* extend large object support to databases beyond postgresql
+* improve large object api
 * add support for prepared statements
-* port Oracle backend to UFFI
+
 
