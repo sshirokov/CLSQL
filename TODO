@@ -49,9 +49,6 @@ COMMONSQL SPEC
       o get :target-slot working 
       o implement :retrieval :immediate 
 
-    LIST-CLASSES 
-      o keyword arg :root-class should do something (portable)
-
     DO-QUERY,MAP-QUERY,LOOP
       o should work with object queries as well as functional ones 
 

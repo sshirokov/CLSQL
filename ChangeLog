@@ -1,7 +1,9 @@
 12 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.6.11
+	* sql/objects.lisp: add :root-class functionality for
+	list-classes and add duration type support [Marcus Pearce]
 	* db-odbc: Add mid-level [DBI] layer
-	
+
 12 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.6.10
 	* db-aodbc: Add methods for generic functions, some are

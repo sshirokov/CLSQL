@@ -217,6 +217,10 @@ condition is true."
   (declare (ignore database))
   (db-timestring self))
 
+(defmethod database-output-sql ((self duration) database)
+  (declare (ignore database))
+  (format nil "'~a'" (duration-timestring self)))
+
 (defmethod database-output-sql (thing database)
   (if (or (null thing)
 	  (eq 'null thing))

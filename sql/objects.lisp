@@ -113,8 +113,6 @@ the view. The argument DATABASE has a default value of
 ;; Drop the tables which store the given view class
 ;;
 
-#.(locally-enable-sql-reader-syntax)
-
 (defun drop-view-from-class (view-class-name &key (database *default-database*))
   "Deletes a view or base table from DATABASE based on VIEW-CLASS-NAME
 which defines that view. The argument DATABASE has a default value of
@@ -125,8 +123,6 @@ which defines that view. The argument DATABASE has a default value of
           (%uninstall-class tclass))
         (error "Class ~s not found." view-class-name)))
   (values))
-
-#.(restore-sql-reader-syntax-state)
 
 (defun %uninstall-class (self &key (database *default-database*))
   (drop-table (sql-expression :table (view-table self))
@@ -141,13 +137,21 @@ which defines that view. The argument DATABASE has a default value of
 ;;
 
 (defun list-classes (&key (test #'identity)
-                          (root-class 'standard-db-object)
-                          (database *default-database*))
-  "Returns a list of View Classes connected to a given DATABASE which
-defaults to *DEFAULT-DATABASE*."
-  (declare (ignore root-class))
-  (remove-if #'(lambda (c) (not (funcall test c)))
-             (database-view-classes database)))
+		     (root-class (find-class 'standard-db-object))
+		     (database *default-database*))
+  "The LIST-CLASSES function collects all the classes below
+ROOT-CLASS, which defaults to standard-db-object, that are connected
+to the supplied DATABASE and which satisfy the TEST function. The
+default for the TEST argument is identity. By default, LIST-CLASSES
+returns a list of all the classes connected to the default database,
+*DEFAULT-DATABASE*."
+  (flet ((find-superclass (class) 
+	   (member root-class (class-precedence-list class))))
+    (let ((view-classes (and database (database-view-classes database))))
+      (when view-classes
+	(remove-if #'(lambda (c) (or (not (funcall test c))
+				     (not (find-superclass c))))
+		   view-classes)))))
 
 ;;
 ;; Define a new view class
@@ -727,6 +731,11 @@ DATABASE-NULL-VALUE on the type of the slot."))
   (unless (eq 'NULL val)
     (parse-timestring val)))
 
+(defmethod read-sql-value (val (type (eql 'duration)) database)
+  (declare (ignore database))
+  (unless (or (eq 'NULL val)
+              (equal "NIL" val))
+    (parse-timestring val)))
 
 ;; ------------------------------------------------------------
 ;; Logic for 'faulting in' :join slots
