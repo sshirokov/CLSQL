@@ -70,6 +70,7 @@ doc: html pdf
 
 .PHONY: check
 check:
+	@echo "Operating system detected: ${OS}"
 	@$(CHECK)
 
 .PHONY: html
