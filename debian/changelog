@@ -1,7 +1,8 @@
 cl-sql (0.9.5-1) unstable; urgency=low
 
   * Fix defgeneric form in db-interfaces.cl
-  * Fix load-libraris call in postgresql-socket-api.cl
+  * Fix load-libraries call in postgresql-socket-api.cl
+  * OpenMCL is now supported
 
  -- Kevin M. Rosenberg <kmr@debian.org>  Fri, 27 Sep 2002 08:55:33 -0600
 

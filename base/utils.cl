@@ -7,7 +7,7 @@
 ;;;; Programmer:   Kevin M. Rosenberg
 ;;;; Date Started: Mar 2002
 ;;;;
-;;;; $Id: utils.cl,v 1.6 2002/09/17 17:16:43 kevin Exp $
+;;;; $Id: utils.cl,v 1.7 2002/09/30 01:57:32 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -30,9 +30,22 @@
 
 (defun float-to-sql-string (num)
   "Convert exponent character for SQL"
-  (substitute #\e #\f (substitute #\e #\d (write-to-string num :readably t))))
+  (let ((str (write-to-string num :readably t)))
+    (cond
+     ((find #\f str)
+      (substitute #\e #\f str))
+     ((find #\d str)
+      (substitute #\e #\d str))
+     ((find #\F str)
+      (substitute #\e #\F str))
+     ((find #\D str)
+      (substitute #\e #\D str))
+     ((find #\S str)
+      (substitute #\e #\S str))
+     (t
+      str))))
 
-(defun sql-escape (identifier)
+  (defun sql-escape (identifier)
   "Change hyphens to underscores, ensure string"
   (let* ((unescaped (etypecase identifier
                       (symbol (symbol-name identifier))

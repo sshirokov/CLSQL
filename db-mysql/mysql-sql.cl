@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.cl,v 1.1 2002/09/18 07:43:40 kevin Exp $
+;;;; $Id: mysql-sql.cl,v 1.2 2002/09/30 01:57:32 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -47,7 +47,7 @@
     (dotimes (i num-fields)
       (declare (fixnum i))
       (let* ( (field (mysql-fetch-field-direct res-ptr i))
-	     #+ignore (field (uffi:deref-array field-vec 'mysql-field-vector i))
+	     #+ignore (field (uffi:deref-array field-vec '(* mysql-field) i))
 	      (type (uffi:get-slot-value field 'mysql-field 'type)))
 	(push
 	 (case type
@@ -154,13 +154,13 @@
 				      types num-fields
 				      res-ptr))
 		   (unwind-protect
-			(loop for row = (mysql-fetch-row res-ptr)
+		       (loop for row = (mysql-fetch-row res-ptr)
 			      until (uffi:null-pointer-p row)
 			      collect
 			      (loop for i from 0 below num-fields
 				    collect
 				    (convert-raw-field
-				     (uffi:deref-array row 'mysql-row i)
+				     (uffi:deref-array row '(* (* :unsigned-char)) i)
 				     types i)))
 		     (mysql-free-result res-ptr)))
 	       (error 'clsql-sql-error
@@ -249,7 +249,7 @@
 	    do
 	    (setf (car rest) 
 		  (convert-raw-field
-		   (uffi:deref-array row 'mysql-row i)
+		   (uffi:deref-array row '(* (* :unsigned-char)) i)
 		   types
 		   i)))
       list)))

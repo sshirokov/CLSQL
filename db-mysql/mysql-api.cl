@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-api.cl,v 1.1 2002/09/18 07:43:40 kevin Exp $
+;;;; $Id: mysql-api.cl,v 1.2 2002/09/30 01:57:32 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -75,9 +75,9 @@
   (size :unsigned-int))
 
 (uffi:def-struct mysql-mem-root
-    (free (* mysql-used-mem))
-  (used (* mysql-used-mem))
-  (pre-alloc (* mysql-used-mem))
+    (free (:struct-pointer mysql-used-mem))
+  (used (:struct-pointer mysql-used-mem))
+  (pre-alloc (:struct-pointer mysql-used-mem))
   (min-alloc :unsigned-int)
   (block-size :unsigned-int)
   (error-handler :pointer-void))
@@ -121,6 +121,7 @@
 ;;; MYSQL-ROWS
 
 (uffi:def-array-pointer mysql-row (* :unsigned-char))
+
 (uffi:def-array-pointer mysql-field-vector (* mysql-field))
 
 (uffi:def-foreign-type mysql-field-offset :unsigned-int)
@@ -129,14 +130,14 @@
     (next :pointer-self)
   (data mysql-row))
 
-(uffi:def-foreign-type mysql-row-offset (* mysql-rows))
+(uffi:def-foreign-type mysql-row-offset (:struct-pointer mysql-rows)))
 
 (uffi:def-struct mysql-data
     (rows-high32 :unsigned-long)
   (rows-low32 :unsigned-long)
   (fields :unsigned-int)
-  (data (* mysql-rows))
-  (alloc mysql-mem-root))
+  (data (:struct-pointer mysql-rows))
+  (alloc (:struct mysql-mem-root)))
 
 ;;; MYSQL
 (uffi:def-struct mysql-options
@@ -175,7 +176,7 @@
      :use-result))
 
 (uffi:def-struct mysql-mysql
-    (net mysql-net)
+    (net (:struct mysql-net))
   (connected-fd (* :char))
   (host (* :char))
   (user (* :char))
@@ -200,11 +201,11 @@
   (extra-info-low32 :unsigned-long)
   (packet-length :unsigned-long)
   (status mysql-status)
-  (fields (* mysql-field))
-  (field-alloc mysql-mem-root)
+  (fields (:struct-pointer mysql-field))
+  (field-alloc (:struct mysql-mem-root))
   (free-me mysql-bool)
   (reconnect mysql-bool)
-  (options mysql-options)
+  (options (:struct mysql-options))
   (scramble-buff (:array :char 9))
   (charset :pointer-void)
   (server-language :unsigned-int))
@@ -216,14 +217,14 @@
   (row-count-low32 :unsigned-long)
   (field-count :unsigned-int)
   (current-field :unsigned-int)
-  (fields (* mysql-field))
-  (data (* mysql-data))
-  (data-cursor (* mysql-rows))
-  (field-alloc mysql-mem-root)
+  (fields (:struct-pointer mysql-field))
+  (data (:struct-pointer mysql-data))
+  (data-cursor (:struct-pointer mysql-rows))
+  (field-alloc (:struct mysql-mem-root))
   (row mysql-row)
   (current-row mysql-row)
   (lengths (* :unsigned-long))
-  (handle (* mysql-mysql))
+  (handle (:struct-pointer mysql-mysql))
   (eof mysql-bool))
 
 ;;;; The Foreign C routines
@@ -436,7 +437,7 @@
 (uffi:def-function "mysql_fetch_row"
     ((res (* mysql-mysql-res)))
   :module "mysql"
-  :returning mysql-row)
+  :returning (* :unsigned-char))
 
 (declaim (inline mysql-fetch-lengths))
 (uffi:def-function "mysql_fetch_lengths"
@@ -454,7 +455,7 @@
 (uffi:def-function "mysql_fetch_fields"
   ((res (* mysql-mysql-res)))
   :module "mysql"
-  :returning mysql-field-vector)
+  :returning (* mysql-field))
 
 (declaim (inline mysql-fetch-field-direct))
 (uffi:def-function "mysql_fetch_field_direct"

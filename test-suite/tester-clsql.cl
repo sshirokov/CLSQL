@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: tester-clsql.cl,v 1.8 2002/06/12 17:47:13 kevin Exp $
+;;;; $Id: tester-clsql.cl,v 1.9 2002/09/30 01:57:32 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -223,9 +223,7 @@
 	    t))))
 	 
 (defun drop-test-table (db)
-  (clsql:execute-command "DROP TABLE test_clsql"))
-
-
+  (clsql:execute-command "DROP TABLE test_clsql" :database db))
 
 (defun do-test ()
     (let ((specs (read-specs)))
