@@ -1,3 +1,11 @@
+18 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+        * sql/table.lisp: Add PURGE to drop command for oracle 10g backend.
+	To handle this difference, will need to add a new database-drop-table
+	generic function.
+	* db-oracle/oracle-sql.lisp: Move server-version and
+	major-version-number to database object to allow multiple connections
+	to Oracle servers of different versions.
+	
 18 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* TODO: moved notes about backends to doc/TODO. 
 	* doc/TODO: added notes about backends and select extensions. 

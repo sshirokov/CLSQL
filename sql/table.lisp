@@ -61,7 +61,10 @@ if IF-DOES-NOT-EXIST is :error."
          (return-from drop-table nil)))
       (:error
        t))
-    (let ((expr (concatenate 'string "DROP TABLE " table-name)))
+    (let ((expr (concatenate 'string "DROP TABLE " table-name
+			     (if (eq :oracle (database-type database))
+				 " PURGE"
+			       ""))))
       (execute-command expr :database database))))
 
 (defun list-tables (&key (owner nil) (database *default-database*))

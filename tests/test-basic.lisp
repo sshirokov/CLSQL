@@ -202,11 +202,12 @@
 	       (clsql-sys:number-to-sql-string test-flt)
 	       (clsql-sys:number-to-sql-string test-flt)
 	       ))
-      (clsql:execute-command
-       (format nil "INSERT INTO TYPE_BIGINT VALUES (~a,~a)"
-	       test-int
-	       (transform-bigint-1 test-int)
-	       )))))
+      (when (clsql-sys:db-type-has-bigint? *test-database-type*)
+	(clsql:execute-command
+	 (format nil "INSERT INTO TYPE_BIGINT VALUES (~a,~a)"
+		 test-int
+		 (transform-bigint-1 test-int)
+		 ))))))
 
 ;;;; Testing functions
 

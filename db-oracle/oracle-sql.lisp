@@ -15,9 +15,6 @@
 
 (in-package #:clsql-oracle)
 
-(defvar *oracle-server-version* nil
-  "Version string of Oracle server.")
-
 (defmethod database-initialize-database-type
     ((database-type (eql :oracle)))
   t)
@@ -127,7 +124,19 @@ likely that we'll have to worry about the CMUCL limit."))
     "Each database connection can be configured with its own date
 output format.  In order to extract date strings from output buffers
 holding multiple date strings in fixed-width fields, we need to know
-the length of that format.")))
+the length of that format.")
+   (server-version 
+    :type string
+    :initarg :server-version
+    :reader server-version
+    :documentation
+    "Version string of Oracle server.")
+   (major-version-number
+    :type (or null fixnum)
+    :initarg :major-version-number
+    :reader major-version-number
+    :documentation
+    "The major version number of Oracle, should be 8, 9, or 10")))
 
 
 ;;; Handle the messy case of return code=+oci-error+, querying the
@@ -258,22 +267,23 @@ the length of that format.")))
 ;  (sql:query "select '',OWNER,TABLE_NAME,TABLE_TYPE,'' from all_catalog"))
   
 
-(defmethod database-list-tables ((db oracle-database) &key owner)
+(defmethod database-list-tables ((database oracle-database) &key owner)
+  (mapcar #'car 
+	  (database-query "select table_name from user_tables"
+			  database nil nil))
+  #+nil
   (values (database-query "select TABLE_NAME from all_catalog
 	        where owner not in ('PUBLIC','SYSTEM','SYS','WMSYS','EXFSYS','CTXSYS','WKSYS','WK_TEST','MDSYS','DMSYS','OLAPSYS','ORDSYS','XDB')"
 			  db nil nil)))
 
 
 (defmethod database-list-views ((database oracle-database)
-                                 &key (system-tables nil) owner)
-  (if system-tables
-      (database-query "select table_name from all_catalog" database nil nil)
-    (database-query "select table_name from all_catalog where owner != 'PUBLIC' and owner != 'SYSTEM' and owner != 'SYS'"
-		    database nil nil)))
+                                 &key owner)
+  ;; (database-query "select table_name from all_catalog" database nil nil)
+  (mapcar #'car
+	  (database-query "select view_name from user_views" database nil nil)))
 
 ;; Return a list of all columns in TABLE.
-;;
-;; The Allegro version of this also returned a second value.
 
 (defmethod list-all-table-columns (table (db oracle-database))
   (declare (type string table))
@@ -301,6 +311,11 @@ the length of that format.")))
 		2 ; numeric
 	        1))) ; string
     preresult))
+
+(defmethod database-list-indexes ((database oracle-database)
+                                  &key (owner nil))
+  (mapcar #'car
+	  (database-query "select index_name from user_indexes" database nil nil)))
 
 (defmethod database-list-attributes (table (database oracle-database) &key owner)
   (let* ((relname (etypecase table
@@ -720,15 +735,25 @@ the length of that format.")))
         ;; oci-handle-alloc((dvoid *)encvhp, (dvoid **)&stmthp, OCI_HTYPE_STMT, 0, 0);
         ;;#+nil
 	)
-      (let ((db (make-instance 'oracle-database
-                               :name (database-name-from-spec connection-spec
-                                                              database-type)
-                               :envhp envhp
-                               :errhp errhp
-			       :database-type :oracle
-                               :svchp svchp
-                               :dsn data-source-name
-                               :user user)))
+      (let (db server-version)
+	(uffi:with-foreign-object (buf (:array :unsigned-char #.+errbuf-len+))
+	  (oci-server-version (uffi:deref-pointer svchp void-pointer)
+			      (uffi:deref-pointer errhp void-pointer)
+			      buf +errbuf-len+ +oci-htype-svcctx+)
+	  (setf server-version (uffi:convert-from-foreign-string buf)))
+	(setq db (make-instance 'oracle-database
+				:name (database-name-from-spec connection-spec
+							       database-type)
+				:envhp envhp
+				:errhp errhp
+				:database-type :oracle
+				:svchp svchp
+				:dsn data-source-name
+				:user user
+				:server-version server-version
+				:major-version-number (major-version-from-string
+						       server-version)))
+
 	(oci-logon (uffi:deref-pointer envhp void-pointer)
 		   (uffi:deref-pointer errhp void-pointer) 
 		   svchp
@@ -737,18 +762,18 @@ the length of that format.")))
 		   (uffi:convert-to-cstring data-source-name) (length data-source-name)
 		   :database db)
 	;; :date-format-length (1+ (length date-format)))))
-	(uffi:with-foreign-object (buf (:array :unsigned-char 512))
-	  (oci-server-version (uffi:deref-pointer svchp void-pointer)
-			      (uffi:deref-pointer errhp void-pointer)
-			      buf
-			      512
-			      +oci-htype-svcctx+)
-	  (setf *oracle-server-version* (uffi:convert-from-foreign-string buf)))
-	
 	(setf (slot-value db 'clsql-sys::state) :open)
         (database-execute-command
 	 (format nil "alter session set NLS_DATE_FORMAT='~A'" (date-format db)) db)
         db))))
+
+
+(defun major-version-from-string (str)
+  (cond 
+    ((search " 10g " str)
+     10)
+    ((search " 9g " str)
+     10)))
 
 
 ;; Close a database connection.
@@ -812,6 +837,9 @@ the length of that format.")))
 		 ".NEXTVAL FROM dual"
 		 ) :database database)))
 
+(defmethod database-list-sequences ((database oracle-database) &key owner)
+  (mapcar #'car (database-query "select sequence_name from user_sequences" 
+				database nil nil)))
 
 (defmethod database-execute-command (sql-expression (database oracle-database))
   (database-query sql-expression database nil nil)
@@ -924,3 +952,6 @@ the length of that format.")))
 
 (defmethod db-type-has-bigint? ((type (eql :oracle)))
   nil)
+
+(defmethod db-type-has-fancy-math? ((db-type (eql :postgresql)))
+  t)
