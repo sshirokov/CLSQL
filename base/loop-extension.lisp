@@ -112,7 +112,9 @@
 			  :preposition-groups '((:of :in) (:from))
 			  :inclusive-permitted nil)
 
-#+lispworks (in-package loop)
+#+lispworks 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (in-package loop))
 
 #+lispworks
 (cl-user::define-loop-method (record records tuple tuples) clsql-loop-method 
@@ -122,6 +124,7 @@
 (defun clsql-loop-method (method-name iter-var iter-var-data-type 
 			  prep-phrases inclusive? allowed-preps 
 			  method-specific-data)
+  (declare (ignore method-name inclusive? allowed-preps method-specific-data))
   (let ((in-phrase nil)
 	(from-phrase nil))
     (loop for (prep . rest) in prep-phrases
@@ -146,10 +149,10 @@
       (setq from-phrase '(clsql-base-sys:*default-database*)))
     (cond
       ((consp iter-var)
-       (let ((query-var (gensym 'loop-record-))
-	     (db-var (gensym 'loop-record-database-))
-	     (result-set-var (gensym 'loop-record-result-set-))
-	     (step-var (gensym 'loop-record-step-)))
+       (let ((query-var (gensym "LOOP-RECORD-"))
+	     (db-var (gensym "LOOP-RECORD-DATABASE-"))
+	     (result-set-var (gensym "LOOP-RECORD-RESULT-SET-"))
+	     (step-var (gensym "LOOP-RECORD-STEP-")))
 	 (values
 	  t
 	  nil
@@ -176,9 +179,9 @@
 	  ()
 	  ())))
       (t
-       (let ((query-var (gensym 'loop-record-))
-	     (db-var (gensym 'loop-record-database-))
-	     (result-set-var (gensym 'loop-record-result-set-)))
+       (let ((query-var (gensym "LOOP-RECORD-"))
+	     (db-var (gensym "LOOP-RECORD-DATABASE-"))
+	     (result-set-var (gensym "LOOP-RECORD-RESULT-SET-")))
 	 (values
 	  t
 	  nil
