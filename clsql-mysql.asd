@@ -75,6 +75,7 @@
   :description "Common Lisp SQL MySQL Driver"
   :long-description "cl-sql-mysql package provides a database driver to the MySQL database system."
 
+  :depends-on (uffi clsql-base clsql-uffi)
   :components
   ((:module :db-mysql
 	    :components
@@ -83,6 +84,4 @@
 	     (:file "mysql-loader" :depends-on ("mysql-package" "mysql"))
 	     (:file "mysql-client-info" :depends-on ("mysql-loader"))
 	     (:file "mysql-api" :depends-on ("mysql-client-info"))
-	     (:file "mysql-sql" :depends-on ("mysql-api"))
-	     (:file "mysql-usql" :depends-on ("mysql-sql")))))
-  :depends-on (:uffi :clsql-base :clsql-uffi))
+	     (:file "mysql-sql" :depends-on ("mysql-api"))))))

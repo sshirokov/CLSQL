@@ -2,7 +2,7 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:     clsql-classic.asd
+;;;; Name:     clsql.asd
 ;;;; Purpose:  System definition for CLSQL-CLASSIC
 ;;;; Authors:  Marcus Pearce and Kevin M. Rosenberg
 ;;;; Created:  March 2004
@@ -14,8 +14,8 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(asdf:defsystem #:clsql-usql
-    :name "CLSQL-USQL"
+(asdf:defsystem #:clsql
+    :name "CLSQL"
     :author ""
     :maintainer ""
     :version ""

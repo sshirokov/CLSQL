@@ -2,7 +2,7 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          clsql-postgresql.asd
+;;;; Name:          clsql-sqlite.asd
 ;;;; Purpose:       ASDF file for CLSQL SQLite backend
 ;;;; Programmer:    Aurelio Bignoli
 ;;;; Date Started:  Aug 2003
@@ -15,6 +15,7 @@
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
+
 (defpackage #:clsql-sqlite-system (:use #:asdf #:cl))
 (in-package #:clsql-sqlite-system)
 
@@ -26,16 +27,15 @@
   :description "Common Lisp SQLite Driver"
   :long-description "cl-sql-sqlite package provides a database driver to SQLite database library."
 
+
+  :depends-on (#-clisp uffi clsql-base)
   :components
-    ((:module :db-sqlite
-	      :components
-	      ((:file "sqlite-package")
-	       (:file "sqlite-loader" :depends-on ("sqlite-package"))
-	       (:file #+clisp "sqlite-api-clisp"
-		      #-clisp "sqlite-api-uffi"
-                      :depends-on ("sqlite-loader"))
-	       (:file "sqlite-sql" :depends-on (#+clisp "sqlite-api-clisp"
-						#-clisp "sqlite-api-uffi"))
-	       (:file "sqlite-usql" :depends-on ("sqlite-sql")))))
-    :depends-on (#-clisp :uffi
-			 :clsql-base))
+  ((:module :db-sqlite
+	    :components
+	    ((:file "sqlite-package")
+	     (:file "sqlite-loader" :depends-on ("sqlite-package"))
+	     (:file #+clisp "sqlite-api-clisp"
+		    #-clisp "sqlite-api-uffi"
+		    :depends-on ("sqlite-loader"))
+	     (:file "sqlite-sql" :depends-on (#+clisp "sqlite-api-clisp"
+						      #-clisp "sqlite-api-uffi"))))))

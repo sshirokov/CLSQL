@@ -30,12 +30,11 @@
   :description "Common Lisp PostgreSQL API Driver"
   :long-description "cl-sql-postgresql package provides a the database driver for the PostgreSQL API."
 
+  :depends-on (uffi clsql-base clsql-uffi)
   :components
   ((:module :db-postgresql
 	    :components
 	    ((:file "postgresql-package")
 	     (:file "postgresql-loader" :depends-on ("postgresql-package"))
 	     (:file "postgresql-api" :depends-on ("postgresql-loader"))
-	     (:file "postgresql-sql" :depends-on ("postgresql-api"))
-	     (:file "postgresql-usql" :depends-on ("postgresql-sql")))))
-  :depends-on (:uffi :clsql-base :clsql-uffi))
+	     (:file "postgresql-sql" :depends-on ("postgresql-api"))))))

@@ -17,7 +17,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-sys)
+(in-package #:clsql-classic-sys)
 
 
 ;;; Row processing macro
@@ -107,5 +107,38 @@
 (defun delete-large-object (object-id &key (database *default-database*))
   "Deletes the large object in the database"
   (database-delete-large-object object-id database))
+
+
+;;; These functions are not exported. If you application depends on these
+;;; functions consider using the clsql package using has further support.
+
+(defun list-tables (&key (database *default-database*))
+  "List all tables in *default-database*, or if the :database keyword arg
+is given, the specified database.  If the keyword arg :system-tables
+is true, then it will not filter out non-user tables.  Table names are
+given back as a list of strings."
+  (database-list-tables database))
+
+
+(defun list-attributes (table &key (database *default-database*))
+  "List the attributes of TABLE in *default-database, or if the
+:database keyword is given, the specified database.  Attributes are
+returned as a list of strings."
+  (database-list-attributes table database))
+
+(defun attribute-type (attribute table &key (database *default-database*))
+  "Return the field type of the ATTRIBUTE in TABLE.  The optional
+keyword argument :database specifies the database to query, defaulting
+to *default-database*."
+  (database-attribute-type attribute table database))
+
+(defun create-sequence (name &key (database *default-database*))
+  (database-create-sequence name database))
+
+(defun drop-sequence (name &key (database *default-database*))
+  (database-drop-sequence name database))
+
+(defun sequence-next (name &key (database *default-database*))
+  (database-sequence-next name database))
 
 

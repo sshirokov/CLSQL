@@ -29,16 +29,13 @@
   :description "Common Lisp SQL Interface Library"
   :long-description "cl-sql package provides the high-level interface for the CLSQL system."
   
+  :depends-on (clsql-base)
   :components
   ((:module :classic
 	    :components
 	    ((:file "package")
 	     (:file "sql" :depends-on ("package"))
-	     (:file "functional" :depends-on ("sql"))
-	     (:file "usql" :depends-on ("sql"))
-	     )))
-  :depends-on (:clsql-base)
-  )
+	     (:file "functional" :depends-on ("sql"))))))
 
 #+(or allegro lispworks cmu sbcl openmcl mcl scl)
 (defmethod perform ((o test-op) (c (eql (find-system :clsql-classic))))

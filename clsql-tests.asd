@@ -23,7 +23,8 @@
     :maintainer ""
     :version ""
     :licence ""
-    :description "A regression test suite for CLSQL-USQL."
+    :description "A regression test suite for CLSQL."
+    :depends-on (clsql rt)
     :components 
     ((:module tests
 	      :serial t
@@ -34,5 +35,4 @@
 			   (:file "test-fdml")
 			   (:file "test-ooddl")
 			   (:file "test-oodml")
-			   (:file "test-syntax"))))
-    :depends-on (:clsql :rt))
+			   (:file "test-syntax")))))

@@ -3,7 +3,7 @@
 ;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          package.lisp
-;;;; Purpose:       Package definition for CLSQL (high-level) interface
+;;;; Purpose:       Package definition for CLSQL-CLASSIC high-level interface
 ;;;; Programmers:   Kevin M. Rosenberg based on
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
@@ -21,8 +21,8 @@
 (in-package #:cl-user)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defpackage #:clsql-sys
-    (:nicknames #:clsql)
+  (defpackage #:clsql-classic-sys
+    (:nicknames #:clsql-classic)
     (:use #:cl #:clsql-base-sys)
     (:import-from 
      #:clsql-base
@@ -136,10 +136,10 @@
      .
      #1#
      )
-    (:documentation "This is the INTERNAL SQL-Interface package of CLSQL."))
+    (:documentation "This is the INTERNAL SQL-Interface package of CLSQL-CLASSIC."))
   
   )					;eval-when
 
-(defpackage #:clsql-user
-  (:use #:common-lisp #:clsql)
-  (:documentation "This is the user package for experimenting with CLSQL."))
+(defpackage #:clsql-classic-user
+  (:use #:common-lisp #:clsql-classic)
+  (:documentation "This is the user package for experimenting with CLSQL-CLASSIC."))
