@@ -7,7 +7,10 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: xptest-clsql.cl,v 1.4 2002/03/27 10:48:21 kevin Exp $
+;;;; $Id: xptest-clsql.cl,v 1.5 2002/03/27 10:56:02 kevin Exp $
+;;;;
+;;;; The XPTest package can be downloaded from
+;;;; http://alpha.onshored.com/lisp-software/
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
