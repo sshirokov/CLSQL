@@ -70,7 +70,7 @@ other systems.</para>
     </sect2>
 
     <sect2>
-      <title>&uffi;</title>
+      <title>&md5;</title>
       <para>&clsql;'s postgresql-socket interface uses Pierre Mai's 
        <ulink url="ftp://clsql.b9.com/">md5</ulink> module. If you plan to use
        this interface please download the md5 module from ftp://clsql.b9.com </para>       

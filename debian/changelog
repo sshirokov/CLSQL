@@ -1,3 +1,9 @@
+cl-sql (1.4.6-1) unstable; urgency=low
+
+  * Documentation fix
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Tue, 29 Apr 2003 04:47:34 -0600
+
 cl-sql (1.4.5-1) unstable; urgency=low
 
   * Documentation updates for cl-md5 module from Gisle Slensminde
