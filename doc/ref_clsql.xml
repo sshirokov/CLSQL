@@ -8,11 +8,11 @@
 <reference id="clsql">
   <title><symbol>CLSQL</symbol></title>
   <partintro>
-    <para>This part gives a reference to all the symbols exported
-      from the package <symbol>CLSQL-SYS</symbol>, which are also
-      re-exported from the package <symbol>CLSQL</symbol>.  These
-      symbols constitute the normal user-interface of
-      &clsql;.</para>
+    <para>This part gives a reference to the symbols exported from the
+    package <symbol>CLSQL-SYS</symbol>, which are also re-exported
+    from the package <symbol>CLSQL</symbol>.  These symbols constitute
+    the normal user-interface of &clsql;. Currently, the symbols of
+    the &commonsql;-API are not documented here.</para>
     </partintro>
     <!-- Conditions -->
     <refentry id="clsql-condition">

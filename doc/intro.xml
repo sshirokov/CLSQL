@@ -26,9 +26,9 @@
       the &uffi; library. The initial code was based substantially on
       Pierre R. Mai's excellent &maisql; package. In late 2003, the
       &usql; library was orphaned by its author, onShore Development,
-      Inc with the cessation of further development. In April 2004,
-      Marcus Pearce ported the &usql; library to &clsql;.  The &usql;
-      library provides a &commonsql;-compatible API for &clsql;.
+      Inc. In April 2004, Marcus Pearce ported the &usql; library to
+      &clsql;.  The &usql; library provides a &commonsql;-compatible
+      API for &clsql;.
     </para>
 
     <para>The main changes from &maisql; and &usql; are:
