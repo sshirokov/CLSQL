@@ -64,7 +64,7 @@ likely that we'll have to worry about the CMUCL limit."))
 ;;; database. Thus, there's no obstacle to having any number of DB
 ;;; objects referring to the same database.
 
-(uffi:def-type pointer-pointer-void '(* :pointer-void))
+(uffi:def-type pointer-pointer-void (* :pointer-void))
 
 (defclass oracle-database (database)    ; was struct db
   ((envhp
@@ -339,9 +339,9 @@ the length of that format.")
 ;; STREAM which has no more data, and QC is not a STREAM, we signal
 ;; DBI-ERROR instead.
 
-(uffi:def-type short-array '(:array :short))
-(uffi:def-type int-pointer '(* :int))
-(uffi:def-type double-pointer '(* :double))
+(uffi:def-type short-array (:array :short))
+(uffi:def-type int-pointer (* :int))
+(uffi:def-type double-pointer (* :double))
 
 ;;; the result of a database query: a cursor through a table
 (defstruct (oracle-result-set (:print-function print-query-cursor)

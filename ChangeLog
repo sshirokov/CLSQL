@@ -1,3 +1,8 @@
+09 Sep 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.0.4 Release
+	* multiple: Remove superfluous quotes in UFFI def-type
+	and def-foreign-type forms.
+	
 07 Sep 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.0.3 Release
 	* db-postgresql-socket/postgresql-socket-api.lisp: Commit patch

@@ -576,13 +576,13 @@ as possible second argument) to the desired representation of date/time/timestam
     (#.$SQL_TINYINT $SQL_C_STINYINT)
     (#.$SQL_BIT $SQL_C_BIT)))
 
-(def-type byte-pointer-type '(* :byte))
-(def-type short-pointer-type '(* :short))
-(def-type int-pointer-type '(* :int))
-(def-type long-pointer-type '(* #.$ODBC-LONG-TYPE))
-(def-type float-pointer-type '(* :float))
-(def-type double-pointer-type '(* :double))
-(def-type string-pointer-type '(* :unsigned-char))
+(def-type byte-pointer-type (* :byte))
+(def-type short-pointer-type (* :short))
+(def-type int-pointer-type (* :int))
+(def-type long-pointer-type (* #.$ODBC-LONG-TYPE))
+(def-type float-pointer-type (* :float))
+(def-type double-pointer-type (* :double))
+(def-type string-pointer-type (* :unsigned-char))
 
 (defun get-cast-byte (ptr)
   (locally (declare (type byte-pointer-type ptr))
@@ -900,9 +900,9 @@ as possible second argument) to the desired representation of date/time/timestam
                (read-from-string str))
            str))))))
 
-(def-type c-timestamp-ptr-type '(* (:struct sql-c-timestamp)))
-(def-type c-time-ptr-type '(* (:struct sql-c-time)))
-(def-type c-date-ptr-type '(* (:struct sql-c-date)))
+(def-type c-timestamp-ptr-type (* (:struct sql-c-timestamp)))
+(def-type c-time-ptr-type (* (:struct sql-c-time)))
+(def-type c-date-ptr-type (* (:struct sql-c-date)))
 
 (defun timestamp-to-universal-time (ptr)
   (declare (type c-timestamp-ptr-type ptr))

@@ -27,6 +27,7 @@
 
 (defmethod initialize-instance :after ((db generic-odbc-database)
                                         &rest all-keys)
+  (declare (ignore all-keys))
   (unless (slot-boundp db 'dbi-package)
     (error "dbi-package not specified."))
   (let ((pkg (slot-value db 'dbi-package)))
