@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: tests.lisp,v 1.1 2003/05/02 03:08:58 kevin Exp $
+;;;; $Id: tests.lisp,v 1.2 2003/05/02 03:17:41 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -220,7 +220,7 @@
 (defun drop-test-table (db)
   (clsql:execute-command "DROP TABLE test_clsql" :database db))
 
-(defun do-test ()
+(defun clsql-tests ()
     (let ((specs (read-specs)))
       (with-tests (:name "CLSQL")
 	(mysql-low-level specs)
@@ -228,7 +228,10 @@
 	(pgsql-table-test specs)
 	(pgsql-socket-table-test specs)
 	(aodbc-table-test specs)
-      )))
+      ))
+    t)
+
+(deftest clsql.all (clsql-tests) t)
 
 
-(do-test)
+

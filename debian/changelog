@@ -3,6 +3,7 @@ cl-sql (1.5.0-1) unstable; urgency=low
   * Update SBCL support in cmucl-compat package.
   * Use debian/compat rather than DH_COMPAT
   * Add cl-sql-tests binary with test suite
+  * Use libmysqlclient10 package for LGPL license
 
  -- Kevin M. Rosenberg <kmr@debian.org>  Thu,  1 May 2003 16:23:37 -0600
 
