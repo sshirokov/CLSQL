@@ -6,7 +6,7 @@
  *   Programmer:    Kevin M. Rosenberg
  *   Date Started:  Mar 2002
  *
- * $Id: clsql-mysql.c,v 1.1 2002/09/18 07:43:40 kevin Exp $
+ * $Id: clsql-mysql.c,v 1.2 2002/12/09 10:34:16 kevin Exp $
  *
  * This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
  *
@@ -52,7 +52,7 @@ clsql_mysql_data_seek (MYSQL_RES* res, unsigned int offset_high32,
    They return the 32-bit low part and store in upper 32-bits in a 
    located sent via a pointer */
 
-const unsigned int bitmask_32bits = 0xFFFFFFFF;
+static const unsigned int bitmask_32bits = 0xFFFFFFFF;
 #define lower_32bits(int64) ((unsigned int) int64 & bitmask_32bits)
 #define upper_32bits(int64) ((unsigned int) (int64 >> 32))
 

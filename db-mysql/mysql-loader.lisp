@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-loader.lisp,v 1.5 2002/11/23 18:00:26 kevin Exp $
+;;;; $Id: mysql-loader.lisp,v 1.6 2002/12/09 10:34:16 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -25,7 +25,7 @@
 ;;;;      -- prevent library from being loaded multiple times
 ;;;;      -- support Allegro CL and Lispworks
 
-(defvar *clsql-mysql-library-filename* 
+(defparameter *clsql-mysql-library-path* 
   (uffi:find-foreign-library
    "clsql-mysql"
    `(,(make-pathname :directory (pathname-directory *load-truename*))
@@ -33,12 +33,23 @@
      "/sw/lib/clsql/"
      "/home/kevin/debian/src/clsql/db-mysql/")
    :drive-letters '("C" "D" "E")))
+
+(defparameter *libz-library-path* 
+  (uffi:find-foreign-library
+   "libz"
+   `(,(make-pathname :directory (pathname-directory *load-truename*))
+      "/usr/lib/"
+      "/sw/lib/"
+      "/usr/local/lib/"
+      "/home/kevin/debian/src/clsql/db-mysql/")
+   :drive-letters '("C" "D" "E")))
   
 (defvar *mysql-library-candidate-names*
     '("libmysqlclient" "libmysql"))
 
-(defvar *mysql-library-candidate-directories*
-    '("/opt/mysql/lib/mysql/" "/usr/local/lib/" "/usr/lib/" "/usr/local/lib/mysql/" "/usr/lib/mysql/" "/mysql/lib/opt/" "/sw/lib/mysql/"))
+(defparameter *mysql-library-candidate-directories*
+    `(,(pathname-directory *load-pathname*)
+      "/opt/mysql/lib/mysql/" "/usr/local/lib/" "/usr/lib/" "/usr/local/lib/mysql/" "/usr/lib/mysql/" "/mysql/lib/opt/" "/sw/lib/mysql/"))
 
 (defvar *mysql-library-candidate-drive-letters* '("C" "D" "E"))
 
@@ -58,22 +69,16 @@ set to the right path before compiling or loading the system.")
 	 (uffi:find-foreign-library *mysql-library-candidate-names*
 				    *mysql-library-candidate-directories*
 				    :drive-letters
-				    *mysql-library-candidate-drive-letters*))
-	(zlib-path
-	 (uffi:find-foreign-library '("libz" "zlib")
-				    '("/usr/lib/" "/usr/local/lib/" "/lib/"))))
+				    *mysql-library-candidate-drive-letters*)))
     (unless (probe-file mysql-path)
       (error "Can't find mysql client library to load"))
-    (unless (probe-file zlib-path)
-      (error "Can't find zlib client library to load"))
-
-    (uffi:load-foreign-library zlib-path) 
     (if	(and
+	 (uffi:load-foreign-library *libz-library-path*) 
 	 (uffi:load-foreign-library mysql-path
 				    :module "mysql" 
 				    :supporting-libraries 
 				    *mysql-supporting-libraries*)
-	 (uffi:load-foreign-library *clsql-mysql-library-filename* 
+	 (uffi:load-foreign-library *clsql-mysql-library-path* 
 				    :module "clsql-mysql" 
 				    :supporting-libraries 
 				    (append *mysql-supporting-libraries*)))

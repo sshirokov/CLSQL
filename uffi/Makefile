@@ -7,7 +7,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.2 2002/11/23 18:00:26 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.3 2002/12/09 10:34:16 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -50,6 +50,6 @@ clean:
 
 distclean: clean
 
-macosx: $(source) Makefile
+mac: $(source) Makefile
 	cc -dynamic -c $(source) -o $(object)
 	ld -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress -o $(base).dylib $(object)

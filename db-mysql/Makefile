@@ -3,11 +3,11 @@
 # FILE IDENTIFICATION
 # 
 #  Name:         Makefile
-#  Purpose:      Makefile for the CLSQL UFFI helper package
+#  Purpose:      Makefile for the CLSQL MySQL database interface
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.1 2002/09/18 07:43:40 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.2 2002/12/09 10:34:16 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -49,8 +49,13 @@ compile: $(shared_lib)
 $(object): $(source) mysql.h
 	$(CC) ${SHARED_CC_OPT} $(INCLUDE_DIRS) -c $< -o $@
 
-$(shared_lib): $(object) -lmysqlclient
+$(shared_lib): $(object) 
 	$(LD) ${SHARED_LD_OPT} $^ -o $@
+
+mac: $(object)
+	ld -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress $(object) -o $(base).dylib
+	ld -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress /sw/lib/libmysqlclient.dylib -o libmysqlclient.dylib
+	ld -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress /usr/lib/libz.dylib -o libz.dylib
 
 clean:
 	@rm -f $(object) $(shared_lib) *~
