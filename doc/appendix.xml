@@ -1,28 +1,33 @@
-<!-- -*- DocBook -*- -->
-
-  <appendix>
-    <title>Database Back-ends</title>
-
-    <sect1>
-      <title>MySQL</title>
-      <sect2>
-	<title>Libraries</title>
-	<para>The MySQL back-end needs access to the MySQL C 
-	  client library (<filename>libmysqlclient.so</filename>).
-	  The location of this library is specified via 
-	  <symbol>*mysql-so-load-path*</symbol>, which defaults
-	  to <filename>/usr/lib/libmysqlclient.so</filename>.
-	  Additional flags to <application>ld</application> needed for
-	  linking are specified via
-	  <symbol>*mysql-so-libraries*</symbol>,
-	  which defaults to <symbol>("-lc")</symbol>.</para>
-      </sect2>
-      <sect2>
-	<title>Initialization</title>
-	<para>Use 
-	  <programlisting>(mk:load-system :clsql-mysql)</programlisting>
-	  to load the MySQL back-end.  The database type for the MySQL
-	  back-end is <symbol>:mysql</symbol>.</para>
+<?xml version='1.0' ?>   <!-- -*- DocBook -*- -->
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+               "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY % myents SYSTEM "entities.xml">
+%myents;
+]>
+  
+<appendix id="appendix">
+  <title>Database Back-ends</title>
+  
+  <sect1 id="mysql">
+    <title>MySQL</title>
+    <sect2>
+      <title>Libraries</title>
+      <para>The MySQL back-end needs access to the MySQL C 
+	client library (<filename>libmysqlclient.so</filename>).
+	The location of this library is specified 
+	via <symbol>*mysql-so-load-path*</symbol>, which defaults
+	to <filename>/usr/lib/libmysqlclient.so</filename>.
+	Additional flags to <application>ld</application> needed for
+	linking are specified via <symbol>*mysql-so-libraries*</symbol>,
+	which defaults to <symbol>("-lc")</symbol>.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Initialization</title>
+      <para>Use 
+	<programlisting>(mk:load-system :clsql-mysql)</programlisting>
+	to load the MySQL back-end.  The database type for the MySQL
+	back-end is <symbol>:mysql</symbol>.</para>
       </sect2>
       <sect2>
 	<title>Connection Specification</title>
@@ -70,55 +75,7 @@
       </sect2>
     </sect1>
 
-    <sect1>
-      <title>AODBC</title>
-      <sect2>
-	<title>Libraries</title>
-	<para>The AODBC back-end requires access to the ODBC interface
-          of &acl;.</para>
-      </sect2>
-      <sect2>
-	<title>Initialization</title>
-	<para>Use 
-	  <programlisting>(mk:load-system :clsql-aodbc)</programlisting>
-	  to load the MySQL back-end.  The database type for the AODBC
-	  back-end is <symbol>:aodbc</symbol>.</para>
-      </sect2>
-      <sect2>
-	<title>Connection Specification</title>
-	<sect3>
-	  <title>Syntax of connection-spec</title>
-	  <synopsis>(<replaceable>dsn</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable>)</synopsis>
-	</sect3>
-	<sect3>
-	  <title>Description of connection-spec</title>
-	  <variablelist>
-	    <varlistentry>
-	      <term><parameter>dsn</parameter></term>
-	      <listitem>
-		<para>String representing the ODBC data source name.</para>
-	      </listitem>
-	    </varlistentry>
-	    <varlistentry>
-	      <term><parameter>user</parameter></term>
-	      <listitem>
-		<para>String representing the user name to use for
-		  authentication.</para>
-	      </listitem>
-	    </varlistentry>
-	    <varlistentry>
-	      <term><parameter>password</parameter></term>
-	      <listitem>
-		<para>String representing the unencrypted password to
-		  use for authentication.</para>
-	      </listitem>
-	    </varlistentry>
-	  </variablelist>
-	</sect3>
-      </sect2>
-    </sect1>
-
-    <sect1>
+    <sect1 id="postgresql">
       <title>PostgreSQL</title>
       <sect2>
 	<title>Libraries</title>
@@ -208,7 +165,7 @@
       </sect2>
     </sect1>
 
-    <sect1>
+    <sect1 id="postgresql-socket">
       <title>PostgreSQL Socket</title>
       <sect2>
 	<title>Libraries</title>
@@ -302,4 +259,53 @@
 	</sect3>
       </sect2>
     </sect1>
+
+    <sect1 id="aodbc">
+      <title>AODBC</title>
+      <sect2>
+	<title>Libraries</title>
+	<para>The AODBC back-end requires access to the ODBC interface
+          of &acl;.</para>
+      </sect2>
+      <sect2>
+	<title>Initialization</title>
+	<para>Use 
+	  <programlisting>(mk:load-system :clsql-aodbc)</programlisting>
+	  to load the MySQL back-end.  The database type for the AODBC
+	  back-end is <symbol>:aodbc</symbol>.</para>
+      </sect2>
+      <sect2>
+	<title>Connection Specification</title>
+	<sect3>
+	  <title>Syntax of connection-spec</title>
+	  <synopsis>(<replaceable>dsn</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable>)</synopsis>
+	</sect3>
+	<sect3>
+	  <title>Description of connection-spec</title>
+	  <variablelist>
+	    <varlistentry>
+	      <term><parameter>dsn</parameter></term>
+	      <listitem>
+		<para>String representing the ODBC data source name.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>user</parameter></term>
+	      <listitem>
+		<para>String representing the user name to use for
+		  authentication.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>password</parameter></term>
+	      <listitem>
+		<para>String representing the unencrypted password to
+		  use for authentication.</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</sect3>
+      </sect2>
+    </sect1>
+
   </appendix>

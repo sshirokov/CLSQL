@@ -5,7 +5,7 @@
 %myents;
 ]>
 
-<reference>
+<reference id="clsql">
   <title><symbol>CLSQL</symbol></title>
   <partintro>
     <para>This part gives a reference to all the symbols exported
@@ -1328,6 +1328,7 @@
 	      <para>A boolean flag. If &t;, acquire connection from a
                pool of open connections. If the pool is empty, a new
                connection is created. The default is &nil;.
+	      </para>
 	    </listitem>
 	  </varlistentry>
 	  <varlistentry>
@@ -1510,6 +1511,7 @@ pool of opened databases. If &t;, rather than terminating the database connectio
 connection is left open and the connection is placed into a pool of connections. Subsequent
 calls to <link linkend="connect"><function>connect</function></link> can then reuse this connection.
 The default is &nil;.
+	      </para>
 	    </listitem>
 	  </varlistentry>
 	  <varlistentry>
@@ -1601,9 +1603,10 @@ The default is &nil;.
       <refsect1>
 	<title>Description</title>
 	<para>This function disconnects all database connections
-	that have been placed into the pool. Connections are placed
-	in the pool by calling 
-	<link linkend="disconnect"><function>disconnection</function></link>.
+	  that have been placed into the pool. Connections are placed
+	  in the pool by calling <link
+	  linkend="disconnect"><function>disconnection</function></link>.
+	</para>
       </refsect1>
       <refsect1>
 	<title>Examples</title>
@@ -1615,6 +1618,7 @@ The default is &nil;.
       <refsect1>
 	<title>Side Effects</title>
 	<para>Database connections will be closed and entries in the pool are removed.
+	</para>
       </refsect1>
       <refsect1>
 	<title>Affected by</title>

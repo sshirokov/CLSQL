@@ -1,6 +1,5 @@
-<!-- -*- DocBook -*- -->
+<?xml version="1.0" encoding="iso-8859-1" ?>
 
-<!DOCTYPE BOOK PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
 <!ENTITY defsystem "<application>Defsystem</application>">
 <!ENTITY asdf "<application>ASDF</application>">
 <!ENTITY clocc "<application><emphasis>CLOCC</emphasis></application>">
@@ -26,19 +25,6 @@
 <!ENTITY null "<constant>NULL</constant>">
 <!ENTITY c "<symbol>C</symbol>">
 <!ENTITY defsystem "<application>defsystem</application>">
-<!ENTITY bookinfo SYSTEM "bookinfo.sgml">
-<!ENTITY preface SYSTEM "preface.sgml">
-<!ENTITY intro SYSTEM "intro.sgml">
-<!ENTITY ref SYSTEM "ref.sgml">
-<!ENTITY appendix SYSTEM "appendix.sgml">
-<!ENTITY glossary SYSTEM "glossary.sgml">
-]>
 
-<book>
-&bookinfo;
-&preface;
-&intro;
-&ref;
-&appendix;
-&glossary;
-</book>
+
+

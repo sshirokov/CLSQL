@@ -5,7 +5,7 @@
 %myents;
 ]>
 
-<glossary>
+<glossary id="glossary">
   <note>
     <para>This glossary is still very thinly populated, and not all
       references in the main text have been properly linked and
@@ -15,11 +15,11 @@
   </note>
   <glossentry>
     <glossterm>Active database</glossterm>
-    <glosssee otherterm="gloss-database-object">
+    <glosssee otherterm="gloss-database-object" />
   </glossentry>
   <glossentry>
     <glossterm>Connection</glossterm>
-    <glosssee otherterm="gloss-database-object">
+    <glosssee otherterm="gloss-database-object" />
   </glossentry>
   <glossentry>
     <glossterm>Closed Database</glossterm>
@@ -35,7 +35,7 @@
   </glossentry>
   <glossentry>
     <glossterm>database</glossterm>
-    <glosssee otherterm="gloss-database-object">
+    <glosssee otherterm="gloss-database-object" />
   </glossentry>
   <glossentry id="gloss-ffi">
     <glossterm>Foreign Function Interface 
@@ -76,9 +76,11 @@
     <glossterm>SQL Expression</glossterm>
     <glossdef>
       <para>Either a string containing a valid SQL statement, or
-	an object of type <type>sql-expression</type><note>
-	<para>This has not been implemented yet, so only strings
-	  are valid SQL expressions for the moment.</para>
+	an object of type <type>sql-expression</type>.
+	<note>
+	  <para>This has not been implemented yet, so only strings
+	    are valid SQL expressions for the moment.
+	  </para>
 	</note>
       </para>
     </glossdef>

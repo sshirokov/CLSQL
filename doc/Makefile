@@ -1,3 +1,4 @@
+##############################################################################
 # FILE IDENTIFICATION
 # 
 #  Name:         Makefile
@@ -7,26 +8,16 @@
 #
 #  CVS Id:   $Id$
 #
-# This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+# This file, part of CLSQL, is Copyright (c) 2002-2003 by Kevin M. Rosenberg
 #
 # CLSQL users are granted the rights to distribute and use this software
 # as governed by the terms of the Lisp Lesser GNU Public License
 # (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+##############################################################################
 
-# System variable to select catalog file
-SYSTEM=debian
-# SYSTEM=redhat
-
-# Nothing to configure beyond this point
-
-CATALOG=catalog.$(SYSTEM)
-
-# Custom DSSSL's
-DSSSL_HTML=../dsssl/html/docbook.dsl
-DSSSL_PRINT=dsssl/print/docbook.dsl
-
-DOCFILE_BASE_DEFAULT=clsql
-DOCFILE_EXT_DEFAULT=sgml
+OS:=debian
+DOCFILE_BASE_DEFAULT:=clsql
+DOCFILE_EXT_DEFAULT:=xml
 
 # Standard docfile processing
 
@@ -38,13 +29,17 @@ ifndef DOCFILE_EXT
 DOCFILE_EXT=${DOCFILE_EXT_DEFAULT}
 endif
 
-DOCFILE=${DOCFILE_BASE}.${DOCFILE_EXT}
-TEXFILE=${DOCFILE_BASE}.tex
-PDFFILE=${DOCFILE_BASE}.pdf
-PSFILE=${DOCFILE_BASE}.ps
-DVIFILE=${DOCFILE_BASE}.dvi
-TMPFILES=${DOCFILE_BASE}.aux ${DOCFILE_BASE}.out ${DOCFILE_BASE}.log
-DOCFILES=$(shell echo *.sgml)
+DOCFILE:=${DOCFILE_BASE}.${DOCFILE_EXT}
+FOFILE:=${DOCFILE_BASE}.fo
+PDFFILE:=${DOCFILE_BASE}.pdf
+PSFILE:=${DOCFILE_BASE}.ps
+DVIFILE:=${DOCFILE_BASE}.dvi
+TXTFILE:=${DOCFILE_BASE}.txt
+TMPFILES:=${DOCFILE_BASE}.aux ${DOCFILE_BASE}.out ${DOCFILE_BASE}.log
+DOCFILES:=$(shell echo *.xml *.xsl)
+
+CATALOG:=`pwd`/catalog-${OS}.xml
+CHECK:=XML_CATALOG_FILES="$(CATALOG)" xmllint --noout --xinclude --postvalid $(DOCFILE) || exit 1
 
 .PHONY: all
 all: html pdf 
@@ -55,8 +50,6 @@ dist: html pdf
 .PHONY: doc
 doc: html pdf
 
-CHECK=nsgmls -s -C ${CATALOG} || exit 1
-
 .PHONY: check
 check:
 	@$(CHECK)
@@ -64,48 +57,46 @@ check:
 .PHONY: html
 html: html.tar.gz
 
-html.tar.gz: $(DOCFILES) Makefile
-	@$(CHECK)
-	@( rm -rf html ; mkdir html; cd html ; jade -t sgml -c ../${CATALOG} -d ${DSSSL_HTML} ../${DOCFILE} > /dev/null; cp book1.html index.html; cd ..; GZIP='-9' tar czf html.tar.gz html)
+html.tar.gz: $(DOCFILES) Makefile 
+	@rm -rf html
+	@mkdir html
+	@XML_CATALOG_FILES="$(CATALOG)" xsltproc --xinclude --output html/ html.xsl $(DOCFILE)
+	@GZIP='-9' tar czf html.tar.gz html 
 
-.PHONY: tex
-tex: ${TEXFILE}
+.PHONY: fo
+fo: ${FOFILE}
 
-${TEXFILE}: ${DOCFILES}
-	@$(CHECK)
-	@jade -t tex -c ${CATALOG} -d ${DSSSL_PRINT} ${DOCFILE} > /dev/null
+${FOFILE}: $(DOCFILES) Makefile 
+	@XML_CATALOG_FILES="$(CATALOG)" xsltproc --xinclude --output $(FOFILE) fo.xsl $(DOCFILE)
 
 .PHONY: pdf
 pdf: ${PDFFILE}
 
-${PDFFILE}: ${DOCFILES}
-	@jade -t tex -c ${CATALOG} -d ${DSSSL_PRINT} ${DOCFILE} > /dev/null
-	@pdfjadetex -interaction=batchmode '\pdfcompresslevel=9' '\input ${TEXFILE}' > /dev/null
-	@pdfjadetex -interaction=batchmode '\pdfcompresslevel=9' '\input ${TEXFILE}' > /dev/null
-	@pdfjadetex -interaction=batchmode '\pdfcompresslevel=9' '\input ${TEXFILE}' > /dev/null
-	@pdfjadetex -interaction=batchmode '\pdfcompresslevel=9' '\input ${TEXFILE}' > /dev/null
+${PDFFILE}: ${FOFILE}
+	@fop $(FOFILE) -pdf $(PDFFILE) > /dev/null
 
 .PHONY: dvi
 dvi: ${DVIFILE}
 
-${DVIFILE}: ${TEXFILE}
-	@jadetex ${TEXFILE} > /dev/null
-	@jadetex ${TEXFILE} > /dev/null
-	@jadetex ${TEXFILE} > /dev/null
-	@jadetex ${TEXFILE} > /dev/null
-
 .PHONY: ps
 ps: ${PSFILE}
 
-${PSFILE}: ${DVIFILE}
-	@dvips -o ${PSFILE} ${DVIFILE} > /dev/null
+${PSFILE}: ${FOFILE}
+	@fop $(FOFILE) -ps $(PSFILE) > /dev/null
+
+
+.PHONY: txt
+txt: ${TXTFILE}
+
+${TXTFILE}: ${FOFILE}
+	@fop $(FOFILE) -txt $(TXTFILE) > /dev/null
 
 .PHONY: clean
 clean: 
-	@rm -f *~ *.bak *.orig \#*\# .\#*  *.log
+	@rm -f *~ *.bak *.orig \#*\# .\#* texput.log
 	@rm -rf html ${PSFILE}
-	@rm -f ${TMPFILES}
-	@rm -f  ${DVIFILE} ${TEXFILE}
+	@rm -f ${TMPFILES} ${FOFILE}
+	@rm -f  ${DVIFILE} ${TXTFILE}
 
 .PHONY: distclean
 distclean: clean
