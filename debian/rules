@@ -23,7 +23,7 @@ prefix-pg	:= debian/$(pkg-pg)
 prefix-pg-socket := debian/$(pkg-pg-socket)
 prefix-aodbc	:= debian/$(pkg-aodbc)
 
-UPSTREAM_VER	:= $(shell sed -n -e "s/${debpkg} (\(.*\)-[0-9.]).*/\1/p" < debian/changelog |head -1)
+UPSTREAM_VER	:= $(shell sed -n -e "s/${pkg} (\(.*\)-[0-9.]).*/\1/p" < debian/changelog |head -1)
 
 ## Lisp sources
 srcs		:= $(wildcard sql/*.cl)
@@ -55,7 +55,7 @@ lispdir-base-uffi := $(prefix-base)/$(clc-clsql)/interfaces/clsql-uffi
 lispdir-mysql	:= $(prefix-mysql)/$(clc-clsql)/mysql
 lispdir-pg	:= $(prefix-pg)/$(clc-clsql)/postgresql
 lispdir-pg-socket := $(prefix-pg-socket)/$(clc-clsql)/postgresql-socket
-lispdir-aodbc	:= $(prefix-pg)/$(clc-clsql)/aodbc
+lispdir-aodbc	:= $(prefix-aodbc)/$(clc-clsql)/aodbc
 
 
 configure: configure-stamp
