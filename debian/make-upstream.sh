@@ -1,9 +1,8 @@
-#!/bin/bash 
-#
-# Creates upstream packages
-# Programmer: Kevin Rosenberg
+#!/bin/bash -e
 
-set -e # abort on error
+bups.sh -Sclsql -Dcl-sql -f"-name test.config" -d"-name .bin"
+exit 0
+
 
 PKG=clsql
 DEBPKG=cl-sql
