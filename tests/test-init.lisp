@@ -153,10 +153,9 @@
 
 ;; many employees can reside at many addressess
 (def-view-class employee-address ()
-  ((aemplid :type integer
-	   :initarg :emplid)
-   (aaddressid :type integer
-	      :initarg :addressid)
+  ((aemplid :type integer :initarg :emplid)
+   (aaddressid :type integer :initarg :addressid)
+   (verified :type boolean :initarg :verified)
    (address :db-kind :join
 	    :db-info (:join-class address
 				  :home-key aaddressid
@@ -343,16 +342,20 @@
 				  :addressid 2)
 	  employee-address1 (make-instance 'employee-address
 					   :emplid 1
-					   :addressid 1)
+					   :addressid 1
+					   :verified t)
 	  employee-address2 (make-instance 'employee-address
 					   :emplid 2
-					   :addressid 2)
+					   :addressid 2
+					   :verified t)
 	  employee-address3 (make-instance 'employee-address
 					   :emplid 3
-					   :addressid 1)
+					   :addressid 1
+					   :verified nil)
 	  employee-address4 (make-instance 'employee-address
 					   :emplid 1
-					   :addressid 2)
+					   :addressid 2
+					   :verified nil)
 	  employee-address5 (make-instance 'employee-address
 					   :emplid 3
 					   :addressid 2)

@@ -103,6 +103,16 @@
 	     (employee-addresses employee2))
 	  ((t t 2 2 2)))
 
+	;; :retrieval :immediate should be boundp before accessed
+	(deftest :oodm/retrieval/1
+	    (mapcar #'(lambda (ea) (slot-boundp ea 'address))
+	     (select 'employee-address :flatp t))
+	  (t t t t t))
+
+	(deftest :oodm/retrieval/2
+	    (mapcar #'(lambda (ea) (typep (slot-value ea 'address) 'address))
+	     (select 'employee-address :flatp t))
+	  (t t t t t))
 
 	;; tests update-records-from-instance 
 	(deftest :oodml/update-records/1
