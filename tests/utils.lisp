@@ -24,7 +24,7 @@
 		 :type "config"))
 
 (defvar +all-db-types+
-  #-clisp '(:postgresql :postgresql-socket :sqlite :mysql :odbc 
+  #-clisp '(:postgresql :postgresql-socket :mysql :sqlite :odbc 
 	    #+allegro :aodbc)
   #+clisp '(:sqlite))
 
