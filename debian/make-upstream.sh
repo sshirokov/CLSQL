@@ -20,7 +20,9 @@ if [ -z "${VERSION}" ]; then
   exit 1
 fi
 
+pushd ${WORK_DIR} > /dev/null
 cvs commit -m 'Auto commit for Debian build'
+popd > /dev/null
 
 if [ -f ${PACKAGE_DIR}/${DEBPKG}_${VERSION}.orig.tar.gz ]; then
   echo "File ${PACKAGE_DIR}/${DEBPKG}_${VERSION}.orig.tar.gz already exists."
