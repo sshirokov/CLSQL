@@ -281,12 +281,18 @@
        (values results (mapcar #'string-downcase field-names)))
  ((1 "Lenin" "t"))
  ("emplid" "last_name" "married"))
- 
+
 (deftest :fdml/select/14
      (floatp (car (clsql:select [height] :from [employee] :where [= [emplid] 1] 
 				:flatp t)))
   t)
 
+(deftest :fdml/select/15
+    (clsql:select [married] :from [employee] 
+     :where [= [emplid] 4]
+     :field-names nil)
+ (("f")))
+ 
 ;(deftest :fdml/select/11
 ;    (clsql:select [emplid] :from [employee]
 ;                :where [= [emplid] [any [select [companyid] :from [company]]]]

@@ -430,9 +430,7 @@ superclass of the newly-defined View Class."
 (defmethod update-slot-with-null ((object standard-db-object)
 				  slotname
 				  slotdef)
-  (let ((st (slot-type slotdef))
-        (void-value (slot-value slotdef 'void-value)))
-    (setf (slot-value object slotname) void-value)))
+  (setf (slot-value object slotname) (slot-value slotdef 'void-value)))
 
 (defvar +no-slot-value+ '+no-slot-value+)
 
@@ -586,8 +584,11 @@ superclass of the newly-defined View Class."
     (prin1-to-string val)))
 
 (defmethod database-output-sql-as-type ((type (eql 'boolean)) val database)
-  (declare (ignore database))
-  (if val "t" "f"))
+  (case (database-underlying-type database)
+    (:mysql
+     (if val 1 0))
+    (t
+     (if val "t" "f"))))
 
 (defmethod database-output-sql-as-type ((type (eql 'string)) val database)
   (declare (ignore database))
@@ -658,8 +659,13 @@ superclass of the newly-defined View Class."
   (float (read-from-string val))) 
 
 (defmethod read-sql-value (val (type (eql 'boolean)) database)
-  (declare (ignore database))
-  (equal "t" val))
+  (case (database-underlying-type database)
+    (:mysql
+     (etypecase val
+       (string (if (string= "0" val) nil t))
+       (integer (if (zerop val) nil t))))
+    (t
+     (equal "t" val))))
 
 (defmethod read-sql-value (val (type (eql 'univeral-time)) database)
   (declare (ignore database))

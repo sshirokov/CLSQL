@@ -1,3 +1,12 @@
+3 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.10.7
+	* db-odbc/odbc-dbi.lisp: Convert TINYINT to integers when
+	result-types is :auto
+	* sql/objects.lisp: Properly handled writing/reading Boolean
+	values from SQL database when retrieving objects.
+	* test/test-fdml.lisp: Add another test for boolean results
+	* test/utils.lisp: Fix incorrect declaration
+	
 2 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* Version 2.10.6
 	* sql/generics.lisp: add generic function for SELECT. 

@@ -454,10 +454,11 @@ This makes the functions db-execute-command and db-query thread safe."
 	      (#.odbc::$SQL_C_DOUBLE :double)
 	      (#.odbc::$SQL_C_FLOAT :float)
 	      (#.odbc::$SQL_C_SSHORT :short)
+	      (#.odbc::$SQL_C_STINYINT :short)
 	      (#.odbc::$SQL_BIGINT :short)
 	      (t t))))
 	  (t
-	  t)))))
+	   t)))))
   query)
 
 (defun db-close-query (query &key drop-p)
