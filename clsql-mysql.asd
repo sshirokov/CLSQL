@@ -29,14 +29,14 @@
 		   (probe-file #p"/usr/lib/clsql/uffi.so")
 		   (probe-file (make-pathname
 				:directory *asd-file-dir*
-				:name "uffi"
+				:name "db-mysql"
 				:type "so")))))
     (if searched
 	(list searched)
 	(list (merge-pathnames
 	       (make-pathname :name (component-name c)
 			      :type "so"
-			      :directory '(:relative "tests"))
+			      :directory '(:relative "db-mysql"))
 	       (make-pathname :directory *asd-file-dir*))))))
 
 (defmethod perform ((o load-op) (c clsql-mysql-source-file))
@@ -49,7 +49,7 @@
 			       (make-pathname
 				:name nil
 				:type nil
-				:directory '(:relative "uffi"))
+				:directory '(:relative "db-mysql"))
 			       (make-pathname
 				:directory *asd-file-dir*)))))
     (error 'operation-error :component c :operation o)))
