@@ -7,11 +7,12 @@
 ;;;; Author:        Kevin M. Rosenberg
 ;;;; Date Started:  Apr 2003
 ;;;;
-;;;; $Id: package.lisp,v 1.2 2003/05/02 03:26:46 kevin Exp $
+;;;; $Id: package.lisp,v 1.3 2003/05/07 02:45:08 kevin Exp $
 ;;;; *************************************************************************
+
+(in-package #:cl-user)
 
 (defpackage #:clsql-tests
   (:use #:asdf #:cl #:clsql #:rtest #:util.test))
 
-(in-package #:clsql-tests)
 

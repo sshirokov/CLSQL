@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-postgresql-socket.asd,v 1.15 2003/03/02 20:02:02 kevin Exp $
+;;;; $Id: clsql-postgresql-socket.asd,v 1.16 2003/05/07 02:45:08 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -16,15 +16,15 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package :asdf)
+(defpackage #:clsql-postgresql-socket-system (:use #:asdf #:cl))
+(in-package #:clsql-postgresql-socket-system)
 
 ;;; System definition
 
 #+(or allegro lispworks cmu sbcl openmcl mcl scl)
-(defsystem :clsql-postgresql-socket
+(defsystem clsql-postgresql-socket
   :name "cl-sql-postgresql-socket"
   :author "Kevin M. Rosenberg <kmr@debian.org>"
-  :version "0.9.2"
   :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
   :licence "Lessor Lisp General Public License"
   :description "Common Lisp SQL PostgreSQL Socket Driver"

@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-mysql.asd,v 1.13 2002/10/16 11:51:04 kevin Exp $
+;;;; $Id: clsql-mysql.asd,v 1.14 2003/05/07 02:45:08 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -16,7 +16,8 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package :asdf)
+(defpackage #:clsql-mysql-system (:use #:asdf #:cl))
+(in-package #:clsql-mysql-system)
 
 ;;; System definition
 
@@ -24,7 +25,6 @@
 (defsystem :clsql-mysql
   :name "cl-sql-mysql"
   :author "Kevin M. Rosenberg <kmr@debian.org>"
-  :version "0.9.2"
   :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
   :licence "Lessor Lisp General Public License"
   :description "Common Lisp SQL MySQL Driver"

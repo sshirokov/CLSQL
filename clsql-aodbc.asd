@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-aodbc.asd,v 1.12 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: clsql-aodbc.asd,v 1.13 2003/05/07 02:45:08 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -16,13 +16,13 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package :asdf)
+(defpackage #:clsql-aodbc-system (:use #:asdf #:cl))
+(in-package #:clsql-aodbc-system)
 
 #+(and allegro (not allegro-cl-trial))
-(defsystem :clsql-aodbc
+(defsystem clsql-aodbc
   :name "cl-sql-aodbc"
   :author "Kevin M. Rosenberg <kmr@debian.org>"
-  :version "0.9.2"
   :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
   :licence "Lessor Lisp General Public License"
   :description "Common Lisp SQL AODBC Driver"

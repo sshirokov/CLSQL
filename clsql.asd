@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql.asd,v 1.17 2003/05/02 03:05:54 kevin Exp $
+;;;; $Id: clsql.asd,v 1.18 2003/05/07 02:45:08 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -16,10 +16,11 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package :asdf)
+(defpackage #:clsql-system (:use #:asdf #:cl))
+(in-package #:clsql-system)
 
 #+(or allegro lispworks cmu sbcl openmcl mcl scl)
-(defsystem :clsql
+(defsystem clsql
   :name "clsql"
   :author "Kevin Rosenberg <kevin@rosenberg.net>"
   :maintainer "Kevin M. Rosenberg <kmr@debian.org>"

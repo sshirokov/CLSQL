@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql-base.asd,v 1.18 2002/11/08 16:51:50 kevin Exp $
+;;;; $Id: clsql-base.asd,v 1.19 2003/05/07 02:45:08 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -16,20 +16,18 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package :asdf)
+(defpackage #:clsql-base-system (:use #:asdf #:cl))
+(in-package #:clsql-base-system)
 
 #+(or allegro lispworks cmu sbcl openmcl mcl scl)
-(defsystem :clsql-base
+(defsystem clsql-base
   :name "cl-sql-base"
-  :author "Kevin M. Rosenberg <kmr@debian.org>"
-  :version "0.9.2"
+  :author "Kevin Rosenberg <kevin@rosenberg.net>"
   :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
   :licence "Lessor Lisp General Public License"
   :description "Common Lisp SQL Base Package"
   :long-description "cl-sql-base package provides the low-level interface for the database drivers."
 
-  :perform (load-op :after (op clsql-base)
-		    (pushnew :clsql-base cl:*features*))
   :components
   ((:module :base
 	    :components

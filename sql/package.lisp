@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: package.lisp,v 1.3 2002/10/21 14:11:09 kevin Exp $
+;;;; $Id: package.lisp,v 1.4 2003/05/07 02:45:08 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -18,16 +18,14 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :cl-user)
-
+(in-package #:cl-user)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defpackage :clsql-sys
-    (:nicknames :clsql)
-    (:use :common-lisp :clsql-base-sys)
+  (defpackage #:clsql-sys
+    (:nicknames #:clsql)
+    (:use #:cl #:clsql-base-sys)
     (:import-from 
-     :clsql-base
+     #:clsql-base
      .
      #1=(
 	 #:clsql-condition

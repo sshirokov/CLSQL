@@ -7,11 +7,10 @@
 ;;;; Author:        Kevin M. Rosenberg
 ;;;; Date Started:  Apr 2003
 ;;;;
-;;;; $Id: clsql-tests.asd,v 1.1 2003/05/02 03:05:54 kevin Exp $
+;;;; $Id: clsql-tests.asd,v 1.2 2003/05/07 02:45:08 kevin Exp $
 ;;;; *************************************************************************
 
-(defpackage #:clsql-tests-system
-  (:use #:asdf #:cl))
+(defpackage #:clsql-tests-system (:use #:asdf #:cl))
 (in-package #:clsql-tests-system)
 
 (defsystem clsql-tests

@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-uffi.asd,v 1.14 2002/10/16 11:51:04 kevin Exp $
+;;;; $Id: clsql-uffi.asd,v 1.15 2003/05/07 02:45:08 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -16,17 +16,15 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 
-(in-package :asdf)
+(defpackage #:clsql-uffi-system (:use #:asdf #:cl))
+(in-package #:clsql-uffi-system)
 
-;;; System definition
 
 #+(or allegro lispworks cmu sbcl openmcl mcl scl)
-(defsystem :clsql-uffi
+(defsystem clsql-uffi
   :name "cl-sql-base"
   :author "Kevin M. Rosenberg <kmr@debian.org>"
-  :version "0.9.2"
   :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
   :licence "Lessor Lisp General Public License"
   :description "Common UFFI Helper functions for Common Lisp SQL Interface Library"

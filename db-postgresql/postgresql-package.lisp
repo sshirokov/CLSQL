@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-package.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: postgresql-package.lisp,v 1.2 2003/05/07 02:45:08 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -16,12 +16,11 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :cl-user)
+(in-package #:cl-user)
 
-(defpackage :postgresql
-    (:nicknames :pgsql)
-    (:use :common-lisp :clsql-uffi)
+(defpackage #:postgresql
+    (:nicknames #:pgsql)
+    (:use #:cl #:clsql-uffi)
     (:export
      #:pgsql-oid
      #:pgsql-conn-status-type

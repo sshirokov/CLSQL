@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: package.lisp,v 1.1 2002/09/30 10:19:01 kevin Exp $
+;;;; $Id: package.lisp,v 1.2 2003/05/07 02:45:08 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -18,15 +18,14 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :cl-user)
+(in-package #:cl-user)
 
 ;;;; This file makes the required package definitions for CLSQL's
 ;;;; core packages.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-(defpackage :clsql-base-sys
-  (:use :common-lisp)
+(defpackage #:clsql-base-sys
+  (:use #:cl)
   (:export
      ;; "Private" exports for use by interface packages
      #:check-connection-spec
