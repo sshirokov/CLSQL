@@ -2,6 +2,11 @@ GENERAL
 
 * port Oracle backend to UFFI.
 
+TESTS TO ADD
+
+* CACHE-TABLE-QUERIES
+* :VOID-VALUE
+
 COMMONSQL SPEC
 
 * Missing: 
