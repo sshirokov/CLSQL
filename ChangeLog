@@ -1,8 +1,9 @@
-29 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
+30 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 2.11.4: MySQL 4.1 now passes all tests
 	* sql/package.lisp: Add API for prepared statments.
-	* sql/fdml.lisp: Change implicity flatp processing
+	* sql/fdml.lisp: Change implicit flatp processing
 	for string map-query for greater CommonSQL conformance.
-	Add high-high API for prepared statements. Not complete.
+	Add high-high API for prepared statements.
 	* tests/test-basic.lisp: Add test for map-query and
 	single argument.
 	* sql/transactions.lisp: Change name/semantics of
@@ -13,6 +14,9 @@
 	* sql/odbc-api.lisp: Update to using ODBC V3 protocol
 	* clsql-mysql.asd, clsql-uffi.asd: Remove check and Common Lisp
 	Controller invocation.
+	* db-mysql/mysql-api.lisp: Add support for MySQL 4.1 field structure
+	* sql/expressions.lisp: Avoid emitting double parenthesis when a
+	function contains a subselect. 
 	
 27 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.11.3

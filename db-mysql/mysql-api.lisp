@@ -118,7 +118,7 @@
   (decimals :unsigned-int))
 
 ;; structure changed in mysql 4 client
-#+mysql-client-v4
+#+(and mysql-client-v4 (not mysql-client-v4.1))
 (uffi:def-struct mysql-field
     (name (* :char))
   (table (* :char))
@@ -129,6 +129,29 @@
   (max-length :unsigned-long)
   (flags :unsigned-int)
   (decimals :unsigned-int)
+  (type mysql-field-types))
+
+#+mysql-client-v4.1
+(uffi:def-struct mysql-field
+    (name (* :char))
+  (org_table (* :char))
+  (table (* :char))
+  (org_table (* :char))
+  (db (* :char))
+  (catalog_db (* :char))
+  (def (* :char))
+  (length :unsigned-long)
+  (max-length :unsigned-long)
+  (name-length :unsigned-int)
+  (org-name-length :unsigned-int)
+  (table-length :unsigned-int)
+  (org-table-length :unsigned-int)
+  (db-length :unsigned-int)
+  (catalog-length :unsigned-int)
+  (def-length :unsigned-int)
+  (flags :unsigned-int)
+  (decimals :unsigned-int)
+  (charsetnr :unsigned-int)
   (type mysql-field-types))
 
 ;;; MYSQL-ROWS
@@ -269,7 +292,7 @@
      (db :cstring)
      (port :unsigned-int)
      (unix-socket :cstring)
-     (clientflag :unsigned-int))
+     (clientflag :unsigned-long))
   :module "mysql"
   :returning (* mysql-mysql))
 

@@ -442,12 +442,12 @@
   t)
 
 (defmethod db-type-has-views? ((db-type (eql :mysql)))
-  ;; MySQL 4.1 will apparently have views, need to check *mysql-client-info*
-  nil)
+  #+mysql-client-v5.1 t
+  #-mysql-client-v5.1 nil)
 
 (defmethod db-type-has-subqueries? ((db-type (eql :mysql)))
-  ;; MySQL 4.1 will apparently have subqueries, need to check *mysql-client-info*
-  nil)
+  #+mysql-client-v4.1 t
+  #-mysql-client-v4.1 nil)
 
 (defmethod db-type-has-boolean-where? ((db-type (eql :mysql)))
   nil)

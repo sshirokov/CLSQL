@@ -379,7 +379,8 @@
   (with-slots (name args)
     expr
     (output-sql name database)
-    (when args (output-sql args database)))
+    (let ((*in-subselect* nil)) ;; aboid double parens
+      (when args (output-sql args database))))
   t)
 
 
