@@ -1,4 +1,8 @@
 16 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.7.5
+	* base/basic-sql.lisp: Fix FLATP in QUERY
+
+16 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.7.3: Implement RECONNECT
 
 15 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
