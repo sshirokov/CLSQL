@@ -15,7 +15,8 @@ else
   exit 1
 fi
 
-# Clean checked out CVS directory
+echo "Cleaning checkout CVS directory"
 rm -f upload.sh make-upstream.sh make-debian.sh
 rm -f `find . -type f -name .cvsignore`
 rm -f cvsbp-prepare.sh
+

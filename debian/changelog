@@ -1,6 +1,6 @@
 cl-sql (0.7.1-1) unstable; urgency=low
 
-  * Initial Release.
+  * Initial Release (closes: 146792).
 
  -- Kevin Rosenberg <kevin@rosenberg.net>  Thu, 25 Apr 2002 19:13:41 -0600
 
