@@ -118,9 +118,6 @@ returns nil when result-set is finished."))
 if not found. May signal an error if unable to communicate with database server."))
 
 (defgeneric database-destroy (connection-spec database)
-  (:method (connection-spec (database t))
-	   (declare (ignore connection-spec))
-	   (signal-no-database-error database))
   (:documentation "Destroys (drops) a database."))
 
 (defgeneric database-truncate (database)

@@ -185,23 +185,33 @@ synchronously execute the result using a Bourne-compatible shell,
 returns (VALUES string-output error-output exit-status)"
   (let ((command (apply #'format nil control-string args)))
     #+sbcl
-    (let ((process (sb-ext:run-program  
+    (let* ((process (sb-ext:run-program  
 		    "/bin/sh"
 		    (list "-c" command)
-		    :input nil :output :stream :error :stream)))
+		    :input nil :output :stream :error :stream))
+	   (output (read-stream-to-string (sb-impl::process-output process)))
+	   (error (read-stream-to-string (sb-impl::process-error process))))
+      (close (sb-impl::process-output process))
+      (close (sb-impl::process-error process))
       (values
-       (sb-impl::process-output process)
-       (sb-impl::process-error process)
-       (sb-impl::process-exit-code process)))
+       output
+       error
+       (sb-impl::process-exit-code process)))    
+
     
     #+(or cmu scl)
-    (let ((process (ext:run-program  
-		    "/bin/sh"
-		    (list "-c" command)
-		    :input nil :output :stream :error :stream)))
+    (let* ((process (ext:run-program  
+		     "/bin/sh"
+		     (list "-c" command)
+		     :input nil :output :stream :error :stream))
+	   (output (read-stream-to-string (ext::process-output process)))
+	   (error (read-stream-to-string (ext::process-error process))))
+      (close (ext::process-output process))
+      (close (ext::process-error process))
+
       (values
-       (ext::process-output process)
-       (ext::process-error process)
+       output
+       error
        (ext::process-exit-code process)))    
 
     #+allegro
