@@ -408,7 +408,8 @@ superclass of the newly-defined View Class."
          (sels (generate-selection-list view-class))
          (res (apply #'select (append (mapcar #'cdr sels)
                                       (list :from  view-table
-                                            :where view-qual)))))
+                                            :where view-qual)
+				      (list :result-types nil)))))
     (when res
       (get-slot-values-from-view instance (mapcar #'car sels) (car res)))))
 
@@ -420,7 +421,8 @@ superclass of the newly-defined View Class."
          (view-qual (key-qualifier-for-instance instance :database vd))
          (slot-def (slotdef-for-slot-with-class slot view-class))
          (att-ref (generate-attribute-reference view-class slot-def))
-         (res (select att-ref :from  view-table :where view-qual)))
+         (res (select att-ref :from  view-table :where view-qual
+		      :result-types nil)))
     (when res 
       (get-slot-values-from-view instance (list slot-def) (car res)))))
 
@@ -686,7 +688,7 @@ superclass of the newly-defined View Class."
 	 (jc (gethash :join-class dbi)))
     (let ((jq (join-qualifier class object slot-def)))
       (when jq 
-        (select jc :where jq)))))
+        (select jc :where jq :flatp t :result-types nil)))))
 
 (defun fault-join-slot (class object slot-def)
   (let* ((dbi (view-class-slot-db-info slot-def))
@@ -745,11 +747,14 @@ superclass of the newly-defined View Class."
 
 (defun find-all (view-classes &rest args &key all set-operation distinct from
                  where group-by having order-by order-by-descending offset limit
-		 refresh (database *default-database*))
-  "tweeze me apart someone pleeze"
+		 refresh flatp (database *default-database*))
+  "Called by SELECT to generate object query results when the
+  View Classes VIEW-CLASSES are passed as arguments to SELECT."
   (declare (ignore all set-operation group-by having offset limit)
            (optimize (debug 3) (speed 1)))
   (remf args :from)
+  (remf args :flatp)
+  (remf args :result-types)
   (labels ((table-sql-expr (table)
 	     (sql-expression :table (view-table table)))
 	   (ref-equal (ref1 ref2)
@@ -771,9 +776,11 @@ superclass of the newly-defined View Class."
 	       obj))
 	   (build-objects (vals sclasses sels)
 	     (let ((objects (mapcar #'(lambda (sclass sel) 
-					(build-object vals sclass sel))
+					(prog1 (build-object vals sclass sel)
+					  (setf vals (nthcdr (list-length sel)
+							     vals))))
 				    sclasses sels)))
-	       (if (= (length sclasses) 1)
+	       (if (and flatp (= (length sclasses) 1))
 		   (car objects)
 		   objects))))
     (let* ((*db-deserializing* t)
@@ -811,7 +818,9 @@ superclass of the newly-defined View Class."
 		     (append (mapcar #'cdr fullsels)
 			     (cons :from 
 				   (list (append (when from (listify from)) 
-						 (listify tables)))) args)))
+						 (listify tables)))) 
+			     (list :result-types nil)
+			     args)))
 	(mapcar #'(lambda (r) (build-objects r sclasses sels)) res))))
 
 (defmethod instance-refreshed ((instance standard-db-object)))
@@ -836,11 +845,10 @@ tuples."
           (apply #'find-all target-args qualifier-args)
           (let ((expr (apply #'make-query select-all-args)))
             (destructuring-bind (&key (flatp nil)
+				      (result-types :auto)
 				      (database *default-database*)
                                       &allow-other-keys)
                 qualifier-args
-              (let ((res (query expr :database database)))
-		(if (and flatp
-			 (= (length (slot-value expr 'selections)) 1))
-		    (mapcar #'car res)
-		  res))))))))
+	      (query expr :flatp flatp :result-types result-types 
+		     :database database)))))))
+

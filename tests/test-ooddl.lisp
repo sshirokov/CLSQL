@@ -67,7 +67,8 @@
         (clsql:execute-command "set datestyle to 'iso'"))
       (clsql:update-records [employee] :av-pairs `((birthday ,now))
                            :where [= [emplid] 1])
-      (let ((dbobj (car (clsql:select 'employee :where [= [birthday] now]))))
+      (let ((dbobj (car (clsql:select 'employee :where [= [birthday] now] 
+				      :flatp t))))
         (values
          (slot-value dbobj 'last-name)
          (clsql-base:time= (slot-value dbobj 'birthday) now))))
@@ -81,7 +82,8 @@
       (dotimes (x 40)
         (clsql:update-records [employee] :av-pairs `((birthday ,now))
                              :where [= [emplid] 1])
-        (let ((dbobj (car (clsql:select 'employee :where [= [birthday] now]))))
+        (let ((dbobj (car (clsql:select 'employee :where [= [birthday] now]
+					:flatp t))))
           (unless (clsql-base:time= (slot-value dbobj 'birthday) now)
             (setf fail-index x))
           (setf now (clsql-base:roll now :day (* 10 x)))))

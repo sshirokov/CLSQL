@@ -24,22 +24,23 @@
 	
 (deftest :oodml/select/1
     (mapcar #'(lambda (e) (slot-value e 'last-name))
-            (clsql:select 'employee :order-by [last-name]))
+            (clsql:select 'employee :order-by [last-name] :flatp t))
   ("Andropov" "Brezhnev" "Chernenko" "Gorbachev" "Kruschev" "Lenin" "Putin"
               "Stalin" "Trotsky" "Yeltsin"))
 
 (deftest :oodml/select/2
     (mapcar #'(lambda (e) (slot-value e 'name))
-            (clsql:select 'company))
+            (clsql:select 'company :flatp t))
   ("Widgets Inc."))
 
 (deftest :oodml/select/3
     (mapcar #'(lambda (e) (slot-value e 'companyid))
             (clsql:select 'employee
-                         :where [and [= [slot-value 'employee 'companyid]
-                                        [slot-value 'company 'companyid]]
-                                     [= [slot-value 'company 'name]
-                                        "Widgets Inc."]]))
+			  :where [and [= [slot-value 'employee 'companyid]
+			                 [slot-value 'company 'companyid]]
+				      [= [slot-value 'company 'name]
+				         "Widgets Inc."]]
+                          :flatp t))
   (1 1 1 1 1 1 1 1 1 1))
 
 (deftest :oodml/select/4
@@ -49,12 +50,13 @@
                              (slot-value e 'last-name)))
             (clsql:select 'employee :where [= [slot-value 'employee 'first-name]
                                              "Vladamir"]
+			 :flatp t		     
                          :order-by [last-name]))
   ("Vladamir Lenin" "Vladamir Putin"))
 
 ;; sqlite fails this because it is typeless 
 (deftest :oodml/select/5
-    (length (clsql:select 'employee :where [married]))
+    (length (clsql:select 'employee :where [married] :flatp t))
   3)
 
 ;; tests update-records-from-instance 
@@ -63,7 +65,8 @@
      (progn
        (let ((lenin (car (clsql:select 'employee
                                       :where [= [slot-value 'employee 'emplid]
-                                                1]))))
+                                                1]
+                                      :flatp t))))
          (concatenate 'string
                       (first-name lenin)
                       " "
@@ -77,7 +80,8 @@
          (clsql:update-records-from-instance employee1)
          (let ((lenin (car (clsql:select 'employee
                                       :where [= [slot-value 'employee 'emplid]
-                                                1]))))
+                                                1]
+				      :flatp t))))
            (concatenate 'string
                         (first-name lenin)
                         " "
@@ -91,7 +95,8 @@
          (clsql:update-records-from-instance employee1)
          (let ((lenin (car (clsql:select 'employee
                                       :where [= [slot-value 'employee 'emplid]
-                                                1]))))
+                                                1]
+				      :flatp t))))
            (concatenate 'string
                         (first-name lenin)
                         " "
@@ -107,19 +112,22 @@
     (values
      (employee-email
       (car (clsql:select 'employee
-                        :where [= [slot-value 'employee 'emplid] 1])))
+                        :where [= [slot-value 'employee 'emplid] 1]
+                        :flatp t)))
      (progn
        (setf (slot-value employee1 'email) "lenin-nospam@soviet.org")
        (clsql:update-record-from-slot employee1 'email)
        (employee-email
         (car (clsql:select 'employee
-                          :where [= [slot-value 'employee 'emplid] 1]))))
+                          :where [= [slot-value 'employee 'emplid] 1]
+			  :flatp t))))
      (progn 
        (setf (slot-value employee1 'email) "lenin@soviet.org")
        (clsql:update-record-from-slot employee1 'email)
        (employee-email
         (car (clsql:select 'employee
-                          :where [= [slot-value 'employee 'emplid] 1])))))
+                          :where [= [slot-value 'employee 'emplid] 1]
+			  :flatp t)))))
   "lenin@soviet.org" "lenin-nospam@soviet.org" "lenin@soviet.org")
 
 ;; tests update-record-from-slots
@@ -127,7 +135,8 @@
     (values
      (let ((lenin (car (clsql:select 'employee
                                     :where [= [slot-value 'employee 'emplid]
-                                              1]))))
+                                              1]
+				    :flatp t))))
        (concatenate 'string
                     (first-name lenin)
                     " "
@@ -141,7 +150,8 @@
        (clsql:update-record-from-slots employee1 '(first-name last-name email))
        (let ((lenin (car (clsql:select 'employee
                                       :where [= [slot-value 'employee 'emplid]
-                                                1]))))
+                                                1]
+				      :flatp t))))
          (concatenate 'string
                       (first-name lenin)
                       " "
@@ -155,7 +165,8 @@
        (clsql:update-record-from-slots employee1 '(first-name last-name email))
        (let ((lenin (car (clsql:select 'employee
                                       :where [= [slot-value 'employee 'emplid]
-                                                1]))))
+                                                1]
+				      :flatp t))))
          (concatenate 'string
                       (first-name lenin)
                       " "

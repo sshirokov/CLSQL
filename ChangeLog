@@ -1,3 +1,18 @@
+2 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk)
+	* sql/objects.lisp: fix bug in FIND-ALL when SELECT called with 2 
+	or more View Classes. 
+	* sql/objects.lisp: make the :flatp argument to SELECT work with 
+	object queries. 
+	* sql/objects.lisp: make SELECT accept a :result-types argument 
+	(defaults to :auto) which is passed on to QUERY.  
+	* sql/objects.lisp: SELECT returns field-names as a second value. 
+	* tests/test-ooddl.lisp: add flatp arg to SELECT calls as appropriate. 
+	* tests/test-fdml.lisp: add flatp/result-types arguments to calls 
+	to SELECT and take only first value as appropriate.
+	* tests/test-fdml.lisp: add two new tests for query result coercion 
+	and the field-names returned as a second value from SELECT. 
+	* tests/test-oodml.lisp: add flatp arg to SELECT calls as appropriate. 
+	
 1 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.6-pre1
 	* sql/metaclasses.lisp: Add void-value slot
