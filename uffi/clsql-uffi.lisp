@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.5 2003/05/06 02:22:58 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.6 2003/05/15 07:33:21 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -120,5 +120,25 @@
 		  low32
 		  (make-64-bit-integer high32 low32)))))
 	 (t
+	  (native-to-string char-ptr)
+	  #+ignore
 	  (uffi:convert-from-foreign-string char-ptr)))))))
   
+
+(uffi:def-function "strlen"
+    ((str (* :unsigned-char)))
+  :returning :unsigned-int)
+
+(defun native-to-string (s)
+  (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0)))
+  (let* ((len (strlen s))
+	 (str (make-string len)))
+    (declare (fixnum len)
+	     (simple-string str))
+    (do ((i 0))
+	((= i len))
+      (declare (fixnum i))
+      (setf (schar str i)
+	(code-char (uffi:deref-array s '(:array :unsigned-char) i)))
+      (incf i))
+    str))
