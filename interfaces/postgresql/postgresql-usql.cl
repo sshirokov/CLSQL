@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: postgresql-usql.cl,v 1.4 2002/05/15 17:10:28 kevin Exp $
+;;;; $Id: postgresql-usql.cl,v 1.5 2002/06/12 17:47:13 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and by onShore Development Inc.
@@ -101,8 +101,7 @@
 
 (defmethod database-output-sql-as-type ((type (eql 'integer)) val
 					(database postgresql-database))
-  ;; typecast it so it uses the indexes
-  (when val
+  (when val   ;; typecast it so it uses the indexes
     (make-instance 'clsql-sys::sql-typecast-exp
                    :modifier 'int8
                    :components val)))

@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: tester-clsql.cl,v 1.7 2002/04/24 16:10:55 kevin Exp $
+;;;; $Id: tester-clsql.cl,v 1.8 2002/06/12 17:47:13 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -119,8 +119,8 @@
 	(dotimes (i 10)
 	  (clsql-mysql::database-execute-command
 	   (format nil "INSERT INTO test_clsql VALUES (~d,~d,'~a')"
-		   i (number-to-sql-string (sqrt i))
-		   (number-to-sql-string (sqrt i)))
+		   i (clsql:number-to-sql-string (sqrt i))
+		   (clsql:number-to-sql-string (sqrt i)))
 	   db))
 	(let ((res (clsql-mysql::database-query-result-set "select * from test_clsql" db :full-set t :types nil)))
 	  (test (mysql:mysql-num-rows
