@@ -1,3 +1,10 @@
+cl-sql (1.4.0-2) unstable; urgency=low
+
+  * Add MD5 support to postgresql socket backend (contributed by
+  Robert Macomber)
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sun,  2 Mar 2003 12:59:10 -0700
+
 cl-sql (1.3.0-1) unstable; urgency=low
 
   * uffi/clsql-uffi.lisp: return NIL for numeric fields that are NULL

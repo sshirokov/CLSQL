@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-postgresql-socket.asd,v 1.14 2002/10/21 07:14:18 kevin Exp $
+;;;; $Id: clsql-postgresql-socket.asd,v 1.15 2003/03/02 20:02:02 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -38,4 +38,4 @@
 		    :depends-on ("postgresql-socket-package"))
 	     (:file "postgresql-socket-sql"
 		    :depends-on ("postgresql-socket-api")))))
-  :depends-on (:clsql-base :uffi))
+  :depends-on (:clsql-base :uffi :md5))

@@ -9,7 +9,7 @@
 ;;;;                
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-api.lisp,v 1.2 2002/10/21 07:45:50 kevin Exp $
+;;;; $Id: postgresql-socket-api.lisp,v 1.3 2003/03/02 20:02:02 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -391,6 +391,11 @@ troubles."
 			       :database database :user user
 			       :password (or password ""))))
 
+(defun encrypt-md5 (plaintext salt)
+  (string-downcase
+   (format nil "~{~2,'0X~}"
+	   (coerce (md5:md5sum-sequence (concatenate 'string plaintext salt)) 'list))))
+
 (defun reopen-postgresql-connection (connection)
   "Reopen the given PostgreSQL connection.  Closes any existing
 connection, if it is still open."
@@ -429,6 +434,15 @@ connection, if it is still open."
 			socket
 			(crypt-password
 			 (postgresql-connection-password connection) salt))))
+		    (5
+		     (let ((salt (make-string 4)))
+		       (read-socket-sequence salt socket)
+		       (let* ((pwd2 (encrypt-md5 (postgresql-connection-password connection)
+						 (postgresql-connection-user connection)))
+			      (pwd (encrypt-md5 pwd2 salt)))
+			 (send-encrypted-password-message
+			  socket
+			  (concatenate 'string "md5" pwd)))))
 		    (t
 		     (error 'postgresql-login-error
 			    :connection connection
