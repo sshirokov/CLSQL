@@ -712,7 +712,9 @@ superclass of the newly-defined View Class."
       (when jq 
         (select jc :where jq :flatp t :result-types nil)))))
 
-;; FIXME: Create a single join query for efficiency
+;; this works, but is inefficient requiring (+ 1 n-rows)
+;; SQL queries
+#+ignore
 (defun fault-join-target-slot (class object slot-def)
   (let* ((res (fault-join-slot-raw class object slot-def))
 	 (dbi (view-class-slot-db-info slot-def))
@@ -732,6 +734,35 @@ superclass of the newly-defined View Class."
       #+ignore ;; this doesn't work when attempting to call slot-value
       (mapcar (lambda (obj)
 		(cons obj (slot-value obj ts))) res))))
+
+(defun fault-join-target-slot (class object slot-def)
+  (let* ((dbi (view-class-slot-db-info slot-def))
+	 (ts (gethash :target-slot dbi))
+	 (jc (gethash :join-class dbi))
+	 (tdbi (view-class-slot-db-info 
+		(find ts (class-slots (find-class jc))
+		      :key #'slot-definition-name)))
+	 (jq (join-qualifier class object slot-def))
+	 (key (slot-value object (gethash :home-key dbi))))
+    (when jq
+      (let ((res
+	     (find-all (list ts) 
+		       :inner-join (sql-expression :attribute jc)
+		       :on (sql-operation 
+			    '==
+			    (sql-expression :attribute (gethash :foreign-key tdbi) :table ts)
+			    (sql-expression :attribute (gethash :home-key tdbi) :table jc))
+		       :where jq
+		       :result-types :auto)))
+	(mapcar #'(lambda (i)
+		    (let* ((instance (car i))
+			   (jcc (make-instance jc :view-database (view-database instance))))
+		      (setf (slot-value jcc (gethash :foreign-key dbi)) 
+			key)
+		      (setf (slot-value jcc (gethash :home-key tdbi)) 
+			(slot-value instance (gethash :foreign-key tdbi)))
+		      (list instance jcc)))
+		res)))))
 
 (defun fault-join-slot (class object slot-def)
   (let* ((dbi (view-class-slot-db-info slot-def))
@@ -787,15 +818,19 @@ superclass of the newly-defined View Class."
                 (apply #'sql-and jc)
                 jc))))))
 
-(defun find-all (view-classes &rest args &key all set-operation distinct from
-                 where group-by having order-by order-by-descending offset limit
-		 refresh flatp result-types (database *default-database*))
+(defun find-all (view-classes 
+		 &rest args
+		 &key all set-operation distinct from where group-by having 
+		      order-by order-by-descending offset limit refresh
+		      flatp result-types inner-join on 
+		      (database *default-database*))
   "Called by SELECT to generate object query results when the
   View Classes VIEW-CLASSES are passed as arguments to SELECT."
-  (declare (ignore all set-operation group-by having offset limit result-types)
+  (declare (ignore all set-operation group-by having offset limit inner-join on)
            (optimize (debug 3) (speed 1)))
   (remf args :from)
   (remf args :flatp)
+  (remf args :additional-fields)
   (remf args :result-types)
   (labels ((table-sql-expr (table)
 	     (sql-expression :table (view-table table)))
@@ -861,7 +896,7 @@ superclass of the newly-defined View Class."
 			     (cons :from 
 				   (list (append (when from (listify from)) 
 						 (listify tables)))) 
-			     (list :result-types nil)
+			     (list :result-types result-types)
 			     args)))
 	(mapcar #'(lambda (r) (build-objects r sclasses sels)) res))))
 
@@ -907,7 +942,7 @@ ENABLE-SQL-READER-SYNTAX."
     (multiple-value-bind (target-args qualifier-args)
         (query-get-selections select-all-args)
       (if (select-objects target-args)
-          (apply #'find-all target-args qualifier-args)
+	  (apply #'find-all target-args qualifier-args)
 	(let* ((expr (apply #'make-query select-all-args))
 	       (specified-types
 		(mapcar #'(lambda (attrib)

@@ -417,6 +417,12 @@
     :initform nil)
    (order-by-descending
     :initarg :order-by-descending
+    :initform nil)
+   (inner-join
+    :initarg :inner-join
+    :initform nil)
+   (on
+    :initarg :on
     :initform nil))
   (:documentation "An SQL SELECT query."))
 
@@ -428,7 +434,8 @@
 
 (defvar *select-arguments*
   '(:all :database :distinct :flatp :from :group-by :having :order-by
-    :order-by-descending :set-operation :where :offset :limit))
+    :order-by-descending :set-operation :where :offset :limit
+    :inner-join :on))
 
 (defun query-arg-p (sym)
   (member sym *select-arguments*))
@@ -455,7 +462,7 @@ uninclusive, and the args from that keyword to the end."
 	  (apply #'select args)
 	  (destructuring-bind (&key all flatp set-operation distinct from where
 				    group-by having order-by order-by-descending
-				    offset limit &allow-other-keys)
+				    offset limit inner-join on &allow-other-keys)
 	      arglist
 	    (if (null selections)
 		(error "No target columns supplied to select statement."))
@@ -466,13 +473,14 @@ uninclusive, and the args from that keyword to the end."
 			   :distinct distinct :from from :where where
 			   :limit limit :offset offset
 			   :group-by group-by :having having :order-by order-by
-			   :order-by-descending order-by-descending))))))
+			   :order-by-descending order-by-descending
+			   :inner-join inner-join :on on))))))
 
 (defvar *in-subselect* nil)
 
 (defmethod output-sql ((query sql-query) database)
   (with-slots (distinct selections from where group-by having order-by
-                        order-by-descending limit offset)
+                        order-by-descending limit offset inner-join on)
       query
     (when *in-subselect*
       (write-string "(" *sql-stream*))
@@ -484,10 +492,17 @@ uninclusive, and the args from that keyword to the end."
         (output-sql distinct database)
         (write-char #\Space *sql-stream*)))
     (output-sql (apply #'vector selections) database)
-    (write-string " FROM " *sql-stream*)
-    (if (listp from)
-        (output-sql (apply #'vector from) database)
-        (output-sql from database))
+    (when from
+      (write-string " FROM " *sql-stream*)
+      (if (listp from)
+	  (output-sql (apply #'vector from) database)
+	(output-sql from database)))
+    (when inner-join
+      (write-string " INNER JOIN " *sql-stream*)
+      (output-sql inner-join database))
+    (when on
+      (write-string " ON " *sql-stream*)
+      (output-sql on database))
     (when where
       (write-string " WHERE " *sql-stream*)
       (let ((*in-subselect* t))

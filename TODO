@@ -47,11 +47,6 @@ COMMONSQL SPEC
 OPTIMIZATIONS
 
 * Revisit result-type list creation,perhaps caching
-* Use an inner join for :target-slot in SELECTS rather than multiple
-  queries. For example, in the test suite:
-    SELECT address.addressid,address.street_number,... FROM address
-      INNER JOIN employee_address ON employe_address.address_id=address.address_id
-      AND emplid=<id>
 
 POSSIBLE EXTENSIONS
 

@@ -542,3 +542,10 @@
 	   (push test-form test-forms)))))
     (values (nreverse test-forms) (nreverse skip-tests))))
 
+
+(defun rl ()
+  "Rapid load for interactive testing."
+  (when *default-database*
+      (disconnect :database *default-database*))
+  (test-connect-to-database :postgresql (car (postgresql-spec (read-specs))))
+  (test-initialise-database))
