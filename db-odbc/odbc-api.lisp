@@ -153,7 +153,7 @@ as possible second argument) to the desired representation of date/time/timestam
 	       ()
 	     (SQLAllocEnv phenv)
 	     (deref-pointer phenv 'sql-handle)))))
-    (%set-attr-odbc-version henv $SQL_OV_ODBC3)
+    (%set-attr-odbc-version henv $SQL_OV_ODBC2)
     henv))
 
 

@@ -330,11 +330,11 @@ of TYPE_NAME (keyword) PRECISION SCALE NULLABLE.")
 ;; Prepared statements
 
 (defgeneric database-prepare (stmt types database result-types field-names)
-  (:method (stmt types (database t))
-    (declare (ignore stmt types))
+  (:method (stmt types (database t) result-types field-names)
+    (declare (ignore stmt types result-types field-names))
     (signal-no-database-error database))
-  (:method (stmt types (database database))
-    (declare (ignore stmt types))
+  (:method (stmt types (database database) result-types field-names)
+    (declare (ignore stmt types result-types field-names))
     (error 'sql-database-error
 	   :message
 	   (format nil "DATABASE-PREPARE not implemented for ~S" database)))
