@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg, Marc Battyani
 ;;;; Date Started:  Apr 2002
 ;;;;
-;;;; $Id: pool.lisp,v 1.2 2002/10/21 07:45:50 kevin Exp $
+;;;; $Id: pool.lisp,v 1.3 2002/10/21 14:11:09 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -19,17 +19,27 @@
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :clsql-sys)
 
-#-scl
-(defun make-lock (name) (declare (ignore name)) nil)
+(defun make-process-lock (name) 
+  #+allegro (mp:make-process-lock :name name)
+  #+scl (thread:make-lock name)
+  #+lispworks (mp:make-lock :name name)
+  #-(or allegro scl lispworks) (declare (ignore name))
+  #-(or allegro scl lispworks) nil)
 
-#-scl
-(defmacro with-lock-held ((lock desc) &body body)
-  (declare (ignore lock desc))
-  `(progn
-     ,@body))
+(defmacro with-process-lock ((lock desc) &body body)
+  #+scl `(thread:with-lock-held (,lock ,desc) ,@body)
+  #+(or allegro lispworks)
+  (declare (ignore desc))
+  #+(or allegro lispworks)
+  (let ((l (gensym)))
+    `(let ((,l ,lock))
+       #+allegro (mp:with-process-lock (,l) ,@body)
+       #+lispworks (mp:with-lock (,l) ,@body)))
+  #-(or scl allegro lispworks) (declare (ignore lock desc))
+  #-(or scl allegro lispworks) `(progn ,@body))
 
 (defvar *db-pool* (make-hash-table :test #'equal))
-(defvar *db-pool-lock* (make-lock "DB Pool lock"))
+(defvar *db-pool-lock* (make-process-lock "DB Pool lock"))
 
 (defclass conn-pool ()
   ((connection-spec :accessor connection-spec :initarg :connection-spec)
@@ -42,24 +52,24 @@
 	 :initform (make-lock "Connection pool"))))
 
 (defun acquire-from-conn-pool (pool)
-  (or (with-lock-held ((conn-pool-lock pool) "Acquire from pool")
+  (or (with-process-lock ((conn-pool-lock pool) "Acquire from pool")
 	(and (plusp (length (free-connections pool)))
 	     (vector-pop (free-connections pool))))
       (let ((conn (connect (connection-spec pool)
 			   :database-type (database-type pool)
 			   :if-exists :new)))
-	(with-lock-held ((conn-pool-lock pool) "Acquire from pool")
+	(with-process-lock ((conn-pool-lock pool) "Acquire from pool")
 	  (vector-push-extend conn (all-connections pool))
 	  (setf (conn-pool conn) pool))
 	conn)))
 
 (defun release-to-conn-pool (conn)
   (let ((pool (conn-pool conn)))
-    (with-lock-held ((conn-pool-lock pool) "Release to pool")
+    (with-process-lock ((conn-pool-lock pool) "Release to pool")
       (vector-push-extend conn (free-connections pool)))))
 
 (defun clear-conn-pool (pool)
-  (with-lock-held ((conn-pool-lock pool) "Clear pool")
+  (with-process-lock ((conn-pool-lock pool) "Clear pool")
     (loop for conn across (all-connections pool)
 	  do (setf (conn-pool conn) nil)
 	  (disconnect :database conn))
@@ -69,7 +79,7 @@
 
 (defun find-or-create-connection-pool (connection-spec database-type)
   "Find connection pool in hash table, creates a new connection pool if not found"
-  (with-lock-held (*db-pool-lock* "Find connection")
+  (with-process-lock (*db-pool-lock* "Find connection")
     (let* ((key (list connection-spec database-type))
 	   (conn-pool (gethash key *db-pool*)))
       (unless conn-pool
@@ -89,7 +99,7 @@
 
 (defun disconnect-pooled (&optional clear)
   "Disconnects all connections in the pool"
-  (with-lock-held (*db-pool-lock* "Find connection")
+  (with-process-lock (*db-pool-lock* "Find connection")
     (maphash
      #'(lambda (key conn-pool)
 	 (declare (ignore key))
