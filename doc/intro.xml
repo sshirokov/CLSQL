@@ -14,7 +14,7 @@
     linkend="gloss-sql">SQL</glossterm> databases.  A number of Common
     Lisp implementations and SQL databases are supported. The general
     structure of &clsql; is based on the &commonsql; package by
-    Xanalys.
+    LispWorks Ltd.
     </para>
   </sect1>
   

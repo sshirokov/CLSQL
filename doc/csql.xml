@@ -36,19 +36,19 @@
     </para>
 
     <para>
-      &clsql; is based on the CommonSQL package from Xanalys, so the
-      documentation that Xanalys makes available online is useful for
+      &clsql; is based on the CommonSQL package from LispWorks Ltd, so the
+      documentation that LispWorks makes available online is useful for
       &clsql; as well.  It is suggested that developers new to &clsql; read
       their documentation as well, as any differences between CommonSQL
-      and &clsql; are minor. Xanalys makes the following documents
+      and &clsql; are minor. LispWorks makes the following documents
       available:
     </para>
 
     <itemizedlist>
       <listitem>
 	<para>
-	  <ulink url="http://www.lispworks.com/reference/lw43/LWUG/html/lwuser-167.htm">
-	    <citetitle>Xanalys &lw; User Guide - The &commonsql;
+	  <ulink url="http://www.lispworks.com/documentation/lw44/LWUG/html/lwuser-204.htm">
+	    <citetitle>&lw; User Guide - The &commonsql;
 	    Package
 	    </citetitle>
 	  </ulink>
@@ -57,8 +57,8 @@
 
       <listitem>
 	<para>
-	  <ulink url="http://www.lispworks.com/reference/lw43/LWRM/html/lwref-383.htm">
-	    <citetitle>Xanalys &lw; Reference Manual - The SQL
+	  <ulink url="http://www.lispworks.com/documentation/lw44/LWRM/html/lwref-424.htm">
+	    <citetitle>&lw; Reference Manual - The SQL
 	    Package</citetitle>
 	  </ulink>
 	</para>
@@ -66,7 +66,7 @@
 
       <listitem>
 	<para>
-	<ulink url="http://www.ravenbrook.com/doc/2002/09/13/common-sql/">
+	<ulink url="http://www.lispworks.com/documentation/sql-tutorial/index.html">
 	  <citetitle>&commonsql; Tutorial by Nick Levine</citetitle>
 	</ulink>
 	</para>
