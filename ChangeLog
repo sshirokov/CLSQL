@@ -1,3 +1,8 @@
+17 Aug 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/db-interface.lisp: Improve messages when functions
+	are passed a database object, but the method is not specialized
+	for that database type.
+	
 14 Aug 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* TODO: Add bug report about SQL generation with a table
 	containing two join slots.

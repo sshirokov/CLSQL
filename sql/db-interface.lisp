@@ -56,6 +56,10 @@ was called with the connection-spec."))
   (:method (query-expression (database t) result-types field-names)
 	   (declare (ignore query-expression result-types field-names))
 	   (signal-no-database-error database))
+  (:method (query-expression (database database) result-types field-names)
+	     (declare (ignore query-expression result-types field-names))
+	     (warn "database-query not implemented for database type ~A."
+		   (database-type database)))
   (:documentation "Internal generic implementation of query."))
 
 
@@ -63,6 +67,10 @@ was called with the connection-spec."))
   (:method (sql-expression (database t))
 	   (declare (ignore sql-expression))
 	   (signal-no-database-error database))
+  (:method (sql-expression (database database))
+	   (declare (ignore sql-expression))
+	   (warn "database-execute-command not implemented for database type ~A."
+		 (database-type database)))
   (:documentation "Internal generic implementation of execute-command."))
 
 ;;; Mapping and iteration
@@ -71,6 +79,11 @@ was called with the connection-spec."))
   (:method (query-expression (database t) &key full-set result-types)
 	   (declare (ignore query-expression full-set result-types))
 	   (signal-no-database-error database)
+	   (values nil nil nil))
+  (:method (query-expression (database database) &key full-set result-types)
+	   (declare (ignore query-expression full-set result-types))
+	   (warn "database-query-result-set not implemented for database type ~A."
+		 (database-type database))
 	   (values nil nil nil))
   (:documentation
    "Internal generic implementation of query mapping.  Starts the
@@ -91,12 +104,20 @@ function should signal a sql-database-data-error."))
   (:method (result-set (database t))
 	   (declare (ignore result-set))
 	   (signal-no-database-error database))
+    (:method (result-set (database database))
+	   (declare (ignore result-set))
+	   (warn "database-dump-result-set not implemented for database type ~A."
+		 (database-type database)))
   (:documentation "Dumps the received result-set."))
 
 (defgeneric database-store-next-row (result-set database list)
   (:method (result-set (database t) list)
 	   (declare (ignore result-set list))
 	   (signal-no-database-error database))
+    (:method (result-set (database database) list)
+	   (declare (ignore result-set list))
+	   (warn "database-store-next-row not implemented for database type ~A."
+		 (database-type database)))
   (:documentation
    "Returns t and stores the next row in the result set in list or
 returns nil when result-set is finished."))
