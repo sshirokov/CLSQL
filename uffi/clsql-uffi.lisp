@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.1 2002/09/30 10:19:24 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.2 2002/12/13 12:21:54 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -83,21 +83,36 @@
 (defmacro split-64-bit-integer (int64)
   `(values (ash ,int64 -32) (logand ,int64 +2^32-1+)))
 
+(defun char-ptr-points-to-null (char-ptr)
+  "Returns T if foreign character pointer refers to 'NULL' string. Only called for numeric entries"
+  ;; Uses short cut and returns T if first character is #\N. It should
+  ;; never be non-numeric
+  (let ((char (uffi:ensure-char-character
+	       (uffi:deref-pointer char-ptr :char))))
+    (eql char #\N)))
+    
 (defun convert-raw-field (char-ptr types index)
   (let ((type (if (listp types)
 		  (nth index types)
 		  types)))
-    (case type
-      (:double
-       (atof char-ptr))
-      ((or :int32 :int)
-       (atoi char-ptr))
-      (:int64
-       (uffi:with-foreign-object (high32-ptr :int)
-	 (let ((low32 (atol64 char-ptr high32-ptr))
-	       (high32 (uffi:deref-pointer high32-ptr :int)))
-	   (if (zerop high32)
-	       low32
-	       (make-64-bit-integer high32 low32)))))
+    (cond
+      ((and (or (eq type :double) (eq type :int32) (eq type :int)
+		(eq type :int64))
+	    (char-ptr-points-to-null char-ptr))
+       nil)
       (t
-       (uffi:convert-from-foreign-string char-ptr)))))
+       (case type
+	 (:double
+	  (atof char-ptr))
+	 ((or :int32 :int)
+	  (atoi char-ptr))
+	 (:int64
+	  (uffi:with-foreign-object (high32-ptr :int)
+	    (let ((low32 (atol64 char-ptr high32-ptr))
+		  (high32 (uffi:deref-pointer high32-ptr :int)))
+	      (if (zerop high32)
+		  low32
+		  (make-64-bit-integer high32 low32)))))
+	 (t
+	  (uffi:convert-from-foreign-string char-ptr)))))))
+  
