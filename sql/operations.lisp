@@ -226,3 +226,7 @@
 (defsql sql-nvl (:symbol "nvl") (&rest rest)
   (make-instance 'sql-function-exp
 		 :name 'coalesce :args rest))
+
+(defsql sql-userenv (:symbol "userenv") (&rest rest)
+  (make-instance 'sql-function-exp
+		 :name 'userenv :args rest))

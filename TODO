@@ -13,9 +13,6 @@ TESTS TO ADD
   rows (200) returned by the oracle backend at a time
 * Number and Char field types
 
-COMMONSQL INCOMPATIBILITY
-
-   o userenv (Oracle specific but deprecated in Oracle 9) 
  
 VARIANCES FROM COMMONSQL
 

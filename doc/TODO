@@ -52,6 +52,7 @@ DOCUMENTATION TO DO LIST
 
  - CONNECT: :make-default and :pool keyword args. 
 
+ - Tranactions: AUTOCOMMIT
 
 4. Documenting lower level, non-CommonSQL functions (some of this is already 
    done). 
