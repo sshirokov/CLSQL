@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-loader.cl,v 1.6 2002/04/08 01:22:02 kevin Exp $
+;;;; $Id: postgresql-loader.cl,v 1.7 2002/05/13 22:05:21 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -49,3 +49,6 @@ set to the right path before compiling or loading the system.")
     (setq *postgresql-library-loaded* t)))
 
 (clsql-sys:database-type-load-foreign :postgresql)
+(when (clsql-sys:database-type-library-loaded :postgresql)
+  (clsql-sys:initialize-database-type :database-type :postgresql)
+  (pushnew :postgresql cl:*features*))

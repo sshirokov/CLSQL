@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql-aodbc.system,v 1.3 2002/04/01 05:27:54 kevin Exp $
+;;;; $Id: clsql-aodbc.system,v 1.4 2002/05/13 22:05:20 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -25,9 +25,6 @@
     :binary-pathname "CLSQL:interfaces;aodbc;bin;"
     :components ((:file "aodbc-package")
 		 (:file "aodbc-sql" :depends-on ("aodbc-package")))
-    :depends-on (:clsql)
-    :finally-do
-    (when (clsql-sys:database-type-library-loaded :aodbc)
-      (clsql-sys:initialize-database-type :database-type :aodbc)))
+    :depends-on (:clsql))
 
     

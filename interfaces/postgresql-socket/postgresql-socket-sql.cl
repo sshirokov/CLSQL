@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-sql.cl,v 1.11 2002/04/27 20:58:11 kevin Exp $
+;;;; $Id: postgresql-socket-sql.cl,v 1.12 2002/05/13 22:05:21 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -304,3 +304,6 @@ doesn't depend on UFFI."
 	  (prog1 nil
 	    (setf (postgresql-socket-result-set-done result-set) t)
 	    (wait-for-query-results (database-connection database)))))))
+
+(when (clsql-sys:database-type-library-loaded :postgresql-socket)
+  (clsql-sys:initialize-database-type :database-type :postgresql-socket))

@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: aodbc-sql.cl,v 1.9 2002/05/13 16:41:22 kevin Exp $
+;;;; $Id: aodbc-sql.cl,v 1.10 2002/05/13 22:05:21 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -146,3 +146,5 @@
 	list))))
 
 		       
+(when (clsql-sys:database-type-library-loaded :aodbc)
+  (clsql-sys:initialize-database-type :database-type :aodbc))
