@@ -354,7 +354,7 @@
      (*value :pointer-void)
      (szLength :int))
   :module "odbc"
-  :returning :int)
+  :returning :short)
 
 (def-function "SQLTables"
     ((hstmt :pointer-void)
