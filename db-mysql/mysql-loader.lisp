@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-loader.lisp,v 1.7 2003/03/27 01:13:33 kevin Exp $
+;;;; $Id: mysql-loader.lisp,v 1.8 2003/05/17 06:03:03 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -32,7 +32,7 @@
      "/usr/lib/clsql/"
      "/sw/lib/clsql/"
      "/home/kevin/debian/src/clsql/db-mysql/")
-   :drive-letters '("C" "D" "E")))
+   :drive-letters '("C")))
 
 (defparameter *libz-library-path* 
   (uffi:find-foreign-library
