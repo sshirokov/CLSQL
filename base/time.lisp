@@ -84,6 +84,13 @@
 
 );eval-when
 
+(defun duration-timestring (duration)
+  (let ((second (duration-second duration))
+        (minute (duration-minute duration))
+        (hour (duration-hour duration))
+        (day (duration-day duration)))
+    (format nil "P~dD~dH~dM~dS" day hour minute second)))
+
 
 ;; ------------------------------------------------------------
 ;; Constructors
@@ -134,9 +141,9 @@
       (values hour minute second))))
 
 (defun time-ymd (time)
-  (destructuring-bind (minute day year)
+  (destructuring-bind (month day year)
       (mjd-to-gregorian (time-mjd time))
-    (values year minute day)))
+    (values year month day)))
 
 (defun time-dow (time)
   "Return the 0 indexed Day of the week starting with Sunday"
@@ -152,19 +159,27 @@ month, year, integer day-of-week"
       (values second minute hour day month year (mod (+ (time-mjd time) 3) 7)))))
 
 ;; duration specific
-(defun duration-reduce (duration precision)
-  (ecase precision
-    (:second
-     (+ (duration-second duration)
-        (* (duration-reduce duration :minute) 60)))
-    (:minute
-     (+ (duration-minute duration)
-        (* (duration-reduce duration :hour) 60)))
-    (:hour
-     (+ (duration-hour duration)
-        (* (duration-reduce duration :day) 24)))
-    (:day
-     (duration-day duration))))    
+(defun duration-reduce (duration precision &optional round)
+     (:second
+      (+ (duration-second duration)
+         (* (duration-reduce duration :minute) 60)))
+     (:minute
+      (+ (if round
+	     (floor (duration-second duration) 30)
+	     0)
+	 (duration-minute duration)
+         (* (duration-reduce duration :hour) 60)))
+     (:hour
+      (+ (if round
+	     (floor (duration-minute duration) 30)
+	     0)
+	 (duration-hour duration)
+         (* (duration-reduce duration :day) 24)))
+     (:day
+      (+ (if round
+	     (floor (duration-hour duration) 12)
+	     0)
+	 (duration-day duration))))
 
 
 ;; ------------------------------------------------------------
@@ -271,7 +286,7 @@ month, year, integer day-of-week"
        (result number))
       ((null nlist) (return result))
      (declare (list nlist))
-     (if (%time> (car nlist) result) (setq result (car nlist)))))
+     (if (%time> (car nlist) result) (setf result (car nlist)))))
 
 (defun time-min (number &rest more-numbers)
   "Returns the least of its arguments."
@@ -279,7 +294,7 @@ month, year, integer day-of-week"
        (result number))
       ((null nlist) (return result))
      (declare (list nlist))
-     (if (%time< (car nlist) result) (setq result (car nlist)))))
+     (if (%time< (car nlist) result) (setf result (car nlist)))))
 
 (defun time-compare (time-a time-b)
   (let ((mjd-a (time-mjd time-a))
@@ -359,6 +374,7 @@ month, year, integer day-of-week"
 (defstruct interval
   (start nil)
   (end nil)
+  (name nil) 
   (contained nil)
   (type nil)
   (data nil))
@@ -435,16 +451,14 @@ month, year, integer day-of-week"
 (defun interval-match (list time)
   "Return the index of the first interval in list containing time"
   ;; this depends on ordering of intervals!
-  (dotimes (x (length list))
-    (let ((elt (nth x list)))
-      (when (and (time<= (interval-start elt) time)
-                 (time< time (interval-end elt)))
-        (return-from interval-match x))
-      (when (time< time (interval-start elt))
-        (return-from interval-match nil)))))
-
+  (let ((list (sort-interval-list list))) 
+    (dotimes (x (length list))
+      (let ((elt (nth x list)))
+	(when (and (time<= (interval-start elt) time)
+		   (time< time (interval-end elt)))
+	  (return-from interval-match x))))))
+  
 (defun interval-clear (list time)
-  ;(cmsg "List = ~s" list)
   (dotimes (x (length list))
     (let ((elt (nth x list)))
       (when (and (time<= (interval-start elt) time)
@@ -713,10 +727,10 @@ with the given options"
 (defun current-year ()
   (third (mjd-to-gregorian (time-mjd (get-time)))))
 
-(defun current-day ()
+(defun current-month ()
   (second (mjd-to-gregorian (time-mjd (get-time)))))
 
-(defun current-month ()
+(defun current-day ()
   (first (mjd-to-gregorian (time-mjd (get-time)))))
 
 (defun parse-date-time (string)
@@ -764,6 +778,11 @@ with the given options"
          (values (- hours 12) "PM"))
         (t
          (values hours "AM"))))
+
+(defmethod to-string ((time wall-time) &rest keys)
+  (destructuring-bind (&key (style :daytime) &allow-other-keys)
+      keys
+    (print-date time style)))
 
 (defun print-date (time &optional (style :daytime))
   (multiple-value-bind (second minute hour day month year dow)
@@ -947,10 +966,33 @@ rules"
   (let ((doy (+ day (* 31 (1- month)))))
     (declare (type fixnum doy))
     (when (< 2 month)
-      (setq doy (- doy (floor (+ 23 (* 4 month)) 10)))
+      (setf doy (- doy (floor (+ 23 (* 4 month)) 10)))
       (when (leap-year? year)
         (incf doy)))
     doy))
+
+(defun parse-yearstring (string)
+  (let ((year (or (parse-integer-insensitively string) 
+		  (extract-roman string))))
+    (when (and year (< 1500 year 2500))
+      (make-time :year year))))
+
+(defvar *roman-digits*
+  '((#\M . 1000)
+    (#\D . 500)
+    (#\C . 100)
+    (#\L . 50)
+    (#\X . 10)
+    (#\V . 5)
+    (#\I . 1)))
+
+(defun extract-roman (string &aux parse)
+  (dotimes (x (length string))
+    (when-bind (val (get-alist (aref string x) *roman-digits*))
+      (when (and parse (< (car parse) val))
+        (push (- (pop parse)) parse))
+      (push val parse)))
+  (apply #'+ parse))
 
 
 ;; ------------------------------------------------------------
@@ -1008,7 +1050,7 @@ formatted date string."
            (t
             (return-from parse (make-duration :day days :hour hours
                                               :minute minutes :second secs))))
-         (setq index next-index))))))
+         (setf index next-index))))))
 
 ;; e.g. 2000-11-11 00:00:00-06
 

@@ -32,6 +32,7 @@
 	      :components ((:file "package")
 			   (:file "utils")
 			   (:file "test-init")
+			   (:file "test-time")
 			   (:file "test-basic")
 			   (:file "test-connection")
 			   (:file "test-fddl")

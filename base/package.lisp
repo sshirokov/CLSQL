@@ -161,7 +161,9 @@
 	 #:duration-month
 	 #:duration-second
 	 #:duration-year
-	 #:duration-reduce                
+	 #:duration-reduce 
+	 #:duration-timestring
+	 #:extract-roman 
 	 #:format-duration
 	 #:format-time
 	 #:get-time
@@ -183,6 +185,7 @@
 	 #:month-name
 	 #:parse-date-time
 	 #:parse-timestring
+	 #:parse-yearstring
 	 #:print-date
 	 #:roll
 	 #:roll-to
