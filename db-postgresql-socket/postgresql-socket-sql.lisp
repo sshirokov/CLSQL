@@ -194,6 +194,7 @@ doesn't depend on UFFI."
 		 (make-instance 'postgresql-socket-database
 				:name (database-name-from-spec connection-spec
 							       database-type)
+				:database-type :postgresql-socket
 				:connection-spec connection-spec
 				:connection connection)))))
 
@@ -456,6 +457,23 @@ doesn't depend on UFFI."
 		    :key #'car :test #'string-equal)
 	    t)
 	(database-disconnect database)))))
+
+(defmethod database-describe-table ((database postgresql-socket-database) 
+				    table)
+  (database-query
+   (format nil "select a.attname, t.typname
+                               from pg_class c, pg_attribute a, pg_type t
+                               where c.relname = '~a'
+                                   and a.attnum > 0
+                                   and a.attrelid = c.oid
+                                   and a.atttypid = t.oid"
+           (sql-escape (string-downcase 
+			(etypecase table
+			  (string table)
+			  (clsql-base-sys::sql-create-table
+			   (symbol-name 
+			    (slot-value table 'clsql-base-sys::name)))))))
+   database :auto))
 
 (when (clsql-base-sys:database-type-library-loaded :postgresql-socket)
   (clsql-base-sys:initialize-database-type :database-type :postgresql-socket))

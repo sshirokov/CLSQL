@@ -52,6 +52,8 @@
 (uffi:def-foreign-type pgsql-conn :pointer-void)
 (uffi:def-foreign-type pgsql-result :pointer-void)
 
+(uffi:def-type pgsql-conn-ptr :pointer-void)
+
 (uffi:def-enum pgsql-ftype
     ((:bytea 17)
      (:int2 21)

@@ -79,7 +79,10 @@
 
 (defclass postgresql-database (database)
   ((conn-ptr :accessor database-conn-ptr :initarg :conn-ptr
-	     :type pgsql-conn-def)))
+	     :type pgsql-conn-def)
+   (lock
+    :accessor database-lock
+    :initform (make-process-lock "conn"))))
 
 (defmethod database-type ((database postgresql-database))
   :postgresql)
@@ -133,6 +136,7 @@
 	(make-instance 'postgresql-database
 		       :name (database-name-from-spec connection-spec
 						      database-type)
+		       :database-type :postgresql
 		       :connection-spec connection-spec
 		       :conn-ptr connection)))))
 
@@ -524,6 +528,50 @@
 	    t)
 	(database-disconnect database)))))
 
+(defmethod database-describe-table ((database postgresql-database) table)
+  (database-query 
+   (format nil "select a.attname, t.typname
+                               from pg_class c, pg_attribute a, pg_type t
+                               where c.relname = '~a'
+                                   and a.attnum > 0
+                                   and a.attrelid = c.oid
+                                   and a.atttypid = t.oid"
+           (sql-escape (string-downcase 
+			(etypecase table
+			  (string table)
+			  (clsql-base-sys::sql-create-table
+			   (symbol-name 
+			    (slot-value table 'clsql-base-sys::name)))))))
+   database :auto))
+
+(defun %pg-database-connection (connection-spec)
+  (check-connection-spec connection-spec :postgresql
+			 (host db user password &optional port options tty))
+  (macrolet ((coerce-string (var)
+               `(unless (typep ,var 'simple-base-string)
+                 (setf ,var (coerce ,var 'simple-base-string)))))
+    (destructuring-bind (host db user password &optional port options tty)
+        connection-spec
+      (coerce-string db)
+      (coerce-string user)
+      (let ((connection (pqsetdblogin host port options tty db user password)))
+        (declare (type postgresql::pgsql-conn-ptr connection))
+        (unless (eq (pqstatus connection) :connection-ok)
+          ;; Connect failed
+          (error 'clsql-connect-error
+                 :database-type :postgresql
+                 :connection-spec connection-spec
+                 :errno (pqstatus connection)
+                 :error (pqerrormessage connection)))
+        connection))))
+
+(defmethod database-reconnect ((database postgresql-database))
+  (let ((lock (database-lock database)))
+    (with-process-lock (lock "Reconnecting")
+      (with-slots (connection-spec conn-ptr)
+	  database
+	(setf conn-ptr (%pg-database-connection connection-spec))
+	database))))
 
 (when (clsql-base-sys:database-type-library-loaded :postgresql)
   (clsql-base-sys:initialize-database-type :database-type :postgresql))
