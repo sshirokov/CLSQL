@@ -165,7 +165,7 @@
                                   :if-does-not-exist :ignore))
                 (t 
                  (clsql:drop-index [bar]:if-does-not-exist :ignore)))
-              (clsql:view-exists-p [bar] :owner *test-database-user*))))
+              (clsql:index-exists-p [bar] :owner *test-database-user*))))
   t nil)
 
 ;; create indexes with names as strings, symbols and in square brackets 
