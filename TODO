@@ -21,9 +21,3 @@ POSSIBLE EXTENSIONS
 
 * improve large object api and extend to databases beyond postgresql 
 * add support for prepared statements
-
-BACKENDS
-
-* Fix ODBC on Windows, convert to ODBC 3.0 (such as SQLAllocHandle rather
-  than SQLAllocEnv)
-

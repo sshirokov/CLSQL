@@ -1,3 +1,9 @@
+cl-sql (3.0.2-1) unstable; urgency=low
+
+  * New upstream
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Thu,  2 Sep 2004 16:04:19 -0600
+
 cl-sql (3.0.1-1) unstable; urgency=medium
 
   * New upstream, important bug fix for classes with multiple join
