@@ -132,7 +132,7 @@ install: build
 		sed -e "s/%%/$$l/;" debian/preinst.template > debian/$$p.preinst ;\
 		sed -e "s/%%/$$l/;" debian/prerm.template > debian/$$p.prerm ;\
 		sed -e "s/%%/$$l/;" debian/postinst.template > debian/$$p.postinst ;\
-		chown root.root debian/$$p.prerm debian/$$p.prerm debian/$pp.preinst; \
+		chown root.root debian/$$p.prerm debian/$$p.prerm debian/$$p.preinst; \
 		chmod +x debian/$$p.prerm debian/$$p.prerm debian/$$p.preinst; \
 	done
 
