@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: tester-clsql.cl,v 1.5 2002/04/19 20:25:20 marc.battyani Exp $
+;;;; $Id: tester-clsql.cl,v 1.6 2002/04/23 18:28:02 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -137,7 +137,7 @@
 ;;;; Testing functions
 
 (defun transform-float-1 (i)
-  (* i (abs (/ i 2)) (expt 10 (* 2 i))))
+  (coerce (* i (abs (/ i 2)) (expt 10 (* 2 i))) 'double-float))
 
 (defun transform-bigint-1 (i)
   (* i (expt 10 (* 3 (abs i)))))
@@ -202,13 +202,14 @@
 	      (format nil "Invalid types field (~S) passed to test-table-row" types))))
     (test (transform-float-1 int)
 	  float
-	  :test #'=
+	  :test #'eql
 	  :fail-info 
 	  (format nil "Wrong float value ~A for int ~A (row ~S)" float int row))
-    (test  (parse-double str)
-	   float
-	   :test #'eql
-	   :fail-info (format nil "Wrong string value ~A" str))))
+    (test (parse-double str)
+	  float
+	  :test #'eql
+	  :fail-info (format nil "Wrong string value ~A for double ~A (row ~S)"
+			     float str row))))
 
 
 (defun drop-test-table (db)
@@ -218,12 +219,13 @@
 
 (defun do-test ()
     (let ((specs (read-specs)))
-      (mysql-low-level specs)
-      (mysql-table-test specs)
-      (pgsql-table-test specs)
-      (pgsql-socket-table-test specs)
-      (aodbc-table-test specs)
-      ))
+      (with-tests (:name "CLSQL")
+	(mysql-low-level specs)
+	(mysql-table-test specs)
+	(pgsql-table-test specs)
+	(pgsql-socket-table-test specs)
+	(aodbc-table-test specs)
+      )))
 
 
 (do-test)

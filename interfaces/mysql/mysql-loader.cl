@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-loader.cl,v 1.5 2002/04/06 22:27:41 kevin Exp $
+;;;; $Id: mysql-loader.cl,v 1.6 2002/04/23 18:28:02 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -71,12 +71,12 @@ set to the right path before compiling or loading the system.")
 				    *mysql-library-candidate-directories*
 				    :drive-letters
 				    *mysql-library-candidate-drive-letters*)))
+    ;; zlib required to load mysql on CMUCL Solaris
+    (uffi:load-foreign-library 
+     (uffi:find-foreign-library '("libz" "zlib")
+				'("/usr/lib/" "/usr/local/" "/lib/")))
     (when
 	(and
-	 ;; zlib required to load mysql on CMUCL Solaris
-	 (uffi:load-foreign-library 
-	  (uffi:find-foreign-library '("libz" "zlib")
-				     '("/usr/lib/" "/usr/local/" "/lib/")))
 	 (uffi:load-foreign-library mysql-path
 				    :module "mysql" 
 				    :supporting-libraries 

@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.cl,v 1.13 2002/04/19 20:25:20 marc.battyani Exp $
+;;;; $Id: postgresql-sql.cl,v 1.14 2002/04/23 18:28:02 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -315,7 +315,8 @@
 	   (setf length (lo-lseek ptr fd 0 2))
 	   (lo-lseek ptr fd 0 0)
 	   (when (> length 0)
-	     (setf buffer (uffi:allocate-foreign-string length :type '(:unsigned :byte)))
+	     (setf buffer (uffi:allocate-foreign-string 
+			   length :unsigned t))
 	     (when (= (lo-read ptr fd buffer length) length)
 	       (setf result (uffi:convert-from-foreign-string
 			     buffer :length length :null-terminated-p nil))))))

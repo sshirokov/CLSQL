@@ -1,3 +1,11 @@
+23 Apr 2002 Kevin Rosenberg (kevin@rosenberg.net)
+	* interfaces/postgresql/postgresql-sql.cl:
+	Fix keyword typo in database-read-large-object
+	* interfaces/mysql/mysql-loader.cl
+	Fix loading on Win32
+	* test-suite/tester-clsql.cl
+	Fix type coercion of double-float
+	
 19 Apr 2002 Marc Battyani (marc.battyani@fractalconcept.com)
 	* interface/postgresql/postgresql-api.cl:
 	* interface/postgresql/postgresql-sql.cl:
