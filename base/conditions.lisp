@@ -157,3 +157,26 @@ and signal an clsql-invalid-spec-error if they don't match."
 	  'clsql-nodb-error
 	  :database database))
 
+
+;; for USQL support
+
+(define-condition clsql-type-error (clsql-error clsql-condition)
+  ((slotname :initarg :slotname
+	     :reader clsql-type-error-slotname)
+   (typespec :initarg :typespec
+	     :reader clsql-type-error-typespec)
+   (value :initarg :value
+	  :reader clsql-type-error-value))
+  (:report (lambda (c stream)
+	     (format stream
+		     "Invalid value ~A in slot ~A, not of type ~A."
+		     (clsql-type-error-value c)
+		     (clsql-type-error-slotname c)
+		     (clsql-type-error-typespec c)))))
+
+(define-condition clsql-sql-syntax-error (clsql-error)
+  ((reason :initarg :reason
+	   :reader clsql-sql-syntax-error-reason))
+  (:report (lambda (c stream)
+	     (format stream "Invalid SQL syntax: ~A"
+		     (clsql-sql-syntax-error-reason c)))))

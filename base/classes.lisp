@@ -24,8 +24,13 @@
 
 (defclass database ()
   ((name :initform nil :initarg :name :reader database-name)
-   (connection-spec :initform nil :initarg :connection-spec :reader connection-spec
+   (connection-spec :initform nil :initarg :connection-spec
+                    :reader connection-spec
 		    :documentation "Require to use connection pool")
+   (command-recording-stream :accessor command-recording-stream :initform nil)
+   (result-recording-stream :accessor result-recording-stream :initform nil)
+   (view-classes :accessor database-view-classes :initform nil)
+   (schema :accessor database-schema :initform nil)
    (transaction-level :initform 0 :accessor transaction-level)
    (transaction :initform nil :accessor transaction)
    (conn-pool :initform nil :initarg :conn-pool :accessor conn-pool))

@@ -134,6 +134,15 @@ returns nil when result-set is finished."))
 (defgeneric database-sequence-next (name database)
   (:documentation "Increment a sequence in DATABASE."))
 
+(defgeneric database-list-sequences (database &key owner)
+  (:documentation "List all sequences in DATABASE."))
+
+(defgeneric database-set-sequence-position (name position database)
+  (:documentation "Set the position of the sequence called NAME in DATABASE."))
+
+(defgeneric database-sequence-last (name database)
+  (:documentation "Select the last value in sequence NAME in DATABASE."))
+
 (defgeneric database-start-transaction (database)
   (:documentation "Start a transaction in DATABASE."))
 
@@ -147,13 +156,19 @@ returns nil when result-set is finished."))
   (:documentation "Return the type SQL type specifier as a string, for
 the given lisp type and parameters."))
 
-(defgeneric database-list-tables (database &key system-tables)
+(defgeneric database-list-tables (database &key owner)
   (:documentation "List all tables in the given database"))
+ 
+(defgeneric database-list-views (database &key owner)
+  (:documentation "List all views in the DATABASE."))
 
-(defgeneric database-list-attributes (table database)
+(defgeneric database-list-indexes (database &key owner)
+  (:documentation "List all indexes in the DATABASE."))
+
+(defgeneric database-list-attributes (table database &key owner)
   (:documentation "List all attributes in TABLE."))
 
-(defgeneric database-attribute-type (attribute table database)
+(defgeneric database-attribute-type (attribute table database &key owner)
   (:documentation "Return the type of ATTRIBUTE in TABLE."))
 
 (defgeneric database-add-attribute (table attribute database)
@@ -165,7 +180,7 @@ the given lisp type and parameters."))
 (defgeneric oid (object)
   (:documentation "Return the unique ID of a database object."))
 
- 
+
 ;;; Large objects support (Marc Battyani)
 
 (defgeneric database-create-large-object (database)

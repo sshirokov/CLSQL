@@ -1,3 +1,7 @@
+02 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Integrate patch from Marcus Pearce <ek735@soi.city.ac.uk>
+	adding further support for providing backend for UncommonSQL
+
 10 Mar 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Integrate patch from Aurelio Bignoli for SQLite backend
 

@@ -48,7 +48,13 @@
      #:database-drop-sequence
      #:database-sequence-next
      #:sql-escape
-
+     #:database-sequence-last
+     #:database-set-sequence-position
+     #:database-list-attributes
+     #:database-list-sequences
+     #:database-list-indexes
+     #:database-list-views
+     
      ;; Support for pooled connections
      #:database-type
 
@@ -89,7 +95,9 @@
 	 #:clsql-exists-error
 	 #:clsql-closed-error
 	 #:clsql-closed-error-database
-	 
+         #:clsql-sql-syntax-error
+         #:clsql-type-error
+         
 	 #:*loaded-database-types*
 	 #:reload-database-types
 	 #:*default-database-type*

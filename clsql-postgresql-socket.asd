@@ -37,5 +37,7 @@
 	     (:file "postgresql-socket-api"
 		    :depends-on ("postgresql-socket-package"))
 	     (:file "postgresql-socket-sql"
-		    :depends-on ("postgresql-socket-api")))))
+		    :depends-on ("postgresql-socket-api"))
+             (:file "postgresql-socket-usql"
+		    :depends-on ("postgresql-socket-sql")))))
   :depends-on (:clsql-base :uffi :md5))

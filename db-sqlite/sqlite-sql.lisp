@@ -1,4 +1,4 @@
-;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
+;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
@@ -22,6 +22,9 @@
 
 (defclass sqlite-database (database)
   ((sqlite-db :initarg :sqlite-db :accessor sqlite-db)))
+
+(defmethod database-type ((database sqlite-database))
+  :sqlite)
 
 (defmethod database-initialize-database-type ((database-type (eql :sqlite)))
   t)

@@ -2,12 +2,12 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          postgresql-usql.sql
+;;;; Name:          postgresql-socket-usql.sql
 ;;;; Purpose:       PostgreSQL interface for USQL routines
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id$
+;;;; $Id: postgresql-socket-usql.lisp 7061 2003-09-07 06:34:45Z kevin $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and by onShore Development Inc.
@@ -17,10 +17,10 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-postgresql)
+(in-package #:clsql-postgresql-socket)
 
 
-(defmethod database-list-objects-of-type ((database postgresql-database)
+(defmethod database-list-objects-of-type ((database postgresql-socket-database)
                                           type owner)
   (let ((owner-clause
          (cond ((stringp owner)
@@ -36,20 +36,20 @@
                      owner-clause)
              database nil))))
     
-(defmethod database-list-tables ((database postgresql-database)
+(defmethod database-list-tables ((database postgresql-socket-database)
                                  &key (owner nil))
   (database-list-objects-of-type database "r" owner))
   
-(defmethod database-list-views ((database postgresql-database)
+(defmethod database-list-views ((database postgresql-socket-database)
                                 &key (owner nil))
   (database-list-objects-of-type database "v" owner))
   
-(defmethod database-list-indexes ((database postgresql-database)
+(defmethod database-list-indexes ((database postgresql-socket-database)
                                   &key (owner nil))
   (database-list-objects-of-type database "i" owner))
   
 (defmethod database-list-attributes ((table string)
-				     (database postgresql-database)
+				     (database postgresql-socket-database)
                                      &key (owner nil))
   (let* ((owner-clause
           (cond ((stringp owner)
@@ -76,7 +76,7 @@
 		    result)))))
 
 (defmethod database-attribute-type (attribute (table string)
-				    (database postgresql-database)
+				    (database postgresql-socket-database)
                                     &key (owner nil))
   (let* ((owner-clause
           (cond ((stringp owner)
@@ -95,22 +95,22 @@
       (intern (string-upcase (car result)) :keyword))))
 
 (defmethod database-create-sequence (sequence-name
-				     (database postgresql-database))
+				     (database postgresql-socket-database))
   (database-execute-command
    (concatenate 'string "CREATE SEQUENCE " (sql-escape sequence-name))
    database))
 
 (defmethod database-drop-sequence (sequence-name
-				   (database postgresql-database))
+				   (database postgresql-socket-database))
   (database-execute-command
    (concatenate 'string "DROP SEQUENCE " (sql-escape sequence-name)) database))
 
-(defmethod database-list-sequences ((database postgresql-database)
+(defmethod database-list-sequences ((database postgresql-socket-database)
                                     &key (owner nil))
   (database-list-objects-of-type database "S" owner))
 
 (defmethod database-set-sequence-position (name (position integer)
-                                                (database postgresql-database))
+                                          (database postgresql-socket-database))
   (values
    (parse-integer
     (caar
@@ -119,7 +119,7 @@
       database nil)))))
 
 (defmethod database-sequence-next (sequence-name 
-				   (database postgresql-database))
+				   (database postgresql-socket-database))
   (values
    (parse-integer
     (caar
@@ -127,7 +127,7 @@
       (concatenate 'string "SELECT NEXTVAL ('" (sql-escape sequence-name) "')")
       database nil)))))
 
-(defmethod database-sequence-last (sequence-name (database postgresql-database))
+(defmethod database-sequence-last (sequence-name (database postgresql-socket-database))
   (values
    (parse-integer
     (caar
@@ -140,7 +140,7 @@
 
 #|
 (defmethod database-output-sql ((expr clsql-sys::sql-typecast-exp) 
-				(database postgresql-database))
+				(database postgresql-socket-database))
   (with-slots (clsql-sys::modifier clsql-sys::components)
     expr
     (if clsql-sys::modifier
@@ -152,7 +152,7 @@
 			clsql-sys::*sql-stream*)))))
 
 (defmethod database-output-sql-as-type ((type (eql 'integer)) val
-					(database postgresql-database))
+					(database postgresql-socket-database))
   (when val   ;; typecast it so it uses the indexes
     (make-instance 'clsql-sys::sql-typecast-exp
                    :modifier 'int8

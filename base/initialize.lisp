@@ -45,9 +45,9 @@ to initialize-database-type.")
   "Initialize the given database-type, if it is not already
 initialized, as indicated by `*initialized-database-types*'."
   (if (member database-type *initialized-database-types*)
-      t
+      database-type
       (when (database-initialize-database-type database-type)
 	(push database-type *initialized-database-types*)
-	t)))
+	database-type)))
 
 

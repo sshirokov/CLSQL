@@ -106,7 +106,7 @@
      (:var-string 253)
      (:string 254)))
 
-#+:mysql-client-v3
+#+mysql-client-v3
 (uffi:def-struct mysql-field
     (name (* :char))
   (table (* :char))
@@ -118,7 +118,7 @@
   (decimals :unsigned-int))
 
 ;; structure changed in mysql 4 client
-#+:mysql-client-v4
+#+mysql-client-v4
 (uffi:def-struct mysql-field
     (name (* :char))
   (table (* :char))
@@ -260,7 +260,7 @@
 
 ;; Need to comment this out for LW 4.2.6
 ;; ? bug in LW version
-;;(declaim (inline mysql-real-connect))
+#-lispworks (declaim (inline mysql-real-connect))
 (uffi:def-function "mysql_real_connect"
     ((mysql (* mysql-mysql))
      (host :cstring)
