@@ -160,8 +160,6 @@ and signal an clsql-invalid-spec-error if they don't match."
   (cerror "Ignore this error and return nil."
 	  'clsql-nodb-error))
 
-;; for USQL support
-
 (define-condition clsql-type-error (clsql-error clsql-condition)
   ((slotname :initarg :slotname
 	     :reader clsql-type-error-slotname)

@@ -23,7 +23,6 @@
 (defvar *default-database* nil
   "Specifies the default database to be used.")
 
-;;; usql
 (defun find-database (database &key (errorp t) (db-type nil))
   "The function FIND-DATABASE, given a string DATABASE, searches
 amongst the connected databases for one matching the name DATABASE. If

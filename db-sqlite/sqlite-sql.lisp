@@ -187,7 +187,7 @@
   ;; Query is copied from .table command of sqlite comamnd line utility.
   (remove-if #'(lambda (s)
                  (and (>= (length s) 10)
-                      (string= (subseq s 0 10) "_usql_seq_")))
+                      (string= (subseq s 0 10) "_clsql_seq_")))
              (mapcar #'car (database-query
                             "SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name"
                             database '()))))
@@ -226,11 +226,11 @@
 	return (third field-info)))
 
 (defun %sequence-name-to-table-name (sequence-name)
-  (concatenate 'string "_usql_seq_" (sql-escape sequence-name)))
+  (concatenate 'string "_clsql_seq_" (sql-escape sequence-name)))
 
 (defun %table-name-to-sequence-name (table-name)
   (and (>= (length table-name) 10)
-       (string= (subseq table-name 0 10) "_usql_seq_")
+       (string= (subseq table-name 0 10) "_clsql_seq_")
        (subseq table-name 10)))
 
 (defmethod database-create-sequence (sequence-name

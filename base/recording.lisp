@@ -5,7 +5,7 @@
 ;;;; Description ==========================================================
 ;;;; ======================================================================
 ;;;;
-;;;; CLSQL-USQL broadcast streams which can be used to monitor the
+;;;; CLSQL broadcast streams which can be used to monitor the
 ;;;; flow of commands to, and results from, a database.
 ;;;;
 ;;;; ======================================================================

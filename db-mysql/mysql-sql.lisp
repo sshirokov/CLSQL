@@ -295,7 +295,7 @@
   (declare (ignore owner))
   (remove-if #'(lambda (s)
                  (and (>= (length s) 10)
-                      (string= (subseq s 0 10) "_usql_seq_")))
+                      (string= (subseq s 0 10) "_clsql_seq_")))
              (mapcar #'car (database-query "SHOW TABLES" database nil))))
     
 ;; MySQL 4.1 does not support views 
@@ -340,11 +340,11 @@
 ;;; Sequence functions
 
 (defun %sequence-name-to-table (sequence-name)
-  (concatenate 'string "_usql_seq_" (sql-escape sequence-name)))
+  (concatenate 'string "_clsql_seq_" (sql-escape sequence-name)))
 
 (defun %table-name-to-sequence-name (table-name)
   (and (>= (length table-name) 10)
-       (string= (subseq table-name 0 10) "_usql_seq_")
+       (string= (subseq table-name 0 10) "_clsql_seq_")
        (subseq table-name 10)))
 
 (defmethod database-create-sequence (sequence-name
@@ -369,7 +369,7 @@
                                     &key (owner nil))
   (declare (ignore owner))
   (mapcar #'(lambda (s) (%table-name-to-sequence-name (car s)))
-          (database-query "SHOW TABLES LIKE '%usql_seq%'" 
+          (database-query "SHOW TABLES LIKE '%clsql_seq%'" 
                           database nil)))
 
 (defmethod database-set-sequence-position (sequence-name

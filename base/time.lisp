@@ -8,7 +8,7 @@
 ;;;;
 ;;;; A variety of structures and function for creating and
 ;;;; manipulating dates, times, durations and intervals for
-;;;; CLSQL-USQL.
+;;;; CLSQL.
 ;;;;
 ;;;; This file was originally part of ODCL and is Copyright (c) 2002 -
 ;;;; 2003 onShore Development, Inc.
