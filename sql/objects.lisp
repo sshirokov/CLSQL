@@ -690,7 +690,11 @@ superclass of the newly-defined View Class."
 (defmethod read-sql-value (val (type (eql 'float)) database)
   (declare (ignore database))
   ;; writing 1.0 writes 1, so we we *really* want a float, must do (float ...)
-  (float (read-from-string val))) 
+  (etypecase val
+    (string
+     (float (read-from-string val)))
+    (float
+     val)))
 
 (defmethod read-sql-value (val (type (eql 'boolean)) database)
   (case (database-underlying-type database)
@@ -1124,6 +1128,9 @@ ENABLE-SQL-READER-SYNTAX."
                        target-args))))
     (multiple-value-bind (target-args qualifier-args)
         (query-get-selections select-all-args)
+      (unless (or *default-database* (getf qualifier-args :database))
+	(signal-no-database-error nil))
+   
 	(cond
 	  ((select-objects target-args)
 	   (let ((caching (getf qualifier-args :caching t))
