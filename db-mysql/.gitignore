@@ -1,13 +1,1 @@
-clsql-mysql.dylib
-libmysqlclient.dylib
-libz.dylib
-.bin
-*.fasl
-*.pfsl
-*.dfsl
-*.cfsl
-*.fasla16
-*.fasla8
-*.faslm16
-*.faslm8
-*.fsl
+clsql-mysql.so
