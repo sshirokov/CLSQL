@@ -12,7 +12,7 @@
 
 (in-package #:cl-user)
 
-(defpackage #:clsql-tests
+(defpackage #:clsql-classic-tests
   (:use #:asdf #:cl #:clsql #:ptester))
 
 

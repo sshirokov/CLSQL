@@ -2,7 +2,7 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          tables.cl
+;;;; Name:          tables.lisp
 ;;;; Purpose:       Table creation tests in CLSQL
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
@@ -28,7 +28,7 @@
 ;;;  (:postgresql ("localhost" "another-db" "user2" "dont-tell"))
 ;;;  (:postgresql-socket ("pg-server" "a-db-name" "user" "secret-password")))
 
-(in-package :clsql-tests)
+(in-package #:clsql-classic-tests)
 
 (defvar *config-pathname*
   (make-pathname :default (user-homedir-pathname)

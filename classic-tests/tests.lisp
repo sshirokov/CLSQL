@@ -2,7 +2,7 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          tests.lisp
+;;;; Name:          classic-tests.lisp
 ;;;; Purpose:       Automated test of CLSQL using ACL's tester
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
@@ -29,7 +29,7 @@
 ;;;  (:postgresql-socket ("pg-server" "a-db-name" "user" "secret-password"))
 ;;;  (:sqlite ("path-to-sqlite-db")))
 
-(in-package :clsql-tests)
+(in-package #:clsql-classic-tests)
 
 (defvar *config-pathname*
   (make-pathname :defaults (user-homedir-pathname)
