@@ -34,18 +34,22 @@ while [ $# != 0 ]; do
     shift
 done
 
-DEBPKG=cl-sql
 PKG=clsql
-TOPDIR=`pwd`
-
-VERSION=`sed -n -e "s/${DEBPKG} (\(.*\)-[0-9.]).*/\1/p" < debian/changelog  |head -1`
+DEBPKG=cl-sql
 
 PACKAGE_DIR=/usr/local/src/Packages/${DEBPKG}
+WORK_DIR=/usr/local/src/Work/${PKG}
 DISTDIR=${PKG}-${VERSION}
 DEBDIR=${DEBPKG}-${VERSION}
 
+VERSION=`sed -n -e "s/${DEBPKG} (\(.*\)-[0-9.]).*/\1/p" < ${WORK_DIR}/debian/changelog  |head -1`
+if [ -z "${VERSION}" ]; then
+  echo "Can't find Debian changelog"
+  exit 1
+fi
+
 if [ ! -z ${opt_commit} ]; then
-    cvs commit -m 'Debian build'
+    cvs commit -m 'Auto commit for Debian build'
 fi
 
 if [ ! -z ${opt_tag} ]; then
@@ -69,14 +73,14 @@ if [ -f ${PACKAGE_DIR}/${DEBPKG}_${VERSION}.orig.tar.gz ]; then
 fi
 
 # Prepare for archive
-cd ..
+cd ${WORK_DIR}/..
 rm -f ${PKG}_${VERSION}.tar.gz ${DEBPKG}_${VERSION}.orig.tar.gz
 rm -rf ${DISTDIR} ${DEBDIR} ${DISTDIR}.zip
-cp -a ${TOPDIR} ${DISTDIR}
+cp -a ${WORK_DIR} ${DISTDIR}
 
 echo "Cleaning distribution directory ${DISTDIR}"
 cd ${DISTDIR}
-rm -f upload.sh make-debian.sh make-upstream.sh cvsbp-prepare.sh test-suite/test.config
+rm -f debian/upload.sh debian/make-debian.sh debian/make-upstream.sh debian/cvsbp-prepare.sh test-suite/test.config
 rm -f `find . -type f -name "*.so" -or -name "*.o"`
 rm -f `find . -type f -name .cvsignore`
 rm -rf `find . -type d -name CVS -or -name .bin`
@@ -98,7 +102,7 @@ unix2dos `find ${DISTDIR} -type f -name \*.cl -or -name \*.list -or \
     -name NEWS -or -name \*.sgml -or -name COPYING\* -or -name catalog`
 zip -rq ${DISTDIR}.zip ${DISTDIR}
 
-cp -a ${TOPDIR}/debian ${DEBDIR}
+cp -a ${WORK_DIR}/debian ${DEBDIR}
 rm -f ${DEBDIR}/debian/.cvsignore 
 rm -rf ${DEBDIR}/debian/CVS
 
@@ -109,5 +113,5 @@ mkdir -p /usr/local/src/Packages/${DEBPKG}
 rm -f ${PACKAGE_DIR}/${DISTDIR}.zip ${PACKAGE_DIR}/${DEBPKG}_${VERSION}.orig.tar.gz
 mv ${DISTDIR}.zip ${DEBPKG}_${VERSION}.orig.tar.gz ${DISTDIR}.tar.gz ${PACKAGE_DIR}
 
-cd ${TOPDIR}
+cd ${WORK_DIR}
 exit 0

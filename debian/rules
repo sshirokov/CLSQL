@@ -125,7 +125,10 @@ install: build
 	$(INSTALL) $(INSTALLFLAGS) test-suite/tester-clsql.cl test-suite/acl-compat-tester.cl $(doc-dir)/test-suite
 
 	# Documentation
+	rm -rf doc/html
+	tar xzf doc/html.tar.gz
 	$(INSTALL) $(INSTALLFLAGS) doc/html/* $(doc-dir)/html
+	rm -rf doc/html
 	cp doc/clsql.pdf doc/cl-sql.pdf
 	rm -f doc/cl-sql.pdf.gz
 	gzip doc/cl-sql.pdf

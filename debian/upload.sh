@@ -1,9 +1,17 @@
 #!/bin/sh
 
+set -e # abort on error
+
 PKG=clsql
 DEBPKG=cl-sql
 
-set -e # abort on error
+
+WORK_DIR=/usr/local/src/Work/${PKG}
+PKG_DIR=/usr/local/src/Packages/${DEBPKG}
+
+UPSTREAM_DIR=ftp.med-info.com:/home/ftp/pub/${PKG}/.
+FTP_DEBDIR=ftp.med-info.com:/home/ftp/pub/debian/UploadQueue
+
 
 usage () {
     progname="`basename \"$0\"`"
@@ -36,28 +44,26 @@ done
 VERSION=`sed -n -e "s/${DEBPKG} (\(.*\)-[0-9.]).*/\1/p" < debian/changelog  |head -1`
 DEBVERSION=`sed -n -e "s/${DEBPKG} (\(.*\)).*/\1/p" < debian/changelog  |head -1`
 
-pushd /usr/local/src/Packages/${DEBPKG} > /dev/null
+pushd ${PKG_DIR} > /dev/null
 
 if [ "${opt_upstream}" == "1" ]; then
   echo "Uploading upstream files to web site"
-  UPSTREAM_DIR=ftp.med-info.com:/home/ftp/pub/${PKG}/.
   scp ${PKG}-${VERSION}.tar.gz ${UPSTREAM_DIR}
   scp ${PKG}-${VERSION}.zip ${UPSTREAM_DIR}
   ssh ftp.med-info.com "(cd /opt/apache/htdocs/${PKG}.med-info.com; make)" &
 fi
 
 echo "Uploading to Debian site"
-DEBIAN_DIR=ftp.med-info.com:/home/ftp/pub/debian/UploadQueue
 
 if [ "${opt_upstream}" == "1" ]; then
   echo "...Uploading original upstream archive"
-  scp ${DEBPKG}_${VERSION}.orig.tar.gz ${DEBIAN_DIR}
+  scp ${DEBPKG}_${VERSION}.orig.tar.gz ${FTP_DEBDIR}
 fi
-scp ${DEBPKG}_${DEBVERSION}.diff.gz ${DEBIAN_DIR}
-scp ${DEBPKG}_${DEBVERSION}.dsc ${DEBIAN_DIR}
-scp ${DEBPKG}_${DEBVERSION}_*.deb ${DEBIAN_DIR}
-scp ${DEBPKG}-*_${DEBVERSION}_*.deb ${DEBIAN_DIR}
-scp ${DEBPKG}_${DEBVERSION}_*.changes ${DEBIAN_DIR} # upload last
+scp ${DEBPKG}_${DEBVERSION}.diff.gz ${FTP_DEBDIR}
+scp ${DEBPKG}_${DEBVERSION}.dsc ${FTP_DEBDIR}
+scp ${DEBPKG}_${DEBVERSION}_*.deb ${FTP_DEBDIR}
+scp ${DEBPKG}-*_${DEBVERSION}_*.deb ${FTP_DEBDIR}
+scp ${DEBPKG}_${DEBVERSION}_*.changes ${FTP_DEBDIR} # upload last
 
 popd > /dev/null
 
