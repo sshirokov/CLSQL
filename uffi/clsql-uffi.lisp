@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.31 2003/06/15 13:50:24 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.32 2003/06/23 19:25:30 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -87,24 +87,14 @@
 
 (uffi:def-type char-ptr-def (* :unsigned-char))
 
-(defun char-ptr-points-to-null (char-ptr)
-  "Returns T if foreign character pointer refers to 'NULL' string. Only called for numeric entries"
-  ;; Uses short cut and returns T if first character is #\N. It should
-  ;; never be non-numeric
-  (declare (type char-ptr-def char-ptr))
-  (or (uffi:null-pointer-p char-ptr) 
-      (char-equal #\N (uffi:ensure-char-character
-		       (uffi:deref-pointer char-ptr :char)))))
-    
 (defun convert-raw-field (char-ptr types index)
-  (declare (optimize (speed 3) (safety 0) (space 0)))
+  (declare (optimize (speed 3) (safety 0) (space 0))
+	   (type char-ptr-def char-ptr))
   (let ((type (if (listp types)
 		  (nth index types)
 		  types)))
     (cond
-      ((and (or (eq type :double) (eq type :int32) (eq type :int)
-		(eq type :int64))
-	    (char-ptr-points-to-null char-ptr))
+      ((uffi:null-pointer-p char-ptr)
        nil)
       (t
        (case type

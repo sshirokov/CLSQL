@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: postgresql-sql.lisp,v 1.2 2003/06/23 19:25:30 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -18,15 +18,14 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :cl-user)
+(in-package #:cl-user)
 
-(defpackage :clsql-postgresql
-    (:use :common-lisp :clsql-base-sys :postgresql :clsql-uffi)
+(defpackage #:clsql-postgresql
+    (:use #:common-lisp #:clsql-base-sys #:postgresql #:clsql-uffi)
     (:export #:postgresql-database)
     (:documentation "This is the CLSQL interface to PostgreSQL."))
 
-(in-package :clsql-postgresql)
+(in-package #:clsql-postgresql)
 
 ;;; Field conversion functions
 

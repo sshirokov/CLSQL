@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.lisp,v 1.5 2003/06/08 12:48:55 kevin Exp $
+;;;; $Id: mysql-sql.lisp,v 1.6 2003/06/23 19:25:30 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -143,6 +143,47 @@
   t)
 
 
+(defmethod database-query (query-expression (database mysql-database) 
+			   types)
+  (declare (optimize (speed 3) (safety 0) (debug 0) (space 0)))
+  (let ((mysql-ptr (database-mysql-ptr database)))
+    (uffi:with-cstring (query-native query-expression)
+      (if (zerop (mysql-query mysql-ptr query-native))
+	  (let ((res-ptr (mysql-use-result mysql-ptr)))
+	    (if res-ptr
+		(unwind-protect
+		     (let ((num-fields (mysql-num-fields res-ptr)))
+		       (declare (fixnum num-fields))
+		       (setq types (canonicalize-types 
+				    types num-fields
+				    res-ptr))
+		       (loop for row = (mysql-fetch-row res-ptr)
+			     until (uffi:null-pointer-p row)
+			   collect
+			     (do* ((rlist (make-list num-fields))
+				   (i 0 (1+ i))
+				   (pos rlist (cdr pos)))
+				 ((= i num-fields) rlist)
+			       (declare (fixnum i))
+			       (setf (car pos)  
+				 (convert-raw-field
+				  (uffi:deref-array row '(:array
+							  (* :unsigned-char))
+						    i)
+				  types i)))))
+		  (mysql-free-result res-ptr))
+		(error 'clsql-sql-error
+		       :database database
+		       :expression query-expression
+		       :errno (mysql-errno mysql-ptr)
+		       :error (mysql-error-string mysql-ptr))))
+	  (error 'clsql-sql-error
+		 :database database
+		 :expression query-expression
+		 :errno (mysql-errno mysql-ptr)
+		 :error (mysql-error-string mysql-ptr))))))
+
+#+ignore
 (defmethod database-query (query-expression (database mysql-database) 
 			   types)
   (declare (optimize (speed 3) (safety 0) (debug 0) (space 0)))
