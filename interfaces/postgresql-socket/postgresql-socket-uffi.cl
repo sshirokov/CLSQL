@@ -9,7 +9,7 @@
 ;;;;                
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-uffi.cl,v 1.1 2002/03/23 14:04:54 kevin Exp $
+;;;; $Id: postgresql-socket-uffi.cl,v 1.2 2002/03/23 16:42:06 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -188,6 +188,16 @@
   (int32 80877102)                      ; Magic
   (int32 pid)
   (int32 key))
+
+
+(defun read-socket-sequence (string stream)
+"KMR -- Added to support reading from binary stream into a string"
+  (declare (optimize (speed 3) (safety 0)))
+  (dotimes (i (length string))
+    (declare (fixnum i))
+    (setf (char string i) (code-char (read-byte stream))))
+  string)
+
 
 ;;; Support for encrypted password transmission
 
@@ -384,7 +394,7 @@ connection, if it is still open."
 		      (postgresql-connection-password connection)))
 		    (4
 		     (let ((salt (make-string 2)))
-		       (read-sequence salt socket)
+		       (read-socket-sequence salt socket)
 		       (send-encrypted-password-message
 			socket
 			(crypt-password
@@ -558,7 +568,7 @@ connection, if it is still open."
 		     collect
 		     (let* ((length (read-socket-value 'int32 socket))
 			    (result (make-string (- length 4))))
-		       (read-sequence result socket)
+		       (read-socket-sequence result socket)
 		       result))))
 	    (#.+binary-row-message+
 	     (error "NYI"))
@@ -600,7 +610,7 @@ connection, if it is still open."
 			nil
 			(let* ((length (read-socket-value 'int32 socket))
 			       (result (make-string (- length 4))))
-			  (read-sequence result socket)
+			  (read-socket-sequence result socket)
 			  result)))
 		(read-null-bit-vector socket (length sequence)))))
 	    (#.+binary-row-message+

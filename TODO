@@ -1,4 +1,2 @@
-Fix postgresql-socket on Lispworks and CMUCL so that the
-socket stream uses a consistent element-type.
 
 
