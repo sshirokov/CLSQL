@@ -132,6 +132,7 @@
 	socket connections.</para></listitem>
 	<listitem><para>&sqlite;.</para></listitem>
 	<listitem><para>Direct &odbc; interface.</para></listitem>
+        <listitem><para>&oracle;</para></listitem>
 	<listitem><para>Allegro's DB interface (&aodbc;).</para></listitem>
       </itemizedlist>
     </sect2>

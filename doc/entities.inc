@@ -11,6 +11,7 @@
 <!ENTITY mysql "<application>MySQL</application>">
 <!ENTITY postgresql "<application>PostgreSQL</application>">
 <!ENTITY sqlite "<application>SQLite</application>">
+<!ENTITY oracle "<application>Oracle</application>">
 <!ENTITY odbc "<application>ODBC</application>">
 <!ENTITY aodbc "<application>AODBC</application>">
 <!ENTITY cmucl "<application>CMUCL</application>">
