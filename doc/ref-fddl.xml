@@ -575,7 +575,7 @@
     ("Konstantin" "Chernenko" "chernenko@soviet.org")
     ("Mikhail" "Gorbachev" "gorbachev@soviet.org")
     ("Boris" "Yeltsin" "yeltsin@soviet.org")
-    ("Vladamir" "Putin" "putin@soviet.org")), 
+    ("Vladimir" "Putin" "putin@soviet.org")), 
    ("first_name" "last_name" "email")
       </screen>
     </refsect1>

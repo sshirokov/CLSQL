@@ -300,7 +300,7 @@ mapped into a database).  They would be defined as follows:
 <para>
 In an &sql; only application, the <symbol>EMPLOYEE</symbol> and
 <symbol>COMPANY</symbol> tables can be queried to determine things
-like, "Who is Vladamir's manager?", "What company does Josef work
+like, "Who is Vladimir's manager?", "What company does Josef work
 for?", and "What employees work for Widgets Inc.".  This is done by
 joining tables with an &sql; query.
 </para>
@@ -316,12 +316,12 @@ SELECT first_name, last_name FROM employee, company
 </programlisting>
 
 <para>
-Who is Vladamir's manager?
+Who is Vladimir's manager?
 </para>
 
 <programlisting>
 SELECT managerid FROM employee
-       WHERE employee.first_name = "Vladamir"
+       WHERE employee.first_name = "Vladimir"
 	     AND employee.last_name = "Lenin"
 </programlisting>
 
@@ -489,7 +489,7 @@ any other CLOS object:
 			      
 (defvar employee1 (make-instance 'employee
 			       :emplid 1
-			       :first-name "Vladamir"
+			       :first-name "Vladimir"
 			       :last-name "Lenin"
 			       :email "lenin@soviet.org"
 			       :companyid 1))

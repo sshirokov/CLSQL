@@ -486,7 +486,7 @@
         :from [employee]
         :where [= [emplid] 1] 
         :field-names nil)
-=> (("Vladamir" "Lenin" "lenin@soviet.org"))
+=> (("Vladimir" "Lenin" "lenin@soviet.org"))
 (update-records [employee] 
                 :av-pairs'((first_name "Yuri")
                            (last_name "Gagarin")
@@ -904,22 +904,22 @@
       <title>Examples</title>
       <screen>
 (query "select emplid,first_name,last_name,height from employee where emplid = 1")
-=> ((1 "Vladamir" "Lenin" 1.5564661d0)), 
+=> ((1 "Vladimir" "Lenin" 1.5564661d0)), 
    ("emplid" "first_name" "last_name" "height")
 
 (query "select emplid,first_name,last_name,height from employee where emplid = 1" 
        :field-names nil)
-=> ((1 "Vladamir" "Lenin" 1.5564661d0))
+=> ((1 "Vladimir" "Lenin" 1.5564661d0))
 
 (query "select emplid,first_name,last_name,height from employee where emplid = 1" 
        :field-names nil
        :result-types nil)
-=> (("1" "Vladamir" "Lenin" "1.5564661"))
+=> (("1" "Vladimir" "Lenin" "1.5564661"))
 
 (query "select emplid,first_name,last_name,height from employee where emplid = 1" 
        :field-names nil
        :result-types '(:int t t :double))
-=> ((1 "Vladamir" "Lenin" 1.5564661))
+=> ((1 "Vladimir" "Lenin" 1.5564661))
 
 (query "select last_name from employee where emplid > 5" :flatp t)
 => ("Andropov" "Chernenko" "Gorbachev" "Yeltsin" "Putin"), 
@@ -1065,7 +1065,7 @@
                      :where [&lt; [emplid] 5]] 
               :titles '("ID" "FORENAME" "SURNAME" "EMAIL"))
 ID FORENAME SURNAME  EMAIL               
-1  Vladamir Lenin    lenin@soviet.org    
+1  Vladimir Lenin    lenin@soviet.org    
 2  Josef    Stalin   stalin@soviet.org   
 3  Leon     Trotsky  trotsky@soviet.org  
 4  Nikita   Kruschev kruschev@soviet.org 
@@ -1079,7 +1079,7 @@ ID FORENAME   SURNAME   EMAIL
 7  Konstantin Chernenko chernenko@soviet.org 
 8  Mikhail    Gorbachev gorbachev@soviet.org 
 9  Boris      Yeltsin   yeltsin@soviet.org   
-10 Vladamir   Putin     putin@soviet.org     
+10 Vladimir   Putin     putin@soviet.org     
 => 
 </screen>
     </refsect1>
@@ -1397,7 +1397,7 @@ ID FORENAME   SURNAME   EMAIL
                      :field-names nil 
                      :result-types nil 
                      :order-by [first-name])
-=> ("Boris" "Josef" "Konstantin" "Leon" "Leonid" "Mikhail" "Nikita" "Vladamir"
+=> ("Boris" "Josef" "Konstantin" "Leon" "Leonid" "Mikhail" "Nikita" "Vladimir"
     "Yuri")
 
 (select [first-name] [count [*]] :from [employee]
@@ -1406,7 +1406,7 @@ ID FORENAME   SURNAME   EMAIL
 			         :order-by [first-name]
 			         :field-names nil)
 => (("Boris" "1") ("Josef" "1") ("Konstantin" "1") ("Leon" "1") ("Leonid" "1")
-    ("Mikhail" "1") ("Nikita" "1") ("Vladamir" "2") ("Yuri" "1"))
+    ("Mikhail" "1") ("Nikita" "1") ("Vladimir" "2") ("Yuri" "1"))
 
 (select [last-name] :from [employee] 
                     :where [like [email] "%org"]
@@ -1454,7 +1454,7 @@ ID FORENAME   SURNAME   EMAIL
         :order-by '(([first-name] :asc) ([last-name] :desc)))
 => (("Boris" "Yeltsin") ("Josef" "Stalin") ("Konstantin" "Chernenko")
     ("Leon" "Trotsky") ("Leonid" "Brezhnev") ("Mikhail" "Gorbachev")
-    ("Nikita" "Kruschev") ("Vladamir" "Putin") ("Vladamir" "Lenin")
+    ("Nikita" "Kruschev") ("Vladimir" "Putin") ("Vladimir" "Lenin")
     ("Yuri" "Andropov"))
 
 (select [last-name] :from [employee]                   
@@ -1465,7 +1465,7 @@ ID FORENAME   SURNAME   EMAIL
                  :field-names nil)
 => ("Andropov" "Boris" "Brezhnev" "Chernenko" "Gorbachev" "Josef" "Konstantin"
     "Kruschev" "Lenin" "Leon" "Leonid" "Mikhail" "Nikita" "Putin" "Stalin"
-    "Trotsky" "Vladamir" "Yeltsin" "Yuri")
+    "Trotsky" "Vladimir" "Yeltsin" "Yuri")
       </screen>
     </refsect1>
     <refsect1>
@@ -1825,7 +1825,7 @@ ID FORENAME   SURNAME   EMAIL
                 :order-by [last-name]]
       collect (concatenate 'string forename " " surname))
 => ("Yuri Andropov" "Leonid Brezhnev" "Konstantin Chernenko" "Mikhail Gorbachev"
-    "Nikita Kruschev" "Vladamir Lenin" "Vladamir Putin" "Josef Stalin"
+    "Nikita Kruschev" "Vladimir Lenin" "Vladimir Putin" "Josef Stalin"
     "Leon Trotsky" "Boris Yeltsin")
 
 (loop for (e) being the records in 
@@ -2033,8 +2033,8 @@ ID FORENAME   SURNAME   EMAIL
            [select [first-name] [last-name] :from [employee] 
                    :order-by [last-name]])
 => (("Yuri" "Andropov") ("Leonid" "Brezhnev") ("Konstantin" "Chernenko")
-    ("Mikhail" "Gorbachev") ("Nikita" "Kruschev") ("Vladamir" "Lenin")
-    ("Vladamir" "Putin") ("Josef" "Stalin") ("Leon" "Trotsky") 
+    ("Mikhail" "Gorbachev") ("Nikita" "Kruschev") ("Vladimir" "Lenin")
+    ("Vladimir" "Putin") ("Josef" "Stalin") ("Leon" "Trotsky") 
     ("Boris" "Yeltsin"))
 
 (map-query 'list #'last-name [select 'employee :order-by [emplid]])

@@ -539,7 +539,7 @@
 ;; 2004-07-02 17:38:45 dent/test/dent => SELECT emplid,first_name,last_name,email FROM employee
 => 
 ";; 2004-07-02 17:38:45 dent/test/dent => SELECT emplid,first_name,last_name,email FROM employee
-1  Vladamir   Lenin     lenin@soviet.org     
+1  Vladimir   Lenin     lenin@soviet.org     
 2  Josef      Stalin    stalin@soviet.org    
 3  Leon       Trotsky   trotsky@soviet.org   
 4  Nikita     Kruschev  kruschev@soviet.org  
@@ -548,7 +548,7 @@
 7  Konstantin Chernenko chernenko@soviet.org 
 8  Mikhail    Gorbachev gorbachev@soviet.org 
 9  Boris      Yeltsin   yeltsin@soviet.org   
-10 Vladamir   Putin     putin@soviet.org     "
+10 Vladimir   Putin     putin@soviet.org     "
       </screen>
     </refsect1>
     <refsect1>

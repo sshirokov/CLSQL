@@ -282,7 +282,7 @@
 (slot-value (car *) 'email)
 => "lenin@soviet.org"
 (select 'employee :where [= [slot-value 'employee 'emplid] 1] :flatp t :refresh t)
-Details for Vladamir Lenin have been updated from the database.
+Details for Vladimir Lenin have been updated from the database.
 => (#&lt;EMPLOYEE {48149995}>)
 (slot-value (car *) 'email)
 => "v.lenin@soviet.org"
