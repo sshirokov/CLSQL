@@ -2,22 +2,21 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          pool.cl
+;;;; Name:          pool.lisp
 ;;;; Purpose:       Support function for connection pool
 ;;;; Programmers:   Kevin M. Rosenberg, Marc Battyani
 ;;;; Date Started:  Apr 2002
 ;;;;
-;;;; $Id: pool.lisp,v 1.4 2002/10/30 19:08:08 kevin Exp $
+;;;; $Id: pool.lisp,v 1.5 2003/08/08 09:04:13 kevin Exp $
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2003 by Kevin M. Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :clsql-sys)
+(in-package clsql-sys)
 
 (defun make-process-lock (name) 
   #+allegro (mp:make-process-lock :name name)
@@ -79,7 +78,7 @@
 
 (defun find-or-create-connection-pool (connection-spec database-type)
   "Find connection pool in hash table, creates a new connection pool if not found"
-  (with-process-lock (*db-pool-lock* "Find connection")
+  (with-process-lock (*db-pool-lock* "Find-or-create connection")
     (let* ((key (list connection-spec database-type))
 	   (conn-pool (gethash key *db-pool*)))
       (unless conn-pool
@@ -99,7 +98,7 @@
 
 (defun disconnect-pooled (&optional clear)
   "Disconnects all connections in the pool"
-  (with-process-lock (*db-pool-lock* "Find connection")
+  (with-process-lock (*db-pool-lock* "Disconnect pooled")
     (maphash
      #'(lambda (key conn-pool)
 	 (declare (ignore key))
@@ -107,4 +106,3 @@
      *db-pool*)
     (when clear (clrhash *db-pool*)))
   t)
-
