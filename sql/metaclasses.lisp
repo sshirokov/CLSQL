@@ -56,7 +56,7 @@
 
 ;;; Lispworks 4.2 and before requires special processing of extra slot and class options
 
-(defconstant +extra-slot-options+ '(:column :db-kind :db-reader :nulls-ok
+(defconstant +extra-slot-options+ '(:column :db-kind :db-reader :nulls-ok :db-constraints
 				    :db-writer :db-type :db-info))
 (defconstant +extra-class-options+ '(:base-table))
 
