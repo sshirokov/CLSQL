@@ -211,21 +211,6 @@ the length of that format.")
 	       :unsigned-char))))
     (if (string-equal str "NULL") nil str)))
 
-(defun deref-oci-int64 (arrayptr index)
-  (let ((low32 (uffi:deref-array arrayptr '(:array :unsigned-int)
-				 (+ index index)))
-	(high32 (uffi:deref-array arrayptr '(:array :unsigned-int)
-				  (+ 1 index index))))
-    (make-64-bit-integer high32 low32)))
-
-(defun deref-oci-int128 (arrayptr index)
-  (let* ((base (* 4 index))
-	 (d (uffi:deref-array arrayptr '(:array :unsigned-int) (incf base)))
-	 (c (uffi:deref-array arrayptr '(:array :unsigned-int) (incf base)))
-	 (b (uffi:deref-array arrayptr '(:array :unsigned-int) (incf base)))
-	 (a (uffi:deref-array arrayptr '(:array :unsigned-int) (incf base))))
-    (make-128-bit-integer a b c d)))
-
 ;; the OCI library, part Z: no-longer used logic to convert from
 ;; Oracle's binary date representation to Common Lisp's native date
 ;; representation
@@ -646,28 +631,13 @@ the length of that format.")
 			     (deref-vp errhp))
 	       (let ((*scale (uffi:deref-pointer scale :byte))
 		     (*precision (uffi:deref-pointer precision :byte)))
-		 
+
 		 ;;(format t "scale=~d, precision=~d~%" *scale *precision)
 		 (cond
 		  ((or (and (minusp *scale) (zerop *precision))
-		       (and (zerop *scale) (< 0 *precision 9)))
+		       (and (zerop *scale) (plusp *precision)))
 		   (setf buffer (acquire-foreign-resource :int +n-buf-rows+)
 			 sizeof 4			;; sizeof(int)
-			 dtype #.SQLT-INT))
-		  ((and (zerop *scale)
-			(plusp *precision)
-			#+ignore (< *precision 19))
-		   (setf buffer (acquire-foreign-resource :unsigned-int
-							  (* 2 +n-buf-rows+))
-			 sizeof 8			;; sizeof(int64)
-			 dtype #.SQLT-INT))
-		  ;; Bug in OCI? But OCI won't take 16-byte buffer for 128-bit
-		  ;; integers
-		  #+ignore
-		  ((and (zerop *scale) (plusp *precision))
-		   (setf buffer (acquire-foreign-resource :unsigned-int
-							  (* 4 +n-buf-rows+))
-			 sizeof 8			;; sizeof(int128)
 			 dtype #.SQLT-INT))
 		  (t
 		   (setf buffer (acquire-foreign-resource :double +n-buf-rows+)

@@ -119,7 +119,7 @@
   t)
 
 (deftest :fddl/attributes/7
-    (and (member (clsql:attribute-type [bd_utime] [employee]) '(:bigint :int8 :number)) t)
+    (and (member (clsql:attribute-type [bd_utime] [employee]) '(:bigint :int8 :char)) t)
   t)
 
 
@@ -279,8 +279,9 @@
 	 (let ((index (1+ i))
 	       (int (first (car rest)))
 	       (bigint (second (car rest))))
-	   (when (and (eq *test-database-type* :odbc)
-		      (eq *test-database-underlying-type* :postgresql)
+	   (when (and (or (eq *test-database-type* :oracle)
+			  (and (eq *test-database-type* :odbc)
+			       (eq *test-database-underlying-type* :postgresql)))
 		      (stringp bigint))
 	     (setf bigint (parse-integer bigint)))
 	   (unless (and (eql int index)

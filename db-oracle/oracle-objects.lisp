@@ -29,11 +29,13 @@
 
 (defmethod database-get-type-specifier ((type (eql 'bigint)) args
 					database (db-type (eql :oracle)))
-  (declare (ignore database)) 
-  (if args
-      (format nil "NUMBER(~A,~A)"
-	      (or (first args) 38) (or (second args) 0))
-    "NUMBER(38,0)"))
+  (declare (ignore args database)) 
+  "CHAR(20)")
+
+(defmethod database-get-type-specifier ((type (eql 'universal-time)) args
+					database (db-type (eql :oracle)))
+  (declare (ignore args database)) 
+  "CHAR(20)")
 
 (defmethod database-get-type-specifier ((type (eql 'string)) args
 					database (db-type (eql :oracle)))
@@ -94,6 +96,17 @@
   (declare (ignore database))
   (when (char-equal #\t (schar val 0))
     t))
+
+(defmethod read-sql-value (val (type (eql 'bigint))
+			   database (db-type (eql :oracle)))
+  (declare (ignore database))
+  (parse-integer val))
+
+(defmethod read-sql-value (val (type (eql 'universal-time))
+			   database (db-type (eql :oracle)))
+  (declare (ignore database))
+  (parse-integer val))
+
 
 (defmethod database-get-type-specifier ((type (eql 'wall-time)) args
 					database (db-type (eql :oracle)))
