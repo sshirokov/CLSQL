@@ -9,7 +9,7 @@
 ;;;;                
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-api.cl,v 1.4 2002/03/25 23:30:49 kevin Exp $
+;;;; $Id: postgresql-socket-api.cl,v 1.5 2002/03/25 23:48:46 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -576,7 +576,36 @@ connection, if it is still open."
       (t
        result))))
 
-(defun read-cursor-row (cursor field-types)
+(defun read-field2 (socket type)
+  (let* ((length (read-socket-value 'int32 socket)))
+    (case type
+      (:int
+       (read-integer-from-socket socket length))
+      (:double
+       (read-double-from-socket socket length))
+      (t
+       (let ((result (make-string (- length 4))))
+	 (read-socket-sequence result socket)
+	 result)))))
+
+(defun read-integer-from-socket (socket length)
+  (let ((val 0)
+	(first-char (read-byte socket))
+	(negative nil))
+    (if (eql first-char (char-code #\-))
+	(setq negative t)
+	(setq val (- first-char (char-code #\0))))
+    (dotimes (i (1- length))
+      (setq val (+
+		 (* 10 val)
+		 (- (read-byte socket) (char-code #\0)))))
+    (if negative
+	(- 0 val)
+	val)))
+
+	    
+
+(defun read-cursor-row (cursor types)
   (let* ((connection (postgresql-cursor-connection cursor))
 	 (socket (postgresql-connection-socket connection))
 	 (fields (postgresql-cursor-fields cursor)))
@@ -596,7 +625,7 @@ connection, if it is still open."
 		     collect nil
 		     else
 		     collect
-		     (read-field socket (nth i field-types)))))
+		     (read-field socket (nth i types)))))
 	    (#.+binary-row-message+
 	     (error "NYI"))
 	    (#.+completed-response-message+
@@ -627,7 +656,7 @@ connection, if it is still open."
 	  (funcall func (elt seq i) i)))
   result-seq)
 
-(defun copy-cursor-row (cursor sequence field-types)
+(defun copy-cursor-row (cursor sequence types)
   (let* ((connection (postgresql-cursor-connection cursor))
 	 (socket (postgresql-connection-socket connection))
 	 (fields (postgresql-cursor-fields cursor)))
@@ -644,14 +673,14 @@ connection, if it is still open."
 		   (declare (fixnum i))
 		   (if (zerop (elt null-vector i))
 		       (setf (elt sequence i) nil)
-		       (let ((value (read-field socket (nth i field-types))))
+		       (let ((value (read-field socket (nth i types))))
 			 (setf (elt sequence i) value)))))
 	       (map-into-indexed
 		sequence
 		#'(lambda (null-bit i)
 		    (if (zerop null-bit)
 			nil
-			(read-field socket (nth i field-types))))
+			(read-field socket (nth i types))))
 		(read-null-bit-vector socket (length sequence)))))
 	    (#.+binary-row-message+
 	     (error "NYI"))
@@ -714,12 +743,12 @@ connection, if it is still open."
 	     (error 'postgresql-fatal-error :connection connection
 		    :message "Received garbled message from backend")))))))
 
-(defun run-query (connection query &optional (field-types nil))
+(defun run-query (connection query &optional (types nil))
   (start-query-execution connection query)
   (multiple-value-bind (status cursor)
       (wait-for-query-results connection)
     (assert (eq status :cursor))
-    (loop for row = (read-cursor-row cursor field-types)
+    (loop for row = (read-cursor-row cursor types)
 	  while row
 	  collect row
 	  finally

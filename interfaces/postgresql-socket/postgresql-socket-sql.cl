@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-sql.cl,v 1.5 2002/03/25 23:22:07 kevin Exp $
+;;;; $Id: postgresql-socket-sql.cl,v 1.6 2002/03/25 23:48:46 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -44,7 +44,7 @@
       (otherwise
        t))))
 
-(defun canonicalize-field-types (types cursor)
+(defun canonicalize-types (types cursor)
   (let* ((fields (postgresql-cursor-fields cursor))
 	 (num-fields (length fields)))
     (cond
@@ -153,7 +153,7 @@
   (close-postgresql-connection (database-connection database))
   t)
 
-(defmethod database-query (expression (database postgresql-socket-database) field-types)
+(defmethod database-query (expression (database postgresql-socket-database) types)
   (let ((connection (database-connection database)))
     (with-postgresql-handlers (database expression)
       (start-query-execution connection expression)
@@ -166,8 +166,8 @@
 		 :expression expression
 		 :errno 'missing-result
 		 :error "Didn't receive result cursor for query."))
-	(setq field-types (canonicalize-field-types field-types cursor))
-	(loop for row = (read-cursor-row cursor field-types)
+	(setq types (canonicalize-types types cursor))
+	(loop for row = (read-cursor-row cursor types)
 	      while row
 	      collect row
 	      finally
@@ -216,10 +216,10 @@
 (defstruct postgresql-socket-result-set
   (done nil)
   (cursor nil)
-  (field-types nil))
+  (types nil))
 
 (defmethod database-query-result-set (expression (database postgresql-socket-database) 
-				      &key full-set field-types
+				      &key full-set types
      )
   (declare (ignore full-set))
   (let ((connection (database-connection database)))
@@ -237,7 +237,7 @@
 	(values (make-postgresql-socket-result-set
 		 :done nil 
 		 :cursor cursor
-		 :field-types (canonicalize-field-types field-types cursor))
+		 :types (canonicalize-types types cursor))
 		(length (postgresql-cursor-fields cursor)))))))
 
 (defmethod database-dump-result-set (result-set
@@ -256,7 +256,7 @@
     (with-postgresql-handlers (database)
       (if (copy-cursor-row cursor 
 			   list
-			   (postgresql-socket-result-set-field-types
+			   (postgresql-socket-result-set-types
 			    result-set))
 	  t
 	  (prog1 nil

@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: test-clsql.cl,v 1.7 2002/03/25 23:22:07 kevin Exp $
+;;;; $Id: test-clsql.cl,v 1.8 2002/03/25 23:48:46 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -78,10 +78,10 @@
 	  (create-test-table db)
 	  (pprint (clsql:query "select * from test_clsql" 
 			       :database db
-			       :field-types :auto))
+			       :types :auto))
 	  (pprint (clsql:map-query 'vector #'list "select * from test_clsql" 
 				   :database db
-				   :field-types :auto)) ;;'(:int :double t)))
+				   :types :auto)) ;;'(:int :double t)))
 	  (drop-test-table db))
       (clsql:disconnect :database db)))
   )
@@ -96,7 +96,7 @@
        (format nil "INSERT INTO test_clsql VALUES (~d,~d,'~a')"
 	       i (sqrt i) (format nil "~d" (sqrt i)))
        db))
-    (let ((res (clsql-mysql::database-query-result-set "select * from test_clsql" db :full-set t :field-types nil)))
+    (let ((res (clsql-mysql::database-query-result-set "select * from test_clsql" db :full-set t :types nil)))
       (format t "~&Number rows: ~D~%" (mysql:mysql-num-rows (clsql-mysql::mysql-result-set-res-ptr res)))
       (clsql-mysql::database-dump-result-set res db))
     (clsql-mysql::database-execute-command "DROP TABLE test_clsql" db)

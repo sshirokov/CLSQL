@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.cl,v 1.9 2002/03/25 14:26:23 kevin Exp $
+;;;; $Id: mysql-sql.cl,v 1.10 2002/03/25 23:48:46 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -41,7 +41,7 @@
 
 ;;; Field conversion functions
 
-(defun canonicalize-field-types (types num-fields res-ptr)
+(defun canonicalize-types (types num-fields res-ptr)
   (cond
    ((if (listp types)
 	(let ((length-types (length types))
@@ -171,15 +171,15 @@
 
 
 (defmethod database-query (query-expression (database mysql-database) 
-			   field-types)
+			   types)
   (with-slots (mysql-ptr) database
     (uffi:with-cstring (query-native query-expression)
        (if (zerop (mysql-query mysql-ptr query-native))
 	   (let ((res-ptr (mysql-use-result mysql-ptr)))
 	     (if res-ptr
 		 (let ((num-fields (mysql-num-fields res-ptr)))
-		   (setq field-types (canonicalize-field-types 
-				      field-types num-fields
+		   (setq types (canonicalize-types 
+				      types num-fields
 				      res-ptr))
 		   (unwind-protect
 			(loop for row = (mysql-fetch-row res-ptr)
@@ -216,14 +216,14 @@
 (defstruct mysql-result-set
   (res-ptr (uffi:make-null-pointer 'mysql-mysql-res)
 	   :type mysql-mysql-res-ptr-def)
-  (field-types nil)
+  (types nil)
   (num-fields nil :type fixnum)
   (full-set nil :type boolean))
 
 
 (defmethod database-query-result-set (query-expression 
 				      (database mysql-database)
-				      &key full-set field-types)
+				      &key full-set types)
   (uffi:with-cstring (query-native query-expression)
     (let ((mysql-ptr (database-mysql-ptr database)))
      (declare (type mysql-mysql-ptr-def mysql-ptr))
@@ -238,9 +238,9 @@
 				    :res-ptr res-ptr
 				    :num-fields num-fields
 				    :full-set full-set
-				    :field-types
-				    (canonicalize-field-types 
-				     field-types num-fields
+				    :types
+				    (canonicalize-types 
+				     types num-fields
 				     res-ptr)))) 
 		  (if full-set
 		      (values result-set
@@ -268,7 +268,7 @@
 (defmethod database-store-next-row (result-set (database mysql-database) list)
   (let* ((res-ptr (mysql-result-set-res-ptr result-set))
 	 (row (mysql-fetch-row res-ptr))
-	 (field-types (mysql-result-set-field-types result-set)))
+	 (types (mysql-result-set-types result-set)))
     (declare (type mysql-mysql-res-ptr-def res-ptr)
 	     (type mysql-row-def row))
     (unless (uffi:null-pointer-p row)
@@ -278,7 +278,7 @@
 	    (setf (car rest) 
 		  (convert-raw-field
 		   (uffi:deref-array row 'mysql-row i)
-		   field-types
+		   types
 		   i)))
       list)))
 

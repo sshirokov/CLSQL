@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: aodbc-sql.cl,v 1.5 2002/03/25 06:07:06 kevin Exp $
+;;;; $Id: aodbc-sql.cl,v 1.6 2002/03/25 23:48:46 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -60,10 +60,10 @@
   (setf (database-aodbc-conn database) nil)
   t)
 
-(defmethod database-query (query-expression (database aodbc-database) field-types) 
+(defmethod database-query (query-expression (database aodbc-database) types) 
   (handler-case
       (dbi:sql query-expression :db (database-aodbc-conn database)
-	       :types field-types)
+	       :types types)
     (error ()
       (error 'clsql-sql-error
 	     :database database
@@ -84,11 +84,11 @@
 
 (defstruct aodbc-result-set
   (query nil)
-  (field-types nil :type cons)
+  (types nil :type cons)
   (full-set nil :type boolean))
 
 (defmethod database-query-result-set (query-expression (database aodbc-database) 
-				      &key full-set field-types)
+				      &key full-set types)
   (handler-case 
       (multiple-value-bind (query column-names)
 	  (dbi:sql query-expression 
@@ -96,11 +96,11 @@
 		   :row-count nil
 		   :column-names t
 		   :query t
-		   :types field-types
+		   :types types
 		   )
 	(values
 	 (make-aodbc-result-set :query query :full-set full-set 
-				:field-types field-types)
+				:types types)
 	 (length column-names)
 	 nil ;; not able to return number of rows with aodbc
 	 ))

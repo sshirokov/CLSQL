@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: sql.cl,v 1.5 2002/03/24 22:25:51 kevin Exp $
+;;;; $Id: sql.cl,v 1.6 2002/03/25 23:48:46 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -309,14 +309,14 @@ database was disconnected and only one other connection exists."
 ;;; Basic operations on databases
 
 (defmethod query (query-expression &key (database *default-database*)  
-		  field-types)
+		  types)
   "Execute the SQL query expression query-expression on the given database.
 Returns a list of lists of values of the result of that expression."
-  (database-query query-expression database field-types))
+  (database-query query-expression database types))
 
-(defgeneric database-query (query-expression database field-types)
-  (:method (query-expression (database closed-database) field-types)
-	   (declare (ignore query-expression field-types))
+(defgeneric database-query (query-expression database types)
+  (:method (query-expression (database closed-database) types)
+	   (declare (ignore query-expression types))
 	   (signal-closed-database-error database))
   (:documentation "Internal generic implementation of query."))
 
@@ -333,9 +333,9 @@ Returns true on success or nil on failure."
 
 ;;; Mapping and iteration
 (defgeneric database-query-result-set
-    (query-expression database &key full-set field-types)
-  (:method (query-expression (database closed-database) &key full-set field-types)
-	   (declare (ignore query-expression full-set field-types))
+    (query-expression database &key full-set types)
+  (:method (query-expression (database closed-database) &key full-set types)
+	   (declare (ignore query-expression full-set types))
 	   (signal-closed-database-error database)
 	   (values nil nil nil))
   (:documentation
@@ -371,7 +371,7 @@ returns nil when result-set is finished."))
 
 (defun map-query (output-type-spec function query-expression
 		  &key (database *default-database*)
-		  (field-types nil))
+		  (types nil))
   "Map the function over all tuples that are returned by the query in
 query-expression.  The results of the function are collected as
 specified in output-type-spec and returned like in MAP."
@@ -383,21 +383,21 @@ specified in output-type-spec and returned like in MAP."
 	       `(if (atom ,type) ,type (car ,type))))
     (case (type-specifier-atom output-type-spec)
       ((nil) 
-       (map-query-for-effect function query-expression database field-types))
+       (map-query-for-effect function query-expression database types))
       (list 
-       (map-query-to-list function query-expression database field-types))
+       (map-query-to-list function query-expression database types))
       ((simple-vector simple-string vector string array simple-array
 	bit-vector simple-bit-vector base-string
 	simple-base-string)
-       (map-query-to-simple output-type-spec function query-expression database field-types))
+       (map-query-to-simple output-type-spec function query-expression database types))
       (t
        (funcall #'map-query (cmucl-compat:result-type-or-lose output-type-spec t)
-              function query-expression :database database :field-types field-types)))))
+              function query-expression :database database :types types)))))
 
-(defun map-query-for-effect (function query-expression database field-types)
+(defun map-query-for-effect (function query-expression database types)
   (multiple-value-bind (result-set columns)
       (database-query-result-set query-expression database :full-set nil
-				 :field-types field-types)
+				 :types types)
     (when result-set
       (unwind-protect
 	   (do ((row (make-list columns)))
@@ -406,10 +406,10 @@ specified in output-type-spec and returned like in MAP."
 	     (apply function row))
 	(database-dump-result-set result-set database)))))
 		     
-(defun map-query-to-list (function query-expression database field-types)
+(defun map-query-to-list (function query-expression database types)
   (multiple-value-bind (result-set columns)
       (database-query-result-set query-expression database :full-set nil
-				 :field-types field-types)
+				 :types types)
     (when result-set
       (unwind-protect
 	   (let ((result (list nil)))
@@ -421,10 +421,10 @@ specified in output-type-spec and returned like in MAP."
 	(database-dump-result-set result-set database)))))
 
 
-(defun map-query-to-simple (output-type-spec function query-expression database field-types)
+(defun map-query-to-simple (output-type-spec function query-expression database types)
   (multiple-value-bind (result-set columns rows)
       (database-query-result-set query-expression database :full-set t
-				 :field-types field-types)
+				 :types types)
     (when result-set
       (unwind-protect
 	   (if rows
@@ -457,7 +457,7 @@ specified in output-type-spec and returned like in MAP."
 
 (defmacro do-query (((&rest args) query-expression
 		     &key (database '*default-database*)
-		     (field-types nil))
+		     (types nil))
 		    &body body)
   (let ((result-set (gensym))
 	(columns (gensym))
@@ -466,7 +466,7 @@ specified in output-type-spec and returned like in MAP."
     `(let ((,db ,database))
        (multiple-value-bind (,result-set ,columns)
 	   (database-query-result-set ,query-expression ,db
-				      :full-set nil :field-types ,field-types)
+				      :full-set nil :types ,types)
 	 (when ,result-set
 	   (unwind-protect
 		(do ((,row (make-list ,columns)))

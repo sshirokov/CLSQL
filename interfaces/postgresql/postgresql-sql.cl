@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.cl,v 1.8 2002/03/25 14:13:41 kevin Exp $
+;;;; $Id: postgresql-sql.cl,v 1.9 2002/03/25 23:48:46 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -30,7 +30,7 @@
 
 ;;; Field conversion functions
 
-(defun canonicalize-field-types (types num-fields res-ptr)
+(defun canonicalize-types (types num-fields res-ptr)
   (cond
    ((if (listp types)
 	(let ((length-types (length types))
@@ -166,7 +166,7 @@
   (setf (database-conn-ptr database) nil)
   t)
 
-(defmethod database-query (query-expression (database postgresql-database) field-types)
+(defmethod database-query (query-expression (database postgresql-database) types)
   (let ((conn-ptr (database-conn-ptr database)))
     (declare (type pgsql-conn-def conn-ptr))
     (uffi:with-cstring (query-native query-expression)
@@ -183,8 +183,8 @@
                nil)
               (#.pgsql-exec-status-type#tuples-ok
 	       (let ((num-fields (PQnfields result)))
-		 (setq field-types
-		   (canonicalize-field-types field-types num-fields
+		 (setq types
+		   (canonicalize-types types num-fields
 					     result))
 		 (loop for tuple-index from 0 below (PQntuples result)
 		       collect
@@ -193,7 +193,7 @@
 			     (if (zerop (PQgetisnull result tuple-index i))
 				 (convert-raw-field
 				  (PQgetvalue result tuple-index i)
-				  field-types i)
+				  types i)
 				 nil)))))
               (t
                (error 'clsql-sql-error
@@ -236,13 +236,13 @@
 (defstruct postgresql-result-set
   (res-ptr (uffi:make-null-pointer 'pgsql-result) 
 	   :type pgsql-result-def)
-  (field-types nil) 
+  (types nil) 
   (num-tuples 0 :type integer)
   (num-fields 0 :type integer)
   (tuple-index 0 :type integer))
 
 (defmethod database-query-result-set (query-expression (database postgresql-database) 
-                                      &key full-set field-types)
+                                      &key full-set types)
   (let ((conn-ptr (database-conn-ptr database)))
     (declare (type pgsql-conn-def conn-ptr))
     (uffi:with-cstring (query-native query-expression)
@@ -260,8 +260,8 @@
                         :res-ptr result
                         :num-fields (PQnfields result)
                         :num-tuples (PQntuples result)
-			:field-types (canonicalize-field-types 
-				      field-types
+			:types (canonicalize-types 
+				      types
 				      (PQnfields result)
 				      result))))
 	     (if full-set
@@ -289,7 +289,7 @@
 (defmethod database-store-next-row (result-set (database postgresql-database) 
                                     list)
   (let ((result (postgresql-result-set-res-ptr result-set))
-	(field-types (postgresql-result-set-field-types result-set)))
+	(types (postgresql-result-set-types result-set)))
     (declare (type pgsql-result-def result))
     (if (>= (postgresql-result-set-tuple-index result-set)
 	    (postgresql-result-set-num-tuples result-set))
@@ -302,7 +302,7 @@
               (if (zerop (PQgetisnull result tuple-index i))
                   (convert-raw-field
                    (PQgetvalue result tuple-index i)
-		   field-types i)
+		   types i)
                 nil))
           finally
             (incf (postgresql-result-set-tuple-index result-set))

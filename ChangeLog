@@ -5,11 +5,12 @@
 	Got :auto types working
 
 	* interfaces/postgresql/postgresql-api.cl
+	* interfaces/postgresql-socket/postgresql-socket-api.cl
 	Added pgsql-field-types enum
 	Got :auto types working
 
-;	* multiple-files
-;	Renamed :field-types to :types
+	* multiple-files
+	Renamed :field-types to :types
 	
 24 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 
