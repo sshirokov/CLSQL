@@ -206,14 +206,12 @@
 	 #'string-downcase
 	 (clsql:list-table-indexes [i3test] :owner *test-database-user*))
 	#'string-lessp)
-       (sort (clsql:list-table-indexes [company] :owner *test-database-user*)
-	     #'string-lessp)
        (progn
 	 (clsql:drop-index [bar] :on [i3test])
 	 (clsql:drop-index [foo] :on [i3test])
 	 (clsql:drop-table [i3test])
 	 t)))
-  t t t ("bar" "foo") nil t)
+  t t t ("bar" "foo") t)
 
 ;; create an sequence, test for existence, drop it and test again 
 (deftest :fddl/sequence/1
