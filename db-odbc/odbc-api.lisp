@@ -31,6 +31,7 @@ May be locally bound to something else if a certain type is necessary.")
 as possible second argument) to the desired representation of date/time/timestamp.")
 
 (defvar +null-ptr+ (make-null-pointer :byte))
+(defparameter +null-handle-ptr+ (make-null-pointer :void))
 (defvar *info-output* nil
   "Stream to send SUCCESS_WITH_INFO messages.")
 
@@ -97,9 +98,9 @@ as possible second argument) to the desired representation of date/time/timestam
          (#.$SQL_SUCCESS_WITH_INFO
           (when ,print-info
             (multiple-value-bind (error-message sql-state)
-		(handle-error (or ,henv +null-ptr+)
-			      (or ,hdbc +null-ptr+)
-			      (or ,hstmt +null-ptr+))
+		(handle-error (or ,henv +null-handle-ptr+)
+			      (or ,hdbc +null-handle-ptr+)
+			      (or ,hstmt +null-handle-ptr+))
 	      (when *info-output*
 		(format *info-output* "[ODBC info ~A] ~A state: ~A"
 			,result-code error-message
@@ -115,9 +116,9 @@ as possible second argument) to the desired representation of date/time/timestam
 	   :odbc-message "Still executing"))
          (#.$SQL_ERROR
           (multiple-value-bind (error-message sql-state)
-	      (handle-error (or ,henv +null-ptr+)
-			    (or ,hdbc +null-ptr+)
-			    (or ,hstmt +null-ptr+))
+	      (handle-error (or ,henv +null-handle-ptr+)
+			    (or ,hdbc +null-handle-ptr+)
+			    (or ,hstmt +null-handle-ptr+))
             (error
 	     'clsql-base-sys:clsql-odbc-error
 	     :odbc-message error-message
@@ -838,7 +839,7 @@ as possible second argument) to the desired representation of date/time/timestam
                                       data-length)))
                     (error "wrong type. preliminary."))
                while (and (= res $SQL_SUCCESS_WITH_INFO)
-                          (equal (sql-state +null-ptr+ +null-ptr+ hstmt)
+                          (equal (sql-state +null-handle-ptr+ +null-handle-ptr+ hstmt)
                                  "01004"))
                do (setf res (%sql-get-data hstmt column-nr c-type data-ptr 
                                            +max-precision+ out-len-ptr)))
@@ -857,9 +858,9 @@ as possible second argument) to the desired representation of date/time/timestam
                     (error "wrong type. preliminary."))
                while 
                (and (= res $SQL_SUCCESS_WITH_INFO)
-                    #+ingore(eq (sql-state +null-ptr+ +null-ptr+ hstmt)
+                    #+ingore(eq (sql-state +null-handle-ptr+ +null-handle-ptr+ hstmt)
                                 $sql-data-truncated)
-                    (equal (sql-state +null-ptr+ +null-ptr+ hstmt)
+                    (equal (sql-state +null-handle-ptr+ +null-handle-ptr+ hstmt)
                            "01004"))
                do (setf res (%sql-get-data hstmt column-nr c-type data-ptr 
                                            +max-precision+ out-len-ptr)

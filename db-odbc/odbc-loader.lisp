@@ -26,6 +26,7 @@
       "/sw/lib/"
       "/usr/local/lib/"
       "/home/kevin/debian/src/clsql/db-odbc/"
+      "/windows/system32/"
       "/odbc/lib/opt/")
    :drive-letters '("C")))
   
