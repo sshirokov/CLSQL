@@ -542,6 +542,7 @@ connection, if it is still open."
 	while (listen socket)
 	do
 	(case (read-socket-value-int8 socket)
+	  (#.+ready-for-query-message+)
 	  (#.+notice-response-message+
 	   (let ((message (read-socket-value-string socket)))
 	     (warn 'postgresql-warning :connection connection
