@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.9 2002/05/02 20:54:48 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.10 2002/05/13 01:57:02 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -48,7 +48,7 @@ DOCFILES=$(shell echo *.sgml)
 
 .PHONY: all dist check html tex pdf ps clean distclean
 
-all: html pdf ps dvi
+all: html pdf
 
 dist: html pdf
 
