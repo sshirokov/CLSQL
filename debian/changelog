@@ -1,3 +1,9 @@
+cl-sql (1.4.3-1) unstable; urgency=low
+
+  * Rebuild against new libmysql package
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sat, 12 Apr 2003 05:05:03 -0600
+
 cl-sql (1.4.2-1) unstable; urgency=low
 
   * Add optimization for pointer derefering

@@ -2,7 +2,7 @@ Source: cl-sql
 Section: devel
 Priority: extra
 Maintainer: Kevin M. Rosenberg <kmr@debian.org>
-Build-Depends: debhelper (>= 4.0.0), libmysqlclient10-dev, postgresql-dev
+Build-Depends: debhelper (>= 4.0.0), libmysqlclient-dev, postgresql-dev
 Standards-Version: 3.5.9.0
 
 Package: cl-sql
@@ -32,7 +32,7 @@ Description: Common UFFI functions for CLSQL database backends
 
 Package: cl-sql-mysql
 Architecture: any
-Depends: cl-sql-base (>= ${Source-Version}), libmysqlclient10, cl-sql-uffi (>= ${Source-Version})
+Depends: cl-sql-base (>= ${Source-Version}), libmysqlclient12, cl-sql-uffi (>= ${Source-Version})
 Provides: cl-sql-backend
 Description: CLSQL database backend, MySQL
  This package enables you to use the CLSQL data access package
