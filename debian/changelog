@@ -1,6 +1,6 @@
-cl-sql (2.2.0-1) unstable; urgency=low
+cl-sql (2.3.0-1) unstable; urgency=low
 
-  * Integrate uncommonsql package code.
+  * Integrate the clsql-usql package.
 
  -- Kevin M. Rosenberg <kmr@debian.org>  Tue,  6 Apr 2004 09:35:28 -0600
 
