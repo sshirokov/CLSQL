@@ -1,6 +1,7 @@
-23 Apr 2002 Kevin Rosenberg (kevin@rosenberg.net)
+27 Apr 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* Multiple files:
 	Added initial support for connection pool
+	Added transactions for MySQL
 
 23 Apr 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* interfaces/postgresql/postgresql-sql.cl:
