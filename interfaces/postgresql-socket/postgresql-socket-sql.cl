@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-sql.cl,v 1.8 2002/03/27 12:09:39 kevin Exp $
+;;;; $Id: postgresql-socket-sql.cl,v 1.9 2002/03/29 08:28:14 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -27,6 +27,17 @@
     (:documentation "This is the CLSQL socket interface to PostgreSQL."))
 
 (in-package :clsql-postgresql-socket)
+
+;; interface foreign library loading routines
+
+(defmethod database-type-library-loaded ((database-type (eql :postgresql-socket)))
+  t)
+
+(defmethod clsql-sys:database-type-load-foreign ((database-type (eql :postgresql-socket)))
+  t)
+
+(clsql-sys:database-type-load-foreign :postgresql-socket)
+
 
 ;; Field type conversion
 
