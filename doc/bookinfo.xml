@@ -20,6 +20,9 @@
     <surname>Mai</surname>
     <affiliation><jobtitle>Author of Original MaiSQL Code</jobtitle></affiliation>
   </author>
+  <author>
+    <othername>onShore Development, Inc.</othername>
+  </author>
   </authorgroup>
   <printhistory>
     <simpara>$Date$</simpara>
@@ -28,8 +31,9 @@
   <legalnotice>
     <itemizedlist>
       <listitem>
-	<para>&clsql; is Copyright &copy; 2002-2003 by Kevin M. Rosenberg and
-	Copyright &copy; 1999-2001 by Pierre R. Mai.</para>
+	<para>&clsql; is Copyright &copy; 2002-2004 by Kevin M. Rosenberg,
+	Copyright &copy; 1999-2001 by Pierre R. Mai, and Copyright
+	&copy; 1999-2003 onShore Development, Inc.</para>
        </listitem>
        <listitem>
 	 <para><application>Allegro CL</application>&reg; is a registered
@@ -37,20 +41,18 @@
 	</listitem>
 	<listitem>
           <para><application>Common SQL</application>,
-	      <application>LispWorks</application> and
-	<application>Xanalys</application> are trademarks or
-	registered trademarks of Xanalys Inc.</para>
-      </listitem>
-      <listitem>
-        <para><application>Microsoft
-	  Windows</application>&reg; is a registered trademark of
-	  Microsoft Inc.</para>
-      </listitem>
-      <listitem>
-        <para>Other brand or
-	    product names are the registered trademarks or trademarks of
-	    their respective holders.</para>
-      </listitem>
+          <application>LispWorks</application> and
+          <application>Xanalys</application> are trademarks or
+	  registered trademarks of Xanalys Inc.</para>
+	</listitem>
+	<listitem>
+	  <para><application>Microsoft Windows</application>&reg; is a
+	  registered trademark of Microsoft Inc.</para>
+	</listitem>
+	<listitem>
+	  <para>Other brand or product names are the registered
+	  trademarks or trademarks of their respective holders.</para>
+	</listitem>
     </itemizedlist>
   </legalnotice>
 </bookinfo>
