@@ -6,7 +6,8 @@ TESTS TO ADD
 
 * CACHE-TABLE-QUERIES
 * :VOID-VALUE
-
+* :db-kind :key adds an index for that key
+ 
 COMMONSQL SPEC
 
 * Missing: 
