@@ -145,7 +145,6 @@ of the default method.  The extra allowed options are the value of the
     result))
 
 
-#+(or cmu scl sbcl openmcl)
 (defmethod validate-superclass ((class standard-db-class)
 				(superclass standard-class))
   t)
@@ -277,13 +276,14 @@ of the default method.  The extra allowed options are the value of the
     (let ((all-slots (mapcar #'frob-slot slots)))
       (setq all-slots (remove-if #'not-db-col all-slots))
       (setq all-slots (stable-sort all-slots #'string< :key #'car))
-      (setf (object-definition class) all-slots
-	    (key-slots class) (remove-if-not (lambda (slot)
-					       (eql (slot-value slot 'db-kind)
-						    :key))
-					     (class-slots class))))))
+      (setf (object-definition class) all-slots))
+    #-(or allegro openmcl)
+    (setf (key-slots class) (remove-if-not (lambda (slot)
+					     (eql (slot-value slot 'db-kind)
+						  :key))
+					   (class-slots class)))))
 
-#+allegro
+#+(or allegro openmcl)
 (defmethod finalize-inheritance :after ((class standard-db-class))
   (setf (key-slots class) (remove-if-not (lambda (slot)
 					   (eql (slot-value slot 'db-kind)

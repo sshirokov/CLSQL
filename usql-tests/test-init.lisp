@@ -29,7 +29,7 @@
            :initarg :height)
    (married :db-kind :base :accessor married :type boolean :nulls-ok t
             :initarg :married)
-   (birthday :nulls-ok t :type wall-time :initarg :birthday)
+   (birthday :nulls-ok t :type clsql-base:wall-time :initarg :birthday)
    (hobby :db-kind :virtual :initarg :hobby :initform nil)))
   
 (def-view-class employee (person)
