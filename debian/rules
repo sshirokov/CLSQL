@@ -129,7 +129,7 @@ binary-arch: build install
 	dh_installdocs
 #	dh_installexamples 
 	dh_installchangelogs ChangeLog
-	dh_link -p $(pkg) $(clc-repos)/clsql $(clc-source)/clsql
+	dh_link -p $(pkg-base) $(clc-repos)/clsql $(clc-source)/clsql
 	dh_link -p $(pkg-base) $(clc-repos)/clsql $(clc-source)/clsql-base
 	dh_link -p $(pkg-mysql) $(clc-repos)/clsql $(clc-source)/clsql-mysql
 	dh_link -p $(pkg-pg) $(clc-repos)/clsql $(clc-source)/clsql-postgresql
