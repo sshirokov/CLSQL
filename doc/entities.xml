@@ -23,6 +23,5 @@
 <!ENTITY nil "<symbol>NIL</symbol>">
 <!ENTITY null "<constant>NULL</constant>">
 <!ENTITY c "<symbol>C</symbol>">
-
-
-
+<!ENTITY unix "UNIX">
+<!ENTITY mswindows "Microsoft Windows">

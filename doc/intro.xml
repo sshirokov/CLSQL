@@ -138,30 +138,31 @@
 	parameters and return values. The &ffi; in most &clsql;
 	implementations do not support 64-bit integers. Thus, C helper
 	libraries are required to break these 64-bit integers into two compatible
-	32-bit integers.
+	32-bit integers. The helper libraries reside in the directories
+	<filename>uffi/</filename> and <filename>db-mysql</filename>.
       </para>
       
-      <para>Makefiles for Microsoft Windows and GNU/Solaris systems
-	are supplied to build the libraries. Since many Microsoft Windows
-	users don't have access to a compiler, the <type>DLL</type> and <type>LIB</type>
-	files for Microsoft Windows are supplied with the distribution.
-      </para>
+      <sect3>
+	<title>&mswindows;</title>
+	<para>
+	  Files named <filename>Makefile.msvc</filename> are supplied
+	  for building the libraries under Microsoft Windows.  Since
+	  &mswindows; does not come with that compiler, compiled
+	  <type>DLL</type> and <type>LIB</type> library files are
+	  supplied with &clsql;.
+	</para>
+      </sect3>
+
+      <sect3>
+	<title>&unix;</title>
+	<para>
+	  Files named <filename>Makefile</filename> are supplied for building the libraries
+	  under &unix;. However, the <filename>.asd</filename> automatically invoke
+	  the makefiles when necessary. So, manual building of the helper libraries
+	  is not necessary on &unix;.
+	</para>
+      </sect3>
       
-      <para>To build the libraries on a GNU or Solaris, use the shell and
-	change to the root directory of &clsql;. You may need to edit the file
-	<filename>interfaces/mysql/Makefile</filename>
-	to specify the location of your
-	MySQL installation. The default Makefiles are setup for shared library
-	linking on Linux. If you are using FreeBSD or Solaris, you will need
-	to change the linker setting as instructed in the Makefile. 
-	Then, you can give the command
-	<screen>
-make libs
-	</screen>
-	in the root directory of &clsql; to build the libraries 
-	<filename>interfaces/mysql/clsql-mysql.so</filename>
-	and <filename>interfaces/clsql-uffi/clsql-uffi.so</filename>.
-      </para>
     </sect2>
     
     <sect2>
