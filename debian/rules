@@ -99,10 +99,10 @@ install: build
 	dh_install -p $(pkg-mysql) $(srcs-mysql-so) $(sodir-mysql)
 	dh_install -p $(pkg-pg) $(srcs-pg) $(lispdir-pg)
 	dh_install -p $(pkg-pg-socket) $(srcs-pg-socket) $(lispdir-pg-socket)
-	dh_install -p $(pkg-pg-socket) $(srcs-aodbc) $(lispdir-pg-aodbc)
+	dh_install -p $(pkg-aodbc) $(srcs-aodbc) $(lispdir-pg-aodbc)
 
 	# CLC Systems
-	dh_install -p $(pkg) $(INSTALLFLAGS) clsql.system $(clc-systems)
+	dh_install -p $(pkg) clsql.system $(clc-systems)
 	dh_install -p $(pkg-base) clsql-base.system clsql-uffi.system $(clc-systems)
 	dh_install -p $(pkg-mysql) clsql-mysql.system $(clc-systems)
 	dh_install -p $(pkg-pg) clsql-postgresql.system $(clc-systems)
