@@ -1,3 +1,10 @@
+04 May 2002 Marc Battyani (marc.battyani@fractalconcept.com)
+	* sql/sql.cl:
+	* sql/pool.cl:
+	* sql/functional.cl:
+	Added pool support in connect/disconnect and with-database.
+	Removed with-db-from-pool as with-database can now works with the connections pool
+
 01 May 2002 Marc Battyani (marc.battyani@fractalconcept.com)
 	* sql/sql.cl:
 	* sql/pool.cl:

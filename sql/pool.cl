@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg, Marc Battyani
 ;;;; Date Started:  Apr 2002
 ;;;;
-;;;; $Id: pool.cl,v 1.4 2002/05/03 20:50:18 marc.battyani Exp $
+;;;; $Id: pool.cl,v 1.5 2002/05/04 16:21:27 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -77,16 +77,3 @@
   (when clear (clrhash *db-pool*))
   t)
 
-;;; with-db-from-pool is the macro you should use if you want to use pooled connections.
-;;; You can use it with a connection spec and database type or directly with a conn-pool.
-;;; When you give a conn-pool the connection spec and database type are ignored
-
-(defmacro with-db-from-pool ((db-var connection-spec database-type &optional conn-pool) &body body)
-  "Evaluate the body in an environment, where `db-var' is bound to a
-database connection acquired from the connection pool
-The connection is automatically released to the connection pool on exit from the body.
-If a pool is given then the connection-spec database-type are ignored."
-  `(let ((,db-var (acquire-from-pool ,connection-spec ,database-type ,conn-pool)))
-     (unwind-protect
-	  (let ((,db-var ,db-var)) ,@body)
-       (release-to-pool ,db-var))))
