@@ -54,7 +54,9 @@
   nil) ;;; library will be loaded by a loader file
 
 (defmethod operation-done-p ((o load-op) (c clsql-uffi-source-file))
-  nil) 
+  (and (symbol-function (intern (symbol-name '#:atol64)
+				(find-package '#:clsql-uffi)))
+       t))
 
 (defmethod perform ((o compile-op) (c clsql-uffi-source-file))
   #-(or win32 mswindows)
@@ -67,10 +69,11 @@
     (error 'operation-error :component c :operation o)))
 
 (defmethod operation-done-p ((o compile-op) (c clsql-uffi-source-file))
-  (let ((lib (make-pathname :defaults (component-pathname c)
-			    :type (uffi:default-foreign-library-type))))
-    (and (probe-file lib)
-	 (> (file-write-date lib) (file-write-date (component-pathname c))))))
+  (or (and (probe-file #p"/usr/lib/clsql/uffi.so") t)
+      (let ((lib (make-pathname :defaults (component-pathname c)
+				:type (uffi:default-foreign-library-type))))
+	(and (probe-file lib)
+	     (> (file-write-date lib) (file-write-date (component-pathname c)))))))
   
 #+(or allegro lispworks cmu sbcl openmcl mcl scl)
 (defsystem clsql-uffi
@@ -86,7 +89,7 @@
   :components
   ((:module :uffi
 	    :components
-	    ((:clsql-uffi-source-file "uffi")
-	     (:file "clsql-uffi-package")
+	    ((:file "clsql-uffi-package")
+	     (:clsql-uffi-source-file "uffi" :depends-on ("clsql-uffi-package"))
 	     (:file "clsql-uffi-loader" :depends-on ("clsql-uffi-package" "uffi"))
 	     (:file "clsql-uffi" :depends-on ("clsql-uffi-loader"))))))

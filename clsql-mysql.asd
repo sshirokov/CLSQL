@@ -45,10 +45,12 @@
 			     :directory *library-file-dir*)))))
 
 (defmethod perform ((o load-op) (c clsql-mysql-source-file))
-  nil) ;;; library will be loaded by a loader file
+  t)
 
 (defmethod operation-done-p ((o load-op) (c clsql-mysql-source-file))
-  nil) 
+  (and (symbol-function (intern (symbol-name '#:mysql-get-client-info)
+				(find-package '#:mysql)))
+       t)) 
 
 (defmethod perform ((o compile-op) (c clsql-mysql-source-file))
   #-(or win32 mswindows)
@@ -61,10 +63,11 @@
     (error 'operation-error :component c :operation o)))
 
 (defmethod operation-done-p ((o compile-op) (c clsql-mysql-source-file))
-  (let ((lib (make-pathname :defaults (component-pathname c)
-			    :type (uffi:default-foreign-library-type))))
-    (and (probe-file lib)
-	 (> (file-write-date lib) (file-write-date (component-pathname c))))))
+  (or (and (probe-file #p"/usr/lib/clsql/mysql.so") t)
+      (let ((lib (make-pathname :defaults (component-pathname c)
+				:type (uffi:default-foreign-library-type))))
+	(and (probe-file lib)
+	     (> (file-write-date lib) (file-write-date (component-pathname c)))))))
 
 ;;; System definition
 
@@ -81,8 +84,8 @@
   :components
   ((:module :db-mysql
 	    :components
-	    ((:clsql-mysql-source-file "mysql")
-	     (:file "mysql-package")
+	    ((:file "mysql-package")
+	     (:clsql-mysql-source-file "mysql" :depends-on ("mysql-package"))
 	     (:file "mysql-loader" :depends-on ("mysql-package" "mysql"))
 	     (:file "mysql-client-info" :depends-on ("mysql-loader"))
 	     (:file "mysql-api" :depends-on ("mysql-client-info"))
