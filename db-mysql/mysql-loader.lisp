@@ -31,11 +31,8 @@
 
 (defparameter *mysql-library-candidate-directories*
     `(,(pathname-directory *load-pathname*)
-      "/opt/mysql/lib/mysql/" "/usr/local/lib/"
       #+(or 64bit x86-64) "/usr/lib64/" #+(or 64bit x86-64) "/usr/local/lib64/mysql/"
-      #+(or 64bit x86-64) "/usr/local/lib64/"
-      #+(or 64bit x86-64) "/usr/local/lib64/mysql/"
-
+      "/opt/mysql/lib/mysql/" "/usr/local/lib/"
       "/usr/lib/" "/usr/local/lib/mysql/" "/usr/lib/mysql/" "/mysql/lib/opt/" "/sw/lib/mysql/" "/opt/local/lib/mysql/"))
 
 (defvar *mysql-library-candidate-drive-letters* '("C" "D" "E"))

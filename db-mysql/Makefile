@@ -26,7 +26,7 @@ shared_lib=$(base).so
 all: $(shared_lib)
 
 $(shared_lib): $(source) Makefile
-	CFLAGS="-I /usr/include/mysql -I /usr/local/include/mysql -I /sw/include/mysql -I /opt/local/include/mysql" LDFLAGS="-L/usr/local/lib/mysql -L/usr/lib/mysql -L/sw/lib -L/opt/local/lib/mysql -lmysqlclient" BASE=$(base) OBJECT=$(object) SOURCE=$(source) SHARED_LIB=$(shared_lib) sh make.sh
+	CFLAGS="-I /usr/local/include/mysql -I /usr/include/mysql -I /sw/include/mysql -I /opt/local/include/mysql" LDFLAGS="-L/usr/local/lib64/mysql -L/usr/lib/mysql -L/sw/lib -L/opt/local/lib/mysql -lmysqlclient" BASE=$(base) OBJECT=$(object) SOURCE=$(source) SHARED_LIB=$(shared_lib) sh make.sh
 	rm $(object)
 
 .PHONY: distclean
