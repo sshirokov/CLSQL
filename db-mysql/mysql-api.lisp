@@ -540,8 +540,8 @@
 
 (declaim (inline mysql-escape-string))
 (uffi:def-function "mysql_escape_string"
-    ((to :cstring)
-     (from :cstring)
+    ((to (* :unsigned-char))
+     (from (* :unsigned-char))
      (length :unsigned-int))
   :module "mysql"
   :returning :unsigned-int)
