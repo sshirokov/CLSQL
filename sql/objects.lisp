@@ -718,6 +718,19 @@ superclass of the newly-defined View Class."
 	 (res (fault-join-slot-raw class object slot-def)))
     (when res
       (cond
+       ((and ts (gethash :target-slot dbi) (gethash :set dbi))
+	(mapcar (lambda (obj)
+		  (let* ((target-name (gethash :target-slot dbi))
+			 (target-class (find-class target-name)))
+		    (cons 
+		     (car
+		      (fault-join-slot-raw 
+		       target-class
+		       obj
+		       (find target-name (class-slots (class-of obj))
+			     :key #'slot-definition-name)))
+		     obj)))
+		 res))
 	((and ts (gethash :set dbi))
 	 (mapcar (lambda (obj)
 		   (cons obj (slot-value obj ts))) res))
@@ -769,10 +782,10 @@ superclass of the newly-defined View Class."
 
 (defun find-all (view-classes &rest args &key all set-operation distinct from
                  where group-by having order-by order-by-descending offset limit
-		 refresh flatp (database *default-database*))
+		 refresh flatp result-types (database *default-database*))
   "Called by SELECT to generate object query results when the
   View Classes VIEW-CLASSES are passed as arguments to SELECT."
-  (declare (ignore all set-operation group-by having offset limit)
+  (declare (ignore all set-operation group-by having offset limit result-types)
            (optimize (debug 3) (speed 1)))
   (remf args :from)
   (remf args :flatp)

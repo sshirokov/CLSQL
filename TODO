@@ -6,12 +6,7 @@ TESTS TO ADD
 * Large object testing
 * Test bigint type
 * :db-constraint tests
-
-POSSIBLE EXTENSIONS
-
-* port Oracle backend to UFFI
-* large object support 
-* add support for prepared statements
+* *update-records-on-make-instance*
 
 COMMONSQL SPEC
 
@@ -29,7 +24,6 @@ COMMONSQL SPEC
  >> The object-oriented sql interface
 
     DEF-VIEW-CLASS
-      o get :target-slot working 
       o implement :retrieval :immediate 
 
  >> Symbolic SQL syntax 
@@ -50,6 +44,12 @@ COMMONSQL SPEC
 
       o variables (e.g., table identifiers) should be instantiated at runtime 
 
+
+POSSIBLE EXTENSIONS
+
+* port Oracle backend to UFFI
+* large object support 
+* add support for prepared statements
 
 
 NOTES ABOUT THE BACKENDS
