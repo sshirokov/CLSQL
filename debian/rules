@@ -27,14 +27,17 @@ prefix-aodbc	:= debian/$(pkg-aodbc)
 srcs		:= $(wildcard sql/*.cl)
 srcs-cmucl-compat:= $(wildcard cmucl-compat/*.cl)
 srcs-base	:= $(wildcard base/*.cl)
-srcs-base-uffi	:= $(wildcard interfaces/clsql-uffi/*.cl) $(wildcard interfaces/clsql-uffi/*.so)
-srcs-mysql	:= $(wildcard interfaces/mysql/*.cl) $(wildcard interfaces/mysql/*.so)
+srcs-base-uffi	:= $(wildcard interfaces/clsql-uffi/*.cl) 
+srcs-base-uffi-so:= $(wildcard interfaces/clsql-uffi/*.so)
+srcs-mysql	:= $(wildcard interfaces/mysql/*.cl)
+srcs-mysql-so	:=  $(wildcard interfaces/mysql/*.so)
 srcs-pg		:= $(wildcard interfaces/postgresql/*.cl)
 srcs-pg-socket	:= $(wildcard interfaces/postgresql-socket/*.cl)
 srcs-aodbc	:= $(wildcard interfaces/aodbc/*.cl)
 
 INSTALL	:= install
 INSTALLFLAGS	:= -g root -o root -m 0644
+INSTALLEXECFLAGS	:= -g root -o root -m 0755
 INSTALLDIRFLAGS	:= -d -g root -o root -m 0755
 
 clc-base	:= usr/share/common-lisp
@@ -80,10 +83,10 @@ install: build
 	# Base
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-base) $(prefix-base)/$(clc-repos)/clsql/base
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-base-uffi) $(prefix-base)/$(clc-repos)/clsql/interfaces/clsql-uffi
-	chmod +x $(prefix-base)/$(clc-repos)/clsql/interfaces/clsql-uffi/*.so
+	$(INSTALL) $(INSTALLEXECFLAGS) $(srcs-base-uffi-so) $(prefix-base)/$(clc-repos)/clsql/interfaces/clsql-uffi
 
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-mysql) $(prefix-mysql)/$(clc-repos)/clsql/interfaces/mysql
-	chmod +x $(prefix-mysql)/$(clc-repos)/clsql/interfaces/mysql/*.so
+	$(INSTALL) $(INSTALLEXECFLAGS) $(srcs-mysql-so) $(prefix-mysql)/$(clc-repos)/clsql/interfaces/mysql
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-pg) $(prefix-pg)/$(clc-repos)/clsql/interfaces/postgresql
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-pg-socket) $(prefix-pg-socket)/$(clc-repos)/clsql/interfaces/postgresql-socket
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-aodbc) $(prefix-aodbc)/$(clc-repos)/clsql/interfaces/aodbc
