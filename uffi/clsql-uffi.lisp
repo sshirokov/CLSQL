@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.26 2003/05/22 15:47:02 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.27 2003/05/27 21:40:16 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -95,7 +95,7 @@
   (declare (type char-ptr-def char-ptr))
   (let ((char (uffi:ensure-char-character
 	       (uffi:deref-pointer char-ptr :char))))
-    (eql char #\N)))
+    (char-equal char #\N)))
     
 (defun convert-raw-field (char-ptr types index)
   (let ((type (if (listp types)
