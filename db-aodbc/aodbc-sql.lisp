@@ -144,6 +144,65 @@
 	      (setf (car rest) elem))
 	list))))
 
+;;; Sequence functions
+
+(defun %sequence-name-to-table (sequence-name)
+  (concatenate 'string "_clsql_seq_" (sql-escape sequence-name)))
+
+(defun %table-name-to-sequence-name (table-name)
+  (and (>= (length table-name) 11)
+       (string= (subseq table-name 0 11) "_clsql_seq_")
+       (subseq table-name 11)))
+
+(defmethod database-create-sequence (sequence-name
+				     (database aodbc-database))
+  (let ((table-name (%sequence-name-to-table sequence-name)))
+    (database-execute-command
+     (concatenate 'string "CREATE TABLE " table-name
+		  " (id int NOT NULL PRIMARY KEY AUTO_INCREMENT)")
+     database)
+    (database-execute-command 
+     (concatenate 'string "INSERT INTO " table-name
+		  " VALUES (0)")
+     database)))
+
+(defmethod database-drop-sequence (sequence-name
+				   (database aodbc-database))
+  (database-execute-command
+   (concatenate 'string "DROP TABLE " (%sequence-name-to-table sequence-name)) 
+   database))
+
+(defmethod database-list-sequences ((database aodbc-database)
+                                    &key (owner nil))
+  (declare (ignore owner))
+  (mapcar #'(lambda (s) (%table-name-to-sequence-name (car s)))
+          (database-query "SHOW TABLES LIKE '%clsql_seq%'" 
+                          database nil)))
+
+(defmethod database-set-sequence-position (sequence-name
+                                           (position integer)
+                                           (database aodbc-database))
+  (database-execute-command
+   (format nil "UPDATE ~A SET id=~A" (%sequence-name-to-table sequence-name)
+           position)
+   database)
+  position)
+
+(defmethod database-sequence-next (sequence-name (database aodbc-database))
+  (warn "Not implemented."))
+
+(defmethod database-sequence-last (sequence-name (database aodbc-database))
+  (declare (ignore sequence-name)))
+
+(defmethod database-create (connection-spec (type (eql :aodbc)))
+  (warn "Not implemented."))
+
+(defmethod database-destroy (connection-spec (type (eql :aodbc)))
+  (warn "Not implemented."))
+
+(defmethod database-probe (connection-spec (type (eql :aodbc)))
+  (warn "Not implemented."))
+
 #+ignore		       
 (when (clsql-base-sys:database-type-library-loaded :aodbc)
   (clsql-base-sys:initialize-database-type :database-type :aodbc))
