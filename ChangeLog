@@ -1,4 +1,9 @@
 16 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* sql/oodml.lisp: on Lispworks, use weak valued hash tables for 
+	object caching. 
+	* sql/expressions.lisp: Fix SQL generation for the symbol NIL. 
+
+16 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* sql/expressions.lisp: reactivate caching of generated SQL strings. 
 	Move methods for DATABASE-OUTPUT-SQL, OUTPUT-SQL and SQL-HASH-KEY 
 	here from sql/fdml.lisp. Rationalise behaviour of SQL-OUTPUT, 

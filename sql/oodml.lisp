@@ -1097,7 +1097,8 @@ as elements of a list."
   (unless (record-caches database)
     (setf (record-caches database)
 	  (make-hash-table :test 'equal
-			   #+allegro :values #+allegro :weak)))
+			   #+allegro :values #+allegro :weak
+                           #+lispworks :weak-kind #+lispworks :value)))
   (setf (gethash (compute-records-cache-key targets qualifiers)
 		 (record-caches database)) results)
   results)

@@ -859,11 +859,13 @@ uninclusive, and the args from that keyword to the end."
 
 (let ((keyword-package (symbol-package :foo)))
   (defmethod database-output-sql ((sym symbol) database)
-    (convert-to-db-default-case
-     (if (equal (symbol-package sym) keyword-package)
-	 (concatenate 'string "'" (string sym) "'")
-	 (symbol-name sym))
-     database)))
+  (if (null sym) 
+      +null-string+ 
+      (convert-to-db-default-case
+       (if (equal (symbol-package sym) keyword-package)
+           (concatenate 'string "'" (string sym) "'")
+           (symbol-name sym))
+       database))))
 
 (defmethod database-output-sql ((tee (eql t)) database)
   (declare (ignore database))
