@@ -74,11 +74,11 @@ install: build
 	dh_installdirs
 
 	# Main package
-	$(INSTALL) $(INSTALLFLAGS) $(srcs) $(prefix)/$(clc-repos)/clsql
+	$(INSTALL) $(INSTALLFLAGS) $(srcs) $(prefix)/$(clc-repos)/clsql/sql
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-cmucl-compat) $(prefix)/$(clc-repos)/clsql/cmucl-compat
 
 	# Base
-	$(INSTALL) $(INSTALLFLAGS) $(srcs-base) $(prefix-base)/$(clc-repos)/clsql
+	$(INSTALL) $(INSTALLFLAGS) $(srcs-base) $(prefix-base)/$(clc-repos)/clsql/sql
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-base-uffi) $(prefix-base)/$(clc-repos)/clsql/interfaces/clsql-uffi
 
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-mysql) $(prefix-mysql)/$(clc-repos)/clsql/interfaces/mysql
@@ -86,12 +86,6 @@ install: build
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-pg-socket) $(prefix-pg-socket)/$(clc-repos)/clsql/interfaces/postgresql-socket
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-aodbc) $(prefix-aodbc)/$(clc-repos)/clsql/interfaces/aodbc
 
-	dh_link ../repositories/clsql $(prefix)/$(clc-source)/clsql
-	dh_link ../repositories/clsql $(prefix-base)/$(clc-source)/clsql-base
-	dh_link ../repositories/clsql $(prefix-mysql)/$(clc-source)/clsql-mysql
-	dh_link ../repositories/clsql $(prefix-pg)/$(clc-source)/clsql-postgresql
-	dh_link ../repositories/clsql $(prefix-pg-socket)/$(clc-source)/clsql-postgresql-socket
-	dh_link ../repositories/clsql $(prefix-aodbc)/$(clc-source)/clsql-aodbc
 
 	# CLC Systems
 	$(INSTALL) $(INSTALLFLAGS) clsql.system $(prefix)/$(clc-systems)/
@@ -134,18 +128,13 @@ binary-arch: build install
 #	dh_installdebconf	
 	dh_installdocs
 #	dh_installexamples 
-#	dh_installmenu
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installpam
-#	dh_installmime
-#	dh_installinit
-#	dh_installcron
-#	dh_installman
-#	dh_installinfo
-#	dh_undocumented
 	dh_installchangelogs ChangeLog
-	dh_link
+	dh_link ../repositories/clsql $(prefix)/$(clc-source)/clsql
+	dh_link ../repositories/clsql $(prefix-base)/$(clc-source)/clsql-base
+	dh_link ../repositories/clsql $(prefix-mysql)/$(clc-source)/clsql-mysql
+	dh_link ../repositories/clsql $(prefix-pg)/$(clc-source)/clsql-postgresql
+	dh_link ../repositories/clsql $(prefix-pg-socket)/$(clc-source)/clsql-postgresql-socket
+	dh_link ../repositories/clsql $(prefix-aodbc)/$(clc-source)/clsql-aodbc
 	dh_strip
 	dh_compress
 	dh_fixperms
