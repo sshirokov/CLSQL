@@ -398,11 +398,54 @@
   :field-names nil :result-types nil :flatp t)
  ("10" "1" "1" "1" "1" "1" "1" "1" "1" "1"))
   
-;(deftest :fdml/select/11
-;    (clsql:select [emplid] :from [employee]
-;                :where [= [emplid] [any [select [companyid] :from [company]]]]
-;                :flatp t)
-;  ("1"))
+(deftest :fdml/select/28 
+ (loop for column in `([*] [emplid]) collect         
+      (clsql:select [count column] :from [employee] 
+                    :flatp t :result-types nil :field-names nil))
+ (("10") ("10")))
+
+(deftest :fdml/select/29 
+ (clsql:select [first-name] [last-name] :from [employee] 
+                       :result-types nil :field-names nil 
+                       :order-by '(([first-name] :asc) ([last-name] :desc)))
+ (("Boris" "Yeltsin") ("Josef" "Stalin") ("Konstantin" "Chernenko")
+  ("Leon" "Trotsky") ("Leonid" "Brezhnev") ("Mikhail" "Gorbachev")
+  ("Nikita" "Kruschev") ("Vladamir" "Putin") ("Vladamir" "Lenin")
+  ("Yuri" "Andropov")))
+
+(deftest :fdml/select/30 
+ (clsql:select [first-name] [last-name] :from [employee] 
+                       :result-types nil :field-names nil 
+                       :order-by '(([first-name] :asc) ([last-name] :asc)))
+ (("Boris" "Yeltsin") ("Josef" "Stalin") ("Konstantin" "Chernenko")
+  ("Leon" "Trotsky") ("Leonid" "Brezhnev") ("Mikhail" "Gorbachev")
+  ("Nikita" "Kruschev") ("Vladamir" "Lenin") ("Vladamir" "Putin")
+  ("Yuri" "Andropov")))
+
+(deftest :fdml/select/31
+ (clsql:select [last-name] :from [employee]                   
+              :set-operation [union [select [first-name] :from [employee]
+                                            :order-by [last-name]]]
+              :flatp t
+              :result-types nil 
+              :field-names nil)
+ ("Andropov" "Boris" "Brezhnev" "Chernenko" "Gorbachev" "Josef" "Konstantin"
+ "Kruschev" "Lenin" "Leon" "Leonid" "Mikhail" "Nikita" "Putin" "Stalin"
+ "Trotsky" "Vladamir" "Yeltsin" "Yuri"))
+
+(deftest :fdml/select/32
+    (clsql:select [emplid] :from [employee]
+                :where [= [emplid] [any [select [companyid] :from [company]]]]
+                :flatp t :result-types nil :field-names nil)
+  ("1"))
+
+(deftest :fdml/select/33
+ (clsql:select [last-name] :from [employee] 
+              :where [> [emplid] [all [select [groupid] :from [employee]]]]
+              :order-by [last-name] 
+              :flatp t :result-types nil :field-names nil)
+("Andropov" "Brezhnev" "Chernenko" "Gorbachev" "Kruschev" "Putin" "Stalin"
+ "Trotsky" "Yeltsin"))
 
 (deftest :fdml/do-query/1
     (let ((result '()))
@@ -426,6 +469,21 @@
                             :order-by [last-name]])
   #("Andropov" "Brezhnev" "Chernenko" "Gorbachev" "Kruschev" "Lenin" "Putin"
     "Stalin" "Trotsky" "Yeltsin"))
+
+(deftest :fdml/map-query/3 
+ (clsql:map-query 'list #'identity
+                  [select [last-name] :from [employee] :order-by [last-name]])
+ (("Andropov") ("Brezhnev") ("Chernenko") ("Gorbachev") ("Kruschev") ("Lenin")
+  ("Putin") ("Stalin") ("Trotsky") ("Yeltsin")))
+
+(deftest :fdml/map-query/4 
+ (clsql:map-query 'list #'identity
+                  [select [first-name] [last-name] :from [employee] 
+                          :order-by [last-name]])
+ (("Yuri" "Andropov") ("Leonid" "Brezhnev") ("Konstantin" "Chernenko")
+  ("Mikhail" "Gorbachev") ("Nikita" "Kruschev") ("Vladamir" "Lenin")
+  ("Vladamir" "Putin") ("Josef" "Stalin") ("Leon" "Trotsky") 
+  ("Boris" "Yeltsin")))
   
 (deftest :fdml/loop/1
     (loop for (forename surname)

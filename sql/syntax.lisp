@@ -86,6 +86,8 @@ syntax is disabled."
   (let ((sqllist (read-delimited-list #\] stream t)))
     (cond ((string= (write-to-string (car sqllist)) "||")
            (cons (sql-operator 'concat) (cdr sqllist)))
+          ((and (= (length sqllist) 1) (eql (car sqllist) '*))
+           (apply #'generate-sql-reference sqllist))
           ((sql-operator (car sqllist))
            (cons (sql-operator (car sqllist)) (cdr sqllist)))
           (t (apply #'generate-sql-reference sqllist)))))
