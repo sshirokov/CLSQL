@@ -1,3 +1,11 @@
+cl-sql (0.7.3-2) unstable; urgency=low
+
+  * Move .so files into /usr/lib/cl-sql directory
+  
+  * Move documentation into the clsql-base package
+
+ -- Kevin M. Rosenberg <kevin@rosenberg.net>  Mon,  8 Jul 2002 11:10:11 -0600
+
 cl-sql (0.7.3-1) unstable; urgency=low
 
   * Added missing documentation to upstream package.

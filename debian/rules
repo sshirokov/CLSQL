@@ -46,7 +46,7 @@ INSTALLDIRFLAGS	:= -d -g root -o root -m 0755
 clc-base	:= usr/share/common-lisp
 clc-source	:= $(clc-base)/source
 clc-systems	:= $(clc-base)/systems
-doc-dir		:= $(prefix)/usr/share/doc/cl-sql
+doc-dir		:= $(prefix-base)/usr/share/doc/cl-sql
 
 clc-clsql	:= $(clc-source)/$(plain-pkg)-$(UPSTREAM_VER)
 
@@ -54,7 +54,9 @@ lispdir		:= $(prefix)/$(clc-clsql)
 lispdir-sql	:= $(prefix)/$(clc-clsql)/sql
 lispdir-base	:= $(prefix-base)/$(clc-clsql)/base
 lispdir-base-uffi := $(prefix-base)/$(clc-clsql)/interfaces/clsql-uffi
+sodir-base-uffi := $(prefix-base)/usr/lib/cl-sql
 lispdir-mysql	:= $(prefix-mysql)/$(clc-clsql)/interfaces/mysql
+sodir-mysql	:= $(prefix-mysql)/usr/lib/cl-sql
 lispdir-pg	:= $(prefix-pg)/$(clc-clsql)/interfaces/postgresql
 lispdir-pg-socket := $(prefix-pg-socket)/$(clc-clsql)/interfaces/postgresql-socket
 lispdir-aodbc	:= $(prefix-aodbc)/$(clc-clsql)/interfaces/aodbc
@@ -91,7 +93,8 @@ install: build
 
 	$(INSTALL) $(INSTALLDIRFLAGS) $(lispdir) $(lispdir-base) \
 		$(lispdir-base-uffi) $(lispdir-pg) $(lispdir-pg-socket) \
-		$(lispdir-mysql) $(lispdir-sql) $(lispdir-aodbc)
+		$(lispdir-mysql) $(lispdir-sql) $(lispdir-aodbc) \
+		$(sodir-base-uffi) $(sodir-mysql)
 
 	# Main package
 	$(INSTALL) $(INSTALLDIRFLAGS) $(lispdir) $(lispdir-int)
@@ -100,10 +103,10 @@ install: build
 	# Base
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-base) $(lispdir-base)
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-base-uffi) $(lispdir-base-uffi)
-	$(INSTALL) $(INSTALLEXECFLAGS) $(srcs-base-uffi-so) $(lispdir-base-uffi)
+	$(INSTALL) $(INSTALLEXECFLAGS) $(srcs-base-uffi-so) $(sodir-base-uffi)
 
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-mysql) $(lispdir-mysql)
-	$(INSTALL) $(INSTALLEXECFLAGS) $(srcs-mysql-so) $(lispdir-mysql)
+	$(INSTALL) $(INSTALLEXECFLAGS) $(srcs-mysql-so) $(sodir-mysql)
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-pg) $(lispdir-pg)
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-pg-socket) $(lispdir-pg-socket)
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-aodbc) $(lispdir-aodbc)

@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.13 2002/06/20 14:58:21 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.14 2002/07/08 17:18:53 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -61,9 +61,12 @@ CHECK=nsgmls -s -C ${CATALOG} || exit 1
 check:
 	@$(CHECK)
 
-html: $(DOCFILES)
+.PHONY: html
+html: html.tar.gz
+
+html.tar.gz: $(DOCFILES)
 	@$(CHECK)
-	@( rm -rf html ; mkdir html; cd html ; jade -t sgml -c ../${CATALOG} -d ${DSSSL_HTML} ../${DOCFILE} > /dev/null; cp book1.html index.html; cd ..)
+	@( rm -rf html ; mkdir html; cd html ; jade -t sgml -c ../${CATALOG} -d ${DSSSL_HTML} ../${DOCFILE} > /dev/null; cp book1.html index.html; GZIP='-9' tar czf ../html.tar.gz *; cd ..)
 
 .PHONY: tex
 tex: ${TEXFILE}
@@ -75,7 +78,7 @@ ${TEXFILE}: ${DOCFILES}
 .PHONY: pdf
 pdf: ${PDFFILE}
 
-${PDFFILE}: ${TEXFILE}
+${PDFFILE}: ${DOCFILES}
 	@pdfjadetex -interaction=batchmode '\pdfcompresslevel=9' '\input ${TEXFILE}' > /dev/null
 	@pdfjadetex -interaction=batchmode '\pdfcompresslevel=9' '\input ${TEXFILE}' > /dev/null
 	@pdfjadetex -interaction=batchmode '\pdfcompresslevel=9' '\input ${TEXFILE}' > /dev/null
@@ -98,11 +101,10 @@ ${PSFILE}: ${DVIFILE}
 
 .PHONY: clean
 clean: 
-	@rm -f *~ *.bak *.orig \#*\# .\#*
+	@rm -f *~ *.bak *.orig \#*\# .\#* 
+	@rm -rf html ${PSFILE}
 	@rm -f ${TMPFILES}
 	@rm -f  ${DVIFILE} ${TEXFILE}
 
 .PHONY: distclean
 distclean: clean
-	@rm -rf html
-	@rm -f ${PSFILE} ${PDFFILE}
