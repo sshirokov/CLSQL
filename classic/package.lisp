@@ -128,7 +128,7 @@
 
      ;; functional.lisp
      ;; These are no longer export since different functions are
-     ;; exported by the CLSQL-USQL package
+     ;; exported by the CLSQL package
      ;; #:insert-records
      ;; #:delete-records
      ;; #:update-records

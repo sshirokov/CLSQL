@@ -23,9 +23,8 @@
 ;;; functional SQL interface, which are just nicer layers above the
 ;;; basic SQL interface.
 
-;;; With the integration of CLSQL-USQL, these functions are no
-;;; longer exported by the CLSQL package since they conflict with names
-;;; exported by CLSQL-USQL
+;;; These functions are no longer exported since they conflict with names
+;;; exported by CLSQL
 
 (defun insert-records
     (&key into attributes values av-pairs query (database *default-database*))
