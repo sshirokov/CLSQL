@@ -611,7 +611,7 @@ DATABASE-NULL-VALUE on the type of the slot."))
   (declare (ignore database))
   (progv '(*print-circle* *print-array*) '(t t)
     (let ((escaped (prin1-to-string val)))
-      (clsql-base-sys::substitute-char-string
+      (clsql-base::substitute-char-string
        escaped #\Null " "))))
 
 (defmethod database-output-sql-as-type ((type (eql 'symbol)) val database)

@@ -113,11 +113,11 @@ as possible second argument) to the desired representation of date/time/timestam
           (progn ,result-code ,@body))
          (#.$SQL_INVALID_HANDLE
           (error
-	   'clsql-base-sys:clsql-odbc-error
+	   'clsql-base:clsql-odbc-error
 	   :odbc-message "Invalid handle"))
          (#.$SQL_STILL_EXECUTING
           (error
-	   'clsql-base-sys:clsql-odbc-error
+	   'clsql-base:clsql-odbc-error
 	   :odbc-message "Still executing"))
          (#.$SQL_ERROR
           (multiple-value-bind (error-message sql-state)
@@ -125,7 +125,7 @@ as possible second argument) to the desired representation of date/time/timestam
 			    (or ,hdbc +null-handle-ptr+)
 			    (or ,hstmt +null-handle-ptr+))
             (error
-	     'clsql-base-sys:clsql-odbc-error
+	     'clsql-base:clsql-odbc-error
 	     :odbc-message error-message
 	     :sql-state sql-state)))
 	 (otherwise

@@ -23,7 +23,7 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defpackage #:clsql-classic-sys
     (:nicknames #:clsql-classic)
-    (:use #:cl #:clsql-base-sys)
+    (:use #:cl #:clsql-base)
     (:import-from 
      #:clsql-base
      .

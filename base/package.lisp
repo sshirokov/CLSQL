@@ -23,11 +23,9 @@
 ;;;; This file makes the required package definitions for CLSQL's
 ;;;; core packages.
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-(defpackage #:clsql-base-sys
+(defpackage #:clsql-base
   (:use #:cl)
   (:export
-     ;; "Private" exports for use by interface packages
      #:check-connection-spec
      #:database-type-load-foreign
      #:database-type-library-loaded ;; KMR - Tests if foreign library okay
@@ -83,229 +81,221 @@
      #:convert-to-db-default-case
      #:ensure-keyword
      
-     ;; Shared exports for re-export by CLSQL-BASE
-     .
-     #1=(#:clsql-condition
-	 #:clsql-error
-	 #:clsql-simple-error
-	 #:clsql-warning
-	 #:clsql-simple-warning
-	 #:clsql-invalid-spec-error
-	 #:clsql-invalid-spec-error-connection-spec
-	 #:clsql-invalid-spec-error-database-type
-	 #:clsql-invalid-spec-error-template
-	 #:clsql-access-error
-	 #:clsql-access-error-database-type
-	 #:clsql-access-error-connection-spec
-	 #:clsql-access-error-error
-	 #:clsql-connect-error
-	 #:clsql-connect-error-errno
-	 #:clsql-sql-error
-	 #:clsql-sql-error-database
-	 #:clsql-sql-error-expression
-	 #:clsql-sql-error-errno
-	 #:clsql-sql-error-error
-	 #:clsql-database-warning
-	 #:clsql-database-warning-database
-	 #:clsql-database-warning-message
-	 #:clsql-exists-condition
-	 #:clsql-exists-condition-new-db
-	 #:clsql-exists-condition-old-db
-	 #:clsql-exists-warning
-	 #:clsql-exists-error
-	 #:clsql-closed-error
-	 #:clsql-closed-error-database
-         #:clsql-sql-syntax-error
-         #:clsql-type-error
-         #:clsql-odbc-error
-	 #:clsql-odbc-error-message
-	 
-	 #:*loaded-database-types*
-	 #:reload-database-types
-	 #:*default-database-type*
-	 #:*initialized-database-types*
-	 #:initialize-database-type
-	 #:*connect-if-exists*
-	 #:*default-database*
-	 #:connected-databases
-	 #:database
-	 #:database-name
-	 #:find-database
-	 #:database-name-from-spec
-	 #:is-database-open
+     #:clsql-condition
+     #:clsql-error
+     #:clsql-simple-error
+     #:clsql-warning
+     #:clsql-simple-warning
+     #:clsql-invalid-spec-error
+     #:clsql-invalid-spec-error-connection-spec
+     #:clsql-invalid-spec-error-database-type
+     #:clsql-invalid-spec-error-template
+     #:clsql-access-error
+     #:clsql-access-error-database-type
+     #:clsql-access-error-connection-spec
+     #:clsql-access-error-error
+     #:clsql-connect-error
+     #:clsql-connect-error-errno
+     #:clsql-sql-error
+     #:clsql-sql-error-database
+     #:clsql-sql-error-expression
+     #:clsql-sql-error-errno
+     #:clsql-sql-error-error
+     #:clsql-database-warning
+     #:clsql-database-warning-database
+     #:clsql-database-warning-message
+     #:clsql-exists-condition
+     #:clsql-exists-condition-new-db
+     #:clsql-exists-condition-old-db
+     #:clsql-exists-warning
+     #:clsql-exists-error
+     #:clsql-closed-error
+     #:clsql-closed-error-database
+     #:clsql-sql-syntax-error
+     #:clsql-type-error
+     #:clsql-odbc-error
+     #:clsql-odbc-error-message
+     
+     #:*loaded-database-types*
+     #:reload-database-types
+     #:*default-database-type*
+     #:*initialized-database-types*
+     #:initialize-database-type
+     #:*connect-if-exists*
+     #:*default-database*
+     #:connected-databases
+     #:database
+     #:database-name
+     #:find-database
+     #:database-name-from-spec
+     #:is-database-open
+     
+     ;; accessors for database class
+     #:name
+     #:connection-spec
+     #:transaction
+     #:transaction-level
+     #:conn-pool
+     #:command-recording-stream
+     #:result-recording-stream
+     #:query-recording-stream
+     #:view-classes
+     #:database-type
+     #:database-state
+     #:attribute-cache
+     
+     ;; utils.lisp
+     #:number-to-sql-string
+     #:float-to-sql-string
+     #:sql-escape-quotes
+     
+     ;; time.lisp
+     #:bad-component
+     #:current-day
+     #:current-month
+     #:current-year
+     #:day-duration
+     #:db-timestring
+     #:decode-duration
+     #:decode-time
+     #:duration
+     #:duration+
+     #:duration<
+     #:duration<=
+     #:duration=
+     #:duration>
+     #:duration>=
+     #:duration-day
+     #:duration-hour
+     #:duration-minute
+     #:duration-month
+     #:duration-second
+     #:duration-year
+     #:duration-reduce 
+     #:duration-timestring
+     #:extract-roman 
+     #:format-duration
+     #:format-time
+     #:get-time
+     #:utime->time
+     #:interval-clear
+     #:interval-contained
+     #:interval-data
+     #:interval-edit
+     #:interval-end
+     #:interval-match
+     #:interval-push
+     #:interval-relation
+     #:interval-start
+     #:interval-type
+     #:make-duration
+     #:make-interval
+     #:make-time
+     #:merged-time
+     #:midnight
+     #:month-name
+     #:parse-date-time
+     #:parse-timestring
+     #:parse-yearstring
+     #:print-date
+     #:roll
+     #:roll-to
+     #:time
+     #:time+
+     #:time-
+     #:time-by-adding-duration
+     #:time-compare
+     #:time-difference
+     #:time-dow
+     #:time-element
+     #:time-max
+     #:time-min
+     #:time-mjd
+     #:time-msec
+     #:time-p
+     #:time-sec
+     #:time-well-formed
+     #:time-ymd
+     #:time<
+     #:time<=
+     #:time=
+     #:time>
+     #:time>=
+     #:timezone
+     #:universal-time
+     #:wall-time
+     #:wall-timestring
+     #:week-containing
+     #:gregorian-to-mjd
+     #:mjd-to-gregorian
 
-	 ;; accessors for database class
-	 #:name
-	 #:connection-spec
-	 #:transaction
-	 #:transaction-level
-	 #:conn-pool
-	 #:command-recording-stream
-	 #:result-recording-stream
-	 #:query-recording-stream
-	 #:view-classes
-	 #:database-type
-	 #:database-state
-	 #:attribute-cache
-	 
-	 ;; utils.lisp
-	 #:number-to-sql-string
-	 #:float-to-sql-string
-	 #:sql-escape-quotes
-	 
-	 ;; time.lisp
-	 #:bad-component
-	 #:current-day
-	 #:current-month
-	 #:current-year
-	 #:day-duration
-	 #:db-timestring
-	 #:decode-duration
-	 #:decode-time
-	 #:duration
-	 #:duration+
-	 #:duration<
-	 #:duration<=
-	 #:duration=
-	 #:duration>
-	 #:duration>=
-	 #:duration-day
-	 #:duration-hour
-	 #:duration-minute
-	 #:duration-month
-	 #:duration-second
-	 #:duration-year
-	 #:duration-reduce 
-	 #:duration-timestring
-	 #:extract-roman 
-	 #:format-duration
-	 #:format-time
-	 #:get-time
-	 #:utime->time
-	 #:interval-clear
-	 #:interval-contained
-	 #:interval-data
-	 #:interval-edit
-	 #:interval-end
-	 #:interval-match
-	 #:interval-push
-	 #:interval-relation
-	 #:interval-start
-	 #:interval-type
-	 #:make-duration
-	 #:make-interval
-	 #:make-time
-	 #:merged-time
-	 #:midnight
-	 #:month-name
-	 #:parse-date-time
-	 #:parse-timestring
-	 #:parse-yearstring
-	 #:print-date
-	 #:roll
-	 #:roll-to
-	 #:time
-	 #:time+
-	 #:time-
-	 #:time-by-adding-duration
-	 #:time-compare
-	 #:time-difference
-	 #:time-dow
-	 #:time-element
-	 #:time-max
-	 #:time-min
-	 #:time-mjd
-	 #:time-msec
-	 #:time-p
-	 #:time-sec
-	 #:time-well-formed
-	 #:time-ymd
-	 #:time<
-	 #:time<=
-	 #:time=
-	 #:time>
-	 #:time>=
-	 #:timezone
-	 #:universal-time
-	 #:wall-time
-	 #:wall-timestring
-	 #:week-containing
-	 #:gregorian-to-mjd
-	 #:mjd-to-gregorian
-	 x
-	 ;; recording.lisp -- SQL I/O Recording 
-	 #:record-sql-action
-	 #:add-sql-stream                 ; recording  xx
-	 #:delete-sql-stream	          ; recording  xx
-	 #:list-sql-streams	          ; recording  xx
-	 #:sql-recording-p	          ; recording  xx
-	 #:sql-stream			  ; recording  xx
-	 #:start-sql-recording		  ; recording  xx
-	 #:stop-sql-recording		  ; recording  xx
+     ;; recording.lisp -- SQL I/O Recording 
+     #:record-sql-action
+     #:add-sql-stream                 ; recording  xx
+     #:delete-sql-stream	          ; recording  xx
+     #:list-sql-streams	          ; recording  xx
+     #:sql-recording-p	          ; recording  xx
+     #:sql-stream			  ; recording  xx
+     #:start-sql-recording		  ; recording  xx
+     #:stop-sql-recording		  ; recording  xx
 
-	 ;; database.lisp -- Connection
-	 #:*default-database-type*	          ; clsql-base xx
-	 #:*default-database*	          ; classes    xx
-	 #:connect			          ; database   xx
-	 #:*connect-if-exists*	          ; database   xx
-	 #:connected-databases	          ; database   xx
-	 #:database		          ; database   xx
-	 #:database-name                     ; database   xx
-	 #:disconnect		          ; database   xx
-	 #:reconnect                         ; database
-	 #:find-database                     ; database   xx
-	 #:status                            ; database   xx
-	 #:with-database
-	 #:with-default-database
-	 #:disconnect-pooled
-	 #:create-database
-	 #:destroy-database
-	 #:probe-database
-	 #:list-databases
-
-	 ;; basic-sql.lisp
-	 #:query
-	 #:execute-command
-	 #:write-large-object
-	 #:read-large-object
-	 #:delete-large-object
-	 #:do-query
-	 #:map-query
-	 #:describe-table
-
-	 ;; Transactions
-	 #:with-transaction
-	 #:commit-transaction
-	 #:rollback-transaction
-	 #:add-transaction-commit-hook
-	 #:add-transaction-rollback-hook
-	 #:commit                            ; transact   xx
-	 #:rollback			  ; transact   xx
-	 #:with-transaction		  ; transact   xx		.
-	 #:start-transaction                 ; transact   xx
-	 #:in-transaction-p                  ; transact   xx
-	 #:database-start-transaction
-	 #:database-abort-transaction
-	 #:database-commit-transaction
-	 #:transaction-level
-	 #:transaction
-
-	 ;; Database features specialized by backend
-	 #:db-type-use-column-on-drop-index?
-	 #:db-type-has-views?
-	 #:db-type-has-subqueries?
-	 #:db-type-has-boolean-where?
-	 #:db-type-has-fancy-math?
-	 #:db-type-default-case 
-	 #:db-backend-has-create/destroy-db?
-	 #:db-type-transaction-capable?
-	 ))
-    (:documentation "This is the INTERNAL SQL-Interface package of CLSQL-BASE."))
-
-(defpackage #:clsql-base
-    (:import-from #:clsql-base-sys . #1#)
-    (:export . #1#)
-    (:documentation "This is the SQL-Interface package of CLSQL-BASE."))
-);eval-when
+     ;; database.lisp -- Connection
+     #:*default-database-type*	          ; clsql-base xx
+     #:*default-database*	          ; classes    xx
+     #:connect			          ; database   xx
+     #:*connect-if-exists*	          ; database   xx
+     #:connected-databases	          ; database   xx
+     #:database		          ; database   xx
+     #:database-name                     ; database   xx
+     #:disconnect		          ; database   xx
+     #:reconnect                         ; database
+     #:find-database                     ; database   xx
+     #:status                            ; database   xx
+     #:with-database
+     #:with-default-database
+     #:disconnect-pooled
+     #:create-database
+     #:destroy-database
+     #:probe-database
+     #:list-databases
+     
+     ;; basic-sql.lisp
+     #:query
+     #:execute-command
+     #:write-large-object
+     #:read-large-object
+     #:delete-large-object
+     #:do-query
+     #:map-query
+     #:describe-table
+     
+     ;; Transactions
+     #:with-transaction
+     #:commit-transaction
+     #:rollback-transaction
+     #:add-transaction-commit-hook
+     #:add-transaction-rollback-hook
+     #:commit                            ; transact   xx
+     #:rollback			  ; transact   xx
+     #:with-transaction		  ; transact   xx		.
+     #:start-transaction                 ; transact   xx
+     #:in-transaction-p                  ; transact   xx
+     #:database-start-transaction
+     #:database-abort-transaction
+     #:database-commit-transaction
+     #:transaction-level
+     #:transaction
+     
+     ;; Database features specialized by backend
+     #:db-type-use-column-on-drop-index?
+     #:db-type-has-views?
+     #:db-type-has-subqueries?
+     #:db-type-has-boolean-where?
+     #:db-type-has-fancy-math?
+     #:db-type-default-case 
+     #:db-backend-has-create/destroy-db?
+     #:db-type-transaction-capable?
+     )
+  (:documentation "This is the INTERNAL SQL-Interface package of CLSQL-BASE."))
 
 

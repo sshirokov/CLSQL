@@ -12,7 +12,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-base-sys)
+(in-package #:clsql-base)
 
 ;;; Query
 

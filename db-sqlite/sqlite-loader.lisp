@@ -16,7 +16,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package :clsql-sqlite)
+(in-package #:clsql-sqlite)
 
 (defvar *sqlite-supporting-libraries* '("c")
   "Used only by CMU. List of library flags needed to be passed to ld
@@ -46,7 +46,7 @@ set to the right path before compiling or loading the system.")
 	(setq *sqlite-library-loaded* t)
 	(warn "Can't load SQLite library ~A" libpath))))
 
-(clsql-base-sys:database-type-load-foreign :sqlite)
+(clsql-base:database-type-load-foreign :sqlite)
 
 
     

@@ -14,7 +14,7 @@
 ;;;; *************************************************************************
 
 (defpackage #:clsql-mysql
-    (:use #:common-lisp #:clsql-base-sys #:mysql #:clsql-uffi)
+    (:use #:common-lisp #:clsql-base #:mysql #:clsql-uffi)
     (:export #:mysql-database)
     (:documentation "This is the CLSQL interface to MySQL."))
 
@@ -392,7 +392,7 @@
 (defmethod database-create (connection-spec (type (eql :mysql)))
   (destructuring-bind (host name user password) connection-spec
     (multiple-value-bind (output status)
-	(clsql-base-sys:command-output "mysqladmin create -u~A -p~A -h~A ~A"
+	(clsql-base:command-output "mysqladmin create -u~A -p~A -h~A ~A"
 				       user password 
 				       (if host host "localhost")
 				       name)
@@ -408,7 +408,7 @@
 (defmethod database-destroy (connection-spec (type (eql :mysql)))
   (destructuring-bind (host name user password) connection-spec
     (multiple-value-bind (output status)
-	(clsql-base-sys:command-output "mysqladmin drop -f -u~A -p~A -h~A ~A"
+	(clsql-base:command-output "mysqladmin drop -f -u~A -p~A -h~A ~A"
 				       user password 
 				       (if host host "localhost")
 				       name)
@@ -432,11 +432,11 @@
     (let ((database (database-connect (list host "mysql" user password) type)))
       (unwind-protect
 	   (progn
-	     (setf (slot-value database 'clsql-base-sys::state) :open)
+	     (setf (slot-value database 'clsql-base::state) :open)
 	     (mapcar #'car (database-query "show databases" database :auto nil)))
 	(progn
 	  (database-disconnect database)
-	  (setf (slot-value database 'clsql-base-sys::state) :closed))))))
+	  (setf (slot-value database 'clsql-base::state) :closed))))))
 
 ;;; Database capabilities
 
@@ -458,6 +458,6 @@
   (let ((tuple (car (database-query "SHOW VARIABLES LIKE 'HAVE_INNODB'" database :auto nil))))
     (and tuple (string-equal "YES" (second tuple)))))
 
-(when (clsql-base-sys:database-type-library-loaded :mysql)
-  (clsql-base-sys:initialize-database-type :database-type :mysql))
+(when (clsql-base:database-type-library-loaded :mysql)
+  (clsql-base:initialize-database-type :database-type :mysql))
 

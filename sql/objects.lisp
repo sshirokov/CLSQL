@@ -456,7 +456,7 @@ superclass of the newly-defined View Class."
 
 (defmethod database-get-type-specifier (type args database)
   (declare (ignore type args))
-  (if (clsql-base-sys::in (database-underlying-type database)
+  (if (clsql-base::in (database-underlying-type database)
 			  :postgresql :postgresql-socket)
           "VARCHAR"
           "VARCHAR(255)"))
@@ -476,7 +476,7 @@ superclass of the newly-defined View Class."
                                         database)
   (if args
       (format nil "VARCHAR(~A)" (car args))
-    (if (clsql-base-sys::in (database-underlying-type database) 
+    (if (clsql-base::in (database-underlying-type database) 
 			    :postgresql :postgresql-socket)
 	"VARCHAR"
       "VARCHAR(255)")))
@@ -485,7 +485,7 @@ superclass of the newly-defined View Class."
                                         database)
   (if args
       (format nil "VARCHAR(~A)" (car args))
-    (if (clsql-base-sys::in (database-underlying-type database) 
+    (if (clsql-base::in (database-underlying-type database) 
 			    :postgresql :postgresql-socket)
 	"VARCHAR"
       "VARCHAR(255)")))
@@ -493,7 +493,7 @@ superclass of the newly-defined View Class."
 (defmethod database-get-type-specifier ((type (eql 'string)) args database)
   (if args
       (format nil "VARCHAR(~A)" (car args))
-    (if (clsql-base-sys::in (database-underlying-type database) 
+    (if (clsql-base::in (database-underlying-type database) 
 			    :postgresql :postgresql-socket)
 	"VARCHAR"
       "VARCHAR(255)")))
@@ -553,7 +553,7 @@ superclass of the newly-defined View Class."
   (declare (ignore database))
   (progv '(*print-circle* *print-array*) '(t t)
     (let ((escaped (prin1-to-string val)))
-      (clsql-base-sys::substitute-char-string
+      (clsql-base::substitute-char-string
        escaped #\Null " "))))
 
 (defmethod database-output-sql-as-type ((type (eql 'symbol)) val database)
@@ -630,22 +630,24 @@ superclass of the newly-defined View Class."
 (defmethod read-sql-value (val (type (eql 'symbol)) database)
   (declare (ignore database))
   (when (< 0 (length val))
-    (unless (string= val (clsql-base-sys:symbol-name-default-case "NIL"))
-      (intern (clsql-base-sys:symbol-name-default-case val)
+    (unless (string= val (clsql-base:symbol-name-default-case "NIL"))
+      (intern (clsql-base:symbol-name-default-case val)
               (symbol-package *update-context*)))))
 
 (defmethod read-sql-value (val (type (eql 'integer)) database)
   (declare (ignore database))
   (etypecase val
     (string
-     (parse-integer val))
+     (unless (string-equal "NIL" val)
+       (parse-integer val)))
     (number val)))
 
 (defmethod read-sql-value (val (type (eql 'bigint)) database)
   (declare (ignore database))
   (etypecase val
     (string
-     (parse-integer val))
+     (unless (string-equal "NIL" val)
+       (parse-integer val)))
     (number val)))
 
 (defmethod read-sql-value (val (type (eql 'float)) database)
@@ -660,10 +662,10 @@ superclass of the newly-defined View Class."
 (defmethod read-sql-value (val (type (eql 'univeral-time)) database)
   (declare (ignore database))
   (unless (eq 'NULL val)
-  (etypecase val
-    (string
-     (parse-intger val))
-    (number val)))
+    (etypecase val
+      (string
+       (parse-integer val))
+      (number val))))
 
 (defmethod read-sql-value (val (type (eql 'wall-time)) database)
   (declare (ignore database))

@@ -16,7 +16,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-base-sys)
+(in-package #:clsql-base)
 
 (defvar *db-pool* (make-hash-table :test #'equal))
 (defvar *db-pool-lock* (make-process-lock "DB Pool lock"))

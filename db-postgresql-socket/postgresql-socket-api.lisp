@@ -27,13 +27,13 @@
      (:float4 700)
      (:float8 701)))
 
-(defmethod clsql-base-sys:database-type-library-loaded ((database-type
+(defmethod clsql-base:database-type-library-loaded ((database-type
 					  (eql :postgresql-socket)))
   "T if foreign library was able to be loaded successfully. Always true for
 socket interface"
   t)
 
-(defmethod clsql-base-sys:database-type-load-foreign ((database-type (eql :postgresql-socket)))
+(defmethod clsql-base:database-type-load-foreign ((database-type (eql :postgresql-socket)))
   t)
 
 

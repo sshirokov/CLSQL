@@ -112,7 +112,7 @@
   t nil)
   
   ;; create a view, list its attributes and drop it 
-(when (clsql-base-sys:db-type-has-views? *test-database-underlying-type*)
+(when (clsql-base:db-type-has-views? *test-database-underlying-type*)
   (deftest :fddl/view/2
       (progn (clsql:create-view [lenins-group]
 				:as [select [first-name] [last-name] [email]

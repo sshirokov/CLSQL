@@ -4,7 +4,12 @@
 	* doc/csql.xml: Update def-view-class documentation
 	* test/test-init.lisp: Change old :db-type to :db-kind.
 	Remove old :nulls-ok attributes.
-
+	* sql/objects.lisp: Add new universal-time and bigint
+	types. Optimize reading of integers using parse-integer
+	rather than read-from-string.
+	* */*.lisp: Merge clsql-base-sys and clsql-base packages
+	into clsql-base package
+	
 1 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.5: SQLite backend now passes all result-types tests
 	* clsql-sqlite.asd: Depend on clsql-uffi system

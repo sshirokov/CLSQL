@@ -62,10 +62,10 @@ set to the right path before compiling or loading the system.")
 (defvar *mysql-library-loaded* nil
   "T if foreign library was able to be loaded successfully")
 
-(defmethod clsql-base-sys:database-type-library-loaded ((database-type (eql :mysql)))
+(defmethod clsql-base:database-type-library-loaded ((database-type (eql :mysql)))
   *mysql-library-loaded*)
 				      
-(defmethod clsql-base-sys:database-type-load-foreign ((database-type (eql :mysql)))
+(defmethod clsql-base:database-type-load-foreign ((database-type (eql :mysql)))
   (let ((mysql-path
 	 (uffi:find-foreign-library *mysql-library-candidate-names*
 				    *mysql-library-candidate-directories*
@@ -85,5 +85,5 @@ set to the right path before compiling or loading the system.")
   (setq *mysql-library-loaded* t))
 
 
-(clsql-base-sys:database-type-load-foreign :mysql)
+(clsql-base:database-type-load-foreign :mysql)
 

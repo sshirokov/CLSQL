@@ -27,12 +27,12 @@
   t)
 
 (deftest :connection/2
-    (clsql-base-sys::string-to-list-connection-spec 
+    (clsql-base::string-to-list-connection-spec 
      "localhost/dbname/user/passwd")
   ("localhost" "dbname" "user" "passwd"))
 
 (deftest :connection/3
-    (clsql-base-sys::string-to-list-connection-spec 
+    (clsql-base::string-to-list-connection-spec 
      "dbname/user@hostname")
   ("hostname" "dbname" "user"))
 

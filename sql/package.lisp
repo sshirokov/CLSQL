@@ -30,7 +30,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defpackage #:clsql-sys
-    (:use #:common-lisp #:clsql-base-sys
+    (:use #:common-lisp #:clsql-base
 	  #+clsql-sbcl-mop #:sb-mop
 	  #+clsql-cmucl-mop #:mop
 	  #+allegro #:mop
@@ -96,7 +96,7 @@
     )
    
    (:import-from 
-    #:clsql-base-sys
+    #:clsql-base
     .
     #1=(
        ;; conditions 

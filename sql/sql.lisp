@@ -35,7 +35,7 @@
 
 (defun truncate-database (&key (database *default-database*))
   (unless (typep database 'database)
-    (clsql-base-sys::signal-no-database-error database))
+    (clsql-base::signal-no-database-error database))
   (unless (is-database-open database)
     (database-reconnect database))
   (when (db-type-has-views? (database-underlying-type database))

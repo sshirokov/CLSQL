@@ -357,7 +357,7 @@ the query against." ))
   "get-free-query finds or makes a nonactive query object, and then sets it to active.
 This makes the functions db-execute-command and db-query thread safe."
   (with-slots (queries hdbc) database
-    (or (clsql-base-sys:without-interrupts
+    (or (clsql-base:without-interrupts
          (let ((inactive-query (find-if (lambda (query)
                                           (not (query-active-p query)))
                                         queries)))
