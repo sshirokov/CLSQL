@@ -4,7 +4,8 @@ cl-sql (1.5.0-1) unstable; urgency=low
   * Use debian/compat rather than DH_COMPAT
   * Add cl-sql-tests binary with test suite
   * Use libmysqlclient10 package for LGPL license
-
+  * Add cl-sql-uffi depends for cl-sql-posgresql-socket package (closes:191599)
+  
  -- Kevin M. Rosenberg <kmr@debian.org>  Thu,  1 May 2003 16:23:37 -0600
 
 cl-sql (1.4.6-1) unstable; urgency=low

@@ -7,7 +7,7 @@
 ;;;; Author:        Kevin M. Rosenberg
 ;;;; Date Started:  Apr 2003
 ;;;;
-;;;; $Id: package.lisp,v 1.1 2003/05/02 03:08:58 kevin Exp $
+;;;; $Id: package.lisp,v 1.2 2003/05/02 03:26:46 kevin Exp $
 ;;;; *************************************************************************
 
 (defpackage #:clsql-tests
@@ -15,6 +15,3 @@
 
 (in-package #:clsql-tests)
 
-(setf *catch-errors* nil)
-
-(rem-all-tests)

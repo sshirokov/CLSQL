@@ -56,7 +56,7 @@ Description: CLSQL database backend, PostgreSQL
 
 Package: cl-sql-postgresql-socket
 Architecture: all
-Depends: cl-sql-base (>= ${Source-Version}), cl-md5
+Depends: cl-sql-base (>= ${Source-Version}), cl-md5, cl-sql-uffi (>= ${Source-Version})
 Provides: cl-sql-backend
 Description: CLSQL database backend, PostgreSQL
  This package enables you to use the CLSQL data access package

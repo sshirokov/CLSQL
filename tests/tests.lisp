@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: tests.lisp,v 1.2 2003/05/02 03:17:41 kevin Exp $
+;;;; $Id: tests.lisp,v 1.3 2003/05/02 03:29:28 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -231,7 +231,8 @@
       ))
     t)
 
-(deftest clsql.all (clsql-tests) t)
+;(deftest clsql.all (clsql-tests) t)
+(clsql-tests)
 
 
 
