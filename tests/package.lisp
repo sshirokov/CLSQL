@@ -13,6 +13,6 @@
 (in-package #:cl-user)
 
 (defpackage #:clsql-tests
-  (:use #:asdf #:cl #:clsql #:rtest #:ptester))
+  (:use #:asdf #:cl #:clsql #:ptester))
 
 
