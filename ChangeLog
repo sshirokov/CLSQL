@@ -1,4 +1,10 @@
 15 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
+	* sql/classes.lisp: SELECT now accepts table identifiers as strings 
+	for CommonSQL compliance. 
+	* tests/test-fdml.lisp: added test for table identifiers as strings 
+	in SELECT. 
+
+15 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* sql/sql.lisp: PRINT-QUERY now calls QUERY with result-types and 
 	field-names set to nil. 
 	* sql/sql.lisp: PRINT-QUERY now computes column sizes correctly 

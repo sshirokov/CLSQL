@@ -38,6 +38,10 @@ UPDATE-OBJECT-JOINS:
  object, to meet CommonSQL spec need to generate a single
  query to read values for all objects, up to max-len count.
 
+COMMIT,ROLLBACK,START-TRANSACTION: 
+ When COMMIT or ROLLBACK are called outside of WITH-TRANSACTION, an sql 
+ transaction must be explicitly started first with START-TRANSACTION. 
+
 OPTIMIZATIONS
  
 * Revisit result-type list creation,perhaps caching

@@ -374,6 +374,14 @@
  ("Boris" "Josef" "Konstantin" "Leon" "Leonid" "Mikhail" "Nikita" "Vladamir"
   "Yuri"))
 
+(deftest :fdml/select/25
+ (clsql:select [first-name] :from "employee" :flatp t :distinct t
+                            :field-names nil 
+                            :result-types nil 
+                            :order-by [first-name])
+ ("Boris" "Josef" "Konstantin" "Leon" "Leonid" "Mikhail" "Nikita" "Vladamir"
+  "Yuri"))
+
 ;(deftest :fdml/select/11
 ;    (clsql:select [emplid] :from [employee]
 ;                :where [= [emplid] [any [select [companyid] :from [company]]]]

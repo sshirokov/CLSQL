@@ -579,9 +579,10 @@ uninclusive, and the args from that keyword to the end."
     (output-sql (apply #'vector selections) database)
     (when from
       (write-string " FROM " *sql-stream*)
-      (if (listp from)
-	  (output-sql (apply #'vector from) database)
-	(output-sql from database)))
+      (typecase from 
+        (list (output-sql (apply #'vector from) database))
+        (string (write-string from *sql-stream*))
+        (t (output-sql from database))))
     (when inner-join
       (write-string " INNER JOIN " *sql-stream*)
       (output-sql inner-join database))

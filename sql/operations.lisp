@@ -139,10 +139,6 @@
   (make-instance 'sql-relational-exp
 		 :operator 'in :sub-expressions rest))
 
-;; (defsql sql-concat (:symbol "||") (&rest rest)
-;;   (make-instance 'sql-relational-exp
-;; 		 :operator '\|\| :sub-expressions rest))
-
 (defsql sql-concat (:symbol "concat") (&rest rest)
   (make-instance 'sql-relational-exp
 		 :operator '\|\| :sub-expressions rest))
