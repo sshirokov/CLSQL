@@ -8,7 +8,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: usql.cl,v 1.2 2002/04/03 17:58:23 kevin Exp $
+;;;; $Id: usql.cl,v 1.3 2002/04/06 19:54:15 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and onShore Development Inc
@@ -96,14 +96,12 @@ specifies the database to operation on, defaulting to
 (defun sequence-next (name &key (database *default-database*))
   (database-sequence-next name database))
 
-#+ignore
 (defclass sql-typecast-exp (sql-value-exp)
   ()
   (:documentation
    "An SQL typecast expression.")
   )
 
-#+ignore
 (defclass sql-value-exp (%sql-expression)
   ((modifier
     :initarg :modifier
@@ -128,7 +126,6 @@ specifies the database to operation on, defaulting to
   (declare (ignore database))
   (write-string +null-string+ *sql-stream*))
 
-#+ignore
 (defmethod print-object ((self %sql-expression) stream)
   (print-unreadable-object
    (self stream :type t)

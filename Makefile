@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.5 2002/03/27 12:09:39 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.6 2002/04/06 19:54:14 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -24,6 +24,7 @@ libs:
 clean:
 	@rm -f $(PACKAGE)-*.tar.gz $(PACKAGE)-*.zip
 	@find . -type d -name .bin |xargs rm -rf 
+	@find . -type f -name \*.a -or -name \*.so |xargs rm -rf 
 
 realclean: clean
 	@find . -type f -name \*~ -exec rm {} \;
@@ -48,10 +49,14 @@ dist: realclean docs
 	@cp -a $(SOURCE_FILES) $(DISTDIR)
 	@find $(DISTDIR) -type d -name CVS | xargs rm -r
 	@find $(DISTDIR) -type f -name .cvsignore -exec rm {} \;
-	@find $(DISTDIR)/doc -type f -name \*.tex -or -name \*.aux -or \
+	@find $(DISTDIR) -type f -and -name \*.tex -or -name \*.aux -or \
 		 -name \*.log -or -name \*.out -or -name \*.dvi -or \
-		 -name \*~ -or -name \*.ps -exec rm {} \;
+		 -name \*~ -or -name \*.ps -or -name test.config | xargs rm -f
 	@tar czf $(DIST_TARBALL) $(DISTDIR)
-	@find $(DISTDIR) -type f |grep -v .dll$ |grep -v .lib$ |xargs unix2dos -q
+	@find $(DISTDIR) -type f -name \*.cl -or -name \*.list -or \
+		-name \*.system -or -name Makefile -or -name ChangeLog -or \
+		-name COPYRIGHT -or -name TODO -or -name README -or -name INSTALL \
+		-or -name NEWS -or -name \*.sgml -or -name COPYING\* -or -name catalog \
+		| xargs unix2dos -q
 	@zip -rq $(DIST_ZIP) $(DISTDIR)
 	@rm -r $(DISTDIR)

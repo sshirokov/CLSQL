@@ -86,13 +86,12 @@ test suite.</para>
       <title>Supported Common Lisp Implementation</title>
       <para>
 The implementations that support &clsql; is governed by the supported
-implementations of &uffi;. At the time of the initial release of &clsql;,
-the following implementations are supported:
+implementations of &uffi;. The following implementations are supported:
       </para>
       <itemizedlist mark="opencircle">
-	<listitem><para>&acl; v6.1 on Redhat Linux 7.2 and Microsoft Windows.</para></listitem>
-	<listitem><para>&lw; v4.2 on Redhat Linux 7.2 and Microsoft Windows.</para></listitem>
-	<listitem><para>&cmucl; 18d on Redhat Linux 7.2.</para></listitem>
+	<listitem><para>&acl; v6.1 on Redhat Linux 7.2, FreeBSD 4.5, and Microsoft Windows XP.</para></listitem>
+	<listitem><para>&lw; v4.2 on Redhat Linux 7.2 and Microsoft Windows XP.</para></listitem>
+	<listitem><para>&cmucl; 18d-pre on Redhat Linux 7.2, FreeBSD 4.5, and Solaris 2.8.</para></listitem>
       </itemizedlist>
     </sect2>
 
@@ -102,9 +101,9 @@ the following implementations are supported:
 	Currently, &clsql; supports the following databases:
       </para>
       <itemizedlist mark="opencircle">
-	<listitem><para>&mysql; v3.23.49 on Redhat Linux 7.2 and Microsoft Windows.</para></listitem>
-	<listitem><para>&postgresql; v7.1 on Redhat Linux 7.2. Support for both direct API connections and TCP socket connections.</para></listitem>
-	<listitem><para>Allegro's ODBC interface (&aodbc;) on Redhat Linux 7.2 and Microsoft Windows.</para></listitem>
+	<listitem><para>&mysql; v3.23.49.</para></listitem>
+	<listitem><para>&postgresql; v7.2 with both direct API and TCP socket connections.</para></listitem>
+	<listitem><para>Allegro's ODBC interface (&aodbc;) using iODBC ODBC manager.</para></listitem>
       </itemizedlist>
     </sect2>
 

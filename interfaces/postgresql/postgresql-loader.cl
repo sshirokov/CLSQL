@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-loader.cl,v 1.4 2002/04/01 05:27:55 kevin Exp $
+;;;; $Id: postgresql-loader.cl,v 1.5 2002/04/06 19:54:14 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -19,20 +19,6 @@
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :postgresql)
 
-(defvar *postgresql-library-filename* 
-    (cond
-     ((probe-file "/opt/postgresql/lib/libpq.so")
-      "/opt/postgresql/lib/libpq.so")
-     ((probe-file "/usr/local/lib/libpq.so")
-      "/usr/local/lib/libpq.so")
-     ((probe-file "/usr/lib/libpq.so")
-      "/usr/lib/libpq.so")
-     #+(or win32 mswindows) 
-     ((probe-file "c:/postgresql/lib/libpq.dll")
-      "c:/postgresql/lib/libpq.dll")
-     (t
-      (warn "Can't find PostgresQL client library to load.")))
-  "Location where the PostgresSQL client library is to be found.")
 
 (defvar *postgresql-supporting-libraries* '("crypt" "c")
   "Used only by CMU. List of library flags needed to be passed to ld to
@@ -50,10 +36,11 @@ set to the right path before compiling or loading the system.")
 						  (eql :postgresql)))
   (when
       (uffi:load-foreign-library 
-       (uffi:find-foreign-library 
-	"libpq"
-	'("/opt/postgresql/lib/" "/usr/local/lib" "usr/lib/" 
-	  "/postgresql/lib/"))
+       (uffi:find-foreign-library "libpq"
+				  '("/opt/postgresql/lib/" "/usr/local/lib/" 
+				    "/usr/lib/" "/postgresql/lib/")
+				  :drive-letters '("C" "D" "E"))
+       
        :module "postgresql"
        :supporting-libraries 
        *postgresql-supporting-libraries*)

@@ -1,87 +1,68 @@
 31 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
+	* src/usql.cl:
+	Reinstated commented out sections
+	* interfaces/postgresql/postgresql-loader.cl:
+	* interfaces/mysql/mysql-loader.cl:
+	Updated find-forieign-library support.
+
+31 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* Added interface to support USQL high-level rouines
 	
 29 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* Separated db-interface and conditions from sql/sql.cl
-
 	* Improved foreign library loading testing
-
 	* interfaces/postgresql/postgresql-api.cl
 	Added PQisBusy function
-
 	* interfaces/clsql-uffi/clsql-uffi.cl
 	Fixed sign error for 64-bit processing
-	
-	* Optimizes :types processing if value is nil
 	
 27 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* interfaces/postgresql-socket/postgresql-socket-api.cl:
 	Fixes to read-double-from-socket. Added 64-bit integer support.
-
 	* test-suite/xptest-clsql.cl
 	Added testint for 64-bit integers
-
 	* Additons to installation docs
 	
 26 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* interfaces/postgresql-socket/postgresql-socket-api.cl:
 	Implemented direct socket reading for field type :double
-
 	* Added usage information for :types to documentation
-
 	* interfaces/mysql/mysql-sql.cl: Fixed type specifiers in atoi,
 	atol, atof calls
-
 	* interfaces/clsql-uffi: Created new directory. Split common
 	interface routines that use UFFI into this package. Required
 	especially to support direct reading of 64-bit integers into
 	bignums and bypassing temporary strings.
-
 	* test-clsql.cl: Updated to test postgresql-socket's
 	read-double-from-socket function.
-	
 	* test-suite/xptest-clsql.cl
 	Started work on test suite
 
 25 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
-
 	* interfaces/mysql/mysql-api.cl: Added mysql-fetch-fields,
 	mysql-fetch-field-direct Got :auto types working
-
 	* interfaces/postgresql/postgresql-api.cl
 	* interfaces/postgresql-socket/postgresql-socket-api.cl
 	Added pgsql-field-types enum. Got :auto types working.
-
 	* multiple-files
 	Renamed :field-types to :types.
 	
 24 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
-
 	* Added field-types parameter to query, database-query,
 	database-query-result-set, map-query. Haven't added code
 	to utilize field types, yet.
-
 	* Changed postgresql-socket result set from cons to a structure
-
 	* Updated test-clsql.cl to use automated testing with a config
 	file
-
 	* Changed return types of field accessors from cstring to
 	(* :unsigned-char).  This prepares for being able to use specified
 	type conversions when taking field data into lisp.
-
 	* Added field-type processing for most interfaces. Not done yet.
 	
 23 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
-	
 	* doc/ref.sgml: Updated MAP-QUERY example to use
 	*read-default-float-format* (John Foderaro)
-	
 	* Extensive work to foreign library loaders and .system files to
 	check for successful loading of foreign libraries.
-
 	* Modified test-clsql.cl to allow more modularity and
 	automated testing in future release.
-
-		
-	
