@@ -294,8 +294,8 @@
 (defmethod database-list-tables ((database mysql-database) &key (owner nil))
   (declare (ignore owner))
   (remove-if #'(lambda (s)
-                 (and (>= (length s) 10)
-                      (string= (subseq s 0 10) "_clsql_seq_")))
+                 (and (>= (length s) 11)
+                      (string= (subseq s 0 11) "_clsql_seq_")))
              (mapcar #'car (database-query "SHOW TABLES" database nil))))
     
 ;; MySQL 4.1 does not support views 
@@ -343,9 +343,9 @@
   (concatenate 'string "_clsql_seq_" (sql-escape sequence-name)))
 
 (defun %table-name-to-sequence-name (table-name)
-  (and (>= (length table-name) 10)
-       (string= (subseq table-name 0 10) "_clsql_seq_")
-       (subseq table-name 10)))
+  (and (>= (length table-name) 11)
+       (string= (subseq table-name 0 11) "_clsql_seq_")
+       (subseq table-name 11)))
 
 (defmethod database-create-sequence (sequence-name
 				     (database mysql-database))

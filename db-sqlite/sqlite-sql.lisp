@@ -137,7 +137,6 @@
 	     :error (sqlite:sqlite-error-message err)))))
 
 (defmethod database-dump-result-set (result-set (database sqlite-database))
-  (declare (ignore database))
   (handler-case
       (sqlite:sqlite-finalize (sqlite-result-set-vm result-set))
     (sqlite:sqlite-error (err)
@@ -186,8 +185,8 @@
   (declare (ignore owner))
   ;; Query is copied from .table command of sqlite comamnd line utility.
   (remove-if #'(lambda (s)
-                 (and (>= (length s) 10)
-                      (string= (subseq s 0 10) "_clsql_seq_")))
+                 (and (>= (length s) 11)
+                      (string= (subseq s 0 11) "_clsql_seq_")))
              (mapcar #'car (database-query
                             "SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name"
                             database '()))))
@@ -229,9 +228,9 @@
   (concatenate 'string "_clsql_seq_" (sql-escape sequence-name)))
 
 (defun %table-name-to-sequence-name (table-name)
-  (and (>= (length table-name) 10)
-       (string= (subseq table-name 0 10) "_clsql_seq_")
-       (subseq table-name 10)))
+  (and (>= (length table-name) 11)
+       (string= (subseq table-name 0 11) "_clsql_seq_")
+       (subseq table-name 11)))
 
 (defmethod database-create-sequence (sequence-name
 				     (database sqlite-database))
@@ -282,4 +281,4 @@
     (sqlite:sqlite-last-insert-rowid (sqlite-db database))))
 
 (defmethod database-sequence-last (sequence-name (database sqlite-database))
-  (declare (ignore sequence-name database)))
+  (declare (ignore sequence-name)))

@@ -104,9 +104,9 @@
 
 (defun ensure-schema-version-table (database)
   (unless (table-exists-p "clsql_object_v" :database database)
-    (create-table [clsql_object_v] '(([name] (string 32))
+    (create-table [clsql_object_v] '(([name] string)
                                     ([vers] integer)
-                                    ([def] (string 32)))
+                                    ([def] string))
                   :database database)))
 
 (defun update-schema-version-records (view-class-name

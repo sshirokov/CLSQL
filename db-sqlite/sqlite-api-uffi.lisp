@@ -16,15 +16,6 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-
-;;; NOTE: Upon reviewing the code, I found this is not UFFI compatible.
-;;; it appears to work on CMUCL, but does not work correctly on Lispworks
-;;; and Allegro. Mostly, the processing of return strings is still incorrect
-;;; UFFI code.
-;;; To fix this will require reading the SQLite API and reworking the
-;;; code below.
-;;; - Kevin Rosenberg
-
 (in-package #:cl-user)
 
 (defpackage #:sqlite
@@ -100,20 +91,18 @@
 ;;;;
 ;;;; Foreign types definitions.
 ;;;;
+(def-foreign-type errmsg (* :char))
 (def-foreign-type sqlite-db :pointer-void)
 (def-foreign-type sqlite-vm :pointer-void)
-(def-foreign-type errmsg :cstring)
-
-(def-array-pointer string-array-pointer :cstring)
+(def-foreign-type string-pointer (* (* :char)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Lisp types used in declarations.
 ;;;;
-(def-type sqlite-db-pointer (* sqlite-db))
-(def-type sqlite-int-pointer (* :int))
-(def-type sqlite-row string-array-pointer)
-(def-type sqlite-row-pointer (* string-array-pointer))
+(def-type sqlite-db sqlite-db)
+(def-type sqlite-row string-pointer)
+(def-type sqlite-row-pointer (* string-pointer))
 (def-type sqlite-vm-pointer (* sqlite-vm))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -166,8 +155,8 @@
     ("sqlite_step" %step)
     ((vm sqlite-vm)
      (cols-n (* :int))
-     (cols (* (* :char)))
-     (col-names (* (* :char))))
+     (cols (* (* (* :char))))
+     (col-names (* (* (* :char)))))
   :returning :int)
 
 (declaim (inline %finalize))
@@ -192,7 +181,7 @@
     ("sqlite_get_table" %get-table)
     ((db sqlite-db)
      (sql :cstring)
-     (result (* (* :char)))
+     (result (* (* (* :char))))
      (rows-n (* :int))
      (cols-n (* :int))
      (error-message (* errmsg)))
@@ -222,31 +211,30 @@
 (defparameter sqlite-version (sqlite-libversion))
 (defparameter sqlite-encoding (sqlite-libencoding))
 
-(def-type sqlite-db-pointer-type sqlite-db-pointer)
-(def-type sqlite-vm-pointer-type sqlite-vm-pointer)
-
 (defun sqlite-open (db-name &optional (mode 0))
-  (let ((db (%open db-name mode nil)))
-    (if (null-pointer-p db)
-	(signal-sqlite-error SQLITE-ERROR
-			     (format nil "unable to open ~A" db-name))
-	db)))
+  (with-cstring (db-name-native db-name) 
+    (let ((db (%open db-name-native mode nil)))
+      (if (null-pointer-p db)
+	  (signal-sqlite-error SQLITE-ERROR
+			       (format nil "unable to open ~A" db-name))
+	  db))))
 
 (defun sqlite-compile (db sql)
-  (let ((vm (allocate-foreign-object 'sqlite-vm)))
-    (with-foreign-object (sql-tail '(* :char))
-      (let ((result (%compile db sql sql-tail vm nil)))
-	(if (= result SQLITE-OK)
-	    vm
-	    (progn
-	      (free-foreign-object vm)
-	      (signal-sqlite-error result)))))))
+  (with-cstring (sql-native sql)
+    (let ((vm (allocate-foreign-object 'sqlite-vm)))
+      (with-foreign-object (sql-tail '(* :char))
+	(let ((result (%compile db sql-native sql-tail vm nil)))
+	  (if (= result SQLITE-OK)
+	      vm
+	      (progn
+		(free-foreign-object vm)
+		(signal-sqlite-error result))))))))
 
 (defun sqlite-step (vm)
-  (declare (type sqlite-vm-pointer-type vm))
+  (declare (type sqlite-vm-pointer vm))
   (with-foreign-object (cols-n :int)
-    (let ((cols (allocate-foreign-object '(* :char)))
-	  (col-names (allocate-foreign-object '(* :char))))
+    (let ((cols (allocate-foreign-object '(* (* :char))))
+	  (col-names (allocate-foreign-object '(* (* :char)))))
       (declare (type sqlite-row-pointer cols col-names))
       (let ((result (%step (deref-pointer vm 'sqlite-vm)
 			   cols-n cols col-names)))
@@ -257,8 +245,8 @@
 	  ((= result SQLITE-DONE)
 	   (free-foreign-object cols)
 	   (free-foreign-object col-names)
-	   (values 0 (make-null-pointer 'string-array-pointer)
-		   (make-null-pointer 'string-array-pointer)))
+	   (values 0 (make-null-pointer 'string-pointer)
+		   (make-null-pointer 'string-pointer)))
 	  (t
 	   (free-foreign-object cols)
 	   (free-foreign-object col-names)
@@ -274,19 +262,20 @@
 	(signal-sqlite-error result))))
 
 (defun sqlite-get-table (db sql)
-  (declare (type sqlite-db-pointer db))
-  (let ((rows (allocate-foreign-object '(* :char))))
-    (with-foreign-object (rows-n :int)
-      (with-foreign-object (cols-n :int)
-        (declare (type sqlite-row-pointer rows))
-	(let ((result (%get-table db sql rows rows-n cols-n nil)))
-	  (if (= result SQLITE-OK)
-	      (let ((cn (deref-pointer cols-n :int))
-		    (rn (deref-pointer rows-n :int)))
-		(values rows rn cn))
-	      (progn
-		(free-foreign-object rows)
-		(signal-sqlite-error result))))))))
+  (declare (type sqlite-db db))
+  (with-cstring (sql-native sql)
+    (let ((rows (allocate-foreign-object '(* (* :char)))))
+      (declare (type sqlite-row-pointer rows))
+      (with-foreign-object (rows-n :int)
+	(with-foreign-object (cols-n :int)
+	  (let ((result (%get-table db sql-native rows rows-n cols-n nil)))
+	    (if (= result SQLITE-OK)
+		(let ((cn (deref-pointer cols-n :int))
+		      (rn (deref-pointer rows-n :int)))
+		  (values rows rn cn))
+		(progn
+		  (free-foreign-object rows)
+		  (signal-sqlite-error result)))))))))
 
 (declaim (inline sqlite-free-table))
 (defun sqlite-free-table (table)
@@ -299,7 +288,7 @@
 ;;;;
 (declaim (inline make-null-row))
 (defun make-null-row ()
-  (uffi:make-null-pointer 'string-array-pointer))
+  (uffi:make-null-pointer 'string-pointer))
 
 (declaim (inline make-null-vm))
 (defun make-null-vm ()
@@ -312,7 +301,7 @@
 (declaim (inline sqlite-aref))
 (defun sqlite-aref (a n)
   (declare (type sqlite-row-pointer a))
-  (deref-array  (deref-pointer a 'sqlite-row-pointer) '(:array :char) n))
+  (convert-from-foreign-string (deref-array  (deref-pointer a 'sqlite-row-pointer) '(:array :char) n)))
 
 (declaim (inline sqlite-free-row))
 (defun sqlite-free-row (row)

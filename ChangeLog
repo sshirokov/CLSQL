@@ -1,3 +1,9 @@
+08 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.3.3 released
+	* Fixes for sequences on mysql and sqlite [Marcus Pearce]
+	* Fixes for uffi sqlite backend [Aurelio Bignoli / Kevin Rosenberg]
+	* Fix for schema table [Marcus Pearce]
+	
 06 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
         * db-*/*-sql.lisp: Ensure that expr in
 	database-query-result-set is a string
