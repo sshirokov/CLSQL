@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-aodbc.asd,v 1.10 2002/09/20 01:40:54 kevin Exp $
+;;;; $Id: clsql-aodbc.asd,v 1.11 2002/09/25 12:44:59 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -18,6 +18,7 @@
 
 (in-package :asdf)
 
+#+(and allegro (not allegro-cl-trial))
 (defsystem :clsql-aodbc
   :name "cl-sql-aodbc"
   :author "Kevin M. Rosenberg <kmr@debian.org>"
@@ -34,6 +35,7 @@
 	       (:file "aodbc-sql" :depends-on ("aodbc-package")))))
     :depends-on (:clsql-base))
 
+#+(and allegro (not allegro-cl-trial))
 (defmethod source-file-type  ((c cl-source-file)
 			      (s (eql (find-system :clsql-aodbc)))) 
    "cl")

@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-postgresql.asd,v 1.9 2002/09/20 06:37:39 kevin Exp $
+;;;; $Id: clsql-postgresql.asd,v 1.10 2002/09/25 12:44:59 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -19,6 +19,7 @@
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :asdf)
 
+#+(or allegro lispworks cmu openmcl mcl)
 (defsystem :clsql-postgresql
   :name "cl-sql-postgresql"
   :author "Kevin M. Rosenberg <kmr@debian.org>"
@@ -38,6 +39,7 @@
 	     (:file "postgresql-usql" :depends-on ("postgresql-sql")))))
   :depends-on (:uffi :clsql-base :clsql-uffi))
 
+#+(or allegro lispworks cmu openmcl mcl)
 (defmethod source-file-type  ((c cl-source-file)
 			      (s (eql (find-system :clsql-postgresql)))) 
    "cl")
