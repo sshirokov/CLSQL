@@ -111,110 +111,7 @@
 			  :set t)))
   (:base-table company))
 
-(defparameter company1 (make-instance 'company
-                                      :companyid 1
-                                      :groupid 1
-                                      :name "Widgets Inc."))
 
-(defparameter employee1 (make-instance 'employee
-                                       :emplid 1
-                                       :groupid 1
-                                       :married t 
-                                       :height (1+ (random 1.00))
-                                       :birthday (clsql-base:get-time)
-                                       :first-name "Vladamir"
-                                       :last-name "Lenin"
-                                       :email "lenin@soviet.org"))
-			      
-(defparameter employee2 (make-instance 'employee
-			       :emplid 2
-                               :groupid 1
-			       :height (1+ (random 1.00))
-                               :married t 
-                               :birthday (clsql-base:get-time)
-                               :first-name "Josef"
-			       :last-name "Stalin"
-			       :email "stalin@soviet.org"))
-
-(defparameter employee3 (make-instance 'employee
-			       :emplid 3
-                               :groupid 1
-			       :height (1+ (random 1.00))
-                               :married t 
-                               :birthday (clsql-base:get-time)
-                               :first-name "Leon"
-			       :last-name "Trotsky"
-			       :email "trotsky@soviet.org"))
-
-(defparameter employee4 (make-instance 'employee
-			       :emplid 4
-                               :groupid 1
-			       :height (1+ (random 1.00))
-                               :married nil
-                               :birthday (clsql-base:get-time)
-                               :first-name "Nikita"
-			       :last-name "Kruschev"
-			       :email "kruschev@soviet.org"))
-
-(defparameter employee5 (make-instance 'employee
-			       :emplid 5
-                               :groupid 1
-                               :married nil
-			       :height (1+ (random 1.00))
-                               :birthday (clsql-base:get-time)
-                               :first-name "Leonid"
-			       :last-name "Brezhnev"
-			       :email "brezhnev@soviet.org"))
-
-(defparameter employee6 (make-instance 'employee
-			       :emplid 6
-                               :groupid 1
-                               :married nil
-			       :height (1+ (random 1.00))
-                               :birthday (clsql-base:get-time)
-                               :first-name "Yuri"
-			       :last-name "Andropov"
-			       :email "andropov@soviet.org"))
-
-(defparameter employee7 (make-instance 'employee
-                                 :emplid 7
-                                 :groupid 1
-                                 :height (1+ (random 1.00))
-                                 :married nil
-                                 :birthday (clsql-base:get-time)
-                                 :first-name "Konstantin"
-                                 :last-name "Chernenko"
-                                 :email "chernenko@soviet.org"))
-
-(defparameter employee8 (make-instance 'employee
-                                 :emplid 8
-                                 :groupid 1
-                                 :height (1+ (random 1.00))
-                                 :married nil
-                                 :birthday (clsql-base:get-time)
-                                 :first-name "Mikhail"
-                                 :last-name "Gorbachev"
-                                 :email "gorbachev@soviet.org"))
-
-(defparameter employee9 (make-instance 'employee
-                                 :emplid 9
-                                 :groupid 1 
-                                 :married nil
-                                 :height (1+ (random 1.00))
-                                 :birthday (clsql-base:get-time)
-                                 :first-name "Boris"
-                                 :last-name "Yeltsin"
-                                 :email "yeltsin@soviet.org"))
-
-(defparameter employee10 (make-instance 'employee
-                                  :emplid 10
-                                  :groupid 1
-                                  :married nil
-                                  :height (1+ (random 1.00))
-                                  :birthday (clsql-base:get-time)
-                                  :first-name "Vladamir"
-                                  :last-name "Putin"
-                                  :email "putin@soviet.org"))
 
 (defun test-connect-to-database (database-type spec)
   (setf *test-database-type* database-type)
@@ -223,9 +120,9 @@
 
   ;; Connect to the database
   (clsql:connect spec
-                :database-type database-type
-                :make-default t
-                :if-exists :old))
+		 :database-type database-type
+		 :make-default t
+		 :if-exists :old))
 
 (defmacro with-ignore-errors (&rest forms)
   `(progn
@@ -233,26 +130,123 @@
 	(lambda (x) (list 'ignore-errors x))
 	forms)))
 
+(defparameter company1 nil)
+(defparameter employee1 nil)
+(defparameter employee2 nil)
+(defparameter employee3 nil)
+(defparameter employee4 nil)
+(defparameter employee5 nil)
+(defparameter employee6 nil)
+(defparameter employee7 nil)
+(defparameter employee8 nil)
+(defparameter employee9 nil)
+(defparameter employee10 nil)
+
 (defun test-initialise-database ()
-  ;; Delete the instance records
-  (with-ignore-errors 
-    (clsql:delete-instance-records company1)
-    (clsql:delete-instance-records employee1)
-    (clsql:delete-instance-records employee2)
-    (clsql:delete-instance-records employee3)
-    (clsql:delete-instance-records employee4)
-    (clsql:delete-instance-records employee5)
-    (clsql:delete-instance-records employee6)
-    (clsql:delete-instance-records employee7)
-    (clsql:delete-instance-records employee8)
-    (clsql:delete-instance-records employee9)
-    (clsql:delete-instance-records employee10)
-    ;; Drop the required tables if they exist 
-    (clsql:drop-view-from-class 'employee)
-    (clsql:drop-view-from-class 'company))
   ;; Create the tables for our view classes
+  (ignore-errors
+   (clsql:drop-view-from-class 'employee)
+   (clsql:drop-view-from-class 'company))
   (clsql:create-view-from-class 'employee)
   (clsql:create-view-from-class 'company)
+
+  (setf company1 (make-instance 'company
+		   :companyid 1
+		   :groupid 1
+		   :name "Widgets Inc.")
+	employee1 (make-instance 'employee
+		    :emplid 1
+		    :groupid 1
+		    :married t 
+		    :height (1+ (random 1.00))
+		    :birthday (clsql-base:get-time)
+		    :first-name "Vladamir"
+		    :last-name "Lenin"
+		    :email "lenin@soviet.org")
+	employee2 (make-instance 'employee
+		    :emplid 2
+		    :groupid 1
+		    :height (1+ (random 1.00))
+		    :married t 
+		    :birthday (clsql-base:get-time)
+		    :first-name "Josef"
+		    :last-name "Stalin"
+		    :email "stalin@soviet.org")
+	employee3 (make-instance 'employee
+		    :emplid 3
+		    :groupid 1
+		    :height (1+ (random 1.00))
+		    :married t 
+		    :birthday (clsql-base:get-time)
+		    :first-name "Leon"
+		    :last-name "Trotsky"
+		    :email "trotsky@soviet.org")
+	employee4 (make-instance 'employee
+		    :emplid 4
+		    :groupid 1
+		    :height (1+ (random 1.00))
+		    :married nil
+		    :birthday (clsql-base:get-time)
+		    :first-name "Nikita"
+		    :last-name "Kruschev"
+		    :email "kruschev@soviet.org")
+	
+	employee5 (make-instance 'employee
+		    :emplid 5
+		    :groupid 1
+		    :married nil
+		    :height (1+ (random 1.00))
+		    :birthday (clsql-base:get-time)
+		    :first-name "Leonid"
+		    :last-name "Brezhnev"
+		    :email "brezhnev@soviet.org")
+
+	employee6 (make-instance 'employee
+		    :emplid 6
+		    :groupid 1
+		    :married nil
+		    :height (1+ (random 1.00))
+		    :birthday (clsql-base:get-time)
+		    :first-name "Yuri"
+		    :last-name "Andropov"
+		    :email "andropov@soviet.org")
+	employee7 (make-instance 'employee
+		    :emplid 7
+		    :groupid 1
+		    :height (1+ (random 1.00))
+		    :married nil
+		    :birthday (clsql-base:get-time)
+		    :first-name "Konstantin"
+		    :last-name "Chernenko"
+		    :email "chernenko@soviet.org")
+	employee8 (make-instance 'employee
+		    :emplid 8
+		    :groupid 1
+		    :height (1+ (random 1.00))
+		    :married nil
+		    :birthday (clsql-base:get-time)
+		    :first-name "Mikhail"
+		    :last-name "Gorbachev"
+		    :email "gorbachev@soviet.org")
+	employee9 (make-instance 'employee
+		    :emplid 9
+		    :groupid 1 
+		    :married nil
+		    :height (1+ (random 1.00))
+		    :birthday (clsql-base:get-time)
+		    :first-name "Boris"
+		    :last-name "Yeltsin"
+		    :email "yeltsin@soviet.org")
+	employee10 (make-instance 'employee
+		     :emplid 10
+		     :groupid 1
+		     :married nil
+		     :height (1+ (random 1.00))
+		     :birthday (clsql-base:get-time)
+		     :first-name "Vladamir"
+		     :last-name "Putin"
+		     :email "putin@soviet.org"))
+  
   ;; Lenin manages everyone
   (clsql:add-to-relation employee2 'manager employee1)
   (clsql:add-to-relation employee3 'manager employee1)
@@ -334,6 +328,6 @@
   (test-initialise-database)
   (let ((remaining (rtest:do-tests)))
     (when (consp remaining)
-      (incf *error-count* (length remaining)))))
-
+      (incf *error-count* (length remaining))))
+  (disconnect))
 
