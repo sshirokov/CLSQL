@@ -33,7 +33,7 @@
 	    )))
 
 (defmethod perform ((o test-op) (c (eql (find-system 'clsql-tests))))
-  (or (funcall (intern (symbol-name '#:do-tests)
-		       (find-package '#:regression-test)))
-      (error "test-op failed")))
+  (unless (funcall (intern (symbol-name '#:run-tests)
+			   (find-package '#:clsql-tests)))
+    (error "test-op failed")))
 

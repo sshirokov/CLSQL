@@ -1,3 +1,15 @@
+cl-sql (1.8.2-1) unstable; urgency=low
+
+  * Documentation fixes, MacOSX changes
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Wed, 12 Nov 2003 22:52:45 -0700
+
+cl-sql (1.8.1-1) unstable; urgency=low
+
+  * Improved shared library building
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Tue, 11 Nov 2003 15:26:55 -0700
+
 cl-sql (1.8.0-1) unstable; urgency=low
 
   * Make asdf-installable

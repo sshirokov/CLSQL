@@ -1,4 +1,6 @@
-(docbook
+(load "docbook")
+
+(docbook-file "bookinfo2.xml"
  (:bookinfo
   (:title "&clsql; Users' Guide")
   (:authorgroup
@@ -7,7 +9,7 @@
     (:othername "M.")
     (:surname "Rosenberg")
     (:affiliation
-     (:jobtitle "Maintainer of CLSQL"]]]
+     (:jobtitle "Maintainer of CLSQL")))
    (:author
     (:firstname "Pierre")
     (:othername "R.")
@@ -43,3 +45,4 @@
       "Other brand or
 	    product names are the registered trademarks or trademarks of
 	    their respective holders."))))))
+

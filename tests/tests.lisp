@@ -55,7 +55,9 @@
 	  (setf (pgsql-socket-spec specs) 
 		(cadr (assoc :postgresql-socket config)))
 	  specs))
-      (warn "CLSQL tester config file ~S not found" path)))
+      (progn
+	(warn "CLSQL tester config file ~S not found" path)
+	nil)))
 
 (defmethod mysql-table-test ((test conn-specs))
   (test-table (mysql-spec test) :mysql))
@@ -220,8 +222,11 @@
 (defun drop-test-table (db)
   (clsql:execute-command "DROP TABLE test_clsql" :database db))
 
-(defun clsql-tests ()
+(defun run-tests ()
     (let ((specs (read-specs)))
+      (unless specs
+	(warn "Not running test because test configuration file is missing")
+	(return-from run-tests :skipped))
       (with-tests (:name "CLSQL")
 	(mysql-low-level specs)
 	(mysql-table-test specs)
@@ -230,9 +235,4 @@
 	(aodbc-table-test specs)
       ))
     t)
-
-;(deftest clsql.all (clsql-tests) t)
-(clsql-tests)
-
-
 

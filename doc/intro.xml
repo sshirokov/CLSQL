@@ -58,7 +58,7 @@
     <title>Prerequisites</title>
     
     <sect2>
-      <title>&defsystem;</title>
+      <title>&asdf;</title>
       <para> &clsql; uses &asdf; to compile and load its
 	components.  &asdf; is included in the <ulink
 	url="http://cclan.sourceforge.net"><citetitle>&cclan;</citetitle></ulink> collection.
@@ -123,11 +123,11 @@
     <title>Installation</title>
     
     <sect2>
-      <title>Ensure &defsystem; is loaded</title>
+      <title>Ensure &asdf; is loaded</title>
       <para>
-	Simply load the file <filename>defsystem.lisp</filename>.
+	Simply load the file <filename>asdf.lisp</filename>.
 	<programlisting>
-(load "defsystem.lisp")
+(load "asdf.lisp")
 	</programlisting>
       </para>
     </sect2>
@@ -168,7 +168,7 @@ make libs
       <title>Load &uffi;</title>
       <para>
 	Unzip or untar the &uffi; distribution which creates a directory
-	for the &uffi; files. Add that directory to Defsystem's <varname>asdf:*central-registry*</varname>.
+	for the &uffi; files. Add that directory to &asdf;'s <varname>asdf:*central-registry*</varname>.
 	You can do that by pushing the pathname of the directory onto this variable.
 	The following example code assumes the &uffi; files reside in the
 	<filename>/usr/share/lisp/uffi/</filename> 
@@ -184,7 +184,7 @@ make libs
      <para>
        If you plan to use the  clsql-postgresql-socket interface, you must load the md5 module.
        Unzip or untar the cl-md5 distribution, which creates a directory for the cl-md5 files.
-       Add that directory to Defsystem's <varname>asdf:*central-registry*</varname>. 
+       Add that directory to &asdf;'s <varname>asdf:*central-registry*</varname>. 
        You can do that by pushing the pathname of the directory onto this variable.
         The following example code assumes the cl-md5 files reside in the
        <filename>/usr/share/lisp/cl-md5/</filename> 
@@ -200,7 +200,7 @@ make libs
      <title>Load &clsql; modules</title>
      <para>
        Unzip or untar the &clsql; distribution which creates a directory
-       for the &clsql; files. Add that directory to Defsystem's <varname>asdf:*central-registry*</varname>.
+       for the &clsql; files. Add that directory to &asdf;'s <varname>asdf:*central-registry*</varname>.
        You can do that by pushing the pathname of the directory onto this variable.
        The following example code assumes the &clsql; files reside in the
        <filename>/usr/share/lisp/clsql/</filename> 
@@ -208,12 +208,12 @@ make libs
        the main <symbol>:clsql</symbol> system and at least one interface system.
 	<programlisting>
 (push #P"/usr/share/lisp/clsql/" asdf:*central-repository*)
-(asdf:oos 'asdf:load-op :clsql-base)        ; base clsql package
-(asdf:oos 'asdf:load-op :clsql-mysql)       ; MySQL interface
-(asdf:oos 'asdf:load-op :clsql-postgresql)  ; PostgreSQL interface
-(asdf:oos 'asdf:load-op :clsql-postgresql-socket) ; Socket PGSQL interface
-(asdf:oos 'asdf:load-op :clsql-aodbc)       ; Allegro ODBC interface
-(asdf:oos 'asdf:load-op :clsql)             ; main clsql package
+(asdf:operate 'asdf:load-op 'clsql-base)        ; base clsql package
+(asdf:operate 'asdf:load-op 'clsql-mysql)       ; MySQL interface
+(asdf:operate 'asdf:load-op 'clsql-postgresql)  ; PostgreSQL interface
+(asdf:operate 'asdf:load-op 'clsql-postgresql-socket) ; Socket PGSQL interface
+(asdf:operate 'asdf:load-op 'clsql-aodbc)       ; Allegro ODBC interface
+(asdf:operate 'asdf:load-op 'clsql)             ; main clsql package
 	</programlisting>
       </para>
     </sect2>
@@ -221,15 +221,19 @@ make libs
     <sect2>
       <title>Run test suite</title>
       <para>
-	After loading &clsql;, you can execute the test program in
-	the directory <filename>./test-suite</filename>. The test file,
-	<filename>tester-clsql</filename>
-	has instructions for creating a <filename>test.config</filename>.
-	After creating that file, simple load the test file with Lisp
-	and the tests should automatically execute.
+	After loading &clsql;, you can execute the test suite. A configuration
+	file named <filename>.clsql-test.config</filename> must be created
+	in your home directory. There are instructures on the format of that file
+	in the <filename>tests/tests.lisp</filename> file in the &clsql;
+	source directory. After creating that file, you can run the test suite
+	with &asdf;:
+	<programlisting>
+(asdf:operate 'asdf:test-op 'clsql)
+        </programlisting>.	.
       </para>
     </sect2>
     
   </sect1>
-  
+
 </chapter>
+

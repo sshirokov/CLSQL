@@ -19,25 +19,23 @@
 (defpackage #:clsql-mysql-system (:use #:asdf #:cl))
 (in-package #:clsql-mysql-system)
 
-(defvar *asd-file-dir* (pathname-directory *load-truename*))
+(defvar *library-file-dir* (append (pathname-directory *load-truename*)
+				   (list "db-mysql")))
 
 (defclass clsql-mysql-source-file (c-source-file)
   ())
 
 (defmethod output-files ((o compile-op) (c clsql-mysql-source-file))
-  (let ((searched (or
-		   (probe-file #p"/usr/lib/clsql/uffi.so")
-		   (probe-file (make-pathname
-				:directory *asd-file-dir*
-				:name "db-mysql"
-				:type "so")))))
-    (if searched
-	(list searched)
-	(list (merge-pathnames
-	       (make-pathname :name (component-name c)
-			      :type "so"
-			      :directory '(:relative "db-mysql"))
-	       (make-pathname :directory *asd-file-dir*))))))
+  (let ((found (some #'(lambda (dir)
+			    (probe-file (make-pathname :directory dir
+						       :name (component-name c)
+						       :type "so")))
+			'((:absolute "usr" "lib" "clsql"))))) 
+    (list (if found
+	      found
+	      (make-pathname :name (component-name c)
+			     :type "so"
+			     :directory *library-file-dir*)))))
 
 (defmethod perform ((o load-op) (c clsql-mysql-source-file))
   nil) ;;; library will be loaded by a loader file
@@ -45,13 +43,9 @@
 (defmethod perform ((o compile-op) (c clsql-mysql-source-file))
   (unless (zerop (run-shell-command
 		  "cd ~A; make"
-		  (namestring (merge-pathnames
-			       (make-pathname
-				:name nil
-				:type nil
-				:directory '(:relative "db-mysql"))
-			       (make-pathname
-				:directory *asd-file-dir*)))))
+		  (namestring (make-pathname :name nil
+					     :type nil
+					     :directory *library-file-dir*))))
     (error 'operation-error :component c :operation o)))
 
 ;;; System definition

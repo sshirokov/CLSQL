@@ -16,29 +16,39 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
+(in-package cl-user)
 
-(defpackage #:clsql-uffi-system (:use #:asdf #:cl))
-(in-package #:clsql-uffi-system)
+;; need to load uffi for below output-files method 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  #+common-lisp-controller (require 'uffi)
+  #-common-lisp-controller (asdf:operate 'asdf:load-op 'uffi))
 
-(defvar *asd-file-dir* (pathname-directory *load-truename*))
+(defpackage clsql-uffi-system (:use #:asdf #:cl))
+(in-package clsql-uffi-system)
+
+(defvar *library-file-dir* (append (pathname-directory *load-truename*)
+				   (list "uffi")))
 
 (defclass clsql-uffi-source-file (c-source-file)
   ())
 
+
 (defmethod output-files ((o compile-op) (c clsql-uffi-source-file))
-  (let ((searched (or
-		   (probe-file #p"/usr/lib/clsql/uffi.so")
-		   (probe-file (make-pathname
-				:directory *asd-file-dir*
-				:name "uffi"
-				:type "so")))))
-    (if searched
-	(list searched)
-	(list (merge-pathnames
-	       (make-pathname :name (component-name c)
-			      :type "so"
-			      :directory '(:relative "tests"))
-	       (make-pathname :directory *asd-file-dir*))))))
+  (let* ((library-file-type
+	  (funcall (intern (symbol-name'#:default-foreign-library-type)
+			   (symbol-name '#:uffi))))
+	 (found
+	  (some #'(lambda (dir)
+		    (probe-file (make-pathname
+				 :directory dir
+				 :name (component-name c)
+				 :type library-file-type)))
+		'((:absolute "usr" "lib" "clsql")))))
+    (list (if found
+	      found
+	      (make-pathname :name (component-name c)
+			     :type library-file-type
+			     :directory *library-file-dir*)))))
 
 (defmethod perform ((o load-op) (c clsql-uffi-source-file))
   nil) ;;; library will be loaded by a loader file
@@ -46,13 +56,9 @@
 (defmethod perform ((o compile-op) (c clsql-uffi-source-file))
   (unless (zerop (run-shell-command
 		  "cd ~A; make"
-		  (namestring (merge-pathnames
-			       (make-pathname
-				:name nil
-				:type nil
-				:directory '(:relative "uffi"))
-			       (make-pathname
-				:directory *asd-file-dir*)))))
+		  (namestring (make-pathname :name nil
+					     :type nil
+					     :directory *library-file-dir*))))
     (error 'operation-error :component c :operation o)))
 
 #+(or allegro lispworks cmu sbcl openmcl mcl scl)
@@ -64,11 +70,12 @@
   :description "Common UFFI Helper functions for Common Lisp SQL Interface Library"
   :long-description "cl-sql-uffi package provides common helper functions using the UFFI for the CLSQL package."
 
+  :depends-on (:uffi :clsql-base)
+  
   :components
   ((:module :uffi
 	    :components
 	    ((:clsql-uffi-source-file "uffi")
 	     (:file "clsql-uffi-package")
 	     (:file "clsql-uffi-loader" :depends-on ("clsql-uffi-package" "uffi"))
-	     (:file "clsql-uffi" :depends-on ("clsql-uffi-loader")))))
-  :depends-on (:uffi :clsql-base))
+	     (:file "clsql-uffi" :depends-on ("clsql-uffi-loader"))))))

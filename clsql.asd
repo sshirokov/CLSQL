@@ -2,8 +2,8 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          clsql.system
-;;;; Purpose:       Defsystem-3/4 for CLSQL
+;;;; Name:          clsql.asd
+;;;; Purpose:       System definition for CLSQL
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;

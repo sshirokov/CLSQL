@@ -40,7 +40,10 @@ set to the right path before compiling or loading the system.")
 		    "/usr/lib/" "/postgresql/lib/"
 		    "/usr/local/pgsql/lib/" "/usr/lib/pgsql/"
 		    "/opt/pgsql/lib/pgsql" "/sw/lib/pgsql/")
-		  :drive-letters '("C" "D" "E"))))
+		  :drive-letters '("C" "D" "E")
+		  #+(or macosx darwin ccl-5.0) :types
+		  #+(or macosx darwin ccl-5.0) '("so")
+		  )))
     (if	(uffi:load-foreign-library libpath
 				   :module "postgresql"
 				   :supporting-libraries 

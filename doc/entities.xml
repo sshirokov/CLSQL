@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
 
-<!ENTITY defsystem "<application>Defsystem</application>">
 <!ENTITY asdf "<application>ASDF</application>">
 <!ENTITY clocc "<application><emphasis>CLOCC</emphasis></application>">
 <!ENTITY cclan "<application><emphasis>CCLAN</emphasis></application>">
@@ -24,7 +23,6 @@
 <!ENTITY nil "<symbol>NIL</symbol>">
 <!ENTITY null "<constant>NULL</constant>">
 <!ENTITY c "<symbol>C</symbol>">
-<!ENTITY defsystem "<application>defsystem</application>">
 
 
 
