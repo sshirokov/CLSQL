@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.2 2002/03/23 14:19:29 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.3 2002/03/23 14:59:27 kevin Exp $
 #
 # This file, part of UFFI, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -64,11 +64,11 @@ CHECK=nsgmls -s -C catalog || exit 1
 check:
 	$(CHECK)
 
-html: html/manual.htm
+html: html/book1.htm
 
-html/manual.htm: ${DOCFILES} 
+html/book1.htm: ${DOCFILES} 
 	$(CHECK)
-	( rm -rf html ; mkdir html; cd html ; jade -t sgml -c ../catalog -d ${DSSSL_HTML} ../${DOCFILE}; mv book1.htm manual.htm; cd ..)
+	( rm -rf html ; mkdir html; cd html ; jade -t sgml -c ../catalog -d ${DSSSL_HTML} ../${DOCFILE}; cd ..)
 
 tex: ${TEXFILE}
 

@@ -16,10 +16,28 @@ structure of &clsql; is based on the
     <title>History</title>
     <para>
       &clsql; is written by Kevin M. Rosenberg and based substantially
-on Pierre R. Mai's excellent &maisql; package. The main changes have
-been to port the &ffi; to &uffi;, add to Allegro's ODBC interface as a
-supported database, add a compatibility layer for &cmucl; specific
-code, and make the code more robust in terms of &mysql; support.
+on Pierre R. Mai's excellent &maisql; package. The main changes from &maisql;
+are:
+<itemizedlist>
+<listitem>
+<para>port from the &cmucl; FFI to &uffi;.</para>
+</listitem>
+<listitem>
+<para>new &acl; ODBC interface back-end.</para>
+</listitem>
+<listitem>
+<para>compatibility layer for &cmucl; specific code.</para>
+</listitem>
+<listitem>
+<para>improved robustness of the &mysql; back-end.</para>
+</listitem>
+<listitem>
+<para>improved system loading.</para>
+</listitem>
+<listitem>
+<para>improved packages and symbol export.</para>
+</listitem>
+</itemizedlist>
     </para>
   </sect1>
 
@@ -30,7 +48,7 @@ code, and make the code more robust in terms of &mysql; support.
       <title>&defsystem;</title>
       <para> &clsql; uses &defsystem to compile and load its
 components.  &defsystem; is included in the <ulink
-url="http://clocc.sourceforge.net"><citetitle>&clocc;</citetitle></ulink>. The
+url="http://clocc.sourceforge.net"><citetitle>&clocc;</citetitle></ulink> collection. The
 defsystem version in the pre-packaged distribution is rather old and
 may not function well. The version in CVS tree tree works quite
 well. For convenience, a copy of the latest defsystem at the FTP
@@ -89,9 +107,9 @@ the following implementations are supported:
       <title>Ensure &defsystem; is loaded</title>
       <para>
 	Simply load the file <filename>defsystem.lisp</filename>.
-<computeroutput>
+        <programlisting>
 (load "defsystem.lisp")
-</computeroutput>
+        </programlisting>
       </para>
     </sect2>
 
@@ -112,14 +130,14 @@ files for Microsoft Windows are supplied with the distribution.</para>
 edit <filename>Makefile</filename> or <filename>Makefile.msvc</filename> to
 correctly specify the location of your &mysql; installation. On UNIX systems, use
 the command:
-<programlisting>make</programlisting>
+     <programlisting>make</programlisting>
 On a Microsoft Windows system,
 use the command: 
-<programlisting>
+     <programlisting>
 nmake /f
 Makefile.msvc
-</programlisting></para>
-    </sect2>
+  </programlisting></para>
+      </sect2>
 
     <sect2>
       <title>Load &uffi;</title>
@@ -131,8 +149,8 @@ use the new <function>add-registry-location</function> present in the newest ver
 &defsystem;. The following example code assumes the &uffi; files reside in the
 <filename>/usr/local/src/lisp/uffi</filename> directory.
 	<programlisting>
-	(mk:add-registry-location #P"/usr/local/src/lisp/uffi")
-	(mk:load-system :uffi)
+(mk:add-registry-location #P"/usr/local/src/lisp/uffi")
+(mk:load-system :uffi)
         </programlisting>
       </para>
     </sect2>
