@@ -25,12 +25,14 @@
     :version ""
     :licence ""
     :description "A regression test suite for CLSQL."
-    :depends-on (clsql clsql-classic-tests rt)
+    :depends-on (clsql ptester rt)
     :components 
     ((:module tests
 	      :serial t
 	      :components ((:file "package")
+			   (:file "utils")
 			   (:file "test-init")
+			   (:file "test-basic")
 			   (:file "test-connection")
 			   (:file "test-fddl")
 			   (:file "test-fdml")

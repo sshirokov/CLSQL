@@ -1680,7 +1680,7 @@ The default is &nil;.
 	  <varlistentry>
 	    <term><parameter>success</parameter></term>
 	    <listitem>
-	      <para>A boolean flag. If &t;, a new database wa
+	      <para>A boolean flag. If &t;, a new database was
 	      successfully created.
 	      </para>
 	    </listitem>
@@ -1700,6 +1700,7 @@ The default is &nil;.
 => T
 
 (create-database '("localhost" "new" "dent" "badpasswd") :database-type :mysql)
+=>
 Error: While trying to access database localhost/new/dent
   using database-type MYSQL:
   Error database-create failed: mysqladmin: connect to server at 'localhost' failed
@@ -1716,8 +1717,7 @@ error: 'Access denied for user: 'root@localhost' (Using password: YES)'
 	<title>Exceptional Situations</title>
 	<para>An exception will be thrown if the database system does
 	not allow new databases to be created or if database creation
-	fails. Currently, only the <symbol>:postgresql-socket</symbol>
-	does not allow new databases to be created.</para>
+	fails.</para>
       </refsect1>
       <refsect1>
 	<title>Notes</title>
@@ -1762,7 +1762,7 @@ error: 'Access denied for user: 'root@localhost' (Using password: YES)'
 	  <varlistentry>
 	    <term><parameter>success</parameter></term>
 	    <listitem>
-	      <para>A boolean flag. If &t;, a new database wa
+	      <para>A boolean flag. If &t;, the database was
 	      successfully destroyed.
 	      </para>
 	    </listitem>
@@ -1782,6 +1782,7 @@ error: 'Access denied for user: 'root@localhost' (Using password: YES)'
 => T
 
 (destroy-database '("localhost" "new" "dent" "dent") :database-type :postgresql)
+=>
 Error: While trying to access database localhost/test2/root
   using database-type POSTGRESQL:
   Error database-destory failed: dropdb: database removal failed: ERROR:  database "test2" does not exist
@@ -1797,9 +1798,7 @@ Error: While trying to access database localhost/test2/root
 	<title>Exceptional Situations</title>
 	<para>An exception will be thrown if the database system does not
 	allow databases to be removed, the database does not exist, or
-	if database removal fails. Currently, only the
-	<symbol>:postgresql-socket</symbol> does not allow 
-	databases to be destroyed.</para>
+	if database removal fails.</para>
       </refsect1>
       <refsect1>
 	<title>Notes</title>
@@ -1817,7 +1816,7 @@ Error: While trying to access database localhost/test2/root
     <refentry id="probe_db">
       <refnamediv>
 	<refname>PROBE-DATABASE</refname>
-	<refpurpose>tests for existance of a database</refpurpose>
+	<refpurpose>tests for existence of a database</refpurpose>
 	<refclass>Function</refclass>
       </refnamediv>
       <refsect1>
@@ -1853,7 +1852,7 @@ Error: While trying to access database localhost/test2/root
       </refsect1>
       <refsect1>
 	<title>Description</title>
-	<para>This function tests for the existance of a database in
+	<para>This function tests for the existence of a database in
 	the database system specified by
 	<parameter>database-type</parameter>.
 	</para>
@@ -1872,8 +1871,8 @@ Error: While trying to access database localhost/test2/root
       <refsect1>
 	<title>Exceptional Situations</title>
 	<para>An exception maybe thrown if the database system does
-	not receive administrator-level authentication. This function
-	may need to read the administrative table of the database
+	not receive administrator-level authentication since function
+	may need to read the administrative database of the database
 	system.</para>
       </refsect1>
       <refsect1>

@@ -1,4 +1,8 @@
 10 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.6.1: documentation fixes, merged
+	classic-tests into tests
+ 	
+10 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
         * Version 2.6.0 released: New API functions
 	CREATE-DATABASE, DESTORY-DATABASE, PROBE-DATABASE
 	* doc/ref_clsql.xml: Document new functions

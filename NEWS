@@ -1,2 +1,4 @@
-CLSQL now supports the CommonSQL-API with the merge of the orphaned
-UncommonSQL package.
+Three new API functions added: create-database, destroy-database,
+and probe-database.
+ 
+CLSQL now supports the CommonSQL-API.

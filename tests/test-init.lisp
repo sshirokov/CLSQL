@@ -294,23 +294,38 @@
     (unless specs
       (warn "Not running tests because test configuration file is missing")
       (return-from run-tests :skipped))
+    (load-necessary-systems specs)
     (dolist (db-type +all-db-types+)
       (let ((spec (db-type-spec db-type specs)))
 	(when spec
-	  (format t 
-"~&
+	  (do-tests-for-backend spec db-type))))))
+
+(defun load-necessary-systems (specs)
+  (dolist (db-type +all-db-types+)
+    (when (db-type-spec db-type specs)
+      (db-type-ensure-system db-type))))
+
+(defun do-tests-for-backend (spec db-type)
+  (format t 
+	  "~&
 *******************************************************************
 ***     Running CLSQL tests with ~A backend.
 *******************************************************************
 " db-type)
-	  (db-type-ensure-system db-type)
-	  (regression-test:rem-all-tests)
-	  (ignore-errors (destroy-database spec :database-type db-type))
-	  (ignore-errors (create-database spec :database-type db-type))
-	  (dolist (test (append *rt-connection* *rt-fddl* *rt-fdml*
-				*rt-ooddl* *rt-oodml* *rt-syntax*))
-	    (eval test))
-	  (test-connect-to-database db-type spec)
-	  (test-initialise-database)
-	  (rtest:do-tests))))))
+  (regression-test:rem-all-tests)
+  
+  ;; Tests of clsql-base
+  (ignore-errors (destroy-database spec :database-type db-type))
+  (ignore-errors (create-database spec :database-type db-type))
+  (with-tests (:name "CLSQL")
+    (test-basic spec db-type))
+  
+  (ignore-errors (destroy-database spec :database-type db-type))
+  (ignore-errors (create-database spec :database-type db-type))
+  (dolist (test (append *rt-connection* *rt-fddl* *rt-fdml*
+			*rt-ooddl* *rt-oodml* *rt-syntax*))
+    (eval test))
+  (test-connect-to-database db-type spec)
+  (test-initialise-database)
+  (rtest:do-tests))
 

@@ -39,5 +39,4 @@
 
 #+(or allegro lispworks cmu sbcl openmcl mcl scl)
 (defmethod perform ((o test-op) (c (eql (find-system 'clsql-classic))))
-  (operate 'load-op 'clsql-classic-tests)
-  (operate 'test-op 'clsql-classic-tests))
+  (warn "Testing is provided by the CLSQL-TESTS system"))
