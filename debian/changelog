@@ -1,3 +1,9 @@
+cl-sql (1.4.2-1) unstable; urgency=low
+
+  * Add optimization for pointer derefering
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sat, 29 Mar 2003 15:28:57 -0700
+
 cl-sql (1.4.1-1) unstable; urgency=low
 
   * Fix typo in clsql-mysql

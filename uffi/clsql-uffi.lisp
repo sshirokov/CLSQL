@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.2 2002/12/13 12:21:54 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.3 2003/03/29 22:29:29 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -83,10 +83,15 @@
 (defmacro split-64-bit-integer (int64)
   `(values (ash ,int64 -32) (logand ,int64 +2^32-1+)))
 
+(defconstant +ascii-n-value+ (char-char #\N))
+
+(uffi:def-type char-ptr-def (* :unsigned-char))
+
 (defun char-ptr-points-to-null (char-ptr)
   "Returns T if foreign character pointer refers to 'NULL' string. Only called for numeric entries"
   ;; Uses short cut and returns T if first character is #\N. It should
   ;; never be non-numeric
+  (declare (type char-ptr-def char-ptr))
   (let ((char (uffi:ensure-char-character
 	       (uffi:deref-pointer char-ptr :char))))
     (eql char #\N)))
