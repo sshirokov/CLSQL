@@ -30,14 +30,15 @@ one result per row. Returns a list of lists of values of the result of
 that expression and a list of field names selected in sql-exp."))
 
 (defmethod query ((query-expression string) &key (database *default-database*)
-                  (result-types nil) (flatp nil))
+                  (result-types nil) (flatp nil) (field-names t))
   (record-sql-action query-expression :query database)
-  (let* ((res (database-query query-expression database result-types))
-         (res (if (and flatp (= 1 (length (car res))))
-                  (mapcar #'car res)
-		res)))
-    (record-sql-action res :result database)
-    res))
+  (multiple-value-bind (rows names) (database-query query-expression database result-types
+                                                    field-names)
+    (let ((result (if (and flatp (= 1 (length (car rows))))
+                      (mapcar #'car rows)
+                    rows)))
+      (record-sql-action result :result database)
+      (values result names))))
 
 ;;; Execute
 

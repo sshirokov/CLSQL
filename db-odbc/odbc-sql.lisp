@@ -87,10 +87,11 @@
   t)
 
 (defmethod database-query (query-expression (database odbc-database) 
-			   result-types) 
+			   result-types field-names) 
   (handler-case
       (odbc-dbi:sql query-expression :db (database-odbc-conn database)
-		    :result-types result-types)
+		    :result-types result-types
+                    :column-names field-names)
     (clsql-error (e)
       (error e))
     #+ignore

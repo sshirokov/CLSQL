@@ -74,11 +74,12 @@
   (setf (database-aodbc-conn database) nil)
   t)
 
-(defmethod database-query (query-expression (database aodbc-database) result-types) 
+(defmethod database-query (query-expression (database aodbc-database) result-types field-names) 
   #+aodbc-v2
   (handler-case
       (dbi:sql query-expression :db (database-aodbc-conn database)
-	       :types result-types)
+	       :types result-types
+               :column-names field-names)
       (clsql-error (e)
 	(error e))
     (error ()

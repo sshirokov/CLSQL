@@ -1,6 +1,5 @@
 GENERAL 
 
-* test on mcl. SCL no longer affordable to individuals;
 * implement remaining functions for CLSQL AODBC backend;
 * port Oracle backend to UFFI.
 
@@ -34,7 +33,6 @@ COMMONSQL SPEC
       o should coerce values returned as strings to appropriate lisp type
 
     QUERY 
-      o should return (values result-list field-names) 
       o should coerce values returned as strings to appropriate lisp type
 
     LIST-ATTRIBUTE-TYPES
@@ -76,9 +74,8 @@ NOTES ABOUT THE BACKENDS
 MYSQL 
 
 drop-index:   requires a table to be specified with the :from keyword parameter
-transactions: don't seem to work  
 views:        mysql does not support views  
-queries:      nested subqueries do not seem to work 
+queries:      nested subqueries are not supported
 
 SQLITE 
 

@@ -75,7 +75,7 @@
 	     :error (sqlite:sqlite-error-message err))))
   t)
 
-(defmethod database-query (query-expression (database sqlite-database) result-types)
+(defmethod database-query (query-expression (database sqlite-database) result-types field-names)
   (declare (ignore result-types))		; SQLite is typeless!
   (handler-case
       (multiple-value-bind (data row-n col-n)
@@ -85,20 +85,26 @@
 	    nil
 	    (prog1
 		;; The first col-n elements are column names.
-		(loop for i from col-n below (* (1+ row-n) col-n) by col-n
-		      collect (loop for j from 0 below col-n
-				    collect
-				    (#+clisp aref
-				     #-clisp sqlite:sqlite-aref
-				             data (+ i j))))
-	        #-clisp (sqlite:sqlite-free-table data))
-	      ))
+                (values
+                 (loop for i from col-n below (* (1+ row-n) col-n) by col-n
+                       collect (loop for j from 0 below col-n
+                                     collect
+                                     (#+clisp aref
+                                              #-clisp sqlite:sqlite-aref
+                                              data (+ i j))))
+                 (when field-names
+                   (loop for i from 0 below col-n
+                         collect (#+clisp aref
+                                  #-clisp sqlite:sqlite-aref
+                                  data i))))
+              #-clisp (sqlite:sqlite-free-table data))
+            ))
     (sqlite:sqlite-error (err)
-      (error 'clsql-sql-error
-	     :database database
-	     :expression query-expression
-	     :errno (sqlite:sqlite-error-code err)
-	     :error (sqlite:sqlite-error-message err)))))
+                         (error 'clsql-sql-error
+                                :database database
+                                :expression query-expression
+                                :errno (sqlite:sqlite-error-code err)
+                                :error (sqlite:sqlite-error-message err)))))
 
 #-clisp
 (defstruct sqlite-result-set

@@ -2,16 +2,14 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          postgresql-socket-api.lisp
-;;;; Purpose:       Low-level PostgreSQL interface using sockets
-;;;; Programmers:   Kevin M. Rosenberg based on
-;;;;                Original code by Pierre R. Mai 
-;;;;                
-;;;; Date Started:  Feb 2002
+;;;; Name:     postgresql-socket-api.lisp
+;;;; Purpose:  Low-level PostgreSQL interface using sockets
+;;;; Authors:  Kevin M. Rosenberg based on original code by Pierre R. Mai 
+;;;; Created:  Feb 2002
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
@@ -19,16 +17,6 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-
-;;;; Changes by Kevin Rosenberg
-;;;;  - Added socket open functions for Allegro and Lispworks
-;;;;  - Changed CMUCL FFI to UFFI
-;;;;  - Added necessary (force-output) for socket streams on 
-;;;;     Allegro and Lispworks
-;;;;  - Added initialization variable
-;;;;  - Added field type processing
-
- 
 (in-package #:postgresql-socket)
 
 (uffi:def-enum pgsql-ftype
@@ -572,7 +560,8 @@ connection, if it is still open."
   (force-output (postgresql-connection-socket connection)))
 
 (defun wait-for-query-results (connection)
-  (assert (postgresql-connection-open-p connection))
+  (asse
+rt (postgresql-connection-open-p connection))
   (let ((socket (postgresql-connection-socket connection))
 	(cursor-name nil)
 	(error nil))

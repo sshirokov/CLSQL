@@ -1,5 +1,9 @@
 30 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.9.7-pre1
+	* base/basic-sql.lisp, db-*/*-sql.lisp: More CommonSQL conformance.
+	Return field names as second value for QUERY. This can be overridden
+	for efficiency sake with the new keyword :FIELD-NAMES set to NIL
+	in the QUERY invocation.
 	* sql/metaclass.lisp: Remove old Lispworks cruft
 	and replace it with invocation of new code in kmr-mop.lisp
 	which actually works with Lispworks 4.2

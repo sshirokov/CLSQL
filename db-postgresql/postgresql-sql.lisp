@@ -146,7 +146,7 @@
   (setf (database-conn-ptr database) nil)
   t)
 
-(defmethod database-query (query-expression (database postgresql-database) result-types)
+(defmethod database-query (query-expression (database postgresql-database) result-types field-names)
   (let ((conn-ptr (database-conn-ptr database)))
     (declare (type pgsql-conn-def conn-ptr))
     (uffi:with-cstring (query-native query-expression)
@@ -166,15 +166,18 @@
 		 (setq result-types
 		   (canonicalize-types result-types num-fields
 					     result))
-		 (loop for tuple-index from 0 below (PQntuples result)
-		       collect
-		       (loop for i from 0 below num-fields
-			     collect
-			     (if (zerop (PQgetisnull result tuple-index i))
-				 (convert-raw-field
-				  (PQgetvalue result tuple-index i)
-				  result-types i)
-				 nil)))))
+                 (values
+                  (loop for tuple-index from 0 below (PQntuples result)
+                        collect
+                        (loop for i from 0 below num-fields
+                              collect
+                              (if (zerop (PQgetisnull result tuple-index i))
+                                  (convert-raw-field
+                                   (PQgetvalue result tuple-index i)
+                                   result-types i)
+                                nil)))
+                  (when field-names
+                    (result-field-names num-fields result)))))
               (t
                (error 'clsql-sql-error
                       :database database
@@ -183,6 +186,13 @@
                       :error (tidy-error-message
                               (PQresultErrorMessage result)))))
           (PQclear result))))))
+
+(defun result-field-names (num-fields result)
+  "Return list of result field names."
+  (let ((names '()))
+    (dotimes (i num-fields (nreverse names))
+      (declare (fixnum i))
+      (push (uffi:convert-from-foreign-string (PQfname res-ptr i)) names))))
 
 (defmethod database-execute-command (sql-expression
                                      (database postgresql-database))

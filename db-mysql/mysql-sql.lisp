@@ -22,14 +22,25 @@
 
 ;;; Field conversion functions
 
+(defun result-field-names (num-fields res-ptr)
+  (declare (fixnum num-fields))
+  (let ((names '())
+	(field-vec (mysql-fetch-fields res-ptr)))
+    (dotimes (i num-fields)
+      (declare (fixnum i))
+      (let* ((field (uffi:deref-array field-vec '(:array (* mysql-field)) i))
+             (name (uffi:convert-from-foreign-string
+                    (uffi:get-slot-value field 'mysql-field 'mysql::name))))
+        (push name names)))
+    (nreverse names)))
+
 (defun make-type-list-for-auto (num-fields res-ptr)
   (declare (fixnum num-fields))
   (let ((new-types '())
-	#+ignore (field-vec (mysql-fetch-fields res-ptr)))
+        (field-vec (mysql-fetch-fields res-ptr)))
     (dotimes (i num-fields)
       (declare (fixnum i))
-      (let* ( (field (mysql-fetch-field-direct res-ptr i))
-	     #+ignore (field (uffi:deref-array field-vec '(:array mysql-field) i))
+      (let* ((field (uffi:deref-array field-vec '(:array (* mysql-field)) i))
 	      (type (uffi:get-slot-value field 'mysql-field 'type)))
 	(push
 	 (case type
@@ -127,7 +138,7 @@
 
 
 (defmethod database-query (query-expression (database mysql-database) 
-			   result-types)
+			   result-types field-names)
   (declare (optimize (speed 3) (safety 0) (debug 0) (space 0)))
   (let ((mysql-ptr (database-mysql-ptr database)))
     (uffi:with-cstring (query-native query-expression)
@@ -141,23 +152,26 @@
 		       (setq result-types (canonicalize-types 
 				    result-types num-fields
 				    res-ptr))
-		       (loop for row = (mysql-fetch-row res-ptr)
-                             for lengths = (mysql-fetch-lengths res-ptr)
-			     until (uffi:null-pointer-p row)
-			   collect
-			     (do* ((rlist (make-list num-fields))
-				   (i 0 (1+ i))
-				   (pos rlist (cdr pos)))
-				 ((= i num-fields) rlist)
-			       (declare (fixnum i))
-			       (setf (car pos)  
-				 (convert-raw-field
-				  (uffi:deref-array row '(:array
-							  (* :unsigned-char))
-						    i)
-				  result-types i
-                                  (uffi:deref-array lengths '(:array :unsigned-long)
-						    i))))))
+                       (values
+                        (loop for row = (mysql-fetch-row res-ptr)
+                              for lengths = (mysql-fetch-lengths res-ptr)
+                              until (uffi:null-pointer-p row)
+                              collect
+                              (do* ((rlist (make-list num-fields))
+                                    (i 0 (1+ i))
+                                    (pos rlist (cdr pos)))
+                                   ((= i num-fields) rlist)
+                                (declare (fixnum i))
+                                (setf (car pos)  
+                                      (convert-raw-field
+                                       (uffi:deref-array row '(:array
+                                                               (* :unsigned-char))
+                                                         i)
+                                       result-types i
+                                       (uffi:deref-array lengths '(:array :unsigned-long)
+                                                         i)))))
+                        (when field-names
+                          (result-field-names num-fields res-ptr))))
 		  (mysql-free-result res-ptr))
 		(error 'clsql-sql-error
 		       :database database
@@ -262,7 +276,7 @@
   (remove-if #'(lambda (s)
                  (and (>= (length s) 11)
                       (string-equal (subseq s 0 11) "_CLSQL_SEQ_")))
-             (mapcar #'car (database-query "SHOW TABLES" database nil))))
+             (mapcar #'car (database-query "SHOW TABLES" database nil nil))))
     
 ;; MySQL 4.1 does not support views 
 (defmethod database-list-views ((database mysql-database)
@@ -349,7 +363,7 @@
   (mapcan #'(lambda (s)
               (let ((sn (%table-name-to-sequence-name (car s))))
                 (and sn (list sn))))
-	  (database-query "SHOW TABLES" database nil)))
+	  (database-query "SHOW TABLES" database nil nil)))
 
 (defmethod database-set-sequence-position (sequence-name
                                            (position integer)
@@ -415,7 +429,7 @@
       (unwind-protect
 	   (progn
 	     (setf (slot-value database 'clsql-base-sys::state) :open)
-	     (mapcar #'car (database-query "show databases" database :auto)))
+	     (mapcar #'car (database-query "show databases" database :auto nil)))
 	(progn
 	  (database-disconnect database)
 	  (setf (slot-value database 'clsql-base-sys::state) :closed))))))
@@ -437,7 +451,7 @@
   nil)
 
 (defmethod db-type-transaction-capable? ((db-type (eql :mysql)) database)
-  (let ((tuple (car (database-query "SHOW VARIABLES LIKE 'HAVE_INNODB'" database :auto))))
+  (let ((tuple (car (database-query "SHOW VARIABLES LIKE 'HAVE_INNODB'" database :auto nil))))
     (and tuple (string-equal "YES" (second tuple)))))
 
 (when (clsql-base-sys:database-type-library-loaded :mysql)

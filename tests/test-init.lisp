@@ -137,8 +137,8 @@
 		 :make-default t
 		 :if-exists :old)
   
-  (unless (db-backend-has-create/destroy-db? db-type)
-    (truncate-database :database *default-database*))
+  ;; Ensure database is empty
+  (truncate-database :database *default-database*)
   
   (setf *test-database-underlying-type*
 	(clsql-sys:database-underlying-type *default-database*))

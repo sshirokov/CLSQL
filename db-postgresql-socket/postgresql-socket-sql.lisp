@@ -2,15 +2,14 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          postgresql-socket-sql.sql
-;;;; Purpose:       High-level PostgreSQL interface using socket
-;;;; Programmers:   Kevin M. Rosenberg based on
-;;;;                Original code by Pierre R. Mai 
-;;;; Date Started:  Feb 2002
+;;;; Name:     postgresql-socket-sql.sql
+;;;; Purpose:  High-level PostgreSQL interface using socket
+;;;; Authors:  Kevin M. Rosenberg based on original code by Pierre R. Mai 
+;;;; Created:  Feb 2002
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
@@ -202,7 +201,7 @@ doesn't depend on UFFI."
   (close-postgresql-connection (database-connection database))
   t)
 
-(defmethod database-query (expression (database postgresql-socket-database) result-types)
+(defmethod database-query (expression (database postgresql-socket-database) result-types field-names)
   (let ((connection (database-connection database)))
     (with-postgresql-handlers (database expression)
       (start-query-execution connection expression)
@@ -216,17 +215,25 @@ doesn't depend on UFFI."
 		 :errno 'missing-result
 		 :error "Didn't receive result cursor for query."))
 	(setq result-types (canonicalize-types result-types cursor))
-	(loop for row = (read-cursor-row cursor result-types)
-	      while row
-	      collect row
-	      finally
-	      (unless (null (wait-for-query-results connection))
-		(close-postgresql-connection connection)
-		(error 'clsql-sql-error
-		       :database database
-		       :expression expression
-		       :errno 'multiple-results
-		       :error "Received multiple results for query.")))))))
+        (values
+         (loop for row = (read-cursor-row cursor result-types)
+               while row
+               collect row
+               finally
+               (unless (null (wait-for-query-results connection))
+                 (close-postgresql-connection connection)
+                 (error 'clsql-sql-error
+                        :database database
+                        :expression expression
+                        :errno 'multiple-results
+                        :error "Received multiple results for query.")))
+         (when field-names
+           (result-field-names cursor)))))))
+
+(defun result-field-names (cursor)
+  "Return list of result field names."
+  ;; FIXME -- implement
+  nil)
 
 (defmethod database-execute-command
     (expression (database postgresql-socket-database))
