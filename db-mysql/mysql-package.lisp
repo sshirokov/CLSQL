@@ -126,6 +126,22 @@
      #:mysql-info-string
      #:mysql-data-seek
      
+     #:mysql-bind
+     #:mysql-stmt-param-count
+     #:mysql-stmt-prepare
+     #:mysql-stmt-execute
+     #:mysql-stmt-init
+     #:mysql-stmt-close-result
+     #:mysql-stmt-free-result
+     #:mysql-stmt
+     #:mysql-stmt-result-metadata
+     #:mysql-stmt-fetch
+     #:mysql-stmt-bind-param
+     #:mysql-stmt-bind-result
+     #:mysql-stmt-close
+     #:mysql-stmt-errno
+     #:mysql-stmt-error
+     
      #:make-64-bit-integer
      )
     (:documentation "This is the low-level interface MySQL."))

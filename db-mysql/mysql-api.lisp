@@ -33,7 +33,7 @@
 ;;; Basic Types
 
 (uffi:def-foreign-type mysql-socket :int)
-(uffi:def-foreign-type mysql-bool :char)
+(uffi:def-foreign-type mysql-bool :byte)
 (uffi:def-foreign-type mysql-byte :unsigned-char)
 
 (uffi:def-enum mysql-net-type
@@ -104,7 +104,8 @@
      (:long-blob 251)
      (:blob 252)
      (:var-string 253)
-     (:string 254)))
+     (:string 254)
+     (:geometry 255)))
 
 #+mysql-client-v3
 (uffi:def-struct mysql-field
@@ -263,15 +264,31 @@
   (handle (:struct-pointer mysql-mysql))
   (eof mysql-bool))
 
+#+mysql-client-4.1
+(uffi:def-enum mysql-field-types
+    (:ready 
+     :get-result
+     :use-result))
+
 #+mysql-client-v4.1
 (uffi:def-struct mysql-bind
     (length (* :unsigned-long))
-  (is-null (* :short))
+  (is-null (* mysql-bool))
   (buffer :pointer-void)
   (buffer-type :int)
   (buffer-length :unsigned-long)
-  ;; remainder of structure is for internal use
-  )
+  ;; internal use
+  (inter_buffer (* :unsigned-char))
+  (offset :unsigned-long)
+  (internal-length :unsigned-long)
+  (param-number :unsigned-int)
+  (pack-length :unsigned-int)
+  (is-signed mysql-bool)
+  (long-data-used mysql-bool)
+  (internal-is-null mysql-bool)
+  (store-param-func :pointer-void)
+  (fetch-result :pointer-void)
+  (skip-result :pointer-void))
 
 ;;;; The Foreign C routines
 (declaim (inline mysql-init))
@@ -541,6 +558,20 @@
   :returning mysql-stmt-ptr)
 
 #+mysql-client-v4.1
+(uffi:def-function "mysql_stmt_prepare"
+    ((stmt mysql-stmt-ptr)
+     (query :cstring)
+     (length :unsigned-long))
+  :module "clsql-mysql"
+  :returning :int)
+
+#+mysql-client-v4.1
+(uffi:def-function "mysql_stmt_param_count"
+    ((stmt mysql-stmt-ptr))
+  :module "clsql-mysql"
+  :returning :unsigned-int)
+
+#+mysql-client-v4.1
 (uffi:def-function "mysql_stmt_bind_param"
     ((stmt mysql-stmt-ptr)
      (bind (* mysql-bind)))
@@ -553,6 +584,13 @@
      (bind (* mysql-bind)))
   :module "clsql-mysql"
   :returning :short)
+
+#+mysql-client-v4.1
+(uffi:def-function "mysql_stmt_result_metadata"
+    ((stmt mysql-stmt-ptr))
+  :module "clsql-mysql"
+  :returning (* mysql-mysql-res))
+
 
 #+mysql-client-v4.1
 (uffi:def-function "mysql_stmt_execute"
@@ -571,6 +609,25 @@
     ((stmt mysql-stmt-ptr))
   :module "clsql-mysql"
   :returning :short)
+
+#+mysql-client-v4.1
+(uffi:def-function "mysql_stmt_close"
+    ((stmt mysql-stmt-ptr))
+  :module "clsql-mysql"
+  :returning :short)
+
+#+mysql-client-v4.1
+(uffi:def-function "mysql_stmt_errno"
+    ((stmt mysql-stmt-ptr))
+  :module "clsql-mysql"
+  :returning :unsigned-int)
+
+#+mysql-client-v4.1
+(uffi:def-function "mysql_stmt_error"
+    ((stmt mysql-stmt-ptr))
+  :module "clsql-mysql"
+  :returning :cstring)
+
 
 ;;;; Equivalents of C Macro definitions for accessing various fields
 ;;;; in the internal MySQL Datastructures

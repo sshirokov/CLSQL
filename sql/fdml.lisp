@@ -581,8 +581,15 @@ computed for each field."
 
 (defun prepare-sql (sql-stmt types &key (database *default-database*) (result-types :auto) field-names)
   "Prepares a SQL statement for execution. TYPES contains a
-list of UFFI primitive types corresponding to the input parameters. Returns a
-prepared-statement object."
+list of types corresponding to the input parameters. Returns a
+prepared-statement object.
+
+A type can be
+  :int
+  :double
+  :null
+  (:string n)
+"
   (unless (db-type-has-prepared-stmt? (database-type database))
     (error 'sql-user-error 
 	   :message

@@ -436,6 +436,125 @@
 	  (database-disconnect database)
 	  (setf (slot-value database 'clsql-sys::state) :closed))))))
 
+
+;;; Prepared statements
+
+(defclass mysql-stmt ()
+  ((database :initarg :database :reader database)
+   (stmt :initarg :stmt :accessor stmt)
+   (input-bind :initarg :input-bind :reader input-bind)
+   (output-bind :initarg :output-bind :reader output-bind)
+   (types :initarg :types :reader types)
+   (result-set :initarg :result-set :reader result-set)
+   (num-fields :initarg :num-fields :reader num-fields)
+   (field-names :initarg :field-names :accessor stmt-field-names)
+   (result-types :initarg :result-types :reader result-types)))
+
+(defun clsql-type->mysql-type (type)
+  (cond
+    ((in type :null) mysql-field-types#null)
+    ((in type :int :integer) mysql-field-types#long)
+    ((in type :short) mysql-field-types#short)
+    ((in type :bigint) mysql-field-types#longlong)
+    ((in type :float :double :number) mysql-field-types#double)
+    ((and (consp type) (in (car type) :char :varchar)) mysql-field-types#var-string)
+    (t
+     (error 'sql-user-error 
+	    :message 
+	    (format nil "Unknown clsql type ~A." type)))))
+
+(defmethod database-prepare (sql-stmt types (database mysql-database) result-types field-names)
+  (let* ((mysql-ptr (database-mysql-ptr database))
+	 (stmt (mysql-stmt-init mysql-ptr)))
+    (when (uffi:null-pointer-p stmt)
+      (error 'sql-database-error
+	     :error-id (mysql-errno mysql-ptr)
+	     :message (mysql-error-string mysql-ptr)))
+
+    (uffi:with-cstring (native-query sql-stmt)
+      (unless (zerop (mysql-stmt-prepare stmt native-query (length sql-stmt)))
+	(error 'sql-database-error
+	       :error-id (mysql-errno mysql-ptr)
+	       :message (mysql-error-string mysql-ptr))))
+    
+    (unless (= (mysql-stmt-param-count stmt) (length types))
+      (error 'sql-database-error
+	     :message 
+	     (format nil "Mysql param count (~D) does not match number of types (~D)"
+		     (mysql-stmt-param-count stmt) (length types))))
+
+    (let ((rs (mysql-stmt-result-metadata stmt)))
+      (when (uffi:null-pointer-p rs)
+	(error 'sql-database-error
+	       :message "NULL result metadata"))
+      (make-instance 'mysql-stmt
+	:database database
+	:stmt stmt
+	:num-fields (mysql-num-fields rs)
+	:input-bind (uffi:allocate-foreign-object mysql-bind (length types))
+	:output-bind (uffi:allocate-foreign-object mysql-bind (mysql-num-fields rs))
+	:result-set rs
+	:result-types result-types
+	:types (mapcar 'clsql-type->mysql-type types)
+	:field-names field-names))))
+
+(defmethod database-bind-parameter ((stmt mysql-stmt) position value)
+  ;; FIXME: will need to allocate bind structure. This should probably be
+  ;; done in C since the API is not mature and may change
+  (let ((binding (uffi:deref-array (input-bind stmt) '(:array mysql-bind) (1- position)))
+	(type (nth (1- position) (types stmt))))
+    (setf (uffi:get-slot-value binding 'mysql-bind 'length) 0)
+    (cond
+     ((null value)
+      (setf (uffi:get-slot-value binding 'mysql-bind 'is-null) 1))
+     (t
+      (setf (uffi:get-slot-value binding 'mysql-bind 'is-null) 0)
+      (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-type) type)
+      (case type
+	(#.mysql-field-types#long
+	 (let ((ptr (uffi:allocate-foreign-object :long)))
+	   (setf (uffi:deref-pointer ptr :long) value)
+	   (setf (uffi:get-slot-value binding 'mysql-bind 'buffer) ptr)))
+	)))))
+
+(defmethod database-run-prepared ((stmt mysql-stmt))
+  (unless (zerop (mysql-stmt-bind-param (stmt stmt) (input-bind stmt)))
+    (error 'sql-database-error
+	   :error-id (mysql-stmt-errno (stmt stmt))
+	   :message  (uffi:convert-from-cstring
+		      (mysql-stmt-error (stmt stmt)))))
+  (unless (zerop (mysql-stmt-execute (stmt stmt)))
+    (error 'sql-database-error
+	   :error-id (mysql-stmt-errno (stmt stmt))
+	   :message  (uffi:convert-from-cstring
+		      (mysql-stmt-error (stmt stmt)))))
+  (let ((field-vec (mysql-fetch-fields (result-set stmt))))
+    (dotimes (i (num-fields (result-set stmt)))
+      (declare (fixnum i))
+      (let* ((field (uffi:deref-array field-vec '(:array mysql-field) i))
+	     (type (uffi:get-slot-value field 'mysql-field 'type))
+	     (binding (uffi:deref-array (output-bind stmt) '(:array mysql-bind) i)))
+	(setf (uffi:get-slot-value binding 'mysql-bind 'buffer-type) type)
+	 (case type
+	   (#.mysql-field-types#var-string
+	    (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-length) 1024)
+	    (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
+		  (uffi:allocate-foreign-object :unsigned-char 1024)))
+	   (t
+	    (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-length) 0))))))
+  (unless (zerop (mysql-stmt-bind-result (stmt stmt) (output-bind stmt)))
+    (error 'sql-database-error
+	   :error-id (mysql-stmt-errno (stmt stmt))
+	   :message  (uffi:convert-from-cstring
+		      (mysql-stmt-error (stmt stmt))))))
+
+
+(defmethod database-free-prepared ((stmt mysql-stmt))
+  (with-slots (stmt) stmt
+    (mysql-stmt-close stmt))
+  )
+
+
 ;;; Database capabilities
 
 (defmethod db-type-use-column-on-drop-index? ((db-type (eql :mysql)))

@@ -228,12 +228,16 @@
    (result-types :initarg :result-types :reader result-types)))
 
 (defun clsql-type->postgresql-type (type)
-  (case type
-    (:string "VARCHAR")
-    ((:int :integer) "INT4")
-    (:short "INT2")
-    ((:number :numeric :float) "NUMERIC")
-    (:bigint "INT8")))
+  (cond
+    ((in type :int :integer) "INT4")
+    ((in type :short) "INT2")
+    ((in type :bigint) "INT8")
+    ((in type :float :double :number) "NUMERIC")
+    ((and (consp type) (in (car type) :char :varchar)) "VARCHAR")
+    (t
+     (error 'sql-user-error 
+	    :message 
+	    (format nil "Unknown clsql type ~A." type)))))
 
 (defun prepared-sql-to-postgresql-sql (sql)
   ;; FIXME: Convert #\? to "$n". Don't convert within strings

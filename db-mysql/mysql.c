@@ -84,3 +84,70 @@ clsql_mysql_insert_id (MYSQL* mysql, unsigned int* pHigh32)
 }
 
 
+/* Accessor functions to hide the differences across MySQL versions */
+
+DLLEXPORT
+short int
+clsql_mysql_field_type (MYSQL_FIELD* field)
+{
+  return field->type;
+}
+
+DLLEXPORT
+char*
+clsql_mysql_field_name (MYSQL_FIELD* field)
+{
+  return field->name;
+}
+
+DLLEXPORT
+unsigned long
+clsql_mysql_field_length (MYSQL_FIELD* field)
+{
+  return field->length;
+}
+
+DLLEXPORT
+unsigned long
+clsql_mysql_field_max_length (MYSQL_FIELD* field)
+{
+  return field->max_length;
+}
+
+
+#if MYSQL_VERSION_ID >= 40102
+#include <stdlib.h>
+
+DLLEXPORT
+MYSQL_BIND*
+allocate_bind (unsigned int n)
+{
+  return (MYSQL_BIND*) malloc (n * sizeof(MYSQL_BIND));
+}
+
+DLLEXPORT
+void
+bind_param (MYSQL_BIND* bind, unsigned int n, unsigned long length, unsigned short is_null, 
+	   void* buffer, unsigned short buffer_type, unsigned long buffer_length)
+{
+  bind[n].length = length;
+  bind[n].is_null = is_null;
+  bind[n].buffer = buffer;
+  bind[n].buffer_type = buffer_type;
+  bind[n].buffer_length = buffer_length;
+}
+
+
+DLLEXPORT
+DLLEXPORT
+unsigned int
+clsql_mysql_stmt_affected_rows (MYSQL_STMT* stmt, unsigned int* pHigh32)
+{
+  my_ulonglong nAffected = mysql_stmt_affected_rows (stmt);
+  *pHigh32 = upper_32bits(nAffected);
+  return lower_32bits(nAffected);
+}
+
+
+#endif
+
