@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.21 2003/05/17 07:34:54 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.22 2003/05/17 07:45:05 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -121,9 +121,9 @@
 		  (make-64-bit-integer high32 low32)))))
 	 (t
 	  ;; Choose optimized routine
-	  #-(or cmu sbcl lispworks scl)
+	  #-(or cmu sbcl scl)
 	  (native-to-string char-ptr)
-	  #+(or cmu sbcl lispworks scl)
+	  #+(or cmu sbcl scl)
 	  (uffi:convert-from-foreign-string char-ptr)))))))
   
 
@@ -143,7 +143,7 @@
 	((= i len))
       (declare (fixnum i))
       (setf (schar str i)
-	(code-char (uffi:deref-array s '(:array :unsigned-char) i)))
+	(code-char (uffi:deref-array s :unsigned-char i)))
       (incf i))
     str))
 
@@ -159,7 +159,7 @@
 	((= i len))
       (declare (fixnum i))
       (setf (schar str i)
-	(code-char (uffi:deref-array s '(:array :unsigned-char) i)))
+	(code-char (uffi:deref-array s :unsigned-char i)))
       (incf i))
     str))
 
@@ -176,13 +176,13 @@
 	((= i len4))
       (declare (fixnum i))
       (setf (aref (the (simple-array (signed-byte 32) (*)) str) i)
-	(uffi:deref-array s '(:array :int) i))
+	(uffi:deref-array s :int i))
 	(incf i))
     (do ((i (* 4 len4)))
 	((= i len))
       (declare (fixnum i))
       (setf (aref (the (simple-array (signed-byte 8) (*)) str) i)
-	(uffi:deref-array s '(:array :unsigned-char) i))
+	(uffi:deref-array s :unsigned-char i))
       (incf i))
     str))
 
