@@ -428,7 +428,8 @@
       (coerce-string user)
       (let ((connection (PQsetdbLogin host port options tty db user password)))
         (declare (type postgresql::pgsql-conn-ptr connection))
-        (unless (eq (PQstatus connection) :connection-ok)
+        (unless (eq (PQstatus connection)
+		    pgsql-conn-status-type#connection-ok)
           ;; Connect failed
           (error 'sql-connection-error
                  :database-type :postgresql

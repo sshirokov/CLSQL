@@ -30,7 +30,7 @@
        (nreverse new-types))
     (declare (fixnum length-types length-auto-list i))
     (if (>= i length-types)
-	(push t new-types) ;; types is shorted than num-fields
+	(push t new-types) ;; types is shorter than num-fields
 	(push
 	 (case (nth i types)
 	   (:int
@@ -74,6 +74,7 @@
 (uffi:def-function "atol64"
     ((str (* :unsigned-char))
      (high32 (* :int)))
+  :module "clsql-uffi"
   :returning :unsigned-int)
 
 (uffi:def-constant +2^32+ 4294967296)
@@ -97,7 +98,7 @@
 (defun convert-raw-field (char-ptr types index &optional length)
   (declare (optimize (speed 3) (safety 0) (space 0))
  	   (type char-ptr-def char-ptr))
-  (let ((type (if (listp types)
+  (let ((type (if (consp types)
 		  (nth index types)
 		  types)))
     (cond
@@ -107,7 +108,7 @@
        (case type
 	 (:double
 	  (atof char-ptr))
-	 ((or :int32 :int)
+	 ((:int32 :int)
 	  (atoi char-ptr))
 	 (:int64
 	  (uffi:with-foreign-object (high32-ptr :int)

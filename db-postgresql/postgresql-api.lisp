@@ -71,6 +71,7 @@
    (dbName :cstring)
    (login :cstring)
    (pwd :cstring))
+  :module "postgresql"
   :returning pgsql-conn)
 
 (declaim (inline PQfinish))

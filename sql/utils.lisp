@@ -56,7 +56,9 @@
                       (symbol (symbol-name identifier))
                       (string identifier)))
          (escaped (make-string (length unescaped))))
-    (dotimes (i (length unescaped))
+    (substitute #\_ #\- unescaped)))
+
+(dotimes (i (length unescaped))
       (setf (char escaped i)
             (cond ((equal (char unescaped i) #\-)
                    #\_)
@@ -66,11 +68,12 @@
     escaped))
 
 (defmacro without-interrupts (&body body)
-  #+lispworks `(mp:without-preemption ,@body)
   #+allegro `(mp:without-scheduling ,@body)
+  #+clisp `(progn ,@body)
   #+cmu `(system:without-interrupts ,@body)
-  #+sbcl `(sb-sys::without-interrupts ,@body)
-  #+openmcl `(ccl:without-interrupts ,@body))
+  #+lispworks `(mp:without-preemption ,@body)
+  #+openmcl `(ccl:without-interrupts ,@body)
+  #+sbcl `(sb-sys::without-interrupts ,@body))
 
 (defun make-process-lock (name) 
   #+allegro (mp:make-process-lock :name name)

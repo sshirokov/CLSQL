@@ -24,9 +24,8 @@
 		 :type "config"))
 
 (defvar +all-db-types+
-    #-clisp '(:postgresql :postgresql-socket :mysql :sqlite :odbc :oracle
-	      #+allegro :aodbc)
-    #+clisp '(:sqlite))
+  '(:postgresql :postgresql-socket :mysql :sqlite :odbc :oracle
+    #+allegro :aodbc))
 
 (defclass conn-specs ()
   ((aodbc :accessor aodbc-spec :initform nil)

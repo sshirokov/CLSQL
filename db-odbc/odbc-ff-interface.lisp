@@ -384,7 +384,10 @@
      (table-name :pointer-void)
      (table-name-length :short)
      (table-type-name :pointer-void)
-     (table-type-name-length :short))
+     (table-type-name-length :short)
+     (unique :short)
+     (reserved :short))
+  :module "odbc"
   :returning :short)
 
 
@@ -398,6 +401,7 @@
      (table-name-length :short)
      (unique :short)
      (reserved :short))
+  :module "odbc"
   :returning :short)
 
 

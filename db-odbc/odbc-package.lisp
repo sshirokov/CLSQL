@@ -59,7 +59,6 @@
      #:query-database
      #:%new-statement-handle
      #:%sql-exec-direct
-     #:%put-str
      #:result-columns-count
      #:result-rows-count
      #:sql-to-c-type

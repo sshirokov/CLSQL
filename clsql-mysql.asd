@@ -72,7 +72,6 @@
 
 ;;; System definition
 
-#+(or allegro lispworks cmu sbcl openmcl mcl scl)
 (defsystem :clsql-mysql
   :name "cl-sql-mysql"
   :author "Kevin M. Rosenberg <kmr@debian.org>"

@@ -1,4 +1,8 @@
 01 Oct 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* multiple: Apply patch from Joerg Hoehle with multiple
+	improvements.
+	
+01 Oct 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.0.7 released
 	* sql/oodml.lisp, sql/package.lisp, db-mysql/mysql-objects.lisp:
 	Add support for mediumint.

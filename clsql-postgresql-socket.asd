@@ -21,7 +21,6 @@
 
 ;;; System definition
 
-#+(or allegro lispworks cmu sbcl openmcl mcl scl)
 (defsystem clsql-postgresql-socket
   :name "cl-sql-postgresql-socket"
   :author "Kevin M. Rosenberg <kmr@debian.org>"

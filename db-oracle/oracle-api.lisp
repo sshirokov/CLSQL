@@ -60,8 +60,6 @@
 	      (error 'sql-database-error :message "OCI No Data Found"))
 	     (#.+oci-success-with-info+
 	      (error 'sql-database-error :message "internal error: unexpected +oci-success-with-info"))
-	     (#.+oci-no-data+
-	      (error 'sql-database-error :message "OCI No Data"))
 	     (#.+oci-invalid-handle+
 	      (error 'sql-database-error :message "OCI Invalid Handle"))
 	     (#.+oci-need-data+

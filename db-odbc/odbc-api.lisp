@@ -648,7 +648,6 @@ as possible second argument) to the desired representation of date/time/timestam
 		   (#.$SQL_INTEGER (get-cast-int data-ptr))
 		   (#.$SQL_BIGINT (read-from-string
 				   (get-cast-foreign-string data-ptr)))
-		   (#.$SQL_TINYINT (get-cast-byte data-ptr))
 		   (#.$SQL_DECIMAL 
 		    (let ((*read-base* 10))
 		      (read-from-string (get-cast-foreign-string data-ptr))))

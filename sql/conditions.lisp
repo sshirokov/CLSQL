@@ -43,10 +43,8 @@ or :ignore/nil to silently ignore the warning.")
 		     :initform nil
 		     :reader sql-error-database))
   (:report (lambda (c stream)
-	     (format stream "A database error occurred~A: ~A / ~A~%  ~A"
-		     (if (sql-error-database c)
-			 (format nil " on database ~A" (sql-error-database c))
-			 "")
+ 	     (format stream "A database error occurred~@[ on database ~A~]: ~A / ~A~%  ~A"
+ 		     (sql-error-database c)
 		     (sql-error-error-id c)
 		     (sql-error-secondary-error-id c)
 		     (sql-error-database-message c))))

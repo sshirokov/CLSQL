@@ -76,7 +76,6 @@
 	(and (probe-file lib)
 	     (> (file-write-date lib) (file-write-date (component-pathname c)))))))
   
-#+(or allegro lispworks cmu sbcl openmcl mcl scl)
 (defsystem clsql-uffi
   :name "cl-sql-base"
   :author "Kevin M. Rosenberg <kmr@debian.org>"

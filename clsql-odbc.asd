@@ -19,7 +19,6 @@
 (defpackage #:clsql-odbc-system (:use #:asdf #:cl))
 (in-package #:clsql-odbc-system)
 
-#+(or allegro lispworks cmu sbcl openmcl mcl scl)
 (defsystem clsql-odbc
   :name "clsql-odbc"
   :author "Kevin M. Rosenberg <kmr@debian.org>"
