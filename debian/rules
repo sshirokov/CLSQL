@@ -98,7 +98,7 @@ install: build
 	dh_install -p $(pkg-mysql) $(srcs-mysql) $(lispdir-mysql)
 	dh_install -p $(pkg-mysql) $(srcs-mysql-so) $(sodir-mysql)
 	dh_install -p $(pkg-pg) $(srcs-pg) $(lispdir-pg)
-	dh_install -p $(pkg-pg-socket) $(srcs-pg) $(lispdir-pg-socket)
+	dh_install -p $(pkg-pg-socket) $(srcs-pg-socket) $(lispdir-pg-socket)
 	dh_install -p $(pkg-pg-socket) $(srcs-aodbc) $(lispdir-pg-aodbc)
 
 	# CLC Systems
