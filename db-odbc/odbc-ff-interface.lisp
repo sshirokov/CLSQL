@@ -18,36 +18,35 @@
 
 (in-package #:odbc)
 
-(def-foreign-type sql-handle (* :void))
-(def-foreign-type sql-handle-ptr (* sql-handle))
-(def-foreign-type string-ptr (* :void))
-
+(def-foreign-type sql-handle :pointer-void)
+(def-foreign-type sql-handle-ptr '(* sql-handle))
+(def-foreign-type string-ptr '(* :unsigned-char))
 (def-type long-ptr-type '(* :long))
 
 
 (def-function "SQLAllocEnv"
     ((*phenv sql-handle-ptr)    ; HENV   FAR *phenv
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLAllocConnect"
     ((henv sql-handle)          ; HENV        henv
      (*phdbc sql-handle-ptr)    ; HDBC   FAR *phdbc
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLConnect"
     ((hdbc sql-handle)          ; HDBC        hdbc
-     (*szDSN string-ptr)        ; UCHAR  FAR *szDSN
+     (*szDSN :cstring)        ; UCHAR  FAR *szDSN
      (cbDSN :short)             ; SWORD       cbDSN
-     (*szUID string-ptr)        ; UCHAR  FAR *szUID 
+     (*szUID :cstring)        ; UCHAR  FAR *szUID 
      (cbUID :short)             ; SWORD       cbUID
-     (*szAuthStr string-ptr)    ; UCHAR  FAR *szAuthStr
+     (*szAuthStr :cstring)    ; UCHAR  FAR *szAuthStr
      (cbAuthStr :short)         ; SWORD       cbAuthStr
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLDriverConnect"
@@ -60,19 +59,19 @@
      (*pcbConnStrOut :pointer-void)      ; SWORD  FAR *pcbConnStrOut
      (fDriverCompletion :short) ; UWORD       fDriverCompletion
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLDisconnect"
     ((hdbc sql-handle))         ; HDBC        hdbc
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
   
 (def-function "SQLAllocStmt"
     ((hdbc sql-handle)          ; HDBC        hdbc
      (*phstmt sql-handle-ptr)   ; HSTMT  FAR *phstmt
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLGetInfo"
@@ -82,41 +81,41 @@
      (cbInfoValueMax :short)    ; SWORD       cbInfoValueMax
      (*pcbInfoValue :pointer-void)       ; SWORD  FAR *pcbInfoValue
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLPrepare"
     ((hstmt sql-handle)         ; HSTMT       hstmt
-     (*szSqlStr string-ptr)     ; UCHAR  FAR *szSqlStr
+     (*szSqlStr :cstring)     ; UCHAR  FAR *szSqlStr
      (cbSqlStr :long)           ; SDWORD      cbSqlStr
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLExecute"
     ((hstmt sql-handle)         ; HSTMT       hstmt
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLExecDirect"
     ((hstmt sql-handle)         ; HSTMT       hstmt
-     (*szSqlStr string-ptr)     ; UCHAR  FAR *szSqlStr
+     (*szSqlStr :cstring)     ; UCHAR  FAR *szSqlStr
      (cbSqlStr :long)           ; SDWORD      cbSqlStr
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLFreeStmt"
     ((hstmt sql-handle)         ; HSTMT       hstmt
      (fOption :short))          ; UWORD       fOption
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
   (def-function "SQLCancel"
       ((hstmt sql-handle)         ; HSTMT       hstmt
        )
-    :module :odbc
+    :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLError"
@@ -129,21 +128,21 @@
      (cbErrorMsgMax :short)     ; SWORD       cbErrorMsgMax
      (*pcbErrorMsg :pointer-void)        ; SWORD  FAR *pcbErrorMsg
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLNumResultCols"
     ((hstmt sql-handle)         ; HSTMT       hstmt
      (*pccol :pointer-void)              ; SWORD  FAR *pccol
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLRowCount"
     ((hstmt sql-handle)         ; HSTMT       hstmt
      (*pcrow :pointer-void)              ; SDWORD FAR *pcrow
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLDescribeCol"
@@ -157,33 +156,33 @@
      (*pibScale :pointer-void)           ; SWORD  FAR *pibScale
      (*pfNullable :pointer-void)         ; SWORD  FAR *pfNullable
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLColAttributes"
     ((hstmt sql-handle)         ; HSTMT       hstmt
      (icol :short)              ; UWORD       icol
      (fDescType :short)         ; UWORD       fDescType
-     (rgbDesc :pointer-void)             ; PTR         rgbDesc
+     (rgbDesc :cstring)             ; PTR         rgbDesc
      (cbDescMax :short)         ; SWORD       cbDescMax
-     (*pcbDesc :pointer-void)            ; SWORD  FAR *pcbDesc
+     (*pcbDesc :cstring)            ; SWORD  FAR *pcbDesc
      (*pfDesc :pointer-void)             ; SDWORD FAR *pfDesc
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLColumns"
     ((hstmt sql-handle)             ; HSTMT       hstmt
-     (*szTableQualifier string-ptr) ; UCHAR  FAR *szTableQualifier
+     (*szTableQualifier :cstring) ; UCHAR  FAR *szTableQualifier
      (cbTableQualifier :short)      ; SWORD       cbTableQualifier
-     (*szTableOwner string-ptr)     ; UCHAR  FAR *szTableOwner
+     (*szTableOwner :cstring)     ; UCHAR  FAR *szTableOwner
      (cbTableOwner :short)          ; SWORD       cbTableOwner
-     (*szTableName string-ptr)      ; UCHAR  FAR *szTableName
+     (*szTableName :cstring)      ; UCHAR  FAR *szTableName
      (cbTableName :short)           ; SWORD       cbTableName
-     (*szColumnName string-ptr)     ; UCHAR  FAR *szColumnName
+     (*szColumnName :cstring)     ; UCHAR  FAR *szColumnName
      (cbColumnName :short)          ; SWORD       cbColumnName
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLBindCol"
@@ -194,13 +193,13 @@
      (cbValueMax :long)         ; SDWORD      cbValueMax
      (*pcbValue :pointer-void)           ; SDWORD FAR *pcbValue
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLFetch"
     ((hstmt sql-handle)         ; HSTMT       hstmt
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLTransact"
@@ -208,7 +207,7 @@
      (hdbc sql-handle)          ; HDBC        hdbc
      (fType :short)             ; UWORD       fType ($SQL_COMMIT or $SQL_ROLLBACK)
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 ;; ODBC 2.0
@@ -220,7 +219,7 @@
      (*pibScale :pointer-void)           ; SWORD  FAR *pibScale
      (*pfNullable :pointer-void)         ; SWORD  FAR *pfNullable
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 ;; ODBC 2.0
@@ -236,7 +235,7 @@
      (cbValueMax :long)         ; SDWORD      cbValueMax
      (*pcbValue :pointer-void)           ; SDWORD FAR *pcbValue
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 ;; level 1
@@ -248,14 +247,14 @@
      (cbValueMax :long)         ; SDWORD      cbValueMax
      (*pcbValue :pointer-void)           ; SDWORD FAR *pcbValue
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLParamData"
     ((hstmt sql-handle)         ; HSTMT       hstmt
      (*prgbValue :pointer-void)          ; PTR    FAR *prgbValue
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLPutData"
@@ -263,7 +262,7 @@
      (rgbValue :pointer-void)            ; PTR         rgbValue
      (cbValue :long)            ; SDWORD      cbValue
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLGetConnectOption"
@@ -271,7 +270,7 @@
      (fOption :short)           ; UWORD       fOption
      (pvParam :pointer-void)             ; PTR         pvParam
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLSetConnectOption"
@@ -279,7 +278,7 @@
      (fOption :short)           ; UWORD       fOption
      (vParam :long)             ; UDWORD      vParam
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLSetPos"
@@ -288,7 +287,7 @@
      (fOption :short)           ; UWORD       fOption
      (fLock :short)             ; UWORD       fLock
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 					; level 2
@@ -299,7 +298,7 @@
      (*pcrow :pointer-void)              ; UDWORD FAR *pcrow
      (*rgfRowStatus :pointer-void)       ; UWORD  FAR *rgfRowStatus
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLDataSources"
@@ -312,13 +311,13 @@
      (cbDescriptionMax :short)  ; SWORD       cbDescriptionMax
      (*pcbDescription :pointer-void)     ; SWORD      *pcbDescription
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 (def-function "SQLFreeEnv"
     ((henv sql-handle)          ; HSTMT       hstmt
      )
-  :module :odbc
+  :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
 
@@ -346,4 +345,28 @@
     (minute   :short)
     (second   :short)
     (fraction :long))
+
+
+;;; Added by KMR
+
+(def-function "SQLSetEnvAttr"
+    ((henv sql-handle)          ; HENV        henv
+     (attr :int)
+     (*value :pointer-void)
+     (szLength :int))
+  :module "odbc"
+  :returning :int)
+
+(def-function "SQLTables"
+    ((hstmt :pointer-void)
+     (catalog-name :pointer-void)
+     (catalog-name-length :short)
+     (schema-name :pointer-void)
+     (schema-name-length :short)
+     (table-name :pointer-void)
+     (table-name-length :short)
+     (table-type-name :pointer-void)
+     (table-type-name-length :short))
+  :returning :short)
+
 

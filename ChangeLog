@@ -1,8 +1,17 @@
-14 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
-	* Version 2.6.14.
+15 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.7.0: New backend: ODBC. Tests as
+	well as AODBC backend. Requires UFFI v1.4.10
+	* db-odbc/*.lisp: Add ODBC3 function SQLSetEnvAttr
+	to explicitly set ODBC2 support. Add BIGINT support.
+	Add result-types support. Added SQLTables.
+	Fix array type in fetch-all-rows. Make width
+	changable by database or query.
 	* base/utils.lisp: Add process functions
 	* base/package.lisp: Export utils to CLSQL-BASE-SYS
-	* db-aodbc: implement sequence functions
+	* db-aodbc: Implement sequence functions,
+	database-list-tables, database-list-attributes
+	* tests/utils.lisp: Add support for ODBC backend,
+	rework READ-SPECS to use +all-db-types+
 	* db-mysql/mysql-sql.lisp: Use WITHOUT-INTERRUPTS
 	for SEQUENCE-NEXT
 	

@@ -22,6 +22,7 @@
 (defvar *rt-ooddl*)
 (defvar *rt-oodml*)
 (defvar *rt-syntax*)
+(defvar *rt-time*)
 
 (defvar *test-database-type* nil)
 (defvar *test-database-user* nil)
@@ -142,9 +143,10 @@
 (defparameter employee10 nil)
 
 (defun test-initialise-database ()
-  ;; Create the tables for our view classes
-  (ignore-errors (clsql:drop-view-from-class 'employee))
-  (ignore-errors (clsql:drop-view-from-class 'company))
+  ;; Remove the tables to support cases when destroy-database isn't supported, like odbc
+  (ignore-errors (clsql:drop-table "EMPLOYEE"))
+  (ignore-errors (clsql:drop-table "COMPANY"))
+  (ignore-errors (clsql:drop-table "FOO"))
   (clsql:create-view-from-class 'employee)
   (clsql:create-view-from-class 'company)
 
@@ -319,6 +321,8 @@
 
   (ignore-errors (destroy-database spec :database-type db-type))
   (ignore-errors (create-database spec :database-type db-type))
+  ;; Also manually delete the tables since destroy-database/create-database doesn't work on ODBC
+
   (dolist (test (append *rt-connection* *rt-fddl* *rt-fdml*
 			*rt-ooddl* *rt-oodml* *rt-syntax*))
     (eval test))

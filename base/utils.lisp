@@ -68,7 +68,7 @@
 (defmacro without-interrupts (&body body)
   #+lispworks `(mp:without-preemption ,@body)
   #+allegro `(mp:without-scheduling ,@body)
-  #+cmu `(pcl::without-interrupts ,@body)
+  #+cmu `(system:without-interrupts ,@body)
   #+sbcl `(sb-sys::without-interrupts ,@body)
   #+openmcl `(ccl:without-interrupts ,@body))
 

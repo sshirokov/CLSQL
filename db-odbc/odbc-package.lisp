@@ -24,8 +24,9 @@
      #:database-library-loaded
 
      #:*null*
-     #:*trace-sql*
+     #:+null-ptr+
      #:+max-precision+
+     #:*info-output*
      #:get-cast-long
      #:%free-statement
      #:%disconnect
@@ -39,7 +40,6 @@
      #:%sql-connect
      #:disable-autocommit
      #:enable-autocommit
-     #:%null-ptr
      #:%sql-free-environment
      #:%sql-data-sources
      #:%sql-get-info
@@ -60,7 +60,9 @@
      #:%sql-exec-direct
      #:%put-str
      #:result-columns-count
+     #:result-rows-count
      #:sql-to-c-type
+     #:%list-tables
      )
   (:documentation "This is the low-level interface ODBC."))
 

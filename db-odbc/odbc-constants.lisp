@@ -4,7 +4,7 @@
 ;;;;
 ;;;; Name:     odbc-constants.lisp
 ;;;; Purpose:  Constants for UFFI interface to ODBC
-;;;; Authors:  Paul Meurer and Kevin M. Rosenberg
+;;;; Authors:  Kevin M. Rosenberg and Paul Meurer
 ;;;;
 ;;;; $Id: odbc-package.lisp 7061 2003-09-07 06:34:45Z kevin $
 ;;;;
@@ -23,7 +23,7 @@
 ;; generally useful constants
 (defconstant $SQL_SPEC_MAJOR 2)		;; Major version of specification 
 (defconstant $SQL_SPEC_MINOR 10) 	;; Minor version of specification 
-(defconstant $SQL_SPEC_STRING 	"02.10") ;; String constant for version	  
+(defvar $SQL_SPEC_STRING 	"02.10") ;; String constant for version	  
 (defconstant $SQL_SQLSTATE_SIZE 5)		;; size of SQLSTATE 			  
 (defconstant $SQL_MAX_MESSAGE_LENGTH 512)	;; message buffer size			  
 (defconstant $SQL_MAX_DSN_LENGTH 32)		;; maximum data source name size  
@@ -671,11 +671,7 @@
 (defconstant $SQL_USE_BOOKMARKS			12)
 (defconstant $SQL_GET_BOOKMARK			13	/*	GetStmtOption Only)
 (defconstant $SQL_ROW_NUMBER				14	/*	GetStmtOption Only)
-; #if (ODBCVER >= #x0200))
 (defconstant $SQL_STMT_OPT_MAX			SQL_ROW_NUMBER
-;; #else)
-(defconstant $SQL_STMT_OPT_MAX			SQL_BIND_TYPE
-;; #endif	;; ODBCVER >= #x0200
 )
 (defconstant $SQL_STMT_OPT_MIN			SQL_QUERY_TIMEOUT
 
@@ -947,4 +943,10 @@
 (defconstant $SQL_FETCH_ABSOLUTE 5)
 (defconstant $SQL_FETCH_RELATIVE 6)
 (defconstant $SQL_FETCH_BOOKMARK 8)
+
+;;; ODBC v3 constants
+
+(defconstant $SQL_ATTR_ODBC_VERSION 200)
+(defconstant $SQL_OV_ODBC2 2)
+(defconstant $SQL_OV_ODBC3 3)
 

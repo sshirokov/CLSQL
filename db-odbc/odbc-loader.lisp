@@ -41,7 +41,8 @@ set to the right path before compiling or loading the system.")
   *odbc-library-loaded*)
 				      
 (defmethod clsql-base-sys:database-type-load-foreign ((database-type (eql :odbc)))
-  (uffi:load-foreign-library *odbc-library-path*) 
+  (uffi:load-foreign-library *odbc-library-path*
+			     :module "odbc") 
   (setq *odbc-library-loaded* t))
 
 (clsql-base-sys:database-type-load-foreign :odbc)

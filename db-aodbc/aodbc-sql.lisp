@@ -53,10 +53,13 @@
     (handler-case
 	(make-instance 'aodbc-database
 	  :name (database-name-from-spec connection-spec :aodbc)
+	  :database-type :aodbc
 	  :aodbc-conn
 	  (dbi:connect :user user
 		       :password password
 		       :data-source-name dsn))
+      (clsql-error (e)
+	(error e))
       (error () 	;; Init or Connect failed
 	(error 'clsql-connect-error
 	       :database-type database-type
@@ -75,6 +78,8 @@
   (handler-case
       (dbi:sql query-expression :db (database-aodbc-conn database)
 	       :types result-types)
+      (clsql-error (e)
+	(error e))
     (error ()
       (error 'clsql-sql-error
 	     :database database
@@ -87,6 +92,8 @@
   #+aodbc-v2
   (handler-case
       (dbi:sql sql-expression :db (database-aodbc-conn database))
+      (clsql-error (e)
+	(error e))
     (error ()
       (error 'clsql-sql-error
 	     :database database
@@ -118,6 +125,8 @@
 	 (length column-names)
 	 nil ;; not able to return number of rows with aodbc
 	 ))
+      (clsql-error (e)
+	(error e))
     (error ()
       (error 'clsql-sql-error
 	     :database database
@@ -179,11 +188,45 @@
           (database-query "SHOW TABLES LIKE '%clsql_seq%'" 
                           database nil)))
 
+(defmethod database-list-tables ((database aodbc-database)
+				 &key (owner nil))
+  (declare (ignore owner))
+  #+aodbc-v2
+  (multiple-value-bind (rows col-names)
+      (dbi:list-all-database-tables :db (database-aodbc-conn database))
+    (let ((pos (position "TABLE_NAME" col-names :test #'string-equal)))
+      (when pos
+	(loop for row in rows
+	    collect (nth pos row))))))
+
+
+(defmethod database-list-attributes ((table string) (database aodbc-database)
+                                     &key (owner nil))
+  (declare (ignore owner))
+  #+aodbc-v2
+  (multiple-value-bind (rows col-names)
+      (dbi:list-all-table-columns table :db (database-aodbc-conn database))
+    (let ((pos (position "COLUMN_NAME" col-names :test #'string-equal)))
+      (when pos
+	(loop for row in rows
+	    collect (nth pos row))))))
+
+(defmethod database-attribute-type ((attribute string) (table string) (database aodbc-database)
+                                     &key (owner nil))
+  (declare (ignore owner))
+  #+aodbc-v2
+  (multiple-value-bind (rows col-names)
+      (dbi:list-all-table-columns table :db (database-aodbc-conn database))
+    (let ((pos (position "TYPE_NAME" col-names :test #'string-equal)))
+      (when pos
+	(loop for row in rows
+	    collect (nth pos row))))))
+
 (defmethod database-set-sequence-position (sequence-name
                                            (position integer)
                                            (database aodbc-database))
   (database-execute-command
-   (format nil "UPDATE ~A SET last-value=~A" 
+   (format nil "UPDATE ~A SET last_value=~A,is_called='t'" 
 	   (%sequence-name-to-table sequence-name)
            position)
    database)

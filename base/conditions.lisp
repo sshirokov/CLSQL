@@ -151,6 +151,16 @@ and signal an clsql-invalid-spec-error if they don't match."
 	     (format stream "~S is not a CLSQL database." 
 		     (clsql-no-database-error-database c)))))
 
+(define-condition clsql-odbc-error (clsql-error)
+  ((odbc-message :initarg :odbc-message
+		 :reader clsql-odbc-error-message)
+   (sql-state :initarg :sql-state :initform nil
+	      :reader clsql-odbc-error-sql-state))
+  (:report (lambda (c stream)
+	     (format stream "[ODBC error] ~A; state: ~A"
+		     (clsql-odbc-error-message c)
+		     (clsql-odbc-error-sql-state c)))))
+
 ;; Signal conditions
 
 

@@ -112,7 +112,9 @@
 	 #:clsql-closed-error-database
          #:clsql-sql-syntax-error
          #:clsql-type-error
-         
+         #:clsql-odbc-error
+	 #:clsql-odbc-error-message
+	 
 	 #:*loaded-database-types*
 	 #:reload-database-types
 	 #:*default-database-type*

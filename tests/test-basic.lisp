@@ -53,7 +53,7 @@
     (test-table-row (list int float bigint str) nil type))
   (do-query ((int float bigint str) "select * from test_clsql" :result-types :auto)
     (test-table-row (list int float bigint str) :auto type))
-  (drop-test-table db))
+  #+ignore (drop-test-table db))
 
 
 (defun %test-basic-untyped (db type)
@@ -113,7 +113,7 @@
       ((eq types :auto)
        (test (and (integerp int)
 		  (typep float 'double-float)
-		  (or (eq db-type :aodbc) ;; aodbc doesn't handle bigint conversions
+		  (or (eq db-type :aodbc)  ;; aodbc considers bigints as strings
 		      (integerp bigint)) 
 		  (stringp str))
 	     t
@@ -127,9 +127,11 @@
 	      t
 	      :fail-info 
 	      (format nil "Incorrect field type for row ~S (types nil)" row))
-	(setq int (parse-integer int))
+	(when (stringp int)
+	  (setq int (parse-integer int)))
 	(setq bigint (parse-integer bigint))
-	(setq float (parse-double float)))
+	(when (stringp float)
+	  (setq float (parse-double float))))
        ((listp types)
 	(error "NYI")
 	)
@@ -140,7 +142,7 @@
     (unless (eq db-type :sqlite)		; SQLite is typeless.
       (test (transform-float-1 int)
 	    float
-	    :test #'eql
+	    :test #'double-float-equal
 	    :fail-info 
 	    (format nil "Wrong float value ~A for int ~A (row ~S)" float int row)))
     (test float

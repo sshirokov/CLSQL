@@ -26,7 +26,8 @@
 ;; ODBC interface
 
 (defclass odbc-database (database)
-  ((odbc-conn :accessor database-odbc-conn :initarg :odbc-conn)))
+  ((odbc-conn :accessor database-odbc-conn :initarg :odbc-conn)
+   (odbc-db-type :accessor database-odbc-db-type)))
 
 (defmethod database-name-from-spec (connection-spec
 				    (database-type (eql :odbc)))
@@ -39,24 +40,29 @@
   (check-connection-spec connection-spec database-type (dsn user password))
   (destructuring-bind (dsn user password) connection-spec
     (handler-case
-	(make-instance 'odbc-database
-	  :name (database-name-from-spec connection-spec :odbc)
-	  :odbc-conn
-	  (odbc-dbi:connect :user user
-			:password password
-			:data-source-name dsn))
-      (error () 	;; Init or Connect failed
-	(error 'clsql-connect-error
-	       :database-type database-type
-	       :connection-spec connection-spec
-	       :errno nil
-	       :error "Connection failed")))))
+	(let ((db
+	       (make-instance 'odbc-database
+		 :name (database-name-from-spec connection-spec :odbc)
+		 :database-type :odbc
+		 :odbc-conn
+		 (odbc-dbi:connect :user user
+				   :password password
+				   :data-source-name dsn))))
+	  (store-type-of-connected-database db)
+	  db)
+    (clsql-error (e)
+      (error e))
+    (error () 	;; Init or Connect failed
+      (error 'clsql-connect-error
+	     :database-type database-type
+	     :connection-spec connection-spec
+	     :errno nil
+	     :error "Connection failed")))))
 
-#+nil
 (defun store-type-of-connected-database (db)
-  (let* ((odbc-db (odbc-db db))
-	 (server-name (get-odbc-info odbc-db odbc::$SQL_SERVER_NAME))
-	 (dbms-name (get-odbc-info odbc-db odbc::$SQL_DBMS_NAME))
+  (let* ((odbc-conn (database-odbc-conn db))
+	 (server-name (odbc-dbi::get-odbc-info odbc-conn odbc::$SQL_SERVER_NAME))
+	 (dbms-name (odbc-dbi::get-odbc-info odbc-conn odbc::$SQL_DBMS_NAME))
 	 (type
 	  ;; need SERVER-NAME and DBMS-NAME because many drivers mix this up
 	  (cond 
@@ -69,9 +75,8 @@
 	   ((or (search "oracle" server-name :test #'char-equal)
 		(search "oracle" dbms-name :test #'char-equal))
 	    :oracle))))
-    (setf (database-type db) type)))
+    (setf (database-odbc-db-type db) type)))
   
-
 (defmethod database-disconnect ((database odbc-database))
   (odbc-dbi:disconnect (database-odbc-conn database))
   (setf (database-odbc-conn database) nil)
@@ -81,7 +86,10 @@
 			   result-types) 
   (handler-case
       (odbc-dbi:sql query-expression :db (database-odbc-conn database)
-		    :query t :result-types result-types)
+		    :result-types result-types)
+    (clsql-error (e)
+      (error e))
+    #+ignore
     (error ()
       (error 'clsql-sql-error
 	     :database database
@@ -92,7 +100,9 @@
 (defmethod database-execute-command (sql-expression 
 				     (database odbc-database))
   (handler-case
-      (odbc-dbi:sql sql-expression (database-odbc-conn database))
+      (odbc-dbi:sql sql-expression :db (database-odbc-conn database))
+    (clsql-error (e)
+      (error e))
     (error ()
       (error 'clsql-sql-error
 	     :database database
@@ -102,7 +112,7 @@
 
 (defstruct odbc-result-set
   (query nil)
-  (types nil :type cons)
+  (types nil)
   (full-set nil :type boolean))
 
 (defmethod database-query-result-set ((query-expression string)
@@ -115,8 +125,7 @@
 		   :row-count nil
 		   :column-names t
 		   :query t
-		   :result-types result-types
-		   )
+		   :result-types result-types)
 	(values
 	 (make-odbc-result-set :query query :full-set full-set 
 				:types result-types)
@@ -162,11 +171,11 @@
   (let ((table-name (%sequence-name-to-table sequence-name)))
     (database-execute-command
      (concatenate 'string "CREATE TABLE " table-name
-		  " (id int NOT NULL PRIMARY KEY AUTO_INCREMENT)")
+		  " (last_value int NOT NULL PRIMARY KEY, increment_by int, min_value int, is_called char(1))")
      database)
     (database-execute-command 
      (concatenate 'string "INSERT INTO " table-name
-		  " VALUES (0)")
+		  " VALUES (1,1,1,'f')")
      database)))
 
 (defmethod database-drop-sequence (sequence-name
@@ -182,20 +191,75 @@
           (database-query "SHOW TABLES LIKE '%clsql_seq%'" 
                           database nil)))
 
+(defmethod database-list-tables ((database odbc-database)
+				 &key (owner nil))
+  (declare (ignore owner))
+    (multiple-value-bind (rows col-names)
+      (odbc-dbi:list-all-database-tables :db (database-odbc-conn database))
+    (let ((pos (position "TABLE_NAME" col-names :test #'string-equal)))
+      (when pos
+	(loop for row in rows
+	    collect (nth pos row))))))
+
+(defmethod database-list-attributes ((table string) (database odbc-database)
+                                     &key (owner nil))
+  (declare (ignore owner))
+  (multiple-value-bind (rows col-names)
+      (odbc-dbi:list-all-table-columns table :db (database-odbc-conn database))
+    (let ((pos (position "COLUMN_NAME" col-names :test #'string-equal)))
+      (when pos
+	(loop for row in rows
+	    collect (nth pos row))))))
+
+(defmethod database-attribute-type ((attribute string) (table string) (database odbc-database)
+                                     &key (owner nil))
+  (declare (ignore owner))
+  (multiple-value-bind (rows col-names)
+      (odbc-dbi:list-all-table-columns table :db (database-odbc-conn database))
+    (let ((pos (position "TYPE_NAME" col-names :test #'string-equal)))
+      (when pos
+	(loop for row in rows
+	    collect (nth pos row))))))
+
 (defmethod database-set-sequence-position (sequence-name
                                            (position integer)
                                            (database odbc-database))
   (database-execute-command
-   (format nil "UPDATE ~A SET id=~A" (%sequence-name-to-table sequence-name)
+   (format nil "UPDATE ~A SET last_value=~A,is_called='t'" 
+	   (%sequence-name-to-table sequence-name)
            position)
    database)
   position)
 
 (defmethod database-sequence-next (sequence-name (database odbc-database))
-  (warn "Not implemented."))
-
+  (without-interrupts
+   (let* ((table-name (%sequence-name-to-table sequence-name))
+	  (tuple
+	   (car (database-query 
+		 (concatenate 'string "SELECT last_value,is_called FROM " 
+			      table-name)
+		 database
+		 :auto))))
+     (cond
+       ((char-equal (schar (second tuple) 0) #\f)
+	(database-execute-command
+	 (format nil "UPDATE ~A SET is_called='t'" table-name)
+	 database)
+	(car tuple))
+       (t
+	(let ((new-pos (1+ (car tuple))))
+	 (database-execute-command
+	  (format nil "UPDATE ~A SET last_value=~D" table-name new-pos)
+	  database)
+	 new-pos))))))
+	     
 (defmethod database-sequence-last (sequence-name (database odbc-database))
-  (declare (ignore sequence-name)))
+  (without-interrupts
+   (caar (database-query 
+	  (concatenate 'string "SELECT last_value FROM " 
+		       (%sequence-name-to-table sequence-name))
+	  database
+	  :auto))))
 
 (defmethod database-create (connection-spec (type (eql :odbc)))
   (warn "Not implemented."))
