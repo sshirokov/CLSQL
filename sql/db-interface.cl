@@ -1,0 +1,100 @@
+;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
+;;;; *************************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          db-interface.cl
+;;;; Purpose:       Generic function definitions for DB interfaces
+;;;; Programmers:   Kevin M. Rosenberg based on
+;;;;                 Original code by Pierre R. Mai 
+;;;; Date Started:  Feb 2002
+;;;;
+;;;; $Id: db-interface.cl,v 1.1 2002/03/29 07:42:10 kevin Exp $
+;;;;
+;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
+;;;;
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
+
+(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
+(in-package :clsql-sys)
+
+
+(defgeneric database-type-load-foreign (database-type)
+  (:documentation
+   "The internal generic implementation of reload-database-types.")
+  (:method :after (database-type)
+	   (pushnew database-type *loaded-database-types*)))
+
+(defgeneric database-type-library-loaded (database-type)
+  (:documentation
+   "The internal generic implementation for checking if
+database type library loaded successfully."))
+
+(defgeneric database-initialize-database-type (database-type)
+  (:documentation
+   "The internal generic implementation of initialize-database-type."))
+
+(defgeneric database-name-from-spec (connection-spec database-type)
+  (:documentation
+   "Returns the name of the database that would be created if connect
+was called with the connection-spec."))
+
+(defgeneric database-connect (connection-spec database-type)
+  (:documentation "Internal generic implementation of connect."))
+
+(defgeneric database-disconnect (database)
+  (:method ((database closed-database))
+	   (signal-closed-database-error database))
+  (:documentation "Internal generic implementation of disconnect."))
+
+(defgeneric database-query (query-expression database types)
+  (:method (query-expression (database closed-database) types)
+	   (declare (ignore query-expression types))
+	   (signal-closed-database-error database))
+  (:documentation "Internal generic implementation of query."))
+
+
+(defgeneric database-execute-command (sql-expression database)
+  (:method (sql-expression (database closed-database))
+	   (declare (ignore sql-expression))
+	   (signal-closed-database-error database))
+  (:documentation "Internal generic implementation of execute-command."))
+
+;;; Mapping and iteration
+(defgeneric database-query-result-set
+    (query-expression database &key full-set types)
+  (:method (query-expression (database closed-database) &key full-set types)
+	   (declare (ignore query-expression full-set types))
+	   (signal-closed-database-error database)
+	   (values nil nil nil))
+  (:documentation
+   "Internal generic implementation of query mapping.  Starts the
+query specified by query-expression on the given database and returns
+a result-set to be used with database-store-next-row and
+database-dump-result-set to access the returned data.  The second
+value is the number of columns in the result-set, if there are any.
+If full-set is true, the number of rows in the result-set is returned
+as a third value, if this is possible (otherwise nil is returned for
+the third value).  This might have memory and resource usage
+implications, since many databases will require the query to be
+executed in full to answer this question.  If the query produced no
+results then nil is returned for all values that would have been
+returned otherwise.  If an error occurs during query execution, the
+function should signal a clsql-sql-error."))
+
+(defgeneric database-dump-result-set (result-set database)
+  (:method (result-set (database closed-database))
+	   (declare (ignore result-set))
+	   (signal-closed-database-error database))
+  (:documentation "Dumps the received result-set."))
+
+(defgeneric database-store-next-row (result-set database list)
+  (:method (result-set (database closed-database) list)
+	   (declare (ignore result-set list))
+	   (signal-closed-database-error database))
+  (:documentation
+   "Returns t and stores the next row in the result set in list or
+returns nil when result-set is finished."))

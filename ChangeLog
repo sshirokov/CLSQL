@@ -1,3 +1,6 @@
+29 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
+	* Separated db-interface and conditions from sql/sql.cl
+ 
 27 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* interfaces/postgresql-socket/postgresql-socket-api.cl:
 	Fixes to read-double-from-socket. Added 64-bit integer support.
