@@ -191,7 +191,7 @@
     </sect2>
     
     <sect2>
-      <title>Load &uffi;</title>
+      <title>Add &uffi; path</title>
       <para>
 	Unzip or untar the &uffi; distribution which creates a directory
 	for the &uffi; files. Add that directory to &asdf;'s <varname>asdf:*central-registry*</varname>.
@@ -201,12 +201,11 @@
 	directory.
 	<screen>
 (push #P"/usr/share/lisp/uffi/" asdf:*central-registry*)
-(asdf:operate 'asdf:load-op :uffi)
 	</screen>
       </para>
     </sect2>
    <sect2>
-     <title>Load &md5; module</title>
+     <title>Add &md5; path</title>
      <para>
        If you plan to use the clsql-postgresql-socket interface, you
        must load the md5 module.  Unzip or untar the cl-md5
@@ -218,13 +217,12 @@
        <filename>/usr/share/lisp/cl-md5/</filename> directory.
        <screen>
 (push #P"/usr/share/lisp/cl-md5/" asdf:*central-registry*)
-(asdf:operate 'asdf:load-op :md5)
        </screen>
      </para>
    </sect2>
    
    <sect2>
-     <title>Load &clsql; modules</title>
+     <title>Add &clsql; path and load module</title>
      <para>
        Unzip or untar the &clsql; distribution which creates a
        directory for the &clsql; files. Add that directory to &asdf;'s
@@ -232,28 +230,23 @@
        pushing the pathname of the directory onto this variable.  The
        following example code assumes the &clsql; files reside in the
        <filename>/usr/share/lisp/clsql/</filename> directory. You need
-       to load, at a minimum, the main <symbol>clsql</symbol> system
-       and at least one interface system. The below example show loading
-       all &clsql; systems.
+       to load the <symbol>clsql</symbol> system.
 
 	<screen>
 (push #P"/usr/share/lisp/clsql/" asdf:*central-registry*)
 (asdf:operate 'asdf:load-op 'clsql)                   ; main CLSQL package
-(asdf:operate 'asdf:load-op 'clsql-mysql)             ; MySQL interface
-(asdf:operate 'asdf:load-op 'clsql-postgresql)        ; PostgreSQL interface
-(asdf:operate 'asdf:load-op 'clsql-postgresql-socket) ; Socket PGSQL interface
-(asdf:operate 'asdf:load-op 'clsql-odbc)              ; ODBC interface
-(asdf:operate 'asdf:load-op 'clsql-sqlite)            ; SQLite interface
-(asdf:operate 'asdf:load-op 'clsql-aodbc)             ; Allegro ODBC interface
 	</screen>
       </para>
     </sect2>
     
     <sect2>
-      <title>Run test suite</title>
+      <title>Run test suite (optional)</title>
       <para>
-	After loading &clsql;, you can execute the test suite. A
-	configuration file named
+	The test suite can be executed using the &asdf;
+	<symbol>test-op</symbol> operator. If &clsql; has not been
+	loaded with <symbol>asdf:load-op</symbol>, the
+	<symbol>asdf:test-op</symbol> operator will automatically load
+	&clsql;. A configuration file named
 	<filename>.clsql-test.config</filename> must be created in
 	your home directory. There are instructures on the format of
 	that file in the <filename>tests/README</filename>. After
