@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.cl,v 1.11 2002/03/27 00:25:03 kevin Exp $
+;;;; $Id: mysql-sql.cl,v 1.12 2002/03/27 04:33:19 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -187,8 +187,9 @@
 			      collect
 			      (loop for i from 0 below num-fields
 				    collect
-				    (uffi:convert-from-foreign-string
-				     (uffi:deref-array row 'mysql-row i))))
+				    (convert-raw-field
+				     (uffi:deref-array row 'mysql-row i)
+				     types i)))
 		     (mysql-free-result res-ptr)))
 	       (error 'clsql-sql-error
 		      :database database
