@@ -1,3 +1,8 @@
+13 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 2.11.9
+	* sql/conditions.lisp: Set initial slot value for message in SQL-WARNING
+	* sql/transactions.lisp: Correctly set slots of SQL-WARNING
+
 12 Jun 2004 Marcus Pearce <m.t.pearce@city.ac.uk>
 	* sql/package.lisp: export DATABASE-TYPE from CLSQL and subclasses 
 	of SQL-EXPRESSION from CLSQL-SYS. 

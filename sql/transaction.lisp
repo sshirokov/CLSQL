@@ -52,9 +52,9 @@
 	  (setf autocommit (previous-autocommit transaction))
           (map nil #'funcall (commit-hooks transaction)))
         (warn 'sql-warning
-              :format-control
-	      "Cannot commit transaction against ~A because there is no transaction in progress."
-              :format-arguments (list database)))))
+              :message
+	      (format nil "Cannot commit transaction against ~A because there is no transaction in progress."
+		      database)))))
 
 (defmethod database-abort-transaction ((database database))
   (with-slots (transaction transaction-level autocommit) database
@@ -65,9 +65,9 @@
 	    (setf autocommit (previous-autocommit transaction))
             (map nil #'funcall (rollback-hooks transaction))))
         (warn 'sql-warning
-              :format-control
-	      "Cannot abort transaction against ~A because there is no transaction in progress."
-              :format-arguments (list database)))))
+	      :message
+	      (format nil "Cannot abort transaction against ~A because there is no transaction in progress."
+		      database)))))
 
 (defun mark-transaction-committed (database)
   (when (and (transaction database)

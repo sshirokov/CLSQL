@@ -122,9 +122,9 @@ connection is no longer usable."))
 ;;; CLSQL Extensions
 
 (define-condition sql-warning (warning sql-condition)
-  ((message :initarg :message :reader sql-warning-message))
+  ((message :initarg :message :initform nil :reader sql-warning-message))
   (:report (lambda (c stream)
-	     (format stream (sql-warning-message c)))))
+	     (format stream "~A" (sql-warning-message c)))))
 
 (define-condition sql-database-warning (sql-warning)
   ((database :initarg :database :reader sql-warning-database))
