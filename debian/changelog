@@ -1,3 +1,9 @@
+cl-sql (2.11.7-2) unstable; urgency=low
+
+  * Move cl-sql-oracle to contrib 
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Wed,  9 Jun 2004 18:49:01 -0600
+
 cl-sql (2.11.7-1) unstable; urgency=low
 
   * New upstream

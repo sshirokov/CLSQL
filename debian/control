@@ -1,5 +1,5 @@
 Source: cl-sql
-Section: contrib/devel
+Section: devel
 Priority: extra
 Maintainer: Kevin M. Rosenberg <kmr@debian.org>
 Build-Depends: debhelper (>= 4.0.0), libmysqlclient-dev, postgresql-dev
@@ -81,6 +81,7 @@ Description: CLSQL database backend, SQLite
  CLSQL is a Common Lisp interface to SQL databases.
 
 Package: cl-sql-oracle
+Section: contrib/devel
 Architecture: all
 Depends: cl-sql (>= ${Source-Version}), cl-sql-uffi (>= ${Source-Version})
 Provides: cl-sql-backend
