@@ -3,10 +3,9 @@ usr/share
 usr/share/common-lisp
 usr/share/common-lisp/systems
 usr/share/common-lisp/source
-usr/share/common-lisp/repositories
-usr/share/common-lisp/repositories/clsql
-usr/share/common-lisp/repositories/clsql/sql
-usr/share/common-lisp/repositories/clsql/cmucl-compat
+usr/share/common-lisp/source/clsql
+usr/share/common-lisp/source/clsql/sql
+usr/share/common-lisp/source/clsql/cmucl-compat
 usr/share/doc
 usr/share/doc/cl-sql
 usr/share/doc/cl-sql/html

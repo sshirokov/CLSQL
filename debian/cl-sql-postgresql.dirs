@@ -3,10 +3,9 @@ usr/share
 usr/share/common-lisp
 usr/share/common-lisp/systems
 usr/share/common-lisp/source
-usr/share/common-lisp/repositories
-usr/share/common-lisp/repositories/clsql
-usr/share/common-lisp/repositories/clsql/interfaces
-usr/share/common-lisp/repositories/clsql/interfaces/postgresql
+usr/share/common-lisp/source/clsql
+usr/share/common-lisp/source/clsql/interfaces
+usr/share/common-lisp/source/clsql/interfaces/postgresql
 
 
 
