@@ -234,6 +234,7 @@ superclass of the newly-defined View Class."
     (let ((cdef
            (list (sql-expression :attribute (view-class-slot-column slotdef))
                  (slot-type slotdef))))
+      (setf cdef (append cdef (list (view-class-slot-db-type slotdef))))
       (let ((const (view-class-slot-db-constraints slotdef)))
         (when const 
           (setq cdef (append cdef (list const)))))

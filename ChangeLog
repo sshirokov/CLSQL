@@ -1,4 +1,9 @@
 16 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.7.6
+	* base/objects.lisp, base/classes.lisp: Patch
+	for db-kind from Eduardo Munoz
+	
+16 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.7.5
 	* base/basic-sql.lisp: Fix FLATP in QUERY
 

@@ -644,13 +644,14 @@ uninclusive, and the args from that keyword to the end."
 (defmethod output-sql ((stmt sql-create-table) &optional
                        (database *default-database*))
   (flet ((output-column (column-spec)
-           (destructuring-bind (name type &rest constraints)
+           (destructuring-bind (name type &optional db-type &rest constraints)
                column-spec
              (let ((type (listify type)))
                (output-sql name database)
                (write-char #\Space *sql-stream*)
                (write-string
-                (database-get-type-specifier (car type) (cdr type) database)
+                (if (stringp db-type) db-type ; override definition
+                    (database-get-type-specifier (car type) (cdr type) database))
                 *sql-stream*)
                (let ((constraints
                       (database-constraint-statement constraints database)))
