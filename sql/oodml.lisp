@@ -261,8 +261,9 @@
          (sels (generate-selection-list view-class))
          (res (apply #'select (append (mapcar #'cdr sels)
                                       (list :from  view-table
-                                            :where view-qual)
-				      (list :result-types nil)))))
+                                            :where view-qual
+					    :result-types nil
+					    :database vd)))))
     (when res
       (get-slot-values-from-view instance (mapcar #'car sels) (car res)))))
 

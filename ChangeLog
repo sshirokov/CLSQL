@@ -1,3 +1,7 @@
+18 Mar 2005 Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/oodml.lisp: Add missing database argument [Patch from
+	Alan Caulkins]
+	
 03 Mar 2005 Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/oodml.lisp: Improve database priority in 
 	update-records-from-instance [Patch from Walter C. Pelissero]
