@@ -50,6 +50,24 @@
 
 (in-package #:odbc-dbi)
 
+(defgeneric terminate (src))
+(defgeneric db-open-query (src query-expression
+			       &key arglen col-positions result-types width
+			       &allow-other-keys))
+(defgeneric db-fetch-query-results (src &optional count))
+(defgeneric %db-execute (src sql-expression &key &allow-other-keys))
+(defgeneric db-execute-command (src sql-string))
+
+(defgeneric %initialize-query (src arglen col-positions
+				   &key result-types width))
+
+(defgeneric %read-query-data (src ignore-columns))
+(defgeneric db-map-query (src type function query-exp &key result-types))
+(defgeneric db-prepare-statement (src sql &key parameter-table
+				      parameter-columns))
+(defgeneric get-odbc-info (src info-type))
+
+
 ;;; SQL Interface
 
 (defclass odbc-db ()
@@ -212,13 +230,13 @@ the query against." ))
 
 ;;; Mid-level interface
 
-(defmethod db-commit ((database odbc-db))
+(defun db-commit (database)
   (%commit (henv database) (hdbc database)))
 
-(defmethod db-rollback ((database odbc-db))
+(defun db-rollback (database)
   (%rollback (henv database) (hdbc database)))
 
-(defmethod db-cancel-query ((query odbc-query))
+(defun db-cancel-query (query)
   (with-slots (hstmt) query
     (%sql-cancel hstmt)
     (setf (query-active-p query) nil)))
@@ -251,7 +269,7 @@ the query against." ))
       (uffi:free-foreign-object hstmt)) ;; ??
     (%dispose-column-ptrs query)))
 
-(defmethod %dispose-column-ptrs ((query odbc-query))
+(defun %dispose-column-ptrs (query)
   (with-slots (column-data-ptrs column-out-len-ptrs hstmt) query
     (loop for data-ptr across column-data-ptrs
           when data-ptr do (uffi:free-foreign-object data-ptr))
@@ -306,7 +324,7 @@ the query against." ))
 							out-len-ptr result-type))))))))
 	(values rows query rows-fetched)))))
 
-(defmethod db-query ((database odbc-db) query-expression &key result-types width)
+(defun db-query (database query-expression &key result-types width)
   (let ((free-query (get-free-query database)))
     (setf (sql-expression free-query) query-expression)
     (unwind-protect
@@ -335,7 +353,7 @@ the query against." ))
       query)))
 
 ;; reuse inactive queries
-(defmethod get-free-query ((database odbc-db))
+(defun get-free-query (database)
   "get-free-query finds or makes a nonactive query object, and then sets it to active.
 This makes the functions db-execute-command and db-query thread safe."
   (with-slots (queries hdbc) database
@@ -442,7 +460,7 @@ This makes the functions db-execute-command and db-query thread safe."
 	  t)))))
   query)
 
-(defmethod db-close-query ((query odbc-query) &key drop-p)
+(defun db-close-query (query &key drop-p)
   (with-slots (hstmt column-count column-names column-c-types column-sql-types
                      column-data-ptrs column-out-len-ptrs column-precisions
                      column-scales column-nullables-p) query
@@ -516,8 +534,8 @@ This makes the functions db-execute-command and db-query thread safe."
     ;; dispose of memory and set query inactive or get rid of it
     (db-close-query query)))
 
-(defmethod db-map-bind-query ((query odbc-query) type function 
-                                 &rest parameters)
+(defun db-map-bind-query (query type function 
+			  &rest parameters)
   (declare (ignore type)) ; preliminary. Do a type coersion here
   (unwind-protect
     (progn
@@ -575,7 +593,7 @@ This makes the functions db-execute-command and db-query thread safe."
   query)
 
 
-(defmethod %db-bind-execute ((query odbc-query) &rest parameters)
+(defun %db-bind-execute (query &rest parameters)
   (with-slots (hstmt parameter-data-ptrs) query
     (loop for parameter in parameters
           with data-ptr and size and parameter-string
@@ -605,7 +623,7 @@ This makes the functions db-execute-command and db-query thread safe."
         (%sql-execute hstmt)))
 
 
-(defmethod %db-reset-query ((query odbc-query))
+(defun %db-reset-query (query)
   (with-slots (hstmt parameter-data-ptrs) query
     (prog1
       (db-fetch-query-results query nil) 
@@ -626,8 +644,8 @@ This makes the functions db-execute-command and db-query thread safe."
 
 ;; database inquiery functions
 
-(defmethod db-describe-columns ((database odbc-db) 
-                                    table-qualifier table-owner table-name column-name)
+(defun db-describe-columns (database table-qualifier table-owner 
+			    table-name column-name)
   (with-slots (hdbc) database
     (%describe-columns hdbc table-qualifier table-owner table-name column-name)))
 
@@ -642,7 +660,9 @@ This makes the functions db-execute-command and db-query thread safe."
 (defmethod get-odbc-info ((query odbc-query) info-type)
   (get-odbc-info (odbc::query-database query) info-type))
 
-;; driver inquiery
+;; driver inquiry
+;; How does this differ from list-data-sources?
+(defgeneric db-data-sources (db-type))
 (defmethod db-data-sources ((db-type (eql :odbc)))
    "Returns a list of (data-source description) - pairs"
    (let ((henv (%new-environment-handle)))
@@ -654,5 +674,3 @@ This makes the functions db-execute-command and db-query thread safe."
                collect data-source+description
                do (setf direction :next))
       (%sql-free-environment henv))))
-
-; EOF

@@ -325,8 +325,7 @@ doesn't depend on UFFI."
     (format nil " AND (NOT (relowner=1))"))
    (t "")))
 
-(defmethod database-list-objects-of-type ((database postgresql-socket-database)
-                                          type owner)
+(defun database-list-objects-of-type (database type owner)
   (mapcar #'car
 	  (database-query
 	   (format nil
