@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.21 2002/08/01 03:08:19 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.22 2002/08/01 03:09:17 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -21,7 +21,7 @@ DOCSUBDIRS:=doc
 
 include Makefile.common
 
-LIBSUBDIRS=interfaces/mysql interfaces/clsql-uffi
+LIBSUBDIRS=clsql-mysql clsql-uffi
 .PHONY: subdirs $(LIBSUBDIRS)
 
 .PHONY: all
