@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-loader.lisp,v 1.2 2002/10/17 17:01:18 kevin Exp $
+;;;; $Id: mysql-loader.lisp,v 1.3 2002/10/17 22:13:20 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -39,20 +39,24 @@
       "/opt/mysql/lib/mysql/libmysqlclient.so")
      ((probe-file "/usr/local/lib/libmysqlclient.so")
       "/usr/local/lib/libmysqlclient.so")
+     ((probe-file "/usr/local/lib/mysql/libmysqlclient.so")
+      "/usr/local/lib/mysql/libmysqlclient.so")
      ((probe-file "/usr/lib/libmysqlclient.so")
       "/usr/lib/libmysqlclient.so")
+     ((probe-file "/usr/lib/mysql/libmysqlclient.so")
+      "/usr/lib/mysql/libmysqlclient.so")
      #+(or win32 mswindows) 
      ((probe-file "c:/mysql/lib/opt/libmysql.dll")
       "c:/mysql/lib/opt/libmysql.dll")
      (t
-      (warn "Can't find MySQL client library to load.")))
+      (error "Can't find MySQL client library to load.")))
   "Location where the MySQL client library is to be found.")
 
 (defvar *mysql-library-candidate-names*
     '("libmysqlclient" "libmysql"))
 
 (defvar *mysql-library-candidate-directories*
-    '("/opt/mysql/lib/mysql/" "/usr/local/lib/" "/usr/lib/" "/mysql/lib/opt/"))
+    '("/opt/mysql/lib/mysql/" "/usr/local/lib/" "/usr/lib/" "/usr/local/lib/mysql/" "/usr/lib/mysql/" "/mysql/lib/opt/"))
 
 (defvar *mysql-library-candidate-drive-letters* '("C" "D" "E"))
 
@@ -72,11 +76,16 @@ set to the right path before compiling or loading the system.")
 	 (uffi:find-foreign-library *mysql-library-candidate-names*
 				    *mysql-library-candidate-directories*
 				    :drive-letters
-				    *mysql-library-candidate-drive-letters*)))
-    ;; zlib required to load mysql on CMUCL Solaris
-    (uffi:load-foreign-library 
-     (uffi:find-foreign-library '("libz" "zlib")
-				'("/usr/lib/" "/usr/local/" "/lib/")))
+				    *mysql-library-candidate-drive-letters*))
+	(zlib-path
+	 (uffi:find-foreign-library '("libz" "zlib")
+				    '("/usr/lib/" "/usr/local/lib/" "/lib/"))))
+    (unless (probe-file mysql-path)
+      (error "Can't find mysql client library to load"))
+    (unless (probe-file zlib-path)
+      (error "Can't find zlib client library to load"))
+    
+    (uffi:load-foreign-library zlib-path) 
     (if	(and
 	 (uffi:load-foreign-library mysql-path
 				    :module "mysql" 
@@ -87,7 +96,7 @@ set to the right path before compiling or loading the system.")
 				    :supporting-libraries 
 				    (append *mysql-supporting-libraries*)))
 	(setq *mysql-library-loaded* t)
-      (warn "Unable to load MySQL client library ~A or CLSQL-MySQL library ~A"
+      (error "Unable to load MySQL client library ~A or CLSQL-MySQL library ~A"
 	    mysql-path *clsql-mysql-library-filename*))))
 
 

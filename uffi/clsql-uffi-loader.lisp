@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi-loader.lisp,v 1.2 2002/10/17 17:01:19 kevin Exp $
+;;;; $Id: clsql-uffi-loader.lisp,v 1.3 2002/10/17 22:13:20 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -37,12 +37,15 @@ set to the right path before compiling or loading the system.")
   "T if foreign library was able to be loaded successfully")
 
 (defun load-uffi-foreign-library ()
+  (unless (probe-file *clsql-uffi-library-filename*)
+    (error "Unable to find clsql-uffi.so"))
+  
   (if (uffi:load-foreign-library *clsql-uffi-library-filename* 
 				 :module "clsql-uffi" 
 				 :supporting-libraries 
 				 *clsql-uffi-supporting-libraries*)
       (setq *uffi-library-loaded* t)
-    (warn "Unable to load helper library ~A" *clsql-uffi-library-filename*)))
+    (error "Unable to load helper library ~A" *clsql-uffi-library-filename*)))
 
 (load-uffi-foreign-library)
 
