@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.19 2003/05/16 18:09:10 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.20 2003/05/16 18:53:57 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -146,7 +146,7 @@
       (incf i))
     str))
 
-#-allegro
+#+(and allegro ics)
 (defun native-to-string (s)
   (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
 	   (type char-ptr-def s))
@@ -162,57 +162,28 @@
       (incf i))
     str))
 
-#+allegro
-(excl:ics-target-case
- (:+ics
-  (defun native-to-string (s)
-    (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
-	     (type char-ptr-def s))
-    (let* ((len (strlen s))
-	   (str (make-string len)))
-      (declare (fixnum len)
-	       (simple-string str))
-      (do ((i 0))
-	  ((= i len))
-	(declare (fixnum i))
-	(setf (schar str i)
-	      (code-char (uffi:deref-array s '(:array :unsigned-char) i)))
-	(incf i))
-    str)))
- (:-ics
-  (defun native-to-string (s)
-    (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
-	     (type char-ptr-def s))
-    (let* ((len (strlen s))
-	   (len4 (floor len 4))
-	   (str (make-string len)))
-      (declare (fixnum len)
-	       (type (simple-array (signed-byte 32) (*)) str))
-      (do ((i 0))
-	  ((= i len4))
-	(declare (fixnum i))
-	(setf (aref (the (simple-array (signed-byte 32) (*)) str) i)
-	  (uffi:deref-array s '(:array :int) i))
-	(incf i))
-      (do ((i (* 4 len4)))
-	  ((= i len))
-	(declare (fixnum i))
-	(setf (aref (the (simple-array (signed-byte 8) (*)) str) i)
-	  (uffi:deref-array s '(:array :unsigned-char) i))
-	(incf i))
-    str))
-  
-  #+ignore
-  (defun native-to-string (s)
-    (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
-	     (type char-ptr-def s))
-    (let* ((len (strlen s))
-	   (str (make-string len)))
-      (declare (fixnum len)
-	       (type (simple-array (unsigned-byte 8) (*)) str))
+#-(and allegro ics)
+(defun native-to-string (s)
+  (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
+	   (type char-ptr-def s))
+  (let* ((len (strlen s))
+	 (len4 (floor len 4))
+	 (str (make-string len)))
+    (declare (fixnum len)
+	     (type (simple-array (signed-byte 32) (*)) str))
     (do ((i 0))
+	((= i len4))
+      (declare (fixnum i))
+      (setf (aref (the (simple-array (signed-byte 32) (*)) str) i)
+	(uffi:deref-array s '(:array :int) i))
+	(incf i))
+    (do ((i (* 4 len4)))
 	((= i len))
       (declare (fixnum i))
-      (setf (aref str i) (uffi:deref-array s '(:array :unsigned-char) i))
+      (setf (aref (the (simple-array (signed-byte 8) (*)) str) i)
+	(uffi:deref-array s '(:array :unsigned-char) i))
       (incf i))
-    str))))
+    str))
+
+
+
