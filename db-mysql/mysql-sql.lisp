@@ -41,7 +41,7 @@
     (dotimes (i num-fields)
       (declare (fixnum i))
       (let* ((field (uffi:deref-array field-vec '(:array mysql-field) i))
-	     (flags (uffi:get-slot-value field 'mysql-field 'flags))
+	     (flags (uffi:get-slot-value field 'mysql-field 'mysql::flags))
 	     (unsigned (plusp (logand flags 32)))
  	     (type (uffi:get-slot-value field 'mysql-field 'type)))
 	(push
