@@ -38,7 +38,7 @@
   (append
    (test-basic-forms-untyped)
    '(
-     (deftest BASIC/TYPE/1
+     (deftest :BASIC/TYPE/1
 	(let ((results '()))
 	  (dolist (row (query "select * from TYPE_TABLE" :result-types :auto)
 		    results)
@@ -55,7 +55,7 @@
       ((t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t)))
     
 
-     (deftest BASIC/TYPE/2
+     (deftest :BASIC/TYPE/2
 	 (let ((results '()))
 	   (dolist (row (query "select * from TYPE_TABLE" :result-types :auto)
 		     results)
@@ -71,14 +71,14 @@
      )))
 
 (defun test-basic-forms-untyped ()
-  '((deftest BASIC/SELECT/1
+  '((deftest :BASIC/SELECT/1
 	(let ((rows (query "select * from TYPE_TABLE" :result-types :auto)))
 	  (values 
 	   (length rows)
 	   (length (car rows))))
       11 4)
     
-    (deftest BASIC/SELECT/2
+    (deftest :BASIC/SELECT/2
 	(let ((results '()))
 	  (dolist (row (query "select * from TYPE_TABLE" :result-types nil)
 		    results)
@@ -90,7 +90,7 @@
 		    results))))
       ((t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t)))
     
-    (deftest BASIC/SELECT/3
+    (deftest :BASIC/SELECT/3
 	(let ((results '()))
 	  (dolist (row (query "select * from TYPE_TABLE" :result-types nil)
 		    results)
@@ -104,7 +104,7 @@
 		    results))))
       ((t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t)))
 
-    (deftest BASIC/MAP/1
+    (deftest :BASIC/MAP/1
 	(let ((results '())
 	      (rows (map-query 'vector #'list "select * from TYPE_TABLE" 
 			       :result-types nil)))
@@ -123,7 +123,7 @@
 	     results)))
       ((t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t)))
     
-    (deftest BASIC/MAP/2
+    (deftest :BASIC/MAP/2
 	(let ((results '())
 	      (rows (map-query 'list #'list "select * from TYPE_TABLE" 
 			       :result-types nil)))
@@ -141,7 +141,7 @@
 	     results)))
       ((t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t)))
 
-    (deftest BASIC/DO/1
+    (deftest :BASIC/DO/1
 	(let ((results '()))
 	  (do-query ((int float bigint str) "select * from TYPE_TABLE")
 	    (push (list (double-float-equal 
