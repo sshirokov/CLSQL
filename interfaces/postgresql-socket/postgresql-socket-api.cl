@@ -9,7 +9,7 @@
 ;;;;                
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-api.cl,v 1.11 2002/03/27 11:13:27 kevin Exp $
+;;;; $Id: postgresql-socket-api.cl,v 1.12 2002/03/27 12:09:39 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -569,7 +569,7 @@ connection, if it is still open."
 (defun read-field (socket type)
   (let ((length (- (read-socket-value 'int32 socket) 4)))
     (case type
-      ((:int :long :longlong)
+      ((:int32 :int64)
        (read-integer-from-socket socket length))
       (:double
        (read-double-from-socket socket length))

@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.cl,v 1.1 2002/03/27 07:58:42 kevin Exp $
+;;;; $Id: clsql-uffi.cl,v 1.2 2002/03/27 12:09:39 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -20,18 +20,30 @@
 (in-package :clsql-uffi)
 
 
-(defun canonicalize-type-list (types num-fields)
+(defun canonicalize-type-list (types auto-list)
   "Ensure a field type list meets expectations"
   (let ((length-types (length types))
 	(new-types '()))
-    (loop for i from 0 below num-fields
+    (loop for i from 0 below (length auto-list)
 	  do
 	  (if (>= i length-types)
 	      (push t new-types) ;; types is shorted than num-fields
 	      (push
 	       (case (nth i types)
-		 ((:int :long :double :longlong t)
-		  (nth i types))
+		 (:int
+		  (case (nth i auto-list)
+		    (:int32
+		     :int32)
+		    (:int64
+		     :int64)
+		    (t
+		     t)))
+		 (:double
+		  (case (nth i auto-list)
+		    (:double
+		     :double)
+		    (t
+		     t)))
 		 (t
 		  t))
 	       new-types)))
@@ -68,18 +80,16 @@
 		  (nth index types)
 		  types)))
     (case type
-      (:int
-       (atoi char-ptr))
-      (:long
-       (atol char-ptr))
       (:double
        (atof char-ptr))
-      (:longlong
+      (:int32
+       (atoi char-ptr))
+      (:int64
        (uffi:with-foreign-object (high32-ptr :int)
 	 (let ((low32 (atol64 char-ptr high32-ptr))
 	       (high32 (uffi:deref-pointer high32-ptr :int)))
 	   (if (zerop high32)
 	       low32
 	       (make-64-bit-integer high32 low32)))))
-      (otherwise
+      (t
        (uffi:convert-from-foreign-string char-ptr)))))

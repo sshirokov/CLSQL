@@ -1832,10 +1832,8 @@
 		  ignored.
 		  <simplelist type="vert">
 		    <member><symbol>:int</symbol> Field is imported as a
-		      32-bit signed integer.
-		    </member>
-		    <member><symbol>:longlong</symbol> Field is imported as a
-		      64-bit signed integer.
+		      signed integer, from 8-bits to 64-bits depending
+                      upon the field type.
 		    </member>
 		    <member><symbol>:double</symbol> Field is imported as a
 		      double-float number.

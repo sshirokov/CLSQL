@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.cl,v 1.10 2002/03/27 08:09:25 kevin Exp $
+;;;; $Id: postgresql-sql.cl,v 1.11 2002/03/27 12:09:39 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -30,33 +30,36 @@
 
 ;;; Field conversion functions
 
-(defun canonicalize-types (types num-fields res-ptr)
-  (cond
-   ((listp types)
-    (canonicalize-type-list types num-fields))
-   ((eq types :auto)
-    (let ((new-types '()))
-      (dotimes (i num-fields)
-	(declare (fixnum i))
-	(let* ((type (PQftype res-ptr i)))
-	  (push
-	   (case type
-	     ((#.pgsql-ftype#bytea
-	       #.pgsql-ftype#int2
-	       #.pgsql-ftype#int4)
-	      :int)
-	     (#.pgsql-ftype#int8
-	      :longlong)
-	     ((#.pgsql-ftype#float4
-	       #.pgsql-ftype#float8)
-	      :double)
-	     (otherwise
-	      t))
-	   new-types)))
+(defun make-type-list-for-auto (num-fields res-ptr)
+  (let ((new-types '()))
+    (dotimes (i num-fields)
+      (declare (fixnum i))
+      (let* ((type (PQftype res-ptr i)))
+	(push
+	 (case type
+	   ((#.pgsql-ftype#bytea
+	     #.pgsql-ftype#int2
+	     #.pgsql-ftype#int4)
+	    :int32)
+	   (#.pgsql-ftype#int8
+	    :int64)
+	   ((#.pgsql-ftype#float4
+	     #.pgsql-ftype#float8)
+	    :double)
+	   (otherwise
+	    t))
+	 new-types)))
       (nreverse new-types)))
-   (t
-    nil)))
 
+(defun canonicalize-types (types num-fields res-ptr)
+  (let ((auto-list (make-type-list-for-auto num-fields res-ptr)))
+    (cond
+      ((listp types)
+       (canonicalize-type-list types auto-list))
+      ((eq types :auto)
+       auto-list)
+      (t
+       nil))))
 
 (defun tidy-error-message (message)
   (unless (stringp message)

@@ -1,3 +1,10 @@
+27 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
+	* interfaces/postgresql-socket/postgresql-socket-api.cl:
+	Fixes to read-double-from-socket. Added 64-bit integer support.
+
+	* test-suite/xptest-clsql.cl
+	Added testint for 64-bit integers
+	
 26 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* interfaces/postgresql-socket/postgresql-socket-api.cl:
 	Implemented direct socket reading for field type :double
@@ -16,7 +23,7 @@
 	read-double-from-socket function.
 	
 	* test-suite/xptest-clsql.cl
-	Start testing using XPTest package
+	Started work on test suite
 
 25 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 

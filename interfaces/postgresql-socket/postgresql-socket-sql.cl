@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-sql.cl,v 1.7 2002/03/27 08:09:25 kevin Exp $
+;;;; $Id: postgresql-socket-sql.cl,v 1.8 2002/03/27 12:09:39 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -30,6 +30,15 @@
 
 ;; Field type conversion
 
+(defun make-type-list-for-auto (cursor)
+  (let* ((fields (postgresql-cursor-fields cursor))
+	 (num-fields (length fields))
+	 (new-types '()))
+    (dotimes (i num-fields)
+      (declare (fixnum i))
+      (push (canonical-field-type fields i) new-types))
+    (nreverse new-types)))
+
 (defun canonical-field-type (fields index)
   "Extracts canonical field type from fields list"
   (let ((oid (cadr (nth index fields))))
@@ -37,49 +46,56 @@
       ((#.pgsql-ftype#bytea
 	#.pgsql-ftype#int2
 	#.pgsql-ftype#int4)
-       :int)
+       :int32)
       (#.pgsql-ftype#int8
-       :longlong)
+       :int64)
       ((#.pgsql-ftype#float4
 	#.pgsql-ftype#float8)
        :double)
       (otherwise
        t))))
 
+(defun canonicalize-types (types cursor)
+  (let ((auto-list (make-type-list-for-auto cursor)))
+    (cond
+      ((listp types)
+       (canonicalize-type-list types auto-list))
+      ((eq types :auto)
+       auto-list)
+      (t
+       nil))))
 
-(defun canonicalize-type-list (types num-fields)
+(defun canonicalize-type-list (types auto-list)
   "Ensure a field type list meets expectations.
 Duplicated from clsql-uffi package so that this interface
 doesn't depend on UFFI."
   (let ((length-types (length types))
 	(new-types '()))
-    (loop for i from 0 below num-fields
+    (loop for i from 0 below (length auto-list)
 	  do
 	  (if (>= i length-types)
 	      (push t new-types) ;; types is shorted than num-fields
 	      (push
 	       (case (nth i types)
-		 ((:int :long :double :longlong t)
-		  (nth i types))
+		 (:int
+		  (case (nth i auto-list)
+		    (:int32
+		     :int32)
+		    (:int64
+		     :int64)
+		    (t
+		     t)))
+		 (:double
+		  (case (nth i auto-list)
+		    (:double
+		     :double)
+		    (t
+		     t)))
 		 (t
 		  t))
 	       new-types)))
     (nreverse new-types)))
 
-(defun canonicalize-types (types cursor)
-  (let* ((fields (postgresql-cursor-fields cursor))
-	 (num-fields (length fields)))
-    (cond
-      ((listp types)
-       (canonicalize-type-list types num-fields))
-      ((eq types :auto)
-       (let ((new-types '()))
-	 (dotimes (i num-fields)
-	   (declare (fixnum i))
-	   (push (canonical-field-type fields i) new-types))
-	 (nreverse new-types)))
-      (t
-       nil))))
 
 (defun convert-to-clsql-warning (database condition)
   (warn 'clsql-database-warning :database database

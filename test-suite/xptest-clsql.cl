@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: xptest-clsql.cl,v 1.6 2002/03/27 11:13:27 kevin Exp $
+;;;; $Id: xptest-clsql.cl,v 1.7 2002/03/27 12:09:39 kevin Exp $
 ;;;;
 ;;;; The XPTest package can be downloaded from
 ;;;; http://alpha.onshored.com/lisp-software/
@@ -18,6 +18,17 @@
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
+
+
+;;; This test suite looks for a configuration file named "test.config"
+;;; This file contains a single a-list that specifies the connection
+;;; specs for each database type to be tested. For example, to test all
+;;; platforms, a sample "test.config" may look like:
+;;;
+;;; ((:mysql ("localhost" "a-mysql-db" "user1" "secret"))
+;;;  (:aodbc ("my-dsn" "a-user" "pass"))
+;;;  (:paostgresql ("localhost" "another-db" "user2" "dont-tell"))
+;;;  (:postgresql-socket ("pg-server" "a-db-name" "user" "secret-password")))
 
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :cl-user)
@@ -89,10 +100,10 @@
 	     (when (map-query nil #'list "select * from test_clsql" 
 					 :database db :types :auto)
 	       (failure "Expected NIL result from map-query nil"))
-	     (do-query ((int float str) "select * from test_clsql")
-	       (test-table-row (list int float str) nil))
-	     (do-query ((int float str) "select * from test_clsql" :types :auto)
-	       (test-table-row (list int float str) :auto))
+	     (do-query ((int float bigint str) "select * from test_clsql")
+	       (test-table-row (list int float bigint str) nil))
+	     (do-query ((int float bigint str) "select * from test_clsql" :types :auto)
+	       (test-table-row (list int float bigint str) :auto))
 	     (drop-test-table db)
 	     )
 	(disconnect :database db)))))
@@ -108,7 +119,8 @@
 	(dotimes (i 10)
 	  (clsql-mysql::database-execute-command
 	   (format nil "INSERT INTO test_clsql VALUES (~d,~d,'~a')"
-		   i (sqrt i) (format nil "~d" (sqrt i)))
+		   i (number-to-sql-string (sqrt i))
+		   (number-to-sql-string (sqrt i)))
 	   db))
 	(let ((res (clsql-mysql::database-query-result-set "select * from test_clsql" db :full-set t :types nil)))
 	  (unless (= 10 (mysql:mysql-num-rows (clsql-mysql::mysql-result-set-res-ptr res)))
@@ -121,16 +133,16 @@
     (make-test-suite
      "CLSQL Test Suite"
      "Basic test suite for database operations."
-     ("MySQL Low Level Interface Test" 'clsql-fixture
+     ("MySQL Low Level Interface" 'clsql-fixture
 		   :test-thunk 'mysql-low-level
 		   :description "A test of MySQL low-level interface")
-     ("MySQL Test" 'clsql-fixture
+     ("MySQL Table" 'clsql-fixture
 		   :test-thunk 'mysql-table-test
 		   :description "A test of MySQL")
-     ("PostgreSQL Test" 'clsql-fixture
+     ("PostgreSQL Table" 'clsql-fixture
 		   :test-thunk 'pgsql-table-test
 		   :description "A test of PostgreSQL tables")     
-     ("PostgreSQL Socket Table Test" 'clsql-fixture
+     ("PostgreSQL Socket Table" 'clsql-fixture
 		   :test-thunk 'pgsql-socket-table-test
 		   :description "A test of PostgreSQL Socket tables")
   ))
@@ -143,24 +155,29 @@
 
 ;;;; Testing functions
 
-(defun transform1 (i)
+(defun transform-float-1 (i)
   (* i (abs (/ i 2)) (expt 10 (* 2 i))))
+
+(defun transform-bigint-1 (i)
+  (* i (expt 10 (* 3 (abs i)))))
 
 (defun create-test-table (db)
   (ignore-errors
     (clsql:execute-command 
      "DROP TABLE test_clsql" :database db))
   (clsql:execute-command 
-   "CREATE TABLE test_clsql (t_int integer, t_float float, t_str CHAR(20))" 
+   "CREATE TABLE test_clsql (t_int integer, t_float float, t_bigint BIGINT, t_str CHAR(20))" 
    :database db)
   (dotimes (i 11)
     (let* ((test-int (- i 5))
-	   (test-flt (transform1 test-int)))
+	   (test-flt (transform-float-1 test-int)))
       (clsql:execute-command
-       (format nil "INSERT INTO test_clsql VALUES (~a,~a,'~a')"
+       (format nil "INSERT INTO test_clsql VALUES (~a,~a,~a,'~a')"
 	       test-int
 	       (number-to-sql-string test-flt)
-	       (number-to-sql-string test-flt))
+	       (transform-bigint-1 test-int)
+	       (number-to-sql-string test-flt)
+	       )
        :database db))))
 
 (defun parse-double (num-str)
@@ -169,30 +186,32 @@
 
 (defun test-table-row (row types)
   (unless (and (listp row)
-	       (= 3 (length row)))
+	       (= 4 (length row)))
     (failure "Row ~S is incorrect format" row))
-  (destructuring-bind (int float str) row
+  (destructuring-bind (int float bigint str) row
     (cond
       ((eq types :auto)
        (unless (and (integerp int)
 		    (typep float 'double-float)
+		    (integerp bigint)
 		    (stringp str))
 	 (failure "Incorrect field type for row ~S" row)))
        ((null types)
 	(unless (and (stringp int)
 		     (stringp float)
+		     (stringp bigint)
 		     (stringp str))
 	  (failure "Incorrect field type for row ~S" row))
-	  (setq int (parse-integer int))
-	  (setq float (parse-double float)))
+	(setq int (parse-integer int))
+	(setq bigint (parse-integer bigint))
+	(setq float (parse-double float)))
        ((listp types)
+	(error "NYI")
 	)
        (t 
 	(failure "Invalid types field (~S) passed to test-table-row" types)))
-#+ignore
-    (unless (= float (transform1 int))
+    (unless (= float (transform-float-1 int))
       (failure "Wrong float value ~A for int ~A (row ~S)" float int row))
-#+ignore
     (unless (= float (parse-double str))
       (failure "Wrong string value ~A" str))))
 

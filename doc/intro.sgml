@@ -60,7 +60,7 @@ of &clsql;.
 
     <sect2>
       <title>&uffi;</title>
-      <para> &clsql; uses <ulink
+      <para>&clsql; uses <ulink
 url="http://uffi.med-info.com/"><citetitle>&uffi;</citetitle></ulink>
 as a <emphasis>Foreign Function Interface</emphasis> (<glossterm
 linkend="gloss-ffi">FFI</glossterm>) to support multiple &cl;
@@ -70,6 +70,16 @@ implementations.</para>
 url="ftp://ftp.med-info.com/pub/uffi/"><citetitle>site</citetitle></ulink>. There
 are zip files for Microsoft Windows systems and gzipped tar files for
 other systems.</para>
+    </sect2>
+
+    <sect2>
+      <title>XPTest (optional)</title>
+      <para>The test suite for &clsql; uses the onShore Development's
+XPTest package. onShore has graciously put the package in the public
+domain. You can download the package from onShore's web <ulink
+url="http://alpha.onshored.com/lisp-software/"><citetitle>site</citetitle></ulink>.
+This package is not required except if you wish to run the &clsql;
+test suite.</para>
     </sect2>
 
     <sect2>
@@ -114,29 +124,29 @@ the following implementations are supported:
     </sect2>
 
     <sect2>
-      <title>Build <filename>clsql-mysql</filename> helper library</title>
-      <para>&mysql; uses functions that require 64-bit integer
+      <title>Build &c; helper libraries</title>
+      <para>&clsql; uses functions that require 64-bit integer
 parameters and return values. The &ffi; in most &clsql;
-implementations do not support 64-bit integers. Thus, a C helper
-library is required to break these 64-bit integers into two compatible
+implementations do not support 64-bit integers. Thus, C helper
+libraries are required to break these 64-bit integers into two compatible
 32-bit integers.</para>
 
-<para><filename>Makefile</filename>'s for Microsoft Windows and GNU/Solaris systems
-are supplied to build this library. In addition, the <type>DLL</type> and <type>LIB</type>
+<para>Makefiles for Microsoft Windows and GNU/Solaris systems
+are supplied to build the libraries. Since many Microsoft Windows
+users don't have access to a compiler, the <type>DLL</type> and <type>LIB</type>
 files for Microsoft Windows are supplied with the distribution.</para>
 
-<para>To build the library, first move to the directory
-<filename>interfaces/mysql</filename> directory. You may need to
-edit <filename>Makefile</filename> or <filename>Makefile.msvc</filename> to
-correctly specify the location of your &mysql; installation. On UNIX systems, use
-the command:
-     <programlisting>make</programlisting>
-On a Microsoft Windows system,
-use the command: 
-     <programlisting>
-nmake /f
-Makefile.msvc
-  </programlisting></para>
+<para>To build the libraries on a GNU or Solaris, use the shell and
+change to the root directory of &clsql;. You may need to edit the file
+<filename>interfaces/mysql/Makefile</filename> to specify the location of your
+MySQL installation. Then, you can give the command
+<programlisting>
+make libs
+</programlisting>
+in the root directory of &clsql; to build the libraries 
+<filename>interfaces/mysql/clsql-mysql.so</filename> and
+<filename>interfaces/clsql-uffi/clsql-uffi.so</filename>.
+</para>
       </sect2>
 
     <sect2>
