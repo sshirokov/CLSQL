@@ -1,6 +1,9 @@
 01 Oct 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.0.7 released
 	* sql/oodml.lisp, sql/package.lisp, db-mysql/mysql-objects.lisp:
 	Add support for mediumint.
+	* sql/metaclass.lisp: Rework CLISP MOP handling
+	* sql/ooddl.lisp: Work-around to have CLISP finalize standard-db-class
 	
 28 Sep 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/metaclass.lisp: Support CLISP's attribute name
