@@ -3,7 +3,7 @@ Section: devel
 Priority: extra
 Maintainer: Kevin M. Rosenberg <kmr@debian.org>
 Build-Depends: debhelper (>= 4.0.0), libmysqlclient10-dev, postgresql-dev
-Standards-Version: 3.5.8.0
+Standards-Version: 3.5.9.0
 
 Package: cl-sql
 Architecture: all
@@ -48,7 +48,7 @@ Description: CLSQL database backend, AODBC
 
 Package: cl-sql-postgresql
 Architecture: all
-Depends: cl-sql-base (>= ${Source-Version}), postgresql-client, cl-sql-uffi (>= ${Source-Version}), cl-md5
+Depends: cl-sql-base (>= ${Source-Version}), postgresql-client, cl-sql-uffi (>= ${Source-Version})
 Provides: cl-sql-backend
 Description: CLSQL database backend, PostgreSQL
  This package enables you to use the CLSQL data access package
@@ -56,7 +56,7 @@ Description: CLSQL database backend, PostgreSQL
 
 Package: cl-sql-postgresql-socket
 Architecture: all
-Depends: cl-sql-base (>= ${Source-Version})
+Depends: cl-sql-base (>= ${Source-Version}), cl-md5
 Provides: cl-sql-backend
 Description: CLSQL database backend, PostgreSQL
  This package enables you to use the CLSQL data access package

@@ -1,3 +1,9 @@
+cl-sql (1.4.0-2) unstable; urgency=low
+
+  * Move cl-md5 dependencies to cl-sql-postgresql-socket (closes: 185738)
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Fri, 21 Mar 2003 09:00:24 -0700
+
 cl-sql (1.4.0-1) unstable; urgency=low
 
   * Add MD5 support to postgresql socket backend (contributed by
