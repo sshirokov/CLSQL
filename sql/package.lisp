@@ -179,7 +179,8 @@
      #:symbol-name-default-case
      #:convert-to-db-default-case
      #:ensure-keyword
-
+     #:getenv
+     
      #:*loaded-database-types*
      #:reload-database-types
      #:*connect-if-exists*

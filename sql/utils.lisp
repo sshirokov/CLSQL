@@ -315,6 +315,17 @@ list of characters and replacement strings."
 	  (incf dpos))))))
 
 
+(defun getenv (var)
+  "Return the value of the environment variable."
+  #+allegro (sys::getenv (string var))
+  #+clisp (ext:getenv (string var))
+  #+(or cmu scl)
+  (cdr (assoc (string var) ext:*environment-list* :test #'equalp
+              :key #'string))
+  #+lispworks (lw:environment-variable (string var))
+  #+mcl (ccl::getenv var)
+  #+sbcl (sb-ext:posix-getenv var))
+
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (when (char= #\a (schar (symbol-name '#:a) 0))
     (pushnew :clsql-lowercase-reader *features*)))
@@ -334,7 +345,6 @@ list of characters and replacement strings."
     ;; Default CommonSQL behavior is to upcase strings
     (string-upcase str)))
 	    
-
 (defun ensure-keyword (name)
   "Returns keyword for a name"
   (etypecase name
@@ -344,3 +354,4 @@ list of characters and replacement strings."
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (setq cl:*features* (delete :clsql-lowercase-reader cl:*features*)))
+

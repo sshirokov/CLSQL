@@ -375,10 +375,11 @@
   "Yuri"))
 
 (deftest :fdml/select/25
- (clsql:select [first-name] :from "employee" :flatp t :distinct t
-                            :field-names nil 
-                            :result-types nil 
-                            :order-by [first-name])
+ (clsql:select [first-name] :from (clsql-sys:convert-to-db-default-case "employee" *default-database*)
+  :flatp t :distinct t
+  :field-names nil 
+  :result-types nil 
+  :order-by [first-name])
  ("Boris" "Josef" "Konstantin" "Leon" "Leonid" "Mikhail" "Nikita" "Vladamir"
   "Yuri"))
 
