@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.2 2002/03/23 14:19:35 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.3 2002/03/27 08:16:24 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -15,9 +15,11 @@
 
 PACKAGE=clsql
 
-all: nothing
+all: libs
 
-nothing:
+libs:
+	(cd interfaces/mysql; make)
+	(cd interfaces/clsql-uffi; make)
 
 clean:
 	@rm -f $(PACKAGE)-*.tar.gz $(PACKAGE)-*.zip
