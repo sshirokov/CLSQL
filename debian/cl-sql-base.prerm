@@ -1,10 +1,4 @@
-#! /bin/sh
-# From UncommonSQL package
-
-set -e
-
-# package name according to lisp
-LISP_PKG=%%
+#!/bin/sh -e
 
 case "$1" in
     remove|upgrade|deconfigure|failed-upgrade)

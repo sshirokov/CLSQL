@@ -130,7 +130,6 @@ install: build
 	dh_install -p $(pkg) doc/cl-sql.pdf.gz $(doc-dir)
 	rm -f doc/cl-sql.pdf.gz
 
-#	From UncommonSQL Debian package: build prerm postinst from templates
 	set -e ;\
 	for p in $(all-pkgs); do \
                 echo "processing maintainer scripts for $$p" ;\
