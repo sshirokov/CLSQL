@@ -30,10 +30,10 @@
     <!-- To resolve short stylesheet references -->
     <uri
         name="docbook_html.xsl"
-        uri="stylesheet/xsl/nwalsh/html/docbook.xsl" />
+        uri="stylesheet/xsl/nwalsh/xhtml/docbook.xsl" />
     <uri 
         name="docbook_chunk.xsl"
-        uri="stylesheet/xsl/nwalsh/html/chunk.xsl" />
+        uri="stylesheet/xsl/nwalsh/xhtml/chunk.xsl" />
     <uri
         name="docbook_fo.xsl"
         uri="stylesheet/xsl/nwalsh/fo/docbook.xsl" />
