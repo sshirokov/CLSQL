@@ -1,20 +1,21 @@
 cl-sql (0.8.1-2) unstable; urgency=low
 
   * Update depends for cl-sql-aodbc to be acl-pro-instaler, not acl-installer
-
- -- Kevin M. Rosenberg <kevin@rosenberg.net>  Sat, 10 Aug 2002 01:12:53 -0600
+  * Upload e-mail adress
+  
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sun, 11 Aug 2002 22:54:04 -0600
 
 cl-sql (0.8.1-1) unstable; urgency=low
 
   * New upstream version. (Changed RedHat to Debian in upstream documentation!)
 
- -- Kevin M. Rosenberg <kevin@rosenberg.net>  Fri,  2 Aug 2002 09:45:08 -0600
+ -- Kevin M. Rosenberg <kmr@debian.org>  Fri,  2 Aug 2002 09:45:08 -0600
 
 cl-sql (0.8.0-2) unstable; urgency=low
 
   * Fix preinst template type to properly remove old symlinks
 
- -- Kevin M. Rosenberg <kevin@rosenberg.net>  Fri,  2 Aug 2002 09:12:32 -0600
+ -- Kevin M. Rosenberg <kmr@debian.org>  Fri,  2 Aug 2002 09:12:32 -0600
 
 cl-sql (0.8.0-1) unstable; urgency=low
 
@@ -23,19 +24,19 @@ cl-sql (0.8.0-1) unstable; urgency=low
   * New binary package: cl-sql-uffi (handles common UFFI tasks for
     some of the database backends).
 
- -- Kevin M. Rosenberg <kevin@rosenberg.net>  Fri,  2 Aug 2002 05:52:38 -0600
+ -- Kevin M. Rosenberg <kmr@debian.org>  Fri,  2 Aug 2002 05:52:38 -0600
 
 cl-sql (0.7.6-2) unstable; urgency=low
 
   * Rework logical pathnames for improved Common Lisp Controller compatibility.
 
- -- Kevin M. Rosenberg <kevin@rosenberg.net>  Wed, 31 Jul 2002 19:31:40 -0600
+ -- Kevin M. Rosenberg <kmr@debian.org>  Wed, 31 Jul 2002 19:31:40 -0600
 
 cl-sql (0.7.6-1) unstable; urgency=low
 
   * New upstream version, improves Common Lisp Controller compatibility.
   
- -- Kevin M. Rosenberg <kevin@rosenberg.net>  Fri, 26 Jul 2002 01:15:07 -0600
+ -- Kevin M. Rosenberg <kmr@debian.org>  Fri, 26 Jul 2002 01:15:07 -0600
 
 cl-sql (0.7.5-1) unstable; urgency=low
 
@@ -43,7 +44,7 @@ cl-sql (0.7.5-1) unstable; urgency=low
   * Rework debhelper rules file to use dh_install rather than install
   * Minor change in upstream.
 
- -- Kevin M. Rosenberg <kevin@rosenberg.net>  Thu, 25 Jul 2002 09:15:44 -0600
+ -- Kevin M. Rosenberg <kmr@debian.org>  Thu, 25 Jul 2002 09:15:44 -0600
 
 cl-sql (0.7.4-1) unstable; urgency=low
 
@@ -52,13 +53,13 @@ cl-sql (0.7.4-1) unstable; urgency=low
   * Move documentation into the clsql-base package, change doc-base section
   to programming.
 
- -- Kevin M. Rosenberg <kevin@rosenberg.net>  Mon,  8 Jul 2002 11:10:11 -0600
+ -- Kevin M. Rosenberg <kmr@debian.org>  Mon,  8 Jul 2002 11:10:11 -0600
 
 cl-sql (0.7.3-1) unstable; urgency=low
 
   * Added missing documentation to upstream package.
 
- -- Kevin M. Rosenberg <kevin@rosenberg.net>  Mon,  8 Jul 2002 07:10:42 -0600
+ -- Kevin M. Rosenberg <kmr@debian.org>  Mon,  8 Jul 2002 07:10:42 -0600
 
 cl-sql (0.7.2-1) unstable; urgency=low
 
@@ -66,17 +67,17 @@ cl-sql (0.7.2-1) unstable; urgency=low
   
   * Add the text of the LLGPL to the copyright file.
 
- -- Kevin M. Rosenberg <kevin@rosenberg.net>  Fri,  5 Jul 2002 11:06:21 -0600
+ -- Kevin M. Rosenberg <kmr@debian.org>  Fri,  5 Jul 2002 11:06:21 -0600
 
 cl-sql (0.7.1-2) unstable; urgency=low
 
   * Additions to the copyright file
 
- -- Kevin M. Rosenberg <kevin@rosenberg.net>  Fri, 28 Jun 2002 11:17:36 -0600
+ -- Kevin M. Rosenberg <kmr@debian.org>  Fri, 28 Jun 2002 11:17:36 -0600
 
 cl-sql (0.7.1-1) unstable; urgency=low
 
   * Initial Release (closes: 146792).
 
- -- Kevin M. Rosenberg <kevin@rosenberg.net>  Thu, 25 Apr 2002 19:13:41 -0600
+ -- Kevin M. Rosenberg <kmr@debian.org>  Thu, 25 Apr 2002 19:13:41 -0600
 

@@ -6,4 +6,4 @@ This is the CLSQL Common Lisp system packaged for Debian.
 Anonymous CVS for this code is available at:
 :pserver:anoncvs@cvs.med-info.com:/pubcvs clsql
 
-Kevin Rosenberg <kevin@rosenberg.net>, Thu, 25 Apr 2002 19:13:41 -0600
+Kevin M. Rosenberg <kmr@debian.org>, Thu, 25 Apr 2002 19:13:41 -0600
