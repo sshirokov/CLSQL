@@ -722,7 +722,7 @@ superclass of the newly-defined View Class."
 	(mapcar (lambda (obj)
 		  (let* ((target-name (gethash :target-slot dbi))
 			 (target-class (find-class target-name)))
-		    (cons 
+		    (list 
 		     (car
 		      (fault-join-slot-raw 
 		       target-class

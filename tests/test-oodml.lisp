@@ -85,9 +85,9 @@
     (mapcar #'(lambda (pair)
 		(list
 		 (typep (car pair) 'address)
-		 (typep (cdr pair) 'employee-address)
+		 (typep (second pair) 'employee-address)
 		 (slot-value (car pair) 'addressid)
-		 (slot-value (cdr pair) 'addressid)))
+		 (slot-value (second pair) 'addressid)))
      (employee-addresses employee1))
   ((t t 1 1) (t t 2 2)))
 
@@ -95,9 +95,9 @@
     (mapcar #'(lambda (pair)
 		(list
 		 (typep (car pair) 'address)
-		 (typep (cdr pair) 'employee-address)
+		 (typep (second pair) 'employee-address)
 		 (slot-value (car pair) 'addressid)
-		 (slot-value (cdr pair) 'addressid)))
+		 (slot-value (second pair) 'addressid)))
      (employee-addresses employee2))
   ((t t 2 2)))
 
