@@ -569,6 +569,9 @@
 	  ((and (null (clsql-sys:db-type-has-union? db-underlying-type))
 		(clsql-sys:in test :fdml/query/6 :fdml/select/31))
 	   (push (cons test "union not supported") skip-tests))
+	  ((and (eq *test-database-type* :oracle)
+		(clsql-sys:in test :fdml/query/8 :fdml/select/21))
+	   (push (cons test "syntax not supported") skip-tests))
 	  (t
 	   (push test-form test-forms)))))
       (values (nreverse test-forms) (nreverse skip-tests))))

@@ -5,6 +5,7 @@
 	* sql/oodml.lisp: Removed old stub function 	
 	* clsql.asd: Use module names in current package rather than keyword package
 	* db-oracle/oracle-sql.lisp: Don't trim trailing spaces
+	* tests/test-init.lisp: Skip 2 tests on Oracle which have unsupported syntax 
 	
 24 May 2004: Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* db-postgresql-socket/postgresql-socket-sql.lisp: replace 
