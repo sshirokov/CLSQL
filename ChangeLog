@@ -1,3 +1,7 @@
+09 Nov 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/operations.lisp: Add lower and upper SQL
+	functions from Daniel Lowe.
+	
 08 Nov 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/expressions.lisp: Fix slot name [thanks to
 	Daniel Lowe]

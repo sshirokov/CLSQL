@@ -242,3 +242,15 @@
 (defsql sql-userenv (:symbol "userenv") (&rest rest)
   (make-instance 'sql-function-exp
 		 :name 'userenv :args rest))
+
+(defsql sql-lower  (:symbol "lower") (&rest rest)
+  (if (= (length rest) 1)
+      (make-instance 'sql-function-exp
+                     :name 'lower :args rest)
+    (error 'sql-user-error :message "LOWER must have 1 argument.")))
+
+(defsql sql-upper  (:symbol "upper") (&rest rest)
+  (if (= (length rest) 1)
+      (make-instance 'sql-function-exp
+                     :name 'upper :args rest)
+    (error 'sql-user-error :message "UPPER must have 1 argument.")))
