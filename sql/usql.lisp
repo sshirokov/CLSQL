@@ -20,6 +20,9 @@
 
 
 ;;; Minimal high-level routines to enable low-level interface for USQL
+;;; Thse functions are not exported. If you application depends on these
+;;; consider using the clsql-usql package.
+
 
 (in-package #:clsql-sys)
 

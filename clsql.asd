@@ -24,7 +24,7 @@
   :name "clsql"
   :author "Kevin Rosenberg <kevin@rosenberg.net>"
   :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
-  :version "1.5.x"
+  :version "2.1.x"
   :licence "Lessor Lisp General Public License"
   :description "Common Lisp SQL Interface Library"
   :long-description "cl-sql package provides the high-level interface for the CLSQL system."

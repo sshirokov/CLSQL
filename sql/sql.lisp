@@ -22,7 +22,35 @@
 
 ;;; Row processing macro
 
+(defmacro for-each-row (((&rest fields) &key from order-by where distinct limit) &body body)
+  (let ((d (gensym "DISTINCT-"))
+	(bind-fields (loop for f in fields collect (car f)))
+	(w (gensym "WHERE-"))
+	(o (gensym "ORDER-BY-"))
+	(frm (gensym "FROM-"))
+	(l (gensym "LIMIT-"))
+	(q (gensym "QUERY-")))
+    `(let ((,frm ,from)
+	   (,w ,where)
+	   (,d ,distinct)
+	   (,l ,limit)
+	   (,o ,order-by))
+      (let ((,q (query-string ',fields ,frm ,w ,d ,o ,l)))
+	(loop for tuple in (query ,q)
+	      collect (destructuring-bind ,bind-fields tuple
+		   ,@body))))))
 
+(defun query-string (fields from where distinct order-by limit)
+  (concatenate
+   'string
+   (format nil "select ~A~{~A~^,~} from ~{~A~^ and ~}" 
+	   (if distinct "distinct " "") (field-names fields)
+	   (from-names from))
+   (if where (format nil " where ~{~A~^ ~}"
+		     (where-strings where)) "")
+   (if order-by (format nil " order by ~{~A~^, ~}"
+			(order-by-strings order-by)))
+   (if limit (format nil " limit ~D" limit) "")))
 
 (defun lisp->sql-name (field)
   (typecase field
@@ -61,35 +89,6 @@
 	    (format nil "~A ~A" (lisp->sql-name (car o))
 		    (lisp->sql-name (cadr o))))))
 
-(defun query-string (fields from where distinct order-by limit)
-  (concatenate
-   'string
-   (format nil "select ~A~{~A~^,~} from ~{~A~^ and ~}" 
-	   (if distinct "distinct " "") (field-names fields)
-	   (from-names from))
-   (if where (format nil " where ~{~A~^ ~}"
-		     (where-strings where)) "")
-   (if order-by (format nil " order by ~{~A~^, ~}"
-			(order-by-strings order-by)))
-   (if limit (format nil " limit ~D" limit) "")))
-
-(defmacro for-each-row (((&rest fields) &key from order-by where distinct limit) &body body)
-  (let ((d (gensym "DISTINCT-"))
-	(bind-fields (loop for f in fields collect (car f)))
-	(w (gensym "WHERE-"))
-	(o (gensym "ORDER-BY-"))
-	(frm (gensym "FROM-"))
-	(l (gensym "LIMIT-"))
-	(q (gensym "QUERY-")))
-    `(let ((,frm ,from)
-	   (,w ,where)
-	   (,d ,distinct)
-	   (,l ,limit)
-	   (,o ,order-by))
-      (let ((,q (query-string ',fields ,frm ,w ,d ,o ,l)))
-	(loop for tuple in (query ,q)
-	      collect (destructuring-bind ,bind-fields tuple
-		   ,@body))))))
 
 ;;; Marc Battyani : Large objects support
 
