@@ -2,7 +2,7 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          functional.cl
+;;;; Name:          functional.lisp
 ;;;; Purpose:       Functional interface
 ;;;; Programmer:    Pierre R. Mai
 ;;;;
@@ -26,8 +26,7 @@
 ;;;; 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :clsql-sys)
+(in-package #:clsql-sys)
 
 
 ;;;; This file implements the more advanced functions of the
@@ -84,16 +83,3 @@
               where)
       :database database))))
 
-(defmacro with-database ((db-var connection-spec &rest connect-args) &body body)
-  "Evaluate the body in an environment, where `db-var' is bound to the
-database connection given by `connection-spec' and `connect-args'.
-The connection is automatically closed or released to the pool on exit from the body."
-  (let ((result (gensym "result-")))
-    (unless db-var (setf db-var '*default-database*))
-    `(let ((,db-var (connect ,connection-spec ,@connect-args))
-	   (,result nil))
-      (unwind-protect
-	   (let ((,db-var ,db-var))
-	     (setf ,result (progn ,@body)))
-	(disconnect :database ,db-var))
-      ,result)))

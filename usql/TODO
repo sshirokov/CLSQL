@@ -1,0 +1,101 @@
+
+GENERAL 
+
+* test on (and port to) sbcl, lispworks, acl, scl, mcl and openmcl; 
+* implement remaining functions for CLSQL AODBC backend; 
+* port UncommonSQL ODBC and Oracle backends to CLSQL. 
+
+
+COMMONSQL SPEC
+
+* Missing: 
+
+  RECONNECT 
+  CACHE-TABLE-QUERIES 
+  *CACHE-TABLE-QUERIES-DEFAULT*
+  *DEFAULT-UPDATE-OBJECTS-MAX-LEN* 
+  UPDATE-OBJECT-JOINS 
+  INSTANCE-REFRESHED
+
+
+* Incompatible 
+
+
+ >> Initialisation and connection 
+
+    CONNECT 
+     o should accept string as connection spec 
+
+    DISCONNECT
+     o should accept string as connection spec 
+
+    INITIALIZE-DATABASE-TYPE
+     o should initialise appropriate backend 
+
+    STATUS 
+     o what is the behaviour in CommonSQL (esp :full parameter)? 
+
+
+ >> The functional sql interface 
+  
+    SELECT 
+      o should accept keyword arg :refresh and call INSTANCE-REFRESHED
+      o should return (values result-list field-names)
+      o should coerce values returned as strings to appropriate lisp type
+
+    QUERY 
+      o should return (values result-list field-names) 
+      o should coerce values returned as strings to appropriate lisp type
+
+    LIST-ATTRIBUTE-TYPES
+      o should return list of (attribute datatype precision scale nullable) 	
+
+    LOOP 
+      o the extension is currently CMUCL specific 
+
+
+ >> The object-oriented sql interface
+
+    DEF-VIEW-CLASS
+      o get :target-slot working 
+      o implement :retrieval :immediate 
+
+    LIST-CLASSES 
+      o keyword arg :root-class should do something (portable)
+
+    DO-QUERY,MAP-QUERY,LOOP
+      o should work with object queries as well as functional ones 
+
+
+ >> Symbolic SQL syntax 
+
+      o Complete sql expressions (see operations.lisp)
+
+         substr
+         some 
+         order-by 
+         times 
+         nvl
+         null 
+         distinct
+         except 
+         intersect 
+         between
+         userenv
+
+      o variables (e.g., table identifiers) should be instantiated at runtime 
+
+
+
+NOTES ABOUT THE BACKENDS
+
+MYSQL 
+
+drop-index:   requires a table to be specified with the :from keyword parameter
+transactions: don't seem to work  
+views:        mysql does not support views  
+queries:      nested subqueries do not seem to work 
+
+SQLITE 
+
+create-view: column-list parameter not supported 

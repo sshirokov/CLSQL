@@ -2,22 +2,21 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:         utils.cl
+;;;; Name:         utils.lisp
 ;;;; Purpose:      SQL utility functions
 ;;;; Programmer:   Kevin M. Rosenberg
 ;;;; Date Started: Mar 2002
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :clsql-base-sys)
+(in-package #:clsql-base-sys)
 
 (defun number-to-sql-string (num)
   (etypecase num

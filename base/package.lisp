@@ -2,7 +2,7 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          package.cl
+;;;; Name:          package.lisp
 ;;;; Purpose:       Package definition for base (low-level) SQL interface
 ;;;; Programmers:   Kevin M. Rosenberg based on
 ;;;;                Original code by Pierre R. Mai 
@@ -10,7 +10,7 @@
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
@@ -119,15 +119,140 @@
 	 #:transaction-level
 	 #:conn-pool
 	 
-	 ;; utils.cl
+	 ;; utils.lisp
 	 #:number-to-sql-string
 	 #:float-to-sql-string
 	 #:sql-escape-quotes
+	 
+	 ;; time.lisp
+	 #:bad-component
+	 #:current-day
+	 #:current-month
+	 #:current-year
+	 #:day-duration
+	 #:db-timestring
+	 #:decode-duration
+	 #:decode-time
+	 #:duration
+	 #:duration+
+	 #:duration<
+	 #:duration<=
+	 #:duration=
+	 #:duration>
+	 #:duration>=
+	 #:duration-day
+	 #:duration-hour
+	 #:duration-minute
+	 #:duration-month
+	 #:duration-second
+	 #:duration-year
+	 #:duration-reduce                
+	 #:format-duration
+	 #:format-time
+	 #:get-time
+	 #:interval-clear
+	 #:interval-contained
+	 #:interval-data
+	 #:interval-edit
+	 #:interval-end
+	 #:interval-match
+	 #:interval-push
+	 #:interval-relation
+	 #:interval-start
+	 #:interval-type
+	 #:make-duration
+	 #:make-interval
+	 #:make-time
+	 #:merged-time
+	 #:midnight
+	 #:month-name
+	 #:parse-date-time
+	 #:parse-timestring
+	 #:print-date
+	 #:roll
+	 #:roll-to
+	 #:time
+	 #:time+
+	 #:time-
+	 #:time-by-adding-duration
+	 #:time-compare
+	 #:time-difference
+	 #:time-dow
+	 #:time-element
+	 #:time-max
+	 #:time-min
+	 #:time-mjd
+	 #:time-msec
+	 #:time-p
+	 #:time-sec
+	 #:time-well-formed
+	 #:time-ymd
+	 #:time<
+	 #:time<=
+	 #:time=
+	 #:time>
+	 #:time>=
+	 #:timezone
+	 #:universal-time
+	 #:wall-time
+	 #:wall-timestring
+	 #:week-containing
+
+	 ;; recording.lisp -- SQL I/O Recording 
+	 #:record-sql-comand
+	 #:record-sql-result
+	 #:add-sql-stream                 ; recording  xx
+	 #:delete-sql-stream	          ; recording  xx
+	 #:list-sql-streams	          ; recording  xx
+	 #:sql-recording-p	          ; recording  xx
+	 #:sql-stream			  ; recording  xx
+	 #:start-sql-recording		  ; recording  xx
+	 #:stop-sql-recording		  ; recording  xx
+
+	 ;; database.lisp -- Connection
+	 #:*default-database-type*	          ; clsql-base xx
+	 #:*default-database*	          ; classes    xx
+	 #:connect			          ; database   xx
+	 #:*connect-if-exists*	          ; database   xx
+	 #:connected-databases	          ; database   xx
+	 #:database		          ; database   xx
+	 #:database-name                     ; database   xx
+	 #:disconnect		          ; database   xx
+	 #:reconnect                         ; database
+	 #:find-database                     ; database   xx
+	 #:status                            ; database   xx
+	 #:with-database
+	 #:with-default-database
+
+	 ;; basic-sql.lisp
+	 #:query
+	 #:execute-command
+	 #:write-large-object
+	 #:read-large-object
+	 #:delete-large-object
+
+	 ;; Transactions
+	 #:with-transaction
+	 #:commit-transaction
+	 #:rollback-transaction
+	 #:add-transaction-commit-hook
+	 #:add-transaction-rollback-hook
+	 #:commit                            ; transact   xx
+	 #:rollback			  ; transact   xx
+	 #:with-transaction		  ; transact   xx		.
+	 #:start-transaction                 ; transact   xx
+	 #:in-transaction-p                  ; transact   xx
+	 #:database-start-transaction
+	 #:database-abort-transaction
+	 #:database-commit-transaction
+	 #:transaction-level
+	 #:transaction
+
 	 ))
     (:documentation "This is the INTERNAL SQL-Interface package of CLSQL-BASE."))
 
 (defpackage #:clsql-base
-    (:import-from :clsql-base-sys . #1#)
+    (:import-from #:clsql-base-sys . #1#)
     (:export . #1#)
     (:documentation "This is the SQL-Interface package of CLSQL-BASE."))
 );eval-when

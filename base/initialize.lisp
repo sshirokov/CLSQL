@@ -2,14 +2,14 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          initialize.cl
+;;;; Name:          initialize.lisp
 ;;;; Purpose:       Initializion routines for backend
 ;;;; Programmers:   Kevin M. Rosenberg 
 ;;;; Date Started:  May 2002
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
@@ -17,8 +17,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :clsql-base-sys)
+(in-package #:clsql-base-sys)
 
 (defvar *loaded-database-types* nil
   "Contains a list of database types which have been defined/loaded.")

@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg, Marc Battyani
 ;;;; Date Started:  Apr 2002
 ;;;;
-;;;; $Id$
+;;;; $Id: pool.lisp 7061 2003-09-07 06:34:45Z kevin $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002-2003 by Kevin M. Rosenberg
 ;;;;
@@ -16,7 +16,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package clsql-sys)
+(in-package #:clsql-base-sys)
 
 (defun make-process-lock (name) 
   #+allegro (mp:make-process-lock :name name)
@@ -77,7 +77,8 @@
   nil)
 
 (defun find-or-create-connection-pool (connection-spec database-type)
-  "Find connection pool in hash table, creates a new connection pool if not found"
+  "Find connection pool in hash table, creates a new connection pool
+if not found"
   (with-process-lock (*db-pool-lock* "Find-or-create connection")
     (let* ((key (list connection-spec database-type))
 	   (conn-pool (gethash key *db-pool*)))
@@ -97,7 +98,7 @@
   (release-to-conn-pool database))
 
 (defun disconnect-pooled (&optional clear)
-  "Disconnects all connections in the pool"
+  "Disconnects all connections in the pool."
   (with-process-lock (*db-pool-lock* "Disconnect pooled")
     (maphash
      #'(lambda (key conn-pool)
@@ -106,3 +107,24 @@
      *db-pool*)
     (when clear (clrhash *db-pool*)))
   t)
+
+;(defun pool-start-sql-recording (pool &key (types :command))
+;  "Start all stream in the pool recording actions of TYPES"
+;  (dolist (con (pool-connections pool))
+;    (start-sql-recording :type types
+;			 :database (connection-database con))))
+
+;(defun pool-stop-sql-recording (pool &key (types :command))
+;  "Start all stream in the pool recording actions of TYPES"
+;  (dolist (con (pool-connections pool))
+;    (stop-sql-recording :type types
+;			  :database (connection-database con))))
+
+;(defmacro with-database-connection (pool &body body)
+;  `(let ((connection (obtain-connection ,pool))
+;         (results nil))
+;    (unwind-protect
+;         (with-database ((connection-database connection))
+;           (setq results (multiple-value-list (progn ,@body))))
+;      (release-connection connection))
+;    (values-list results)))

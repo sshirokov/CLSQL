@@ -2,7 +2,7 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          usql.cl
+;;;; Name:          usql.lisp
 ;;;; Purpose:       High-level interface to SQL driver routines needed for
 ;;;;                UncommonSQL
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
@@ -10,7 +10,7 @@
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
 ;;;; and onShore Development Inc
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
@@ -21,16 +21,14 @@
 
 ;;; Minimal high-level routines to enable low-level interface for USQL
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :clsql-sys)
+(in-package #:clsql-sys)
 
-(defun list-tables (&key (database *default-database*)
-                         (system-tables nil))
+(defun list-tables (&key (database *default-database*))
   "List all tables in *default-database*, or if the :database keyword arg
 is given, the specified database.  If the keyword arg :system-tables
 is true, then it will not filter out non-user tables.  Table names are
 given back as a list of strings."
-  (database-list-tables database :system-tables system-tables))
+  (database-list-tables database))
 
 
 (defun list-attributes (table &key (database *default-database*))

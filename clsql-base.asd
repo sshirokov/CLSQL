@@ -16,6 +16,9 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
+(eval-when (:compile-toplevel)
+  (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0))))
+
 (defpackage #:clsql-base-system (:use #:asdf #:cl))
 (in-package #:clsql-base-system)
 
@@ -37,5 +40,13 @@
 	     (:file "classes" :depends-on ("package"))
 	     (:file "conditions" :depends-on ("classes"))
 	     (:file "db-interface" :depends-on ("conditions"))
-	     (:file "initialize" :depends-on ("db-interface"))))))
+	     (:file "initialize" :depends-on ("db-interface"))
+	     (:file "loop-extension" :depends-on ("db-interface"))
+	     (:file "time" :depends-on ("package"))
+	     (:file "database" :depends-on ("initialize"))
+	     (:file "recording" :depends-on ("time" "database"))
+	     (:file "basic-sql" :depends-on ("database"))
+	     (:file "pool" :depends-on ("basic-sql"))
+	     (:file "transaction" :depends-on ("basic-sql"))
+	     ))))
 

@@ -2,7 +2,7 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          conditions.cl
+;;;; Name:          conditions.lisp
 ;;;; Purpose:       Error conditions for high-level SQL interface
 ;;;; Programmers:   Kevin M. Rosenberg based on
 ;;;;                 Original code by Pierre R. Mai 
@@ -10,7 +10,7 @@
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
@@ -18,8 +18,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :clsql-base-sys)
+(in-package #:clsql-base-sys)
 
 ;;; Conditions
 (define-condition clsql-condition ()
@@ -157,6 +156,9 @@ and signal an clsql-invalid-spec-error if they don't match."
 	  'clsql-nodb-error
 	  :database database))
 
+(defun signal-no-database-error ()
+  (cerror "Ignore this error and return nil."
+	  'clsql-nodb-error))
 
 ;; for USQL support
 

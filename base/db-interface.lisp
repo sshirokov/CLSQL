@@ -2,7 +2,7 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          db-interface.cl
+;;;; Name:          db-interface.lisp
 ;;;; Purpose:       Generic function definitions for DB interfaces
 ;;;; Programmers:   Kevin M. Rosenberg based on
 ;;;;                Original code by Pierre R. Mai. Additions from
@@ -11,7 +11,7 @@
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai, and onShoreD
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
@@ -19,8 +19,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :clsql-base-sys)
+(in-package #:clsql-base-sys)
 
 (defgeneric database-type-load-foreign (database-type)
   (:documentation

@@ -2,23 +2,23 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          cmucl-compat.sql
+;;;; Name:          cmucl-compat.lisp
 ;;;; Purpose:       Compatiblity library for CMUCL functions
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package :cl-user)
+(in-package #:cl-user)
 
-(defpackage :cmucl-compat
+(defpackage #:cmucl-compat
   (:use #:common-lisp)
   (:export
    #:shrink-vector
@@ -26,7 +26,7 @@
    #:result-type-or-lose
    #:required-argument
    ))
-(in-package :cmucl-compat)
+(in-package #:cmucl-compat)
 
 #+(or cmu scl)
 (defmacro required-argument ()
@@ -79,7 +79,7 @@ Needs to be a macro to overwrite value of VEC."
     (defun make-sequence-of-type (type len)
       (lisp::make-sequence-of-type type len))
   (defun make-sequence-of-type (type len)
-    (system::make-sequence-of-type type len)))
+    (common-lisp::make-sequence-of-type type len)))
 
 #-(or cmu scl)
 (defun result-type-or-lose (type nil-ok)

@@ -2,14 +2,14 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:         sql.cl
+;;;; Name:         sql.lisp
 ;;;; Purpose:      High-level SQL interface
 ;;;; Authors:      Kevin M. Rosenberg based on code by Pierre R. Mai 
 ;;;; Date Started: Feb 2002
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
@@ -17,117 +17,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(eval-when (:compile-toplevel)
-  (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0))))
-
 (in-package #:clsql-sys)
-
-
-;;; Database handling
-
-(defvar *connect-if-exists* :error
-  "Default value for the if-exists parameter of connect calls.")
-
-(defvar *connected-databases* nil
-  "List of active database objects.")
-
-(defun connected-databases ()
-  "Return the list of active database objects."
-  *connected-databases*)
-
-(defvar *default-database* nil
-  "Specifies the default database to be used.")
-
-(defun find-database (database &optional (errorp t))
-  (etypecase database
-    (database
-     ;; Return the database object itself
-     database)
-    (string
-     (or (find database (connected-databases)
-	       :key #'database-name
-	       :test #'string=)
-	 (when errorp
-	   (cerror "Return nil."
-		   'clsql-simple-error
-		   :format-control "There exists no database called ~A."
-		   :format-arguments (list database)))))))
-
-(defun connect (connection-spec
-		&key (if-exists *connect-if-exists*)
-		(database-type *default-database-type*)
-		(pool nil))
-  "Connects to a database of the given database-type, using the type-specific
-connection-spec. 
-If pool is t the connection will be taken from the general pool,
-if pool is a conn-pool object the connection will be taken from this pool.
-"
-  (if pool
-    (acquire-from-pool connection-spec database-type pool)
-    (let* ((db-name (database-name-from-spec connection-spec database-type))
-	   (old-db (unless (eq if-exists :new) (find-database db-name nil)))
-	   (result nil))
-      (if old-db
-	(case if-exists
-;	    (:new
-;	     (setq result
-;	       (database-connect connection-spec database-type)))
-	  (:warn-new
-	   (setq result
-		 (database-connect connection-spec database-type))
-	   (warn 'clsql-exists-warning :old-db old-db :new-db result))
-	  (:error
-	   (restart-case
-		 (error 'clsql-exists-error :old-db old-db)
-	       (create-new ()
-		   :report "Create a new connection."
-		 (setq result
-		   (database-connect connection-spec database-type)))
-	       (use-old ()
-		   :report "Use the existing connection."
-		 (setq result old-db))))
-	  (:warn-old
-	   (setq result old-db)
-	   (warn 'clsql-exists-warning :old-db old-db :new-db old-db))
-	  (:old
-	   (setq result old-db)))
-	(setq result
-	      (database-connect connection-spec database-type)))
-      (when result
-	(pushnew result *connected-databases*)
-	(setq *default-database* result)
-	result))))
-
-
-(defun disconnect (&key (database *default-database*))
-  "Closes the connection to database. Resets *default-database* if that
-database was disconnected and only one other connection exists.
-if the database is from a pool it will be released to this pool."
-  (if (conn-pool database)
-      (release-to-pool database)
-    (when (database-disconnect database)
-      (setq *connected-databases* (delete database *connected-databases*))
-      (when (eq database *default-database*)
-	(setq *default-database* (car *connected-databases*)))
-      (change-class database 'closed-database)
-      t)))
-
-;;; Basic operations on databases
-
-(defgeneric query (expression &key database types))
-(defmethod query (query-expression &key (database *default-database*)  
-		  types)
-  "Execute the SQL query expression query-expression on the given database.
-Returns a list of lists of values of the result of that expression."
-  (database-query query-expression database types))
-
-
-(defgeneric execute-command (expression &key database))
-(defmethod execute-command (sql-expression &key (database *default-database*))
-  "Execute the SQL command expression sql-expression on the given database.
-Returns true on success or nil on failure."
-  (database-execute-command sql-expression database))
-
 
 
 (defun map-query (output-type-spec function query-expression
@@ -237,24 +127,6 @@ specified in output-type-spec and returned like in MAP."
 		    ,@body))
 	     (database-dump-result-set ,result-set ,db)))))))
 
-;;; Marc Battyani : Large objects support
-
-(defun create-large-object (&key (database *default-database*))
-  "Creates a new large object in the database and returns the object identifier"
-  (database-create-large-object database))
-
-(defun write-large-object (object-id data &key (database *default-database*))
-  "Writes data to the large object"
-  (database-write-large-object object-id data database))
-
-(defun read-large-object (object-id &key (database *default-database*))
-  "Reads the large object content"
-  (database-read-large-object object-id database))
-
-(defun delete-large-object (object-id &key (database *default-database*))
-  "Deletes the large object in the database"
-  (database-delete-large-object object-id database))
-
 
 ;;; Row processing macro
 
@@ -326,3 +198,23 @@ specified in output-type-spec and returned like in MAP."
 	(loop for tuple in (query ,q)
 	      collect (destructuring-bind ,bind-fields tuple
 		   ,@body))))))
+
+;;; Marc Battyani : Large objects support
+
+(defun create-large-object (&key (database *default-database*))
+  "Creates a new large object in the database and returns the object identifier"
+  (database-create-large-object database))
+
+(defun write-large-object (object-id data &key (database *default-database*))
+  "Writes data to the large object"
+  (database-write-large-object object-id data database))
+
+(defun read-large-object (object-id &key (database *default-database*))
+  "Reads the large object content"
+  (database-read-large-object object-id database))
+
+(defun delete-large-object (object-id &key (database *default-database*))
+  "Deletes the large object in the database"
+  (database-delete-large-object object-id database))
+
+

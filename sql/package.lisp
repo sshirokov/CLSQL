@@ -2,7 +2,7 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          package.cl
+;;;; Name:          package.lisp
 ;;;; Purpose:       Package definition for CLSQL (high-level) interface
 ;;;; Programmers:   Kevin M. Rosenberg based on
 ;;;;                Original code by Pierre R. Mai 
@@ -10,7 +10,7 @@
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
@@ -76,14 +76,6 @@
 	 ))
     (:export
      ;; sql.cl
-     #:*connect-if-exists*
-     #:connected-databases
-     #:*default-database*
-     #:find-database
-     #:connect
-     #:disconnect
-     #:query
-     #:execute-command
      #:map-query
      #:do-query
      #:for-each-row
@@ -94,32 +86,12 @@
      #:update-records
      #:with-database
      
-     ;; For High-level UncommonSQL compatibility
-     #:sql-ident
-     #:list-tables
-     #:list-attributes
-     #:attribute-type
-     #:create-sequence 
-     #:drop-sequence
-     #:sequence-next
-     
-     ;; Pooled connections
-     #:disconnect-pooled
-     #:find-or-create-connection-pool
-     
-     ;; Transactions
-     #:with-transaction
-     #:commit-transaction
-     #:rollback-transaction
-     #:add-transaction-commit-hook
-     #:add-transaction-rollback-hook
-     
      ;; Large objects (Marc B)
      #:create-large-object
      #:write-large-object
      #:read-large-object
      #:delete-large-object
-     
+
      .
      #1#
      )

@@ -33,12 +33,10 @@
   ((:module :sql
 	    :components
 	    ((:file "package")
-	     (:file "pool" :depends-on ("package"))
-	     (:file "loop-extension")
-	     (:file "sql" :depends-on ("pool"))
-	     (:file "transactions" :depends-on ("sql"))
+	     (:file "sql" :depends-on ("package"))
 	     (:file "functional" :depends-on ("sql"))
-	     (:file "usql" :depends-on ("sql")))))
+	     (:file "usql" :depends-on ("sql"))
+	     )))
   :depends-on (:clsql-base)
   )
 
