@@ -181,7 +181,7 @@ if the database connection has been lost."
 	      ((or string list)
 	       (let ((db (find-database database :errorp nil)))
 		 (when (null db)
-		   (if (and database errorp)
+		   (if (and database error)
 		       (error 'clsql-generic-error
 			      :message
 			      (format nil "Unable to find database with connection-spec ~A." database))
