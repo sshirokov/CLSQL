@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.10 2003/05/16 08:07:39 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.11 2003/05/16 08:41:47 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -184,12 +184,19 @@
   (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
 	   (type char-ptr-def s))
   (let* ((len (strlen s))
+	 (len4 (floor len 4))
 	 (str (make-string len)))
     (declare (fixnum len)
-	     (type (simple-array (unsigned-byte 8) (*)) str))
+	     (type (simple-array (unsigned-byte 32) (*)) str))
     (do ((i 0))
-	((= i len))
+	((= i len4))
       (declare (fixnum i))
-      (setf (aref str i) (uffi:deref-array s '(:array :unsigned-char) i))
+      (setf (aref str i) (uffi:deref-array s '(:array :unsigned-int) i))
+      (incf i))
+    (do ((i (* 4 len4))
+	 (str1 str))
+	((= i len))
+      (declare (fixnum i) (type (simple-array (unsigned-byte 8) (*)) str1))
+      (setf (aref str1 i) (uffi:deref-array s '(:array :unsigned-char) i))
       (incf i))
     str))))
