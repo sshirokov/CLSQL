@@ -508,6 +508,12 @@ the length of that format.")
 ;; 21 bytes. See pp. 3-10, 3-26, and 6-13 of OCI documentation
 ;; for more details.
 
+;; Mac OS X Note: According to table 6-8 in the Oracle 9i OCI 
+;; documentation, PRECISION may actually be an sb2 instead of a 
+;; single byte if performing an "implicit describe".  Using a 
+;; signed short instead of an unsigned byte fixes a Mac OS X bug 
+;; where PRECISION is always zero. -- JJB 20040713
+
 ;; When calling OCI C code to handle the conversion, we have
 ;; only two numeric types available to pass the return value:
 ;; double-float and signed-long. It would be possible to
@@ -554,7 +560,10 @@ the length of that format.")
 ;; below, beware!) try setting this value into COLSIZE, calling OCI,
 ;; then looking at the value in COLSIZE.  (setf colsize #x12345678)
 ;; debugging only
-            
+
+;; Mac OS X Note: This workaround fails on a bigendian platform so
+;; I've changed the data type of COLNAME to :unsigned-short as per
+;; the Oracle 9i OCI documentation. -- JJB 20040713
 
 (uffi:def-type byte-pointer (* :byte))
 (uffi:def-type ulong-pointer (* :unsigned-long))
@@ -567,11 +576,11 @@ the length of that format.")
   (with-slots (errhp) database
     (uffi:with-foreign-objects ((dtype-foreign :unsigned-short)
 				(parmdp :pointer-void)
-				(precision :byte)
+				(precision :short)
 				(scale :byte)
 				(colname '(* :unsigned-char))
 				(colnamelen :unsigned-long)
-				(colsize :unsigned-long)
+				(colsize :unsigned-short)
 				(colsizesize :unsigned-long)
 				(defnp ':pointer-void))
       (let ((buffer nil)
@@ -614,7 +623,7 @@ the length of that format.")
 			     +oci-attr-scale+
 			     (deref-vp errhp))
 	       (let ((*scale (uffi:deref-pointer scale :byte))
-		     (*precision (uffi:deref-pointer precision :byte)))
+		     (*precision (uffi:deref-pointer precision :short)))
 
 		 ;;(format t "scale=~d, precision=~d~%" *scale *precision)
 		 (cond
@@ -629,7 +638,7 @@ the length of that format.")
 			 dtype #.SQLT-FLT)))))
 	      ;; Default to SQL-STR
 	      (t
-	       (setf (uffi:deref-pointer colsize :unsigned-long) 0)
+	       (setf (uffi:deref-pointer colsize :unsigned-short) 0)
 	       (setf dtype #.SQLT-STR)
 	       (oci-attr-get (deref-vp parmdp)
 			     +oci-dtype-param+ 
@@ -637,7 +646,7 @@ the length of that format.")
 			     +unsigned-int-null-pointer+
 			     +oci-attr-data-size+
 			     (deref-vp errhp))
-	       (let ((colsize-including-null (1+ (uffi:deref-pointer colsize :unsigned-long))))
+	       (let ((colsize-including-null (1+ (uffi:deref-pointer colsize :unsigned-short))))
 		 (setf buffer (acquire-foreign-resource
 			       :unsigned-char (* +n-buf-rows+ colsize-including-null)))
 		 (setf sizeof colsize-including-null))))
@@ -719,7 +728,21 @@ the length of that format.")
       ;; handle errors very gracefully (since they're part of the
       ;; error-handling mechanism themselves) so we just assert they
       ;; work.
+
+      ;; Using (SETF DEREF-VP) to initialize this pointer fails in OpenMCL
+      ;; due to incorrect evaluation of the :POINTER-VOID argument to
+      ;; UFFI:DEREF-POINTER:
+      ;;
+      ;; > Error in process listener(1): Unknown foreign type: :g10
+      ;; > While executing: ccl::%parse-foreign-type
+      ;;
+      ;; The following works around this for OpenMCL as I'm not
+      ;; certain where the actual problem is. -- JJB 20040713
+      #+openmcl
+      (setf (uffi:deref-pointer envhp :pointer-void) +null-void-pointer+)
+      #-openmcl
       (setf (deref-vp envhp) +null-void-pointer+)
+
       #-oci7
       (oci-env-create envhp +oci-default+ +null-void-pointer+
 		      +null-void-pointer+ +null-void-pointer+ 

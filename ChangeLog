@@ -1,3 +1,8 @@
+14 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 2.11.15
+	* db-oracle/oracle-sql.lisp: Apply patch for OpenMCL/OSX
+	from James Bielman
+	
 14 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* README, INSTALL: update URLs. Minor updates to descriptions. 
 	* tests/README: remove stuff about editing contexts. 
