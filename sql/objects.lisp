@@ -467,6 +467,10 @@ superclass of the newly-defined View Class."
   (if args
       (format nil "INT(~A)" (car args))
       "INT"))
+
+(defmethod database-get-type-specifier ((type (eql 'bigint)) args database)
+  (declare (ignore args database))
+  "BIGINT")
               
 (defmethod database-get-type-specifier ((type (eql 'simple-base-string)) args
                                         database)
@@ -493,6 +497,10 @@ superclass of the newly-defined View Class."
 			    :postgresql :postgresql-socket)
 	"VARCHAR"
       "VARCHAR(255)")))
+
+(defmethod database-get-type-specifier ((type (eql 'universal-time)) args database)
+  (declare (ignore args database))
+  "BIGINT")
 
 (defmethod database-get-type-specifier ((type (eql 'wall-time)) args database)
   (declare (ignore args))
@@ -630,7 +638,14 @@ superclass of the newly-defined View Class."
   (declare (ignore database))
   (etypecase val
     (string
-     (read-from-string val))
+     (parse-integer val))
+    (number val)))
+
+(defmethod read-sql-value (val (type (eql 'bigint)) database)
+  (declare (ignore database))
+  (etypecase val
+    (string
+     (parse-integer val))
     (number val)))
 
 (defmethod read-sql-value (val (type (eql 'float)) database)
@@ -641,6 +656,14 @@ superclass of the newly-defined View Class."
 (defmethod read-sql-value (val (type (eql 'boolean)) database)
   (declare (ignore database))
   (equal "t" val))
+
+(defmethod read-sql-value (val (type (eql 'univeral-time)) database)
+  (declare (ignore database))
+  (unless (eq 'NULL val)
+  (etypecase val
+    (string
+     (parse-intger val))
+    (number val)))
 
 (defmethod read-sql-value (val (type (eql 'wall-time)) database)
   (declare (ignore database))
