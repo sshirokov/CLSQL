@@ -77,10 +77,11 @@
   (setf (database-odbc-conn database) nil)
   t)
 
-(defmethod database-query (query-expression (database odbc-database) result-types) 
+(defmethod database-query (query-expression (database odbc-database) 
+			   result-types) 
   (handler-case
       (odbc-dbi:sql query-expression :db (database-odbc-conn database)
-	       :types result-types)
+		    :query t :result-types result-types)
     (error ()
       (error 'clsql-sql-error
 	     :database database

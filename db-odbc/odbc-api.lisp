@@ -21,7 +21,6 @@
 (defvar *null* (make-null-pointer :byte))
 (defvar *binary-format* :unsigned-byte-vector)
 (defvar *time-conversion-function* 'identity)
-(defvar *trace-sql* nil)
 
 (defun %null-ptr ()
   (make-null-pointer :byte))

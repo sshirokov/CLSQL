@@ -122,8 +122,10 @@ the query against." ))
     (%disconnect hdbc)))
 
 
-(defun sql (expr &key db result-types row-count column-names)
-  (warn "Not implemented."))
+(defun sql (expr &key db result-types row-count column-names query)
+  (if query 
+      (db-query db expr)
+      (db-execute db expr)))
 
 (defun close-query (result-set)
   (warn "Not implemented."))
@@ -211,79 +213,44 @@ the query against." ))
   (%db-execute query query-expression)
   (%initialize-query query arglen col-positions))
 
-(defmethod db-fetch-query-results ((database odbc-db) &optional count flatp)
-  (db-fetch-query-results (db-query-object database) count flatp))
+(defmethod db-fetch-query-results ((database odbc-db) &optional count)
+  (db-fetch-query-results (db-query-object database) count))
 
-(defmethod db-fetch-query-results ((query odbc-query) &optional count flatp)
+(defmethod db-fetch-query-results ((query odbc-query) &optional count)
   (when (query-active-p query)
     (let (#+ignore(no-data nil))
       (with-slots (column-count column-data-ptrs column-c-types column-sql-types 
                                 column-out-len-ptrs column-precisions hstmt)
                   query
         (values
-         (cond (flatp
-                (when (> column-count 1)
-                  (error "If more than one column is to be fetched, flatp has to be nil."))
-                (let ((data-ptr (aref column-data-ptrs 0))
-                      (c-type (aref column-c-types 0))
-                      (sql-type (aref column-sql-types 0))
-                      (out-len-ptr (aref column-out-len-ptrs 0))
-                      (precision (aref column-precisions 0)))
-                  (loop for i from 0 
-                        until (or (and count (= i count))
-                                  ;;(setf no-data ;; not used???
-                                  (= (%sql-fetch hstmt) odbc::$SQL_NO_DATA_FOUND))
-                        collect
-                        (cond ((< 0 precision +max-precision+)
-                               (read-data data-ptr c-type sql-type out-len-ptr nil))
-                              ((zerop (get-cast-long out-len-ptr))
-                               nil)
-                              (t
-                               (read-data-in-chunks hstmt 0 data-ptr c-type sql-type
-                                                    out-len-ptr nil)))
-                        #+ignore
-                        (if (< 0 precision +max-precision+) ;(and precision (< precision +max-precision+))
-                          (read-data data-ptr c-type sql-type out-len-ptr nil)
-                          (read-data-in-chunks hstmt 0 data-ptr c-type sql-type
-                                               out-len-ptr nil)))))
-               (t
-                (loop for i from 0 
-                      until (or (and count (= i count))
-                                (= (%sql-fetch hstmt) odbc::$SQL_NO_DATA_FOUND))
-                      collect
-                      (loop for data-ptr across column-data-ptrs
-                            for c-type across column-c-types
-                            for sql-type across column-sql-types
-                            for out-len-ptr across column-out-len-ptrs
-                            for precision across column-precisions
-                            for j from 0 ; column count is zero based in lisp
-                            collect 
-                            (cond ((< 0 precision +max-precision+)
-                                   (read-data data-ptr c-type sql-type out-len-ptr nil))
-                                  ((zerop (get-cast-long out-len-ptr))
-                                   nil)
-                                  (t
-                                   (read-data-in-chunks hstmt j data-ptr c-type sql-type
-                                                        out-len-ptr nil)))))))
-         query)))))
+	 (loop for i from 0 
+	     until (or (and count (= i count))
+		       (= (%sql-fetch hstmt) odbc::$SQL_NO_DATA_FOUND))
+	     collect
+	       (loop for data-ptr across column-data-ptrs
+		   for c-type across column-c-types
+		   for sql-type across column-sql-types
+		   for out-len-ptr across column-out-len-ptrs
+		   for precision across column-precisions
+		   for j from 0		; column count is zero based in lisp
+		   collect 
+		     (cond ((< 0 precision +max-precision+)
+			    (read-data data-ptr c-type sql-type out-len-ptr nil))
+			   ((zerop (get-cast-long out-len-ptr))
+			    nil)
+			   (t
+			    (read-data-in-chunks hstmt j data-ptr c-type sql-type
+						 out-len-ptr nil)))))
+	 query)))))
 
-#+lispworks
 (defmacro without-interrupts (&body body)
-  `(mp:without-preemption ,@body))
+  #+lispworks `(mp:without-preemption ,@body)
+  #+allegro `(mp:without-scheduling ,@body)
+  #+cmu `(pcl::without-interrupts ,@body)
+  #+sbcl `(sb-sys::without-interrupts ,@body)
+  #+openmcl `(ccl:without-interrupts ,@body))
 
-#+allegro
-(defmacro without-interrupts (&body body)
-  `(mp:without-scheduling ,@body))
-
-#+cormanlisp
-(defmacro without-interrupts (&body body)
-  `(progn ,@body))
-
-#+pcl
-(defmacro without-interrupts (&body body)
-  `(pcl::without-interrupts ,@body))
-
-(defmethod db-query ((database odbc-db) query-expression &optional flatp)
+(defmethod db-query ((database odbc-db) query-expression)
   (let ((free-query
          ;; make it thread safe 
          (get-free-query database)))
@@ -294,7 +261,7 @@ the query against." ))
         (%db-execute free-query query-expression)
         (%initialize-query free-query)
         (values
-         (db-fetch-query-results free-query nil flatp)
+         (db-fetch-query-results free-query nil)
          ;; LMH return the column names as well
          (column-names free-query)))
       (db-close-query free-query)
@@ -304,12 +271,7 @@ the query against." ))
 (defmethod %db-execute ((database odbc-db) sql-expression &key &allow-other-keys)
   (%db-execute (get-free-query database) sql-expression))
 
-;; C. Stacy's idea
 (defmethod %db-execute ((query odbc-query) sql-expression &key &allow-other-keys)
-  ;; cstacy
-  (when *trace-sql*
-    (format (if (streamp *trace-sql*) *trace-sql* *trace-output*)
-            "~&~A;~%" sql-expression))
   (with-slots (henv hdbc) (odbc::query-database query)
     (with-slots (hstmt) query
       (unless hstmt (setf hstmt (%new-statement-handle hdbc))) 
@@ -357,10 +319,6 @@ This makes the functions db-execute-command and db-query thread safe."
   (db-execute-command (get-free-query database) sql-string))
 
 (defmethod db-execute-command ((query odbc-query) sql-string)
-  ;; cstacy
-  (when *trace-sql*
-    (format (if (streamp *trace-sql*) *trace-sql* *trace-output*)
-            "~&~A;~%" sql-string))
   (with-slots (hstmt database) query
     (with-slots (henv hdbc) database
       (unless hstmt (setf hstmt (%new-statement-handle hdbc))) 
@@ -568,7 +526,7 @@ This makes the functions db-execute-command and db-query thread safe."
 (defmethod %db-reset-query ((query odbc-query))
   (with-slots (hstmt parameter-data-ptrs) query
     (prog1
-      (db-fetch-query-results query nil ; flatp
+      (db-fetch-query-results query nil
                               nil) 
       (%free-statement hstmt :reset) ;; but _not_ :unbind !
       (%free-statement hstmt :close)
