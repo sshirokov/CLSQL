@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-api.cl,v 1.2 2002/09/30 01:57:32 kevin Exp $
+;;;; $Id: mysql-api.cl,v 1.3 2002/09/30 02:45:16 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -130,7 +130,7 @@
     (next :pointer-self)
   (data mysql-row))
 
-(uffi:def-foreign-type mysql-row-offset (:struct-pointer mysql-rows)))
+(uffi:def-foreign-type mysql-row-offset (:struct-pointer mysql-rows))
 
 (uffi:def-struct mysql-data
     (rows-high32 :unsigned-long)
@@ -437,7 +437,7 @@
 (uffi:def-function "mysql_fetch_row"
     ((res (* mysql-mysql-res)))
   :module "mysql"
-  :returning (* :unsigned-char))
+  :returning (* (* :unsigned-char)))
 
 (declaim (inline mysql-fetch-lengths))
 (uffi:def-function "mysql_fetch_lengths"
@@ -584,4 +584,3 @@
 (defun mysql-data-seek (res offset)
   (multiple-value-bind (high32 low32) (split-64-bit-integer offset)
     (clsql-mysql-data-seek res high32 low32)))
-
