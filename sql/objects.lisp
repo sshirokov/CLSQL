@@ -783,7 +783,7 @@ superclass of the newly-defined View Class."
 		     :where jq)))))))
 
 (defun update-object-joins (objects &key (slots t) (force-p t)
-			    class-name (max-len *default-update-objects-max-len))
+			    class-name (max-len *default-update-objects-max-len*))
   "Updates the remote join slots, that is those slots defined without :retrieval :immediate."
   (when objects
     (unless class-name
