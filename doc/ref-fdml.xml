@@ -37,7 +37,7 @@
       <refentrytitle>*CACHE-TABLE-QUERIES-DEFAULT*</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Variable</emphasis> <emphasis role="bold">*CACHE-TABLE-QUERIES-DEFAULT*</emphasis></refname>
+      <refname>*CACHE-TABLE-QUERIES-DEFAULT*</refname>
       <refpurpose>Specifies the default behaviour for caching of
       attribute types.</refpurpose>
       <refclass>Variable</refclass>
@@ -94,141 +94,17 @@
       <refentrytitle>CACHE-TABLE-QUERIES</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">CACHE-TABLE-QUERIES</emphasis></refname>
-      <refpurpose>Controls the caching of attribute type information for a database table.</refpurpose>
-      <refclass>Function</refclass>
+      <refname>CACHE-TABLE-QUERIES</refname>
+      <refpurpose>Control the caching of table attribute types.</refpurpose>
     </refnamediv>
-    <refsect1>
-      <title>Syntax</title>
-      <synopsis>
-      <function>cache-table-queries</function> <replaceable>table</replaceable> &amp;key <replaceable>action</replaceable> <replaceable>database</replaceable>) => <returnvalue></returnvalue></synopsis>
-    </refsect1>
-    <refsect1>
-      <title>Arguments and Values</title>
-      <variablelist>
-        <varlistentry>
-          <term><parameter>table</parameter></term>
-          <listitem>
-            <para>
-              A string representing a database table, &t; or
-              <symbol>:default</symbol>.
-            </para> 
-          </listitem>
-        </varlistentry>
-        <varlistentry>
-          <term><parameter>action</parameter></term>
-          <listitem>
-            <para>
-              &t;, &nil; or <symbol>:flush</symbol>. 
-            </para> 
-          </listitem>
-        </varlistentry>
-        <varlistentry>
-          <term><parameter>database</parameter></term>
-          <listitem>
-            <para>A 
-            <glossterm linkend="gloss-database-object">database
-            object</glossterm>. This will default to the value
-            of <symbol>*default-database*</symbol>.</para>
-          </listitem>
-      </varlistentry>
-      </variablelist>
-    </refsect1>
-    <refsect1>
-      <title>Description</title>
-      <para>Controls the caching of attribute type information on the
-      table specified by <parameter>table</parameter> in
-      <parameter>database</parameter> which defaults to
-      <symbol>*default-database*</symbol>. <parameter>action</parameter>
-      specifies the caching behaviour to adopt. If its value is &t;
-      then attribute type information is cached whereas if its value
-      is &nil; then attribute type information is not cached. If
-      <parameter>action</parameter> is <symbol>:flush</symbol> then
-      all existing type information in the cache for
-      <parameter>table</parameter> is removed, but caching is still
-      enabled. <parameter>table</parameter> may be a string
-      representing a table for which the caching action is to be taken
-      while the caching action is applied to all tables if
-      <parameter>table</parameter> is &t;. Alternatively, when
-      <parameter>table</parameter> is <symbol>:default</symbol>, the
-      default caching action specified by
-      <symbol>*cache-table-queries-default*</symbol> is applied to all
-      tables for which a caching action has not been explicitly set.
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Examples</title>
-      <screen>
-(setf *cache-table-queries-default* t)
-=> T
-(create-table [foo]
-              '(([id] integer)
-                ([height] float)
-                ([name] (string 24))
-                ([comments] varchar)))
-=> 
-(cache-table-queries "foo")
-=> 
-(list-attribute-types "foo")
-=> (("id" :INT4 4 NIL 1) ("height" :FLOAT8 8 NIL 1) ("name" :BPCHAR 24 NIL 1)
-    ("comments" :VARCHAR 255 NIL 1))
-(drop-table "foo")
-=> 
-(create-table [foo]
-              '(([id] integer)
-                ([height] float)
-                ([name] (string 36))
-                ([comments] (string 100))))
-=> 
-(cache-table-queries "foo" :action :flush)
-=> 
-(list-attribute-types "foo")
-=> (("id" :INT4 4 NIL 1) ("height" :FLOAT8 8 NIL 1) ("name" :BPCHAR 36 NIL 1)
-    ("comments" :BPCHAR 100 NIL 1))
-      </screen>
-    </refsect1>
-    <refsect1>
-      <title>Side Effects</title>
-      <para>
-        The internal attribute cache for
-        <parameter>database</parameter> is modified.
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Affected by</title>
-      <simplelist>
-        <member><link linkend="cache-table-queries-default"><symbol>*cache-table-queries-default*</symbol></link></member>
-      </simplelist>
-    </refsect1>
-    <refsect1>
-      <title>Exceptional Situations</title>
-      <para>
-        None. 
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>See Also</title>
-      <simplelist>
-        <member><link linkend="cache-table-queries-default"><symbol>*cache-table-queries-default*</symbol></link></member>
-      </simplelist>
-    </refsect1>
-    <refsect1>
-      <title>Notes</title>
-      <para>
-        None. 
-      </para>
-    </refsect1>
   </refentry>
-
-
-  <!-- insert/update/delete records --> 
 
   <refentry id="insert-records">
     <refmeta>
       <refentrytitle>INSERT-RECORDS</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">INSERT-RECORDS</emphasis></refname>
+      <refname>INSERT-RECORDS</refname>
       <refpurpose>Insert tuples of data into a database table.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -391,7 +267,7 @@
       <refentrytitle>UPDATE-RECORDS</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">UPDATE-RECORDS</emphasis></refname>
+      <refname>UPDATE-RECORDS</refname>
       <refpurpose>Updates the values of existing records.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -551,7 +427,7 @@
       <refentrytitle>DELETE-RECORDS</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">DELETE-RECORDS</emphasis></refname>
+      <refname>DELETE-RECORDS</refname>
       <refpurpose>Delete records from a database table.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -665,7 +541,7 @@
       <refentrytitle>EXECUTE-COMMAND</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Generic Function</emphasis> <emphasis role="bold">EXECUTE-COMMAND</emphasis></refname>
+      <refname>EXECUTE-COMMAND</refname>
       <refpurpose>Execute an SQL command which returns no values.</refpurpose>
       <refclass>Generic Function</refclass>
     </refnamediv>
@@ -769,7 +645,7 @@
       <refentrytitle>QUERY</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Generic Function</emphasis> <emphasis role="bold">QUERY</emphasis></refname>
+      <refname>QUERY</refname>
       <refpurpose>Execute an SQL query and return the tuples as a 
       list.</refpurpose>
       <refclass>Generic Function</refclass>
@@ -973,7 +849,7 @@
       <refentrytitle>PRINT-QUERY</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">PRINT-QUERY</emphasis></refname>
+      <refname>PRINT-QUERY</refname>
       <refpurpose>Prints a tabular report of query results.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -1129,7 +1005,7 @@ ID FORENAME   SURNAME   EMAIL
       <refentrytitle>SELECT</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">SELECT</emphasis></refname>
+      <refname>SELECT</refname>
       <refpurpose>Executes a query given the supplied constraints.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -1506,7 +1382,7 @@ ID FORENAME   SURNAME   EMAIL
       <refentrytitle>DO-QUERY</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Macro</emphasis> <emphasis role="bold">DO-QUERY</emphasis></refname>
+      <refname>DO-QUERY</refname>
       <refpurpose>Iterate over all the tuples of a query.</refpurpose>
       <refclass>Macro</refclass>
     </refnamediv>
@@ -1687,9 +1563,10 @@ ID FORENAME   SURNAME   EMAIL
       <refentrytitle>LOOP</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Additional clause</emphasis> for <emphasis role="bold">LOOP</emphasis></refname>
-      <refpurpose>Iterate over all the tuples of a
-      query via a loop clause.</refpurpose>
+      <refname>LOOP</refname>
+      <refpurpose>Extension to Common Lisp
+      <computeroutput>Loop</computeroutput> to iterate over all the
+      tuples of a query via a loop clause.</refpurpose>
       <refclass>Loop Clause</refclass>
     </refnamediv>
     <!-- refsect1>
@@ -1855,7 +1732,7 @@ ID FORENAME   SURNAME   EMAIL
       <refentrytitle>MAP-QUERY</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">MAP-QUERY</emphasis></refname>
+      <refname>MAP-QUERY</refname>
       <refpurpose>Map a function over all the tuples from a
       query</refpurpose>
       <refclass>Function</refclass>

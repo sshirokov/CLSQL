@@ -22,9 +22,9 @@
 <!ENTITY lw "<application>Lispworks</application>">
 <!ENTITY acl "<application>AllegroCL</application>">
 <!ENTITY cl "<application>ANSI Common Lisp</application>">
-<!ENTITY t "<symbol>T</symbol>">
-<!ENTITY nil "<symbol>NIL</symbol>">
+<!ENTITY t "<constant>T</constant>">
+<!ENTITY nil "<constant>NIL</constant>">
 <!ENTITY null "<constant>NULL</constant>">
-<!ENTITY c "<symbol>C</symbol>">
-<!ENTITY unix "UNIX">
-<!ENTITY mswindows "Microsoft Windows">
+<!ENTITY c "<application>C</application>">
+<!ENTITY unix "<application>UNIX</application>">
+<!ENTITY mswindows "<application>Microsoft Windows</application>">

@@ -16,10 +16,31 @@
       written with the OODML.
     </para>
     <para>
-      The main function for reading data with the OODML is the
-      <link linkend="select"><function>select</function></link> function. The
-      <function>select</function> is also used in the FDML. However, when <function>select</function>
-      is given a view class name, it returns a list of instances of view classes.
+      The main function for reading data with the OODML is the <link
+      linkend="select"><function>select</function></link>
+      function. The <function>select</function> is also used in the
+      FDML. However, when <function>select</function> is given a view
+      class name, it returns a list of instances of view classes.
+    </para>
+    <para>
+      View class instances can be updated to reflect any changes in
+      the database with the functions <link
+      linkend="update-slot-from-record"><function>update-slot-from-record</function></link>
+      and <link
+      linkend="update-instance-from-records"><function>update-instance-from-records</function></link>.
+    </para>
+    <para>To update the database to reflect changes made to instances of view classes, use the functions <link
+      linkend="update-records-from-instance"><function>update-records-from-instance</function></link>,
+      <link
+      linkend="update-record-from-slot"><function>update-record-from-slot</function></link>, and
+      <link
+      linkend="update-record-from-slots"><function>update-record-from-slots</function></link>.
+    </para>
+    <para>
+      The function <link
+      linkend="delete-instance-records"><function>delete-instance-records</function></link>
+      deletes the records corresponding to an instance of a view
+      class.
     </para>
   </partintro>
 
@@ -40,12 +61,17 @@
       <para>&nil;</para>
     </refsect1>
     <refsect1>
-      <title>Description</title>
-      When this variable is &t; an instance is stored in the SQL database when the instance is created
-      by <function>make-instance</function>. When this variable is &nil;, which is the default value, &clsql;
-      behaves like &commonsql;: instances of view classes are stored to the SQL database only when
-      <link linkend="update-record-from-slots"><function>update-record-from-slots</function></link>
-      is called.
+      <title>Description</title> 
+      <para>
+	When this variable is &t; an instance is stored in the SQL
+	database when the instance is created by
+	<function>make-instance</function>. When this variable is
+	&nil;, which is the default value, &clsql; behaves like
+	&commonsql;: instances of view classes are stored to the SQL
+	database only when <link
+	linkend="update-record-from-slots"><function>update-record-from-slots</function></link>
+	is called.
+      </para>
     </refsect1>
     <refsect1>
       <title>Examples</title>
@@ -111,7 +137,9 @@
     </refsect1>
     <refsect1>
       <title>See Also</title>
-      <para>None.</para>
+      <simplelist>
+	<member><link linkend="update-object-joins"><function>update-object-joins</function></link></member>
+      </simplelist>
     </refsect1>
     <refsect1>
       <title>Notes</title>
@@ -122,7 +150,8 @@
   <refentry id="delete-instance-records">
     <refnamediv>
       <refname>DELETE-INSTANCE-RECORDS</refname>
-      <refpurpose>Delete SQL records represented by a view class object.</refpurpose>
+      <refpurpose>Delete SQL records represented by a view class
+      object.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
     <refsect1>
@@ -442,14 +471,17 @@
       <title>Affected by</title>
       <para>
         <simplelist>
-          <!-- affected by --> 
+      <simplelist>
+	<member><link
+	linkend="default-update-objects-max-len"><variable>*default-update-objects-max-len*</variable></link></member>
+      </simplelist>
         </simplelist>
       </para>
     </refsect1>
     <refsect1>
       <title>Exceptional Situations</title>
       <para>
-        <!-- execeptional situations -->
+	Database errors.
       </para>
     </refsect1>
     <refsect1>
@@ -482,7 +514,30 @@
     <refsect1>
       <title>Arguments and Values</title>
       <variablelist>
-        <!-- arguments and values --> 
+	<varlistentry>
+	  <term><parameter>object</parameter></term>
+	  <listitem>
+	    <para>
+	      An instance of a view class.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><parameter>slot</parameter></term>
+	  <listitem>
+	    <para>
+	      The name of a slot in <parameter>object</parameter>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><parameter>database</parameter></term>
+	  <listitem>
+	    <para>
+	      A database connection.
+	    </para>
+	  </listitem>
+	</varlistentry>
       </variablelist>
     </refsect1>
     <refsect1>
@@ -502,36 +557,35 @@
       </para>
     </refsect1>
     <refsect1>
-      <title>examples</title>
+      <title>Examples</title>
       <screen>
         <!-- examples -->
       </screen>
     </refsect1>
     <refsect1>
-      <title>side effects</title>
+      <title>Side Effects</title>
       <para>
-        modifies sql database.
+	Modifies database.
       </para>
     </refsect1>
     <refsect1>
-      <title>affected by</title>
+      <title>Affected By</title>
+      <para>
+	Nothing.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+	Database errors.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
       <para>
         <simplelist>
-          <!-- affected by --> 
-        </simplelist>
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>exceptional situations</title>
-      <para>
-        if a database error occurs.
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>see also</title>
-      <para>
-        <simplelist>
-          <!-- see also --> 
+	  <member><link linkend="update-record-from-slots"><function>update-record-from-slots</function></link></member>
+	  <member><link linkend="update-records-from-instance"><function>update-records-from-instance</function></link></member>
         </simplelist>
       </para>
     </refsect1>
@@ -555,14 +609,37 @@
       <function>(update-record-from-slots object slots &amp;key (database *default-database*))</function> => <returnvalue><!-- result --></returnvalue></synopsis>
     </refsect1>
     <refsect1>
-      <title>arguments and values</title>
+      <title>Arguments and Values</title>
       <variablelist>
-        <!-- arguments and values --> 
+	<varlistentry>
+	  <term><parameter>object</parameter></term>
+	  <listitem>
+	    <para>
+	      An instance of a view class.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><parameter>slots</parameter></term>
+	  <listitem>
+	    <para>
+	      A list of slot names in <parameter>object</parameter>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><parameter>database</parameter></term>
+	  <listitem>
+	    <para>
+	      A database connection.
+	    </para>
+	  </listitem>
+	</varlistentry>
       </variablelist>
     </refsect1>
     <refsect1>
-      <title>description</title>
-      <para>updates the values stored in the columns represented by
+      <title>Description</title>
+      <para>Updates the values stored in the columns represented by
       the slots, specified by the clos slot names
       <parameter>slots</parameter>, of view class instance
       <parameter>object</parameter>. <parameter>database</parameter>
@@ -591,22 +668,21 @@
     <refsect1>
       <title>Affected by</title>
       <para>
-        <simplelist>
-          <!-- affected by --> 
-        </simplelist>
+	Nothing.
       </para>
     </refsect1>
     <refsect1>
       <title>Exceptional Situations</title>
       <para>
-        <!-- execeptional situations -->
+	Database errors.
       </para>
     </refsect1>
     <refsect1>
       <title>See Also</title>
       <para>
         <simplelist>
-          <!-- see also --> 
+	  <member><link linkend="update-record-from-slot"><function>update-record-from-slot</function></link></member>
+	  <member><link linkend="update-records-from-instance"><function>update-records-from-instance</function></link></member>
         </simplelist>
       </para>
     </refsect1>
@@ -633,7 +709,22 @@
     <refsect1>
       <title>Arguments and Values</title>
       <variablelist>
-        <!-- arguments and values --> 
+	<varlistentry>
+	  <term><parameter>object</parameter></term>
+	  <listitem>
+	    <para>
+	      An instance of a view class.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><parameter>database</parameter></term>
+	  <listitem>
+	    <para>
+	      A database connection.
+	    </para>
+	  </listitem>
+	</varlistentry>
       </variablelist>
     </refsect1>
     <refsect1>
@@ -659,28 +750,27 @@
     <refsect1>
       <title>Side Effects</title>
       <para>
-        <!-- side effects --> 
+	Modifies the database.
       </para>
     </refsect1>
     <refsect1>
       <title>Affected by</title>
       <para>
-        <simplelist>
-          <!-- affected by --> 
-        </simplelist>
+	Nothing.
       </para>
     </refsect1>
     <refsect1>
       <title>Exceptional Situations</title>
       <para>
-        <!-- execeptional situations -->
+	Database errors.
       </para>
     </refsect1>
     <refsect1>
       <title>See Also</title>
       <para>
         <simplelist>
-          <!-- see also --> 
+	  <member><link linkend="update-record-from-slot"><function>update-record-from-slot</function></link></member>
+	  <member><link linkend="update-record-from-slots"><function>update-record-from-slots</function></link></member>
         </simplelist>
       </para>
     </refsect1>
@@ -706,7 +796,30 @@
     <refsect1>
       <title>Arguments and Values</title>
       <variablelist>
-        <!-- arguments and values --> 
+	<varlistentry>
+	  <term><parameter>object</parameter></term>
+	  <listitem>
+	    <para>
+	      An instance of a view class.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><parameter>slot</parameter></term>
+	  <listitem>
+	    <para>
+	      The name of a slot in <parameter>object</parameter>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><parameter>database</parameter></term>
+	  <listitem>
+	    <para>
+	      A database connection.
+	    </para>
+	  </listitem>
+	</varlistentry>
       </variablelist>
     </refsect1>
     <refsect1>
@@ -746,7 +859,7 @@
     <refsect1>
       <title>Exceptional Situations</title>
       <para>
-	SQL access errors.
+	Database errors.
       </para>
     </refsect1>
     <refsect1>

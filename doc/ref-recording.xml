@@ -28,7 +28,7 @@
       <refentrytitle>START-SQL-RECORDING</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">START-SQL-RECORDING</emphasis></refname>
+      <refname>START-SQL-RECORDING</refname>
       <refpurpose>Start recording SQL commands or results.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -139,7 +139,7 @@
       <refentrytitle>STOP-SQL-RECORDING</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">STOP-SQL-RECORDING</emphasis></refname>
+      <refname>STOP-SQL-RECORDING</refname>
       <refpurpose>Stop recording SQL commands or results.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -249,7 +249,7 @@
       <refentrytitle>SQL-RECORDING-P</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">SQL-RECORDING-P</emphasis></refname>
+      <refname>SQL-RECORDING-P</refname>
       <refpurpose>Tests whether SQL commands or results are being recorded.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -357,7 +357,7 @@
       <refentrytitle>SQL-STREAM</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">SQL-STREAM</emphasis></refname>
+      <refname>SQL-STREAM</refname>
       <refpurpose>Returns the broadcast stream used for recording SQL commands or results.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -462,7 +462,7 @@
       <refentrytitle>ADD-SQL-STREAM</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">ADD-SQL-STREAM</emphasis></refname>
+      <refname>ADD-SQL-STREAM</refname>
       <refpurpose>Add a component to the broadcast streams used for recording SQL commands or results.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -592,7 +592,7 @@
       <refentrytitle>DELETE-SQL-STREAM</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">DELETE-SQL-STREAM</emphasis></refname>
+      <refname>DELETE-SQL-STREAM</refname>
       <refpurpose>Remove a component from the broadcast streams used for recording SQL commands or results.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -718,7 +718,7 @@
       <refentrytitle>LIST-SQL-STREAMS</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">LIST-SQL-STREAMS</emphasis></refname>
+      <refname>LIST-SQL-STREAMS</refname>
       <refpurpose>List the components of the broadcast streams used for recording SQL commands or results.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>

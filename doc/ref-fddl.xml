@@ -24,7 +24,7 @@
       <refentrytitle>CREATE-TABLE</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">CREATE-TABLE</emphasis></refname>
+      <refname>CREATE-TABLE</refname>
       <refpurpose>Create a database table.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -169,7 +169,7 @@
       <refentrytitle>DROP-TABLE</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">DROP-TABLE</emphasis></refname>
+      <refname>DROP-TABLE</refname>
       <refpurpose>Drop a database table.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -277,7 +277,7 @@
       <refentrytitle>LIST-TABLES</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">LIST-TABLES</emphasis></refname>
+      <refname>LIST-TABLES</refname>
       <refpurpose>Returns a list of database tables.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -383,7 +383,7 @@
       <refentrytitle>TABLE-EXISTS-P</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">TABLE-EXISTS-P</emphasis></refname>
+      <refname>TABLE-EXISTS-P</refname>
       <refpurpose>Tests for the existence of a database table.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -489,7 +489,7 @@
       <refentrytitle>CREATE-VIEW</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">CREATE-VIEW</emphasis></refname>
+      <refname>CREATE-VIEW</refname>
       <refpurpose>Create a database view.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -621,7 +621,7 @@
       <refentrytitle>DROP-VIEW</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">DROP-VIEW</emphasis></refname>
+      <refname>DROP-VIEW</refname>
       <refpurpose>Drops a database view.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -729,7 +729,7 @@
       <refentrytitle>LIST-VIEWS</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">LIST-VIEWS</emphasis></refname>
+      <refname>LIST-VIEWS</refname>
       <refpurpose>Returns a list of database views.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -836,7 +836,7 @@
       <refentrytitle>VIEW-EXISTS-P</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">VIEW-EXISTS-P</emphasis></refname>
+      <refname>VIEW-EXISTS-P</refname>
       <refpurpose>Tests for the existence of a database view.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -942,7 +942,7 @@
       <refentrytitle>CREATE-INDEX</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">CREATE-INDEX</emphasis></refname>
+      <refname>CREATE-INDEX</refname>
       <refpurpose>Create a database index.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -1064,7 +1064,7 @@
       <refentrytitle>DROP-INDEX</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">DROP-INDEX</emphasis></refname>
+      <refname>DROP-INDEX</refname>
       <refpurpose>Drop a database index.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -1189,7 +1189,7 @@
       <refentrytitle>LIST-INDEXES</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">LIST-INDEXES</emphasis></refname>
+      <refname>LIST-INDEXES</refname>
       <refpurpose>Returns a list of database indexes.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -1307,7 +1307,7 @@
       <refentrytitle>INDEX-EXISTS-P</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">INDEX-EXISTS-P</emphasis></refname>
+      <refname>INDEX-EXISTS-</refname>
       <refpurpose>Tests for the existence of a database index.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -1414,7 +1414,7 @@
       <refentrytitle>ATTRIBUTE-TYPE</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">ATTRIBUTE-TYPE</emphasis></refname>
+      <refname>ATTRIBUTE-TYPE</refname>
       <refpurpose>Returns the type of the supplied attribute.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -1564,7 +1564,7 @@
       <refentrytitle>LIST-ATTRIBUTE-TYPES</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">LIST-ATTRIBUTE-TYPES</emphasis></refname>
+      <refname>LIST-ATTRIBUTE-TYPES</refname>
       <refpurpose>Returns information about the attribute types of a table.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -1680,7 +1680,7 @@
       <refentrytitle>LIST-ATTRIBUTES</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">LIST-ATTRIBUTES</emphasis></refname>
+      <refname>LIST-ATTRIBUTES</refname>
       <refpurpose>Returns the attributes of a table as a list.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -1787,7 +1787,7 @@
       <refentrytitle>CREATE-SEQUENCE</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">CREATE-SEQUENCE</emphasis></refname>
+      <refname>CREATE-SEQUENCE</refname>
       <refpurpose>Create a database sequence.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -1879,7 +1879,7 @@
       <refentrytitle>DROP-SEQUENCE</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">DROP-SEQUENCE</emphasis></refname>
+      <refname>DROP-SEQUENCE</refname>
       <refpurpose>Drop a database sequence.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -1989,7 +1989,7 @@
       <refentrytitle>LIST-SEQUENCES</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">LIST-SEQUENCES</emphasis></refname>
+      <refname>LIST-SEQUENCES</refname>
       <refpurpose>Returns a list of database sequences.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -2090,7 +2090,7 @@
       <refentrytitle>SEQUENCE-EXISTS-P</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">SEQUENCE-EXISTS-P</emphasis></refname>
+      <refname>SEQUENCE-EXISTS-P</refname>
       <refpurpose>Tests for the existence of a database sequence.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -2200,7 +2200,7 @@
       <refentrytitle>SEQUENCE-LAST</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">SEQUENCE-LAST</emphasis></refname>
+      <refname>SEQUENCE-LAST</refname>
       <refpurpose>Return the last element in a database sequence.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -2302,7 +2302,7 @@
       <refentrytitle>SEQUENCE-NEXT</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">SEQUENCE-NEXT</emphasis></refname>
+      <refname>SEQUENCE-NEXT</refname>
       <refpurpose>Increment the value of a database sequence.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -2411,7 +2411,7 @@
       <refentrytitle>SET-SEQUENCE-POSITION</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">SET-SEQUENCE-POSITION</emphasis></refname>
+      <refname>SET-SEQUENCE-POSITION</refname>
       <refpurpose>Sets the position of a database sequence.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -2523,7 +2523,7 @@
       <refentrytitle>TRUNCATE-DATABASE</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">TRUNCATE-DATABASE</emphasis></refname>
+      <refname>TRUNCATE-DATABASE</refname>
       <refpurpose>Drop all tables, views, indexes and sequences in a database.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>

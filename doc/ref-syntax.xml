@@ -23,7 +23,7 @@
       <refentrytitle>ENABLE-SQL-READER-SYNTAX</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Macro</emphasis> <emphasis role="bold">ENABLE-SQL-READER-SYNTAX</emphasis></refname>
+      <refname>ENABLE-SQL-READER-SYNTAX</refname>
       <refpurpose>Globally enable square bracket reader syntax.</refpurpose>
       <refclass>Macro</refclass>
     </refnamediv>
@@ -97,7 +97,7 @@
       <refentrytitle>DISABLE-SQL-READER-SYNTAX</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Macro</emphasis> <emphasis role="bold">DISABLE-SQL-READER-SYNTAX</emphasis></refname>
+      <refname>DISABLE-SQL-READER-SYNTAX</refname>
       <refpurpose>Globally disable square bracket reader syntax.</refpurpose>
       <refclass>Macro</refclass>
     </refnamediv>
@@ -171,7 +171,7 @@
       <refentrytitle>LOCALLY-ENABLE-SQL-READER-SYNTAX</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Macro</emphasis> <emphasis role="bold">LOCALLY-ENABLE-SQL-READER-SYNTAX</emphasis></refname>
+      <refname>LOCALLY-ENABLE-SQL-READER-SYNTAX</refname>
       <refpurpose>Globally enable square bracket reader syntax.</refpurpose>
       <refclass>Macro</refclass>
     </refnamediv>
@@ -249,7 +249,7 @@
       <refentrytitle>LOCALLY-DISABLE-SQL-READER-SYNTAX</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Macro</emphasis> <emphasis role="bold">LOCALLY-DISABLE-SQL-READER-SYNTAX</emphasis></refname>
+      <refname>LOCALLY-DISABLE-SQL-READER-SYNTAX</refname>
       <refpurpose>Locally disable square bracket reader syntax.</refpurpose>
       <refclass>Macro</refclass>
     </refnamediv>
@@ -330,7 +330,7 @@
       <refentrytitle>RESTORE-SQL-READER-SYNTAX-STATE</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Macro</emphasis> <emphasis role="bold">RESTORE-SQL-READER-SYNTAX-STATE</emphasis></refname>
+      <refname>RESTORE-SQL-READER-SYNTAX-STATE</refname>
       <refpurpose>
         Restore square bracket reader syntax to its previous state.
       </refpurpose>
@@ -414,7 +414,7 @@
       <refentrytitle>SQL</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">SQL</emphasis></refname>
+      <refname>SQL</refname>
       <refpurpose>Construct an SQL string from supplied expressions.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -513,7 +513,7 @@
       <refentrytitle>SQL-EXPRESSION</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">SQL-EXPRESSION</emphasis></refname>
+      <refname>SQL-EXPRESSION</refname>
       <refpurpose>Constructs an SQL expression from supplied keyword arguments.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -671,7 +671,7 @@
       <refentrytitle>SQL-OPERATION</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">SQL-OPERATION</emphasis></refname>
+      <refname>SQL-OPERATION</refname>
       <refpurpose>Constructs an SQL expression from a supplied operator and arguments.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -775,7 +775,7 @@
       <refentrytitle>SQL-OPERATOR</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">SQL-OPERATOR</emphasis></refname>
+      <refname>SQL-OPERATOR</refname>
       <refpurpose>Returns the symbol for the supplied SQL operator.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>

@@ -31,7 +31,7 @@
       <refentrytitle>START-TRANSACTION</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">START-TRANSACTION</emphasis></refname>
+      <refname>START-TRANSACTION</refname>
       <refpurpose>Open a transaction block.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -132,7 +132,7 @@
       <refentrytitle>COMMIT</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">COMMIT</emphasis></refname>
+      <refname>COMMIT</refname>
       <refpurpose>Commit modifications made in the current transaction.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -236,7 +236,7 @@
       <refentrytitle>ROLLBACK</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">ROLLBACK</emphasis></refname>
+      <refname>ROLLBACK</refname>
       <refpurpose>Roll back modifications made in the current transaction.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -339,7 +339,7 @@
       <refentrytitle>IN-TRANSACTION-P</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">IN-TRANSACTION-P</emphasis></refname>
+      <refname>IN-TRANSACTION-P</refname>
       <refpurpose>A predicate for testing whether a transaction is currently in progress.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -431,7 +431,7 @@
       <refentrytitle>ADD-TRANSACTION-COMMIT-HOOK</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">ADD-TRANSACTION-COMMIT-HOOK</emphasis></refname>
+      <refname>ADD-TRANSACTION-COMMIT-HOOK</refname>
       <refpurpose>Specify hooks to be run when committing changes.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -532,7 +532,7 @@
       <refentrytitle>ADD-TRANSACTION-ROLLBACK-HOOK</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">ADD-TRANSACTION-ROLLBACK-HOOK</emphasis></refname>
+      <refname>ADD-TRANSACTION-ROLLBACK-HOOK</refname>
       <refpurpose>Specify hooks to be run when rolling back changes.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -632,7 +632,7 @@
       <refentrytitle>SET-AUTOCOMMIT</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">SET-AUTOCOMMIT</emphasis></refname>
+      <refname>SET-AUTOCOMMIT</refname>
       <refpurpose>Turn on or off autocommit for a database.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -733,7 +733,7 @@
       <refentrytitle>WITH-TRANSACTION</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Macro</emphasis> <emphasis role="bold">WITH-TRANSACTION</emphasis></refname>
+      <refname>WITH-TRANSACTION</refname>
       <refpurpose>Execute a body of code within a transaction.</refpurpose>
       <refclass>Macro</refclass>
     </refnamediv>
