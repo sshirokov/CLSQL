@@ -9,7 +9,7 @@
 ;;;;                onShoreD to support UncommonSQL front-end 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: db-interface.cl,v 1.5 2002/09/27 14:55:37 kevin Exp $
+;;;; $Id: db-interface.cl,v 1.6 2002/09/27 15:08:13 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai, and onShoreD
@@ -171,7 +171,7 @@ the given lisp type and parameters."))
 (defgeneric database-create-large-object (database)
   (:documentation "Creates a new large object in the database and returns the object identifier"))
 
-(defgeneric database-write-large-object (object-id (data string) database)
+(defgeneric database-write-large-object (object-id data database)
   (:documentation "Writes data to the large object"))
 
 (defgeneric database-read-large-object (object-id database)
