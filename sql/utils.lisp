@@ -58,15 +58,6 @@
          (escaped (make-string (length unescaped))))
     (substitute #\_ #\- unescaped)))
 
-(dotimes (i (length unescaped))
-      (setf (char escaped i)
-            (cond ((equal (char unescaped i) #\-)
-                   #\_)
-                  ;; ...
-                  (t
-                   (char unescaped i)))))
-    escaped))
-
 (defmacro without-interrupts (&body body)
   #+allegro `(mp:without-scheduling ,@body)
   #+clisp `(progn ,@body)
