@@ -81,6 +81,15 @@
       procstr)))
 
 
+(defun position-char (char string start max)
+  "From KMRCL."
+  (declare (optimize (speed 3) (safety 0) (space 0))
+	   (fixnum start max) (simple-string string))
+  (do* ((i start (1+ i)))
+       ((= i max) nil)
+    (declare (fixnum i))
+    (when (char= char (schar string i)) (return i))))
+
 (defun delimited-string-to-list (string &optional (separator #\space) 
 						  skip-terminal)
   "Split a string with delimiter, from KMRCL."
@@ -104,7 +113,7 @@
     (setq pos (1+ end))))
 
 (defun string-to-list-connection-spec (str)
-  (let ((at-pos (position #\@ str)))
+  (let ((at-pos (position-char #\@ str)))
     (cond
       ((and at-pos (> (length str) at-pos))
        ;; Connection spec is SQL*NET format
@@ -112,3 +121,4 @@
 	       (list (subseq str (1+ at-pos)))))
       (t
        (delimited-string-to-list str #\/)))))
+
