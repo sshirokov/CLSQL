@@ -107,13 +107,13 @@ install: build
 	dh_install -p $(pkg-aodbc) $(srcs-aodbc) $(lispdir-aodbc)
 
 	# CLC Systems
-	dh_install -p $(pkg) clsql.system $(clc-systems)
-	dh_install -p $(pkg-base) clsql-base.system $(clc-systems)
-	dh_install -p $(pkg-uffi) clsql-uffi.system $(clc-systems)
-	dh_install -p $(pkg-mysql) clsql-mysql.system $(clc-systems)
-	dh_install -p $(pkg-pg) clsql-postgresql.system $(clc-systems)
-	dh_install -p $(pkg-pg-socket) clsql-postgresql-socket.system $(clc-systems)
-	dh_install -p $(pkg-aodbc) clsql-aodbc.system $(clc-systems)
+	dh_install -p $(pkg) clsql.system clsql.asd $(clc-systems)
+	dh_install -p $(pkg-base) clsql-base.system clsql-base.asd $(clc-systems)
+	dh_install -p $(pkg-uffi) clsql-uffi.system clsql-uffi.asd $(clc-systems)
+	dh_install -p $(pkg-mysql) clsql-mysql.system clsql-mysql.asd $(clc-systems)
+	dh_install -p $(pkg-pg) clsql-postgresql.system clsql-postgresql.asd $(clc-systems)
+	dh_install -p $(pkg-pg-socket) clsql-postgresql-socket.system clsql-postgresql-socket.asd $(clc-systems)
+	dh_install -p $(pkg-aodbc) clsql-aodbc.system clsql-aodbc.asd $(clc-systems)
 
 	# Test suite
 	dh_installdirs -p $(pkg) $(doc-dir)/html $(doc-dir)/test-suite
