@@ -55,7 +55,7 @@ supports transactions."
     (execute-command stmt :database database)))
 
 (defun drop-table (name &key (if-does-not-exist :error)
-                        (database *default-database*))
+			     (database *default-database*))
   "Drops the table called NAME from DATABASE which defaults to
 *DEFAULT-DATABASE*. If the table does not exist and
 IF-DOES-NOT-EXIST is :ignore then DROP-TABLE returns nil whereas
@@ -67,10 +67,16 @@ an error is signalled if IF-DOES-NOT-EXIST is :error."
          (return-from drop-table nil)))
       (:error
        t))
-    (let ((expr (concatenate 'string "DROP TABLE " table-name
-			     (if (eq :oracle (database-type database))
-				 " PURGE"
-			       ""))))
+    
+    ;; Fixme: move to clsql-oracle
+    (let ((expr (concatenate 'string "DROP TABLE " table-name)))
+      (when (and (find-package 'clsql-oracle)
+		 (eq :oracle (database-type database))
+		 (eql 9 (slot-value database 
+				    (intern (symbol-name '#:major-version-number)
+					    (symbol-name '#:clsql-oracle)))))
+	(setq expr (concatenate 'string expr " PURGE")))
+
       (execute-command expr :database database))))
 
 (defun list-tables (&key (owner nil) (database *default-database*))

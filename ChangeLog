@@ -1,3 +1,10 @@
+20 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* db-oracle/make9.sh: add makefile for building with Oracle 9 client
+	libraries
+	* sql/table.lisp: Add logic for dealing with Oracle 10g vs. previous
+	Oracle versions with the PURGE option required for drop table. This needs
+	to be converted to a generic function and moved to db-oracle/oracle-sql.lisp
+
 20 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* sql/classes.lisp: remove unused PARAMS slot in SQL-IDENT-ATTRIBUTE. 
 	* sql/syntax.lisp: remove unused PARAMS keyword arg to SQL-EXPRESSION. 

@@ -793,7 +793,7 @@ the length of that format.")
   (cond 
     ((search " 10g " str)
      10)
-    ((search " 9g " str)
+    ((search "Oracle9i  " str)
      10)))
 
 

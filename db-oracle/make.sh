@@ -1,3 +1,5 @@
+# Make shared library for Oracle 10
+
 if [ -z "$ORACLE_HOME" ]; then 
   ORACLE_HOME=/10g/app/product/10.1.0/db_1
 fi

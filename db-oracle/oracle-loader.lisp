@@ -20,6 +20,7 @@
   (uffi:find-foreign-library
    "oracle"
    `(,(make-pathname :directory (pathname-directory *load-truename*))
+     "/9i/lib/"
      "/usr/lib/clsql/"
      "/sw/lib/clsql/"
      "/home/kevin/debian/src/clsql/db-oracle/")
