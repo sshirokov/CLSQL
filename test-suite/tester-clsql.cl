@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: tester-clsql.cl,v 1.6 2002/04/23 18:28:02 kevin Exp $
+;;;; $Id: tester-clsql.cl,v 1.7 2002/04/24 16:10:55 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -205,13 +205,23 @@
 	  :test #'eql
 	  :fail-info 
 	  (format nil "Wrong float value ~A for int ~A (row ~S)" float int row))
-    (test (parse-double str)
-	  float
-	  :test #'eql
-	  :fail-info (format nil "Wrong string value ~A for double ~A (row ~S)"
-			     float str row))))
+    (test float
+	  (parse-double str)
+	  :test #'double-float-equal
+	  :fail-info (format nil "Wrong string value ~A for double ~A~%Row: ~S"
+			     str float row))))
 
 
+(defun double-float-equal (a b)
+  (if (zerop a)
+      (if (zerop b)
+	  t
+	  nil)
+      (let ((diff (abs (/ (- a b) a))))
+	(if (> diff (* 10 double-float-epsilon))
+	    nil
+	    t))))
+	 
 (defun drop-test-table (db)
   (clsql:execute-command "DROP TABLE test_clsql"))
 
