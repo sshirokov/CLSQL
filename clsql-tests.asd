@@ -22,16 +22,14 @@
   :description "Testing suite for CLSQL"
 
   :depends-on (:clsql :clsql-mysql :clsql-postgresql :clsql-postgresql-socket
-		      :rt
+		      :ptester
 		      #+(and allegro (not allegro-cl-trial)) :clsql-aodbc)
   :components
   ((:module tests
 	    :components
-	    ((:file "rt")
-	     (:file "ptester")
-	     (:file "package" :depends-on ("rt"))
+	    ((:file "package")
 ;;	     (:file "tables" :depends-on ("package")))
-	     (:file "tests" :depends-on ("package" "ptester")))
+	     (:file "tests" :depends-on ("package")))
 	    )))
 
 (defmethod perform ((o test-op) (c (eql (find-system 'clsql-tests))))
