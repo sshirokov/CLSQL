@@ -18,7 +18,7 @@
 ;; This mirrors the expectation of Common Lisp Controller's pathnames
 
 (handler-case
-    (logical-pathname-translations "CL-LIBRARY")
+    (logical-pathname-translations "cl-library")
   (error ()
 	 (let* ((dir (pathname-directory *load-truename*))
 		(parent-dir (subseq dir 0 (1- (length dir)))))
@@ -30,14 +30,14 @@
 			   :device (pathname-device *load-truename*)
 			   :directory parent-dir))))
   (:no-error (translation)
-	     ;; Make sure that CL-LIBRARY points to this installation
+	     ;; Make sure that cl-library points to this installation
 	     (let* ((dir (pathname-directory *load-truename*))
 		    (base-dir (car (last dir)))
 		    (logical-dir (translate-logical-pathname 
 				  (concatenate 'string
-					       "CL-LIBRARY:" base-dir ";"))))
+					       "cl-library:" base-dir ";"))))
 	       (unless (equalp dir (pathname-directory logical-dir))
 		 (let ((*print-circle* nil))
-		   (error "CL-LIBRARY:~A; directory ~S does not equal *load-truename*'s directory ~S"
+		   (error "cl-library:~A; directory ~S does not equal *load-truename*'s directory ~S"
 			  base-dir (cdr dir)
 			  (cdr (pathname-directory logical-dir))))))))
