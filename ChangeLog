@@ -1,7 +1,10 @@
-8 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
-	* sql/fdml.lisp: Apply patch from  Kim Minh Kaplan 
+9 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 2.11.13
+	* sql/fdml.lisp: Apply patch from Kim Minh Kaplan 
 	to change escaping of single quotes. Mild optimizations
 	for escaped string output.
+	* doc/ref-ooddl.lisp: documentation additions
+	* doc/ref-oodml.lisp: Add purpose to functions
 	* TODO: Add need to test single quote escaping
 	
 7 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>

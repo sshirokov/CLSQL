@@ -494,6 +494,15 @@
 	and a column type <parameter>VARCHAR2(100)</parameter> in
 	&oracle;
       </para>
+      <para>
+	The actual lisp type for a slot may be different than the
+	value specified by the <parameter>:type</parameter> attribute.
+	For example, a slot declared with "<parameter>:type (string
+	30)</parameter>" actually sets the slots Lisp type as
+	<parameter>(or null string)</parameter>. This is to allow a
+	&nil; value or a string shorter than 30 characters to be
+	stored in the slot.
+      </para>
     </refsect1>
   </refentry>
 
@@ -685,8 +694,6 @@
       </para>
     </refsect1>
   </refentry>
-
-
 
 
 </reference> 
