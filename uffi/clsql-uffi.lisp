@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.30 2003/06/08 12:48:55 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.31 2003/06/15 13:50:24 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -92,8 +92,9 @@
   ;; Uses short cut and returns T if first character is #\N. It should
   ;; never be non-numeric
   (declare (type char-ptr-def char-ptr))
-  (char-equal #\N (uffi:ensure-char-character
-		   (uffi:deref-pointer char-ptr :char))))
+  (or (uffi:null-pointer-p char-ptr) 
+      (char-equal #\N (uffi:ensure-char-character
+		       (uffi:deref-pointer char-ptr :char)))))
     
 (defun convert-raw-field (char-ptr types index)
   (declare (optimize (speed 3) (safety 0) (space 0)))
