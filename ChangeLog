@@ -1,8 +1,15 @@
-03 Dec 2004 Kevin Rosenberg <kevin@rosenberg.net>
+06 Dec 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.1.2
+	* sql/ooddl.lisp: Accept patch from Klaus Harbo for
+	update-object-joins.
+	* sql/metaclass.lisp: Remove unnecssary (and runtime error
+	causing) change-class invocation when running on CLISP.
 	* db-mysql/mysql-api.lisp: Commit patch from Paul Werkowski
 	to fix structure name.
 	* sql/database.lisp: More specific error message with trying
 	to use a database value of NIL.
+	* sql/expressions.lisp: Accept a string for the table name
+	in (sql-output sql-delete database) [suggested by Ed Symanzik].
 	
 11 Nov 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.1.1

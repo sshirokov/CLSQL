@@ -737,15 +737,22 @@ maximum of MAX-LEN instances updated in each query."
 								      keys))
 				      :result-types :auto
 				      :flatp t)))
+
 	      (dolist (object objects)
 		(when (or force-p (not (slot-boundp object slotdef-name)))
-		  (let ((res (find (slot-value object home-key) results 
-				   :key #'(lambda (res) (slot-value res foreign-key))
-				   :test #'equal)))
+		  (let ((res (remove-if-not #'(lambda (obj)
+						(equal obj (slot-value
+							    object
+							    home-key)))
+					    results
+					    :key #'(lambda (res)
+						     (slot-value res
+								 foreign-key)))))
 		    (when res
-		      (setf (slot-value object slotdef-name) res)))))))))))
+		      (setf (slot-value object slotdef-name)
+			    (if (gethash :set dbi) res (car res)))))))))))))
   (values))
-  
+
 (defun fault-join-slot-raw (class object slot-def)
   (let* ((dbi (view-class-slot-db-info slot-def))
 	 (jc (gethash :join-class dbi)))

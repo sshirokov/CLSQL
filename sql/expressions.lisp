@@ -694,7 +694,7 @@ uninclusive, and the args from that keyword to the end."
     stmt
     (write-string "DELETE FROM " *sql-stream*)
     (typecase from
-      (symbol (write-string (sql-escape from) *sql-stream*))
+      ((or symbol string) (write-string (sql-escape from) *sql-stream*))
       (t  (output-sql from database)))
     (when where
       (write-string " WHERE " *sql-stream*)
