@@ -3,12 +3,12 @@
 ;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          package.cl
-;;;; Purpose:       Package definition for high-level SQL interface
+;;;; Purpose:       Package definition for base (low-level) SQL interface
 ;;;; Programmers:   Kevin M. Rosenberg based on
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: package.cl,v 1.4 2002/05/19 16:05:22 kevin Exp $
+;;;; $Id: package.cl,v 1.5 2002/05/20 17:46:34 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
