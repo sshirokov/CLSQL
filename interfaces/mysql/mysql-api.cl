@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-api.cl,v 1.3 2002/03/27 08:09:25 kevin Exp $
+;;;; $Id: mysql-api.cl,v 1.4 2002/05/25 15:57:28 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -242,16 +242,18 @@
   :module "mysql"
   :returning (* mysql-mysql))
 
-(declaim (inline mysql-real-connect))
+;; Need to comment this out for LW 4.2.6
+;; ? bug in LW version
+;;(declaim (inline mysql-real-connect))
 (uffi:def-function "mysql_real_connect"
-  ((mysql (* mysql-mysql))
-   (host :cstring)
-   (user :cstring)
-   (passwd :cstring)
-   (db :cstring)
-   (port :unsigned-int)
-   (unix-socket :cstring)
-   (clientflag :unsigned-int))
+    ((mysql (* mysql-mysql))
+     (host :cstring)
+     (user :cstring)
+     (passwd :cstring)
+     (db :cstring)
+     (port :unsigned-int)
+     (unix-socket :cstring)
+     (clientflag :unsigned-int))
   :module "mysql"
   :returning (* mysql-mysql))
 

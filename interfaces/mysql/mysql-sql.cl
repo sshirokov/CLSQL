@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.cl,v 1.20 2002/05/14 16:29:53 kevin Exp $
+;;;; $Id: mysql-sql.cl,v 1.21 2002/05/25 15:57:28 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -98,7 +98,6 @@
   (destructuring-bind (host db user password) connection-spec
     (declare (ignore password))
     (concatenate 'string host "/" db "/" user)))
-
 
 (defmethod database-connect (connection-spec (database-type (eql :mysql)))
   (check-connection-spec connection-spec database-type (host db user password))
