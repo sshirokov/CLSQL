@@ -2,12 +2,12 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          clsql-postgresql.asd
+;;;; Name:          clsql-postgresql-socket.asd
 ;;;; Purpose:       ASDF file for CLSQL PostgresSQL socket backend
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-postgresql-socket.asd,v 1.13 2002/10/16 11:51:04 kevin Exp $
+;;;; $Id: clsql-postgresql-socket.asd,v 1.14 2002/10/21 07:14:18 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
