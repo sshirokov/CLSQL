@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: aodbc-package.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: aodbc-package.lisp,v 1.2 2002/12/06 20:46:58 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -26,6 +26,6 @@
 
 (defpackage :clsql-aodbc
     (:nicknames :aodbc)
-    (:use :common-lisp :clsql-base-sys)
+    (:use :common-lisp :clsql-base)
     (:export #:aodbc-database)
     (:documentation "This is the CLSQL interface to Allegro's AODBC"))

@@ -5,10 +5,6 @@ Upstream Source URL: ftp://clsql.med-info.com
 Upstream Author: Kevin M. Rosenberg <kmr@debian.org>
 Debian Maintainer: (Same as upstream)
 
-Since the upstream author is the same as the Debian maintainer,
-there should be no divergence between the upstream package and
-the Debian package.
-
 
 Upstream Copyright Statement
 ============================

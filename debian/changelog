@@ -1,3 +1,10 @@
+cl-sql (1.2.4-1) unstable; urgency=low
+
+  * Remove changes information from copyright file
+  * Minor upstream changes
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Wed,  4 Dec 2002 14:39:00 -0700
+
 cl-sql (1.2.3-1) unstable; urgency=low
 
   * New upstream
