@@ -50,7 +50,8 @@ COMMONSQL SPEC
       o should return list of (attribute datatype precision scale nullable) 	
 
     LOOP 
-      o the extension is currently CMUCL specific 
+      o Port to lispworks. Potentially useful documentation:
+        http://www.lispworks.com/reference/lcl50/loop/loop-52.html 
 
 
  >> The object-oriented sql interface

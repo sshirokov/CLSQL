@@ -1,4 +1,15 @@
 09 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.4.2 released:
+	loop extension now supported on Allegro, all
+	CLSQL-TESTS pass on Allegro.
+	* sql/metaclasses.lisp: Some optimization
+	of compute-slots, be selective when
+	ordered-class-slots needs to be called
+	instead of class-slots
+	* TODO: add URL with documentation on
+	extending Lispworks LOOP form
+	
+09 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.4.1 released: CLSQL-TESt suite passes
 	all tests for postgresql and CMUCL, SBCL, OpenMCL.
 	Allegro and Lispworks pass all tests except for

@@ -461,19 +461,16 @@ implementations."
   (let ((slots (call-next-method))
 	desired-sequence
 	output-slots)
-
     (dolist (c (compute-class-precedence-list class))
       (dolist (s (class-direct-slots c))
 	(let ((name (slot-definition-name s)))
 	  (unless (find name desired-sequence)
-	    (setq desired-sequence (append desired-sequence (list name)))))))
-    ;; desired-sequence is reversed at this time
+	    (push name desired-sequence)))))
     (dolist (desired desired-sequence)
       (let ((slot (find desired slots :key #'slot-definition-name)))
 	(assert slot)
 	(push slot output-slots)))
-
-    (nreverse output-slots)))
+    output-slots))
 
 (defun compute-lisp-type-from-slot-specification (slotd specified-type)
   "Computes the Lisp type for a user-specified type. Needed for OpenMCL
@@ -592,7 +589,7 @@ which does type checking before storing a value in a slot."
 
 (defun slotdef-for-slot-with-class (slot class)
   (find-if #'(lambda (d) (eql slot (slot-definition-name d)))
-	   (ordered-class-slots class)))
+	   (class-slots class)))
 
 #+ignore
 (eval-when (:compile-toplevel :load-toplevel :execute)

@@ -113,7 +113,7 @@
                                       &key (database *default-database*))
   (let ((schemadef nil)
         (tclass (find-class view-class-name)))
-    (dolist (slotdef (ordered-class-slots tclass))
+    (dolist (slotdef (class-slots tclass))
       (let ((res (database-generate-column-definition view-class-name
                                                       slotdef database)))
         (when res (setf schemadef (cons res schemadef)))))
