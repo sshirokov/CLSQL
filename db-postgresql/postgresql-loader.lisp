@@ -36,7 +36,7 @@ set to the right path before compiling or loading the system.")
   (let ((libpath (uffi:find-foreign-library 
 		  "libpq"
 		  '("/opt/postgresql/lib/" "/usr/local/lib/" 
-		    #+64bit "/usr/lib64/"
+		    #+(or 64bit x86-64) "/usr/lib64/"
 		    "/usr/lib/" "/postgresql/lib/"
 		    "/usr/local/pgsql/lib/" "/usr/lib/pgsql/"
 		    "/opt/pgsql/lib/pgsql" "/sw/lib/pgsql/")

@@ -220,7 +220,7 @@ socket interface"
   (unless *crypt-library-loaded*
     (uffi:load-foreign-library 
      (uffi:find-foreign-library "libcrypt"
-			   '(#+64bit "/usr/lib64/"
+			   '(#+(or 64bit x86-64) "/usr/lib64/"
 			     "/usr/lib/" "/usr/local/lib/" "/lib/"))
      :supporting-libraries '("c"))
     (setq *crypt-library-loaded* t)))
