@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-mysql.asd,v 1.3 2002/09/01 09:00:14 kevin Exp $
+;;;; $Id: clsql-mysql.asd,v 1.4 2002/09/06 10:26:17 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -22,10 +22,6 @@
 
 ;;; System definition
 
-(defmethod source-file-type  ((c cl-source-file)
-			      (s (eql (find-system 'clsql-mysql)))) 
-   "cl")
-
 (defsystem clsql-mysql
   :pathname #.(format nil "~A:clsql-mysql;" +clsql-logical-host+)
   :components ((:file "mysql-package")
@@ -36,6 +32,7 @@
   :depends-on (:uffi :clsql-base :clsql-uffi))
 
 
-
-
+(defmethod source-file-type  ((c cl-source-file)
+			      (s (eql (find-system 'clsql-mysql)))) 
+   "cl")
 

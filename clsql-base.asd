@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql-base.asd,v 1.5 2002/09/01 09:00:14 kevin Exp $
+;;;; $Id: clsql-base.asd,v 1.6 2002/09/06 10:26:17 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -36,10 +36,6 @@
   #-common-lisp-controller "clsql"
   "Logical hostname for loading system")
 
-(defmethod source-file-type  ((c cl-source-file)
-			      (s (eql (find-system 'clsql-base)))) 
-   "cl")
-
  ;;; System definitions
 
 (defsystem clsql-base
@@ -54,3 +50,8 @@
 	       (:file "db-interface" :depends-on ("conditions"))
 	       (:file "initialize" :depends-on ("db-interface")))
   )
+
+(defmethod source-file-type  ((c cl-source-file)
+			      (s (eql (find-system 'clsql-base)))) 
+   "cl")
+
