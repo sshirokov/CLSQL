@@ -89,14 +89,14 @@ set to :error to signal an error or :ignore/nil to silently ignore the warning."
 ;; Signal conditions
 
 (defun signal-closed-database-error (database)
-  (cerror 'sql-connection-error
-	  :message
-	  (format nil "Trying to perform operation on closed database ~A."
-		  database)))
+  (error 'sql-connection-error
+	 :database database
+	 :message "Database is closed."))
 
 (defun signal-no-database-error (database)
-  (error 'sql-database-error 
-	 :message (format nil "Not a database: ~A." database)))
+  (error 'sql-database-error
+	 :database database
+	 :message (format nil "~A is not a database." database)))
 
 
 ;;; CLSQL Extensions
