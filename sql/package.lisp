@@ -209,7 +209,8 @@
 
        
        ;; recording.lisp -- SQL I/O Recording 
-       #:record-sql-action
+       #:record-sql-command
+       #:record-sql-result
        #:add-sql-stream                   ; recording  xx
        #:delete-sql-stream                ; recording  xx
        #:list-sql-streams                 ; recording  xx

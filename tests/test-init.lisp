@@ -145,7 +145,7 @@
     :type (string 30)
     :initarg :city)
    (postal-code
-    :column "zip"
+    :column zip
     :type integer
     :void-value 0
     :initarg :postal-code))

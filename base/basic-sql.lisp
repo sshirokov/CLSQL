@@ -31,13 +31,13 @@ that expression and a list of field names selected in sql-exp."))
 
 (defmethod query ((query-expression string) &key (database *default-database*)
                   (result-types :auto) (flatp nil) (field-names t))
-  (record-sql-action query-expression :query database)
+  (record-sql-command query-expression database)
   (multiple-value-bind (rows names) (database-query query-expression database result-types
                                                     field-names)
     (let ((result (if (and flatp (= 1 (length (car rows))))
                       (mapcar #'car rows)
                     rows)))
-      (record-sql-action result :result database)
+      (record-sql-result result database)
       (if field-names
 	  (values result names)
 	result))))
@@ -55,9 +55,9 @@ pair."))
 
 (defmethod execute-command ((sql-expression string)
                             &key (database *default-database*))
-  (record-sql-action sql-expression :command database)
+  (record-sql-command sql-expression database)
   (let ((res (database-execute-command sql-expression database)))
-    (record-sql-action res :result database))
+    (record-sql-result res database))
   (values))
 
 ;;; Large objects support

@@ -1,6 +1,10 @@
 10 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* sql/kmr-mop.lisp: Explicitly check slot order and
 	store as a cl:*feature*
+	* sql/recording.lisp: Remove additional types to
+	increase CommonSQL conformance.
+	* tests/test-init.lisp: Change a :column attribute
+	to test symbols as value
 	
 9 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.15
