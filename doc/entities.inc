@@ -8,6 +8,7 @@
 <!ENTITY sql "<application>SQL</application>">
 <!ENTITY mysql "<application>MySQL</application>">
 <!ENTITY postgresql "<application>PostgreSQL</application>">
+<!ENTITY sqlite "<application>SQLite</application>">
 <!ENTITY aodbc "<application>AODBC</application>">
 <!ENTITY cmucl "<application>CMUCL</application>">
 <!ENTITY scl "<application>SCL</application>">

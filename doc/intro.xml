@@ -111,6 +111,7 @@
 	<listitem><para>&mysql; v3.23.51 and v4.0.15.</para></listitem>
 	<listitem><para>&postgresql; v7.2 with both direct API and TCP
 	socket connections.</para></listitem>
+	<listitem><para>&sqlite;.</para></listitem>
 	<listitem><para>Allegro's ODBC interface (&aodbc;) using iODBC
 	ODBC manager.</para></listitem>
       </itemizedlist>
