@@ -8,7 +8,7 @@
 ;;;;                 original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: classes.cl,v 1.5 2002/05/01 20:22:16 marc.battyani Exp $
+;;;; $Id: classes.cl,v 1.6 2002/05/07 10:19:13 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -23,12 +23,12 @@
 
 
 (defclass database ()
-  ((name :initarg :name :reader database-name)
-   (connection-spec :initarg :connection-spec :reader connection-spec
+  ((name :initform nil :initarg :name :reader database-name)
+   (connection-spec :initform nil :initarg :connection-spec :reader connection-spec
 		    :documentation "Require to use connection pool")
-   (transaction-level :initarg :transaction-level :accessor transaction-level)
-   (conn-pool :initarg :conn-pool :accessor conn-pool :initform nil))
-  (:default-initargs :name nil :connection-spec nil :transaction-level 0)
+   (transaction-level :initform 0 :accessor transaction-level)
+   (transaction :initform nil :accessor transaction)
+   (conn-pool :initform nil :initarg :conn-pool :accessor conn-pool))
   (:documentation
    "This class is the supertype of all databases handled by CLSQL."))
 
