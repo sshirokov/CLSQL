@@ -27,7 +27,7 @@
     (progn
       (clsql:insert-records :into [employee] 
                            :values `(11 1 "Yuri" "Gagarin" "gagarin@soviet.org"
-                                     1 1 1.85 t ,(clsql-base:get-time)))
+                                     1 1 1.85 t ,(clsql:get-time)))
       (values 
        (clsql:select [first-name] [last-name] [email]
                     :from [employee] :where [= [emplid] 11])

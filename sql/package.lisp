@@ -246,6 +246,86 @@
        #:db-type-default-case
        #:convert-to-db-default-case
        #:database-underlying-type
+
+       ;; time.lisp 
+       #:bad-component
+       #:current-day
+       #:current-month
+       #:current-year
+       #:day-duration
+       #:db-timestring
+       #:decode-duration
+       #:decode-time
+       #:duration
+       #:duration+
+       #:duration<
+       #:duration<=
+       #:duration=
+       #:duration>
+       #:duration>=
+       #:duration-day
+       #:duration-hour
+       #:duration-minute
+       #:duration-month
+       #:duration-second
+       #:duration-year
+       #:duration-reduce 
+       #:duration-timestring
+       #:extract-roman 
+       #:format-duration
+       #:format-time
+       #:get-time
+       #:utime->time
+       #:interval-clear
+       #:interval-contained
+       #:interval-data
+       #:interval-edit
+       #:interval-end
+       #:interval-match
+       #:interval-push
+       #:interval-relation
+       #:interval-start
+       #:interval-type
+       #:make-duration
+       #:make-interval
+       #:make-time
+       #:merged-time
+       #:midnight
+       #:month-name
+       #:parse-date-time
+       #:parse-timestring
+       #:parse-yearstring
+       #:print-date
+       #:roll
+       #:roll-to
+       #:time
+       #:time+
+       #:time-
+       #:time-by-adding-duration
+       #:time-compare
+       #:time-difference
+       #:time-dow
+       #:time-element
+       #:time-max
+       #:time-min
+       #:time-mjd
+       #:time-msec
+       #:time-p
+       #:time-sec
+       #:time-well-formed
+       #:time-ymd
+       #:time<
+       #:time<=
+       #:time=
+       #:time>
+       #:time>=
+       #:timezone
+       #:universal-time
+       #:wall-time
+       #:wall-timestring
+       #:week-containing
+       #:gregorian-to-mjd
+       #:mjd-to-gregorian
        ))
    (:export
     ;; "Private" exports for use by interface packages
@@ -348,8 +428,6 @@
        #:locally-enable-sql-reader-syntax  ; syntax     xx
        #:restore-sql-reader-syntax-state   ; syntax     xx
 
-       #:*update-records-on-make-instance* 
-       
        ;;------------------------------------------------
        ;; Miscellaneous Extensions
        ;;------------------------------------------------
@@ -376,6 +454,7 @@
        #:universal-time    		   ; objects    xx 
        #:bigint
        ;;OODML
+       #:*db-auto-sync*                    ; objects    xx              
        #:add-to-relation                   ; objects    x
        #:remove-from-relation              ; objects    x
        #:read-sql-value                    ; objects    x

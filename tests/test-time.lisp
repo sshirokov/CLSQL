@@ -12,19 +12,19 @@
 
 ;; relations of intervals
 (deftest :time/1
-    (let* ((time-1 (clsql-base:parse-timestring "2002-01-01 10:00:00"))
-	   (time-2 (clsql-base:parse-timestring "2002-01-01 11:00:00"))
-	   (time-3 (clsql-base:parse-timestring "2002-01-01 12:00:00"))
-	   (time-4 (clsql-base:parse-timestring "2002-01-01 13:00:00"))
-	   (interval-1 (clsql-base:make-interval :start time-1 :end time-2))
-	   (interval-2 (clsql-base:make-interval :start time-2 :end time-3))
-	   (interval-3 (clsql-base:make-interval :start time-3 :end time-4))
-	   (interval-4 (clsql-base:make-interval :start time-1 :end time-3))
-	   (interval-5 (clsql-base:make-interval :start time-2 :end time-4))
-	   (interval-6 (clsql-base:make-interval :start time-1 :end time-4)))
+    (let* ((time-1 (clsql:parse-timestring "2002-01-01 10:00:00"))
+	   (time-2 (clsql:parse-timestring "2002-01-01 11:00:00"))
+	   (time-3 (clsql:parse-timestring "2002-01-01 12:00:00"))
+	   (time-4 (clsql:parse-timestring "2002-01-01 13:00:00"))
+	   (interval-1 (clsql:make-interval :start time-1 :end time-2))
+	   (interval-2 (clsql:make-interval :start time-2 :end time-3))
+	   (interval-3 (clsql:make-interval :start time-3 :end time-4))
+	   (interval-4 (clsql:make-interval :start time-1 :end time-3))
+	   (interval-5 (clsql:make-interval :start time-2 :end time-4))
+	   (interval-6 (clsql:make-interval :start time-1 :end time-4)))
       (flet ((my-assert (number relation i1 i2)
 	       (declare (ignore number))
-	       (let ((found-relation (clsql-base:interval-relation i1 i2)))
+	       (let ((found-relation (clsql:interval-relation i1 i2)))
 		 (equal relation found-relation))))
 	(and 
 	 (my-assert 1 :contains interval-1 interval-1)
@@ -68,73 +68,73 @@
 ;; adjacent intervals in list
 (deftest :time/2
   (let* ((interval-list nil)
-         (time-1 (clsql-base:parse-timestring "2002-01-01 10:00:00"))
-         (time-3 (clsql-base:parse-timestring "2002-01-01 12:00:00"))
-         (time-4 (clsql-base:parse-timestring "2002-01-01 13:00:00")))
+         (time-1 (clsql:parse-timestring "2002-01-01 10:00:00"))
+         (time-3 (clsql:parse-timestring "2002-01-01 12:00:00"))
+         (time-4 (clsql:parse-timestring "2002-01-01 13:00:00")))
     (setf interval-list 
-	  (clsql-base:interval-push interval-list (clsql-base:make-interval :start time-1 :end time-3
+	  (clsql:interval-push interval-list (clsql:make-interval :start time-1 :end time-3
 						      :type :open)))
     (setf interval-list 
-	  (clsql-base:interval-push interval-list (clsql-base:make-interval :start time-3 :end time-4
+	  (clsql:interval-push interval-list (clsql:make-interval :start time-3 :end time-4
 						      :type :open)))
-    (clsql-base:interval-relation (car interval-list) (cadr interval-list)))
+    (clsql:interval-relation (car interval-list) (cadr interval-list)))
   :precedes)
 
 ;; nested intervals in list
 (deftest :time/3
     (let* ((interval-list nil)
-	   (time-1 (clsql-base:parse-timestring "2002-01-01 10:00:00"))
-	   (time-2 (clsql-base:parse-timestring "2002-01-01 11:00:00"))
-	   (time-3 (clsql-base:parse-timestring "2002-01-01 12:00:00"))
-	   (time-4 (clsql-base:parse-timestring "2002-01-01 13:00:00")))
+	   (time-1 (clsql:parse-timestring "2002-01-01 10:00:00"))
+	   (time-2 (clsql:parse-timestring "2002-01-01 11:00:00"))
+	   (time-3 (clsql:parse-timestring "2002-01-01 12:00:00"))
+	   (time-4 (clsql:parse-timestring "2002-01-01 13:00:00")))
       (setf interval-list 
-	    (clsql-base:interval-push interval-list (clsql-base:make-interval :start time-1 
+	    (clsql:interval-push interval-list (clsql:make-interval :start time-1 
 							:end time-4 
 							:type :open)))
       (setf interval-list 
-	    (clsql-base:interval-push interval-list (clsql-base:make-interval :start time-2 
+	    (clsql:interval-push interval-list (clsql:make-interval :start time-2 
 							:end time-3 
 							:type :closed)))
       (let* ((interval (car interval-list))
 	     (interval-contained 
-	      (when interval (car (clsql-base:interval-contained interval)))))
+	      (when interval (car (clsql:interval-contained interval)))))
 	(when (and interval interval-contained)
-	  (and (clsql-base:time= (clsql-base:interval-start interval) time-1)
-	       (clsql-base:time= (clsql-base:interval-end interval) time-4)
-	       (eq (clsql-base:interval-type interval) :open)
-	       (clsql-base:time= (clsql-base:interval-start interval-contained) time-2)
-	       (clsql-base:time= (clsql-base:interval-end interval-contained) time-3)
-	       (eq (clsql-base:interval-type interval-contained) :closed)))))
+	  (and (clsql:time= (clsql:interval-start interval) time-1)
+	       (clsql:time= (clsql:interval-end interval) time-4)
+	       (eq (clsql:interval-type interval) :open)
+	       (clsql:time= (clsql:interval-start interval-contained) time-2)
+	       (clsql:time= (clsql:interval-end interval-contained) time-3)
+	       (eq (clsql:interval-type interval-contained) :closed)))))
   t)
 
 ;; interval-edit - nonoverlapping
 (deftest :time/4
     (let* ((interval-list nil)
-	   (time-1 (clsql-base:parse-timestring "2002-01-01 10:00:00"))
-	   (time-2 (clsql-base:parse-timestring "2002-01-01 11:00:00"))
-	   (time-3 (clsql-base:parse-timestring "2002-01-01 12:00:00"))
-	   (time-4 (clsql-base:parse-timestring "2002-01-01 13:00:00")))
-      (setf interval-list (clsql-base:interval-push interval-list (clsql-base:make-interval :start time-1 :end time-2 :type :open)))
-      (setf interval-list (clsql-base:interval-push interval-list (clsql-base:make-interval :start time-3 :end time-4 :type :closed)))
-      (setf interval-list (clsql-base:interval-edit interval-list time-1 time-1 time-3))
+	   (time-1 (clsql:parse-timestring "2002-01-01 10:00:00"))
+	   (time-2 (clsql:parse-timestring "2002-01-01 11:00:00"))
+	   (time-3 (clsql:parse-timestring "2002-01-01 12:00:00"))
+	   (time-4 (clsql:parse-timestring "2002-01-01 13:00:00")))
+      (setf interval-list (clsql:interval-push interval-list (clsql:make-interval :start time-1 :end time-2 :type :open)))
+      (setf interval-list (clsql:interval-push interval-list (clsql:make-interval :start time-3 :end time-4 :type :closed)))
+      (setf interval-list (clsql:interval-edit interval-list time-1 time-1 time-3))
       ;; should be time-3 not time-2 
-      (clsql-base:time= (clsql-base:interval-end (car interval-list)) time-3))
+      (clsql:time= (clsql:interval-end (car interval-list)) time-3))
   t)
 
 ;; interval-edit - overlapping
 (deftest :time/5
     (let* ((interval-list nil)
-	   (time-1 (clsql-base:parse-timestring "2002-01-01 10:00:00"))
-	   (time-2 (clsql-base:parse-timestring "2002-01-01 11:00:00"))
-	   (time-3 (clsql-base:parse-timestring "2002-01-01 12:00:00"))
-	   (time-4 (clsql-base:parse-timestring "2002-01-01 13:00:00")))
-      (setf interval-list (clsql-base:interval-push interval-list (clsql-base:make-interval :start time-1 :end time-2 :type :open)))
-      (setf interval-list (clsql-base:interval-push interval-list (clsql-base:make-interval :start time-2 :end time-4 :type :closed)))
+	   (time-1 (clsql:parse-timestring "2002-01-01 10:00:00"))
+	   (time-2 (clsql:parse-timestring "2002-01-01 11:00:00"))
+	   (time-3 (clsql:parse-timestring "2002-01-01 12:00:00"))
+	   (time-4 (clsql:parse-timestring "2002-01-01 13:00:00")))
+      (setf interval-list (clsql:interval-push interval-list (clsql:make-interval :start time-1 :end time-2 :type :open)))
+      (setf interval-list (clsql:interval-push interval-list (clsql:make-interval :start time-2 :end time-4 :type :closed)))
       (let ((pass t))
 	(handler-case 
 	    (progn 
 	      (setf interval-list 
-		    (clsql-base:interval-edit interval-list time-1 time-1 time-3))
+		    (clsql:interval-edit interval-list time-1 time-1 time-3))
 	      (setf pass nil))
 	  (error nil))
 	pass))
@@ -143,28 +143,28 @@
 ;; interval-edit - nested intervals in list
 (deftest :time/6
     (let* ((interval-list nil)
-	   (time-1 (clsql-base:parse-timestring "2002-01-01 10:00:00"))
-	   (time-2 (clsql-base:parse-timestring "2002-01-01 11:00:00"))
-	   (time-3 (clsql-base:parse-timestring "2002-01-01 12:00:00"))
-	   (time-4 (clsql-base:parse-timestring "2002-01-01 13:00:00"))
-	   (time-5 (clsql-base:parse-timestring "2002-01-01 14:00:00"))
-	   (time-6 (clsql-base:parse-timestring "2002-01-01 15:00:00")))
-      (setf interval-list (clsql-base:interval-push interval-list (clsql-base:make-interval :start time-1 :end time-6 :type :open)))
-      (setf interval-list (clsql-base:interval-push interval-list (clsql-base:make-interval :start time-2 :end time-3 :type :closed)))
-      (setf interval-list (clsql-base:interval-push interval-list (clsql-base:make-interval :start time-4 :end time-5 :type :closed)))
-      (setf interval-list (clsql-base:interval-edit interval-list time-1 time-1 time-4))
+	   (time-1 (clsql:parse-timestring "2002-01-01 10:00:00"))
+	   (time-2 (clsql:parse-timestring "2002-01-01 11:00:00"))
+	   (time-3 (clsql:parse-timestring "2002-01-01 12:00:00"))
+	   (time-4 (clsql:parse-timestring "2002-01-01 13:00:00"))
+	   (time-5 (clsql:parse-timestring "2002-01-01 14:00:00"))
+	   (time-6 (clsql:parse-timestring "2002-01-01 15:00:00")))
+      (setf interval-list (clsql:interval-push interval-list (clsql:make-interval :start time-1 :end time-6 :type :open)))
+      (setf interval-list (clsql:interval-push interval-list (clsql:make-interval :start time-2 :end time-3 :type :closed)))
+      (setf interval-list (clsql:interval-push interval-list (clsql:make-interval :start time-4 :end time-5 :type :closed)))
+      (setf interval-list (clsql:interval-edit interval-list time-1 time-1 time-4))
       ;; should be time-4 not time-6 
-      (clsql-base:time= (clsql-base:interval-end (car interval-list)) time-4))
+      (clsql:time= (clsql:interval-end (car interval-list)) time-4))
   t)
   
 ;; Test the boundaries of Local Time with granularity of 1 year
 (deftest :time/7
     (let ((sec-in-year (* 60 60 24 365))
-	  (year (clsql-base:time-element (clsql-base:make-time) :year)))
+	  (year (clsql:time-element (clsql:make-time) :year)))
       (dotimes (n 50 n)
-	(let ((date (clsql-base:make-time :second (* n sec-in-year))))
+	(let ((date (clsql:make-time :second (* n sec-in-year))))
 	  (unless (= (+ year n)
-		     (clsql-base:time-element date :year))
+		     (clsql:time-element date :year))
 	    (return n)))))
   50)
 
@@ -175,42 +175,42 @@
       (let ((second-in-year (* 60 60 24 365)))
 	(dotimes (n 2000 n)
 	  (let* ((second (* -1 n second-in-year))
-		 (date (clsql-base:make-time :year 2525 :second second)))
+		 (date (clsql:make-time :year 2525 :second second)))
 	    (unless
-                (= (grab-year (clsql-base:db-timestring date))
-                   (clsql-base:time-element date :year))
+                (= (grab-year (clsql:db-timestring date))
+                   (clsql:time-element date :year))
 	      (return n))))))
   2000)
 
 ;; Conversion between MJD and Gregorian
 (deftest :time/10
     (dotimes (base 10000 base)
-      (unless (= (apply #'clsql-base:gregorian-to-mjd (clsql-base:mjd-to-gregorian base))
+      (unless (= (apply #'clsql:gregorian-to-mjd (clsql:mjd-to-gregorian base))
 		 base)
 	(return base)))
   10000)
   
-;; Clsql-Base:Roll by minutes: +90
+;; Clsql:Roll by minutes: +90
 (deftest :time/11
-    (let ((now (clsql-base:get-time)))
-      (clsql-base:time= (clsql-base:time+ now (clsql-base:make-duration :minute 90))
-	     (clsql-base:roll now :minute 90)))
+    (let ((now (clsql:get-time)))
+      (clsql:time= (clsql:time+ now (clsql:make-duration :minute 90))
+	     (clsql:roll now :minute 90)))
   t)
 
-;;Clsql-Base:Roll by minutes: +900
+;;Clsql:Roll by minutes: +900
 (deftest :time/12
-    (let ((now (clsql-base:get-time)))
-      (clsql-base:time= (clsql-base:time+ now (clsql-base:make-duration :minute 900))
-	     (clsql-base:roll now :minute 900)))
+    (let ((now (clsql:get-time)))
+      (clsql:time= (clsql:time+ now (clsql:make-duration :minute 900))
+	     (clsql:roll now :minute 900)))
   t)
 
 
-;; Clsql-Base:Roll by minutes: +900
+;; Clsql:Roll by minutes: +900
 (deftest :time/13
-    (let* ((now (clsql-base:get-time))
-	   (add-time (clsql-base:time+ now (clsql-base:make-duration :minute 9000)))
-	   (roll-time (clsql-base:roll now :minute 9000)))
-      (clsql-base:time= add-time roll-time))
+    (let* ((now (clsql:get-time))
+	   (add-time (clsql:time+ now (clsql:make-duration :minute 9000)))
+	   (roll-time (clsql:roll now :minute 9000)))
+      (clsql:time= add-time roll-time))
   t)
 
 ))

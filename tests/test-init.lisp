@@ -38,7 +38,7 @@
            :initarg :height)
    (married :db-kind :base :accessor married :type boolean
             :initarg :married)
-   (birthday :type clsql-base:wall-time :initarg :birthday)
+   (birthday :type clsql:wall-time :initarg :birthday)
    (hobby :db-kind :virtual :initarg :hobby :initform nil)))
   
 (def-view-class employee (person)
@@ -218,7 +218,7 @@
     (clsql:create-view-from-class 'address)
     (clsql:create-view-from-class 'employee-address))
 
-  (let ((*update-records-on-make-instance* t))
+  (let ((*db-auto-sync* t))
     (setf company1 (make-instance 'company
 				  :presidentid 1
 				  :companyid 1
@@ -229,7 +229,7 @@
 				   :groupid 1
 				   :married t 
 				   :height (1+ (random 1.00))
-				   :birthday (clsql-base:get-time)
+				   :birthday (clsql:get-time)
 				   :first-name "Vladamir"
 				   :last-name "Lenin"
 				   :email "lenin@soviet.org"
@@ -239,7 +239,7 @@
 				   :groupid 1
 				   :height (1+ (random 1.00))
 				   :married t 
-				   :birthday (clsql-base:get-time)
+				   :birthday (clsql:get-time)
 				   :first-name "Josef"
 				   :last-name "Stalin"
 				   :email "stalin@soviet.org"
@@ -250,7 +250,7 @@
 				   :groupid 1
 				   :height (1+ (random 1.00))
 				   :married t 
-				   :birthday (clsql-base:get-time)
+				   :birthday (clsql:get-time)
 				   :first-name "Leon"
 				   :last-name "Trotsky"
 				   :email "trotsky@soviet.org"
@@ -261,7 +261,7 @@
 				   :groupid 1
 				   :height (1+ (random 1.00))
 				   :married nil
-				   :birthday (clsql-base:get-time)
+				   :birthday (clsql:get-time)
 				   :first-name "Nikita"
 				   :last-name "Kruschev"
 				   :email "kruschev@soviet.org"
@@ -272,7 +272,7 @@
 				   :groupid 1
 				   :married nil
 				   :height (1+ (random 1.00))
-				   :birthday (clsql-base:get-time)
+				   :birthday (clsql:get-time)
 				   :first-name "Leonid"
 				   :last-name "Brezhnev"
 				   :email "brezhnev@soviet.org"
@@ -283,7 +283,7 @@
 				   :groupid 1
 				   :married nil
 				   :height (1+ (random 1.00))
-				   :birthday (clsql-base:get-time)
+				   :birthday (clsql:get-time)
 				   :first-name "Yuri"
 				   :last-name "Andropov"
 				   :email "andropov@soviet.org"
@@ -294,7 +294,7 @@
 				   :groupid 1
 				   :height (1+ (random 1.00))
 				   :married nil
-				   :birthday (clsql-base:get-time)
+				   :birthday (clsql:get-time)
 				   :first-name "Konstantin"
 				   :last-name "Chernenko"
 				   :email "chernenko@soviet.org"
@@ -305,7 +305,7 @@
 				   :groupid 1
 				   :height (1+ (random 1.00))
 				   :married nil
-				   :birthday (clsql-base:get-time)
+				   :birthday (clsql:get-time)
 				   :first-name "Mikhail"
 				   :last-name "Gorbachev"
 				   :email "gorbachev@soviet.org"
@@ -316,7 +316,7 @@
 				   :groupid 1 
 				   :married nil
 				   :height (1+ (random 1.00))
-				   :birthday (clsql-base:get-time)
+				   :birthday (clsql:get-time)
 				   :first-name "Boris"
 				   :last-name "Yeltsin"
 				   :email "yeltsin@soviet.org"
@@ -327,7 +327,7 @@
 				    :groupid 1
 				    :married nil
 				    :height (1+ (random 1.00))
-				    :birthday (clsql-base:get-time)
+				    :birthday (clsql:get-time)
 				    :first-name "Vladamir"
 				    :last-name "Putin"
 				    :email "putin@soviet.org"
@@ -457,9 +457,9 @@
 ******************************************************************************
 "
 	  report-type
-	  (clsql-base:format-time 
+	  (clsql:format-time 
 	   nil 
-	   (clsql-base:utime->time (get-universal-time)))
+	   (clsql:utime->time (get-universal-time)))
 	  (lisp-implementation-type)
 	  (lisp-implementation-version)
 	  (machine-type)

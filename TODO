@@ -6,7 +6,7 @@ TESTS TO ADD
 * Large object testing
 * Test bigint type
 * :db-constraint tests
-* *update-records-on-make-instance*
+* test *db-auto-sync* 
 * test :retrieval :deferred joins
 
 COMMONSQL SPEC

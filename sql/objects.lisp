@@ -21,9 +21,10 @@
   (:metaclass standard-db-class)
   (:documentation "Superclass for all CLSQL View Classes."))
 
-(defvar *update-records-on-make-instance* nil
-  "When T, UPDATE-RECORDS-FROM-INSTANCE will be automatically called
-when a new instance of a view-class is created.")
+(defvar *db-auto-sync* nil 
+  "A non-nil value means that creating View Class instances or
+  setting their slots automatically creates/updates the
+  corresponding records in the underlying database.")
 
 (defvar *db-deserializing* nil)
 (defvar *db-initializing* nil)
@@ -43,20 +44,25 @@ when a new instance of a view-class is created.")
               (setf (slot-value instance slot-name) nil))))))
   (call-next-method))
 
-#+ignore ;; not currently used
 (defmethod (setf slot-value-using-class) (new-value (class standard-db-class)
-					  instance slot)
-  (declare (ignore new-value instance slot))
-  (call-next-method))
+					  instance slot-def)
+  (declare (ignore new-value))
+  (let ((slot-name (%svuc-slot-name slot-def))
+        (slot-kind (view-class-slot-db-kind slot-def)))
+    (call-next-method)
+    (when (and *db-auto-sync* 
+	       (not *db-initializing*)
+	       (not *db-deserializing*)
+	       (not (eql slot-kind :virtual)))
+      (update-record-from-slot instance slot-name))))
 
 (defmethod initialize-instance ((object standard-db-object)
 					&rest all-keys &key &allow-other-keys)
   (declare (ignore all-keys))
   (let ((*db-initializing* t))
     (call-next-method)
-    (when (and *update-records-on-make-instance*
+    (when (and *db-auto-sync*
 	       (not *db-deserializing*))
-      #+nil (created-object object)
       (update-records-from-instance object))))
 
 ;;
@@ -873,7 +879,6 @@ superclass of the newly-defined View Class."
 	     (let* ((class-name (class-name vclass))
 		    (db-vals (butlast vals (- (list-length vals)
 					      (list-length selects))))
-		    (*db-initializing* t)
 		    (obj (make-instance class-name :view-database database)))
 	       ;; use refresh keyword here 
 	       (setf obj (get-slot-values-from-view obj (mapcar #'car selects) 
@@ -890,8 +895,6 @@ superclass of the newly-defined View Class."
 		   (car objects)
 		   objects))))
     (let* ((*db-deserializing* t)
-	   (*default-database* (or database
-				   (error 'clsql-base::clsql-no-database-error :database nil)))
 	   (sclasses (mapcar #'find-class view-classes))
 	   (sels (mapcar #'generate-selection-list sclasses))
 	   (fullsels (apply #'append sels))
