@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql.system,v 1.6 2002/04/27 20:58:11 kevin Exp $
+;;;; $Id: clsql.system,v 1.7 2002/04/27 21:48:08 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -42,6 +42,7 @@
 		 (:file "db-interface" :depends-on ("conditions"))
 		 (:file "pool" :depends-on ("db-interface"))
 		 (:file "sql" :depends-on ("pool"))
+		 (:file "transactions" :depends-on ("sql"))
 		 (:file "utils" :depends-on ("package"))
 		 (:file "functional" :depends-on ("sql"))
 		 (:file "usql" :depends-on ("sql")))
