@@ -202,6 +202,16 @@
           (format *sql-stream* "~s" alias))))
   t)
 
+#|
+(defmethod database-output-sql ((self duration) database)
+  (declare (ignore database))
+  (format nil "'~a'" (duration-timestring self)))
+
+(defmethod database-output-sql ((self money) database)
+  (database-output-sql (slot-value self 'odcl::units) database))
+|#
+
+
 (defmethod output-sql-hash-key ((expr sql-ident-table) &optional
                                 (database *default-database*))
   (declare (ignore database))
