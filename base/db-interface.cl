@@ -9,7 +9,7 @@
 ;;;;                onShoreD to support UncommonSQL front-end 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: db-interface.cl,v 1.4 2002/09/17 17:16:43 kevin Exp $
+;;;; $Id: db-interface.cl,v 1.5 2002/09/27 14:55:37 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai, and onShoreD
@@ -147,7 +147,7 @@ returns nil when result-set is finished."))
   (:documentation "Return the type SQL type specifier as a string, for
 the given lisp type and parameters."))
 
-(defgeneric database-list-tables (database &key (system-tables nil))
+(defgeneric database-list-tables (database &key system-tables)
   (:documentation "List all tables in the given database"))
 
 (defgeneric database-list-attributes (table database)

@@ -1,3 +1,9 @@
+cl-sql (0.9.5-1) unstable; urgency=low
+
+  * Fix defgeneric form in db-interfaces.cl
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Fri, 27 Sep 2002 08:55:33 -0600
+
 cl-sql (0.9.4-2) unstable; urgency=low
 
   * Move documentation to cl-sql package (closes: 162491)
