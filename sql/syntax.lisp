@@ -158,7 +158,7 @@ attribute and type."
 for the operator."
   (typecase operation
     (string nil)
-    (symbol (gethash (string-upcase (symbol-name operation))
+    (symbol (gethash (symbol-name-default-case (symbol-name operation))
                      *sql-op-table*))))
 
 (defun sql-operation (operation &rest rest)

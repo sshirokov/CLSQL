@@ -147,11 +147,14 @@
   (with-slots (qualifier name type params)
       expr
     (if (and (not qualifier) (not type))
-	(write-string (sql-escape (convert-to-db-default-case (symbol-name name) database)) *sql-stream*)
+	(write-string (sql-escape (convert-to-db-default-case 
+				   (symbol-name name) database)) *sql-stream*)
       (format *sql-stream* "~@[~A.~]~A~@[ ~A~]"
-	      (if qualifier (sql-escape qualifier) qualifier)
+	      (when qualifier
+		  (convert-to-db-default-case (sql-escape qualifier) database))
 	      (sql-escape (convert-to-db-default-case name database))
-	      type))
+	      (when type
+		  (convert-to-db-default-case (symbol-name type) database))))
     t))
 
 (defmethod output-sql-hash-key ((expr sql-ident-attribute) database)
@@ -170,7 +173,7 @@
   (declare (ignore environment))
   (with-slots (alias name)
     sql
-    `(make-instance 'sql-ident-table :name name :alias ',alias)))
+    `(make-instance 'sql-ident-table :name ',name :table-alias ',alias)))
 
 (defun generate-sql (expr database)
   (let ((*sql-stream* (make-string-output-stream)))
@@ -690,8 +693,9 @@ uninclusive, and the args from that keyword to the end."
 ;; Column constraint types
 ;;
 (defparameter *constraint-types*
-  '(("NOT-NULL" . "NOT NULL")
-    ("PRIMARY-KEY" . "PRIMARY KEY")))
+  (list 
+   (cons (symbol-name-default-case "NOT-NULL") "NOT NULL") 
+   (cons (symbol-name-default-case "PRIMARY-KEY") "PRIMARY KEY")))
 
 ;;
 ;; Convert type spec to sql syntax

@@ -78,9 +78,11 @@
 (defmethod database-pkey-constraint ((class standard-db-class) database)
   (let ((keylist (mapcar #'view-class-slot-column (keyslots-for-class class))))
     (when keylist 
-      (format nil "CONSTRAINT ~APK PRIMARY KEY~A"
-              (database-output-sql (view-table class) database)
-              (database-output-sql keylist database)))))
+      (convert-to-db-default-case
+       (format nil "CONSTRAINT ~APK PRIMARY KEY~A"
+	       (database-output-sql (view-table class) database)
+	       (database-output-sql keylist database))
+       database))))
 
 
 (defun create-view-from-class (view-class-name

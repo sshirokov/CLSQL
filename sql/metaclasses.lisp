@@ -151,7 +151,7 @@ of the default method.  The extra allowed options are the value of the
 	((typep arg 'sql-ident)
 	 (slot-value arg 'name))
 	((stringp arg)
-	 (intern (string-upcase arg)))))
+	 (intern (symbol-name-default-case arg)))))
 
 (defun column-name-from-arg (arg)
   (cond ((symbolp arg)
@@ -159,7 +159,7 @@ of the default method.  The extra allowed options are the value of the
 	((typep arg 'sql-ident)
 	 (slot-value arg 'name))
 	((stringp arg)
-	 (intern (string-upcase arg)))))
+	 (intern (symbol-name-default-case arg)))))
 
 
 (defun remove-keyword-arg (arglist akey)

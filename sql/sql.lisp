@@ -191,10 +191,11 @@ condition is true."
 
 (let ((keyword-package (symbol-package :foo)))
   (defmethod database-output-sql ((sym symbol) database)
-    (declare (ignore database))
-    (if (equal (symbol-package sym) keyword-package)
-        (concatenate 'string "'" (string sym) "'")
-        (symbol-name sym))))
+    (convert-to-db-default-case
+     (if (equal (symbol-package sym) keyword-package)
+	 (concatenate 'string "'" (string sym) "'")
+	 (symbol-name sym))
+     database)))
 
 (defmethod database-output-sql ((tee (eql t)) database)
   (declare (ignore database))
@@ -261,7 +262,8 @@ condition is true."
 			   &key (database *default-database*))
   (database-describe-table
    database
-   (convert-to-db-default-case (symbol-name (slot-value table 'name)) database)))
+   (convert-to-db-default-case 
+    (symbol-name (slot-value table 'name)) database)))
 
 #+nil
 (defmethod add-storage-class ((self database) (class symbol) &key (sequence t))

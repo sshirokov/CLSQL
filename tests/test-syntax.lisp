@@ -49,10 +49,9 @@
     (clsql:sql [foo bar])
   "FOO.BAR")
 
-;; not sure about this one 
 (deftest :syntax/ident/3
     (clsql:sql ["foo" bar])
-  "foo.BAR")
+  "FOO.BAR")
 
 ;(deftest :syntax/ident/4
 ;    (clsql:sql [foo "bar"])
@@ -66,10 +65,9 @@
     (clsql:sql [foo bar :integer])
   "FOO.BAR INTEGER")
 
-;; not sure about this one 
 (deftest :syntax/ident/7
     (clsql:sql ["foo" bar :integer])
-  "foo.BAR INTEGER")
+  "FOO.BAR INTEGER")
 
 
 (deftest :syntax/value/1

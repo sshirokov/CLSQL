@@ -1,3 +1,9 @@
+24 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.9.4: Multiple changes to support Allegro's "modern"
+	lisp which uses a lowercase reader and has case-sensitive symbols
+	* sql/classes.lisp: Fix make-load-form bug for sql-ident-table
+	exposed by case-sensitive mlisp
+
 22 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.9.3: All tests now pass on all platforms!
 	* LATEST-TEST-RESULTS: New file with summary of test results

@@ -98,7 +98,7 @@ Description: Classic CLSQL high-level interface
 
 Package: cl-sql-tests
 Architecture: all
-Depends: cl-sql-base, cl-sql-postgresql, cl-sql-postgresql-socket, cl-sql-mysql, cl-rt, cl-ptester
+Depends: cl-sql-base, cl-sql-postgresql, cl-sql-postgresql-socket, cl-sql-mysql, cl-rt
 Suggests: acl-installer, libmyodbc, unixodbc,cl-sql-aodbc 
 Description: Testing suite for CLSQL
  This package contains a test suite for CLSQL. It requires manual
