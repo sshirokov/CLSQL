@@ -17,13 +17,13 @@
   </author>
   </authorgroup>
   <printhistory>
-    <simpara>$Date: 2002/03/23 15:17:43 $</simpara>
-    <simpara>$Id: bookinfo.sgml,v 1.3 2002/03/23 15:17:43 kevin Exp $</simpara>
+    <simpara>$Date$</simpara>
+    <simpara>$Id$</simpara>
   </printhistory>
   <legalnotice>
     <itemizedlist>
       <listitem>
-	<para>&clsql; is Copyright &copy; 2002 by Kevin M. Rosenberg and
+	<para>&clsql; is Copyright &copy; 2002-2003 by Kevin M. Rosenberg and
 	Copyright &copy; 1999-2001 by Pierre R. Mai.</para>
        </listitem>
        <listitem>
