@@ -93,7 +93,7 @@ install: build
 
 	# Main package
 	$(INSTALL) $(INSTALLDIRFLAGS) $(lispdir) $(lispdir-int)
-	$(INSTALL) $(INSTALLFLAGS) $(srcs) $(prefix)/$(clc-source)/clsql/sql
+	$(INSTALL) $(INSTALLFLAGS) $(srcs) $(lispdir-sql)
 
 	# Base
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-base) $(lispdir-base)
