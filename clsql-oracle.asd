@@ -89,6 +89,6 @@
 	       (:file "oracle-loader" :depends-on ("oracle-package"))
 	       (:file "foreign-resources" :depends-on ("oracle-package"))
 	       (:file "oracle-constants" :depends-on ("oracle-package"))
-	       (:file "oracle" :depends-on ("oracle-constants" "oracle-loader"))
-	       (:file "oracle-sql" :depends-on ("oracle" "foreign-resources"))
+	       (:file "oracle-api" :depends-on ("oracle-constants" "oracle-loader"))
+	       (:file "oracle-sql" :depends-on ("oracle-api" "foreign-resources"))
 	       (:file "oracle-objects" :depends-on ("oracle-sql"))))))
