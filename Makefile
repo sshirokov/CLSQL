@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.7 2002/04/07 03:57:04 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.8 2002/04/07 03:57:35 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -46,8 +46,8 @@ VERSION_UNDERSCORE=$(shell cat VERSION | tr . _)
 TAG=dist_$(VERSION_UNDERSCORE)
 
 tagcvs:
-	cvs rtag -d $(TAG) $(PKG)
-	cvs tag -F $(TAG)
+	cvs -q rtag -d $(TAG) $(PKG)
+	cvs -q tag -F $(TAG)
 
 dist: realclean docs tagcvs
 	@rm -fr $(DISTDIR) $(DIST_TARBALL) $(DIST_ZIP)
