@@ -215,7 +215,9 @@
 	 #:wall-time
 	 #:wall-timestring
 	 #:week-containing
-
+	 #:gregorian-to-mjd
+	 #:mjd-to-gregorian
+	 x
 	 ;; recording.lisp -- SQL I/O Recording 
 	 #:record-sql-action
 	 #:add-sql-stream                 ; recording  xx
