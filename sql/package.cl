@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: package.cl,v 1.2 2002/03/24 04:01:26 kevin Exp $
+;;;; $Id: package.cl,v 1.3 2002/03/26 14:11:59 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -95,7 +95,12 @@
 	 #:delete-records
 	 #:update-records
 	 #:select
-	 #:with-database))
+	 #:with-database
+	 
+	 ;; utils.cl
+	 #:float-to-sql-string
+	 #:sql-escape-quotes
+	 ))
     (:documentation "This is the INTERNAL SQL-Interface package of CLSQL."))
 
 (defpackage #:clsql

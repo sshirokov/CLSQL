@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: test-clsql.cl,v 1.8 2002/03/25 23:48:46 kevin Exp $
+;;;; $Id: test-clsql.cl,v 1.9 2002/03/26 14:12:12 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -59,12 +59,15 @@
     (clsql:execute-command 
      "DROP TABLE test_clsql" :database db))
   (clsql:execute-command 
-   "CREATE TABLE test_clsql (i integer, sqrt float, sqrt_str CHAR(20))" :database db)
-  (dotimes (i 10)
-    (clsql:execute-command
-     (format nil "INSERT INTO test_clsql VALUES (~d,~d,'~a')"
-	     i (sqrt i) (format nil "~d" (sqrt i)))
-     :database db)))
+   "CREATE TABLE test_clsql (n integer, n_pi float, n_pi_str CHAR(20))" 
+   :database db)
+  (dotimes (i 11)
+    (let ((n (- i 5)))
+      (clsql:execute-command
+       (format nil "INSERT INTO test_clsql VALUES (~a,~a,'~a')"
+	       n (clsql:float-to-sql-string (* pi n))
+	       (clsql:float-to-sql-string (* pi n)))
+       :database db))))
 
 (defun drop-test-table (db)
   (clsql:execute-command "DROP TABLE test_clsql"))

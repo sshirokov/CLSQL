@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql.system,v 1.1 2002/03/23 14:04:49 kevin Exp $
+;;;; $Id: clsql.system,v 1.2 2002/03/26 14:12:12 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -38,6 +38,7 @@
     :binary-pathname "CLSQL:sql;bin;"
     :components ((:file "package")
 		 (:file "sql" :depends-on ("package"))
+		 (:file "utils" :depends-on ("package"))
 		 (:file "functional" :depends-on ("sql")))
     :depends-on (:cmucl-compat)
     :finally-do

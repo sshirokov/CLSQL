@@ -9,7 +9,7 @@
 ;;;;                
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-api.cl,v 1.5 2002/03/25 23:48:46 kevin Exp $
+;;;; $Id: postgresql-socket-api.cl,v 1.6 2002/03/26 14:12:12 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -208,7 +208,8 @@ socket interface"
 
 (defun read-socket-sequence (string stream)
 "KMR -- Added to support reading from binary stream into a string"
-  (declare (optimize (speed 3) (safety 0)))
+  (declare (optimize (speed 3) (safety 0))
+	   (string string))
   (dotimes (i (length string))
     (declare (fixnum i))
     (setf (char string i) (code-char (read-byte stream))))
@@ -563,47 +564,101 @@ connection, if it is still open."
 	    do (setf (aref result index) (ldb (byte 1 weight) byte))))
     result))
 
-(defun read-field (socket type)
-  (let* ((length (read-socket-value 'int32 socket))
-	 (result (make-string (- length 4))))
-    (read-socket-sequence result socket)
-    (case type
-      (:int
-       (parse-integer result))
-      (:double
-       (let ((*read-default-float-format* 'double-float))
-	 (read-from-string result)))
-      (t
-       result))))
 
-(defun read-field2 (socket type)
-  (let* ((length (read-socket-value 'int32 socket)))
+(defun read-field (socket type)
+  (let* ((length (- (read-socket-value 'int32 socket) 4)))
     (case type
       (:int
        (read-integer-from-socket socket length))
       (:double
        (read-double-from-socket socket length))
       (t
-       (let ((result (make-string (- length 4))))
+       (let ((result (make-string length)))
 	 (read-socket-sequence result socket)
 	 result)))))
+
+(uffi:def-constant +char-code-zero+ (char-code #\0))
+(uffi:def-constant +char-code-minus+ (char-code #\-))
+(uffi:def-constant +char-code-plus+ (char-code #\+))
+(uffi:def-constant +char-code-period+ (char-code #\.))
 
 (defun read-integer-from-socket (socket length)
   (let ((val 0)
 	(first-char (read-byte socket))
-	(negative nil))
-    (if (eql first-char (char-code #\-))
-	(setq negative t)
-	(setq val (- first-char (char-code #\0))))
+	(minusp nil))
+    (declare (fixnum first-char))
+    (if (eql first-char +char-code-minus+)
+	(setq minusp t)
+	(setq val (- first-char +char-code-zero+)))
     (dotimes (i (1- length))
+      (declare (fixnum i))
       (setq val (+
 		 (* 10 val)
-		 (- (read-byte socket) (char-code #\0)))))
-    (if negative
+		 (- (read-byte socket) +char-code-zero+))))
+    (if minusp
 	(- 0 val)
 	val)))
 
-	    
+(defmacro ascii-digit (int)
+  (let ((offset (gensym)))
+    `(let ((,offset (- ,int +char-code-zero+)))
+      (declare (fixnum ,int ,offset))
+      (if (and (plusp ,offset)
+	       (< ,offset 10))
+	  ,offset
+	  nil))))
+      
+#+ignore
+(defun read-double-from-socket (socket length)
+  (let ((before-decimal 0)
+	(after-decimal 0)
+	(decimal-count 0)
+	(exponent 0)
+	(char (read-byte socket))
+	(decimalp nil)
+	(minusp nil))
+    (declare (fixnum first-char))
+    (cond
+      ((eql char +char-code-minus+)
+       (setq minusp t)
+       (setq char (read-byte socket))
+       (decf length))
+      ((eql char +char-code-plus+)
+       (setq char (read-byte socket))
+       (decf length)))
+    
+    (dotimes (i (1- length))
+      (let ((weight (ascii-digit char)))
+	(cond 
+	  ((and weight (not decimalp)) ;; before decimal point
+	   (setq before-decimal (+ weight (* 10 before-decimal))))
+	  ((and weight decimalp) ;; after decimal point
+	   (setq after-decimal (+ weight (* 10 after-decimal)))
+	   (incf decimal-count))
+	  ((and (eql char +char-code-period+) decimalp)
+	   (setq decimalp t))
+	  ((or (eql char +char-code-e+) 	      ;; E is for exponent
+	       (eql char +char-code-upper-e+))
+	   (multiple-value-bind (num idx) 
+	       (parse-integer string :start (1+ index) :end end
+			      :radix radix :junk-allowed junk-allowed)
+	     (setq exponent (or num 0)
+		   index idx)
+	     (when (= index end) (return nil))))
+	  )
+	(setq char (read-byte socket))))
+
+	  
+
+	       
+      ))
+	
+      
+(defun read-double-from-socket (socket length)
+  (let ((result (make-string length)))
+    (read-socket-sequence result socket)
+    (let ((*read-default-float-format* 'double-float))
+      (read-from-string result))))
 
 (defun read-cursor-row (cursor types)
   (let* ((connection (postgresql-cursor-connection cursor))

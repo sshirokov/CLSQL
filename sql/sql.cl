@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: sql.cl,v 1.6 2002/03/25 23:48:46 kevin Exp $
+;;;; $Id: sql.cl,v 1.7 2002/03/26 14:11:59 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -21,10 +21,13 @@
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :clsql-sys)
 
-;;;; Modified to use CMUCL-COMPAT library and to fix format strings in
-;;;; error messages
+;;; Modified by KMR 
+;;; - to use CMUCL-COMPAT library 
+;;; - fix format strings in error messages 
+;;; - use field types
 
-;;;; Simple implementation of SQL along the lines of Harlequin's Common SQL
+
+;;; Simple implementation of SQL along the lines of Harlequin's Common SQL
 
 ;;; Conditions
 (define-condition clsql-condition ()
