@@ -7,7 +7,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.5 2002/04/03 17:58:22 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.6 2002/04/07 08:48:54 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -36,16 +36,17 @@ source=$(base).c
 object=$(base).o
 shared_lib=$(base).so
 
+.PHONY: all clean distclean
+
 all: $(shared_lib)
 
 $(shared_lib): $(source) Makefile
 	$(CC) ${SHARED_CC_OPT} -c $(source) -o $(object)
 	$(LD) ${SHARED_LD_OPT} $(object) -o $(shared_lib)
-	rm $(object)
+	@rm $(object)
 
 clean:
-	rm -f $(object) $(shared_lib)
+	@rm -f $(object) $(shared_lib) *~
 
-realclean: clean
-	rm -f *~
+distclean: clean
 
