@@ -1,3 +1,9 @@
+29 Jan 2005 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.1.6
+	* sql/oodml.lisp: Clear view instance cache when delete-instance-records
+	is invoked [suggested by Alan Shutko].
+	* uffi/clsql-uffi-loader.lisp: Improvements for loading with SBCL X86-64
+	
 25 Jan 2005 Kevin Rosenberg <kevin@rosenberg.net>
 	* tests/*.lisp: Change Vladamir to Vladimir per Cyrus Harmon's
 	suggestion.

@@ -248,6 +248,7 @@
     (if vd
 	(let ((qualifier (key-qualifier-for-instance instance :database vd)))
 	  (delete-records :from vt :where qualifier :database vd)
+	  (setf (records-caches vd) nil)
 	  (setf (slot-value instance 'view-database) nil)
           (values))
 	(signal-no-database-error vd))))
