@@ -6,7 +6,7 @@
 export DH_VERBOSE=1
 
 # This is the debhelper compatibility version to use.
-export DH_COMPAT=3
+export DH_COMPAT=4
 
 pkg		:= cl-sql
 pkg-base	:= cl-sql-base
@@ -22,6 +22,8 @@ prefix-mysql	:= debian/$(pkg-mysql)
 prefix-pg	:= debian/$(pkg-pg)
 prefix-pg-socket := debian/$(pkg-pg-socket)
 prefix-aodbc	:= debian/$(pkg-aodbc)
+
+UPSTREAM_VER	:= $(shell sed -n -e "s/${debpkg} (\(.*\)-[0-9.]).*/\1/p" < debian/changelog |head -1)
 
 ## Lisp sources
 srcs		:= $(wildcard sql/*.cl)
@@ -43,6 +45,17 @@ clc-base	:= usr/share/common-lisp
 clc-source	:= $(clc-base)/source
 clc-systems	:= $(clc-base)/systems
 doc-dir		:= $(prefix)/usr/share/doc/cl-sql
+
+clc-clsql	:= $(clc-source)/$(pkg)-$(UPSTREAM_VER)	
+
+lispdir		:= $(prefix)/$(clc-clsql)
+lispdir-sql	:= $(prefix)/$(clc-clsql)/sql
+lispdir-base	:= $(prefix-base)/$(clc-clsql)/base
+lispdir-base-uffi := $(prefix-base)/$(clc-clsql)/interfaces/clsql-uffi
+lispdir-mysql	:= $(prefix-mysql)/$(clc-clsql)/mysql
+lispdir-pg	:= $(prefix-pg)/$(clc-clsql)/postgresql
+lispdir-pg-socket := $(prefix-pg-socket)/$(clc-clsql)/postgresql-socket
+lispdir-aodbc	:= $(prefix-pg)/$(clc-clsql)/aodbc
 
 
 configure: configure-stamp
@@ -72,21 +85,26 @@ install: build
 	dh_testdir
 	dh_testroot
 	dh_clean -k
-	dh_installdirs
+	dh_installdirs -all -i $(clc-systems) $(clc-source)
+
+	$(INSTALL) $(INSTALLDIRFLAGS) $(lispdir) $(lispdir-base) \
+		$(lispdir-base-uffi) $(lispdir-pg) $(lispdir-pg-socket) \
+		$(lispdir-mysql) $(lispdir-sql) $(lispdir-aodbc)
 
 	# Main package
+	$(INSTALL) $(INSTALLDIRFLAGS) $(lispdir) $(lispdir-int)
 	$(INSTALL) $(INSTALLFLAGS) $(srcs) $(prefix)/$(clc-source)/clsql/sql
 
 	# Base
-	$(INSTALL) $(INSTALLFLAGS) $(srcs-base) $(prefix-base)/$(clc-source)/clsql/base
-	$(INSTALL) $(INSTALLFLAGS) $(srcs-base-uffi) $(prefix-base)/$(clc-source)/clsql/interfaces/clsql-uffi
-	$(INSTALL) $(INSTALLEXECFLAGS) $(srcs-base-uffi-so) $(prefix-base)/$(clc-source)/clsql/interfaces/clsql-uffi
+	$(INSTALL) $(INSTALLFLAGS) $(srcs-base) $(lispdir-base)
+	$(INSTALL) $(INSTALLFLAGS) $(srcs-base-uffi) $(lispdir-base-uffi)
+	$(INSTALL) $(INSTALLEXECFLAGS) $(srcs-base-uffi-so) $(lispdir-base-uffi)
 
-	$(INSTALL) $(INSTALLFLAGS) $(srcs-mysql) $(prefix-mysql)/$(clc-source)/clsql/interfaces/mysql
-	$(INSTALL) $(INSTALLEXECFLAGS) $(srcs-mysql-so) $(prefix-mysql)/$(clc-source)/clsql/interfaces/mysql
-	$(INSTALL) $(INSTALLFLAGS) $(srcs-pg) $(prefix-pg)/$(clc-source)/clsql/interfaces/postgresql
-	$(INSTALL) $(INSTALLFLAGS) $(srcs-pg-socket) $(prefix-pg-socket)/$(clc-source)/clsql/interfaces/postgresql-socket
-	$(INSTALL) $(INSTALLFLAGS) $(srcs-aodbc) $(prefix-aodbc)/$(clc-source)/clsql/interfaces/aodbc
+	$(INSTALL) $(INSTALLFLAGS) $(srcs-mysql) $(lispdir-mysql)
+	$(INSTALL) $(INSTALLEXECFLAGS) $(srcs-mysql-so) $(lispdir-mysql)
+	$(INSTALL) $(INSTALLFLAGS) $(srcs-pg) $(lispdir-pg)
+	$(INSTALL) $(INSTALLFLAGS) $(srcs-pg-socket) $(lispdir-pg-socket)
+	$(INSTALL) $(INSTALLFLAGS) $(srcs-aodbc) $(lispdir-aodbc)
 
 	# CLC Systems
 	$(INSTALL) $(INSTALLFLAGS) clsql.system $(prefix)/$(clc-systems)/
@@ -97,6 +115,8 @@ install: build
 	$(INSTALL) $(INSTALLFLAGS) clsql-aodbc.system $(prefix-aodbc)/$(clc-systems)/
 
 	# Test suite
+	$(INSTALL) $(INSTALLDIRFLAGS) $(doc-dir)/html $(doc-dir)/test-suite
+ 
 	$(INSTALL) $(INSTALLFLAGS) test-suite/tester-clsql.cl test-suite/acl-compat-tester.cl $(doc-dir)/test-suite
 
 	# Documentation
@@ -130,11 +150,11 @@ binary-arch: build install
 	dh_installdocs
 #	dh_installexamples 
 	dh_installchangelogs ChangeLog
-	dh_link -p $(pkg-base) $(clc-source)/clsql $(clc-source)/clsql-base
-	dh_link -p $(pkg-mysql) $(clc-source)/clsql $(clc-source)/clsql-mysql
-	dh_link -p $(pkg-pg) $(clc-source)/clsql $(clc-source)/clsql-postgresql
-	dh_link -p $(pkg-pg-socket) $(clc-source)/clsql $(clc-source)/clsql-postgresql-socket
-	dh_link -p $(pkg-aodbc) $(clc-source)/clsql $(clc-source)/clsql-aodbc
+	dh_link -p $(pkg-base) $(clc-clsql) $(clc-source)/clsql-base
+	dh_link -p $(pkg-mysql) $(clc-clsql) $(clc-source)/clsql-mysql
+	dh_link -p $(pkg-pg) $(clc-clsql) $(clc-source)/clsql-postgresql
+	dh_link -p $(pkg-pg-socket) $(clc-clsql) $(clc-source)/clsql-postgresql-socket
+	dh_link -p $(pkg-aodbc) $(clc-clsql) $(clc-source)/clsql-aodbc
 	dh_strip
 	dh_compress
 	dh_fixperms
