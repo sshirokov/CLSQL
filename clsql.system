@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql.system,v 1.9 2002/05/13 00:45:10 kevin Exp $
+;;;; $Id: clsql.system,v 1.10 2002/05/13 00:57:42 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -19,11 +19,8 @@
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :cl-user)
 
-(handler-case
-    (logical-pathname-translations "CL-LIBRARY")
-  (error ()
-      (load (make-pathname :name "set-cl-library" :type "cl"
-			   :defaults *load-truename*))))
+(load (make-pathname :name "set-cl-library" :type "cl"
+		     :defaults *load-truename*))
 
 ;;; System definitions
 

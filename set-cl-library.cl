@@ -20,12 +20,26 @@
 (handler-case
     (logical-pathname-translations "CL-LIBRARY")
   (error ()
-    (let* ((dir (pathname-directory *load-truename*))
-	   (parent-dir (subseq dir 0 (1- (length dir)))))
-      (load (make-pathname :name "set-logical" :type "cl"
-			   :defaults *load-truename*))
-      (set-logical-host-for-pathname 
-       "CL-LIBRARY" 
-       (make-pathname :host (pathname-host *load-truename*)
-		      :device (pathname-device *load-truename*)
-		      :directory parent-dir)))))
+	 (let* ((dir (pathname-directory *load-truename*))
+		(parent-dir (subseq dir 0 (1- (length dir)))))
+	   (load (make-pathname :name "set-logical" :type "cl"
+				:defaults *load-truename*))
+	   (set-logical-host-for-pathname 
+	    "CL-LIBRARY" 
+	    (make-pathname :host (pathname-host *load-truename*)
+			   :device (pathname-device *load-truename*)
+			   :directory parent-dir))))
+  (:no-error (translation)
+	     ;; Make sure that CL-LIBRARY points to this installation
+	     (let* ((dir (pathname-directory *load-truename*))
+		    (base-dir (car (last dir)))
+		    (logical-dir (translate-logical-pathname 
+				  (concatenate 'string
+					       "CL-LIBRARY:" base-dir ";"))))
+	       (unless (equalp dir (pathname-directory logical-dir))
+		 (error 
+		  (format nil "~S does not equal ~S"
+			  dir (pathname-directory logical-dir)))))))
+			
+
+	     ))
