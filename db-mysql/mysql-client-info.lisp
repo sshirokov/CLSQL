@@ -23,7 +23,7 @@
 (defvar *mysql-client-info* nil)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (uffi:def-function "mysql_get_client_info"
+  (uffi:def-function ("mysql_get_client_info" mysql-get-client-info)
       ()
     :module "mysql"
     :returning :cstring)
