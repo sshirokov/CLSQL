@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: cmucl-compat.lisp,v 1.3 2002/10/21 07:45:49 kevin Exp $
+;;;; $Id: cmucl-compat.lisp,v 1.4 2003/05/02 03:05:54 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -16,7 +16,6 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :cl-user)
 
 (defpackage :cmucl-compat
@@ -56,9 +55,11 @@ Needs to be a macro to overwrite value of VEC."
       ((typep ,vec 'simple-array)
        (let ((,new-vec (make-array ,len :element-type
 				   (array-element-type ,vec))))
-	 (dotimes (i ,len)
-	   (declare (fixnum i))
-	   (setf (aref ,new-vec i) (aref ,vec i)))
+	 (check-type ,len fixnum)
+	 (locally (declare (speed 3) (safety 0) (space 0)) 
+	   (dotimes (i ,len)
+	     (declare (fixnum i))
+	     (setf (aref ,new-vec i) (aref ,vec i))))
 	 (setq ,vec ,new-vec)))
       ((typep ,vec 'vector)
 	(setf (fill-pointer ,vec) ,len)
@@ -68,27 +69,10 @@ Needs to be a macro to overwrite value of VEC."
        )))
 
 
-
-#-(or cmu sbcl scl)
+#-(or cmu scl)
 (defun make-sequence-of-type (type length)
   "Returns a sequence of the given TYPE and LENGTH."
-  (declare (fixnum length))
-  (case type
-    (list 
-     (make-list length))
-    ((bit-vector simple-bit-vector) 
-     (make-array length :element-type '(mod 2)))
-    ((string simple-string base-string simple-base-string)
-     (make-string length))
-    (simple-vector 
-     (make-array length))
-    ((array simple-array vector)
-     (if (listp type)
-	 (make-array length :element-type (cadr type))
-       (make-array length)))
-    (t
-     (make-sequence-of-type (result-type-or-lose type t) length))))
-
+  (make-sequence type length))
 
 #+(or cmu scl)
 (if (fboundp 'lisp::make-sequence-of-type)
@@ -97,11 +81,7 @@ Needs to be a macro to overwrite value of VEC."
   (defun make-sequence-of-type (type len)
     (system::make-sequence-of-type type len)))
 
-#+sbcl
-(defun make-sequence-of-type (type len)
-  (sb-impl::make-sequence-of-type type len))
-
-#-(or cmu sbcl scl)
+#-(or cmu scl)
 (defun result-type-or-lose (type nil-ok)
   (unless (or type nil-ok)
     (error "NIL output type invalid for this sequence function"))
@@ -121,7 +101,3 @@ Needs to be a macro to overwrite value of VEC."
 #+(or cmu scl)
 (defun result-type-or-lose (type nil-ok)
   (lisp::result-type-or-lose type nil-ok))
-
-#+sbcl
-(defun result-type-or-lose (type nil-ok)
-  (sb-impl::result-type-or-lose type nil-ok))

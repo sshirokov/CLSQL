@@ -24,7 +24,7 @@
 ;; Place, Suite 330, Boston, MA  02111-1307  USA
 ;;
 ;;;; from the original ACL 6.1 sources:
-;; $Id: acl-compat-tester.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;; $Id: acl-compat-tester.lisp,v 1.1 2003/05/02 03:08:58 kevin Exp $
 
 
 (defpackage :util.test
@@ -399,17 +399,17 @@ discriminate on new versus known failures."
   (if catch-breaks
       `(handler-case (values-list (cons t (multiple-value-list ,form)))
          (error (condition)
-           (declare (ignore-if-unused condition))
+           (declare (ignorable condition))
            ,@(if announce `((format *error-output* "~&Error: ~a~%" condition)))
            nil)
          (simple-break (condition)
-           (declare (ignore-if-unused condition))
+           (declare (ignorable condition))
            ,@(if announce `((format *error-output* "~&Warning: ~a~%" condition))
 )
            nil))
     `(handler-case (values-list (cons t (multiple-value-list ,form)))
        (error (condition)
-         (declare (ignore-if-unused condition))
+         (declare (ignorable condition))
          ,@(if announce `((format *error-output* "~&Error: ~a~%" condition)))
          nil))))
 

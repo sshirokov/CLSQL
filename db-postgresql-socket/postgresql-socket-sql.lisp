@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-sql.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: postgresql-socket-sql.lisp,v 1.2 2003/05/02 03:05:54 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -30,11 +30,6 @@
 
 ;; interface foreign library loading routines
 
-(defmethod database-type-library-loaded ((database-type (eql :postgresql-socket)))
-  t)
-
-(defmethod clsql-base-sys:database-type-load-foreign ((database-type (eql :postgresql-socket)))
-  t)
 
 (clsql-base-sys:database-type-load-foreign :postgresql-socket)
 

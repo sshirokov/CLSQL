@@ -2,12 +2,12 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          tester-clsql.cl
+;;;; Name:          tests.lisp
 ;;;; Purpose:       Automated test of CLSQL using ACL's tester
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: tester-clsql.lisp,v 1.2 2002/10/16 11:51:04 kevin Exp $
+;;;; $Id: tests.lisp,v 1.1 2003/05/02 03:08:58 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -16,7 +16,9 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-;;; This test suite looks for a configuration file named "test.config"
+;;; This test suite looks for a configuration file named ".clsql-test.config"
+;;; located in the users home directory.
+;;;
 ;;; This file contains a single a-list that specifies the connection
 ;;; specs for each database type to be tested. For example, to test all
 ;;; platforms, a sample "test.config" may look like:
@@ -26,19 +28,13 @@
 ;;;  (:postgresql ("localhost" "another-db" "user2" "dont-tell"))
 ;;;  (:postgresql-socket ("pg-server" "a-db-name" "user" "secret-password")))
 
+(in-package :clsql-tests)
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :cl-user)
+(defvar *config-pathname*
+  (make-pathname :defaults (user-homedir-pathname)
+		 :name ".clsql-test"
+		 :type "config"))
 
-(unless (find-package :util.test)
-  (load (make-pathname :name "acl-compat-tester" :defaults *load-truename*)))
-
-(in-package :clsql-user)
-(use-package :util.test)
-
-(defvar *config-pathname* (make-pathname :name "test"
-					 :type "config"
-					 :defaults *load-truename*))
 
 (defclass conn-specs ()
   ((aodbc-spec :accessor aodbc-spec)

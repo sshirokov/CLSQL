@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql.asd,v 1.16 2002/11/08 16:51:50 kevin Exp $
+;;;; $Id: clsql.asd,v 1.17 2003/05/02 03:05:54 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -20,16 +20,14 @@
 
 #+(or allegro lispworks cmu sbcl openmcl mcl scl)
 (defsystem :clsql
-  :name "cl-sql"
-  :author "Kevin M. Rosenberg <kmr@debian.org>"
-  :version "0.9.2"
+  :name "clsql"
+  :author "Kevin Rosenberg <kevin@rosenberg.net>"
   :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
+  :version "1.5.x"
   :licence "Lessor Lisp General Public License"
   :description "Common Lisp SQL Interface Library"
   :long-description "cl-sql package provides the high-level interface for the CLSQL system."
   
-  :perform (load-op :after (op clsql)
-		    (pushnew :clsql cl:*features*))
   :components
   ((:module :sql
 	    :components
@@ -42,3 +40,8 @@
 	     (:file "usql" :depends-on ("sql")))))
   :depends-on (:clsql-base)
   )
+
+#+(or allegro lispworks cmu sbcl openmcl mcl scl)
+(defmethod perform ((o test-op) (c (eql (find-system :clsql))))
+  (oos 'load-op 'clsql-tests)
+  (oos 'test-op 'clsql-tests))

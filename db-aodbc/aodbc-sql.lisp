@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: aodbc-sql.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: aodbc-sql.lisp,v 1.2 2003/05/02 03:05:54 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -21,7 +21,7 @@
 
 
 ;; interface foreign library loading routines
-(defmethod database-type-library-loaded ((database-type (eql :aodbc)))
+(defmethod clsql-base-sys:database-type-library-loaded ((database-type (eql :aodbc)))
   "T if foreign library was able to be loaded successfully. "
   (when (find-package :dbi) ;; finds Allegro's DBI (AODBC) package
     t))
@@ -145,6 +145,6 @@
 	      (setf (car rest) elem))
 	list))))
 
-		       
+#+ignore		       
 (when (clsql-base-sys:database-type-library-loaded :aodbc)
   (clsql-base-sys:initialize-database-type :database-type :aodbc))

@@ -32,7 +32,7 @@ Description: Common UFFI functions for CLSQL database backends
 
 Package: cl-sql-mysql
 Architecture: any
-Depends: cl-sql-base (>= ${Source-Version}), libmysqlclient12, cl-sql-uffi (>= ${Source-Version})
+Depends: cl-sql-base (>= ${Source-Version}), libmysqlclient10, cl-sql-uffi (>= ${Source-Version})
 Provides: cl-sql-backend
 Description: CLSQL database backend, MySQL
  This package enables you to use the CLSQL data access package
@@ -61,3 +61,16 @@ Provides: cl-sql-backend
 Description: CLSQL database backend, PostgreSQL
  This package enables you to use the CLSQL data access package
  with PostgreSQL databases via a socket interface.
+
+Package: cl-sql-tests
+Architecture: all
+Depends: cl-sql-base, cl-sql-postgresql, cl-sql-postgresql-socket, cl-sql-mysql
+Suggests: acl-installer, libmyodbc, unixodbc,cl-sql-aodbc 
+Description: Testing suite for CLSQL
+ This package contains a test suite for CLSQL. It requires manual
+ configuration of MySQL and PostgreSQL databases to execute.
+ A configured, licensed version of AllegroCL with ODBC setup is
+ required to test the clsql-aodbc interface. See the
+ /usr/share/doc/cl-sql-tests/README file if you want to try
+ running these regression tests.
+

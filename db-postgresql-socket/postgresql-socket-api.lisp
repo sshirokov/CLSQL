@@ -9,7 +9,7 @@
 ;;;;                
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-api.lisp,v 1.3 2003/03/02 20:02:02 kevin Exp $
+;;;; $Id: postgresql-socket-api.lisp,v 1.4 2003/05/02 03:05:54 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -40,12 +40,15 @@
      (:float4 700)
      (:float8 701)))
 
-(defmethod database-type-library-loaded ((database-type
+(defmethod clsql-base-sys:database-type-library-loaded ((database-type
 					  (eql :postgresql-socket)))
   "T if foreign library was able to be loaded successfully. Always true for
 socket interface"
   t)
-				      
+
+(defmethod clsql-base-sys:database-type-load-foreign ((database-type (eql :postgresql-socket)))
+  t)
+
 
 ;;; Message I/O stuff
 

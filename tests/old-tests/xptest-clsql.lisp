@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: xptest-clsql.lisp,v 1.1 2002/09/30 10:19:24 kevin Exp $
+;;;; $Id: xptest-clsql.lisp,v 1.1 2003/05/02 03:08:58 kevin Exp $
 ;;;;
 ;;;; The XPTest package can be downloaded from
 ;;;; http://alpha.onshored.com/lisp-software/

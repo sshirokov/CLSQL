@@ -1,0 +1,16 @@
+These tests require the setup of a configuration file with account
+information for MySQL and PostgreSQL SQL servers. Additionally,
+the Debian package acl-installer must be installed and a license downloaded
+to use the AODBC tests.
+
+This test suite looks for a configuration file named ".clsql-test.config"
+located in the users home directory.
+
+This file contains a single a-list that specifies the connection
+ specs for each database type to be tested. For example, to test all
+platforms, a sample file might look like this:
+
+((:mysql ("localhost" "a-mysql-db" "user1" "secret"))
+ (:aodbc ("my-dsn" "a-user" "pass"))
+ (:postgresql ("localhost" "another-db" "user2" "dont-tell"))
+ (:postgresql-socket ("pg-server" "a-db-name" "user" "secret-password")))
