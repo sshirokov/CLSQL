@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-uffi.asd,v 1.11 2002/09/25 12:44:59 kevin Exp $
+;;;; $Id: clsql-uffi.asd,v 1.12 2002/09/30 10:19:23 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -39,9 +39,3 @@
 	     (:file "clsql-uffi-loader" :depends-on ("clsql-uffi-package"))
 	     (:file "clsql-uffi" :depends-on ("clsql-uffi-loader")))))
   :depends-on (:uffi :clsql-base))
-
-
-#+(or allegro lispworks cmu openmcl mcl)
-(defmethod source-file-type  ((c cl-source-file)
-			      (s (eql (find-system :clsql-uffi)))) 
-   "cl")

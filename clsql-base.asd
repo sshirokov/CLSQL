@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql-base.asd,v 1.14 2002/09/25 12:44:59 kevin Exp $
+;;;; $Id: clsql-base.asd,v 1.15 2002/09/30 10:19:23 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -40,11 +40,6 @@
 	     (:file "conditions" :depends-on ("classes"))
 	     (:file "db-interface" :depends-on ("conditions"))
 	     (:file "initialize" :depends-on ("db-interface"))))))
-
-#+(or allegro lispworks cmu openmcl mcl)
-(defmethod source-file-type  ((c cl-source-file)
-			      (s (eql (find-system :clsql-base)))) 
-   "cl")
 
 #+(or allegro lispworks cmu openmcl mcl)
 (when (ignore-errors (find-class 'load-compiled-op))

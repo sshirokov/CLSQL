@@ -23,15 +23,15 @@ all-pkgs	:= $(pkg) $(pkg-base) $(pkg-uffi) $(pkg-mysql) $(pkg-pg) $(pkg-pg-socke
 UPSTREAM_VER	:= $(shell sed -n -e "s/${pkg} (\(.*\)-[0-9A-Za-z\.]).*/\1/p" < debian/changelog |head -1)
 
 ## Lisp sources
-srcs		:= $(wildcard sql/*.cl) clsql.asd
-srcs-base	:= $(wildcard base/*.cl) 
-srcs-uffi	:= $(wildcard uffi/*.cl) $(wildcard uffi/*.c)
+srcs		:= $(wildcard sql/*.lisp) clsql.asd
+srcs-base	:= $(wildcard base/*.lisp) 
+srcs-uffi	:= $(wildcard uffi/*.lisp) $(wildcard uffi/*.c)
 srcs-uffi-so	:= $(wildcard uffi/*.so)
-srcs-mysql	:= $(wildcard db-mysql/*.cl) $(wildcard db-mysql/*.c)
+srcs-mysql	:= $(wildcard db-mysql/*.lisp) $(wildcard db-mysql/*.c)
 srcs-mysql-so	:=  $(wildcard db-mysql/*.so)
-srcs-pg		:= $(wildcard db-postgresql/*.cl)
-srcs-pg-socket	:= $(wildcard db-postgresql-socket/*.cl)
-srcs-aodbc	:= $(wildcard db-aodbc/*.cl)
+srcs-pg		:= $(wildcard db-postgresql/*.lisp)
+srcs-pg-socket	:= $(wildcard db-postgresql-socket/*.lisp)
+srcs-aodbc	:= $(wildcard db-aodbc/*.lisp)
 
 clc-base	:= usr/share/common-lisp
 clc-source	:= $(clc-base)/source
@@ -129,7 +129,7 @@ install: build
 
 	# Test suite
 	dh_installdirs -p $(pkg) $(doc-dir)/html $(doc-dir)/test-suite
-	dh_install -p $(pkg) test-suite/tester-clsql.cl test-suite/acl-compat-tester.cl $(doc-dir)/test-suite
+	dh_install -p $(pkg) test-suite/tester-clsql.lisp test-suite/acl-compat-tester.lisp $(doc-dir)/test-suite
 
 	# Documentation
 	rm -rf doc/html
