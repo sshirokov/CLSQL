@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-sql.cl,v 1.4 2002/03/24 22:25:51 kevin Exp $
+;;;; $Id: postgresql-socket-sql.cl,v 1.5 2002/03/25 23:22:07 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -21,13 +21,56 @@
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :cl-user)
 
-
 (defpackage :clsql-postgresql-socket
     (:use :common-lisp :clsql-sys :postgresql-socket)
     (:export #:postgresql-socket-database)
     (:documentation "This is the CLSQL socket interface to PostgreSQL."))
 
 (in-package :clsql-postgresql-socket)
+
+;; Field type conversion
+
+(defun canonical-field-type (fields index)
+  "Extracts canonical field type from fields list"
+  (let ((oid (cadr (nth index fields))))
+    (case oid
+      ((#.pgsql-ftype#bytea
+	#.pgsql-ftype#int2
+	#.pgsql-ftype#int4)
+       :int)
+      ((#.pgsql-ftype#float4
+	#.pgsql-ftype#float8)
+       :double)
+      (otherwise
+       t))))
+
+(defun canonicalize-field-types (types cursor)
+  (let* ((fields (postgresql-cursor-fields cursor))
+	 (num-fields (length fields)))
+    (cond
+      ((listp types)
+       (let ((length-types (length types))
+	     (new-types '()))
+	 (loop for i from 0 below num-fields
+	       do
+	       (if (>= i length-types)
+		   (push t new-types) ;; types is shorted than num-fields
+		   (push
+		    (case (nth i types)
+		      ((:int :long :double t)
+		       (nth i types))
+		      (t
+		       t))
+		    new-types)))
+	 (nreverse new-types)))
+      ((eq types :auto)
+       (let ((new-types '()))
+	 (dotimes (i num-fields)
+	   (declare (fixnum i))
+	   (push (canonical-field-type fields i) new-types))
+	 (nreverse new-types)))
+      (t
+       nil))))
 
 (defun convert-to-clsql-warning (database condition)
   (warn 'clsql-database-warning :database database
@@ -123,7 +166,8 @@
 		 :expression expression
 		 :errno 'missing-result
 		 :error "Didn't receive result cursor for query."))
-	(loop for row = (read-cursor-row cursor)
+	(setq field-types (canonicalize-field-types field-types cursor))
+	(loop for row = (read-cursor-row cursor field-types)
 	      while row
 	      collect row
 	      finally
@@ -193,7 +237,7 @@
 	(values (make-postgresql-socket-result-set
 		 :done nil 
 		 :cursor cursor
-		 :field-types field-types)
+		 :field-types (canonicalize-field-types field-types cursor))
 		(length (postgresql-cursor-fields cursor)))))))
 
 (defmethod database-dump-result-set (result-set
@@ -210,7 +254,10 @@
 				    list)
   (let ((cursor (postgresql-socket-result-set-cursor result-set)))
     (with-postgresql-handlers (database)
-      (if (copy-cursor-row cursor list)
+      (if (copy-cursor-row cursor 
+			   list
+			   (postgresql-socket-result-set-field-types
+			    result-set))
 	  t
 	  (prog1 nil
 	    (setf (postgresql-socket-result-set-done result-set) t)

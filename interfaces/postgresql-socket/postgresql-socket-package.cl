@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-package.cl,v 1.1 2002/03/23 14:04:53 kevin Exp $
+;;;; $Id: postgresql-socket-package.cl,v 1.2 2002/03/25 23:22:07 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -23,7 +23,14 @@
 
 (defpackage :postgresql-socket
   (:use :common-lisp)
-  (:export #:+crypt-library+
+  (:export #:pgsql-ftype
+	   #:pgsql-ftype#bytea
+	   #:pgsql-ftype#int2
+	   #:pgsql-ftype#int4
+	   #:pgsql-ftype#float4
+   	   #:pgsql-ftype#float8
+
+	   #:+crypt-library+
 	   #:postgresql-condition
 	   #:postgresql-condition-connection
 	   #:postgresql-condition-message

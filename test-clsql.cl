@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: test-clsql.cl,v 1.6 2002/03/25 14:13:41 kevin Exp $
+;;;; $Id: test-clsql.cl,v 1.7 2002/03/25 23:22:07 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -25,13 +25,15 @@
 					 :defaults *load-truename*))
 (defparameter *config* nil)
 
-(defun do-test ()
-  (if (probe-file *config-pathname*)
-      (with-open-file (stream *config-pathname* :direction :input)
-	(setq *config* (read stream))
-	(test-automated *config*))
-      (test-interactive)))
-
+(defun do-test (&optional (interactive nil))
+  (if interactive
+      (test-interactive)
+    (if (probe-file *config-pathname*)
+	(with-open-file (stream *config-pathname* :direction :input)
+	  (setq *config* (read stream))
+	  (test-automated *config*))
+      (test-interactive))))
+  
 (defun test-interactive ()
   (do ((done nil))
       (done)
@@ -52,6 +54,20 @@
   )
 
 
+(defun create-test-table (db)
+  (ignore-errors
+    (clsql:execute-command 
+     "DROP TABLE test_clsql" :database db))
+  (clsql:execute-command 
+   "CREATE TABLE test_clsql (i integer, sqrt float, sqrt_str CHAR(20))" :database db)
+  (dotimes (i 10)
+    (clsql:execute-command
+     (format nil "INSERT INTO test_clsql VALUES (~d,~d,'~a')"
+	     i (sqrt i) (format nil "~d" (sqrt i)))
+     :database db)))
+
+(defun drop-test-table (db)
+  (clsql:execute-command "DROP TABLE test_clsql"))
 
 (defun clsql-test-table (spec type)
   (when (eq type :mysql)
@@ -59,20 +75,14 @@
   (let ((db (clsql:connect spec :database-type type :if-exists :new)))
     (unwind-protect
 	(progn
-	  (ignore-errors
-	   (clsql:execute-command 
-	    "DROP TABLE test_clsql" :database db))
-	  (clsql:execute-command 
-	   "CREATE TABLE test_clsql (i integer, sqrt float, sqrt_str CHAR(20))" :database db)
-	  (dotimes (i 10)
-	    (clsql:execute-command
-	     (format nil "INSERT INTO test_clsql VALUES (~d,~d,'~a')"
-		     i (sqrt i) (format nil "~d" (sqrt i)))
-	     :database db))
+	  (create-test-table db)
+	  (pprint (clsql:query "select * from test_clsql" 
+			       :database db
+			       :field-types :auto))
 	  (pprint (clsql:map-query 'vector #'list "select * from test_clsql" 
 				   :database db
 				   :field-types :auto)) ;;'(:int :double t)))
-	  (clsql:execute-command "DROP TABLE test_clsql"))
+	  (drop-test-table db))
       (clsql:disconnect :database db)))
   )
 

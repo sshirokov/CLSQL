@@ -9,7 +9,7 @@
 ;;;;                
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-api.cl,v 1.2 2002/03/24 04:01:26 kevin Exp $
+;;;; $Id: postgresql-socket-api.cl,v 1.3 2002/03/25 23:22:07 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -26,10 +26,18 @@
 ;;;;  - Added necessary (force-output) for socket streams on 
 ;;;;     Allegro and Lispworks
 ;;;;  - Added initialization variable
+;;;;  - Added field type processing
 
+ 
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :postgresql-socket)
 
+(uffi:def-enum pgsql-ftype
+    ((:bytea 17)
+     (:int2 21)
+     (:int4 23)
+     (:float4 700)
+     (:float8 701)))
 
 (defmethod database-type-library-loaded ((database-type
 					  (eql :postgresql-socket)))
@@ -555,7 +563,20 @@ connection, if it is still open."
 	    do (setf (aref result index) (ldb (byte 1 weight) byte))))
     result))
 
-(defun read-cursor-row (cursor)
+(defun read-field (socket type)
+  (let* ((length (read-socket-value 'int32 socket))
+	 (result (make-string (- length 4))))
+    (read-socket-sequence result socket)
+    (case type
+      (:int
+       (parse-integer result))
+      (:double
+       (let ((*read-default-float-format* 'double-float))
+	 (read-from-string result)))
+      (t
+       result))))
+
+(defun read-cursor-row (cursor field-types)
   (let* ((connection (postgresql-cursor-connection cursor))
 	 (socket (postgresql-connection-socket connection))
 	 (fields (postgresql-cursor-fields cursor)))
@@ -569,15 +590,13 @@ connection, if it is still open."
 		     with null-vector = (read-null-bit-vector socket count)
 		     repeat count
 		     for null-bit across null-vector
+		     for i from 0
 		     for null-p = (zerop null-bit)
 		     if null-p
 		     collect nil
 		     else
 		     collect
-		     (let* ((length (read-socket-value 'int32 socket))
-			    (result (make-string (- length 4))))
-		       (read-socket-sequence result socket)
-		       result))))
+		     (read-field socket (nth i field-types)))))
 	    (#.+binary-row-message+
 	     (error "NYI"))
 	    (#.+completed-response-message+
@@ -601,7 +620,8 @@ connection, if it is still open."
 	     (error 'postgresql-fatal-error :connection connection
 		    :message "Received garbled message from backend")))))))
 
-(defun copy-cursor-row (cursor sequence)
+
+(defun copy-cursor-row (cursor sequence field-types)
   (let* ((connection (postgresql-cursor-connection cursor))
 	 (socket (postgresql-connection-socket connection))
 	 (fields (postgresql-cursor-fields cursor)))
@@ -611,15 +631,21 @@ connection, if it is still open."
 	  (case code
 	    (#.+ascii-row-message+
 	     (return
+	       #+ignore
+	       (let* ((count (length sequence))
+		      (null-vector (read-null-bit-vector socket count)))
+		 (dotimes (i count)
+		   (declare (fixnum i))
+		   (if (zerop (elt null-vector i))
+		       (setf (elt sequence i) nil)
+		       (let ((value (read-field socket (nth i field-types))))
+			 (setf (elt sequence i) value)))))
 	       (map-into
 		sequence
 		#'(lambda (null-bit)
 		    (if (zerop null-bit)
 			nil
-			(let* ((length (read-socket-value 'int32 socket))
-			       (result (make-string (- length 4))))
-			  (read-socket-sequence result socket)
-			  result)))
+			(read-field socket t)))
 		(read-null-bit-vector socket (length sequence)))))
 	    (#.+binary-row-message+
 	     (error "NYI"))
@@ -682,12 +708,12 @@ connection, if it is still open."
 	     (error 'postgresql-fatal-error :connection connection
 		    :message "Received garbled message from backend")))))))
 
-(defun run-query (connection query)
+(defun run-query (connection query &optional (field-types nil))
   (start-query-execution connection query)
   (multiple-value-bind (status cursor)
       (wait-for-query-results connection)
     (assert (eq status :cursor))
-    (loop for row = (read-cursor-row cursor)
+    (loop for row = (read-cursor-row cursor field-types)
 	  while row
 	  collect row
 	  finally
