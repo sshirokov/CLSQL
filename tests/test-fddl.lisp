@@ -79,6 +79,43 @@
       (clsql:drop-table "MyMixedCase"))
   ((5) (6)))
 
+(deftest :fddl/table/6 
+    (values
+     (clsql:table-exists-p [foo])
+     (progn
+       (let ((*backend-warning-behavior*
+              (if (member *test-database-type* 
+                          '(:postgresql :postgresql-socket))
+                  :ignore
+                  :warn)))
+         (clsql:create-table [foo] 
+                             '(([bar] integer :not-null :unique :primary-key) 
+                               ([baz] string :not-null :unique))))
+       (clsql:table-exists-p [foo]))
+     (progn
+       (clsql:drop-table [foo])
+       (clsql:table-exists-p [foo])))
+  nil t nil)    
+
+(deftest :fddl/table/7 
+    (values
+     (clsql:table-exists-p [foo])
+     (progn
+       (let ((*backend-warning-behavior*
+              (if (member *test-database-type* 
+                          '(:postgresql :postgresql-socket))
+                  :ignore
+                  :warn)))
+         (clsql:create-table [foo] '(([bar] integer :not-null) 
+                                     ([baz] string :not-null))
+                             :constraints '("UNIQUE (bar,baz)" 
+                                            "PRIMARY KEY (bar)")))
+       (clsql:table-exists-p [foo]))
+     (progn
+       (clsql:drop-table [foo])
+       (clsql:table-exists-p [foo])))
+  nil t nil)    
+
 (deftest :fddl/attributes/1
     (apply #'values
            (sort 
@@ -289,7 +326,18 @@
 	     (return nil))))))
   555 t)
 
-	   
+(deftest :fddl/owner/1 
+    (and 
+     ;; user tables are an improper subset of all tables 
+     (= (length (intersection (clsql:list-tables :owner nil) 
+                              (clsql:list-tables :owner :all)
+                              :test #'string=))
+        (length (clsql:list-tables :owner nil)))
+     ;; user tables are a proper subset of all tables 
+     (> (length (clsql:list-tables :owner :all)) 
+        (length (clsql:list-tables :owner nil))))
+  t) 
+
 ))
 
 #.(clsql:restore-sql-reader-syntax-state)

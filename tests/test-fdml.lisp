@@ -478,6 +478,13 @@
 		  :flatp t :result-types nil :field-names nil)))
   ("Lenin" "Stalin" "Trotsky" "Kruschev"))
 
+;; test escaping of single quotes 
+(deftest :fdml/select/35 
+    (clsql:select "What's up doc?" :from [employee] :flatp t :field-names nil)
+  ("What's up doc?" "What's up doc?" "What's up doc?" "What's up doc?"
+   "What's up doc?" "What's up doc?" "What's up doc?" "What's up doc?"
+   "What's up doc?" "What's up doc?"))
+
 (deftest :fdml/do-query/1
     (let ((result '()))
     (clsql:do-query ((name) [select [last-name] :from [employee]

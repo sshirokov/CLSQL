@@ -40,6 +40,9 @@
     (clsql:sql ["SELECT FOO,BAR FROM BAZ"])
   "SELECT FOO,BAR FROM BAZ")
 
+(deftest :syntax/generic/6 
+    (clsql:sql "What's up Doc?") 
+  "'What''s up Doc?'")
 
 (deftest :syntax/ident/1
     (clsql:sql [foo])

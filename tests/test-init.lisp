@@ -595,6 +595,10 @@
 	  ((and (eq *test-database-type* :oracle)
 		(clsql-sys:in test :fdml/query/8 :fdml/select/21))
 	   (push (cons test "syntax not supported") skip-tests))
+          ((and (not (member *test-database-underlying-type* 
+                             '(:postgresql :oracle)))
+                (clsql-sys:in test :fddl/owner/1))
+           (push (cons test "table ownership not supported") skip-tests))
 	  (t
 	   (push test-form test-forms)))))
       (values (nreverse test-forms) (nreverse skip-tests))))

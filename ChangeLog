@@ -1,5 +1,15 @@
+12 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* tests/test-syntax.lisp, tests/test-fdml.lisp: add tests for escaping 
+	of single quotes. 
+	* tests/test-fddl.lisp: add tests for column and table constraints 
+	in CREATE-TABLE. Add test for OWNER keyword parameter to 
+	LIST-TABLES (assuming same underlying machinery in other FDDL 
+	functions). 
+	* tests/test-init.lisp: restrict above test to postgresql and oracle. 
+	
 12 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
-	* db-sqlite/sqlite-sql.lisp: Fix condition as reported by Aurelio Bignoli.
+	* db-sqlite/sqlite-sql.lisp: Fix condition as reported by Aurelio 
+	Bignoli.
 
 11 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/oodml.lisp, sql/package.lisp, doc/ref-ooddl.lisp, db-mysql/mysql-objects.lisp: Add tinyint type
