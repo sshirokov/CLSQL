@@ -32,6 +32,9 @@
 (defvar *default-database* nil
   "Specifies the default database to be used.")
 
+(defun is-database-open (database)
+  (eql (database-state database) :open))
+
 (defun find-database (database &key (errorp t) (db-type nil))
   "The function FIND-DATABASE, given a string DATABASE, searches
 amongst the connected databases for one matching the name DATABASE. If
@@ -85,6 +88,12 @@ is a conn-pool object the connection will be taken from this pool."
   (when (stringp connection-spec)
     (setq connection-spec (string-to-list-connection-spec connection-spec)))
   
+  (unless (member database-type *loaded-database-types*)
+    (asdf:operate 'asdf:load-op (ensure-keyword
+				 (concatenate 'string 
+					      (symbol-name '#:clsql-)
+					      (symbol-name database-type)))))
+
   (if pool
       (acquire-from-pool connection-spec database-type pool)
       (let* ((db-name (database-name-from-spec connection-spec database-type))
@@ -116,6 +125,7 @@ is a conn-pool object the connection will be taken from this pool."
             (setq result
                   (database-connect connection-spec database-type)))
         (when result
+	  (setf (slot-value result 'state) :open)
           (pushnew result *connected-databases*)
           (when make-default (setq *default-database* result))
           result))))
@@ -143,7 +153,7 @@ this pool."
             (setf *connected-databases* (delete database *connected-databases*))
             (when (eq database *default-database*)
               (setf *default-database* (car *connected-databases*)))
-            (change-class database 'closed-database)
+            (setf (slot-value database 'state) :closed)
             t)))))
 
 

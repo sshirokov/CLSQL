@@ -34,7 +34,7 @@ database type library loaded successfully."))
   (:documentation
    "Returns database type")
   (:method (database)
-	   (signal-nodb-error database)))
+	   (signal-no-database-error database)))
 
 
 (defgeneric database-initialize-database-type (database-type)
@@ -49,42 +49,35 @@ was called with the connection-spec."))
 (defgeneric database-connect (connection-spec database-type)
   (:documentation "Internal generic implementation of connect."))
 
-(defgeneric database-disconnect (database)
-  (:method ((database closed-database))
-	   (signal-closed-database-error database))
+(defgeneric database-reconnect (database)
   (:method ((database t))
-	   (signal-nodb-error database))
+	   (signal-no-database-error database))
+  (:documentation "Internal generic implementation of reconnect."))
+
+(defgeneric database-disconnect (database)
+  (:method ((database t))
+	   (signal-no-database-error database))
   (:documentation "Internal generic implementation of disconnect."))
 
 (defgeneric database-query (query-expression database result-types)
-  (:method (query-expression (database closed-database) result-types)
-	   (declare (ignore query-expression result-types))
-	   (signal-closed-database-error database))  
   (:method (query-expression (database t) result-types)
 	   (declare (ignore query-expression result-types))
-	   (signal-nodb-error database))
+	   (signal-no-database-error database))
   (:documentation "Internal generic implementation of query."))
 
 
 (defgeneric database-execute-command (sql-expression database)
-  (:method (sql-expression (database closed-database))
-	   (declare (ignore sql-expression))
-	   (signal-closed-database-error database))
   (:method (sql-expression (database t))
 	   (declare (ignore sql-expression))
-	   (signal-nodb-error database))
+	   (signal-no-database-error database))
   (:documentation "Internal generic implementation of execute-command."))
 
 ;;; Mapping and iteration
 (defgeneric database-query-result-set
     (query-expression database &key full-set result-types)
-  (:method (query-expression (database closed-database) &key full-set result-types)
-	   (declare (ignore query-expression full-set result-types))
-	   (signal-closed-database-error database)
-	   (values nil nil nil))
   (:method (query-expression (database t) &key full-set result-types)
 	   (declare (ignore query-expression full-set result-types))
-	   (signal-nodb-error database)
+	   (signal-no-database-error database)
 	   (values nil nil nil))
   (:documentation
    "Internal generic implementation of query mapping.  Starts the
@@ -102,21 +95,15 @@ returned otherwise.  If an error occurs during query execution, the
 function should signal a clsql-sql-error."))
 
 (defgeneric database-dump-result-set (result-set database)
-  (:method (result-set (database closed-database))
-	   (declare (ignore result-set))
-	   (signal-closed-database-error database))
   (:method (result-set (database t))
 	   (declare (ignore result-set))
-	   (signal-nodb-error database))
+	   (signal-no-database-error database))
   (:documentation "Dumps the received result-set."))
 
 (defgeneric database-store-next-row (result-set database list)
-  (:method (result-set (database closed-database) list)
-	   (declare (ignore result-set list))
-	   (signal-closed-database-error database))
   (:method (result-set (database t) list)
 	   (declare (ignore result-set list))
-	   (signal-nodb-error database))
+	   (signal-no-database-error database))
   (:documentation
    "Returns t and stores the next row in the result set in list or
 returns nil when result-set is finished."))
@@ -129,6 +116,23 @@ returns nil when result-set is finished."))
   (:documentation
    "Probes for the existence of a database, returns T if database found or NIL 
 if not found. May signal an error if unable to communicate with database server."))
+
+(defgeneric database-destroy (connection-spec database)
+  (:method (connection-spec (database t))
+	   (declare (ignore connection-spec))
+	   (signal-no-database-error database))
+  (:documentation "Destroys (drops) a database."))
+
+(defgeneric database-truncate (database)
+  (:method ((database t))
+    (signal-no-database-error database))
+  (:documentation "Remove all data from database."))
+
+(defgeneric database-describe-table (database table)
+  (:method ((database t) table)
+    (declare (ignore table))
+    (signal-no-database-error database))
+  (:documentation "Return a list of name/type for columns in table"))
 
 (defgeneric database-destory (connection-spec type)
   (:documentation
@@ -204,3 +208,49 @@ the given lisp type and parameters."))
 
 (defgeneric database-delete-large-object (object-id database)
   (:documentation "Deletes the large object in the database"))
+
+
+;; Checks for closed database
+
+(defmethod database-disconnect :before ((database database))
+  (unless (is-database-open database)
+    (signal-closed-database-error database)))
+
+(defmethod database-query :before (query-expression (database database) 
+				   result-set)
+  (declare (ignore query-expression result-set))
+  (unless (is-database-open database)
+    (signal-closed-database-error database)))
+
+(defmethod database-execute-command :before (sql-expression (database database))
+  (declare (ignore sql-expression))
+  (unless (is-database-open database)
+    (signal-closed-database-error database)))
+
+(defmethod database-query-result-set :before (expr (database database)
+                                            &key full-set result-types)
+  (declare (ignore expr full-set result-types))
+  (unless (is-database-open database)
+    (signal-closed-database-error database)))
+
+(defmethod database-dump-result-set :before (result-set (database database))
+  (declare (ignore result-set))
+  (unless (is-database-open database)
+    (signal-closed-database-error database)))
+ 
+(defmethod database-store-next-row :before (result-set (database database) list)
+  (declare (ignore result-set list))
+  (unless (is-database-open database)
+    (signal-closed-database-error database)))
+
+(defmethod database-commit-transaction :before ((database database))
+  (unless (is-database-open database)
+    (signal-closed-database-error database)))
+
+(defmethod database-start-transaction :before ((database database))
+  (unless (is-database-open database)
+    (signal-closed-database-error database)))
+
+(defmethod database-abort-transaction :before ((database database))
+  (unless (is-database-open database)
+    (signal-closed-database-error database)))

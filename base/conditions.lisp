@@ -145,12 +145,11 @@ and signal an clsql-invalid-spec-error if they don't match."
 	     (format stream "The database ~A has already been closed."
 		     (clsql-closed-error-database c)))))
 
-(define-condition clsql-nodb-error (clsql-error)
-  ((database :initarg :database :reader clsql-nodb-error-database))
+(define-condition clsql-no-database-error (clsql-error)
+  ((database :initarg :database :reader clsql-no-database-error-database))
   (:report (lambda (c stream)
-	     (format stream "No such database ~S is open." 
-		     (clsql-nodb-error-database c)))))
-
+	     (format stream "~S is not a CLSQL database." 
+		     (clsql-no-database-error-database c)))))
 
 ;; Signal conditions
 
@@ -160,14 +159,8 @@ and signal an clsql-invalid-spec-error if they don't match."
 	  'clsql-closed-error
 	  :database database))
 
-(defun signal-nodb-error (database)
-  (cerror "Ignore this error and return nil."
-	  'clsql-nodb-error
-	  :database database))
-
-(defun signal-no-database-error ()
-  (cerror "Ignore this error and return nil."
-	  'clsql-nodb-error))
+(defun signal-no-database-error (database)
+  (error 'clsql-no-database-error :database database))
 
 (define-condition clsql-type-error (clsql-error clsql-condition)
   ((slotname :initarg :slotname

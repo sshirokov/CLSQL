@@ -67,7 +67,8 @@
 	 
 	 #:database
 	 #:database-name
-	 #:closed-database
+	 #:database-type
+	 #:is-database-open
 	 #:database-name-from-spec
 	 
 	 ;; utils.lisp
