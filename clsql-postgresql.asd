@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-postgresql.asd,v 1.7 2002/09/18 07:50:01 kevin Exp $
+;;;; $Id: clsql-postgresql.asd,v 1.8 2002/09/20 01:40:54 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -20,6 +20,14 @@
 (in-package :asdf)
 
 (defsystem :clsql-postgresql
+  :name "cl-sql-postgresql"
+  :author "Kevin M. Rosenberg <kmr@debian.org>"
+  :version "0.9.2"
+  :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
+  :licence "Lessor Lisp General Public License"
+  :description "Common Lisp PostgreSQL API Driver"
+  :long-description "cl-sql-postgresql package provides a the database driver for the PostgreSQL API."
+
   :components
   ((:module :db-postgresql
 	    :components

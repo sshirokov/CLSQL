@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-mysql.asd,v 1.7 2002/09/18 07:50:01 kevin Exp $
+;;;; $Id: clsql-mysql.asd,v 1.8 2002/09/20 01:40:54 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -23,6 +23,14 @@
 ;;; System definition
 
 (defsystem :clsql-mysql
+  :name "cl-sql-mysql"
+  :author "Kevin M. Rosenberg <kmr@debian.org>"
+  :version "0.9.2"
+  :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
+  :licence "Lessor Lisp General Public License"
+  :description "Common Lisp SQL MySQL Driver"
+  :long-description "cl-sql-mysql package provides a database driver to the MySQL database system."
+
   :components
   ((:module :db-mysql
 	    :components

@@ -1,14 +1,22 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; This is copyrighted software.  See interfaces/oracle/* files for terms.
 ;;;; 
-;;;; $Id: clsql-oracle.asd,v 1.7 2002/09/18 07:50:01 kevin Exp $
+;;;; $Id: clsql-oracle.asd,v 1.8 2002/09/20 01:40:54 kevin Exp $
 
 (in-package :asdf)
 
 ;;; System definition
 
 (defsystem :clsql-oracle
-    :components
+  :name "cl-sql-oracle"
+  :author "Kevin M. Rosenberg <kmr@debian.org>"
+  :version "0.9.2"
+  :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
+  :licence "Lessor Lisp General Public License"
+  :description "Common Lisp SQL Oracle Driver"
+  :long-description "cl-sql-oracle package provides a database driver to the Oracle database system."
+
+  :components
     ((:module :db-oracle
 	      :components
 	      ((:file "oracle-package")

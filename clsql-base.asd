@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql-base.asd,v 1.11 2002/09/18 07:50:01 kevin Exp $
+;;;; $Id: clsql-base.asd,v 1.12 2002/09/20 01:40:54 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -19,7 +19,16 @@
 (in-package :asdf)
 
 (defsystem clsql-base
-    :perform (load-op :after (op clsql-base)
+  :name "cl-sql-base"
+  :author "Kevin M. Rosenberg <kmr@debian.org>"
+  :version "0.9.2"
+  :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
+  :licence "Lessor Lisp General Public License"
+  :description "Common Lisp SQL Base Package"
+  :long-description "cl-sql-base package provides the low-level interface for the database drivers."
+
+
+  :perform (load-op :after (op clsql-base)
 		      (pushnew :clsql-base cl:*features*))
     :components
     ((:module :base

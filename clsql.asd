@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql.asd,v 1.9 2002/09/19 21:27:54 kevin Exp $
+;;;; $Id: clsql.asd,v 1.10 2002/09/20 01:40:54 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -19,6 +19,14 @@
 (in-package :asdf)
 
 (defsystem clsql
+  :name "cl-sql"
+  :author "Kevin M. Rosenberg <kmr@debian.org>"
+  :version "0.9.2"
+  :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
+  :licence "Lessor Lisp General Public License"
+  :description "Common Lisp SQL Interface Library"
+  :long-description "cl-sql package provides the high-level interface for the CLSQL system."
+  
   :perform (load-op :after (op clsql)
 		    (pushnew :clsql cl:*features*))
   :components

@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-uffi.asd,v 1.9 2002/09/18 07:50:01 kevin Exp $
+;;;; $Id: clsql-uffi.asd,v 1.10 2002/09/20 01:40:54 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -23,6 +23,14 @@
 ;;; System definition
 
 (defsystem :clsql-uffi
+  :name "cl-sql-base"
+  :author "Kevin M. Rosenberg <kmr@debian.org>"
+  :version "0.9.2"
+  :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
+  :licence "Lessor Lisp General Public License"
+  :description "Common UFFI Helper functions for Common Lisp SQL Interface Library"
+  :long-description "cl-sql-uffi package provides common helper functions using the UFFI for the CLSQL package."
+
   :components
   ((:module :uffi
 	    :components
