@@ -67,20 +67,24 @@ pair."))
 attributes of each record resulting from QUERY-EXPRESSION. The
 return value is determined by the result of executing BODY. The
 default value of DATABASE is *DEFAULT-DATABASE*."
-  (let ((result-set (gensym))
-	(columns (gensym))
-	(row (gensym))
-	(db (gensym)))
-    `(if (listp ,query-expression)
+  (let ((result-set (gensym "RESULT-SET-"))
+	(qe (gensym "QUERY-EXPRESSION-"))
+	(columns (gensym "COLUMNS-"))
+	(row (gensym "ROW-"))
+	(db (gensym "DB-")))
+    `(let ((,qe ,query-expression))
+      (typecase ,qe
+	(list
 	 ;; Object query 
-         (dolist (,row ,query-expression)
+         (dolist (,row ,qe)
            (destructuring-bind ,args 
                ,row
-             ,@body))
+             ,@body)))
+	(t
 	 ;; Functional query 
 	 (let ((,db ,database))
 	   (multiple-value-bind (,result-set ,columns)
-	       (database-query-result-set ,query-expression ,db
+	       (database-query-result-set ,qe ,db
 					  :full-set nil 
 					  :result-types ,result-types)
 	     (when ,result-set
@@ -90,7 +94,7 @@ default value of DATABASE is *DEFAULT-DATABASE*."
 			 nil)
 		      (destructuring-bind ,args ,row
 			,@body))
-		 (database-dump-result-set ,result-set ,db))))))))
+		 (database-dump-result-set ,result-set ,db))))))))))
 
 (defun map-query (output-type-spec function query-expression
 		  &key (database *default-database*)
