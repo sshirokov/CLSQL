@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.1 2002/03/23 14:04:49 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.2 2002/03/23 14:19:35 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -50,6 +50,6 @@ dist: realclean docs
 		 -name \*.log -or -name \*.out -or -name \*.dvi -or \
 		 -name \*~ -or -name \*.ps -exec rm {} \;
 	@tar czf $(DIST_TARBALL) $(DISTDIR)
-	@find $(DISTDIR) -type f -exec unix2dos -q {} \;
+	@find $(DISTDIR) -type f |grep -v .dll$ |grep -v .lib$ |xargs unix2dos -q
 	@zip -rq $(DIST_ZIP) $(DISTDIR)
 	@rm -r $(DISTDIR)

@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.1 2002/03/23 14:04:49 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.2 2002/03/23 14:19:29 kevin Exp $
 #
 # This file, part of UFFI, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -29,7 +29,7 @@ DSSSL_HTML=/usr/share/sgml/docbook/dsssl-stylesheets-1.76/html/docbook.dsl
 DSSSL_PRINT=/usr/share/sgml/docbook/dsssl-stylesheets-1.76/print/docbook.dsl
 
 # Custom version
-DSSSL_HTML=dsssl/html/docbook.dsl
+DSSSL_HTML=../dsssl/html/docbook.dsl
 DSSSL_PRINT=dsssl/print/docbook.dsl
 
 # Nothing to configure beyond this point
