@@ -1,4 +1,8 @@
 29 Jan 2005 Kevin Rosenberg <kevin@rosenberg.net>
+	* db-postgresql/postgresql-loader.lisp: Add additional
+	directories to Fink on darwin [patch from Cyrus Harmon].
+	
+29 Jan 2005 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.1.6
 	* sql/oodml.lisp: Clear view instance cache when delete-instance-records
 	is invoked [suggested by Alan Shutko].

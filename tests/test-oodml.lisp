@@ -455,6 +455,14 @@
 		 (mapcar #'(lambda (dea) (slot-value (slot-value dea 'address) 'addressid)) dea-list))))
 	  t t t t (1 1 2 2 2))
 	
+	(deftest :oodml/uoj/2
+	    (progn
+	      (clsql:update-objects-joins (list company1))
+	      (mapcar #'(lambda (e)
+			  (slot-value e 'ecompanyid))
+	         (company-employees company1)))
+	  (1 1 1 1 1 1 1 1 1 1))
+	
 	(deftest :oodml/big/1 
 	    (let ((objs (clsql:select 'big :order-by [i] :flatp t)))
 	      (values
