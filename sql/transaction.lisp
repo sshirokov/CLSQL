@@ -82,9 +82,10 @@ back and otherwise the transaction is committed."
   (let ((db (gensym "db-")))
     `(let ((,db ,database))
       (unwind-protect
-           (progn
+           (prog2
              (database-start-transaction ,db)
-             ,@body
+             (progn
+               ,@body)
              (mark-transaction-committed ,db))
         (if (eq (transaction-status (transaction ,db)) :committed)
             (database-commit-transaction ,db)
