@@ -1,3 +1,5 @@
 CLSQL now supports SBCL, OpenMCL, and SCL.
 
+CLSQL now supports locking on connection pools.
+
 
