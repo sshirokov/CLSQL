@@ -423,7 +423,7 @@ which does type checking before storing a value in a slot."
       (car list)
       list))
 
-(declaim (inline delistify))
+(declaim (inline delistify-dsd))
 (defun delistify-dsd (list)
   "Some MOPs, like openmcl 0.14.2, cons attribute values in a list."
   (if (and (listp list) (null (cdr list)))
