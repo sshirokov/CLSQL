@@ -19,7 +19,7 @@
 (in-package #:cl-user)
 
 (defpackage #:odbc
-  (:use #:cl #:clsql-uffi)
+  (:use #:cl #:uffi)
   (:export 
      #:database-library-loaded
      )
