@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: package.cl,v 1.4 2002/03/27 05:04:19 kevin Exp $
+;;;; $Id: package.cl,v 1.5 2002/04/01 05:27:55 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -41,6 +41,16 @@
      #:database-query-result-set
      #:database-dump-result-set
      #:database-store-next-row
+     
+     ;; For UncommonSQL support
+     #:database-list-tables
+     #:database-list-attributes
+     #:database-attribute-type
+     #:database-create-sequence 
+     #:database-drop-sequence
+     #:database-sequence-next
+    
+     #:sql-escape
      ;; Shared exports for re-export by CLSQL
      .
      #1=(#:clsql-condition
@@ -101,6 +111,16 @@
 	 #:number-to-sql-string
 	 #:float-to-sql-string
 	 #:sql-escape-quotes
+	 
+	 ;; For UncommonSQL support
+	 #:sql-ident
+	 #:list-tables
+	 #:list-attributes
+	 #:attribute-type
+	 #:create-sequence 
+	 #:drop-sequence
+	 #:sequence-next
+	 
 	 ))
     (:documentation "This is the INTERNAL SQL-Interface package of CLSQL."))
 

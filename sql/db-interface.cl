@@ -5,13 +5,14 @@
 ;;;; Name:          db-interface.cl
 ;;;; Purpose:       Generic function definitions for DB interfaces
 ;;;; Programmers:   Kevin M. Rosenberg based on
-;;;;                 Original code by Pierre R. Mai 
+;;;;                Original code by Pierre R. Mai. Additions from
+;;;;                onShoreD to support UncommonSQL front-end 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: db-interface.cl,v 1.4 2002/03/29 08:34:44 kevin Exp $
+;;;; $Id: db-interface.cl,v 1.5 2002/04/01 05:27:55 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
-;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
+;;;; and Copyright (c) 1999-2001 by Pierre R. Mai, and onShoreD
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
@@ -113,3 +114,48 @@ function should signal a clsql-sql-error."))
   (:documentation
    "Returns t and stores the next row in the result set in list or
 returns nil when result-set is finished."))
+
+
+;; Interfaces to support UncommonSQL
+
+(defgeneric database-create-sequence (name database)
+  (:documentation "Create a sequence in DATABASE."))
+
+(defgeneric database-drop-sequence (name database)
+  (:documentation "Drop a sequence from DATABASE."))
+
+(defgeneric database-sequence-next (name database)
+  (:documentation "Increment a sequence in DATABASE."))
+
+(defgeneric database-start-transaction (database)
+  (:documentation "Start a transaction in DATABASE."))
+
+(defgeneric database-commit-transaction (database)
+  (:documentation "Commit current transaction in DATABASE."))
+
+(defgeneric database-abort-transaction (database)
+  (:documentation "Abort current transaction in DATABASE."))
+
+(defgeneric database-get-type-specifier (type args database)
+  (:documentation "Return the type SQL type specifier as a string, for
+the given lisp type and parameters."))
+
+(defgeneric database-list-tables (database &key (system-tables nil))
+  (:documentation "List all tables in the given database"))
+
+(defgeneric database-list-attributes (table database)
+  (:documentation "List all attributes in TABLE."))
+
+(defgeneric database-attribute-type (attribute table database)
+  (:documentation "Return the type of ATTRIBUTE in TABLE."))
+
+(defgeneric database-add-attribute (table attribute database)
+  (:documentation "Add the attribute to the table."))
+
+(defgeneric database-rename-attribute (table oldatt newname database)
+  (:documentation "Rename the attribute in the table to NEWNAME."))
+
+(defgeneric oid (object)
+  (:documentation "Return the unique ID of a database object."))
+
+ 

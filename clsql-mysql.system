@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql-mysql.system,v 1.4 2002/03/27 08:09:25 kevin Exp $
+;;;; $Id: clsql-mysql.system,v 1.5 2002/04/01 05:27:54 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -29,7 +29,8 @@
     :components ((:file "mysql-package")
 		 (:file "mysql-loader" :depends-on ("mysql-package"))
 		 (:file "mysql-api" :depends-on ("mysql-loader"))
-		 (:file "mysql-sql" :depends-on ("mysql-api")))
+		 (:file "mysql-sql" :depends-on ("mysql-api"))
+		 (:file "mysql-usql" :depends-on ("mysql-sql")))
     :depends-on (:uffi :clsql :clsql-uffi)
     :finally-do
     (when (clsql-sys:database-type-library-loaded :mysql)

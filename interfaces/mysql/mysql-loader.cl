@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-loader.cl,v 1.3 2002/03/24 04:37:09 kevin Exp $
+;;;; $Id: mysql-loader.cl,v 1.4 2002/04/01 05:27:55 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -31,7 +31,7 @@
      #+(or mswindows win32) "CLSQL:interfaces;mysql;clsql-mysql.dll"
      ))
 
-(defvar *mysql-library-filename* 
+(defvar *mysql-library-filename*
     (cond
      ((probe-file "/opt/mysql/lib/mysql/libmysqlclient.so")
       "/opt/mysql/lib/mysql/libmysqlclient.so")
@@ -46,6 +46,14 @@
       (warn "Can't find MySQL client library to load.")))
   "Location where the MySQL client library is to be found.")
 
+(defvar *mysql-library-candidate-names*
+    '("libmysqlclient" "libmysql"))
+
+(defvar *mysql-library-candidate-directories*
+    '("/opt/mysql/lib/mysql/" "/usr/local/lib/" "/usr/lib/" "/mysql/lib/opt/"))
+
+(defvar *mysql-library-candidate-drive-letters* '("C" "D" "E"))
+
 (defvar *mysql-supporting-libraries* '("c")
   "Used only by CMU. List of library flags needed to be passed to ld to
 load the MySQL client library succesfully.  If this differs at your site,
@@ -58,17 +66,22 @@ set to the right path before compiling or loading the system.")
   *mysql-library-loaded*)
 				      
 (defmethod clsql-sys:database-type-load-foreign ((database-type (eql :mysql)))
-  (when
-      (and
-       (uffi:load-foreign-library *mysql-library-filename* 
-				  :module "mysql" 
-				  :supporting-libraries 
-				  *mysql-supporting-libraries*)
-       (uffi:load-foreign-library *clsql-mysql-library-filename* 
-				  :module "clsql-mysql" 
-				  :supporting-libraries 
-				  (append *mysql-supporting-libraries*)))
-    (setq *mysql-library-loaded* t)))
+  (let ((mysql-path
+	 (uffi:find-foreign-library *mysql-library-candidate-names*
+				    *mysql-library-candidate-directories*
+				    :drive-letters
+				    *mysql-library-candidate-drive-letters*)))
+    (when
+	(and
+	 (uffi:load-foreign-library mysql-path
+				    :module "mysql" 
+				    :supporting-libraries 
+				    *mysql-supporting-libraries*)
+	 (uffi:load-foreign-library *clsql-mysql-library-filename* 
+				    :module "clsql-mysql" 
+				    :supporting-libraries 
+				    (append *mysql-supporting-libraries*)))
+      (setq *mysql-library-loaded* t))))
 
 
 (clsql-sys:database-type-load-foreign :mysql)

@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-loader.cl,v 1.3 2002/03/24 04:37:09 kevin Exp $
+;;;; $Id: postgresql-loader.cl,v 1.4 2002/04/01 05:27:55 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -49,10 +49,14 @@ set to the right path before compiling or loading the system.")
 (defmethod clsql-sys:database-type-load-foreign ((database-type
 						  (eql :postgresql)))
   (when
-      (uffi:load-foreign-library *postgresql-library-filename* 
-				 :module "postgresql"
-				 :supporting-libraries 
-				 *postgresql-supporting-libraries*)
+      (uffi:load-foreign-library 
+       (uffi:find-foreign-library 
+	"libpq"
+	'("/opt/postgresql/lib/" "/usr/local/lib" "usr/lib/" 
+	  "/postgresql/lib/"))
+       :module "postgresql"
+       :supporting-libraries 
+       *postgresql-supporting-libraries*)
     (setq *postgresql-library-loaded* t)))
 
 (clsql-sys:database-type-load-foreign :postgresql)

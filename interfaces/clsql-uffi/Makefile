@@ -7,7 +7,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.1 2002/03/27 07:58:42 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.2 2002/04/01 05:27:55 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -16,6 +16,7 @@
 # (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ###########################################################################
 
+AR=ar
 
 # These variables are correct for GCC
 # you'll need to modify these for other compilers
@@ -32,20 +33,27 @@ SHARED_LD_OPT=-shared
 # Nothing to configure beyond this point
 
 BASE=clsql-uffi
-SRC=${BASE}.c
-OBJECT=${BASE}.o
-LIB=${BASE}.so
+SRC=$(BASE).c
+OBJECT=$(BASE).o
+SHARED=$(BASE).so
+STATIC=$(BASE).a
 
-all: ${LIB}
+all: $(SHARED) $(STATIC)
 
-${LIB}: ${SRC} 
-	${CC} ${SHARED_CC_OPT} -c ${SRC} -o ${OBJECT}
-	ld ${SHARED_LD_OPT} ${OBJECT} -o ${LIB}
-	@rm ${OBJECT}
+$(SHARED): $(SRC)
+	$(CC) $(SHARED_CC_OPT) -c $(SRC) -o $(OBJECT)
+	ld $(SHARED_LD_OPT) $(OBJECT) -o $(SHARED)
+	@rm $(OBJECT)
+
+$(STATIC): $(SRC) 
+	$(CC) -c $(SRC) -o $(OBJECT)
+	$(AR) r $(STATIC) $(OBJECT)
+	@rm $(OBJECT)
 
 clean:
-	rm -f ${LIB}
+	rm -f $(SHARED) $(STATIC)
 
 realclean: clean
 	rm -f *~
+
 

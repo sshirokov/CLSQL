@@ -1,3 +1,6 @@
+31 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
+	* Added interface to support USQL high-level rouines
+	
 29 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* Separated db-interface and conditions from sql/sql.cl
 
