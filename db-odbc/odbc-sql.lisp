@@ -52,6 +52,26 @@
 	       :errno nil
 	       :error "Connection failed")))))
 
+#+nil
+(defun store-type-of-connected-database (db)
+  (let* ((odbc-db (odbc-db db))
+	 (server-name (get-odbc-info odbc-db odbc::$SQL_SERVER_NAME))
+	 (dbms-name (get-odbc-info odbc-db odbc::$SQL_DBMS_NAME))
+	 (type
+	  ;; need SERVER-NAME and DBMS-NAME because many drivers mix this up
+	  (cond 
+	   ((or (search "postgresql" server-name :test #'char-equal)
+		(search "postgresql" dbms-name :test #'char-equal))
+	    :postgresql)
+	   ((or (search "mysql" server-name :test #'char-equal)
+		(search "mysql" dbms-name :test #'char-equal))
+	    :mysql)
+	   ((or (search "oracle" server-name :test #'char-equal)
+		(search "oracle" dbms-name :test #'char-equal))
+	    :oracle))))
+    (setf (database-type db) type)))
+  
+
 (defmethod database-disconnect ((database odbc-database))
   (odbc-dbi:disconnect (database-odbc-conn database))
   (setf (database-odbc-conn database) nil)

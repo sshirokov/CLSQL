@@ -24,7 +24,7 @@
 (defvar *trace-sql* nil)
 
 (defun %null-ptr ()
-  (allocate-foreign-object :pointer-void))
+  (make-null-pointer :byte))
 
 (defmacro %put-str (ptr string &optional max-length)
   (let ((size (gensym)))
@@ -36,6 +36,13 @@
          (setf (deref-array ,ptr '(:array :unsigned-char) i) (char ,string i)))
        (setf (deref-array ,ptr '(:array :unsigned-char) ,size) 0))))
 
+(defun %cstring-into-vector (ptr vector offset size-in-bytes)
+    (dotimes (i size-in-bytes)
+      (setf (aref vector offset)
+            (deref-array ptr '(:array :unsigned-char) i))
+      (incf offset))
+    offset)
+  
 (defun handle-error (henv hdbc hstmt)
   (with-foreign-objects ((sql-state '(:array :unsigned-char 256))
 			 (error-message '(:array :unsigned-char
@@ -65,7 +72,7 @@
 
 (defmacro with-error-handling ((&key henv hdbc hstmt (print-info t))
                                    odbc-call &body body)
-  (let ((result-code (gensym)))
+  (let ((result-code (gensym "RC-")))
     `(let ((,result-code ,odbc-call))
        (case ,result-code
          (#.$SQL_SUCCESS
@@ -140,88 +147,6 @@
       (SQLConnect hdbc server-ptr $SQL_NTS uid-ptr 
 		  $SQL_NTS pwd-ptr $SQL_NTS))))
 
-;;; SQLDriverConnect
-;;; [991115 CStacy@Pilgrim.COM]
-;;;
-;;; The CONNX ODBC driver can bring up a nice GUI prompt for the User-ID
-;;; and password, so that applications don't have to supply their own.
-;;;
-;;; That is not desirable for non-interactive applications, such as
-;;; web servers, so they should always supply complete login info
-;;; to SQLConnect.   But the driver won't bring up a GUI anyway
-;;; unless the SQL_QUIET_MODE is set to an HWND (nonzero).
-;;; (CONNX version 6 did not have the GUI "Integrated Login" feature,
-;;; and in version 7, it was broken such that the GUI always came up.)
-;;;
-;;; Connx version 8 respects to that connection option, so the first
-;;; thing I tried was just setting it.  I hacked the DB-CONNECT ODBC
-;;; method with this:
-;;;        (without-error-handling
-;;;         (SQLSetConnectOption hdbc $SQL_QUIET_MODE hwnd))
-;;; but that didn't work -- no GUI ever comes up from SQLConnect.
-;;; That may be a bug in the CONNX driver.
-;;;
-;;; In the end, the luser tech support person at CONNX Integrated Solutions
-;;; gave me the hint that if I were using VB, I should give it a string
-;;; like "DSN=CONNX8SAMPLES32, prompt=2".  There's no ODBC API that wants
-;;; a string like that, but SQLDriverConnect does take an attribute-value-list
-;;; connection string (including driver-defined attributes).  Reading the SDK
-;;; header files, I find that it also takes an argument that is 2 if you want
-;;; the driver to use a GUI and prompt the user.  Eureka!
-;;;
-;;; If the user specified a DSN, we use SQL_DRIVER_COMPLETE and let the
-;;; Driver Manager find the appropriate driver.  (Otherwise, aside from
-;;; the gratuitous prompt about the driver, the CONNX driver would also
-;;; prompting for the DSN and the Data Dictionary (CDD file).
-
-;; cstacy
-(defun odbc-connection-string (connection-string db-name user-id password)
-  ;; Merge the specified attributes into a usable connection-string.
-  (multiple-value-bind (dsn uid pwd other-attr-vals)
-      (odbc-parse-connection-string connection-string)
-    (setq db-name (or db-name dsn)
-          user-id (or user-id uid)
-          password (or password pwd)
-          connection-string
-          (format nil "DSN=~A~:[~;~:*;UID=~A~]~:[~;~:*;PWD=~A~]~:[~;~:*;~A~]"
-                  db-name user-id password other-attr-vals))
-    (values
-     connection-string
-     db-name
-     user-id
-     password)))
-
-;; cstacy
-(defun odbc-parse-connection-string (connection-string)
-  (flet ((parse (key)
-           (let ((beg (search key connection-string :test #'equal)))
-             (when beg
-               (subseq connection-string 
-                       (+ beg (length key)) 
-                       (position #\; connection-string :start beg))))))
-    (let ((db-name (parse "DSN="))
-          (user-id (parse "UID="))
-          (password (parse "PWD=")))
-      (values db-name user-id password nil))))
-
-(defun %sql-driver-connect (henv hdbc hwnd connection-string completion-option)
-  (let ((completion-option
-         (ecase completion-option
-           (:complete $SQL_DRIVER_COMPLETE)
-           (:required $SQL_DRIVER_COMPLETE_REQUIRED)
-           (:prompt $SQL_DRIVER_PROMPT)
-           (:noprompt $SQL_DRIVER_NOPROMPT))))
-    (with-cstring (connection-str-ptr connection-string)
-      (with-foreign-objects
-        ((complete-connection-str-ptr '(:array :unsigned-char 1024))
-         (length-ptr :short))
-        (with-error-handling 
-          (:henv henv :hdbc hdbc)
-          (SQLDriverConnect hdbc hwnd ; (%null-ptr) ; no window
-                            connection-str-ptr $SQL_NTS
-                            complete-connection-str-ptr 1024
-                            length-ptr completion-option))
-        (print (convert-from-foreign-string complete-connection-str-ptr))))))
 
 (defun %disconnect (hdbc)
   (with-error-handling 
@@ -942,3 +867,4 @@
    (get-slot-value ptr 'sql-c-timestamp 'minute)
    (get-slot-value ptr 'sql-c-timestamp 'hour)
    0 0 0))
+

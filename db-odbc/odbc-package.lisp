@@ -33,9 +33,9 @@
      #:%rollback
      #:%sql-fetch
      #:%sql-cancel
+     #:db-connect
      #:%new-db-connection-handle
      #:%new-environment-handle
-     #:%sql-driver-connect
      #:%sql-connect
      #:disable-autocommit
      #:enable-autocommit
@@ -59,6 +59,8 @@
      #:%new-statement-handle
      #:%sql-exec-direct
      #:%put-str
+     #:result-columns-count
+     #:sql-to-c-type
      )
   (:documentation "This is the low-level interface ODBC."))
 

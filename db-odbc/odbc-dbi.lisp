@@ -48,12 +48,79 @@
 
 (in-package #:odbc-dbi)
 
-(defun connect (&key user password data-source-name)
-  (warn "Not implemented.")
-  nil)
+;;; SQL Interface
 
-(defun disconnect (conn)
-  (warn "Not implemented."))  
+(defclass odbc-db ()
+  (;; any reason to have more than one henv?
+   (henv :initform nil :allocation :class :initarg :henv :accessor henv)
+   (hdbc :initform nil :initarg :hdbc :accessor hdbc)
+   ;; info returned from SQLGetInfo
+   (info :initform (make-hash-table) :reader db-info)
+   (type :initform nil :initarg :db-type :reader db-type)
+   (connected-p :initform nil :accessor db-connected-p)
+   ;; not used yet
+   (count :initform 0 :initarg :count :accessor db-count)
+   ;; not used yet
+   (total-count :initform 0 :allocation :class :accessor db-total-count)
+   ;; the use of this slot is deprecated; it will be removed when dtf works without it.
+   (query :initform nil :accessor db-query-object)
+   ;; resource of (active and inactive) query objects
+   (queries :initform () :accessor db-queries)))
+
+(defclass query ()
+  ((hstmt :initform nil :initarg :hstmt :accessor hstmt) ; = cursor??
+   (column-count :initform nil :accessor column-count)
+   (column-names :initform (make-array 0 :element-type 'string :adjustable t :fill-pointer t)
+		 :accessor column-names)
+   (column-c-types :initform (make-array 0 :element-type 'fixnum :adjustable t :fill-pointer t)
+		   :accessor column-c-types)
+   (column-sql-types :initform (make-array 0 :element-type 'fixnum :adjustable t :fill-pointer t)
+		     :accessor column-sql-types)
+   (column-data-ptrs :initform (make-array 0 :adjustable t :fill-pointer t)
+		     :accessor data-ptrs)
+   (column-out-len-ptrs :initform (make-array 0 :adjustable t :fill-pointer t)
+			:accessor column-out-len-ptrs)
+   (column-precisions :initform (make-array 0 :element-type 'fixnum :adjustable t :fill-pointer t)
+		      :accessor column-precisions)
+   (column-scales :initform (make-array 0 :element-type 'fixnum :adjustable t :fill-pointer t)
+		  :accessor column-scales)
+   (column-nullables-p :initform (make-array 0 :element-type 'fixnum :adjustable t :fill-pointer t)
+		       :accessor column-nullables-p)
+      ;;(parameter-count :initform 0 :accessor parameter-count)
+   (parameter-data-ptrs :initform (make-array 0 :adjustable t :fill-pointer t)
+			:accessor parameter-ptrs)
+   ;; a query string or a query expression object
+   (sql-expression :initform nil :initarg :sql-expression :accessor sql-expression)
+   ;; database object the query is to be run against
+   (database :initarg :database :reader query-database)
+   (active-p :initform nil :initarg :active-p :accessor query-active-p))
+  (:documentation
+   "Stores query information, like SQL query string/expression and database to run
+the query against." ))
+
+(defun connect (&key data-source-name user password (autocommit t))
+  (let ((db (make-instance 'odbc-db)))
+    (unless (henv db) ;; has class allocation!
+      (setf (henv db) (%new-environment-handle)))
+    (setf (hdbc db) (%new-db-connection-handle (henv db)))
+    (%sql-connect (hdbc db) data-source-name user password)
+    ;; FIXME: Check if connected
+    (when (/= (get-odbc-info db odbc::$SQL_TXN_CAPABLE) odbc::$SQL_TC_NONE)
+      (if autocommit
+	  (enable-autocommit (hdbc db))
+	  (disable-autocommit (hdbc db))))
+    db))
+
+(defun disconnect (database)
+  (with-slots (hdbc queries) database
+    (dolist (query queries)
+      (if (query-active-p query)
+	  (with-slots (hstmt) query
+	    (when hstmt 
+	      (%free-statement hstmt :drop)
+	      (setf hstmt nil)))))
+    (%disconnect hdbc)))
+
 
 (defun sql (expr &key db result-types row-count column-names)
   (warn "Not implemented."))
@@ -63,7 +130,6 @@
 
 (defun fetch-row (result-set error-eof eof-value)
   (warn "Not implemented."))
-
 
 (defclass odbc-query (query)
   ((hstmt :initform nil :initarg :hstmt :accessor hstmt) ; = cursor??
@@ -88,131 +154,10 @@
    (parameter-data-ptrs :initform (make-array 0 :adjustable t :fill-pointer t)
                      :accessor parameter-ptrs)))
 
-(defclass odbc-database (database)
-  (;; any reason to have more than one henv?
-   (henv :initform nil :allocation :class :initarg :henv :accessor henv)
-   (hdbc :initform nil :initarg :hdbc :accessor hdbc)
-   ;; info returned from SQLGetInfo
-   (info :initform (make-hash-table) :reader db-info))
-  #+cormanlisp (:metaclass cl::class-slot-class))
-
-;; use this method if the db object does not exist yet
-
-;; cstacy
-(defparameter *odbc-driver-connect-p* nil)
-
-;; cstacy
-(defmethod db-connect ((db-type (eql :odbc)) db-name user-id password autocommit)
-  (if *odbc-driver-connect-p*
-      (driver-connect db-type :db-name db-name :user-id user-id :password password)
-    ;; Else just use SQLConnect (old way).
-    (let ((db (make-instance 'odbc-database :db-type :odbc
-                             :db-name db-name
-                             :user-id user-id
-                             :password password)))
-      (unless (henv db) ;; has class allocation!
-        (setf (henv db) (%new-environment-handle)))
-      (setf (hdbc db) (%new-db-connection-handle (henv db)))
-      ;; if connection cannot be established, we drop out here.
-      (db-connect db db-name user-id password autocommit))))
-
-;; cstacy
-(defmethod db-connect ((db odbc-database) db-name user-id password autocommit)
-  (if *odbc-driver-connect-p*
-    (driver-connect db :db-name db-name :user-id user-id :password password)
-    ;; Else just use SQLConnect (old way).
-    (%sql-connect (hdbc db) db-name user-id password))
-  ;; If we got this far without erring out, the database was successfully connected.
-  (setf (odbc::db-connected-p db) t)
-  (let ((server-name (get-odbc-info db odbc::$SQL_SERVER_NAME))
-        (dbms-name (get-odbc-info db odbc::$SQL_DBMS_NAME))
-        (txn-capable-p (/= (get-odbc-info db odbc::$SQL_TXN_CAPABLE) odbc::$SQL_TC_NONE)))
-    ;; need SERVER-NAME and DBMS-NAME because many drivers mix this up
-    (flet ((db-type-p (db-name)
-           (or (search db-name server-name :test #'char-equal)
-               (search db-name dbms-name :test #'char-equal))))  
-      (cond ((db-type-p "oracle") (change-class db 'oracle-database))
-            ((db-type-p "access") (change-class db 'access-database))
-            ((db-type-p "mysql")  (change-class db 'mysql-database))
-            (t nil)))
-    (when txn-capable-p ; has transaction support
-      (if autocommit
-        (enable-autocommit (hdbc db))
-        (disable-autocommit (hdbc db)))))
-  db)
-
-;; cstacy
-(defgeneric driver-connect (db-type &key hwnd connection-string 
-                                       completion-mode
-                                       db-name user-id password
-                                       &allow-other-keys))
-
-;; cstacy
-(defmethod driver-connect ((db-type (eql :odbc)) &key hwnd connection-string 
-                           (completion-mode :complete)
-                           db-name user-id password)
-  (multiple-value-bind (connection-string db-name user-id password)
-      (odbc-connection-string connection-string db-name user-id password)
-    (let ((db (make-instance 'odbc-database 
-                             :db-type :odbc
-                             :db-name db-name
-                             :user-id user-id
-                             :password password)))
-      (unless (henv db) ;; has class allocation!
-        (setf (henv db) (%new-environment-handle)))          ;SQLAllocEnv
-      (setf (hdbc db) (%new-db-connection-handle (henv db))) ;SQLAllocConnect
-      (cond ((null hwnd)
-             (setq hwnd (%null-ptr)))
-            #+(and :lispworks (not :unix))
-            ((eq hwnd t)
-             (setq hwnd (capi-library::representation-handle
-                         (capi:representation
-                          (ww::find-topmost-window nil nil)))))
-            #+(and :lispworks (not :unix))
-            ((eq hwnd :podium)
-             (setq hwnd (capi-win32-lib::r-top-level-interface-hwnd win32::*main-representation*)))
-            ((not (integerp hwnd))
-             (error "HWND is not NIL, T, :PODIUM, or an integer")))
-      ;; if connection cannot be established, we drop out here.
-      (driver-connect db 
-                      :hwnd hwnd
-                      :connection-string connection-string
-                      :completion-mode completion-mode))))
-
-;; cstacy
-(defmethod driver-connect ((db odbc-database) &key hwnd connection-string completion-mode
-                           &allow-other-keys)
-  (let ((completion (%sql-driver-connect 
-                     (henv db) (hdbc db) hwnd connection-string completion-mode)))
-    (multiple-value-bind (dsn uid pwd)
-        (odbc-parse-connection-string completion)
-      (flet ((non-string-null (x) (and x (not (string= x "")) x)))
-        (setf (odbc::db-name db) (or (non-string-null (odbc::db-name db)) dsn))
-        (setf (odbc::db-user-id db) (or (non-string-null (odbc::db-user-id db)) uid))
-        (setf (odbc::db-password db) (or (non-string-null (odbc::db-password db)) pwd)))))
-  db)
-
-(defmethod db-disconnect ((database odbc-database))
-  (with-slots (hdbc queries odbc::connected-p) database
-    (when odbc::connected-p
-      (dolist (query queries)
-        (if (query-active-p query)
-            (with-slots (hstmt) query
-              (when hstmt 
-                (%free-statement hstmt :drop)
-                (setf hstmt nil)))))
-      (%disconnect hdbc)
-      #+kmr-nil
-      (let ((reset-default-db-p (eq *default-database* database)))
-        (setf *connected-databases* (delete database *connected-databases*)
-              odbc::connected-p nil)
-        (when reset-default-db-p
-          (setf *default-database* (car *connected-databases*)))))))
-
-(defmethod db-commit ((database odbc-database))
+(defmethod db-commit ((database odbc-db))
   (%commit (henv database) (hdbc database)))
 
-(defmethod db-rollback ((database odbc-database))
+(defmethod db-rollback ((database odbc-db))
   (%rollback (henv database) (hdbc database)))
 
 (defmethod db-cancel-query ((query odbc-query))
@@ -239,7 +184,7 @@
         (%initialize-query query)
         (setf active-p t)))))
 
-;; one for odbc-database is missing
+;; one for odbc-db is missing
 (defmethod terminate ((query odbc-query))
   ;;(format tb::*local-output* "~%*** terminated: ~s" query)
   (with-slots (hstmt) query
@@ -255,7 +200,7 @@
     (loop for out-len-ptr across column-out-len-ptrs
           when out-len-ptr do (uffi:free-foreign-object out-len-ptr))))
 
-(defmethod db-open-query ((database odbc-database) query-expression
+(defmethod db-open-query ((database odbc-db) query-expression
                              &key arglen col-positions
                              &allow-other-keys)
   (db-open-query (get-free-query database) query-expression
@@ -266,8 +211,8 @@
   (%db-execute query query-expression)
   (%initialize-query query arglen col-positions))
 
-(defmethod db-fetch-query-results ((database odbc-database) &optional count flatp)
-  (db-fetch-query-results (odbc::db-query-object database) count flatp))
+(defmethod db-fetch-query-results ((database odbc-db) &optional count flatp)
+  (db-fetch-query-results (db-query-object database) count flatp))
 
 (defmethod db-fetch-query-results ((query odbc-query) &optional count flatp)
   (when (query-active-p query)
@@ -338,7 +283,7 @@
 (defmacro without-interrupts (&body body)
   `(pcl::without-interrupts ,@body))
 
-(defmethod db-query ((database odbc-database) query-expression &optional flatp)
+(defmethod db-query ((database odbc-db) query-expression &optional flatp)
   (let ((free-query
          ;; make it thread safe 
          (get-free-query database)))
@@ -356,7 +301,7 @@
       ;;(format tb::*local-output* "~%query closed: ~s" free-query)
       )))
 
-(defmethod %db-execute ((database odbc-database) sql-expression &key &allow-other-keys)
+(defmethod %db-execute ((database odbc-db) sql-expression &key &allow-other-keys)
   (%db-execute (get-free-query database) sql-expression))
 
 ;; C. Stacy's idea
@@ -374,7 +319,7 @@
       query)))
 
 ;; reuse inactive queries
-(defmethod get-free-query ((database odbc-database))
+(defmethod get-free-query ((database odbc-db))
   "get-free-query finds or makes a nonactive query object, and then sets it to active.
 This makes the functions db-execute-command and db-query thread safe."
   (with-slots (queries) database
@@ -408,7 +353,7 @@ This makes the functions db-execute-command and db-query thread safe."
           (push new-query queries)
           new-query))))
 
-(defmethod db-execute-command ((database odbc-database) sql-string)
+(defmethod db-execute-command ((database odbc-db) sql-string)
   (db-execute-command (get-free-query database) sql-string))
 
 (defmethod db-execute-command ((query odbc-query) sql-string)
@@ -423,7 +368,7 @@ This makes the functions db-execute-command and db-query thread safe."
           (%sql-exec-direct sql-string hstmt henv hdbc)
         (db-close-query query)))))
 
-(defmethod %initialize-query ((database odbc-database) &optional arglen col-positions)
+(defmethod %initialize-query ((database odbc-db) &optional arglen col-positions)
   (%initialize-query (db-query-object database) arglen col-positions))
 
 (defmethod %initialize-query ((query odbc-query) &optional arglen col-positions)
@@ -483,7 +428,7 @@ This makes the functions db-execute-command and db-query thread safe."
       (setf (query-active-p query) nil)))
   query)
 
-(defmethod %read-query-data ((database odbc-database) ignore-columns)
+(defmethod %read-query-data ((database odbc-db) ignore-columns)
   (%read-query-data (db-query-object database) ignore-columns))
 
 (defmethod %read-query-data ((query odbc-query) ignore-columns)
@@ -515,12 +460,12 @@ This makes the functions db-execute-command and db-query thread safe."
                                            nil)))))
        t))))
 
-(defmethod db-map-query ((database odbc-database) type function query-exp)
+(defmethod db-map-query ((database odbc-db) type function query-exp)
   (db-map-query (get-free-query database) type function query-exp))
 
 (defmethod db-map-query ((query odbc-query) type function query-exp)
   (declare (ignore type)) ; preliminary. Do a type coersion here
-  (%db-execute query (odbc::sql-string query-exp))
+  (%db-execute query (sql-expression query-exp))
   (unwind-protect
     (progn
       (%initialize-query query)
@@ -564,7 +509,7 @@ This makes the functions db-execute-command and db-query thread safe."
 
 ;; prepared queries
 
-(defmethod db-prepare-statement ((database odbc-database) sql
+(defmethod db-prepare-statement ((database odbc-db) sql
                                      &key parameter-table parameter-columns)
   (with-slots (hdbc) database
     (let ((query (get-free-query database))) 
@@ -642,14 +587,14 @@ This makes the functions db-execute-command and db-query thread safe."
 
 ;; database inquiery functions
 
-(defmethod db-describe-columns ((database odbc-database) 
+(defmethod db-describe-columns ((database odbc-db) 
                                     table-qualifier table-owner table-name column-name)
   (with-slots (hdbc) database
     (%describe-columns hdbc table-qualifier table-owner table-name column-name)))
 
 ;; should translate info-type integers to keywords in order to make this 
 ;; more readable?
-(defmethod get-odbc-info ((database odbc-database) info-type)
+(defmethod get-odbc-info ((database odbc-db) info-type)
   (with-slots (hdbc info) database
     (or (gethash info-type info)
         (setf (gethash info-type info)
