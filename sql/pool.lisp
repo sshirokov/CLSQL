@@ -52,7 +52,8 @@
   (with-process-lock ((conn-pool-lock pool) "Clear pool")
     (loop for conn across (all-connections pool)
 	  do (setf (conn-pool conn) nil)
-	  (disconnect :database conn))
+	  ;; disconnect may error if remote side closed connection
+	  (ignore-errors (disconnect :database conn)))
     (setf (fill-pointer (free-connections pool)) 0)
     (setf (fill-pointer (all-connections pool)) 0))
   nil)
