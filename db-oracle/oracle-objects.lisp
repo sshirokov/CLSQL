@@ -6,7 +6,7 @@
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file is part of CLSQL.
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
