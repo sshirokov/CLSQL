@@ -163,6 +163,17 @@
 				  :retrieval :immediate)))
   (:base-table "ea_join"))
 
+(def-view-class deferred-employee-address ()
+  ((aemplid :type integer :initarg :emplid)
+   (aaddressid :type integer :initarg :addressid)
+   (verified :type boolean :initarg :verified)
+   (address :db-kind :join
+	    :db-info (:join-class address
+				  :home-key aaddressid
+				  :foreign-key addressid
+				  :retrieval :deferred)))
+  (:base-table "ea_join"))
+
 (defun test-connect-to-database (db-type spec)
   (when (clsql-sys:db-backend-has-create/destroy-db? db-type)
     (ignore-errors (destroy-database spec :database-type db-type))

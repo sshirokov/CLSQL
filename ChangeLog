@@ -1,3 +1,8 @@
+13 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* tests/test-init.lisp: Add deferred-employee-address
+	class
+	* tests/test-oodml.lisp: Add deferred retrieval testgs
+	
 12 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.17
 	* LATEST-TEST-RESULTS: Run on all platforms, add AMD64

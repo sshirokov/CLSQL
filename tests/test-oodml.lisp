@@ -111,25 +111,45 @@
 	     (select 'employee :flatp t :caching nil))
 	  t)
 
-	;; :retrieval :immediate should be boundp before accessed
 	(deftest :oodm/retrieval/2
+	    (every #'(lambda (e) (not (slot-boundp e 'address)))
+	     (select 'deferred-employee-address :flatp t :caching nil))
+	  t)
+
+	;; :retrieval :immediate should be boundp before accessed
+	(deftest :oodm/retrieval/3
 	    (every #'(lambda (ea) (slot-boundp ea 'address))
 	     (select 'employee-address :flatp t :caching nil))
 	  t)
 
-	(deftest :oodm/retrieval/3
+	(deftest :oodm/retrieval/4
 	    (mapcar #'(lambda (ea) (typep (slot-value ea 'address) 'address))
 	     (select 'employee-address :flatp t :caching nil))
 	  (t t t t t))
 
-	(deftest :oodm/retrieval/4
+	(deftest :oodm/retrieval/5
+	    (mapcar #'(lambda (ea) (typep (slot-value ea 'address) 'address))
+	     (select 'deferred-employee-address :flatp t :caching nil))
+	  (t t t t t))
+
+	(deftest :oodm/retrieval/6
 	    (every #'(lambda (ea) (slot-boundp (slot-value ea 'address) 'addressid))
 	     (select 'employee-address :flatp t :caching nil))
 	  t)
 
-	(deftest :oodm/retrieval/5	    
+	(deftest :oodm/retrieval/7
+	    (every #'(lambda (ea) (slot-boundp (slot-value ea 'address) 'addressid))
+	     (select 'deferred-employee-address :flatp t :caching nil))
+	  t)
+
+	(deftest :oodm/retrieval/8	    
 	    (mapcar #'(lambda (ea) (slot-value (slot-value ea 'address) 'street-number))
 	     (select 'employee-address :flatp t :order-by [aaddressid] :caching nil))
+	  (10 10 nil nil nil))
+
+	(deftest :oodm/retrieval/9
+	    (mapcar #'(lambda (ea) (slot-value (slot-value ea 'address) 'street-number))
+	     (select 'deferred-employee-address :flatp t :order-by [aaddressid] :caching nil))
 	  (10 10 nil nil nil))
 
 	;; tests update-records-from-instance 
@@ -353,6 +373,14 @@
 	     collect (slot-value e 'last-name))
 	  ("Lenin" "Stalin" "Trotsky"))
 
-	))
 
+      (deftest oodml/cache/1
+	  (progn
+	    (setf (clsql-sys:record-caches *default-database*) nil)
+	    (let ((employees (select 'employee)))
+	      (every #'(lambda (a b) (eq a b))
+		     employees (select 'employee))))
+	t)
+			 
+	))
 #.(clsql:restore-sql-reader-syntax-state)
