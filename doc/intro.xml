@@ -106,12 +106,18 @@
 	implementations of &uffi;. The following implementations are supported:
       </para>
       <itemizedlist mark="opencircle">
-	<listitem><para>&acl; v6.2 on Debian Linux, FreeBSD 4.5, and Microsoft Windows XP.</para></listitem>
-	<listitem><para>&lw; v4.3 on Debian Linux and Microsoft Windows XP.</para></listitem>
-	<listitem><para>&cmucl; 18e on Debian Linux, FreeBSD 4.5, and Solaris 2.8.</para></listitem>
-	<listitem><para>&sbcl; 0.8.5 on Debian Linux.</para></listitem>
+	<listitem><para>&acl; v6.2 and 7.0b on Debian Linux x86 &
+	x86_64 & PowerPC, FreeBSD 4.5, and Microsoft Windows
+	XP.</para></listitem>
+	<listitem><para>&lw; v4.3 on Debian Linux and Microsoft
+	Windows XP.</para></listitem>
+	<listitem><para>&cmucl; 18e on Debian Linux, FreeBSD 4.5, and
+	Solaris 2.8.</para></listitem>
+	<listitem><para>&sbcl; 0.8.5 on Debian
+	Linux.</para></listitem>
 	<listitem><para>&scl; 1.1.1 on Debian Linux.</para></listitem>
-	<listitem><para>&openmcl; 0.14 on Debian Linux PowerPC.</para></listitem>
+	<listitem><para>&openmcl; 0.14 on Debian Linux
+	PowerPC.</para></listitem>
       </itemizedlist>
     </sect2>
     
@@ -231,14 +237,13 @@
 
 	<screen>
 (push #P"/usr/share/lisp/clsql/" asdf:*central-registry*)
-(asdf:operate 'asdf:load-op 'clsql-base)              ; base CLSQL package
+(asdf:operate 'asdf:load-op 'clsql)                   ; main CLSQL package
 (asdf:operate 'asdf:load-op 'clsql-mysql)             ; MySQL interface
 (asdf:operate 'asdf:load-op 'clsql-postgresql)        ; PostgreSQL interface
 (asdf:operate 'asdf:load-op 'clsql-postgresql-socket) ; Socket PGSQL interface
 (asdf:operate 'asdf:load-op 'clsql-odbc)              ; ODBC interface
 (asdf:operate 'asdf:load-op 'clsql-sqlite)            ; SQLite interface
 (asdf:operate 'asdf:load-op 'clsql-aodbc)             ; Allegro ODBC interface
-(asdf:operate 'asdf:load-op 'clsql)                   ; main CLSQL package
 	</screen>
       </para>
     </sect2>
