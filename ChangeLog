@@ -1,3 +1,7 @@
+01 Oct 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/oodml.lisp, sql/package.lisp, db-mysql/mysql-objects.lisp:
+	Add support for mediumint.
+	
 28 Sep 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/metaclass.lisp: Support CLISP's attribute name
 	for the type field in direct class slots

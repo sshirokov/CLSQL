@@ -327,10 +327,18 @@
   "INT")
 
 (deftype smallint () 
-  "An integer smaller than a 32-bit integer, this width may vary by SQL implementation."
+  "An integer smaller than a 32-bit integer. this width may vary by SQL implementation."
   'integer)
 
 (defmethod database-get-type-specifier ((type (eql 'smallint)) args database db-type)
+  (declare (ignore args database db-type))
+  "INT")
+
+(deftype mediumint () 
+  "An integer smaller than a 32-bit integer, but may be larger than a smallint. This width may vary by SQL implementation."
+  'integer)
+
+(defmethod database-get-type-specifier ((type (eql 'mediumint)) args database db-type)
   (declare (ignore args database db-type))
   "INT")
 

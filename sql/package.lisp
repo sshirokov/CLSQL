@@ -352,6 +352,7 @@
 	 #:bigint
 	 #:varchar
 	 #:generalized-boolean
+	 #:mediumint
 	 #:smallint
 	 #:tinyint
 	 #:*default-string-length*
