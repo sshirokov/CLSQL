@@ -110,6 +110,7 @@
      #:database-type-load-foreign
      #:database-connect
      #:database-disconnect
+     #:database-reconnect
      #:database-query
      #:database-execute-command
      #:database-create-sequence
