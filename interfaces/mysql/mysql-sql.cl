@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.cl,v 1.4 2002/03/24 18:08:27 kevin Exp $
+;;;; $Id: mysql-sql.cl,v 1.5 2002/03/24 18:39:32 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -28,6 +28,9 @@
 ;;;;    for MYSQL structure. This will make the code more robust in
 ;;;;    the event that MySQL library changes the size of the mysql-mysql
 ;;;;    structure.
+;;;;
+;;;; Mar 2002
+;;;; Added field types
 
 (defpackage :clsql-mysql
     (:use :common-lisp :clsql-sys :mysql)
@@ -134,7 +137,8 @@
 
 
 
-(defmethod database-query (query-expression (database mysql-database) field-types)
+(defmethod database-query (query-expression (database mysql-database) 
+			   field-types)
   (with-slots (mysql-ptr) database
     (uffi:with-cstring (query-native query-expression)
        (if (zerop (mysql-query mysql-ptr query-native))
@@ -173,7 +177,8 @@
 	    (declare (type mysql-mysql-res-ptr-def res-ptr))
 	    (if (not (uffi:null-pointer-p res-ptr))
 		(if full-set
-		    (values (make-mysql-result-set :res-ptr res-ptr :full-set t)
+		    (values (make-mysql-result-set :res-ptr res-ptr :full-set t
+						   :field-types field-types)
 			    (mysql-num-fields res-ptr)
 			    (mysql-num-rows res-ptr))
 		  (values (make-mysql-result-set :res-ptr res-ptr)

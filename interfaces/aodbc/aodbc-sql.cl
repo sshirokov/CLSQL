@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: aodbc-sql.cl,v 1.3 2002/03/24 18:08:27 kevin Exp $
+;;;; $Id: aodbc-sql.cl,v 1.4 2002/03/24 18:39:32 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -97,7 +97,8 @@
 		   :query t
 		   )
 	(values
-	 (make-aodbc-result-set :query query :full-set full-set)
+	 (make-aodbc-result-set :query query :full-set full-set 
+				:field-types field-types)
 	 (length column-names)
 	 nil ;; not able to return number of rows with aodbc
 	 ))

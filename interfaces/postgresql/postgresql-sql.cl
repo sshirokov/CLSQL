@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.cl,v 1.4 2002/03/24 18:31:05 kevin Exp $
+;;;; $Id: postgresql-sql.cl,v 1.5 2002/03/24 18:39:32 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -188,13 +188,15 @@
                (values (make-postgresql-result-set
                         :res-ptr result
                         :num-fields (PQnfields result)
-                        :num-tuples (PQntuples result))
+                        :num-tuples (PQntuples result)
+			:field-types field-types)
                        (PQnfields result)
                        (PQntuples result))
 	     (values (make-postgresql-result-set
 		      :res-ptr result
 		      :num-fields (PQnfields result)
-		      :num-tuples (PQntuples result))
+		      :num-tuples (PQntuples result)
+		      :field-types field-types)
 		     (PQnfields result))))
           (t
            (unwind-protect

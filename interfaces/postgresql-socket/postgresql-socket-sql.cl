@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-sql.cl,v 1.2 2002/03/24 18:08:27 kevin Exp $
+;;;; $Id: postgresql-socket-sql.cl,v 1.3 2002/03/24 18:39:32 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -192,7 +192,8 @@
 		 :error "Didn't receive result cursor for query."))
 	(values (make-postgresql-socket-result-set
 		 :done nil 
-		 :cursor cursor)
+		 :cursor cursor
+		 :field-types field-types)
 		(length (postgresql-cursor-fields cursor)))))))
 
 (defmethod database-dump-result-set (result-set
