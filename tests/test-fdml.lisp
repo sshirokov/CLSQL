@@ -128,9 +128,13 @@
   (("Vladamir" "Lenin" "lenin@soviet.org")))
 
 
+;; Computed values are not always classified as numeric by psqlodbc
 (deftest :fdml/query/1
-    (clsql:query "SELECT COUNT(*) FROM EMPLOYEE WHERE (EMAIL LIKE '%org')" :field-names nil)
-  (("10")))
+    (let ((count (caar (clsql:query "SELECT COUNT(*) FROM EMPLOYEE WHERE (EMAIL LIKE '%org')" :field-names nil))))
+      (if (stringp count)
+	  (nth-value 0 (parse-integer count))
+	count))
+  10)
 
 (deftest :fdml/query/2
     (multiple-value-bind (rows field-names)
@@ -141,6 +145,14 @@
    ("Josef" "Stalin") ("Leon" "Trotsky"))
   ("FIRST_NAME" "LAST_NAME"))
 
+(deftest :fdml/query/3
+    (caar (clsql:query "SELECT EMPLID FROM EMPLOYEE WHERE LAST_NAME = 'Andropov'" :field-names nil))
+  6)
+  
+(deftest :fdml/query/4
+    (typep (caar (clsql:query "SELECT HEIGHT FROM EMPLOYEE WHERE LAST_NAME = 'Andropov'" :field-names nil))
+     'float)
+  t)
   
 (deftest :fdml/execute-command/1
     (values

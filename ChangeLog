@@ -1,5 +1,12 @@
 30 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
-	* Version 2.10.0: New API function: CACHE-TABLE-QUERIES.
+	* Version 2.10.2
+	* base/basic-sql.lisp: Set default value of :result-types 
+	to :auto for more CommonSQL conformance. 
+	* test/test-fdml.lisp: Add tests for numeric value of fields
+	
+
+30 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.10.1: New API function: CACHE-TABLE-QUERIES.
 	* base/basic-sql.lisp, db-*/*-sql.lisp: More CommonSQL conformance.
 	Return field names as second value for QUERY. This can be overridden
 	for efficiency with the new keyword :FIELD-NAMES set to NIL

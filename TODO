@@ -26,8 +26,7 @@ COMMONSQL SPEC
 
     QUERY 
       o should coerce values returned as strings to appropriate lisp type
-	(except for SQLite interface, this works when :result-types is :auto).
-	Perhaps that should be the default?
+	for SQLite backend
 
  >> The object-oriented sql interface
 
