@@ -144,7 +144,7 @@
       <title>Description</title> 
       <para>
 	This variable stores the default value of the
-	<variable>CACHING</variable> keyword for the <link
+	<varname>CACHING</varname> keyword for the <link
 	linkend="select"><function>select</function></link>.
       </para> 
     </refsect1>

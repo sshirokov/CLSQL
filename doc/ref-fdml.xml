@@ -1286,10 +1286,10 @@ ID FORENAME   SURNAME   EMAIL
           <para>
             This value is only considered when CLOS objects are being
             selected. A boolean with a default value of &nil;. When
-            the value of the <variable>caching</variable> keyword is
+            the value of the <varname>caching</varname> keyword is
             &t;, a second equivalent <function>select</function> call
             will return the same view class instance objects. When
-            <variable>refresh</variable> is &t;, then slots of the
+            <varname>refresh</varname> is &t;, then slots of the
             existing instances are updated as necessary. In such
             cases, you may wish to override the hook
             <function>instance-refresh</function>.
@@ -1302,7 +1302,7 @@ ID FORENAME   SURNAME   EMAIL
           <para>
             This value is only considered when CLOS objects are being
             selected.  A boolean with a default value of
-            <variable>*default-caching*</variable>. &clsql; caches
+            <varname>*default-caching*</varname>. &clsql; caches
             objects in accordance with the &commonsql; interface: a
             second equivalent <function>select</function> call will
             return the same view class instance objects.
