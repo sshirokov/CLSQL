@@ -59,14 +59,15 @@
        t))
 
 (defmethod perform ((o compile-op) (c clsql-uffi-source-file))
-  #-(or win32 mswindows)
-  (unless (zerop (run-shell-command
-		  #-freebsd "cd ~A; make"
-		  #+freebsd "cd ~A; gmake"
-		  (namestring (make-pathname :name nil
-					     :type nil
-					     :directory *library-file-dir*))))
-    (error 'operation-error :component c :operation o)))
+  (unless (operation-done-p o c)
+    #-(or win32 mswindows)
+    (unless (zerop (run-shell-command
+		    #-freebsd "cd ~A; make"
+		    #+freebsd "cd ~A; gmake"
+		    (namestring (make-pathname :name nil
+					       :type nil
+					       :directory *library-file-dir*))))
+      (error 'operation-error :component c :operation o))))
 
 (defmethod operation-done-p ((o compile-op) (c clsql-uffi-source-file))
   (or (and (probe-file #p"/usr/lib/clsql/uffi.so") t)
