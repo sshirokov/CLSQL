@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.28 2003/05/29 05:19:50 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.29 2003/06/06 21:59:09 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -82,9 +82,6 @@
 (defmacro split-64-bit-integer (int64)
   `(values (ash ,int64 -32) (logand ,int64 +2^32-1+)))
 
-(defvar +ascii-N-value+ (char-code #\N))
-(defvar +ascii-U-value+ (char-code #\U))
-
 (uffi:def-type char-ptr-def (* :unsigned-char))
 
 (defun char-ptr-points-to-null (char-ptr)
@@ -92,9 +89,8 @@
   ;; Uses short cut and returns T if first character is #\N. It should
   ;; never be non-numeric
   (declare (type char-ptr-def char-ptr))
-  (let ((char (uffi:ensure-char-character
-	       (uffi:deref-pointer char-ptr :char))))
-    (char-equal char #\N)))
+  (char-equal #\N (uffi:ensure-char-character
+		   (uffi:deref-pointer char-ptr :char))))
     
 (defun convert-raw-field (char-ptr types index)
   (let ((type (if (listp types)
@@ -119,49 +115,5 @@
 		  low32
 		  (make-64-bit-integer high32 low32)))))
 	 (t
-	  #+(or allegro lispworks) (native-to-string char-ptr) ;; optimized
-	  #-(or allegro lispworks) (uffi:convert-from-foreign-string char-ptr)))))))
+	  (uffi:convert-from-foreign-string char-ptr :locale :none)))))))
   
-
-(uffi:def-function "strlen"
-    ((str (* :unsigned-char)))
-  :returning :unsigned-int)
-
-#+(or lispworks (and allegro ics))
-(defun native-to-string (s)
-  (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
-	   (type char-ptr-def s))
-  (let* ((len (strlen s))
-	 (str (make-string len)))
-    (declare (fixnum len)
-	     (simple-string str))
-    (do ((i 0))
-	((= i len))
-      (declare (fixnum i))
-      (setf (schar str i)
-	(code-char (uffi:deref-array s '(:array :unsigned-char) i)))
-      (incf i))
-    str))
-
-#+(and allegro (not ics))
-(defun native-to-string (s)
-  (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
-	   (type char-ptr-def s))
-  (let* ((len (strlen s))
-	 (len4 (floor len 4))
-	 (str (make-string len)))
-    (declare (fixnum len)
-	     (type (simple-array (signed-byte 32) (*)) str))
-    (do ((i 0))
-	((= i len4))
-      (declare (fixnum i))
-      (setf (aref (the (simple-array (signed-byte 32) (*)) str) i)
-	(uffi:deref-array s '(:array :int) i))
-	(incf i))
-    (do ((i (* 4 len4)))
-	((= i len))
-      (declare (fixnum i))
-      (setf (aref (the (simple-array (signed-byte 8) (*)) str) i)
-	(uffi:deref-array s '(:array :unsigned-char) i))
-      (incf i))
-    str))

@@ -7,9 +7,10 @@
 ;;;; Author:        Kevin M. Rosenberg
 ;;;; Date Started:  Apr 2003
 ;;;;
-;;;; $Id: clsql-tests.asd,v 1.2 2003/05/07 02:45:08 kevin Exp $
+;;;; $Id: clsql-tests.asd,v 1.3 2003/06/06 21:59:09 kevin Exp $
 ;;;; *************************************************************************
 
+(in-package #:cl-user)
 (defpackage #:clsql-tests-system (:use #:asdf #:cl))
 (in-package #:clsql-tests-system)
 
@@ -32,7 +33,7 @@
 	     (:file "tests" :depends-on ("package" "acl-compat-tester")))
 	    )))
 
-(defmethod perform ((o test-op) (c (eql (find-system :clsql-tests))))
+(defmethod perform ((o test-op) (c (eql (find-system 'clsql-tests))))
   (or (funcall (intern (symbol-name '#:do-tests)
 		       (find-package '#:regression-test)))
       (error "test-op failed")))
