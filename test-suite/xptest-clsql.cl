@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: xptest-clsql.cl,v 1.7 2002/03/27 12:09:39 kevin Exp $
+;;;; $Id: xptest-clsql.cl,v 1.8 2002/03/27 12:27:47 kevin Exp $
 ;;;;
 ;;;; The XPTest package can be downloaded from
 ;;;; http://alpha.onshored.com/lisp-software/
@@ -166,7 +166,7 @@
     (clsql:execute-command 
      "DROP TABLE test_clsql" :database db))
   (clsql:execute-command 
-   "CREATE TABLE test_clsql (t_int integer, t_float float, t_bigint BIGINT, t_str CHAR(20))" 
+   "CREATE TABLE test_clsql (t_int integer, t_float float, t_bigint BIGINT, t_str CHAR(30))" 
    :database db)
   (dotimes (i 11)
     (let* ((test-int (- i 5))
@@ -182,7 +182,7 @@
 
 (defun parse-double (num-str)
   (let ((*read-default-float-format* 'double-float))
-    (read-from-string num-str)))
+    (coerce (read-from-string num-str) 'double-float)))
 
 (defun test-table-row (row types)
   (unless (and (listp row)
