@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.12 2002/04/07 09:24:22 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.13 2002/04/07 09:26:20 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -15,7 +15,7 @@
 
 PKG=clsql
 
-.PHONY: all libs clean distclean doc tagcvs dist
+.PHONY: all libs clean distclean doc tagcvs dist wwwdist
 
 SUBDIRS=interfaces/mysql interfaces/clsql-uffi
 .PHONY: subdirs $(SUBDIRS)
@@ -68,3 +68,6 @@ dist: distclean tagcvs
 		| xargs unix2dos -q
 	@zip -rq $(DIST_ZIP) $(DISTDIR)
 	@rm -r $(DISTDIR)
+
+wwwdist: dist
+	@./copy
