@@ -126,36 +126,37 @@ the length of that format.")
 ;;; NULLS-OK are as in the OERR function.
 
 (defun handle-oci-error (&key database nulls-ok)
-  (cond (database
-         (with-slots (errhp) database
-           (uffi:with-foreign-objects ((errbuf '(:array :unsigned-char
-						 #.+errbuf-len+))
-				       (errcode :long))
-	     ;; ensure errbuf empty string
-             (setf (uffi:deref-array errbuf '(:array :unsigned-char) 0)
-	       (uffi:ensure-char-storable (code-char 0)))
-             (setf (uffi:deref-pointer errcode :long) 0)
-	     
-	     (uffi:with-cstring (sqlstate nil)
-	       (oci-error-get (deref-vp errhp) 1
-			      sqlstate
-			      errcode
-			      (uffi:char-array-to-pointer errbuf)
-			      +errbuf-len+ +oci-htype-error+))
-             (let ((subcode (uffi:deref-pointer errcode :long)))
-               (unless (and nulls-ok (= subcode +null-value-returned+))
-                 (error 'sql-database-error
-                        :database database
-                        :error-id subcode
-                        :message (uffi:convert-from-foreign-string errbuf)))))))
-	(nulls-ok
-	 (error 'sql-database-error
-                :database database
-                :message "can't handle NULLS-OK without ERRHP"))
-	(t 
-	 (error 'sql-database-error
-                :database database
-                :message "OCI Error (and no ERRHP available to find subcode)"))))
+  (cond
+    (database
+     (with-slots (errhp) database
+       (uffi:with-foreign-object (errcode :long)
+	 (let ((errbuf (uffi:allocate-foreign-string #.+errbuf-len+)))
+	   ;; ensure errbuf empty string
+	   (setf (uffi:deref-array errbuf '(:array :unsigned-char) 0)
+		 (uffi:ensure-char-storable (code-char 0)))
+	   (setf (uffi:deref-pointer errcode :long) 0)
+	   
+	   (uffi:with-cstring (sqlstate nil)
+	     (oci-error-get (deref-vp errhp) 1
+			    sqlstate
+			    errcode
+			    (uffi:char-array-to-pointer errbuf)
+			    +errbuf-len+ +oci-htype-error+))
+	   (let ((subcode (uffi:deref-pointer errcode :long)))
+	     (unless (and nulls-ok (= subcode +null-value-returned+))
+	       (error 'sql-database-error
+		      :database database
+		      :error-id subcode
+		      :message (uffi:convert-from-foreign-string errbuf))))
+	   (uffi:free-foreign-object errbuf)))))
+    (nulls-ok
+	  (error 'sql-database-error
+		 :database database
+		 :message "can't handle NULLS-OK without ERRHP"))
+	 (t 
+	  (error 'sql-database-error
+		 :database database
+		 :message "OCI Error (and no ERRHP available to find subcode)"))))
 
 ;;; Require an OCI success code.
 ;;;

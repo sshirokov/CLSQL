@@ -1,3 +1,18 @@
+3 Aug 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.0.0 Release
+	* db-aodbc/aodbc-sql.lisp: Fix storage location
+	of odbc connection. Specialize database-query since
+	dbi's :types keyword is different than generic-odbc's
+	:result-types keyword
+	* sql/db-interface.lisp: Add warnings for methods
+	not specialized by a db backends
+	* tests/test-fddl.lisp: Fix case of symbols to support
+	case-sensitive Allegro 
+	* db-oracle/oracle-sql.lisp: Rework errbuf in handle-oci-error
+	* tests/test-init.lisp: Note that odbc driver for postgresql
+	doesn't properly handle table ownership
+	* LATEST-TEST-RESULTS: update with version 3.0.0
+	
 1 Aug 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* sql/expressions.lisp: conditionalise escaping of backslash in 
 	generated SQL strings on backend. 

@@ -34,8 +34,7 @@
 ;; AODBC interface
 
 (defclass aodbc-database (generic-odbc-database)
-  ((aodbc-conn :accessor database-aodbc-conn :initarg :aodbc-conn)
-   (aodbc-db-type :accessor database-aodbc-db-type :initform :unknown)))
+  ((aodbc-db-type :accessor database-aodbc-db-type :initform :unknown)))
 
 (defmethod database-name-from-spec (connection-spec
 				    (database-type (eql :aodbc)))
@@ -53,7 +52,7 @@
 	  :name (database-name-from-spec connection-spec :aodbc)
 	  :database-type :aodbc
 	  :dbi-package (find-package '#:dbi)
-	  :aodbc-conn
+	  :odbc-conn
 	  (dbi:connect :user user
 		       :password password
 		       :data-source-name dsn))
@@ -66,6 +65,20 @@
 	       :message "Connection failed")))))
 
 
+(defmethod database-query (query-expression (database aodbc-database) 
+			   result-types field-names)
+  #+aodbc-v2
+  (handler-case
+      (dbi:sql query-expression
+	       :db (clsql-sys::odbc-conn database)
+	       :types result-types
+	       :column-names field-names)
+    #+ignore
+    (error ()
+      (error 'sql-database-data-error
+	     :database database
+	     :expression query-expression
+	     :message "Query failed"))))
 
 (defmethod database-create (connection-spec (type (eql :aodbc)))
   (warn "Not implemented."))

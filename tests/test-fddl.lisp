@@ -354,7 +354,7 @@
   (progn 
     (clsql:cache-table-queries "EMPLOYEE" :action :flush)
     (gethash "EMPLOYEE" (clsql-sys::attribute-cache clsql:*default-database*))))
- (NIL (T NIL) T (T NIL)))
+ (nil (t nil) t (t nil)))
 
   ))
 

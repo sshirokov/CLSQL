@@ -596,9 +596,13 @@
 		(clsql-sys:in test :fdml/query/8 :fdml/select/21 
                               :fddl/table/6))
 	   (push (cons test "syntax not supported") skip-tests))
-          ((and (not (member *test-database-underlying-type* 
+          ((and (eq *test-database-type* :odbc)
+		(eq *test-database-underlying-type* :postgresql)
+		(clsql-sys:in test :fddl/owner/1))
+           (push (cons test "table ownership not supported by postgresql odbc driver") skip-tests))
+	  ((and (not (member *test-database-underlying-type* 
                              '(:postgresql :oracle)))
-                (clsql-sys:in test :fddl/owner/1))
+		(clsql-sys:in test :fddl/owner/1))
            (push (cons test "table ownership not supported") skip-tests))
 	  (t
 	   (push test-form test-forms)))))
