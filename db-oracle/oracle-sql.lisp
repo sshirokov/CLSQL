@@ -51,8 +51,8 @@ likely that we'll have to worry about the CMUCL limit."))
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defconstant SQLT-NUMBER 2)
   (defconstant SQLT-INT 3)
-  (defconstant SQLT-STR 5)
   (defconstant SQLT-FLT 4)
+  (defconstant SQLT-STR 5)
   (defconstant SQLT-DATE 12))
 
 ;;; Note that despite the suggestive class name (and the way that the
@@ -657,9 +657,10 @@ the length of that format.")
 			     (deref-vp errhp))
 	       (let ((*scale (uffi:deref-pointer scale :byte))
 		     (*precision (uffi:deref-pointer precision :byte)))
-		 ;;(format t "scale=~d, precision=~d~%" *scale *precision)
+		 
+		 ;; (format t "scale=~d, precision=~d~%" *scale *precision)
 		 (cond
-		  ((or (zerop *scale)
+		  ((or (and (zerop *scale) (not (zerop *precision)))
 		       (and (minusp *scale) (< *precision 10)))
 		   (setf buffer (acquire-foreign-resource :int +n-buf-rows+)
 			 sizeof 4			;; sizeof(int)
@@ -910,18 +911,14 @@ the length of that format.")
 	  (push row reversed-result))))))
 
 
-(defmethod database-create-sequence
-  (sequence-name (database oracle-database))
+(defmethod database-create-sequence (sequence-name (database oracle-database))
   (execute-command
-   (concatenate 'string "CREATE SEQUENCE "
-		(sql-escape sequence-name))
+   (concatenate 'string "CREATE SEQUENCE " (sql-escape sequence-name))
    :database database))
 
-(defmethod database-drop-sequence
-  (sequence-name (database oracle-database))
+(defmethod database-drop-sequence (sequence-name (database oracle-database))
   (execute-command
-   (concatenate 'string "DROP SEQUENCE "
-		(sql-escape sequence-name))
+   (concatenate 'string "DROP SEQUENCE " (sql-escape sequence-name))
    :database database))
 
 (defmethod database-sequence-next (sequence-name (database oracle-database))
@@ -933,7 +930,7 @@ the length of that format.")
 		 )
     database :auto nil)))
 
-(defmethod database-set-sequence-position (name position database)
+(defmethod database-set-sequence-position (name position (database oracle-database))
   (let* ((next (database-sequence-next name database))
 	 (incr (- position next)))
     (database-execute-command

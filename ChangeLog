@@ -4,7 +4,10 @@
 	are now in the same order an in the def-view-class.
 	* sql/sql.lisp: Honor case of string table identifier to INSERT-RECORDS
 	* test/test-fddl.lisp: Add two tests for mixed case names
-	
+	* db-oracle/oracle-sql.lisp: Add missing database qualifier. Return NUMBER (double)
+	for computed fields, this will require some adjustment to the test suite which
+	in many cases expects integers.
+
 22 May 2004 Kevin Rosenberg
 	* Version 2.10.21 released
 	* sql/sequences.lisp: Move generic sequence functions here from db-sqlite,

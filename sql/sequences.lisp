@@ -56,7 +56,7 @@
 		(and sn (list sn))))
 	  (database-list-tables-and-sequences database)))
 
-(defmethod database-set-sequence-position (sequence-name (position integer) database)
+(defmethod database-set-sequence-position (sequence-name position database)
   (database-execute-command
    (format nil "UPDATE ~A SET last_value=~A,is_called='t'" 
 	   (%sequence-name-to-table sequence-name database)
