@@ -106,8 +106,8 @@
 	implementations of &uffi;. The following implementations are supported:
       </para>
       <itemizedlist mark="opencircle">
-	<listitem><para>&acl; v6.2 and 7.0b on Debian Linux x86 &
-	x86_64 & PowerPC, FreeBSD 4.5, and Microsoft Windows
+	<listitem><para>&acl; v6.2 and 7.0b on Debian Linux x86 &amp;
+	x86_64 &amp; PowerPC, FreeBSD 4.5, and Microsoft Windows
 	XP.</para></listitem>
 	<listitem><para>&lw; v4.3 on Debian Linux and Microsoft
 	Windows XP.</para></listitem>
