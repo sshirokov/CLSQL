@@ -20,7 +20,7 @@
 ;;;; core packages.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  #+sbcl
+ #+sbcl
   (if (find-package 'sb-mop)
       (pushnew :clsql-sbcl-mop cl:*features*)
       (pushnew :clsql-sbcl-pcl cl:*features*))
@@ -181,7 +181,6 @@
      #:result-recording-stream
      #:record-caches
      #:view-classes
-     #:database-type
      #:database-state
      #:attribute-cache
      #:database-autocommit
@@ -204,7 +203,21 @@
      ;; Generic backends
      #:generic-postgresql-database
      #:generic-odbc-database
-     
+
+         ;; Subclasses of sql-expresssion (expressions.lisp) 
+         #:sql-function-exp
+         #:sql-value-exp 
+         #:sql-set-exp 
+         #:sql-query-modifier-exp 
+         #:sql-relational-exp 
+         #:sql-upcase-like 
+         #:sql-assignment-exp 
+         #:sql-typecast-exp 
+         #:sql-between-exp 
+         #:sql-ident 
+         #:sql-ident-attribute
+         #:sql-ident-table 
+
      .
 
      ;; Shared exports for re-export by CLSQL package. 
@@ -244,6 +257,7 @@
          #:find-database               
          #:status                      
          ;; CLSQL Extensions 
+         #:database-type 
          #:with-database
          #:with-default-database
          #:disconnect-pooled

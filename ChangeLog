@@ -1,3 +1,15 @@
+12 Jun 2004 Marcus Pearce <m.t.pearce@city.ac.uk>
+	* sql/package.lisp: export DATABASE-TYPE from CLSQL and subclasses 
+	of SQL-EXPRESSION from CLSQL-SYS. 
+	* sql/syntax.lisp: make error signalled in SQL-OPERATION an 
+	SQL-USER-ERROR. Make SQL-OPERATOR return just one value. 
+	* doc/Makefile: added Mandrake linux. 
+	* doc/catalog-redhat.xml, doc/catalog-mandrake.xml: new files. 
+	* doc/appendix.xml: fixed little typo (adsf). 
+	* doc/glossary.xml: removed closed-database and note about 
+	sql-expression, added some entries. 
+	* doc/ref-syntax.xml: documented the symbolic SQL syntax. 
+
 10 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.11.8
 	* db-mysql/mysql-loader.lisp: Remove load of unnecessary zlib library

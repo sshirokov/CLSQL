@@ -161,8 +161,8 @@ and ALIAS; TABLE; and STRING."
   represented by the symbol OPERATION."
   (typecase operation
     (string nil)
-    (symbol (gethash (symbol-name-default-case (symbol-name operation))
-                     *sql-op-table*))))
+    (symbol (values (gethash (symbol-name-default-case (symbol-name operation))
+                             *sql-op-table*)))))
 
 (defun sql-operation (operation &rest rest)
   "Returns an SQL expression constructed from the supplied SQL
@@ -172,6 +172,8 @@ REST is taken to be a valid SQL function and the remaining values
 in REST its arguments."
   (if (sql-operator operation)
       (apply (symbol-function (sql-operator operation)) rest)
-      (error "~A is not a recognized SQL operator." operation)))
+      (error 'sql-user-error 
+             :message 
+             (format nil "~A is not a recognized SQL operator." operation))))
 
 

@@ -12,7 +12,13 @@
     <firstname>Kevin</firstname>
     <othername>M.</othername>
     <surname>Rosenberg</surname>
-    <affiliation><jobtitle>Maintainer of CLSQL</jobtitle></affiliation>
+    <affiliation><jobtitle>Maintainer of &clsql;</jobtitle></affiliation>
+  </author>
+  <author>
+    <firstname>Marcus</firstname>
+    <othername>T.</othername>
+    <surname>Pearce</surname>
+    <affiliation><jobtitle>Contributor to &clsql;</jobtitle></affiliation>
   </author>
   <author>
     <firstname>Pierre</firstname>

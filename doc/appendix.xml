@@ -25,7 +25,7 @@
 	<title>Initialization</title>
 	<para>Use 
 	  <screen>
-(asdf:operate 'adsf:load-op 'clsql-postgresql)
+(asdf:operate 'asdf:load-op 'clsql-postgresql)
 	</screen>
 	  to load the PostgreSQL back-end.  The database type for the
 	  PostgreSQL back-end is <symbol>:postgresql</symbol>.</para>
