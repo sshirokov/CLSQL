@@ -27,10 +27,11 @@
 
 (defparameter *db2-client-library-path* 
     (uffi:find-foreign-library
-     "libclntsh"
+     "libdb2"
      `(,@(when *load-truename* (list (make-pathname :directory (pathname-directory *load-truename*))))
        ,@(when *db2-lib-path* (list *db2-lib-path*))
-       "/usr/lib/db2/10.1.0.2/client/lib/")
+       #+64bit "/opt/IBM/db2/V8.1/lib64/"
+       "/opt/IBM/db2/V8.1/lib/")
      :drive-letters '("C")))
 
 (defvar *db2-supporting-libraries* '("c")

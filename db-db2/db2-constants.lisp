@@ -15,3 +15,10 @@
 ;;;; *************************************************************************
 
 (in-package #:clsql-db2)
+
+(defconstant SQL_NULL_HANDLE 0)
+(defconstant SQL_HANDLE_ENV 1)
+(defconstant SQL_HANDLE_DBC 2)
+(defconstant SQL_HANDLE_STMT 3)
+(defconstant SQL_NTS -3)
+
