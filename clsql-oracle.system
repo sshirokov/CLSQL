@@ -1,0 +1,25 @@
+;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
+;;;; This is copyrighted software.  See interfaces/oracle/* files for terms.
+;;;; 
+;;;; $Id: clsql-oracle.system,v 1.1 2002/05/15 17:28:43 kevin Exp $
+
+(in-package :cl-user)
+
+;;; System definition
+
+(mk:defsystem :clsql-oracle
+    :source-pathname "cl-library:clsql;interfaces;oracle"
+    :source-extension "cl"
+    :components
+    ((:file "oracle-package")
+     (:file "oracle-loader" :depends-on ("oracle-package"))
+     (:file "alien-resources" :depends-on ("oracle-package"))
+     (:file "oracle-constants" :depends-on ("oracle-package"))
+     (:file "oracle" :depends-on ("oracle-constants" "oracle-loader"))
+     (:file "oracle-sql" :depends-on ("oracle" "alien-resources"))
+     (:file "oracle-objects" :depends-on ("oracle-sql")))
+    :depends-on (:clsql-base))
+
+
+
+
