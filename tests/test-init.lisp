@@ -340,20 +340,24 @@
 (defvar *error-count* 0)
 (defvar *error-list* nil)
 
-(defun run-tests-append-report-file (report-file)
-  (let* ((report-path (etypecase report-file
+(defun run-function-append-report-file (function report-file)
+    (let* ((report-path (etypecase report-file
 			(pathname report-file)
 			(string (parse-namestring report-file))))
 	 (sexp-report-path (make-pathname :defaults report-path
 					  :type "sexp")))
-  (with-open-file (rs report-path :direction :output
-		      :if-exists :append
+      (with-open-file (rs report-path :direction :output
+			  :if-exists :append
 		      :if-does-not-exist :create)
-    (with-open-file (srs sexp-report-path :direction :output
-			 :if-exists :append
-			 :if-does-not-exist :create)
-      (run-tests :report-stream rs :sexp-report-stream srs)))))
-    
+	(with-open-file (srs sexp-report-path :direction :output
+			     :if-exists :append
+			     :if-does-not-exist :create)
+	  (funcall function :report-stream rs :sexp-report-stream srs)))))
+
+(defun run-tests-append-report-file (report-file)
+  (run-function-append-report-file 'run-tests report-file))
+
+
 (defun run-tests (&key (report-stream *standard-output*) (sexp-report-stream nil))
   (let ((specs (read-specs))
 	(*report-stream* report-stream)
@@ -374,35 +378,39 @@
     (when (db-type-spec db-type specs)
       (clsql:initialize-database-type :database-type db-type))))
 
-(defun do-tests-for-backend (db-type spec)
-  (test-connect-to-database db-type spec)
-
-  (unwind-protect
-      (multiple-value-bind (test-forms skip-tests)
-	  (compute-tests-for-backend db-type *test-database-underlying-type*)
-	
-	(format *report-stream* 
-		"~&
+(defun write-report-banner (report-type db-type stream)
+  (format *report-stream* 
+	  "~&
 ******************************************************************************
-***     CLSQL Test Suite begun at ~A
+***     CLSQL ~A begun at ~A
 ***     ~A
 ***     ~A on ~A
 ***     Database ~A backend~A.
 ******************************************************************************
-" 
-		(clsql-base:format-time 
-		 nil 
-		 (clsql-base:utime->time (get-universal-time)))
-		(lisp-implementation-type)
-		(lisp-implementation-version)
-		(machine-type)
-		db-type
-		(if (not (eq db-type *test-database-underlying-type*))
-		    (format nil " with underlying type ~A" 
-			    *test-database-underlying-type*)
-		  "")
-		)
-	
+"
+	  report-type
+	  (clsql-base:format-time 
+	   nil 
+	   (clsql-base:utime->time (get-universal-time)))
+	  (lisp-implementation-type)
+	  (lisp-implementation-version)
+	  (machine-type)
+	  db-type
+	  (if (not (eq db-type *test-database-underlying-type*))
+	      (format nil " with underlying type ~A" 
+		      *test-database-underlying-type*)
+	      "")
+	  ))
+
+(defun do-tests-for-backend (db-type spec)
+  (test-connect-to-database db-type spec)
+  
+  (unwind-protect
+       (multiple-value-bind (test-forms skip-tests)
+	  (compute-tests-for-backend db-type *test-database-underlying-type*)
+	 
+	 (write-report-banner "Test Suite" db-type *report-stream*)
+	 
 	(test-initialise-database)
 	
 	(regression-test:rem-all-tests)

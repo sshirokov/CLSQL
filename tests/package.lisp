@@ -21,6 +21,8 @@
   (:export 
    #:run-tests 
    #:run-tests-append-report-file
+   #:run-benchmarks 
+   #:run-benchmarks-append-report-file
    #:summarize-test-report
    #:test-initialise-database 
    #:test-connect-to-database
