@@ -12,6 +12,7 @@ TESTS TO ADD
 * symbol slot
 * generalized-boolean slot
 * column and table constraints in CREATE-TABLE and DEF-VIEW-CLASS. 
+* escaping of single quotes
 
 OPTIMIZATIONS
  
