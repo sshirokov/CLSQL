@@ -1,0 +1,668 @@
+<?xml version='1.0' ?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY % myents SYSTEM "entities.inc">
+%myents;
+]>
+
+<!-- Object Oriented Data Manipulation Language --> 
+<reference id="ref-oodml"> 
+  <title>Object Oriented Data Manipulation Language (OODML)</title> 
+    <partintro>
+    <para>
+      <!-- introduction --> 
+    </para>
+  </partintro>
+
+  <refentry id="db-auto-sync">
+    <refnamediv>
+      <refname>*DB-AUTO-SYNC*</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Variable</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Value Type</title>
+      <para>
+        <!-- value type --> 
+      </para> 
+    </refsect1>
+    <refsect1>
+      <title>Initial Value</title>
+      <para><symbol>nil</symbol></para>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <!-- description --> 
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples --> 
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Affected By</title>
+      <para>None.</para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>None.</para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>None.</para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="default-update-objects-max-len">
+    <refnamediv>
+      <refname>*DEFAULT-UPDATE-OBJECTS-MAX-LEN*</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Variable</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Value Type</title>
+      <para>
+        <!-- value type --> 
+      </para> 
+    </refsect1>
+    <refsect1>
+      <title>Initial Value</title>
+      <para><symbol>nil</symbol></para>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <!-- description --> 
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples --> 
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Affected By</title>
+      <para>None.</para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>None.</para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>None.</para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="delete-instance-records">
+    <refnamediv>
+      <refname>DELETE-INSTANCE-RECORDS</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (DELETE-INSTANCE-RECORDS OBJECT) [generic]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Deletes the records represented by OBJECT in the
+      appropriate table of the database associated with OBJECT. If
+      OBJECT is not yet associated with a database, an error is
+      signalled.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry> 
+
+  <refentry id="instance-refreshed">
+    <refnamediv>
+      <refname>INSTANCE-REFRESHED</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (INSTANCE-REFRESHED OBJECT) [generic]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Provides a hook which is called within an object
+      oriented call to SELECT with a non-nil value of REFRESH when
+      the View Class instance OBJECT has been updated from the
+      database. A method specialised on STANDARD-DB-OBJECT is
+      provided which has no effects. Methods specialised on
+      particular View Classes can be used to specify any operations
+      that need to be made on View Classes instances which have been
+      updated in calls to SELECT.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry> 
+
+  <refentry id="update-instance-from-records">
+    <refnamediv>
+      <refname>UPDATE-INSTANCE-FROM-RECORDS</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (UPDATE-INSTANCE-FROM-RECORDS OBJECT &amp;KEY DATABASE) [generic]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Updates the slot values of the View Class instance
+      OBJECT using the attribute values of the appropriate table of
+      DATABASE which defaults to the database associated with OBJECT
+      or, if OBJECT is not associated with a database,
+      *DEFAULT-DATABASE*.  Join slots are updated but instances of
+      the class on which the join is made are not updated.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry> 
+
+  <refentry id="update-objects-joins">
+    <refnamediv>
+      <refname>UPDATE-OBJECTS-JOINS</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (UPDATE-OBJECTS-JOINS OBJECTS &amp;KEY (SLOTS T) (FORCE-P T) CLASS-NAME (MAX-LEN *DEFAULT-UPDATE-OBJECTS-MAX-LEN*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Updates from the records of the appropriate
+      database tables the join slots specified by SLOTS in
+      the supplied list of View Class instances OBJECTS.
+      SLOTS is t by default which means that all join slots
+      with :retrieval :immediate are updated. CLASS-NAME is
+      used to specify the View Class of all instance in
+      OBJECTS and default to nil which means that the class
+      of the first instance in OBJECTS is used. FORCE-P is t
+      by default which means that all join slots are updated
+      whereas a value of nil means that only unbound join
+      slots are updated. MAX-LEN defaults to
+      *DEFAULT-UPDATE-OBJECTS-MAX-LEN* and when non-nil
+      specifies that UPDATE-OBJECT-JOINS may issue multiple
+      database queries with a maximum of MAX-LEN instances
+      updated in each query.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="update-record-from-slot">
+    <refnamediv>
+      <refname>UPDATE-RECORD-FROM-SLOT</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (UPDATE-RECORD-FROM-SLOT OBJECT SLOT &amp;KEY DATABASE) [generic]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Updates the value stored in the column represented by
+      the slot, specified by the CLOS slot name SLOT, of View Class
+      instance OBJECT. DATABASE defaults to *DEFAULT-DATABASE* and
+      specifies the database in which the update is made only if
+      OBJECT is not associated with a database. In this case, a
+      record is created in DATABASE and the attribute represented by
+      SLOT is initialised from the value of the supplied slots with
+      other attributes having default values. Furthermore, OBJECT
+      becomes associated with DATABASE.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry> 
+
+  <refentry id="update-record-from-slots">
+    <refnamediv>
+      <refname>UPDATE-RECORD-FROM-SLOTS</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (UPDATE-RECORD-FROM-SLOTS OBJECT SLOTS &amp;KEY DATABASE) [generic]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Updates the values stored in the columns represented by
+      the slots, specified by the CLOS slot names SLOTS, of View
+      Class instance OBJECT. DATABASE defaults to *DEFAULT-DATABASE*
+      and specifies the database in which the update is made only if
+      OBJECT is not associated with a database. In this case, a
+      record is created in the appropriate table of DATABASE and the
+      attributes represented by SLOTS are initialised from the
+      values of the supplied slots with other attributes having
+      default values. Furthermore, OBJECT becomes associated with
+      DATABASE.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry> 
+
+
+  <refentry id="update-records-from-instance">
+    <refnamediv>
+      <refname>UPDATE-RECORDS-FROM-INSTANCE</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (UPDATE-RECORDS-FROM-INSTANCE OBJECT &amp;KEY DATABASE) [generic]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Using an instance of a View Class, OBJECT, update the
+      table that stores its instance data. DATABASE defaults to
+      *DEFAULT-DATABASE* and specifies the database in which the
+      update is made only if OBJECT is not associated with a
+      database. In this case, a record is created in the appropriate
+      table of DATABASE using values from the slot values of OBJECT,
+      and OBJECT becomes associated with DATABASE.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry> 
+
+  <refentry id="update-slot-from-record">
+    <refnamediv>
+      <refname>UPDATE-SLOT-FROM-RECORD</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (UPDATE-SLOT-FROM-RECORD OBJECT SLOT &amp;KEY DATABASE) [generic]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Updates the slot value, specified by the CLOS slot name
+      SLOT, of the View Class instance OBJECT using the attribute
+      values of the appropriate table of DATABASE which defaults to
+      the database associated with OBJECT or, if OBJECT is not
+      associated with a database, *DEFAULT-DATABASE*.  Join slots
+      are updated but instances of the class on which the join is
+      made are not updated.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry> 
+
+</reference> 

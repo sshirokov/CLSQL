@@ -1,0 +1,1422 @@
+<?xml version='1.0' ?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY % myents SYSTEM "entities.inc">
+%myents;
+]>
+
+<!-- Functional Data Manipulation Language --> 
+<reference id="ref-fdml"> 
+  <title>Functional Data Manipulation Language (FDML)</title> 
+    <partintro>
+    <para>
+      <!-- introduction --> 
+    </para>
+  </partintro>
+
+  <refentry id="cache-table-queries-default">
+    <refnamediv>
+      <refname>*CACHE-TABLE-QUERIES-DEFAULT*</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Variable</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Value Type</title>
+      <para>
+        <!-- value type --> 
+      </para> 
+    </refsect1>
+    <refsect1>
+      <title>Initial Value</title>
+      <para><symbol>nil</symbol></para>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <!-- description --> 
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples --> 
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Affected By</title>
+      <para>None.</para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>None.</para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>None.</para>
+    </refsect1>
+  </refentry>
+
+
+
+  <refentry id="bind-parameter">
+    <refnamediv>
+      <refname>BIND-PARAMETER</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (BIND-PARAMETER PREPARED-STMT POSITION VALUE) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Sets the value of a parameter in a prepared statement.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="cache-table-queries">
+    <refnamediv>
+      <refname>CACHE-TABLE-QUERIES</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (CACHE-TABLE-QUERIES TABLE &amp;KEY (ACTION NIL) (DATABASE *DEFAULT-DATABASE*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Controls the caching of attribute type information on
+      the table specified by TABLE in DATABASE which defaults to
+      *DEFAULT-DATABASE*. ACTION specifies the caching behaviour to
+      adopt. If its value is t then attribute type information is
+      cached whereas if its value is nil then attribute type
+      information is not cached. If ACTION is :flush then all
+      existing type information in the cache for TABLE is removed,
+      but caching is still enabled. TABLE may be a string
+      representing a table for which the caching action is to be
+      taken while the caching action is applied to all tables if
+      TABLE is t. Alternativly, when TABLE is :default, the default
+      caching action specified by *CACHE-TABLE-QUERIES-DEFAULT* is
+      applied to all table for which a caching action has not been
+      explicitly set.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+
+  <refentry id="delete-records">
+    <refnamediv>
+      <refname>DELETE-RECORDS</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (DELETE-RECORDS &amp;KEY (FROM NIL) (WHERE NIL) (DATABASE *DEFAULT-DATABASE*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Deletes records satisfying the SQL expression
+      WHERE from the table specified by FROM in DATABASE
+      specifies a database which defaults to
+      *DEFAULT-DATABASE*.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+
+  <refentry id="do-query">
+    <refnamediv>
+      <refname>DO-QUERY</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (DO-QUERY &amp;KEY (DATABASE '*DEFAULT-DATABASE*) (RESULT-TYPES :AUTO) &amp;REST QUERY-EXPRESSION &amp;BODY BODY) [macro]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Repeatedly executes BODY within a binding of
+      ARGS on the fields of each row selected by the SQL
+      query QUERY-EXPRESSION, which may be a string or a
+      symbolic SQL expression, in DATABASE which defaults to
+      *DEFAULT-DATABASE*. The values returned by the
+      execution of BODY are returned. RESULT-TYPES is a list
+      of symbols which specifies the lisp type for each
+      field returned by QUERY-EXPRESSION. If RESULT-TYPES is
+      nil all results are returned as strings whereas the
+      default value of :auto means that the lisp types are
+      automatically computed for each field.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="execute-command">
+    <refnamediv>
+      <refname>EXECUTE-COMMAND</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (EXECUTE-COMMAND EXPRESSION &amp;KEY DATABASE) [generic]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Executes the SQL command EXPRESSION, which may be an SQL
+      expression or a string representing any SQL statement apart
+      from a query, on the supplied DATABASE which defaults to
+      *DEFAULT-DATABASE*.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry> 
+
+  <refentry id="for-each-row">
+    <refnamediv>
+      <refname>FOR-EACH-ROW</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (FOR-EACH-ROW &amp;KEY FROM ORDER-BY WHERE DISTINCT LIMIT &amp;REST FIELDS &amp;BODY BODY) [macro]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>
+        <!-- description --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples --> 
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also list here --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes here --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="free-prepared-sql">
+    <refnamediv>
+      <refname>FREE-PREPARED-SQL</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (FREE-PREPARED-SQL PREPARED-STMT) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Delete the objects associated with a prepared
+      statement.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="insert-records">
+    <refnamediv>
+      <refname>INSERT-RECORDS</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (INSERT-RECORDS &amp;KEY (INTO NIL) (ATTRIBUTES NIL) (VALUES NIL) (AV-PAIRS NIL) (QUERY NIL) (DATABASE *DEFAULT-DATABASE*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Inserts records into the table specified by
+      INTO in DATABASE which defaults to
+      *DEFAULT-DATABASE*. There are five ways of specifying
+      the values inserted into each row. In the first VALUES
+      contains a list of values to insert and ATTRIBUTES,
+      AV-PAIRS and QUERY are nil. This can be used when
+      values are supplied for all attributes in INTO. In the
+      second, ATTRIBUTES is a list of column names, VALUES
+      is a corresponding list of values and AV-PAIRS and
+      QUERY are nil. In the third, ATTRIBUTES, VALUES and
+      QUERY are nil and AV-PAIRS is an alist of (attribute
+      value) pairs. In the fourth, VALUES, AV-PAIRS and
+      ATTRIBUTES are nil and QUERY is a symbolic SQL query
+      expression in which the selected columns also exist in
+      INTO. In the fifth method, VALUES and AV-PAIRS are nil
+      and ATTRIBUTES is a list of column names and QUERY is
+      a symbolic SQL query expression which returns values
+      for the specified columns.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+    <refentry id="loop-tuples">
+      <refnamediv>
+	<refname>LOOP-FOR-AS-TUPLES</refname>
+	<refpurpose>Iterate over all the tuples of a
+	query via a loop clause</refpurpose>
+	<refclass>Loop Clause</refclass>
+      </refnamediv>
+      <refsect1>
+        <title>Compatibility</title>
+        <caution><para><function>loop-for-as-tuples</function> only works with &cmucl;.</para></caution>
+      </refsect1>
+      <refsect1>
+	<title>Syntax</title>
+	<synopsis><replaceable>var</replaceable> [<replaceable>type-spec</replaceable>] being {each | the} {record | records | tuple | tuples} {in | of} <replaceable>query</replaceable> [from <replaceable>database</replaceable>]</synopsis>
+      </refsect1>
+      <refsect1>
+	<title>Arguments and Values</title>
+	<variablelist>
+	  <varlistentry>
+	    <term><parameter>var</parameter></term>
+	    <listitem>
+	      <para>A <literal>d-var-spec</literal>, as defined in the 
+		grammar for <function>loop</function>-clauses in the
+		ANSI Standard for Common Lisp.  This allows for the
+		usual loop-style destructuring.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>type-spec</parameter></term>
+	    <listitem>
+	      <para>An optional <literal>type-spec</literal> either
+		simple or destructured, as defined in the grammar for
+		<function>loop</function>-clauses in the ANSI Standard
+		for Common Lisp.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>query</parameter></term>
+	    <listitem>
+	      <para>An <glossterm linkend="gloss-sql-expression">sql
+		  expression</glossterm> that represents an SQL
+		query which is expected to return a (possibly empty)
+		result set, where each tuple has as many attributes as
+		<parameter>function</parameter> takes arguments.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>database</parameter></term>
+	    <listitem>
+	      <para>An optional
+		<glossterm linkend="gloss-database-object">database
+		  object</glossterm>. This will default to the value
+		of <symbol>*default-database*</symbol>.</para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </refsect1>
+      <refsect1>
+	<title>Description</title>
+	<para>This clause is an iteration driver for
+	<function>loop</function>, that binds the given variable
+	  (possibly destructured) to the consecutive tuples (which are 
+	  represented as lists of attribute values) in the result set
+	  returned by executing the SQL <parameter>query</parameter>
+	  expression on the <parameter>database</parameter>
+	  specified.</para>
+      </refsect1>
+      <refsect1>
+	<title>Examples</title>
+	<screen>
+(defvar *my-db* (connect '("dent" "newesim" "dent" "dent"))
+  "My database"
+=> *MY-DB*
+(loop with time-graph = (make-hash-table :test #'equal)
+      with event-graph = (make-hash-table :test #'equal)
+      for (time event) being the tuples of "select time,event from log"
+      from *my-db*
+      do
+      (incf (gethash time time-graph 0))
+      (incf (gethash event event-graph 0))
+      finally
+      (flet ((show-graph (k v) (format t "~40A => ~5D~%" k v)))
+        (format t "~&amp;Time-Graph:~%===========~%")
+        (maphash #'show-graph time-graph)
+        (format t "~&amp;~%Event-Graph:~%============~%")
+        (maphash #'show-graph event-graph))
+      (return (values time-graph event-graph)))
+>> Time-Graph:
+>> ===========
+>> D                                        => 53000
+>> X                                        =>     3
+>> test-me                                  =>  3000
+>> 
+>> Event-Graph:
+>> ============
+>> CLOS Benchmark entry.                    =>  9000
+>> Demo Text...                             =>     3
+>> doit-text                                =>  3000
+>> C    Benchmark entry.                    => 12000
+>> CLOS Benchmark entry                     => 32000
+=> #&lt;EQUAL hash table, 3 entries {48350A1D}>
+=> #&lt;EQUAL hash table, 5 entries {48350FCD}>
+	</screen>
+      </refsect1>
+      <refsect1>
+	<title>Side Effects</title>
+	<para>Whatever effects the execution of the SQL query has
+	  on the underlying database, if any.</para>
+      </refsect1>
+      <refsect1>
+	<title>Affected by</title>
+	<para>None.</para>
+      </refsect1>
+      <refsect1>
+	<title>Exceptional Situations</title>
+	<para>If the execution of  the SQL query leads to any
+	  errors, an error of type
+	  <errortype>sql-database-error</errortype> is signalled.</para>
+	<para>Otherwise, any of the exceptional situations of
+	  <function>loop</function> applies.</para>
+      </refsect1>
+      <refsect1>
+	<title>See Also</title>
+	<para>
+	<simplelist>
+	  <member><link linkend="query"><function>query</function></link></member>
+	  <member><link linkend="map-query"><function>map-query</function></link></member>
+	  <member><link linkend="do-query"><function>do-query</function></link></member>
+	</simplelist>
+	</para>
+      </refsect1>
+      <refsect1>
+	<title>Notes</title>
+	<para>None.</para>
+      </refsect1>
+    </refentry>
+
+    <refentry id="map-query">
+      <refnamediv>
+	<refname>MAP-QUERY</refname>
+	<refpurpose>Map a function over all the tuples from a
+	  query</refpurpose>
+	<refclass>Function</refclass>
+      </refnamediv>
+      <refsect1>
+	<title>Syntax</title>
+	<synopsis><function>map-query</function> <replaceable>output-type-spec</replaceable> <replaceable>function</replaceable> <replaceable>query-expression</replaceable> &amp;key <replaceable>database</replaceable> <replaceable>result-types</replaceable> => <returnvalue>result</returnvalue></synopsis>
+      </refsect1>
+      <refsect1>
+	<title>Arguments and Values</title>
+	<variablelist>
+	  <varlistentry>
+	    <term><parameter>output-type-spec</parameter></term>
+	    <listitem>
+	      <para>A sequence type specifier or <symbol>nil</symbol>.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>function</parameter></term>
+	    <listitem>
+	      <para>A function designator.
+		<parameter>function</parameter> takes a single argument which
+		is the atom value for a query single with a single column
+		or is a list of values for a multi-column query.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>query-expression</parameter></term>
+	    <listitem>
+	      <para>An <glossterm linkend="gloss-sql-expression">sql
+		  expression</glossterm> that represents an SQL
+		query which is expected to return a (possibly empty)
+		result set.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>database</parameter></term>
+	    <listitem>
+	      <para>A 
+		<glossterm linkend="gloss-database-object">database
+		  object</glossterm>. This will default to the value
+		of <symbol>*default-database*</symbol>.</para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>result-types</parameter></term>
+	    <listitem>
+	      <para>
+		A <glossterm linkend="gloss-field-types">field type specifier</glossterm>. 
+		The default is &nil;. See <link
+		linkend="query"><function>query</function></link>
+		for the semantics of this argument.  
+	      </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><returnvalue>result</returnvalue></term>
+	    <listitem>
+	      <para>If <parameter>output-type-spec</parameter> is a
+		type specifier other than <symbol>nil</symbol>, then a 
+		sequence of the type it denotes.  Otherwise
+		<symbol>nil</symbol> is returned.</para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </refsect1>
+      <refsect1>
+	<title>Description</title>
+	<para>Applies <parameter>function</parameter> to the
+	  successive tuples in the result set returned
+	  by executing the SQL
+	  <parameter>query-expression</parameter>.  If the
+	  <parameter>output-type-spec</parameter> is
+	  <symbol>nil</symbol>, then the result of each application
+	  of <parameter>function</parameter> is discarded, and
+	  <function>map-query</function> returns
+	  <symbol>nil</symbol>.  Otherwise the result of each
+	  successive application of <parameter>function</parameter> is 
+	  collected in a sequence of type
+	  <parameter>output-type-spec</parameter>, where the jths
+	  element is the result of applying
+	  <parameter>function</parameter> to the attributes of the
+	  jths tuple in the result set.  The collected sequence is the 
+	  result of the call to <function>map-query</function>.
+	</para>
+	<para>If the <parameter>output-type-spec</parameter> is a
+	  subtype of <type>list</type>, the result will be a
+	  <type>list</type>.</para>
+	<para>If the <parameter>result-type</parameter> is a subtype
+	  of <type>vector</type>, then if the implementation can
+	  determine the element type specified for the
+	  <parameter>result-type</parameter>, the element type of the
+	  resulting array is the result of
+	  <emphasis>upgrading</emphasis> that element type; or, if the
+	  implementation can determine that the element type is
+	  unspecified (or <symbol>*</symbol>), the element type of the
+	  resulting array is <type>t</type>; otherwise, an error is
+          signaled.</para>
+        <para>If RESULT-TYPES is nil all results are returned as
+        strings whereas the default value of :auto means that the lisp
+        types are automatically computed for each field.</para>
+      </refsect1>
+      <refsect1>
+	<title>Examples</title>
+	<screen>
+(map-query 'list #'(lambda (tuple) 
+                     (multiple-value-bind (salary name) tuple
+  		       (declare (ignorable name))
+		       (read-from-string salary)))
+	   "select salary,name from simple where salary > 8000")
+=> (10000.0 8000.5)
+
+(map-query '(vector double-float)
+	   #'(lambda (tuple)
+               (multiple-value-bind (salary name) tuple
+	         (declare (ignorable name))
+                 (let ((*read-default-float-format* 'double-float))
+ 	           (coerce (read-from-string salary) 'double-float))
+ 	            "select salary,name from simple where salary > 8000")))
+=> #(10000.0d0 8000.5d0)
+(type-of *)
+=> (SIMPLE-ARRAY DOUBLE-FLOAT (2))
+
+(let (list)
+  (values (map-query nil #'(lambda (tuple) 
+                             (multiple-value-bind (salary name) tuple
+	                       (push (cons name (read-from-string salary)) list))
+		     "select salary,name from simple where salary > 8000")
+	  list))
+=> NIL
+=> (("Hacker, Random J." . 8000.5) ("Mai, Pierre" . 10000.0))
+	</screen>
+      </refsect1>
+      <refsect1>
+	<title>Side Effects</title>
+	<para>Whatever effects the execution of the SQL query has
+	  on the underlying database, if any.</para>
+      </refsect1>
+      <refsect1>
+	<title>Affected by</title>
+	<para>None.</para>
+      </refsect1>
+      <refsect1>
+	<title>Exceptional Situations</title>
+	<para>If the execution of  the SQL query leads to any
+	  errors, an error of type
+	  <errortype>sql-database-error</errortype> is signalled.</para>
+	<para>An error of type <errortype>type-error</errortype> must
+	  be signaled if the <parameter>output-type-spec</parameter> is
+	  not a recognizable subtype of <type>list</type>, not a
+	  recognizable subtype of <type>vector</type>, and not
+	  <symbol>nil</symbol>.</para>
+	<para>An error of type <errortype>type-error</errortype>
+	  should be signaled if
+	  <parameter>output-type-spec</parameter> specifies the number
+	  of elements and the size of the result set is different from
+	  that number.</para>
+      </refsect1>
+      <refsect1>
+	<title>See Also</title>
+	<para>
+	<simplelist>
+	  <member><link linkend="query"><function>query</function></link></member>
+	  <member><link linkend="do-query"><function>do-query</function></link></member>
+	</simplelist>
+	</para>
+      </refsect1>
+      <refsect1>
+	<title>Notes</title>
+	<para>None.</para>
+      </refsect1>
+    </refentry>
+
+  <refentry id="prepare-sql">
+    <refnamediv>
+      <refname>PREPARE-SQL</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (PREPARE-SQL SQL-STMT TYPES &amp;KEY (DATABASE *DEFAULT-DATABASE*) (RESULT-TYPES :AUTO) FIELD-NAMES) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Prepares a SQL statement for execution. TYPES
+      contains a list of types corresponding to the input
+      parameters. Returns a prepared-statement object.
+
+      A type can be
+      :int
+      :double
+      :null
+      (:string n)
+      
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="print-query">
+    <refnamediv>
+      <refname>PRINT-QUERY</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (PRINT-QUERY QUERY-EXP &amp;KEY TITLES (FORMATS T) (SIZES T) (STREAM T) (DATABASE *DEFAULT-DATABASE*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Prints a tabular report of the results returned by the
+      SQL query QUERY-EXP, which may be a symbolic SQL expression or
+      a string, in DATABASE which defaults to
+      *DEFAULT-DATABASE*. The report is printed onto STREAM which
+      has a default value of t which means that *STANDARD-OUTPUT* is
+      used. The TITLE argument, which defaults to nil, allows the
+      specification of a list of strings to use as column titles in
+      the tabular output. SIZES accepts a list of column sizes, one
+      for each column selected by QUERY-EXP, to use in formatting
+      the tabular report. The default value of t means that minimum
+      sizes are computed. FORMATS is a list of format strings to be
+      used for printing each column selected by QUERY-EXP. The
+      default value of FORMATS is t meaning that ~A is used to
+      format all columns or ~VA if column sizes are used.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+
+  <refentry id="query">
+    <refnamediv>
+      <refname>QUERY</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (QUERY QUERY-EXPRESSION &amp;KEY DATABASE RESULT-TYPES FLATP FIELD-NAMES) [generic]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Executes the SQL query expression QUERY-EXPRESSION,
+      which may be an SQL expression or a string, on the supplied
+      DATABASE which defaults to *DEFAULT-DATABASE*. RESULT-TYPES is
+      a list of symbols which specifies the lisp type for each field
+      returned by QUERY-EXPRESSION. If RESULT-TYPES is nil all
+      results are returned as strings whereas the default value of
+      :auto means that the lisp types are automatically computed for
+      each field. FIELD-NAMES is t by default which means that the
+      second value returned is a list of strings representing the
+      columns selected by QUERY-EXPRESSION. If FIELD-NAMES is nil,
+      the list of column names is not returned as a second
+      value. FLATP has a default value of nil which means that the
+      results are returned as a list of lists. If FLATP is t and
+      only one result is returned for each record selected by
+      QUERY-EXPRESSION, the results are returned as elements of a
+      list.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry> 
+
+
+  <refentry id="run-prepared-sql">
+    <refnamediv>
+      <refname>RUN-PREPARED-SQL</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (RUN-PREPARED-SQL PREPARED-STMT) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Execute the prepared sql statment. All input
+      parameters must be bound.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="select">
+    <refnamediv>
+      <refname>SELECT</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (SELECT &amp;REST SELECT-ALL-ARGS) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Executes a query on DATABASE, which has a
+      default value of *DEFAULT-DATABASE*, specified by the
+      SQL expressions supplied using the remaining arguments
+      in SELECT-ALL-ARGS. The SELECT argument can be used to
+      generate queries in both functional and object
+      oriented contexts.
+
+      In the functional case, the required arguments specify
+      the columns selected by the query and may be symbolic
+      SQL expressions or strings representing attribute
+      identifiers. Type modified identifiers indicate that
+      the values selected from the specified column are
+      converted to the specified lisp type. The keyword
+      arguments ALL, DISTINCT, FROM, GROUP-by, HAVING,
+      ORDER-BY, SET-OPERATION and WHERE are used to specify,
+      using the symbolic SQL syntax, the corresponding
+      components of the SQL query generated by the call to
+      SELECT. RESULT-TYPES is a list of symbols which
+      specifies the lisp type for each field returned by the
+      query. If RESULT-TYPES is nil all results are returned
+      as strings whereas the default value of :auto means
+      that the lisp types are automatically computed for
+      each field. FIELD-NAMES is t by default which means
+      that the second value returned is a list of strings
+      representing the columns selected by the query. If
+      FIELD-NAMES is nil, the list of column names is not
+      returned as a second value.
+
+      In the object oriented case, the required arguments to
+      SELECT are symbols denoting View Classes which specify
+      the database tables to query. In this case, SELECT
+      returns a list of View Class instances whose slots are
+      set from the attribute values of the records in the
+      specified table. Slot-value is a legal operator which
+      can be employed as part of the symbolic SQL syntax
+      used in the WHERE keyword argument to SELECT. REFRESH
+      is nil by default which means that the View Class
+      instances returned are retrieved from a cache if an
+      equivalent call to SELECT has previously been
+      issued. If REFRESH is true, the View Class instances
+      returned are updated as necessary from the database
+      and the generic function INSTANCE-REFRESHED is called
+      to perform any necessary operations on the updated
+      instances.
+
+      In both object oriented and functional contexts, FLATP
+      has a default value of nil which means that the
+      results are returned as a list of lists. If FLATP is t
+      and only one result is returned for each record
+      selected in the query, the results are returned as
+      elements of a list.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+
+
+  <refentry id="update-records">
+    <refnamediv>
+      <refname>UPDATE-RECORDS</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (UPDATE-RECORDS TABLE &amp;KEY (ATTRIBUTES NIL) (VALUES NIL) (AV-PAIRS NIL) (WHERE NIL) (DATABASE *DEFAULT-DATABASE*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Updates the attribute values of existing records
+      satsifying the SQL expression WHERE in the table specified by
+      TABLE in DATABASE which defaults to *DEFAULT-DATABASE*. There
+      are three ways of specifying the values to update for each
+      row. In the first, VALUES contains a list of values to use in
+      the update and ATTRIBUTES, AV-PAIRS and QUERY are nil. This
+      can be used when values are supplied for all attributes in
+      TABLE. In the second, ATTRIBUTES is a list of column names,
+      VALUES is a corresponding list of values and AV-PAIRS and
+      QUERY are nil. In the third, ATTRIBUTES, VALUES and QUERY are
+      nil and AV-PAIRS is an alist of (attribute value) pairs.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+
+
+</reference> 

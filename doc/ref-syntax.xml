@@ -1,0 +1,624 @@
+<?xml version='1.0' ?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY % myents SYSTEM "entities.inc">
+%myents;
+]>
+
+<!-- Symbolic SQL Syntax --> 
+<reference id="ref-syntax"> 
+  <title>The Symbolic SQL Syntax</title> 
+  <partintro>
+    <para> 
+      <!-- introduction --> 
+    </para>
+  </partintro>  
+
+    <refentry id="disable-sql-reader-syntax">
+    <refnamediv>
+      <refname>DISABLE-SQL-READER-SYNTAX</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (DISABLE-SQL-READER-SYNTAX) [macro]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Turns off the SQL reader syntax setting the
+      syntax state such that if the syntax is subsequently
+      enabled, RESTORE-SQL-READER-SYNTAX-STATE will disable
+      it again.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="enable-sql-reader-syntax">
+    <refnamediv>
+      <refname>ENABLE-SQL-READER-SYNTAX</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (ENABLE-SQL-READER-SYNTAX) [macro]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Turns on the SQL reader syntax setting the
+      syntax state such that if the syntax is subsequently
+      disabled, RESTORE-SQL-READER-SYNTAX-STATE will enable
+      it again.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="locally-disable-sql-reader-syntax">
+    <refnamediv>
+      <refname>LOCALLY-DISABLE-SQL-READER-SYNTAX</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (LOCALLY-DISABLE-SQL-READER-SYNTAX) [macro]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Turns off the SQL reader syntax without
+      changing the syntax state such that
+      RESTORE-SQL-READER-SYNTAX-STATE will re-establish the
+      current syntax state.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="locally-enable-sql-reader-syntax">
+    <refnamediv>
+      <refname>LOCALLY-ENABLE-SQL-READER-SYNTAX</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (LOCALLY-ENABLE-SQL-READER-SYNTAX) [macro]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Turns on the SQL reader syntax without
+      changing the syntax state such that
+      RESTORE-SQL-READER-SYNTAX-STATE will re-establish the
+      current syntax state.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="restore-sql-reader-syntax-state">
+    <refnamediv>
+      <refname>RESTORE-SQL-READER-SYNTAX-STATE</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (RESTORE-SQL-READER-SYNTAX-STATE) [macro]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Enables the SQL reader syntax if
+      ENABLE-SQL-READER-SYNTAX has been called more recently
+      than DISABLE-SQL-READER-SYNTAX and otherwise disables
+      the SQL reader syntax. By default, the SQL reader
+      syntax is disabled.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="sql">
+    <refnamediv>
+      <refname>SQL</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (SQL &amp;REST ARGS) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Returns an SQL string generated from the SQL expressions
+      ARGS. The expressions are translated into SQL strings and then
+      concatenated with a single space delimiting each expression.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+
+  <refentry id="sql-expression">
+    <refnamediv>
+      <refname>SQL-EXPRESSION</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (SQL-EXPRESSION &amp;KEY STRING TABLE ALIAS ATTRIBUTE TYPE) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Returns an SQL expression constructed from
+      the supplied arguments which may be combined as
+      follows: ATTRIBUTE and TYPE; ATTRIBUTE; ALIAS or TABLE
+      and ATTRIBUTE and TYPE; ALIAS or TABLE and ATTRIBUTE;
+      TABLE, ATTRIBUTE and TYPE; TABLE and ATTRIBUTE; TABLE
+      and ALIAS; TABLE; and STRING.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="sql-operation">
+    <refnamediv>
+      <refname>SQL-OPERATION</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (SQL-OPERATION OPERATION &amp;REST REST) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Returns an SQL expression constructed from
+      the supplied SQL operator or function OPERATION and
+      its arguments REST. If OPERATION is passed the symbol
+      FUNCTION then the first value in REST is taken to be a
+      valid SQL function and the remaining values in REST
+      its arguments.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="sql-operator">
+    <refnamediv>
+      <refname>SQL-OPERATOR</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (SQL-OPERATOR OPERATION) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Returns the Lisp symbol corresponding to the
+      SQL operation represented by the symbol
+      OPERATION.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+</reference> 

@@ -1,0 +1,1507 @@
+<?xml version='1.0' ?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY % myents SYSTEM "entities.inc">
+%myents;
+]>
+
+<!-- Connection and Initialisation --> 
+<reference id="ref-connect"> 
+  <title>Connection and Initialisation</title> 
+  <partintro>
+    <para> 
+      <!-- introduction --> 
+    </para>
+  </partintro>
+
+    <refentry id="database">
+    <refnamediv>
+      <refname>DATABASE</refname>
+      <refpurpose>The super-type of all &clsql; databases</refpurpose>
+      <refclass>Class</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Class Precedence List</title>
+      <para>
+        <simplelist type="inline">
+          <member><type>database</type></member>
+          <member><type>standard-object</type></member>
+          <member><type>t</type></member>
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Description</title> <para>This class is the superclass
+      of all &clsql; databases. The different database back-ends
+      derive subclasses of this class to implement their databases.
+      No instances of this class are ever created by &clsql;.</para>
+    </refsect1>
+    <refsect1>
+      <title class="contenttitle">Class details</title>
+      <programlisting>(defclass DATABASE ()(...))</programlisting>
+    </refsect1>
+    <refsect1>
+      <title class="contenttitle">Slots</title>
+      <para>
+        <simplelist> 
+          <property>slot COMMAND-RECORDING-STREAM is of type T</property>
+          <property>slot CONN-POOL is of type T</property>
+          <property>slot NAME is of type T</property>
+          <property>slot RECORD-CACHES is of type T</property>
+          <property>slot RESULT-RECORDING-STREAM is of type T</property>
+          <property>slot STATE is of type T</property>
+          <property>slot TRANSACTION is of type T</property>
+          <property>slot TRANSACTION-LEVEL is of type T</property>
+          <property>slot VIEW-CLASSES is of type T</property>
+        </simplelist> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="connect-if-exists">
+    <refnamediv>
+      <refname>*CONNECT-IF-EXISTS*</refname>
+      <refpurpose>Default value for the
+      <parameter>if-exists</parameter> parameter of
+      <function>connect</function>.</refpurpose>
+      <refclass>Variable</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Value Type</title>
+      <para>A valid argument to the <parameter>if-exists</parameter> 
+      parameter of <function>connect</function>, i.e. one of
+      <simplelist type="inline">
+        <member><symbol>:new</symbol></member>
+        <member><symbol>:warn-new</symbol></member>
+        <member><symbol>:error</symbol></member>
+        <member><symbol>:warn-old</symbol></member>
+        <member><symbol>:old</symbol></member>
+        </simplelist>.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Initial Value</title>
+      <para><symbol>:error</symbol></para>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>The value of this variable is used in calls to
+      <function>connect</function> as the default
+      value of the <parameter>if-exists</parameter>
+      parameter.  See <link
+      linkend="connect"><function>connect</function></link> for
+      the semantics of the valid values for this variable.</para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <para>None.</para>
+    </refsect1>
+    <refsect1>
+      <title>Affected By</title>
+      <para>None.</para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <member><link
+          linkend="connect"><function>connect</function></link></member>
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>None.</para>
+    </refsect1>
+  </refentry>
+
+
+  <refentry id="default-database">
+    <refnamediv>
+      <refname>*DEFAULT-DATABASE*</refname>
+      <refpurpose>The default database object to use</refpurpose>
+      <refclass>Variable</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Value Type</title>
+      <para>Any object of type <type>database</type>, or nil to
+      indicate no default database.</para>
+    </refsect1>
+    <refsect1>
+      <title>Initial Value</title>
+      <para><symbol>nil</symbol></para>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Any function or macro in
+      &clsql; that operates on a
+      database uses the value of this variable as the default
+      value for it's <parameter>database</parameter>
+      parameter.</para>
+      <para>The value of this parameter is changed by calls to
+      <function>connect</function>, which sets
+      <symbol>*default-database*</symbol> to the database object
+      it returns.  It is also changed by calls to
+      <function>disconnect</function>, when the database object
+      being disconnected is the same as the value of
+      <symbol>*default-database*</symbol>.  In this case
+      <function>disconnect</function> sets
+      <symbol>*default-database*</symbol> to the first database
+      that remains in the list of active databases as returned by
+      <function>connected-databases</function>, or
+      <symbol>nil</symbol> if no further active databases
+      exist.</para>
+      <para>The user may change <symbol>*default-database*</symbol>
+      at any time to a valid value of his choice.</para>
+      <caution>
+        <para>If the value of <symbol>*default-database*</symbol> is
+        <symbol>nil</symbol>, then all calls to
+        &clsql; functions on databases
+        must provide a suitable <parameter>database</parameter>
+        parameter, or an error will be signalled.</para>
+      </caution>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        (connected-databases)
+        => NIL
+        (connect '("dent" "newesim" "dent" "dent") :database-type :mysql)
+        => #&lt;CLSQL-MYSQL:MYSQL-DATABASE {48385F55}>
+        (connect '(nil "template1" "dent" nil) :database-type :postgresql)
+        => #&lt;CLSQL-POSTGRESQL:POSTGRESQL-DATABASE {483868FD}>
+        (connect '("dent" "newesim" "dent" "dent") :database-type :mysql :if-exists :new)
+        => #&lt;CLSQL-MYSQL:MYSQL-DATABASE {48387265}>
+        *default-database*
+        => #&lt;CLSQL-MYSQL:MYSQL-DATABASE {48387265}>
+        (disconnect)
+        => T
+        *default-database*
+        => #&lt;CLSQL-POSTGRESQL:POSTGRESQL-DATABASE {483868FD}>
+        (disconnect)
+        => T
+        *default-database*
+        => #&lt;CLSQL-MYSQL:MYSQL-DATABASE {48385F55}>
+        (disconnect)
+        => T
+        *default-database*
+        => NIL
+        (connected-databases)
+        => NIL
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Affected By</title>
+      <para>
+        <simplelist>
+          <member><link linkend="connect"><function>connect</function></link></member>
+          <member><link linkend="disconnect"><function>disconnect</function></link></member>
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <member><link linkend="connected-databases"><function>connected-databases</function></link></member>
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <note>
+        <para>This variable is intended to facilitate working with
+        &clsql; in an interactive
+        fashion at the top-level loop, and because of this,
+        <function>connect</function> and
+        <function>disconnect</function> provide some fairly
+        complex  behaviour to keep
+        <symbol>*default-database*</symbol> set to  useful values.
+        Programmatic use of &clsql;
+        should never depend on the value of
+        <symbol>*default-database*</symbol> and should provide
+        correct database objects via the
+        <parameter>database</parameter> parameter to functions
+        called.</para>
+      </note>
+    </refsect1>
+  </refentry>
+
+
+  <refentry id="default-database-type">
+    <refnamediv>
+      <refname>*DEFAULT-DATABASE-TYPE*</refname>
+      <refpurpose>The default database type to use</refpurpose>
+      <refclass>Variable</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Value Type</title>
+      <para>Any keyword representing a valid database back-end of
+      &clsql;, or
+      <symbol>nil</symbol>.</para>
+    </refsect1>
+    <refsect1>
+      <title>Initial Value</title>
+      <para><symbol>nil</symbol></para>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>The value of this variable is used in calls to
+      <function>initialize-database-type</function> and
+      <function>connect</function> as the default
+      value of the <parameter>database-type</parameter>
+      parameter.</para>
+      <caution>
+        <para>If the value of this variable is <symbol>nil</symbol>,
+        then all calls to
+        <function>initialize-database-type</function> or
+        <function>connect</function> will have to specify the
+        <parameter>database-type</parameter> to use, or a
+        general-purpose error will be signalled.</para>
+      </caution>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        (setf *default-database-type* :mysql)
+        => :mysql
+        (initialize-database-type)
+        => t
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Affected By</title>
+      <para>None.</para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>None.</para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>None.</para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="initialized-database-types">
+    <refnamediv>
+      <refname>*INITIALIZED-DATABASE-TYPES*</refname>
+      <refpurpose>List of all initialized database types</refpurpose>
+      <refclass>Variable</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Value Type</title>
+      <para>A list of all initialized database types, each of which
+      represented by it's corresponding keyword.</para>
+    </refsect1>
+    <refsect1>
+      <title>Initial Value</title>
+      <para><symbol>nil</symbol></para>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>This variable is updated whenever
+      <function>initialize-database-type</function> is called for a
+      database type which hasn't already been initialized before,
+      as determined by this variable.  In that case the keyword
+      representing the database type is pushed onto the list
+      stored in
+      <symbol>*INITIALIZED-DATABASE-TYPES*</symbol>.</para>
+      <caution>
+        <para>Attempts to modify the value of this variable will
+        result in undefined behaviour.</para>
+      </caution>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        (setf *default-database-type* :mysql)
+        => :mysql
+        (initialize-database-type)
+        => t
+        *initialized-database-types*
+        => (:MYSQL)
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Affected By</title>
+      <para>
+        <simplelist>
+          <member><function>initialize-database-type</function></member>
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>None.</para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>Direct access to this variable is primarily provided
+      because of compatibility with Harlequin's <application>Common
+      SQL</application>.</para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="connect">
+    <refnamediv>
+      <refname>CONNECT</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (CONNECT CONNECTION-SPEC &amp;KEY (IF-EXISTS *CONNECT-IF-EXISTS*) (MAKE-DEFAULT T) (POOL NIL) (DATABASE-TYPE *DEFAULT-DATABASE-TYPE*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Connects to a database of the supplied DATABASE-TYPE
+      which defaults to *DEFAULT-DATABASE-TYPE*, using the
+      type-specific connection specification CONNECTION-SPEC. The
+      value of IF-EXISTS, which defaults to *CONNECT-IF-EXISTS*,
+      determines what happens if a connection to the database
+      specified by CONNECTION-SPEC is already established.  A value
+      of :new means create a new connection.  A value of :warn-new
+      means warn the user and create a new connect.  A value of
+      :warn-old means warn the user and use the old connection.  A
+      value of :error means fail, notifying the user.  A value of
+      :old means return the old connection.  MAKE-DEFAULT is t by
+      default which means that *DEFAULT-DATABASE* is set to the new
+      connection, otherwise *DEFAULT-DATABASE* is not changed. If
+      POOL is t the connection will be taken from the general pool,
+      if POOL is a CONN-POOL object the connection will be taken
+      from this pool.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples --> 
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also list here --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes here --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="connected-databases">
+    <refnamediv>
+      <refname>CONNECTED-DATABASES</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (CONNECTED-DATABASES) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Returns the list of active database objects.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="create-database">
+    <refnamediv>
+      <refname>CREATE-DATABASE</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (CREATE-DATABASE CONNECTION-SPEC &amp;KEY DATABASE-TYPE) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>
+        <!-- description --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples --> 
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also list here --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes here --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="database-name">
+    <refnamediv>
+      <refname>DATABASE-NAME</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (DATABASE-NAME (OBJ DATABASE)) [reader]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>
+        "Returns the name of DATABASE."
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples --> 
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also list here --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes here --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="database-type">
+    <refnamediv>
+      <refname>DATABASE-TYPE</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (DATABASE-TYPE (OBJ DATABASE)) [reader]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>
+        "Returns the type of DATABASE."
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples --> 
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also list here --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes here --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="destroy-database">
+    <refnamediv>
+      <refname>DESTROY-DATABASE</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (DESTROY-DATABASE CONNECTION-SPEC &amp;KEY DATABASE-TYPE) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>
+        <!-- description --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples --> 
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also list here --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes here --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="disconnect">
+    <refnamediv>
+      <refname>DISCONNECT</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (DISCONNECT &amp;KEY (DATABASE *DEFAULT-DATABASE*) (ERROR NIL)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Closes the connection to DATABASE and resets
+      *DEFAULT-DATABASE* if that database was
+      disconnected. If DATABASE is a database instance, this
+      object is closed. If DATABASE is a string, then a
+      connected database whose name matches DATABASE is
+      sought in the list of connected databases. If no
+      matching database is found and ERROR and DATABASE are
+      both non-nil an error is signaled, otherwise nil is
+      returned. If the database is from a pool it will be
+      released to this pool.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="disconnect-pooled">
+    <refnamediv>
+      <refname>DISCONNECT-POOLED</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (DISCONNECT-POOLED &amp;OPTIONAL CLEAR) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Disconnects all connections in the pool.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+
+  <refentry id="find-database">
+    <refnamediv>
+      <refname>FIND-DATABASE</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (FIND-DATABASE DATABASE &amp;KEY (ERRORP T) (DB-TYPE NIL)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Returns the connected databases of type
+      DB-TYPE whose names match the string DATABASE. If
+      DATABASE is a database object, it is returned. If
+      DB-TYPE is nil all databases matching the string
+      DATABASE are considered.  If no matching databases are
+      found and ERRORP is nil then nil is returned. If
+      ERRORP is nil and one or more matching databases are
+      found, then the most recently connected database is
+      returned as a first value and the number of matching
+      databases is returned as a second value. If no, or
+      more than one, matching databases are found and ERRORP
+      is true, an error is signalled.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="initialize-database-type">
+    <refnamediv>
+      <refname>INITIALIZE-DATABASE-TYPE</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (INITIALIZE-DATABASE-TYPE &amp;KEY (DATABASE-TYPE *DEFAULT-DATABASE-TYPE*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Initializes the supplied DATABASE-TYPE, if it
+      is not already initialized, as indicated by
+      *INITIALIZED-DATABASE-TYPES* and returns
+      DATABASE-TYPE. *DEFAULT-DATABASE-TYPE* is set to
+      DATABASE-TYPE and, if DATABASE-TYPE has not been
+      initialised, it is added to
+      *INITIALIZED-DATABASE-TYPES*. 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="list-databases">
+    <refnamediv>
+      <refname>LIST-DATABASES</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (LIST-DATABASES CONNECTION-SPEC &amp;KEY DATABASE-TYPE) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>
+        <!-- description --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples --> 
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also list here --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes here --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="probe-database">
+    <refnamediv>
+      <refname>PROBE-DATABASE</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (PROBE-DATABASE CONNECTION-SPEC &amp;KEY DATABASE-TYPE) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>
+        <!-- description --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples --> 
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also list here --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes here --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="reconnect">
+    <refnamediv>
+      <refname>RECONNECT</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (RECONNECT &amp;KEY (DATABASE *DEFAULT-DATABASE*) (ERROR NIL) (FORCE T)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Reconnects DATABASE which defaults to
+      *DEFAULT-DATABASE* to the underlying database
+      management system. On success, t is returned and the
+      variable *DEFAULT-DATABASE* is set to the newly
+      reconnected database. If DATABASE is a database
+      instance, this object is closed. If DATABASE is a
+      string, then a connected database whose name matches
+      DATABASE is sought in the list of connected
+      databases. If no matching database is found and ERROR
+      and DATABASE are both non-nil an error is signaled,
+      otherwise nil is returned. When the current database
+      connection cannot be closed, if FORCE is non-nil, as
+      it is by default, the connection is closed and errors
+      are suppressed. If force is nil and the database
+      connection cannot be closed, an error is
+      signalled.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="status">
+    <refnamediv>
+      <refname>STATUS</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (STATUS &amp;OPTIONAL FULL) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Prints information about the currently connected databases to
+      *STANDARD-OUTPUT*. The argument FULL is nil by default and a
+      value of t means that more detailed information about each
+      database is printed.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="truncate-database">
+    <refnamediv>
+      <refname>TRUNCATE-DATABASE</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (TRUNCATE-DATABASE &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>
+        <!-- description --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples --> 
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also list here --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes here --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="with-database">
+    <refnamediv>
+      <refname>WITH-DATABASE</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (WITH-DATABASE DB-VAR CONNECTION-SPEC &amp;REST CONNECT-ARGS &amp;BODY BODY) [macro]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Evaluate the body in an environment, where
+      `db-var' is bound to the database connection given by
+      `connection-spec' and `connect-args'.  The connection
+      is automatically closed or released to the pool on
+      exit from the body.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="with-default-database">
+    <refnamediv>
+      <refname>WITH-DEFAULT-DATABASE</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (WITH-DEFAULT-DATABASE DATABASE &amp;REST BODY) [macro]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Perform BODY with DATABASE bound as
+      *default-database*.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+
+</reference> 

@@ -1,0 +1,508 @@
+<?xml version='1.0' ?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY % myents SYSTEM "entities.inc">
+%myents;
+]>
+
+<!-- SQL I/0 Recording --> 
+<reference id="ref-recording"> 
+  <title>SQL I/O Recording</title> 
+    <partintro>
+    <para>
+      <!-- introduction --> 
+    </para>
+  </partintro>
+
+  <refentry id="add-sql-stream">
+    <refnamediv>
+      <refname>ADD-SQL-STREAM</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (ADD-SQL-STREAM STREAM &amp;KEY (TYPE :COMMANDS) (DATABASE *DEFAULT-DATABASE*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Adds the supplied stream STREAM (or T for
+      *standard-output*) as a component of the recording broadcast
+      stream for the SQL recording type specified by TYPE on
+      DATABASE which defaults to *DEFAULT-DATABASE*. TYPE must be
+      one of :commands, :results, or :both, defaulting to :commands,
+      depending on whether the stream is to be added for recording
+      SQL commands, results or both.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="delete-sql-stream">
+    <refnamediv>
+      <refname>DELETE-SQL-STREAM</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (DELETE-SQL-STREAM STREAM &amp;KEY (TYPE :COMMANDS) (DATABASE *DEFAULT-DATABASE*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Removes the supplied stream STREAM from the
+      recording broadcast stream for the SQL recording type
+      specified by TYPE on DATABASE which defaults to
+      *DEFAULT-DATABASE*. TYPE must be one of :commands,
+      :results, or :both, defaulting to :commands, depending
+      on whether the stream is to be added for recording SQL
+      commands, results or both.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="list-sql-streams">
+    <refnamediv>
+      <refname>LIST-SQL-STREAMS</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (LIST-SQL-STREAMS &amp;KEY (TYPE :COMMANDS) (DATABASE *DEFAULT-DATABASE*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Returns the list of component streams for the
+      broadcast stream recording SQL commands sent to and/or
+      results returned from DATABASE which defaults to
+      *DEFAULT-DATABASE*. TYPE must be one of :commands,
+      :results, or :both, defaulting to :commands, and
+      determines whether the listed streams contain those
+      recording SQL commands, results or both.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+
+  <refentry id="sql-recording-p">
+    <refnamediv>
+      <refname>SQL-RECORDING-P</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (SQL-RECORDING-P &amp;KEY (TYPE :COMMANDS) (DATABASE *DEFAULT-DATABASE*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Predicate to test whether the SQL recording
+      specified by TYPE is currently enabled for DATABASE
+      which defaults to *DEFAULT-DATABASE*.  TYPE may be one
+      of :commands, :results, :both or :either, defaulting
+      to :commands, otherwise nil is returned.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="sql-stream">
+    <refnamediv>
+      <refname>SQL-STREAM</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (SQL-STREAM &amp;KEY (TYPE :COMMANDS) (DATABASE *DEFAULT-DATABASE*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Returns the broadcast stream used for recording SQL commands
+      sent to or results returned from DATABASE which defaults to
+      *DEFAULT-DATABASE*. TYPE must be one of :commands or :results,
+      defaulting to :commands, and determines whether the stream
+      returned is that used for recording SQL commands or results.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+  <refentry id="start-sql-recording">
+    <refnamediv>
+      <refname>START-SQL-RECORDING</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (START-SQL-RECORDING &amp;KEY (TYPE :COMMANDS) (DATABASE *DEFAULT-DATABASE*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Starts recording of SQL commands sent to and/or results
+      returned from DATABASE which defaults to *DEFAULT-DATABASE*. The
+      SQL is output on one or more broadcast streams, initially just
+      *STANDARD-OUTPUT*, and the functions ADD-SQL-STREAM and
+      DELETE-SQL-STREAM may be used to add or delete command or result
+      recording streams. The default value of TYPE is :commands which
+      means that SQL commands sent to DATABASE are recorded. If TYPE
+      is :results then SQL results returned from DATABASE are
+      recorded. Both commands and results may be recorded by passing
+      TYPE value of :both.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+
+  <refentry id="stop-sql-recording">
+    <refnamediv>
+      <refname>STOP-SQL-RECORDING</refname>
+      <refpurpose><!-- purpose --></refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function> (STOP-SQL-RECORDING &amp;KEY (TYPE :COMMANDS) (DATABASE *DEFAULT-DATABASE*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <!-- arguments and values --> 
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Stops recording of SQL commands sent to and/or results
+      returned from DATABASE which defaults to *DEFAULT-DATABASE*. The
+      default value of TYPE is :commands which means that SQL commands
+      sent to DATABASE will no longer be recorded. If TYPE is :results
+      then SQL results returned from DATABASE will no longer be
+      recorded. Recording may be stopped for both commands and results
+      by passing TYPE value of :both.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+        <!-- examples -->
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        <!-- side effects --> 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        <simplelist>
+          <!-- affected by --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        <!-- execeptional situations -->
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <!-- see also --> 
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <!-- notes --> 
+      </para>
+    </refsect1>
+  </refentry>
+
+</reference> 

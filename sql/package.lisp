@@ -270,7 +270,6 @@
 	 #:list-attributes                
 	 #:attribute-type                 
 	 #:list-attribute-types		  
-	 #:*cache-table-queries-default*  
 	 #:create-view                    
 	 #:drop-view                      
 	 #:create-index                   

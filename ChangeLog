@@ -1,3 +1,11 @@
+7 Jun 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* sql/package.lisp: remove duplicate export of 
+	*CACHE-TABLE-QUERIES-DEFAULT*. 
+	* doc/ref-*.xml, doc/global-index.xml: new files documenting 
+	the CommonSQL compatible api. 
+	* tests/test-fdml.lisp: modified the test :fdml/transaction/3 to 
+	reflect changes in return values of WITH-TRANSACTION. 
+
 04 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* tests/README: Fix filename [reported by Bill Clementson]
 	* sql/transactions.lisp: Apply return value patch from

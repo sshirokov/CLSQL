@@ -626,8 +626,7 @@
                          :flatp t)
             results)
       (apply #'values (nreverse results)))
-  nil :committed nil ("lenin-nospam@soviet.org") :committed
-  nil ("lenin@soviet.org"))
+  nil nil nil ("lenin-nospam@soviet.org") nil nil ("lenin@soviet.org"))
 
 ;; runs a valid update and an invalid one within a transaction and checks
 ;; that the valid update is rolled back when the invalid one fails. 
