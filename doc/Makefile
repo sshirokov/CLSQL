@@ -72,7 +72,8 @@ ${FOFILE}: $(DOCFILES) Makefile
 .PHONY: pdf
 pdf: ${PDFFILE}
 
-${PDFFILE}: ${FOFILE}
+${PDFFILE}: ${DOCFILES} Makefile
+	@$(MAKE) fo
 	@fop $(FOFILE) -pdf $(PDFFILE) > /dev/null
 
 .PHONY: dvi
@@ -81,7 +82,8 @@ dvi: ${DVIFILE}
 .PHONY: ps
 ps: ${PSFILE}
 
-${PSFILE}: ${FOFILE}
+${PSFILE}: ${DOCFILES} Makefile
+	@$(MAKE) fo
 	@fop $(FOFILE) -ps $(PSFILE) > /dev/null
 
 
