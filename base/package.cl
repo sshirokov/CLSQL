@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: package.cl,v 1.3 2002/05/15 17:21:29 kevin Exp $
+;;;; $Id: package.cl,v 1.4 2002/05/19 16:05:22 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -120,7 +120,7 @@
 	 ;; utils.cl
 	 #:number-to-sql-string
 	 #:float-to-sql-string
-	 #:sql-escape
+	 #:sql-escape-quotes
 
 	 ;; For UncommonSQL support
 	 #:sql-ident

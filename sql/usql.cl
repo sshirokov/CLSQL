@@ -8,7 +8,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: usql.cl,v 1.6 2002/04/07 15:11:21 kevin Exp $
+;;;; $Id: usql.cl,v 1.7 2002/05/19 16:05:23 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and onShore Development Inc
@@ -72,22 +72,6 @@ specifies the database to operation on, defaulting to
   (with-slots (name)
     sql
     `(make-instance 'sql-ident :name ',name)))
-
-
-;; KMR -- change aref to more specific char
-(defun sql-escape (identifier)
-  (let* ((unescaped (etypecase identifier
-                      (symbol (symbol-name identifier))
-                      (string identifier)))
-         (escaped (make-string (length unescaped))))
-    (dotimes (i (length unescaped))
-      (setf (char escaped i)
-            (cond ((equal (char unescaped i) #\-)
-                   #\_)
-                  ;; ...
-                  (t
-                   (char unescaped i)))))
-    escaped))
 
 
 (defun create-sequence (name &key (database *default-database*))
