@@ -10,7 +10,8 @@ DEBVERSION=`sed -n -e "s/${DEBPKG} (\(.*\)).*/\1/p" < ${WORK_DIR}/debian/changel
 export CVSROOT=`cat CVS/Root`
 
 echo "Building Debian files"
-cvs-buildpackage -rfakeroot -kkevin@rosenberg.net -H${WORK_DIR}/debian/cvsbp-prepare.sh -F -d ${DEBPKG} -uc -us $*
+#cvs-buildpackage -rfakeroot -kkevin@rosenberg.net -H${WORK_DIR}/debian/cvsbp-prepare.sh -F -d ${DEBPKG} -uc -us -i.cvsignore $*
+cvs-buildpackage -rfakeroot -kkevin@rosenberg.net -F -d ${DEBPKG} -uc -us -i.cvsignore $*
 
 rm -rf ${PACKAGE_DIR}/${DEBPKG}-${DEBVERSION}
 
