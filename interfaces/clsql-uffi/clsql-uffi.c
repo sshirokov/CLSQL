@@ -6,7 +6,7 @@
  *   Programmer:    Kevin M. Rosenberg
  *   Date Started:  Mar 2002
  *
- * $Id: clsql-uffi.c,v 1.1 2002/03/27 08:09:25 kevin Exp $
+ * $Id: clsql-uffi.c,v 1.2 2002/03/27 09:10:16 kevin Exp $
  *
  * This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
  *
@@ -41,7 +41,11 @@ DLLEXPORT
 unsigned int
 atol64 (const unsigned char* str, int* pHigh32)
 {
+#ifdef WIN32
+  __int64 result = 0;
+#else
   long long result = 0;
+#endif
   int minus = 0;
   int first_char = *str;
   if (first_char == '+')

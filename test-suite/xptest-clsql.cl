@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: xptest-clsql.cl,v 1.1 2002/03/27 09:00:15 kevin Exp $
+;;;; $Id: xptest-clsql.cl,v 1.2 2002/03/27 09:11:30 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -30,7 +30,7 @@
    (postgresql-socket-spec :accessor postgresql-socket-spec))
   (:documentation "Test fixture for CLSQL testing"))
 
-(defvar *config-pathname* (make-pathname :name "test-clsql"
+(defvar *config-pathname* (make-pathname :name "test"
 					 :type "config"
 					 :defaults *load-truename*))
 (defmethod setup ((fix clsql-fixture))

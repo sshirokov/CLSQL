@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: test-clsql.cl,v 1.1 2002/03/27 09:00:15 kevin Exp $
+;;;; $Id: test-clsql.cl,v 1.2 2002/03/27 09:11:30 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -20,7 +20,7 @@
 (in-package :cl-user)
 
 
-(defvar *config-pathname* (make-pathname :name "test-clsql"
+(defvar *config-pathname* (make-pathname :name "test"
 					 :type "config"
 					 :defaults *load-truename*))
 (defparameter *config* nil)
