@@ -2289,6 +2289,7 @@
       </refsect1>
     </refentry>
   </reference>
+
   <reference>
     <title><symbol>CLSQL-SYS</symbol></title>
     <partintro>
@@ -2297,11 +2298,6 @@
 	exported from <symbol>CLSQL</symbol>.  These symbols are part of
 	the interface for database back-ends, but not part of the normal
 	user-interface of &clsql;.</para>
-      <note>
-	<para>This part has only one demonstration entry, since the
-	  rest still has to be written.  In the meantime, use the
-	  source to understand the database back-end interface.</para>
-      </note>
     </partintro>
     <refentry id="database-initialize-database-type">
       <refnamediv>

@@ -2,26 +2,24 @@
 
 <bookinfo>
   <title>&clsql; Users' Guide</title>
-  <author>
-    <firstname>Pierre</firstname>
-    <othername>R.</othername>
-    <surname>Mai</surname>
-  </author>
+  <authorgroup>
   <author>
     <firstname>Kevin</firstname>
     <othername>M.</othername>
     <surname>Rosenberg</surname>
+    <affiliation><jobtitle>Maintainer of CLSQL</jobtitle></affiliation>
   </author>
+  <author>
+    <firstname>Pierre</firstname>
+    <othername>R.</othername>
+    <surname>Mai</surname>
+    <affiliation><jobtitle>Author of Original MaiSQL Code</jobtitle></affiliation>
+  </author>
+  </authorgroup>
   <printhistory>
-    <simpara>File $Date: 2002/03/23 14:34:36 $</simpara>
-    <simpara>$Id: bookinfo.sgml,v 1.2 2002/03/23 14:34:36 kevin Exp $</simpara>
+    <simpara>$Date: 2002/03/23 15:17:43 $</simpara>
+    <simpara>$Id: bookinfo.sgml,v 1.3 2002/03/23 15:17:43 kevin Exp $</simpara>
   </printhistory>
-  <copyright>
-    <year>1999</year>
-    <year>2001</year>
-    <year>2002</year>
-    <holder>Pierre R. Mai and Kevin M. Rosenberg</holder>
-  </copyright>
   <legalnotice>
     <itemizedlist>
       <listitem>

@@ -49,9 +49,9 @@ are:
       <para> &clsql; uses &defsystem to compile and load its
 components.  &defsystem; is included in the <ulink
 url="http://clocc.sourceforge.net"><citetitle>&clocc;</citetitle></ulink> collection. The
-defsystem version in the pre-packaged distribution is rather old and
+version in the pre-packaged distribution is rather old and
 may not function well. The version in CVS tree tree works quite
-well. For convenience, a copy of the latest defsystem at the FTP
+well. For convenience, a copy of the latest &defsystem; at the FTP
 <ulink
 url="ftp://ftp.med-info.com/pub/defsystem/"><citetitle>site</citetitle></ulink>
 of &clsql;.

@@ -1,7 +1,7 @@
 <!-- -*- DocBook -*- -->
 
 <!DOCTYPE BOOK PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
-<!ENTITY defsystem "<application><emphasis>Defsystem</emphasis></application>">
+<!ENTITY defsystem "<application>Defsystem</application>">
 <!ENTITY clocc "<application><emphasis>CLOCC</emphasis></application>">
 <!ENTITY uffi "<application><emphasis>UFFI</emphasis></application>">
 <!ENTITY ffi "<emphasis>FFI</emphasis>">
