@@ -24,6 +24,7 @@
     :description "A regression test suite for CLSQL-USQL."
     :components 
     ((:module usql-tests
+	      :serial t
 	      :components ((:file "package")
 			   (:file "test-init")
 			   (:file "test-connection")

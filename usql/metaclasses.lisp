@@ -11,7 +11,27 @@
 ;;;;
 ;;;; ======================================================================
 
-(in-package :clsql-usql-sys)
+
+(in-package #:clsql-usql-sys)
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (when (>= (length (generic-function-lambda-list
+		     (ensure-generic-function
+		      'compute-effective-slot-definition)))
+	    3)
+    (pushnew :kmr-normal-cesd cl:*features*))
+  
+  (when (>= (length (generic-function-lambda-list
+		     (ensure-generic-function
+		      'direct-slot-definition-class)))
+	    3)
+    (pushnew :kmr-normal-dsdc cl:*features*))
+  
+  (when (>= (length (generic-function-lambda-list
+		     (ensure-generic-function
+		      'effective-slot-definition-class)))
+	    3)
+    (pushnew :kmr-normal-esdc cl:*features*)))
 
 
 ;; ------------------------------------------------------------
@@ -125,14 +145,10 @@ of the default method.  The extra allowed options are the value of the
     result))
 
 
-(defmethod validate-superclass ((class standard-class)
-				     (superclass standard-db-class))
-    t)
-
+#+(or cmu scl sbcl openmcl)
 (defmethod validate-superclass ((class standard-db-class)
-				     (superclass standard-class))
-    t)
-
+				(superclass standard-class))
+  t)
 
 (defun table-name-from-arg (arg)
   (cond ((symbolp arg)
@@ -262,10 +278,17 @@ of the default method.  The extra allowed options are the value of the
       (setq all-slots (remove-if #'not-db-col all-slots))
       (setq all-slots (stable-sort all-slots #'string< :key #'car))
       (setf (object-definition class) all-slots
-            (key-slots class) (remove-if-not (lambda (slot)
-                                               (eql (slot-value slot 'db-kind)
-                                                    :key))
-                                             (class-slots class))))))
+	    (key-slots class) (remove-if-not (lambda (slot)
+					       (eql (slot-value slot 'db-kind)
+						    :key))
+					     (class-slots class))))))
+
+#+allegro
+(defmethod finalize-inheritance :after ((class standard-db-class))
+  (setf (key-slots class) (remove-if-not (lambda (slot)
+					   (eql (slot-value slot 'db-kind)
+						:key))
+					 (class-slots class))))
 
 ;; return the deepest view-class ancestor for a given view class
 
@@ -402,14 +425,14 @@ all NULL values retrieved are converted by DATABASE-NULL-VALUE")
   ())
 
 (defmethod direct-slot-definition-class ((class standard-db-class)
-                                         #-cmu &rest
+                                         #+kmr-normal-dsdc &rest
                                          initargs)
   (declare (ignore initargs))
   (find-class 'view-class-direct-slot-definition))
 
 (defmethod effective-slot-definition-class ((class standard-db-class)
-                                            #-cmu &rest
-                                            initargs)
+					    #+kmr-normal-esdc &rest
+					    initargs)
   (declare (ignore initargs))
   (find-class 'view-class-effective-slot-definition))
 
@@ -418,10 +441,9 @@ all NULL values retrieved are converted by DATABASE-NULL-VALUE")
 ;; verifies the column name.
 
 (defmethod compute-effective-slot-definition ((class standard-db-class)
-					      #-cmu slot-name
+					      #+kmr-normal-cesd slot-name
 					      direct-slots)
-  ;(declare (ignore #-cmu slot-name direct-slots))
-  (declare (ignore #-cmu slot-name))
+  #+kmr-normal-cesd (declare (ignore slot-name))
   (let ((slotd (call-next-method))
 	(sd (car direct-slots)))
     
@@ -493,3 +515,12 @@ all NULL values retrieved are converted by DATABASE-NULL-VALUE")
   (find-if #'(lambda (d) (eql slot (slot-definition-name d)))
 	   (class-slots class)))
 
+#+ignore
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  #+kmr-normal-cesd
+  (setq cl:*features* (delete :kmr-normal-cesd cl:*features*))
+  #+kmr-normal-dsdc
+  (setq cl:*features* (delete :kmr-normal-dsdc cl:*features*))
+  #+kmr-normal-esdc
+  (setq cl:*features* (delete :kmr-normal-esdc cl:*features*))
+  )

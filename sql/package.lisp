@@ -69,10 +69,50 @@
 	 #:closed-database
 	 #:database-name-from-spec
 	 
-	 ;; utils.cl
+	 ;; utils.lisp
 	 #:number-to-sql-string
 	 #:float-to-sql-string
 	 #:sql-escape-quotes
+
+	 ;; database.lisp -- Connection
+	 #:*default-database-type*	          ; clsql-base xx
+	 #:*default-database*	          ; classes    xx
+	 #:connect			          ; database   xx
+	 #:*connect-if-exists*	          ; database   xx
+	 #:connected-databases	          ; database   xx
+	 #:database		          ; database   xx
+	 #:database-name                     ; database   xx
+	 #:disconnect		          ; database   xx
+	 #:reconnect                         ; database
+	 #:find-database                     ; database   xx
+	 #:status                            ; database   xx
+	 #:with-database
+	 #:with-default-database
+
+	 ;; basic-sql.lisp
+	 #:query
+	 #:execute-command
+	 #:write-large-object
+	 #:read-large-object
+	 #:delete-large-object
+
+	 ;; Transactions
+	 #:with-transaction
+	 #:commit-transaction
+	 #:rollback-transaction
+	 #:add-transaction-commit-hook
+	 #:add-transaction-rollback-hook
+	 #:commit                            ; transact   xx
+	 #:rollback			  ; transact   xx
+	 #:with-transaction		  ; transact   xx		.
+	 #:start-transaction                 ; transact   xx
+	 #:in-transaction-p                  ; transact   xx
+	 #:database-start-transaction
+	 #:database-abort-transaction
+	 #:database-commit-transaction
+	 #:transaction-level
+	 #:transaction
+	 #:disconnect-pooled
 	 ))
     (:export
      ;; sql.cl

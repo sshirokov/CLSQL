@@ -13,7 +13,7 @@
 ;;;;
 ;;;; ======================================================================
 
-(in-package :clsql-usql-tests)
+(in-package #:clsql-usql-tests)
 
 (defvar *test-database-type* nil)
 (defvar *test-database-server* "")
@@ -121,7 +121,7 @@
                                        :groupid 1
                                        :married t 
                                        :height (1+ (random 1.00))
-                                       :birthday (usql:get-time)
+                                       :birthday (clsql-base:get-time)
                                        :first-name "Vladamir"
                                        :last-name "Lenin"
                                        :email "lenin@soviet.org"))
@@ -131,7 +131,7 @@
                                :groupid 1
 			       :height (1+ (random 1.00))
                                :married t 
-                               :birthday (usql:get-time)
+                               :birthday (clsql-base:get-time)
                                :first-name "Josef"
 			       :last-name "Stalin"
 			       :email "stalin@soviet.org"))
@@ -141,7 +141,7 @@
                                :groupid 1
 			       :height (1+ (random 1.00))
                                :married t 
-                               :birthday (usql:get-time)
+                               :birthday (clsql-base:get-time)
                                :first-name "Leon"
 			       :last-name "Trotsky"
 			       :email "trotsky@soviet.org"))
@@ -151,7 +151,7 @@
                                :groupid 1
 			       :height (1+ (random 1.00))
                                :married nil
-                               :birthday (usql:get-time)
+                               :birthday (clsql-base:get-time)
                                :first-name "Nikita"
 			       :last-name "Kruschev"
 			       :email "kruschev@soviet.org"))
@@ -161,7 +161,7 @@
                                :groupid 1
                                :married nil
 			       :height (1+ (random 1.00))
-                               :birthday (usql:get-time)
+                               :birthday (clsql-base:get-time)
                                :first-name "Leonid"
 			       :last-name "Brezhnev"
 			       :email "brezhnev@soviet.org"))
@@ -171,7 +171,7 @@
                                :groupid 1
                                :married nil
 			       :height (1+ (random 1.00))
-                               :birthday (usql:get-time)
+                               :birthday (clsql-base:get-time)
                                :first-name "Yuri"
 			       :last-name "Andropov"
 			       :email "andropov@soviet.org"))
@@ -181,7 +181,7 @@
                                  :groupid 1
                                  :height (1+ (random 1.00))
                                  :married nil
-                                 :birthday (usql:get-time)
+                                 :birthday (clsql-base:get-time)
                                  :first-name "Konstantin"
                                  :last-name "Chernenko"
                                  :email "chernenko@soviet.org"))
@@ -191,7 +191,7 @@
                                  :groupid 1
                                  :height (1+ (random 1.00))
                                  :married nil
-                                 :birthday (usql:get-time)
+                                 :birthday (clsql-base:get-time)
                                  :first-name "Mikhail"
                                  :last-name "Gorbachev"
                                  :email "gorbachev@soviet.org"))
@@ -201,7 +201,7 @@
                                  :groupid 1 
                                  :married nil
                                  :height (1+ (random 1.00))
-                                 :birthday (usql:get-time)
+                                 :birthday (clsql-base:get-time)
                                  :first-name "Boris"
                                  :last-name "Yeltsin"
                                  :email "yeltsin@soviet.org"))
@@ -211,7 +211,7 @@
                                   :groupid 1
                                   :married nil
                                   :height (1+ (random 1.00))
-                                  :birthday (usql:get-time)
+                                  :birthday (clsql-base:get-time)
                                   :first-name "Vladamir"
                                   :last-name "Putin"
                                   :email "putin@soviet.org"))

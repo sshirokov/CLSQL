@@ -43,7 +43,8 @@
   (call-next-method))
 
 (defmethod (setf slot-value-using-class) (new-value (class standard-db-class)
-                                                    instance slot)
+					  instance slot)
+  (declare (ignore new-value instance slot))
   (call-next-method))
 
 ;; JMM - Can't go around trying to slot-access a symbol!  Guess in
@@ -770,7 +771,6 @@ DATABASE-NULL-VALUE on the type of the slot."))
           "VARCHAR(255)")))
 
 (defmethod database-get-type-specifier ((type (eql 'string)) args database)
-  (declare (ignore database))
   (if args
       (format nil "VARCHAR(~A)" (car args))
       (if (member (database-type database) '(:postgresql :postgresql-socket))

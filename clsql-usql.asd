@@ -24,16 +24,14 @@
 based on the Xanalys CommonSQL interface for Lispworks. It depends on
 the low-level database interfaces provided by CLSQL and includes both
 a functional and an object oriented interface."
+    :depends-on (clsql-base)
     :components
     ((:module usql
 	      :components
-	      ((:module :patches
+	      ((:module :package
 			:pathname ""
-			:components (#+(or cmu sbcl) (:file "pcl-patch")))
-	       (:module :package
-			:pathname ""
-			:components ((:file "package"))
-			:depends-on (:patches))
+			:components ((:file "package")
+				     (:file "kmr-mop" :depends-on ("package"))))
 	       (:module :core
 			:pathname ""
 			:components ((:file "classes")
@@ -47,8 +45,7 @@ a functional and an object oriented interface."
 			:depends-on (:core))
 	       (:module :object
 			:pathname ""
-			:components ((:file "metaclasses")
-				     (:file "objects" :depends-on ("metaclasses")))
-			:depends-on (:functional)))))
-    :depends-on (:clsql-base))
+		       :components ((:file "metaclasses")
+				    (:file "objects" :depends-on ("metaclasses")))
+		       :depends-on (:functional))))))
      

@@ -57,7 +57,7 @@
      
      ;; Support for pooled connections
      #:database-type
-
+     
      ;; Large objects (Marc B)
      #:database-create-large-object
      #:database-write-large-object
@@ -118,7 +118,7 @@
 	 #:transaction
 	 #:transaction-level
 	 #:conn-pool
-	 
+
 	 ;; utils.lisp
 	 #:number-to-sql-string
 	 #:float-to-sql-string
@@ -223,6 +223,7 @@
 	 #:status                            ; database   xx
 	 #:with-database
 	 #:with-default-database
+	 #:disconnect-pooled
 
 	 ;; basic-sql.lisp
 	 #:query

@@ -14,15 +14,10 @@
 ;;;; ======================================================================
 
 
-(in-package :cl-user)
+(in-package #:cl-user)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  
-(defpackage :clsql-usql-tests
-  (:nicknames :usql-tests)
-  (:use :clsql-usql :common-lisp :rtest)
-  (:export :test-usql :test-initialise-database :test-connect-to-database)
+(defpackage #:clsql-usql-tests
+  (:nicknames #:usql-tests)
+  (:use #:clsql-usql #:common-lisp #:rtest)
+  (:export #:test-usql #:test-initialise-database #:test-connect-to-database)
   (:documentation "Regression tests for CLSQL-USQL."))
-
-); eval-when
-  

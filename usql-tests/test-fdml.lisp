@@ -23,7 +23,7 @@
     (progn
       (usql:insert-records :into [employee] 
                            :values `(11 1 "Yuri" "Gagarin" "gagarin@soviet.org"
-                                     1 1 1.85 t ,(usql:get-time)))
+                                     1 1 1.85 t ,(clsql-base:get-time)))
       (values 
        (usql:select [first-name] [last-name] [email]
                     :from [employee] :where [= [emplid] 11])

@@ -58,7 +58,7 @@
   "Lenin")
 
 (deftest :ooddl/time/1
-    (let* ((now (usql:get-time)))
+    (let* ((now (clsql-base:get-time)))
       (when (member *test-database-type* '(:postgresql :postgresql-socket))
         (usql:execute-command "set datestyle to 'iso'"))
       (usql:update-records [employee] :av-pairs `((birthday ,now))
@@ -66,11 +66,11 @@
       (let ((dbobj (car (usql:select 'employee :where [= [birthday] now]))))
         (values
          (slot-value dbobj 'last-name)
-         (usql:time= (slot-value dbobj 'birthday) now))))
+         (clsql-base:time= (slot-value dbobj 'birthday) now))))
   "Lenin" t)
 
 (deftest :ooddl/time/2
-    (let* ((now (usql:get-time))
+    (let* ((now (clsql-base:get-time))
            (fail-index -1))
       (when (member *test-database-type* '(:postgresql :postgresql-socket))
         (usql:execute-command "set datestyle to 'iso'"))
@@ -78,9 +78,9 @@
         (usql:update-records [employee] :av-pairs `((birthday ,now))
                              :where [= [emplid] 1])
         (let ((dbobj (car (usql:select 'employee :where [= [birthday] now]))))
-          (unless (usql:time= (slot-value dbobj 'birthday) now)
+          (unless (clsql-base:time= (slot-value dbobj 'birthday) now)
             (setf fail-index x))
-          (setf now (usql:roll now :day (* 10 x)))))
+          (setf now (clsql-base:roll now :day (* 10 x)))))
       fail-index)
   -1)
 

@@ -12,11 +12,8 @@
 ;;;;
 ;;;; ======================================================================
 
-(in-package :clsql-usql-sys)
+(in-package #:clsql-usql-sys)
 
-
-(defvar *default-database* nil
-  "Specifies the default database to be used.")
 
 (defvar +empty-string+ "''")
 

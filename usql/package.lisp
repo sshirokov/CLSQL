@@ -1,7 +1,7 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; ======================================================================
 ;;;; File:    package.lisp
-;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>
+;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>, Kevin Rosenberg
 ;;;; Created: 30/03/2004
 ;;;; Updated: <04/04/2004 12:21:50 marcusp>
 ;;;; ======================================================================
@@ -16,104 +16,201 @@
 (in-package #:cl-user)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  
-(defpackage #:clsql-usql-sys
-  (:nicknames #:usql-sys #:sql-sys)
-  (:use #:common-lisp #:clsql-base-sys #+lispworks #:clos)
-  ;; This is for working with the CMUCL/SBCL PCL MOP, which is kinda whacky
-  #+(or cmu sbcl)
-  (:shadowing-import-from #+cmu :pcl #+sbcl :sb-pcl 
-                          :built-in-class 
-                          :class-direct-slots
-                          :class-name
-                          :class-of
-                          :class-slots
-                          :compute-effective-slot-definition
-                          :direct-slot-definition-class
-                          :effective-slot-definition-class
-                          :find-class
-                          :slot-boundp
-                          :slot-definition-name
-                          :slot-definition-type
-                          :slot-value-using-class
-                          :standard-direct-slot-definition
-                          :standard-effective-slot-definition
-                          :validate-superclass
-                          :class-direct-superclasses
-                          :name
-                          :standard-class)
-  (:import-from :clsql-base-sys
-                ;; conditions 
-                :clsql-condition
-                :clsql-error
-                :clsql-simple-error
-                :clsql-warning
-                :clsql-simple-warning
-                :clsql-invalid-spec-error
-                :clsql-invalid-spec-error-connection-spec
-                :clsql-invalid-spec-error-database-type
-                :clsql-invalid-spec-error-template
-                :clsql-connect-error
-                :clsql-connect-error-database-type
-                :clsql-connect-error-connection-spec
-                :clsql-connect-error-errno
-                :clsql-connect-error-error
-                :clsql-sql-error
-                :clsql-sql-error-database
-                :clsql-sql-error-expression
-                :clsql-sql-error-errno
-                :clsql-sql-error-error
-                :clsql-database-warning
-                :clsql-database-warning-database
-                :clsql-database-warning-message
-                :clsql-exists-condition
-                :clsql-exists-condition-new-db
-                :clsql-exists-condition-old-db
-                :clsql-exists-warning
-                :clsql-exists-error
-                :clsql-closed-error
-                :clsql-closed-error-database
-                :clsql-type-error
-                :clsql-sql-syntax-error
-                ;; db-interface
-                :check-connection-spec
-                :database-initialize-database-type
-                :database-type-load-foreign
-                :database-name-from-spec
-                :database-create-sequence
-                :database-drop-sequence
-                :database-sequence-next
-                :database-set-sequence-position
-                :database-query-result-set
-                :database-dump-result-set
-                :database-store-next-row
-                :database-get-type-specifier
-                :database-list-tables
-                :database-list-views
-                :database-list-indexes
-                :database-list-sequences
-                :database-list-attributes
-                :database-attribute-type
-                :database-add-attribute
-                :database-type 
-                ;; initialize
-                :*loaded-database-types*
-                :reload-database-types
-                :*default-database-type*
-                :*initialized-database-types*
-                :initialize-database-type
-                ;; classes
-                :database
-                :closed-database
-                :database-name
-                :command-recording-stream
-                :result-recording-stream
-                :database-view-classes
-                :database-schema
-                :conn-pool
-                :print-object 
-                ;; utils
-                :sql-escape)
+
+#+sbcl
+  (if (find-package 'sb-mop)
+      (pushnew :usql-sbcl-mop cl:*features*)
+      (pushnew :usql-sbcl-pcl cl:*features*))
+
+  #+cmu
+  (if (eq (symbol-package 'pcl:find-class)
+	  (find-package 'common-lisp))
+      (pushnew :usql-cmucl-mop cl:*features*)
+      (pushnew :usql-cmucl-pcl cl:*features*)))
+
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defpackage #:clsql-usql-sys
+    (:nicknames #:usql-sys)
+    (:use #:common-lisp #:clsql-base-sys
+	  #+usql-sbcl-mop #:sb-mop
+	  #+usql-cmucl-mop #:mop
+	  #+allegro #:mop
+	  #+lispworks #:clos
+	  #+scl #:clos
+	  #+openmcl #:openmcl-mop)
+    
+    #+allegro
+    (:shadowing-import-from 
+     #:excl)
+   #+lispworks
+   (:shadowing-import-from 
+    #:clos)
+   #+usql-sbcl-mop 
+   (:shadowing-import-from 
+    #:sb-pcl
+    #:generic-function-lambda-list)
+   #+usql-sbcl-pcl
+   (:shadowing-import-from 
+    #:sb-pcl
+    #:name
+    #:class-direct-slots
+    #:class-of #:class-name #:class-slots #:find-class
+    #:slot-boundp
+    #:standard-class
+    #:slot-definition-name #:finalize-inheritance
+    #:standard-direct-slot-definition
+    #:standard-effective-slot-definition #:validate-superclass
+    #:direct-slot-definition-class #:compute-effective-slot-definition
+    #:effective-slot-definition-class
+    #:slot-value-using-class
+    #:class-prototype #:generic-function-method-class #:intern-eql-specializer
+    #:make-method-lambda #:generic-function-lambda-list
+    #:class-precedence-list #:slot-definition-type
+    #:class-direct-superclasses)
+   #+usql-cmucl-mop 
+   (:shadowing-import-from 
+    #:pcl
+    #:generic-function-lambda-list)
+   #+usql-cmucl-pcl
+   (:shadowing-import-from 
+    #:pcl
+    #:class-direct-slots
+    #:name
+    #:class-of  #:class-name #:class-slots #:find-class #:standard-class
+    #:slot-boundp
+    #:slot-definition-name #:finalize-inheritance
+    #:standard-direct-slot-definition #:standard-effective-slot-definition
+    #:validate-superclass #:direct-slot-definition-class
+    #:effective-slot-definition-class
+    #:compute-effective-slot-definition
+    #:slot-value-using-class
+    #:class-prototype #:generic-function-method-class #:intern-eql-specializer
+    #:make-method-lambda #:generic-function-lambda-list
+    #:class-precedence-list #:slot-definition-type
+    #:class-direct-superclasses)
+   #+scl
+   (:shadowing-import-from 
+    #:clos
+    #:class-prototype  ;; note: make-method-lambda is not fbound
+    )
+   
+   (:import-from 
+    #:clsql-base-sys
+    .
+    #1=(
+       ;; conditions 
+       :clsql-condition
+       :clsql-error
+       :clsql-simple-error
+       :clsql-warning
+       :clsql-simple-warning
+       :clsql-invalid-spec-error
+       :clsql-invalid-spec-error-connection-spec
+       :clsql-invalid-spec-error-database-type
+       :clsql-invalid-spec-error-template
+       :clsql-connect-error
+       :clsql-connect-error-database-type
+       :clsql-connect-error-connection-spec
+       :clsql-connect-error-errno
+       :clsql-connect-error-error
+       :clsql-sql-error
+       :clsql-sql-error-database
+       :clsql-sql-error-expression
+       :clsql-sql-error-errno
+       :clsql-sql-error-error
+       :clsql-database-warning
+       :clsql-database-warning-database
+       :clsql-database-warning-message
+       :clsql-exists-condition
+       :clsql-exists-condition-new-db
+       :clsql-exists-condition-old-db
+       :clsql-exists-warning
+       :clsql-exists-error
+       :clsql-closed-error
+       :clsql-closed-error-database
+       :clsql-type-error
+       :clsql-sql-syntax-error
+
+       ;; db-interface
+       :check-connection-spec
+       :database-initialize-database-type
+       :database-type-load-foreign
+       :database-name-from-spec
+       :database-create-sequence
+       :database-drop-sequence
+       :database-sequence-next
+       :database-set-sequence-position
+       :database-query-result-set
+       :database-dump-result-set
+       :database-store-next-row
+       :database-get-type-specifier
+       :database-list-tables
+       :database-list-views
+       :database-list-indexes
+       :database-list-sequences
+       :database-list-attributes
+       :database-attribute-type
+       :database-add-attribute
+       :database-type 
+       ;; initialize
+       :*loaded-database-types*
+       :reload-database-types
+       :*default-database-type*
+       :*initialized-database-types*
+       :initialize-database-type
+       ;; classes
+       :database
+       :closed-database
+       :database-name
+       :command-recording-stream
+       :result-recording-stream
+       :database-view-classes
+       :database-schema
+       :conn-pool
+       :print-object 
+       ;; utils
+       :sql-escape
+
+	 ;; database.lisp -- Connection
+	 #:*default-database-type*	          ; clsql-base xx
+	 #:*default-database*	          ; classes    xx
+	 #:connect			          ; database   xx
+	 #:*connect-if-exists*	          ; database   xx
+	 #:connected-databases	          ; database   xx
+	 #:database		          ; database   xx
+	 #:database-name                     ; database   xx
+	 #:disconnect		          ; database   xx
+	 #:reconnect                         ; database
+	 #:find-database                     ; database   xx
+	 #:status                            ; database   xx
+	 #:with-database
+	 #:with-default-database
+
+	 ;; basic-sql.lisp
+	 #:query
+	 #:execute-command
+	 #:write-large-object
+	 #:read-large-object
+	 #:delete-large-object
+
+	 ;; Transactions
+	 #:with-transaction
+	 #:commit-transaction
+	 #:rollback-transaction
+	 #:add-transaction-commit-hook
+	 #:add-transaction-rollback-hook
+	 #:commit                            ; transact   xx
+	 #:rollback			  ; transact   xx
+	 #:with-transaction		  ; transact   xx		.
+	 #:start-transaction                 ; transact   xx
+	 #:in-transaction-p                  ; transact   xx
+	 #:database-start-transaction
+	 #:database-abort-transaction
+	 #:database-commit-transaction
+	 #:transaction-level
+	 #:transaction
+	 ))
   (:export
    ;; "Private" exports for use by interface packages
    :check-connection-spec
@@ -146,7 +243,7 @@
    ;; I = Implemented, D = Documented
    ;;  name                                 file       ID
    ;;====================================================
-   #1=(;;------------------------------------------------
+   #2=(;;------------------------------------------------
        ;; CommonSQL API 
        ;;------------------------------------------------
       ;;FDML 
@@ -235,37 +332,6 @@
        :database-output-sql               ; sql/class  xx
 
        ;;-----------------------------------------------
-       ;; Conditions/Warnings/Errors
-       ;;-----------------------------------------------
-       :clsql-condition
-       :clsql-error
-       :clsql-simple-error
-       :clsql-warning
-       :clsql-simple-warning
-       :clsql-invalid-spec-error
-       :clsql-invalid-spec-error-connection-spec
-       :clsql-invalid-spec-error-database-type
-       :clsql-invalid-spec-error-template
-       :clsql-connect-error
-       :clsql-connect-error-database-type
-       :clsql-connect-error-connection-spec
-       :clsql-connect-error-errno
-       :clsql-connect-error-error
-       :clsql-sql-error
-       :clsql-type-error
-       :clsql-sql-error-database
-       :clsql-sql-error-expression
-       :clsql-sql-error-errno
-       :clsql-sql-error-error
-       :clsql-exists-condition
-       :clsql-exists-condition-new-db
-       :clsql-exists-condition-old-db
-       :clsql-exists-warning
-       :clsql-exists-error
-       :clsql-closed-error
-       :clsql-closed-error-database
-
-       ;;-----------------------------------------------
        ;; Symbolic Sql Syntax 
        ;;-----------------------------------------------
        :sql-and-qualifier
@@ -306,7 +372,9 @@
        :sql-view-class
        :sql_slot-value
 
-))
+       . 
+       #1#
+       ))
   (:documentation "This is the INTERNAL SQL-Interface package of USQL."))
 
 
@@ -318,10 +386,34 @@
 (defpackage #:clsql-usql
   (:nicknames #:usql #:sql)
   (:use :common-lisp)
-  (:import-from :clsql-usql-sys . #1#)
-  (:export . #1#)
+  (:import-from :clsql-usql-sys . #2#)
+  (:export . #2#)
   (:documentation "This is the SQL-Interface package of USQL."))
 
+  ;; This is from USQL's pcl-patch  
+  #+(or usql-sbcl-pcl usql-cmucl-pcl)
+  (progn
+    ;; Note that this will no longer required for cmucl as of version 19a. 
+    (in-package #+cmu :pcl #+sbcl :sb-pcl)
+    (defmacro pv-binding1 ((pv calls pv-table-symbol pv-parameters slot-vars) 
+			   &body body)
+      `(pv-env (,pv ,calls ,pv-table-symbol ,pv-parameters)
+	(let (,@(mapcar #'(lambda (slot-var p) `(,slot-var (get-slots-or-nil ,p)))
+			slot-vars pv-parameters))
+	  ,@(mapcar #'(lambda (slot-var) `(declare (ignorable ,slot-var))) slot-vars)
+	  ,@body))))
+  
+  
+  #+sbcl
+  (if (find-package 'sb-mop)
+      (setq cl:*features* (delete :usql-sbcl-mop cl:*features*))
+      (setq cl:*features* (delete :usql-sbcl-pcl cl:*features*)))
+  
+  #+cmu
+  (if (find-package 'mop)
+      (setq cl:*features* (delete :usql-cmucl-mop cl:*features*))
+      (setq cl:*features* (delete :usql-cmucl-pcl cl:*features*)))
+  
 );eval-when                                      
 
 
