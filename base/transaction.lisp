@@ -1,7 +1,16 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id: transactions.lisp 7061 2003-09-07 06:34:45Z kevin $
+;;;; $Id$
+;;;;
+;;;; Transaction support
+;;;;
+;;;; This file is part of CLSQL.
+;;;;
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
 
 (in-package #:clsql-base-sys)
 

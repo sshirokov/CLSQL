@@ -1,10 +1,7 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
-;;;; ======================================================================
-;;;; $Id: $
-;;;; ======================================================================
+;;;; *************************************************************************
 ;;;;
-;;;; Description ==========================================================
-;;;; ======================================================================
+;;;; $Id$
 ;;;;
 ;;;; A variety of structures and function for creating and
 ;;;; manipulating dates, times, durations and intervals for
@@ -13,11 +10,12 @@
 ;;;; This file was originally part of ODCL and is Copyright (c) 2002 -
 ;;;; 2003 onShore Development, Inc.
 ;;;;
-;;;; ======================================================================
-
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
 
 (in-package #:clsql-base-sys)
-
 
 ;; ------------------------------------------------------------
 ;; Months
