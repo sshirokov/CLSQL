@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-package.cl,v 1.4 2002/03/25 14:13:41 kevin Exp $
+;;;; $Id: mysql-package.cl,v 1.5 2002/03/25 14:26:23 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -61,6 +61,7 @@
      #:mysql-row
      #:mysql-field-offset
      #:mysql-row-offset
+     #:mysql-field-vector
      #:mysql-data
      #:mysql-options
      #:mysql-mysql-option

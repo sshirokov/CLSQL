@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.cl,v 1.8 2002/03/25 14:13:41 kevin Exp $
+;;;; $Id: mysql-sql.cl,v 1.9 2002/03/25 14:26:23 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -63,10 +63,9 @@
 	  #+ignore (field-vec (mysql-fetch-fields res-ptr)))
       (dotimes (i num-fields)
 	(declare (fixnum i))
-	(let* ((field (mysql-fetch-field-direct res-ptr i))
-	       #+ignore
-	       (field-test (uffi:deref-array field-vec 'mysql-field-vector i))
-	       (type (uffi:get-slot-value field 'mysql-field 'type)))
+	(let* ( (field (mysql-fetch-field-direct res-ptr i))
+		#+ignore (field (uffi:deref-array field-vec 'mysql-field-vector i))
+		(type (uffi:get-slot-value field 'mysql-field 'type)))
 	  (push
 	   (case type
 	     ((#.mysql-field-types#tiny 
