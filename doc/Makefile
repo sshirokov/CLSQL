@@ -23,16 +23,21 @@ DOCFILE_EXT_DEFAULT:=xml
 
 DEBIAN=$(shell expr "`cat /etc/issue`" : '.*Debian.*')
 SUSE=$(shell expr "`cat /etc/issue`" : '.*SuSE.*')
+SUSE91=$(shell expr "`cat /etc/issue`" : '.*SuSE Linux 9.1.*')
 REDHAT=$(shell expr "`cat /etc/issue`" : '.*RedHat.*')
 
 ifneq (${DEBIAN},0)
 OS:=debian
 else
-  ifneq (${SUSE},0)
-    OS=suse
-  else   
-    ifneq (${REDHAT},0)
-      OS=redhat
+  ifneq (${SUSE91},0)
+    OS=suse91
+  else
+    ifneq (${SUSE},0)
+      OS=suse
+    else   
+      ifneq (${REDHAT},0)
+        OS=redhat
+      endif
     endif
   endif
 endif
