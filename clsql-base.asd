@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql-base.asd,v 1.4 2002/08/23 19:39:56 kevin Exp $
+;;;; $Id: clsql-base.asd,v 1.5 2002/09/01 09:00:14 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -36,15 +36,13 @@
   #-common-lisp-controller "clsql"
   "Logical hostname for loading system")
 
-(unless (ignore-errors (find-class 'clsql-cl-source-file))
-  (defclass clsql-cl-source-file (cl-source-file) ())
-  (defmethod source-file-type ((c clsql-cl-source-file) (s module)) 
-    "cl"))
+(defmethod source-file-type  ((c cl-source-file)
+			      (s (eql (find-system 'clsql-base)))) 
+   "cl")
 
  ;;; System definitions
 
 (defsystem clsql-base
-  :default-component-class clsql-cl-source-file
   :pathname #.(format nil "~A:clsql-base;" +clsql-logical-host+)
   :perform (load-op :after (op clsql-base)
 		    (pushnew :clsql-base cl:*features*))

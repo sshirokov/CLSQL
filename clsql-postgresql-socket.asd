@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-postgresql-socket.asd,v 1.2 2002/08/23 19:39:56 kevin Exp $
+;;;; $Id: clsql-postgresql-socket.asd,v 1.3 2002/09/01 09:00:15 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -21,8 +21,11 @@
 
 ;;; System definition
 
+(defmethod source-file-type  ((c cl-source-file)
+			      (s (eql (find-system 'clsql-postgresql-socket)))) 
+   "cl")
+
 (defsystem clsql-postgresql-socket
-  :default-component-class clsql-cl-source-file
   :pathname #.(format nil "~A:clsql-postgresql-socket;" +clsql-logical-host+)
   :components ((:file "postgresql-socket-package")
 	       (:file "postgresql-socket-api"

@@ -1,14 +1,17 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; This is copyrighted software.  See interfaces/oracle/* files for terms.
 ;;;; 
-;;;; $Id: clsql-oracle.asd,v 1.2 2002/08/23 19:39:56 kevin Exp $
+;;;; $Id: clsql-oracle.asd,v 1.3 2002/09/01 09:00:15 kevin Exp $
 
 (in-package :asdf)
 
 ;;; System definition
 
+(defmethod source-file-type  ((c cl-source-file)
+			      (s (eql (find-system 'clsql-oracle)))) 
+   "cl")
+
 (defsystem :clsql-oracle
-  :default-component-class clsql-cl-source-file
   :pathname #.(format nil "~A:clsql-oracle;" +clsql-logical-host+)
   :pathname "cl-library:clsql-oracle"
   :components

@@ -1,3 +1,6 @@
+01 Sep 2002 Kevin Rosenberg (kevin@rosenberg.net)
+        * Rework use of file types in .asd files
+
 17 Aug 2002 Kevin Rosenberg (kevin@rosenberg.net)
         * Add .asd definition files for ASDF users
 
