@@ -137,6 +137,14 @@
 		  (if error error ""))
      status)))
 
+(defun read-stream-to-string (in)
+  (with-output-to-string (out)
+    (let ((eof (gensym)))		    
+      (do ((line (read-line in nil eof) 
+		 (read-line in nil eof)))
+	  ((eq line eof))
+	(format out "~A~%" line)))))
+	
 ;; From KMRCL
 (defun %command-output (control-string &rest args)
   "Interpolate ARGS into CONTROL-STRING as if by FORMAT, and
@@ -188,16 +196,19 @@ returns (VALUES string-output error-output exit-status)"
      (ext:run-shell-command  command :output :terminal :wait t))
     
     #+openmcl
-    (let ((process (ccl:run-program  
-		    "/bin/sh"
-		    (list "-c" command)
-		    :input nil :output :stream :error :stream
-		    :wait t)))
-      (values
-       (get-output-stream-string (ccl::external-process-output-stream process))
-       (get-output-stream-string (ccl::external-process-error-stream process))
-       (nth-value 1 (ccl::external-process-status process))))    
-	   
+    (let* ((process (ccl:run-program  
+		     "/bin/sh"
+		     (list "-c" command)
+		     :input nil :output :stream :error :stream
+		     :wait t))
+	   (output (read-stream-to-string (ccl::external-process-output-stream process)))
+	   (error (read-stream-to-string (ccl::external-process-error-stream process))))
+      (close (ccl::external-process-output-stream process))
+      (close (ccl::external-process-error-stream process))
+      (values output
+	      error
+	      (nth-value 1 (ccl::external-process-status process))))
+  
     #-(or openmcl clisp lispworks allegro scl cmu sbcl)
     (error "COMMAND-OUTPUT not implemented for this Lisp")
 
