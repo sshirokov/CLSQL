@@ -1,0 +1,48 @@
+;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
+;;;; *************************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          clsql-base.system
+;;;; Purpose:       Defsystem-3/4 for Base CLSQL
+;;;; Programmer:    Kevin M. Rosenberg
+;;;; Date Started:  Feb 2002
+;;;;
+;;;; $Id: clsql-base.system,v 1.1 2002/05/13 02:08:11 kevin Exp $
+;;;;
+;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;;
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
+
+(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
+(in-package :cl-user)
+
+;; For use with non-Debian installations
+(let ((helper-pathname (make-pathname :name "set-cl-library" :type "cl"
+				      :defaults *load-truename*)))
+  (when (probe-file helper-pathname)
+    (load helper-pathname)))
+
+;;; System definitions
+
+(mk:defsystem :cmucl-compat
+    :source-pathname "CL-LIBRARY:clsql;cmucl-compat;"
+    :source-extension "cl"
+    :binary-pathname "CL-LIBRARY:clsql;cmucl-compat;bin;"
+    :components ((:file "cmucl-compat")
+		 (:file "loop-extension")))
+
+(mk:defsystem :clsql-base
+    :source-pathname "CL-LIBRARY:clsql;sql;"
+    :source-extension "cl"
+    :binary-pathname "CL-LIBRARY:clsql;sql;bin;"
+    :components ((:file "package")
+		 (:file "classes" :depends-on ("package"))
+		 (:file "conditions" :depends-on ("classes"))
+		 (:file "db-interface" :depends-on ("conditions")))
+    :depends-on (:cmucl-compat)
+    :finally-do
+    (pushnew :clsql cl:*features*)
+    )

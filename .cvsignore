@@ -1,4 +1,2 @@
-*.zip
-*.tar.gz
-copy
-test-clsql.config
+configure-stamp
+build-stamp
