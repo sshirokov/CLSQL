@@ -79,7 +79,8 @@ html: html.tar.gz
 html.tar.gz: $(DOCFILES) Makefile 
 	@rm -rf html
 	@mkdir html
-	@XML_CATALOG_FILES="$(CATALOG)" xsltproc --xinclude --output html/ html_chunk.xsl $(DOCFILE)
+	@XML_CATALOG_FILES="$(CATALOG)" $(XSLTPROC) --stringparam chunker.output.encoding ISO-8859-1 \
+		 --xinclude --output html/ html_chunk.xsl $(DOCFILE)
 	@GZIP='-9' tar czf html.tar.gz html 
 
 .PHONY: fo

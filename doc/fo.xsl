@@ -3,6 +3,6 @@
                 version="1.0">
 
 <xsl:import href="docbook_fo.xsl"/>
-
+<xsl:param name="fop.extensions" select="1"/>
 </xsl:stylesheet>
 
