@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.cl,v 1.13 2002/03/27 05:37:35 kevin Exp $
+;;;; $Id: mysql-sql.cl,v 1.14 2002/03/27 08:09:25 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -33,7 +33,7 @@
 ;;;; Added field types
 
 (defpackage :clsql-mysql
-    (:use :common-lisp :clsql-sys :mysql)
+    (:use :common-lisp :clsql-sys :mysql :clsql-uffi)
     (:export #:mysql-database)
     (:documentation "This is the CLSQL interface to MySQL."))
 
@@ -43,21 +43,8 @@
 
 (defun canonicalize-types (types num-fields res-ptr)
   (cond
-   ((if (listp types)
-	(let ((length-types (length types))
-	      (new-types '()))
-	  (loop for i from 0 below num-fields
-	      do
-		(if (>= i length-types)
-		    (push t new-types) ;; types is shorted than num-fields
-		  (push
-		   (case (nth i types)
-		     ((:int :long :double t)
-		      (nth i types))
-		     (t
-		      t))
-		   new-types)))
-	  (nreverse new-types))))
+   ((listp types)
+    (canonicalize-type-list types num-fields))
    ((eq types :auto)
     (let ((new-types '())
 	  #+ignore (field-vec (mysql-fetch-fields res-ptr)))
@@ -85,44 +72,6 @@
       (nreverse new-types)))
    (t
     nil)))
-
-(uffi:def-function "atoi"
-    ((str (* :unsigned-char)))
-  :returning :int)
-
-(uffi:def-function "atol"
-    ((str (* :unsigned-char)))
-  :returning :long)
-
-(uffi:def-function "atol64"
-    ((str (* :unsigned-char))
-     (high32 (* :int)))
-  :returning :int)
-
-(uffi:def-function "atof"
-    ((str (* :unsigned-char)))
-  :returning :double)
-
-(defun convert-raw-field (char-ptr types index)
-  (let ((type (if (listp types)
-		  (nth index types)
-		  types)))
-    (case type
-      (:int
-       (atoi char-ptr))
-      (:long
-       (atol char-ptr))
-      (:double
-       (atof char-ptr))
-      (:longlong
-       (uffi:with-foreign-object (high32-ptr :int)
-	 (let ((low32 (atol64 char-ptr high32-ptr))
-	       (high32 (uffi:deref-pointer high32-ptr :int)))
-	   (if (zerop high32)
-	       low32
-	       (mysql:make-64-bit-integer high32 low32)))))
-      (otherwise
-       (uffi:convert-from-foreign-string char-ptr)))))
 
 (defmethod database-initialize-database-type ((database-type (eql :mysql)))
   t)
@@ -277,7 +226,6 @@
 (defmethod database-dump-result-set (result-set (database mysql-database))
   (mysql-free-result (mysql-result-set-res-ptr result-set))
   t)
-
 
 
 (defmethod database-store-next-row (result-set (database mysql-database) list)

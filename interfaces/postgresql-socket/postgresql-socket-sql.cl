@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-sql.cl,v 1.6 2002/03/25 23:48:46 kevin Exp $
+;;;; $Id: postgresql-socket-sql.cl,v 1.7 2002/03/27 08:09:25 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -38,31 +38,40 @@
 	#.pgsql-ftype#int2
 	#.pgsql-ftype#int4)
        :int)
+      (#.pgsql-ftype#int8
+       :longlong)
       ((#.pgsql-ftype#float4
 	#.pgsql-ftype#float8)
        :double)
       (otherwise
        t))))
 
+
+(defun canonicalize-type-list (types num-fields)
+  "Ensure a field type list meets expectations.
+Duplicated from clsql-uffi package so that this interface
+doesn't depend on UFFI."
+  (let ((length-types (length types))
+	(new-types '()))
+    (loop for i from 0 below num-fields
+	  do
+	  (if (>= i length-types)
+	      (push t new-types) ;; types is shorted than num-fields
+	      (push
+	       (case (nth i types)
+		 ((:int :long :double :longlong t)
+		  (nth i types))
+		 (t
+		  t))
+	       new-types)))
+    (nreverse new-types)))
+
 (defun canonicalize-types (types cursor)
   (let* ((fields (postgresql-cursor-fields cursor))
 	 (num-fields (length fields)))
     (cond
       ((listp types)
-       (let ((length-types (length types))
-	     (new-types '()))
-	 (loop for i from 0 below num-fields
-	       do
-	       (if (>= i length-types)
-		   (push t new-types) ;; types is shorted than num-fields
-		   (push
-		    (case (nth i types)
-		      ((:int :long :double t)
-		       (nth i types))
-		      (t
-		       t))
-		    new-types)))
-	 (nreverse new-types)))
+       (canonicalize-type-list types num-fields))
       ((eq types :auto)
        (let ((new-types '()))
 	 (dotimes (i num-fields)

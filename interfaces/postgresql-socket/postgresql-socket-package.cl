@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-package.cl,v 1.2 2002/03/25 23:22:07 kevin Exp $
+;;;; $Id: postgresql-socket-package.cl,v 1.3 2002/03/27 08:09:25 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -27,6 +27,7 @@
 	   #:pgsql-ftype#bytea
 	   #:pgsql-ftype#int2
 	   #:pgsql-ftype#int4
+	   #:pgsql-ftype#int8
 	   #:pgsql-ftype#float4
    	   #:pgsql-ftype#float8
 

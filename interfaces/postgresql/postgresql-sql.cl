@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.cl,v 1.9 2002/03/25 23:48:46 kevin Exp $
+;;;; $Id: postgresql-sql.cl,v 1.10 2002/03/27 08:09:25 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -22,7 +22,7 @@
 (in-package :cl-user)
 
 (defpackage :clsql-postgresql
-    (:use :common-lisp :clsql-sys :postgresql)
+    (:use :common-lisp :clsql-sys :postgresql :clsql-uffi)
     (:export #:postgresql-database)
     (:documentation "This is the CLSQL interface to PostgreSQL."))
 
@@ -32,21 +32,8 @@
 
 (defun canonicalize-types (types num-fields res-ptr)
   (cond
-   ((if (listp types)
-	(let ((length-types (length types))
-	      (new-types '()))
-	  (loop for i from 0 below num-fields
-	      do
-		(if (>= i length-types)
-		    (push t new-types) ;; types is shorted than num-fields
-		  (push
-		   (case (nth i types)
-		     ((:int :long :double t)
-		      (nth i types))
-		     (t
-		      t))
-		   new-types)))
-	  (nreverse new-types))))
+   ((listp types)
+    (canonicalize-type-list types num-fields))
    ((eq types :auto)
     (let ((new-types '()))
       (dotimes (i num-fields)
@@ -58,6 +45,8 @@
 	       #.pgsql-ftype#int2
 	       #.pgsql-ftype#int4)
 	      :int)
+	     (#.pgsql-ftype#int8
+	      :longlong)
 	     ((#.pgsql-ftype#float4
 	       #.pgsql-ftype#float8)
 	      :double)
@@ -67,33 +56,6 @@
       (nreverse new-types)))
    (t
     nil)))
-
-
-(uffi:def-function "atoi"
-    ((str :cstring))
-  :returning :int)
-
-(uffi:def-function "atol"
-    ((str :cstring))
-  :returning :long)
-
-(uffi:def-function "atof"
-    ((str :cstring))
-  :returning :double)
-
-(defun convert-raw-field (char-ptr types index)
-  (let ((type (if (listp types)
-		  (nth index types)
-		  types)))
-    (case type
-      (:int
-       (atoi char-ptr))
-      (:long
-       (atol char-ptr))
-      (:double
-       (atof char-ptr))
-      (otherwise
-       (uffi:convert-from-foreign-string char-ptr)))))
 
 
 (defun tidy-error-message (message)

@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-api.cl,v 1.3 2002/03/25 14:13:41 kevin Exp $
+;;;; $Id: postgresql-api.cl,v 1.4 2002/03/27 08:09:25 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -57,10 +57,10 @@
     ((:bytea 17)
      (:int2 21)
      (:int4 23)
+     (:int8 20)
      (:float4 700)
      (:float8 701)))
   
-    
 ;;(declaim (inline PQsetdbLogin)) ;; causes compile error in LW 4.2.0
 (uffi:def-function ("PQsetdbLogin" PQsetdbLogin)
   ((pghost :cstring)

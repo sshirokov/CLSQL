@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-package.cl,v 1.4 2002/03/25 14:13:41 kevin Exp $
+;;;; $Id: postgresql-package.cl,v 1.5 2002/03/27 08:09:25 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -21,7 +21,7 @@
 
 (defpackage :postgresql
     (:nicknames :pgsql)
-    (:use :common-lisp)
+    (:use :common-lisp :clsql-uffi)
     (:export
      #:pgsql-oid
      #:pgsql-conn-status-type
@@ -42,8 +42,10 @@
      #:pgsql-ftype#bytea
      #:pgsql-ftype#int2
      #:pgsql-ftype#int4
+     #:pgsql-ftype#int8
      #:pgsql-ftype#float4
      #:pgsql-ftype#float8
+     
      ;; Functions
      #:PQsetdbLogin
      #:PQlogin
