@@ -48,9 +48,8 @@
   t t t)
 
 (deftest :ooddl/join/1
-    (mapcar #'(lambda (e)
-                (slot-value e 'companyid))
-            (company-employees company1))
+    (mapcar #'(lambda (e) (slot-value e 'ecompanyid))
+     (company-employees company1))
   (1 1 1 1 1 1 1 1 1 1))
 
 (deftest :ooddl/join/2

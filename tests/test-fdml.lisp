@@ -40,7 +40,7 @@
     (progn
       (clsql:insert-records :into [employee] 
                            :attributes '(emplid groupid first_name last_name
-                                         email companyid managerid)
+                                         email ecompanyid managerid)
                            :values '(11 1 "Yuri" "Gagarin" "gagarin@soviet.org"
                                      1 1))
       (values 
@@ -58,7 +58,7 @@
                                       (first_name "Yuri")
                                       (last_name "Gagarin")
                                       (email "gagarin@soviet.org")
-                                      (companyid 1) (managerid 1)))
+                                      (ecompanyid 1) (managerid 1)))
       (values 
        (clsql:select [first-name] [last-name] [email] :from [employee]
                     :where [= [emplid] 11])

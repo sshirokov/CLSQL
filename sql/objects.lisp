@@ -738,6 +738,8 @@ superclass of the newly-defined View Class."
   (let* ((dbi (view-class-slot-db-info slot-def))
 	 (ts (gethash :target-slot dbi))
 	 (jc (gethash :join-class dbi))
+	 (ts-view-table (view-table (find-class ts)))
+	 (jc-view-table (view-table (find-class jc)))
 	 (tdbi (view-class-slot-db-info 
 		(find ts (class-slots (find-class jc))
 		      :key #'slot-definition-name)))
@@ -749,11 +751,15 @@ superclass of the newly-defined View Class."
 	(:immediate
 	 (let ((res
 		(find-all (list ts) 
-			  :inner-join (sql-expression :attribute jc)
+			  :inner-join (sql-expression :table jc-view-table)
 			  :on (sql-operation 
 			       '==
-			       (sql-expression :attribute (gethash :foreign-key tdbi) :table ts)
-			       (sql-expression :attribute (gethash :home-key tdbi) :table jc))
+			       (sql-expression 
+				:attribute (gethash :foreign-key tdbi) 
+				:table ts-view-table)
+			       (sql-expression 
+				:attribute (gethash :home-key tdbi) 
+				:table jc-view-table))
 			  :where jq
 			  :result-types :auto)))
 	   (mapcar #'(lambda (i)
@@ -778,8 +784,8 @@ superclass of the newly-defined View Class."
 		   (setf (slot-value jcc (gethash :home-key tdbi)) 
 			 fk)
 		   (list instance jcc)))
-	     (select (sql-expression :attribute (gethash :foreign-key tdbi) :table jc)
-		     :from (sql-expression :table jc)
+	     (select (sql-expression :attribute (gethash :foreign-key tdbi) :table jc-view-table)
+		     :from (sql-expression :table jc-view-table)
 		     :where jq)))))))
 
 (defun update-object-joins (objects &key (slots t) (force-p t)
@@ -787,7 +793,7 @@ superclass of the newly-defined View Class."
   "Updates the remote join slots, that is those slots defined without :retrieval :immediate."
   (when objects
     (unless class-name
-      (class-name (class-of (first object))))
+      (class-name (class-of (first objects))))
     )
   )
 

@@ -64,14 +64,14 @@
     :accessor employee-email
     :type (string 100)
     :initarg :email)
-   (companyid
+   (ecompanyid
     :type integer
     :initarg :companyid)
    (company
     :accessor employee-company
     :db-kind :join
     :db-info (:join-class company
-			  :home-key companyid
+			  :home-key ecompanyid
 			  :foreign-key companyid
 			  :set nil))
    (managerid
@@ -89,7 +89,7 @@
     :db-kind :join
     :db-info (:join-class employee-address
 			  :home-key emplid
-			  :foreign-key emplid
+			  :foreign-key aemplid
 			  :target-slot address
 			  :set t)))
   (:base-table employee))
@@ -123,7 +123,7 @@
     :db-kind :join
     :db-info (:join-class employee
 			  :home-key (companyid groupid)
-			  :foreign-key (companyid groupid)
+			  :foreign-key (ecompanyid groupid)
 			  :set t)))
   (:base-table company))
 
@@ -154,15 +154,16 @@
 
 ;; many employees can reside at many addressess
 (def-view-class employee-address ()
-  ((emplid :type integer
+  ((aemplid :type integer
 	   :initarg :emplid)
-   (addressid :type integer
+   (aaddressid :type integer
 	      :initarg :addressid)
    (address :db-kind :join
 	    :db-info (:join-class address
-				  :home-key addressid
+				  :home-key aaddressid
 				  :foreign-key addressid
-				  :retrieval :immediate))))
+				  :retrieval :immediate)))
+  (:base-table "ea_join"))
 
 (defun test-connect-to-database (db-type spec)
   (when (db-backend-has-create/destroy-db? db-type)

@@ -28,7 +28,7 @@
            (sort (mapcar #'string-downcase
                          (clsql:list-tables :owner *test-database-user*))
                  #'string<))
-  "address" "company" "employee" "employee_address" "type_table")
+  "address" "company" "ea_join" "employee" "type_table")
 
 ;; create a table, test for its existence, drop it and test again 
 (deftest :fddl/table/2
@@ -66,7 +66,7 @@
                     (clsql:list-attributes [employee]
                                           :owner *test-database-user*))
             #'string<))
-  "birthday" "companyid" "email" "emplid" "first_name" "groupid" "height"
+  "birthday" "ecompanyid" "email" "emplid" "first_name" "groupid" "height"
   "last_name" "managerid" "married")
 
 (deftest :fddl/attributes/2
@@ -76,7 +76,7 @@
                     (clsql:list-attribute-types [employee]
                                                :owner *test-database-user*))
             #'string<))
-  "birthday" "companyid" "email" "emplid" "first_name" "groupid" "height"
+  "birthday" "ecompanyid" "email" "emplid" "first_name" "groupid" "height"
   "last_name" "managerid" "married")
 
 ;; Attribute types are vendor specific so need to test a range

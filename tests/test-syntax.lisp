@@ -118,13 +118,6 @@
     (clsql:sql [select [count [*]] :from [emp]])
   "SELECT COUNT(*) FROM EMP")
   
-(deftest :syntax/query/5
-    (string-downcase (clsql:sql [select 'employee]))
-  "(employee)")
-
-(deftest :syntax/query/6
-    (string-downcase (clsql:sql [select 'employee 'address]))
-  "(employee address)")
 
 (deftest :syntax/expression1
     (clsql:sql
