@@ -505,9 +505,9 @@
 	(print 'a)
 	(dotimes (i (length types))
 	  (let* ((binding (uffi:deref-array input-bind '(:array mysql-bind) i)))
-	    (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-type) 
+	    (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer-type) 
 	      (nth i mysql-types))
-	    (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-length) 0)))	    
+	    (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer-length) 0)))	    
 	
 	(print 'b)
 	(unless (uffi:null-pointer-p rs)
@@ -519,13 +519,15 @@
 	  (dotimes (i num-fields)
 	    (declare (fixnum i))
 	    (let* ((field (uffi:deref-array field-vec '(:array mysql-field) i))
-		   (type (uffi:get-slot-value field 'mysql-field 'type))
+		   (type (uffi:get-slot-value field mysql-field 'type))
 		   (binding (uffi:deref-array output-bind '(:array mysql-bind) i)))
-	      (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-type) type)
+	      (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer-type) type)
 	      
-	      (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-length) 0)
-	      (setf (uffi:get-slot-value binding 'mysql-bind 'is-null) 
+	      (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer-length) 0)
+	      #+need-to-allocate-foreign-object-for-this
+	      (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::is-null) 
 		(+ i (uffi:pointer-address is-null-ptr)))
+	      #+need-to-allocate-foreign-object-for-this
 	      (setf (uffi:get-slot-value binding 'mysql-bind 'length) 
 		(+ (* i 8) (uffi:pointer-address length-ptr)))
 	      
@@ -533,28 +535,28 @@
 		((#.mysql-field-types#var-string #.mysql-field-types#string
 		  #.mysql-field-types#tiny-blob #.mysql-field-types#blob
 		  #.mysql-field-types#medium-blob #.mysql-field-types#long-blob)
-		 (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-length) 1024)
-		 (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
+		 (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer-length) 1024)
+		 (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer)
 		   (uffi:allocate-foreign-object :unsigned-char 1024)))
 		(#.mysql-field-types#tiny
-		 (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
+		 (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer)
 		   (uffi:allocate-foreign-object :byte)))
 		(#.mysql-field-types#short
-		 (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
+		 (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer)
 		   (uffi:allocate-foreign-object :short)))
 		(#.mysql-field-types#long
-		 (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
+		 (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer)
 		   ;; segfaults if supply :int on amd64
 		   (uffi:allocate-foreign-object :long)))
 		#+64bit
 		(#.mysql-field-types#longlong
-		 (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
+		 (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer)
 		   (uffi:allocate-foreign-object :long)))
 		(#.mysql-field-types#float
-		 (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
+		 (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer)
 		   (uffi:allocate-foreign-object :float)))
 		(#.mysql-field-types#double
-		 (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
+		 (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer)
 		   (uffi:allocate-foreign-object :double)))
 		((#.mysql-field-types#time #.mysql-field-types#date
 		  #.mysql-field-types#datetime #.mysql-field-types#timestamp)
@@ -598,7 +600,7 @@
 	(setf (uffi:deref-array (is-null-ptr stmt) '(:array :byte) (1- position)) 0))
       (case type
 	(#.mysql-field-types#long
-	 (setf (uffi:get-slot-value binding 'mysql-bind 'buffer) value))
+	 (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer) value))
 	(t
 	 (warn "Unknown input bind type ~D." type))
 	)))))
@@ -640,8 +642,8 @@
 			       (uffi:deref-array (is-null-ptr stmt) '(:array :byte) i))))))
 	     (unless is-null
 	       (let* ((bind (uffi:deref-array (output-bind stmt) '(:array mysql-bind) i))
-		      (type (uffi:get-slot-value bind 'mysql-bind 'buffer-type))
-		      (buffer (uffi:get-slot-value bind 'mysql-bind 'buffer)))
+		      (type (uffi:get-slot-value bind 'mysql-bind 'mysql::buffer-type))
+		      (buffer (uffi:get-slot-value bind 'mysql-bind 'mysql::buffer)))
 		 (case type
 		   ((#.mysql-field-types#var-string #.mysql-field-types#string
 		     #.mysql-field-types#tiny-blob #.mysql-field-types#blob
