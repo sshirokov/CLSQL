@@ -250,9 +250,9 @@
 	configuration file named
 	<filename>.clsql-test.config</filename> must be created in
 	your home directory. There are instructures on the format of
-	that file in the <filename>tests/tests.lisp</filename> file in
-	the &clsql; source directory. After creating that file, you
-	can run the test suite with &asdf;:
+	that file in the <filename>tests/README</filename>. After
+	creating <filename>.clsql-test.config</filename>, you can run
+	the test suite with &asdf;:
 	<screen>
 	  (asdf:operate 'asdf:test-op 'clsql)
         </screen>
