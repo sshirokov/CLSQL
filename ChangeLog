@@ -1,4 +1,7 @@
-6 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+7 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* sql/metaclass.lisp: Work-around openmcl's CHANGE-CLASS
+	changing the type-specifier. Use a lisp type of (OR NULL FOO)
+	for a specified-type of FOO unless :db-constraints :not-null.
 	* tests/test-*.lisp: Rename fields so that joins occur on
 	fields with different names. This ensures that join code is
 	selecting the proper name.
@@ -6,7 +9,7 @@
 	view class for testing.
 	* sql/objects.lisp: Use view-table rather than name of table
 	in a number of places to fix errors noted with using :base-table.
-	
+
 6 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
         * sql/objects.lisp: replace *update-records-on-make-instance* with 
         *db-auto-sync* which also controls both automatic creation of 

@@ -380,7 +380,6 @@ implementations."
 (defun compute-lisp-type-from-slot-specification (slotd specified-type)
   "Computes the Lisp type for a user-specified type. Needed for OpenMCL
 which does type checking before storing a value in a slot."
-  (declare (ignore slotd))
   ;; This function is called after the base compute-effective-slots is called.
   ;; OpenMCL sets the type-predicate based on the initial value of the slots type.
   ;; so we have to override the type-predicates here
@@ -394,9 +393,9 @@ which does type checking before storing a value in a slot."
 	specified-type)))
     ((eq (ensure-keyword specified-type) :bigint)
      'integer)
-    #+openmcl
-    ((null specified-type)
-     t)
+    ((and specified-type
+	  (not (eql :not-null (slot-value slotd 'db-constraints))))
+     `(or null ,specified-type))
     (t
      specified-type)))
 
@@ -470,17 +469,22 @@ which does type checking before storing a value in a slot."
 	 )
 	;; all other slots
 	(t
-	 (change-class esd 'view-class-effective-slot-definition
-		       #+allegro :name 
-		       #+allegro (slot-definition-name dsd))
+	 (let ((type-predicate #+openmcl (slot-value esd 'ccl::type-predicate)))
+	   
+	   (change-class esd 'view-class-effective-slot-definition
+			 #+allegro :name 
+			 #+allegro (slot-definition-name dsd))
+	   #+openmcl (setf (slot-value esd 'ccl::type-predicate)
+			   type-predicate))
 	 
 	 (setf (slot-value esd 'column)
 	   (column-name-from-arg
 	    (sql-escape (slot-definition-name dsd))))
-	 
+
 	 (setf (slot-value esd 'db-info) nil)
-	 (setf (slot-value esd 'db-kind)
-	   :virtual)))
+	 (setf (slot-value esd 'db-kind) :virtual)
+	 (setf (specified-type esd) (slot-definition-type dsd)))
+	)
       esd)))
   
 (defun slotdefs-for-slots-with-class (slots class)
