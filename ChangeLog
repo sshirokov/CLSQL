@@ -3,7 +3,8 @@
 	* sql/objects.lisp: Have :target-slot return of list of lists rather
 	than a list of cons pairs to be conformant with CommonSQL.
 	Make :target-slot much more efficient by using a SQL inner join
-	statement and just requiring one SQL query.
+	statement and just requiring one SQL query. Add :retrieval :deferrred
+	to target-slot joins. Add placeholder for update-objects-join.
 	* sql/classes.lisp: Add :inner-join and :on slots to sql-query class
 	and process them for query output-sql.
 	

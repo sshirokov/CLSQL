@@ -705,13 +705,6 @@ superclass of the newly-defined View Class."
 ;; ------------------------------------------------------------
 ;; Logic for 'faulting in' :join slots
 
-(defun fault-join-slot-raw (class object slot-def)
-  (let* ((dbi (view-class-slot-db-info slot-def))
-	 (jc (gethash :join-class dbi)))
-    (let ((jq (join-qualifier class object slot-def)))
-      (when jq 
-        (select jc :where jq :flatp t :result-types nil)))))
-
 ;; this works, but is inefficient requiring (+ 1 n-rows)
 ;; SQL queries
 #+ignore
@@ -742,27 +735,63 @@ superclass of the newly-defined View Class."
 	 (tdbi (view-class-slot-db-info 
 		(find ts (class-slots (find-class jc))
 		      :key #'slot-definition-name)))
+	 (retrieval (gethash :retrieval tdbi))
 	 (jq (join-qualifier class object slot-def))
 	 (key (slot-value object (gethash :home-key dbi))))
     (when jq
-      (let ((res
-	     (find-all (list ts) 
-		       :inner-join (sql-expression :attribute jc)
-		       :on (sql-operation 
-			    '==
-			    (sql-expression :attribute (gethash :foreign-key tdbi) :table ts)
-			    (sql-expression :attribute (gethash :home-key tdbi) :table jc))
-		       :where jq
-		       :result-types :auto)))
-	(mapcar #'(lambda (i)
-		    (let* ((instance (car i))
-			   (jcc (make-instance jc :view-database (view-database instance))))
-		      (setf (slot-value jcc (gethash :foreign-key dbi)) 
-			key)
-		      (setf (slot-value jcc (gethash :home-key tdbi)) 
-			(slot-value instance (gethash :foreign-key tdbi)))
+      (ecase retrieval
+	(:immediate
+	 (let ((res
+		(find-all (list ts) 
+			  :inner-join (sql-expression :attribute jc)
+			  :on (sql-operation 
+			       '==
+			       (sql-expression :attribute (gethash :foreign-key tdbi) :table ts)
+			       (sql-expression :attribute (gethash :home-key tdbi) :table jc))
+			  :where jq
+			  :result-types :auto)))
+	   (mapcar #'(lambda (i)
+		       (let* ((instance (car i))
+			      (jcc (make-instance jc :view-database (view-database instance))))
+			 (setf (slot-value jcc (gethash :foreign-key dbi)) 
+			       key)
+			 (setf (slot-value jcc (gethash :home-key tdbi)) 
+			       (slot-value instance (gethash :foreign-key tdbi)))
 		      (list instance jcc)))
-		res)))))
+		   res)))
+	(:deferred
+	    ;; just fill in minimal slots
+	    (mapcar
+	     #'(lambda (k)
+		 (let ((instance (make-instance ts :view-database (view-database object)))
+		       (jcc (make-instance jc :view-database (view-database object)))
+		       (fk (car k)))
+		   (setf (slot-value instance (gethash :home-key tdbi)) fk)
+		   (setf (slot-value jcc (gethash :foreign-key dbi)) 
+			 key)
+		   (setf (slot-value jcc (gethash :home-key tdbi)) 
+			 fk)
+		   (list instance jcc)))
+	     (select (sql-expression :attribute (gethash :foreign-key tdbi) :table jc)
+		     :from (sql-expression :table jc)
+		     :where jq)))))))
+
+(defun update-object-joins (objects &key (slots t) (force-p t)
+			    class-name (max-len *default-update-objects-max-len))
+  "Updates the remote join slots, that is those slots defined without :retrieval :immediate."
+  (when objects
+    (unless class-name
+      (class-name (class-of (first object))))
+    )
+  )
+
+  
+(defun fault-join-slot-raw (class object slot-def)
+  (let* ((dbi (view-class-slot-db-info slot-def))
+	 (jc (gethash :join-class dbi)))
+    (let ((jq (join-qualifier class object slot-def)))
+      (when jq 
+        (select jc :where jq :flatp t :result-types nil)))))
 
 (defun fault-join-slot (class object slot-def)
   (let* ((dbi (view-class-slot-db-info slot-def))

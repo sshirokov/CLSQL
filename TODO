@@ -7,6 +7,7 @@ TESTS TO ADD
 * Test bigint type
 * :db-constraint tests
 * *update-records-on-make-instance*
+* test :retrieval :deferred joins
 
 COMMONSQL SPEC
 
@@ -20,11 +21,10 @@ COMMONSQL SPEC
   
     SELECT 
       o keyword arg :refresh should function as advertised 
- 
- >> The object-oriented sql interface
 
     DEF-VIEW-CLASS
-      o implement :retrieval :immediate 
+      o Rework functioning of :immediate to be conformant. It 
+     works as expect with target-slot, but not without target-slot
 
  >> Symbolic SQL syntax 
 
