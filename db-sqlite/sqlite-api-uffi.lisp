@@ -95,6 +95,7 @@
 (def-foreign-type sqlite-db :pointer-void)
 (def-foreign-type sqlite-vm :pointer-void)
 (def-foreign-type string-pointer (* (* :char)))
+(def-foreign-type sqlite-row-pointer (* string-pointer))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -102,7 +103,7 @@
 ;;;;
 (def-type sqlite-db sqlite-db)
 (def-type sqlite-row string-pointer)
-(def-type sqlite-row-pointer (* string-pointer))
+(def-type sqlite-row-pointer-type (* string-pointer))
 (def-type sqlite-vm-pointer (* sqlite-vm))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -235,7 +236,7 @@
   (with-foreign-object (cols-n :int)
     (let ((cols (allocate-foreign-object '(* (* :char))))
 	  (col-names (allocate-foreign-object '(* (* :char)))))
-      (declare (type sqlite-row-pointer cols col-names))
+      (declare (type sqlite-row-pointer-type cols col-names))
       (let ((result (%step (deref-pointer vm 'sqlite-vm)
 			   cols-n cols col-names)))
 	(cond
@@ -265,7 +266,7 @@
   (declare (type sqlite-db db))
   (with-cstring (sql-native sql)
     (let ((rows (allocate-foreign-object '(* (* :char)))))
-      (declare (type sqlite-row-pointer rows))
+      (declare (type sqlite-row-pointer-type rows))
       (with-foreign-object (rows-n :int)
 	(with-foreign-object (cols-n :int)
 	  (let ((result (%get-table db sql-native rows rows-n cols-n nil)))
@@ -279,7 +280,7 @@
 
 (declaim (inline sqlite-free-table))
 (defun sqlite-free-table (table)
-  (declare (type sqlite-row-pointer table))
+  (declare (type sqlite-row-pointer-type table))
   (%free-table (deref-pointer table 'sqlite-row-pointer)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -300,10 +301,10 @@
 
 (declaim (inline sqlite-aref))
 (defun sqlite-aref (a n)
-  (declare (type sqlite-row-pointer a))
+  (declare (type sqlite-row-pointer-type a))
   (convert-from-foreign-string (deref-array  (deref-pointer a 'sqlite-row-pointer) '(:array :char) n)))
 
 (declaim (inline sqlite-free-row))
 (defun sqlite-free-row (row)
-  (declare (type sqlite-row-pointer row))
+  (declare (type sqlite-row-pointer-type row))
   (free-foreign-object row))
