@@ -1,5 +1,5 @@
 ;;; -*- Mode: Lisp -*-
-;;; $Id: oracle-constants.lisp,v 1.1 2002/04/01 05:27:55 kevin Exp $
+;;; $Id: oracle-constants.cl,v 1.1 2002/05/13 03:52:24 kevin Exp $
 
 (in-package :MAISQL-ORACLE)
 

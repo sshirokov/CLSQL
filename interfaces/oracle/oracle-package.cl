@@ -1,5 +1,5 @@
 ;;; -*- Mode: Lisp -*-
-;;; $Id: oracle-package.lisp,v 1.1 2002/04/01 05:27:55 kevin Exp $
+;;; $Id: oracle-package.cl,v 1.1 2002/05/13 03:52:24 kevin Exp $
 ;;;
 ;;; MaiSQL --- Common Lisp Interface Layer to SQL Databases
 ;;; This is copyrighted software.  See documentation for terms.
