@@ -151,7 +151,7 @@ as possible second argument) to the desired representation of date/time/timestam
 	 (with-foreign-object (phenv 'sql-handle)
 	   (with-error-handling
 	       ()
-	     (SQLAllocEnv phenv)
+	     (SQLAllocHandle $SQL_HANDLE_ENV +null-handle-ptr+ phenv)
 	     (deref-pointer phenv 'sql-handle)))))
     (%set-attr-odbc-version henv $SQL_OV_ODBC3)
     henv))
@@ -164,9 +164,10 @@ as possible second argument) to the desired representation of date/time/timestam
 
 (defun %new-db-connection-handle (henv)
   (with-foreign-object (phdbc 'sql-handle)
+    (setf (deref-pointer phdbc sql-handle) +null-handle-ptr+)
     (with-error-handling
       (:henv henv)
-      (SQLAllocConnect henv phdbc)
+      (SQLAllocHandle $SQL_HANDLE_DBC henv phdbc)
       (deref-pointer phdbc 'sql-handle))))
 
 (defun %free-statement (hstmt option)

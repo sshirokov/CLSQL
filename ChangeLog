@@ -1,4 +1,7 @@
 02 Sep 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* db-odbc/odbc-api.lisp: More conversions to ODBC v3
+	
+02 Sep 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.0.2 Release
 	* TODO: Add note about ODBC on Windows
 	* db-odbc/odbc-loader.lisp: Add /winnt/system32/ to

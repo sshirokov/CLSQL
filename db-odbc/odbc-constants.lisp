@@ -24,6 +24,13 @@
 
 ;; (defconstant $ODBCVER	#x0210)
 
+
+;; for new SQLAllocHandle functiion
+(defconstant $SQL_HANDLE_ENV 1)
+(defconstant $SQL_HANDLE_DBC 2)
+(defconstant $SQL_HANDLE_STMT 3)
+(defconstant $SQL_HANDLE_DESC 4)
+
 ;; generally useful constants
 (defconstant $SQL_SPEC_MAJOR 2)		;; Major version of specification 
 (defconstant $SQL_SPEC_MINOR 10) 	;; Minor version of specification 

@@ -23,7 +23,15 @@
 (def-foreign-type string-ptr '(* :unsigned-char))
 (def-type long-ptr-type '(* #.$ODBC-LONG-TYPE))
 
+;; odbc v3
+(def-function "SQLAllocHandle"
+    ((handle-type :short)
+     (input-handle sql-handle)
+     (*phenv sql-handle-ptr))
+  :module "odbc"
+  :returning :short)
 
+;; deprecated
 (def-function "SQLAllocEnv"
     ((*phenv sql-handle-ptr)    ; HENV   FAR *phenv
      )
@@ -353,6 +361,15 @@
      (attr :int)
      (*value :pointer-void)
      (szLength :int))
+  :module "odbc"
+  :returning :short)
+
+(def-function "SQLGetEnvAttr"
+    ((henv sql-handle)          ; HENV        henv
+     (attr :int)
+     (*value :pointer-void)
+     (szLength :int)
+     (string-length-ptr (* :int)))
   :module "odbc"
   :returning :short)
 

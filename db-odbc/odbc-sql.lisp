@@ -52,6 +52,7 @@
 	  ;; underlying database
 	  (initialize-database-type :database-type database-type)
 	  db)
+      #+ignore
       (error () 	;; Init or Connect failed
 	(error 'sql-connection-error
 	       :database-type database-type
