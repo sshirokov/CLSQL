@@ -32,9 +32,6 @@
 
 ;; Tables 
 
-(defvar *table-schemas* (make-hash-table :test #'equal)
-  "Hash of schema name to table lists.")
-
 (defun create-table (name description &key (database *default-database*)
                           (constraints nil))
   "Create a table called NAME, in DATABASE which defaults to
@@ -48,8 +45,6 @@ a list containing lists of attribute-name and type information pairs."
                               :name table-name
                               :columns description
                               :modifiers constraints)))
-    (pushnew table-name (gethash *default-schema* *table-schemas*)
-             :test #'equal)
     (execute-command stmt :database database)))
 
 (defun drop-table (name &key (if-does-not-exist :error)
@@ -92,9 +87,6 @@ returned as a list of strings."
 
 ;; Views 
 
-(defvar *view-schemas* (make-hash-table :test #'equal)
-  "Hash of schema name to view lists.")
-
 (defun create-view (name &key as column-list (with-check-option nil)
                          (database *default-database*))
   "Creates a view called NAME using the AS query and the optional
@@ -111,7 +103,6 @@ is NIL. The default value of DATABASE is *DEFAULT-DATABASE*."
                               :column-list column-list
                               :query as
                               :with-check-option with-check-option)))
-    (pushnew view-name (gethash *default-schema* *view-schemas*) :test #'equal)
     (execute-command stmt :database database)))
 
 (defun drop-view (name &key (if-does-not-exist :error)
@@ -153,9 +144,6 @@ of strings."
 
 ;; Indexes 
 
-(defvar *index-schemas* (make-hash-table :test #'equal)
-  "Hash of schema name to index lists.")
-
 (defun create-index (name &key on (unique nil) attributes
                           (database *default-database*))
   "Creates an index called NAME on the table specified by ON. The
@@ -169,7 +157,6 @@ UNIQUE is nil. The default value of DATABASE is *DEFAULT-DATABASE*."
          (stmt (format nil "CREATE ~A INDEX ~A ON ~A (~{~A~^, ~})"
                        (if unique "UNIQUE" "")
                        index-name table-name attributes)))
-    (pushnew index-name (gethash *default-schema* *index-schemas*))
     (execute-command stmt :database database)))
 
 (defun drop-index (name &key (if-does-not-exist :error)
@@ -262,16 +249,11 @@ is the vendor-specific type returned by ATTRIBUTE-TYPE."
 
 ;; Sequences 
 
-(defvar *sequence-schemas* (make-hash-table :test #'equal)
-  "Hash of schema name to sequence lists.")
-
 (defun create-sequence (name &key (database *default-database*))
   "Create a sequence called NAME in DATABASE which defaults to
 *DEFAULT-DATABASE*."
   (let ((sequence-name (database-identifier name)))
-    (database-create-sequence sequence-name database)
-    (pushnew sequence-name (gethash *default-schema* *sequence-schemas*)
-             :test #'equal))
+    (database-create-sequence sequence-name database))
   (values))
 
 (defun drop-sequence (name &key (if-does-not-exist :error)

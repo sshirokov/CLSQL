@@ -7,7 +7,7 @@
 #
 #  CVS Id:   $Id$
 #
-# This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+# This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
 #
 # CLSQL users are granted the rights to distribute and use this software
 # as governed by the terms of the Lisp Lesser GNU Public License
@@ -15,7 +15,7 @@
 
 PKG	:= clsql
 DEBPKG	:= cl-sql
-SUBDIRS	:= sql tests uffi base db-mysql db-aodbc \
+SUBDIRS	:= sql tests uffi base classic db-mysql db-aodbc \
 	   db-postgresql db-postgresql-socket db-sqlite
 DOCSUBDIRS:=doc
 

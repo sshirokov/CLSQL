@@ -45,10 +45,6 @@
     :accessor object-definition
     :initarg :definition
     :initform nil)
-   (version
-    :accessor object-version
-    :initarg :version
-    :initform 0)
    (key-slots
     :accessor key-slots
     :initform nil)
@@ -117,7 +113,7 @@ of the default method.  The extra allowed options are the value of the
     result))
 
 #+lispworks
-(defconstant +extra-class-options+ '(:base-table :version :schemas))
+(defconstant +extra-class-options+ '(:base-table))
 
 #+lispworks 
 (defmethod clos::canonicalize-class-options :around
@@ -181,7 +177,7 @@ of the default method.  The extra allowed options are the value of the
 (defmethod initialize-instance :around ((class standard-db-class)
                                         &rest all-keys
 					&key direct-superclasses base-table
-                                        schemas version qualifier
+                                        qualifier
 					&allow-other-keys)
   (let ((root-class (find-class 'standard-db-object nil))
 	(vmc (find-class 'standard-db-class)))
@@ -203,16 +199,12 @@ of the default method.  The extra allowed options are the value of the
                                                         (car base-table)
                                                         base-table))
                                                (class-name class)))))
-    (setf (object-version class) version)
-    (mapc (lambda (schema)
-            (pushnew (class-name class) (gethash schema *object-schemas*)))
-          (if (listp schemas) schemas (list schemas)))
     (register-metaclass class (nth (1+ (position :direct-slots all-keys))
                                    all-keys))))
 
 (defmethod reinitialize-instance :around ((class standard-db-class)
                                           &rest all-keys
-                                          &key base-table schemas version
+                                          &key base-table 
                                           direct-superclasses qualifier
                                           &allow-other-keys)
   (let ((root-class (find-class 'standard-db-object nil))
@@ -235,10 +227,6 @@ of the default method.  The extra allowed options are the value of the
                                                 direct-superclasses)
 		   (remove-keyword-arg all-keys :direct-superclasses)))
         (call-next-method)))
-  (setf (object-version class) version)
-  (mapc (lambda (schema)
-          (pushnew (class-name class) (gethash schema *object-schemas*)))
-        (if (listp schemas) schemas (list schemas)))
   (register-metaclass class (nth (1+ (position :direct-slots all-keys))
                                  all-keys)))
 

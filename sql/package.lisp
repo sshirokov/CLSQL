@@ -167,7 +167,6 @@
        #:command-recording-stream
        #:result-recording-stream
        #:database-view-classes
-       #:database-schema
        #:conn-pool
        #:print-object 
        ;; utils
@@ -330,7 +329,6 @@
        #:reload-database-types             ; clsql-base xx
        #:database-type                     ; database   x
        #:is-database-open
-       #:in-schema                         ; classes    x
        ;;FDDL 
        #:list-views                        ; table      xx
        #:view-exists-p                     ; table      xx

@@ -1,5 +1,11 @@
 12 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
-	* Version 2.6.5
+	* Version 2.6.7
+	* sql/*.lisp: Remove schema versioning cruft
+	[Marcus Pearce]
+	* Makefile: Add classic subdirectory
+	
+12 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.6.6
 	* sql/sql.lisp: Fix TRUNCATE command, bug reported
 	by Marcus Pearce
 	* sql/sql.lisp: Remove EXPLAIN function. Postgresql/Oracle

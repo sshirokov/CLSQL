@@ -22,14 +22,6 @@
 (defvar *sql-stream* nil
   "stream which accumulates SQL output")
 
-(defvar *default-schema* "UNCOMMONSQL")
-
-(defvar *object-schemas* (make-hash-table :test #'equal)
-  "Hash of schema name to class constituent lists.")
-
-(defun in-schema (schemaname)
-  (setf *default-schema* schemaname))
-
 (defun sql-output (sql-expr &optional database)
   (progv '(*sql-stream*)
       `(,(make-string-output-stream))
