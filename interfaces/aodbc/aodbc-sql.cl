@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: aodbc-sql.cl,v 1.8 2002/03/29 08:28:14 kevin Exp $
+;;;; $Id: aodbc-sql.cl,v 1.9 2002/05/13 16:41:22 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -36,7 +36,7 @@
   t)
 
 
-;; AODBC interfac
+;; AODBC interface
 
 (defclass aodbc-database (database)
   ((aodbc-conn :accessor database-aodbc-conn :initarg :aodbc-conn)))
@@ -50,6 +50,7 @@
 
 (defmethod database-connect (connection-spec (database-type (eql :aodbc)))
   (check-connection-spec connection-spec database-type (dsn user password))
+  #+aodbc-v2
   (destructuring-bind (dsn user password) connection-spec
     (handler-case
 	(make-instance 'aodbc-database
@@ -66,11 +67,13 @@
 	       :error "Connection failed")))))
 
 (defmethod database-disconnect ((database aodbc-database))
+  #+aodbc-v2
   (dbi:disconnect (database-aodbc-conn database))
   (setf (database-aodbc-conn database) nil)
   t)
 
 (defmethod database-query (query-expression (database aodbc-database) types) 
+  #+aodbc-v2
   (handler-case
       (dbi:sql query-expression :db (database-aodbc-conn database)
 	       :types types)
@@ -83,6 +86,7 @@
 
 (defmethod database-execute-command (sql-expression 
 				     (database aodbc-database))
+  #+aodbc-v2
   (handler-case
       (dbi:sql sql-expression :db (database-aodbc-conn database))
     (error ()
@@ -99,6 +103,7 @@
 
 (defmethod database-query-result-set (query-expression (database aodbc-database) 
 				      &key full-set types)
+  #+aodbc-v2
   (handler-case 
       (multiple-value-bind (query column-names)
 	  (dbi:sql query-expression 
@@ -122,12 +127,14 @@
 	     :error "Query result set failed"))))
 
 (defmethod database-dump-result-set (result-set (database aodbc-database))
+  #+aodbc-v2
   (dbi:close-query (aodbc-result-set-query result-set))
   t)
 
 (defmethod database-store-next-row (result-set
 				    (database aodbc-database)
 				    list)
+  #+aodbc-v2
   (let ((row (dbi:fetch-row (aodbc-result-set-query result-set) nil 'eof)))
     (if (eq row 'eof)
 	nil

@@ -14,7 +14,7 @@ Description: SQL Interface for Common Lisp
  on multiple Common Lisp implementations.
 
 Package: cl-sql-base
-Architecture: all
+Architecture: any
 Depends: common-lisp-controller, cl-uffi, cmucl | lisp-compiler
 Recommends: cl-sql-backend
 Description: SQL Interface for Common Lisp
@@ -22,7 +22,7 @@ Description: SQL Interface for Common Lisp
  on multiple Common Lisp implementations.
 
 Package: cl-sql-mysql
-Architecture: all
+Architecture: any
 Depends: cl-sql-base (>= ${Source-Version}), libmysqlclient10-dev
 Provides: cl-sql-backend
 Description: UncommonSQL database backend, MySQL
