@@ -6,6 +6,10 @@
 
 	* interfaces/mysql/mysql-sql.cl
 	Fixed type specifiers in ato* calls
+
+	* interfaces/mysql/clsql-mysql.c
+	* interfaces/mysql/mysql-sql.cl
+	Added atol64 function, :longlong translations
 	
 25 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 

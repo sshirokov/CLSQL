@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-package.cl,v 1.5 2002/03/25 14:26:23 kevin Exp $
+;;;; $Id: mysql-package.cl,v 1.6 2002/03/27 05:37:35 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -126,5 +126,7 @@
      #:mysql-info
      #:mysql-info-string
      #:mysql-data-seek
+     
+     #:make-64-bit-integer
      )
     (:documentation "This is the low-level interface MySQL."))

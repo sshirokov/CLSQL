@@ -6,7 +6,7 @@
  *   Programmer:    Kevin M. Rosenberg
  *   Date Started:  Mar 2002
  *
- * $Id: clsql-mysql.c,v 1.1 2002/03/23 14:04:52 kevin Exp $
+ * $Id: clsql-mysql.c,v 1.2 2002/03/27 05:37:35 kevin Exp $
  *
  * This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
  *
@@ -59,15 +59,6 @@ const unsigned int bitmask_32bits = 0xFFFFFFFF;
 
 DLLEXPORT
 unsigned int
-clsql_mysql_num_rows (MYSQL_RES* res, unsigned int* pHigh32)
-{
-  my_ulonglong nRows = mysql_num_rows (res);
-  *pHigh32 = upper_32bits(nRows);
-  return lower_32bits(nRows);
-}
-
-DLLEXPORT
-unsigned int
 clsql_mysql_affected_rows (MYSQL* res, unsigned int* pHigh32)
 {
   my_ulonglong nAffected = mysql_affected_rows (res);
@@ -85,6 +76,27 @@ clsql_mysql_insert_id (MYSQL* mysql, unsigned int* pHigh32)
 }
 
 
+/* Reads a 64-bit integer string, returns result as two 32-bit integers */
+
+DLLEXPORT
+unsigned int
+atol64 (const unsigned char* str, int* pHigh32)
+{
+  long long result = 0;
+  int minus = 0;
+
+  while (*str) {
+    int i = *str - '0';
+    if (i < 0 || i > 9) /* Non-numeric character -- quit */
+      break;
+    result = i + (10 * result);
+    str++;
+  }
+
+  *pHigh32 = upper_32bits(result);
+  return lower_32bits(result);
+}
 
   
   
+

@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.cl,v 1.12 2002/03/27 04:33:19 kevin Exp $
+;;;; $Id: mysql-sql.cl,v 1.13 2002/03/27 05:37:35 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -73,6 +73,8 @@
 	       #.mysql-field-types#int24
 	       #.mysql-field-types#long)
 	      :int)
+	     (#.mysql-field-types#longlong
+	      :longlong)
 	     ((#.mysql-field-types#double
 	       #.mysql-field-types#float
 	       #.mysql-field-types#decimal)
@@ -92,6 +94,11 @@
     ((str (* :unsigned-char)))
   :returning :long)
 
+(uffi:def-function "atol64"
+    ((str (* :unsigned-char))
+     (high32 (* :int)))
+  :returning :int)
+
 (uffi:def-function "atof"
     ((str (* :unsigned-char)))
   :returning :double)
@@ -107,6 +114,13 @@
        (atol char-ptr))
       (:double
        (atof char-ptr))
+      (:longlong
+       (uffi:with-foreign-object (high32-ptr :int)
+	 (let ((low32 (atol64 char-ptr high32-ptr))
+	       (high32 (uffi:deref-pointer high32-ptr :int)))
+	   (if (zerop high32)
+	       low32
+	       (mysql:make-64-bit-integer high32 low32)))))
       (otherwise
        (uffi:convert-from-foreign-string char-ptr)))))
 
