@@ -80,6 +80,16 @@ Description: CLSQL database backend, SQLite
  with SQLite databases. 
  CLSQL is a Common Lisp interface to SQL databases.
 
+Package: cl-sql-oracle
+Architecture: all
+Depends: cl-sql (>= ${Source-Version}), cl-sql-uffi (>= ${Source-Version})
+Provides: cl-sql-backend
+Description: CLSQL database backend, Oracle
+ This package enables you to use the CLSQL data access package
+ with Oracle databases.  This package requires the Oracle Instant
+ Client libraries to operate.
+ CLSQL is a Common Lisp interface to SQL databases.
+
 Package: cl-sql-tests
 Architecture: all
 Depends: cl-sql, cl-sql-postgresql, cl-sql-postgresql-socket, cl-sql-mysql, cl-sql-sqlite, cl-sql-odbc, cl-rt
