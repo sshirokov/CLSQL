@@ -10,13 +10,6 @@ COMMONSQL SPEC
 
 * Incompatible 
 
-
- >> Initialisation and connection 
-
-    STATUS 
-     o what is the behaviour in CommonSQL (esp :full parameter)? 
-
-
  >> The functional sql interface 
   
     SELECT 

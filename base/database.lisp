@@ -204,26 +204,38 @@ if the database connection has been lost."
 output, for the connected databases and initialized database types. If
 full is T, detailed status information is printed. The default value
 of full is NIL."
-  (declare (ignore full))
-  ;; TODO: table details if full is true?
   (flet ((get-data ()
            (let ((data '()))
              (dolist (db (connected-databases) data)
-               (push (list (database-name db)
-                           (string (database-type db))
-                           (when (conn-pool db) "T" "NIL")
-                           (format nil "~A" (length (database-list-tables db)))
-                           (format nil "~A" (length (database-list-views db)))
-                           (if (equal db *default-database*) "   *" ""))
-                     data))))
-         (compute-sizes (data)
+	       (push 
+		(append 
+		 (list (if (equal db *default-database*) "*" "")	
+		       (database-name db)
+		       (string-downcase (string (database-type db)))
+		       (cond ((and (command-recording-stream db) 
+				   (result-recording-stream db)) 
+			      "Both")
+			     ((command-recording-stream db) "Commands")
+			     ((result-recording-stream db) "Results")
+			     (t "nil")))
+		 (when full 
+		   (list 
+		    (if (conn-pool db) "t" "nil")
+		    (format nil "~A" (length (database-list-tables db)))
+		    (format nil "~A" (length (database-list-views db))))))
+		data))))
+	 (compute-sizes (data)
            (mapcar #'(lambda (x) (apply #'max (mapcar #'length x)))
                    (apply #'mapcar (cons #'list data))))
          (print-separator (size)
            (format t "~&~A" (make-string size :initial-element #\-))))
+    (format t "~&CLSQL STATUS: ~A~%" (iso-timestring (get-time)))
     (let ((data (get-data)))
       (when data
-        (let* ((titles (list "NAME" "TYPE" "POOLED" "TABLES" "VIEWS" "DEFAULT"))
+        (let* ((titles (if full 
+			   (list "" "DATABASE" "TYPE" "RECORDING" "POOLED" 
+				 "TABLES" "VIEWS")
+			   (list "" "DATABASE" "TYPE" "RECORDING")))
                (sizes (compute-sizes (cons titles data)))
                (total-size (+ (apply #'+ sizes) (* 2 (1- (length titles)))))
                (control-string (format nil "~~&~~{~{~~~AA  ~}~~}" sizes)))

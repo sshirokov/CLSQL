@@ -4,13 +4,13 @@
 ;;;;
 ;;;; Name:     sqlite-sql.lisp
 ;;;; Purpose:  High-level SQLite interface
-;;;; Authors:  Aurelio Bignoli and Marcus Pearce
+;;;; Authors:  Aurelio Bignoli, Kevin Rosenberg, Marcus Pearce
 ;;;; Created:  Aug 2003
 ;;;;
 ;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2003 by Aurelio Bignoli and
-;;;; Marcus Pearce
+;;;; Copyright (c) 2003-2004 by Kevin Rosenberg and Marcus Pearce.
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
@@ -60,8 +60,7 @@
   (handler-case
       (multiple-value-bind (data row-n col-n)
 	  (sqlite:sqlite-get-table (sqlite-db database) sql-expression)
-	#+clisp (declare (ignore data))
-	#-clisp (sqlite:sqlite-free-table data)
+	(sqlite:sqlite-free-table data)
 	(unless (= row-n 0)
 	  (error 'clsql-simple-warning
 		 :format-control
@@ -75,72 +74,89 @@
 	     :error (sqlite:sqlite-error-message err))))
   t)
 
-(defmethod database-query (query-expression (database sqlite-database) result-types field-names)
-  (declare (ignore result-types))		; SQLite is typeless!
-  (handler-case
-      (multiple-value-bind (data row-n col-n)
-	  (sqlite:sqlite-get-table (sqlite-db database) query-expression)
-	#-clisp (declare (type sqlite:sqlite-row-pointer-type data))
-	(let ((rows
-	       (when (plusp row-n)
-		 (loop for i from col-n below (* (1+ row-n) col-n) by col-n
-		     collect (loop for j from 0 below col-n
-				 collect
-				   (#+clisp aref
-					    #-clisp sqlite:sqlite-aref
-					    data (+ i j))))))
-	      (names
-	       (when field-names
-		 (loop for j from 0 below col-n
-		     collect (#+clisp aref
-				      #-clisp sqlite:sqlite-aref
-				      data j)))))
-	  #-clisp (sqlite:sqlite-free-table data)
-	  (values rows names)))
-    (sqlite:sqlite-error (err)
-                         (error 'clsql-sql-error
-                                :database database
-                                :expression query-expression
-                                :errno (sqlite:sqlite-error-code err)
-                                :error (sqlite:sqlite-error-message err)))))
-
-#-clisp
 (defstruct sqlite-result-set
   (vm (sqlite:make-null-vm)
-      :type sqlite:sqlite-vm-pointer)
+      #-clisp :type
+      #-clisp sqlite:sqlite-vm-pointer)
   (first-row (sqlite:make-null-row)
-	     :type sqlite:sqlite-row-pointer-type)
-  (n-col 0 :type fixnum))
-#+clisp
-(defstruct sqlite-result-set
-  (vm nil)
-  (first-row nil)
+	     #-clisp :type
+	     #-clisp sqlite:sqlite-row-pointer-type)
+  (col-names (sqlite:make-null-row)
+	     #-clisp :type
+	     #-clisp sqlite:sqlite-row-pointer-type)
+  (result-types nil)
   (n-col 0 :type fixnum))
 
-(defmethod database-query-result-set
-    ((query-expression string) (database sqlite-database) &key full-set result-types)
-  (declare (ignore full-set result-types))
+(defmethod database-query (query-expression (database sqlite-database) result-types field-names)
+  (declare (optimize (speed 3) (safety 0) (debug 0) (space 0)))
   (handler-case
-      (let* ((vm (sqlite:sqlite-compile (sqlite-db database)
-					query-expression))
-	     (result-set (make-sqlite-result-set :vm vm)))
-	#-clisp (declare (type sqlite:sqlite-vm-pointer vm))
-
-	;;; To obtain column number we have to read the first row.
-	(multiple-value-bind (n-col cols col-names)
-	    (sqlite:sqlite-step vm)
-	  (declare (ignore col-names)
-		   #-clisp (type sqlite:sqlite-row-pointer-type cols)
-		   )
-	  (setf (sqlite-result-set-first-row result-set) cols
-		(sqlite-result-set-n-col result-set) n-col)
-	  (values result-set n-col nil)))
+      (multiple-value-bind (result-set n-col)
+	  (database-query-result-set query-expression database
+				     :result-types result-types
+				     :full-set nil)
+	(do* ((rows nil)
+	      (col-names (when field-names
+			   (loop for j from 0 below n-col
+				 collect (sqlite:sqlite-aref (sqlite-result-set-col-names result-set) j))))
+	      (new-row (make-list n-col) (make-list n-col))
+	      (row-ok (database-store-next-row result-set database new-row)
+		      (database-store-next-row result-set database new-row)))
+	     ((not row-ok)
+	      (values (nreverse rows) col-names))
+	  (push new-row rows)))
     (sqlite:sqlite-error (err)
       (error 'clsql-sql-error
 	     :database database
 	     :expression query-expression
 	     :errno (sqlite:sqlite-error-code err)
 	     :error (sqlite:sqlite-error-message err)))))
+
+(defmethod database-query-result-set ((query-expression string)
+				      (database sqlite-database)
+				      &key result-types full-set)
+  (handler-case
+      (let ((vm (sqlite:sqlite-compile (sqlite-db database)
+				       query-expression)))
+	;;; To obtain column number/datatypes we have to read the first row.
+	(multiple-value-bind (n-col cols col-names)
+	    (sqlite:sqlite-step vm)
+	  (let ((result-set (make-sqlite-result-set
+			     :vm vm
+			     :first-row cols
+			     :n-col n-col
+			     :col-names col-names
+			     :result-types
+			     (canonicalize-result-types
+			      result-types
+			      n-col
+			      col-names))))
+	    (if full-set
+		(values result-set n-col nil)
+		(values result-set n-col)))))
+    (sqlite:sqlite-error (err)
+      (error 'clsql-sql-error
+	     :database database
+	     :expression query-expression
+	     :errno (sqlite:sqlite-error-code err)
+	     :error (sqlite:sqlite-error-message err)))))
+
+(defun canonicalize-result-types (result-types n-col col-names)
+  (when result-types
+    (let ((raw-types (if (eq :auto result-types)
+			 (loop for j from n-col below (* 2 n-col)
+			       collect (ensure-keyword (sqlite:sqlite-aref col-names j)))
+			 result-types)))
+      (loop for type in raw-types
+	    collect
+	    (case type
+	      ((:int :integer :tinyint :long :bigint)
+	       :integer)
+	      ((:float :double)
+	       :double)
+	      ((:numeric)
+	       :number)
+	      (otherwise
+	       :string))))))
 
 (defmethod database-dump-result-set (result-set (database sqlite-database))
   (handler-case
@@ -151,7 +167,8 @@
 	     :format-arguments (list (sqlite:sqlite-error-message err))))))
 
 (defmethod database-store-next-row (result-set (database sqlite-database) list)
-  (let ((n-col (sqlite-result-set-n-col result-set)))
+  (let ((n-col (sqlite-result-set-n-col result-set))
+	(result-types (sqlite-result-set-result-types result-set)))
     (if (= n-col 0)
 	;; empty result set
 	nil
@@ -162,8 +179,7 @@
 		  (multiple-value-bind (n new-row col-names)
 		      (sqlite:sqlite-step (sqlite-result-set-vm result-set))
 		    (declare (ignore n col-names)
-			     #-clisp (type sqlite:sqlite-row-pointer-type new-row)
-			     )
+			     #-clisp (type sqlite:sqlite-row-pointer-type new-row))
 		    (if (sqlite:null-row-p new-row)
 			(return-from database-store-next-row nil)
 			(setf row new-row)))
@@ -179,10 +195,23 @@
 	  (loop for i = 0 then (1+ i)
 		for rest on list
 		do (setf (car rest)
-			 (#+clisp aref
-			  #-clisp sqlite:sqlite-aref
-			  row i)))
-	  #-clisp (sqlite:sqlite-free-row row)
+			 (let ((type (if result-types
+					 (nth i result-types)
+					 :string))
+			       (val (sqlite:sqlite-aref row i)))
+			   (case type
+			     (:string
+			      val)
+			     (:integer
+			      (when val (parse-integer val)))
+			     (:number
+			      (read-from-string val))
+			     (:double
+			      (when val
+				(coerce
+				 (read-from-string (sqlite:sqlite-aref row i))
+				 'double-float)))))))
+	  (sqlite:sqlite-free-row row)
 	  t))))
 
 ;;; Object listing
@@ -306,9 +335,9 @@
 	(database-execute-command
 	 (format nil "UPDATE ~A SET is_called='t'" table-name)
 	 database)
-	(parse-integer (car tuple)))
+	(car tuple))
        (t
-	(let ((new-pos (1+ (parse-integer (car tuple)))))
+	(let ((new-pos (1+ (car tuple))))
 	 (database-execute-command
 	  (format nil "UPDATE ~A SET last_value=~D" table-name new-pos)
 	  database)
@@ -316,11 +345,10 @@
 	     
 (defmethod database-sequence-last (sequence-name (database sqlite-database))
   (without-interrupts
-    (parse-integer 
-     (caar (database-query 
-	    (concatenate 'string "SELECT last_value FROM " 
-			 (%sequence-name-to-table-name sequence-name))
-	    database :auto nil)))))
+   (caar (database-query 
+	  (concatenate 'string "SELECT last_value FROM " 
+		       (%sequence-name-to-table-name sequence-name))
+	    database :auto nil))))
 
 (defmethod database-set-sequence-position (sequence-name
                                            (position integer)

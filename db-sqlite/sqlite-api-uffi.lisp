@@ -10,6 +10,7 @@
 ;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2003 by Aurelio Bignoli
+;;;; and Copyright (c) 2003-2004 by Kevin Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License

@@ -399,12 +399,9 @@
 (defun compute-tests-for-backend (db-type db-underlying-type)
   (let ((test-forms '())
 	(skip-tests '()))
-    (dolist (test-form (append
-			(if (eq db-type :sqlite)
-			    (test-basic-forms-untyped)
-			  (test-basic-forms))
-			*rt-connection* *rt-fddl* *rt-fdml*
-			*rt-ooddl* *rt-oodml* *rt-syntax*))
+    (dolist (test-form (append (test-basic-forms)
+			       *rt-connection* *rt-fddl* *rt-fdml*
+			       *rt-ooddl* *rt-oodml* *rt-syntax*))
       (let ((test (second test-form)))
 	(cond
 	  ((and (null (db-type-has-views? db-underlying-type))

@@ -32,7 +32,7 @@
 	   ;;; Core API.
            #:sqlite-open
 	   #:sqlite-close
-
+	   
 	   ;;; New API.
 	   #:sqlite-compile
 	   #:sqlite-step
@@ -50,9 +50,16 @@
 	   
 	   ;;; Macros.
 	   #:with-open-sqlite-db
-	   #:with-sqlite-vm))
+	   #:with-sqlite-vm
 
-(in-package :sqlite)
+	   ;;; Compatibility with clsql-sql-uffi.lisp
+	   #:sqlite-aref
+	   #:sqlite-free-table
+	   #:make-null-vm
+	   #:make-null-row
+	   ))
+
+(in-package #:sqlite)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
@@ -343,6 +350,22 @@
 	     (return-from nil)
 	     (format t "~&column name = ~A, type = ~A~%"
 		     (aref cols 1) (aref cols 2))))))))
+
+;;; Compatibility with sqlite-api-uffi.lisp
+
+(defun sqlite-aref (row i)
+  (aref row i))
+
+(defun sqlite-free-table (table)
+  (declare (ignore table))
+  )
+
+(defun make-null-vm ()
+  nil)
+
+(defun make-null-row ()
+  nil)
+
 
 ;;;; Local Variables:
 ;;;; Mode: lisp
