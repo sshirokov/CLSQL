@@ -2,7 +2,7 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          loop-extension.cl
+;;;; Name:          loop-extension.lisp
 ;;;; Purpose:       Extensions to the Loop macro for CMUCL
 ;;;; Programmer:    Pierre R. Mai
 ;;;;
@@ -14,7 +14,7 @@
 ;;;; MaiSQL package in the file sql/sql.cl
 ;;;; *************************************************************************
 
-(in-package :cl-user)
+(in-package #:cl-user)
 
 ;;;; MIT-LOOP extension
 
