@@ -8,7 +8,7 @@
 ;;;;
 ;;;; Copyright (c) 1999-2001 Pierre R. Mai
 ;;;;
-;;;; $Id: functional.cl,v 1.4 2002/05/04 02:43:15 kevin Exp $
+;;;; $Id: functional.cl,v 1.5 2002/05/04 09:27:12 marc.battyani Exp $
 ;;;;
 ;;;; This file is part of CLSQL. 
 ;;;;
@@ -84,18 +84,11 @@
               where)
       :database database))))
 
-(defmacro with-database ((db-var connection-spec 
-				 &rest connect-args
-				 &key (pool nil))
-			 &body body)
+(defmacro with-database ((db-var connection-spec &rest connect-args) &body body)
   "Evaluate the body in an environment, where `db-var' is bound to the
 database connection given by `connection-spec' and `connect-args'.
-If pool is t the the connection will be taken from the general pool,
-if pool is a conn-pool object the connection will be taken from this pool.
-The connection is automatically closed or released to the pool
-on exit from the body."
-  `(let ((,db-var (connect ,connection-spec :pool ,pool ,@connect-args)))
-     (unwind-protect
-	 (progn
-	   ,@body)
-       (disconnect :database ,db-var :poool ,pool))))
+The connection is automatically closed or released to the pool on exit from the body."
+  `(let ((,db-var (connect ,connection-spec ,@connect-args)))
+    (unwind-protect
+	 (let ((,db-var ,db-var)) ,@body)
+      (disconnect :database ,db-var))))
