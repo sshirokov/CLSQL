@@ -45,7 +45,8 @@
      #:database-probe
      #:database-list
      #:database-describe-table
-     
+     #:database-underlying-type
+
      #:database-list-tables
      #:database-list-attributes
      #:database-attribute-type

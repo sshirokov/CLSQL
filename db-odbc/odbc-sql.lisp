@@ -60,6 +60,9 @@
 	     :errno nil
 	     :error "Connection failed")))))
 
+(defmethod database-underlying-type ((database odbc-database))
+  (odbc-db-type database))
+
 (defun store-type-of-connected-database (db)
   (let* ((odbc-conn (database-odbc-conn db))
 	 (server-name (odbc-dbi::get-odbc-info odbc-conn odbc::$SQL_SERVER_NAME))

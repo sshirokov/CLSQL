@@ -206,12 +206,17 @@ the given lisp type and parameters."))
 
 ;;; Database backend capabilities
 
-(defgeneric db-use-column-on-drop-index? (database)
+(defgeneric database-underlying-type (database)
   (:method (database)
-	   (declare (ignore database))
+    (database-type database))
+  (:documentation "Returns the type of the underlying database. For ODBC, needs to query ODBC driver."))
+
+(defgeneric db-use-column-on-drop-index? (db-type)
+  (:method (db-type)
+	   (declare (ignore db-type))
 	   ;; Standard SQL does not use column name on DROP INDEX
 	   nil)
-  (:documentation "NIL [default] lif database does not use column name on DROP INDEX."))
+  (:documentation "NIL [default] lif database-type does not use column name on DROP INDEX."))
 
 
 ;;; Large objects support (Marc Battyani)

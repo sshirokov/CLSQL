@@ -8,7 +8,15 @@
 	* db-aodbc/aodbc-sql.lisp: Filter driver manager
 	"information_schema" tables from LIST-TABLES
 	* tests/test-basic.lisp: Remove table after testing
-
+	* tests/test-fddl.lisp: Test LIST-TABLE-INDEXES
+	* base/db-interface.lisp: Add DATABASE-UNDERLYING-TYPE
+	which gets the underlying type of database -- required
+	when dealing with ODBC databases and want to query
+	database capabilities. Added DB-USE-COLUMN-ON-DROP-TABLES?
+	as first database-backend specific feature. Is T on
+	:mysql, NIL on other backends. Change DROP-TABLE to
+	query this.
+	
 19 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.8.2: Build changes for FreeBSD [Slawek Zak]
 

@@ -26,8 +26,8 @@
    (connection-spec :initform nil :initarg :connection-spec
                     :reader connection-spec
 		    :documentation "Require to use connection pool")
-   (database-type :initarg :database-type :reader database-type 
-		  :initform :unknown)
+   (database-type :initarg :database-type :initform :unknown
+		  :reader database-type)
    (state :initform :closed :reader database-state)
    (command-recording-stream :accessor command-recording-stream :initform nil)
    (result-recording-stream :accessor result-recording-stream :initform nil)

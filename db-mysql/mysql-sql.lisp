@@ -421,7 +421,7 @@
 
 ;;; Database capabilities
 
-(defmethod db-use-column-on-drop-index? ((database mysql-database))
+(defmethod db-use-column-on-drop-index? ((db-type (eql :mysql)))
   t)
 
 (when (clsql-base-sys:database-type-library-loaded :mysql)
