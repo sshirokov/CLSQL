@@ -1,4 +1,4 @@
-cl-sql (1.4.0-2) unstable; urgency=low
+cl-sql (1.4.0-1) unstable; urgency=low
 
   * Add MD5 support to postgresql socket backend (contributed by
   Robert Macomber)
