@@ -1,3 +1,7 @@
+28 Dec 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* db-mysql/mysql-sql.lisp: Apply patch from Yannick Gingras to
+	implement database-sequence-last.
+	
 26 Dec 2004 Kevin Rosenberg <kevin@rosenberg.net>
         * doc/ref-fdml.lisp: Fix variable tag name to varname
 	[noted by Eduardo Munoz]

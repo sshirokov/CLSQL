@@ -387,7 +387,11 @@
    (mysql:mysql-insert-id (clsql-mysql::database-mysql-ptr database))))
 
 (defmethod database-sequence-last (sequence-name (database mysql-database))
-  (declare (ignore sequence-name)))
+  (without-interrupts
+    (caar (database-query 
+	   (concatenate 'string "SELECT id from " 
+			(%sequence-name-to-table sequence-name))
+	   database :auto nil))))
 
 (defmethod database-create (connection-spec (type (eql :mysql)))
   (destructuring-bind (host name user password) connection-spec
