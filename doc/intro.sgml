@@ -37,6 +37,9 @@ are:
 <listitem>
 <para>improved packages and symbol export.</para>
 </listitem>
+<listitem>
+<para>transaction support.</para>
+</listitem>
 </itemizedlist>
     </para>
   </sect1>
@@ -76,8 +79,9 @@ implementations of &uffi;. The following implementations are supported:
 	<listitem><para>&acl; v6.2 on Debian Linux, FreeBSD 4.5, and Microsoft Windows XP.</para></listitem>
 	<listitem><para>&lw; v4.2 on Debian Linux and Microsoft Windows XP.</para></listitem>
 	<listitem><para>&cmucl; 18d on Debian Linux, FreeBSD 4.5, and Solaris 2.8.</para></listitem>
-	<listitem><para>&sbcl; 0.7.8 on Debian Linux, FreeBSD 4.5, and Solaris 2.8.</para></listitem>
-	<listitem><para>&openmcl; 0.13 on Debian Linux.</para></listitem>
+	<listitem><para>&sbcl; 0.7.8 on Debian Linux.</para></listitem>
+	<listitem><para>&scl; 1.1 on Debian Linux.</para></listitem>
+	<listitem><para>&openmcl; 0.13 on Debian Linux PowerPC.</para></listitem>
       </itemizedlist>
     </sect2>
 
