@@ -1,7 +1,7 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id: $
+;;;; $Id$
 ;;;;
 ;;;; The CLSQL Object Oriented Data Manipulation Language (OODML).
 ;;;;
@@ -1057,11 +1057,4 @@ as elements of a list."
 		 (record-caches database)) results)
   results)
 
-(defun update-cached-results (targets qualifiers database)
-  ;; FIXME: this routine will need to update slots in cached objects, perhaps adding or removing objects from cached
-  ;; for now, dump cache entry and perform fresh search
-  (let ((res (apply #'find-all targets qualifiers)))
-    (setf (gethash (compute-records-cache-key targets qualifiers)
-		   (record-caches database)) res)
-    res))
 

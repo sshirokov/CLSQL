@@ -2,7 +2,8 @@
         * db-oracle/oracle-sql.lisp: Add declaration so that SBCL runs efficiently.
 	* tests/test-init.lisp: capitalize odbc backend name in banner
 	* CONTRIBUTORS: Add note about Marcus' excellent work
- 	
+	* sql/oodml.lisp: Removed old stub function 	
+	
 24 May 2004: Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* db-postgresql-socket/postgresql-socket-sql.lisp: replace 
 	CLSQL-SIMPLE-WARNING with SQL-WARNING. 
