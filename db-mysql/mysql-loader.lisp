@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-loader.lisp,v 1.8 2003/05/17 06:03:03 kevin Exp $
+;;;; $Id: mysql-loader.lisp,v 1.9 2003/05/17 06:11:16 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -42,7 +42,7 @@
       "/sw/lib/"
       "/usr/local/lib/"
       "/home/kevin/debian/src/clsql/db-mysql/")
-   :drive-letters '("C" "D" "E")))
+   :drive-letters '("C")))
   
 (defvar *mysql-library-candidate-names*
     '("libmysqlclient" "libmysql"))
@@ -83,6 +83,7 @@ set to the right path before compiling or loading the system.")
 				    :supporting-libraries 
 				    (append *mysql-supporting-libraries*)))
 	(setq *mysql-library-loaded* t)
+	#+ignore ;; return value not set
       (error "Unable to load MySQL client library ~A or CLSQL-MySQL library ~A"
 	    mysql-path *clsql-mysql-library-path*))))
 
