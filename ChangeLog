@@ -1,3 +1,7 @@
+31 Oct 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* clsql-sqlite3, db-sqlite3/*: NEW BACKEND
+	contributed by Aurelio Bignoli
+
 23 Oct 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/oodml.lisp: Commit patch from Walter Pelis
 	to use an object's database for a select on its slot.

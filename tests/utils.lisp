@@ -24,7 +24,7 @@
 		 :type "config"))
 
 (defvar +all-db-types+
-  '(:postgresql :postgresql-socket :mysql :sqlite :odbc :oracle
+  '(:postgresql :postgresql-socket :mysql :sqlite :sqlite3 :odbc :oracle
     #+allegro :aodbc))
 
 (defclass conn-specs ()
@@ -33,6 +33,7 @@
    (postgresql :accessor postgresql-spec :initform nil)
    (postgresql-socket :accessor postgresql-socket-spec :initform nil)
    (sqlite :accessor sqlite-spec :initform nil)
+   (sqlite3 :accessor sqlite3-spec :initform nil)
    (odbc :accessor odbc-spec :initform nil)
    (oracle :accessor oracle-spec :initform nil))
   (:documentation "Connection specs for CLSQL testing"))
