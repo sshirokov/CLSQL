@@ -1,5 +1,6 @@
-21 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
-	* Version 2.9.3
+22 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.9.3: All tests now pass on all platforms!
+	* LATEST-TEST-RESULTS: New file with summary of test results
 	* sql/generics.lisp: New file for generic function definitions.
 	* test/test-init.lisp: Display names of skipped tests.
 	Use unwind-protect to ensure disconnect
