@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.lisp,v 1.4 2003/04/16 21:50:01 kevin Exp $
+;;;; $Id: mysql-sql.lisp,v 1.5 2003/06/08 12:48:55 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -18,7 +18,8 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
+(eval-when (:compile-toplevel)
+  (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0))))
 
 ;;;; Modified by Kevin Rosenberg, Feb 20002
 ;;;; -- Added support for Allegro CL and Lispworks using UFFI layer
@@ -32,12 +33,12 @@
 ;;;; Mar 2002
 ;;;; Added field types
 
-(defpackage :clsql-mysql
+(defpackage #:clsql-mysql
     (:use #:common-lisp #:clsql-base-sys #:mysql #:clsql-uffi)
     (:export #:mysql-database)
     (:documentation "This is the CLSQL interface to MySQL."))
 
-(in-package :clsql-mysql)
+(in-package #:clsql-mysql)
 
 ;;; Field conversion functions
 
@@ -144,35 +145,39 @@
 
 (defmethod database-query (query-expression (database mysql-database) 
 			   types)
-  (with-slots (mysql-ptr) database
+  (declare (optimize (speed 3) (safety 0) (debug 0) (space 0)))
+  (let ((mysql-ptr (database-mysql-ptr database)))
     (uffi:with-cstring (query-native query-expression)
-       (if (zerop (mysql-query mysql-ptr query-native))
-	   (let ((res-ptr (mysql-use-result mysql-ptr)))
-	     (if res-ptr
-		 (unwind-protect
-		      (let ((num-fields (mysql-num-fields res-ptr)))
-			(setq types (canonicalize-types 
-				     types num-fields
-				     res-ptr))
-			(loop for row = (mysql-fetch-row res-ptr)
-			      until (uffi:null-pointer-p row)
-			      collect
-			      (loop for i from 0 below num-fields
-				    collect
-				    (convert-raw-field
-				     (uffi:deref-array row '(:array (* :unsigned-char)) i)
-				     types i))))
-		   (mysql-free-result res-ptr))
-	       (error 'clsql-sql-error
-		      :database database
-		      :expression query-expression
-		      :errno (mysql-errno mysql-ptr)
-		      :error (mysql-error-string mysql-ptr))))
-	 (error 'clsql-sql-error
-		:database database
-		:expression query-expression
-		:errno (mysql-errno mysql-ptr)
-		:error (mysql-error-string mysql-ptr))))))
+      (if (zerop (mysql-query mysql-ptr query-native))
+	  (let ((res-ptr (mysql-use-result mysql-ptr)))
+	    (if res-ptr
+		(unwind-protect
+		     (let ((num-fields (mysql-num-fields res-ptr)))
+		       (declare (fixnum num-fields))
+		       (setq types (canonicalize-types 
+				    types num-fields
+				    res-ptr))
+		       (loop for row = (mysql-fetch-row res-ptr)
+			     until (uffi:null-pointer-p row)
+			     collect
+			     (loop for i fixnum from 0 below num-fields
+				   collect
+				   (convert-raw-field
+				    (uffi:deref-array row '(:array
+							    (* :unsigned-char))
+						      i)
+				    types i))))
+		  (mysql-free-result res-ptr))
+		(error 'clsql-sql-error
+		       :database database
+		       :expression query-expression
+		       :errno (mysql-errno mysql-ptr)
+		       :error (mysql-error-string mysql-ptr))))
+	  (error 'clsql-sql-error
+		 :database database
+		 :expression query-expression
+		 :errno (mysql-errno mysql-ptr)
+		 :error (mysql-error-string mysql-ptr))))))
 
 (defmethod database-execute-command (sql-expression (database mysql-database))
   (uffi:with-cstring (sql-native sql-expression)

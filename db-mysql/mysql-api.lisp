@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-api.lisp,v 1.2 2003/05/17 07:27:15 kevin Exp $
+;;;; $Id: mysql-api.lisp,v 1.3 2003/06/08 12:48:55 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -18,9 +18,10 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
+(eval-when (:compile-toplevel)
+  (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0))))
 
-(in-package :mysql)
+(in-package #:mysql)
 
 ;;;; Modifications from original code
 ;;;;  - Updated C-structures to conform to structures in MySQL 3.23.46

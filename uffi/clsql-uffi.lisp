@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.29 2003/06/06 21:59:09 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.30 2003/06/08 12:48:55 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -21,40 +21,43 @@
 
 (defun canonicalize-type-list (types auto-list)
   "Ensure a field type list meets expectations"
-  (let ((length-types (length types))
-	(new-types '()))
-    (loop for i from 0 below (length auto-list)
-	  do
-	  (if (>= i length-types)
-	      (push t new-types) ;; types is shorted than num-fields
-	      (push
-	       (case (nth i types)
-		 (:int
-		  (case (nth i auto-list)
-		    (:int32
-		     :int32)
-		    (:int64
-		     :int64)
-		    (t
-		     t)))
-		 (:double
-		  (case (nth i auto-list)
-		    (:double
-		     :double)
-		    (t
-		     t)))
-		 (:int32
-		  (if (eq :int32 (nth i auto-list))
-		      :int32
-		    t))
-		 (:int64
-		  (if (eq :int64 (nth i auto-list))
-		      :int64
-		    t))
-		 (t
-		  t))
-	       new-types)))
-    (nreverse new-types)))
+  (declaim (optimize (speed 3) (safety 0)))
+  (do ((i 0 (1+ i))
+       (new-types '())
+       (length-types (length types))
+       (length-auto-list (length auto-list)))
+      ((= i length-auto-list)
+       (nreverse new-types))
+    (declaim (fixnum length-types length-auto-list i))
+    (if (>= i length-types)
+	(push t new-types) ;; types is shorted than num-fields
+	(push
+	 (case (nth i types)
+	   (:int
+	    (case (nth i auto-list)
+	      (:int32
+	       :int32)
+	      (:int64
+	       :int64)
+	      (t
+	       t)))
+	   (:double
+	    (case (nth i auto-list)
+	      (:double
+	       :double)
+	      (t
+	       t)))
+	   (:int32
+	    (if (eq :int32 (nth i auto-list))
+		:int32
+		t))
+	   (:int64
+	    (if (eq :int64 (nth i auto-list))
+		:int64
+		t))
+	   (t
+	    t))
+	 new-types))))
 
 (uffi:def-function "atoi"
     ((str (* :unsigned-char)))
@@ -77,7 +80,7 @@
 (uffi:def-constant +2^32-1+ (1- +2^32+))
 
 (defmacro make-64-bit-integer (high32 low32)
-  `(+ ,low32 (* ,high32 +2^32+)))
+  `(+ ,low32 (ash ,high32 32)))
 
 (defmacro split-64-bit-integer (int64)
   `(values (ash ,int64 -32) (logand ,int64 +2^32-1+)))
@@ -93,6 +96,7 @@
 		   (uffi:deref-pointer char-ptr :char))))
     
 (defun convert-raw-field (char-ptr types index)
+  (declare (optimize (speed 3) (safety 0) (space 0)))
   (let ((type (if (listp types)
 		  (nth index types)
 		  types)))
