@@ -16,7 +16,7 @@
 
 (in-package #:clsql-tests)
 
-(defvar *report-stream* nil "Stream to send text report.")
+(defvar *report-stream* *standard-output* "Stream to send text report.")
 (defvar *sexp-report-stream* nil "Stream to send sexp report.")
 (defvar *rt-connection*)
 (defvar *rt-fddl*)

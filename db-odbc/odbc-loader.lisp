@@ -22,6 +22,7 @@
   (uffi:find-foreign-library
    '("odbc32" "libodbc" "libiodbc")
    `(,(make-pathname :directory (pathname-directory *load-truename*))
+     #+64bit "/usr/lib64/"
       "/usr/lib/"
       "/sw/lib/"
       "/usr/local/lib/"
