@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.9 2003/05/16 08:04:02 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.10 2003/05/16 08:07:39 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -164,7 +164,7 @@
 
 #+allegro
 (excl:ics-target-case
- (:-ics
+ (:+ics
   (defun native-to-string (s)
     (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
 	     (type char-ptr-def s))
@@ -179,7 +179,7 @@
 	      (code-char (uffi:deref-array s '(:array :unsigned-char) i)))
 	(incf i))
     str)))
- (:+ics
+ (:-ics
   (defun native-to-string (s)
   (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
 	   (type char-ptr-def s))
