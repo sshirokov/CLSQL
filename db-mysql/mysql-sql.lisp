@@ -114,6 +114,7 @@
 		  (make-instance 'mysql-database
 		    :name (database-name-from-spec connection-spec
 						   database-type)
+		    :database-type :mysql
 		    :connection-spec connection-spec
 		    :mysql-ptr mysql-ptr))
 	      (when error-occurred (mysql-close mysql-ptr)))))))))

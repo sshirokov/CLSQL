@@ -41,6 +41,8 @@
   (handler-case
       (make-instance 'sqlite-database
 		     :name (database-name-from-spec connection-spec :sqlite)
+		     :database-type :sqlite
+		     :connection-spec connection-spec
 		     :sqlite-db (sqlite:sqlite-open (first connection-spec)))
     (sqlite:sqlite-error (err)
       (error 'clsql-connect-error

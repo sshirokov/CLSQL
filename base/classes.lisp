@@ -26,8 +26,12 @@
    (connection-spec :initform nil :initarg :connection-spec
                     :reader connection-spec
 		    :documentation "Require to use connection pool")
+   (database-type :initarg :database-type :reader database-type 
+		  :initform :unknown)
+   (state :initform :closed :reader database-state)
    (command-recording-stream :accessor command-recording-stream :initform nil)
    (result-recording-stream :accessor result-recording-stream :initform nil)
+   (query-recording-stream :accessor query-recording-stream :initform nil)
    (view-classes :accessor database-view-classes :initform nil)
    (schema :accessor database-schema :initform nil)
    (transaction-level :initform 0 :accessor transaction-level)
@@ -38,22 +42,9 @@
 
 (defmethod print-object ((object database) stream)
   (print-unreadable-object (object stream :type t :identity t)
-    (write-string (if (slot-boundp object 'name)
-		      (database-name object)
-		      "<unbound>")
-		  stream)))
-
-;; Closed database idea and original code comes from UncommonSQL
-
-(defclass closed-database ()
-  ((name :initarg :name :reader database-name))
-  (:documentation
-   "This class represents databases after they are closed via 'disconnect'."))
-
-(defmethod print-object ((object closed-database) stream)
-  (print-unreadable-object (object stream :type t :identity t)
-    (write-string (if (slot-boundp object 'name)
-		      (database-name object)
-		      "<unbound>")
-		  stream)))
+    (format stream "~A ~A"
+	    (if (slot-boundp object 'name)
+		(database-name object)
+	      "<unbound>")
+	    (database-state object))))
 
