@@ -17,15 +17,16 @@
 (in-package #:clsql-sys)
 
 (defvar *backend-warning-behavior* :warn
-  "Action to perform on warning messages from backend. Default is to :warn. May also be
-set to :error to signal an error or :ignore/nil to silently ignore the warning.")
+  "Action to perform on warning messages from backend. Default is
+to :warn. May also be set to :error to signal an error
+or :ignore/nil to silently ignore the warning.")
 
 ;;; CommonSQL-compatible conditions
  
 (define-condition sql-condition ()
   ())
 
-(define-condition sql-error (simple-error)
+(define-condition sql-error (simple-error sql-condition)
   ())
 
 (define-condition sql-database-error (sql-error)

@@ -10,10 +10,25 @@
   <title>Functional Data Manipulation Language (FDML)</title> 
   <partintro>
     <para>
-      <!-- introduction --> 
+      The functional data manipulation interface provided by &clsql;
+      includes functions for inserting, updating and deleting records
+      in existing database tables and executing SQL queries and
+      statements with the results of queries returned as Lisp types.
+      SQL statements expressed as strings may be executed with the
+      <link linkend="query"><function>query</function></link> and
+      <link
+      linkend="execute-command"><function>execute-command</function></link>
+      functions. The <link
+      linkend="select"><function>select</function></link> function, on
+      the other hand, allows for the construction of queries in Lisp
+      using the symbolic SQL syntax. Finally, iterative manipulation
+      of query results is supported by <link
+      linkend="do-query"><function>do-query</function></link>, <link
+      linkend="map-query"><function>map-query</function></link> and an
+      extended clause for the <link
+      linkend="loop-tuples"><function>loop</function></link> macro.
     </para>
   </partintro>
-
 
   <!-- Caching table queries --> 
 
@@ -1278,7 +1293,7 @@ ID FORENAME   SURNAME   EMAIL
               in the tuple.
             </para>
           </listitem>
-        </varlistentry>
+        </varlistentry>        
       </variablelist>
     </refsect1>
     <refsect1>
@@ -1461,6 +1476,16 @@ ID FORENAME   SURNAME   EMAIL
     </refsect1>
     <refsect1>
       <title>Notes</title>
+      <para> 
+        The <function>select</function> function is actually
+        implemented in &clsql; with a single
+        <symbol>&amp;rest</symbol> parameter (which is subsequently
+        destructured) rather than the keyword parameters presented
+        here for the purposes of exposition. This means that incorrect
+        or missing keywords or values may not trigger errors in the
+        way that they would if <function>select</function> had been
+        defined using keyword arguments.
+      </para>
       <para>
         The <parameter>field-names</parameter> and
         <parameter>result-types</parameter> keyword arguments are a
@@ -1653,77 +1678,6 @@ ID FORENAME   SURNAME   EMAIL
       <para> 
         <parameter>do-query</parameter> is common across the functional
         and object-oriented data manipulation languages.
-      </para>
-    </refsect1>
-  </refentry>
-
-  <refentry id="for-each-row">
-    <refmeta>
-      <refentrytitle>FOR-EACH-ROW</refentrytitle>
-    </refmeta>
-    <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">FOR-EACH-ROW</emphasis></refname>
-      <refpurpose><!-- purpose --></refpurpose>
-      <refclass>Function</refclass>
-    </refnamediv>
-    <refsect1>
-      <title>Syntax</title>
-      <synopsis>
-      <function>for-each-row</function> &amp;KEY FROM ORDER-BY WHERE DISTINCT LIMIT &amp;REST FIELDS &amp;body <replaceable>body</replaceable> => <returnvalue><!-- result --></returnvalue></synopsis>
-    </refsect1>
-    <refsect1>
-      <title>Arguments and Values</title>
-      <variablelist>
-        <!-- arguments and values --> 
-      </variablelist>
-    </refsect1>
-    <refsect1>
-      <title>Description</title>
-      <para>
-        <!-- description --> 
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Examples</title>
-      <screen>
-        <!-- examples --> 
-      </screen>
-    </refsect1>
-    <refsect1>
-      <title>Side Effects</title>
-      <para>
-        <!-- side effects --> 
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Affected by</title>
-      <para>
-        <simplelist>
-          <!-- affected by --> 
-        </simplelist>
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Exceptional Situations</title>
-      <para>
-        <!-- execeptional situations -->
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>See Also</title>
-      <simplelist>
-        <member><link linkend="query"><function>query</function></link></member>
-        <member><link linkend="print-query"><function>print-query</function></link></member>
-        <member><link linkend="do-query"><function>do-query</function></link></member>
-        <member><link linkend="map-query"><function>map-query</function></link></member>
-        <member><link linkend="loop-tuples"><function>loop</function></link></member>
-        <member><link linkend="select"><function>select</function></link></member>
-        </simplelist>
-    </refsect1>
-    <refsect1>
-      <title>Notes</title>
-      <para>
-        <!-- notes here --> 
       </para>
     </refsect1>
   </refentry>
@@ -2109,287 +2063,5 @@ ID FORENAME   SURNAME   EMAIL
     </refsect1>
   </refentry>
 
-
-  <!-- prepared statements --> 
-
-  <refentry id="prepare-sql">
-    <refmeta>
-      <refentrytitle>PREPARE-SQL</refentrytitle>
-    </refmeta>
-    <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">PREPARE-SQL</emphasis></refname>
-      <refpurpose>Create a prepared statement.</refpurpose>
-      <refclass>Function</refclass>
-    </refnamediv>
-    <refsect1>
-      <title>Syntax</title>
-      <synopsis>
-      <function>prepare-sql</function> <replaceable>sql-stmt types</replaceable> &amp;key <replaceable>database</replaceable> <replaceable>result-types</replaceable> <replaceable>field-names</replaceable> => <returnvalue>result</returnvalue></synopsis>
-    </refsect1>
-    <refsect1>
-      <title>Arguments and Values</title>
-      <variablelist>
-        <!-- arguments and values --> 
-      </variablelist>
-    </refsect1>
-    <refsect1>
-      <title>Description</title>
-      <para>Prepares a SQL statement <parameter>sql-stmt</parameter>
-      for execution. <parameter>types</parameter> contains a list of
-      types corresponding to the input parameters. Returns a
-      prepared-statement object.
-      
-      A type can be
-      :int
-      :double
-      :null
-      (:string n)
-      
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Examples</title>
-      <screen>
-        <!-- examples -->
-      </screen>
-    </refsect1>
-    <refsect1>
-      <title>Side Effects</title>
-      <para>
-        <!-- side effects --> 
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Affected by</title>
-      <para>
-        <simplelist>
-          <!-- affected by --> 
-        </simplelist>
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Exceptional Situations</title>
-      <para>
-        <!-- execeptional situations -->
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>See Also</title>
-      <para>
-        <simplelist>
-          <!-- see also --> 
-        </simplelist>
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Notes</title>
-      <para>
-        <!-- notes --> 
-      </para>
-    </refsect1>
-  </refentry>
-
-  <refentry id="run-prepared-sql">
-    <refmeta>
-      <refentrytitle>RUN-PREPARED-SQL</refentrytitle>
-    </refmeta>
-    <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">RUN-PREPARED-SQL</emphasis></refname>
-      <refpurpose>Execute a prepared statement.</refpurpose>
-      <refclass>Function</refclass>
-    </refnamediv>
-    <refsect1>
-      <title>Syntax</title>
-      <synopsis>
-      <function>run-prepared-sql</function> <replaceable>prepared-stmt</replaceable> => <returnvalue><!-- result --></returnvalue></synopsis>
-    </refsect1>
-    <refsect1>
-      <title>Arguments and Values</title>
-      <variablelist>
-        <!-- arguments and values --> 
-      </variablelist>
-    </refsect1>
-    <refsect1>
-      <title>Description</title>
-      <para>Execute the prepared sql statment. All input
-      parameters must be bound.
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Examples</title>
-      <screen>
-        <!-- examples -->
-      </screen>
-    </refsect1>
-    <refsect1>
-      <title>Side Effects</title>
-      <para>
-        <!-- side effects --> 
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Affected by</title>
-      <para>
-        <simplelist>
-          <!-- affected by --> 
-        </simplelist>
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Exceptional Situations</title>
-      <para>
-        <!-- execeptional situations -->
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>See Also</title>
-      <para>
-        <simplelist>
-          <!-- see also --> 
-        </simplelist>
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Notes</title>
-      <para>
-        <!-- notes --> 
-      </para>
-    </refsect1>
-  </refentry>
-
-  <refentry id="free-prepared-sql">
-    <refmeta>
-      <refentrytitle>FREE-PREPARED-SQL</refentrytitle>
-    </refmeta>
-    <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">FREE-PREPARED-SQL</emphasis></refname>
-      <refpurpose>Delete a prepared statement object.</refpurpose>
-      <refclass>Function</refclass>
-    </refnamediv>
-    <refsect1>
-      <title>Syntax</title>
-      <synopsis>
-      <function>free-prepared-sql</function> <replaceable>prepared-stmt</replaceable> => <returnvalue><!-- result --></returnvalue></synopsis>
-    </refsect1>
-    <refsect1>
-      <title>Arguments and Values</title>
-      <variablelist>
-        <!-- arguments and values --> 
-      </variablelist>
-    </refsect1>
-    <refsect1>
-      <title>Description</title>
-      <para>Delete the objects associated with a prepared
-      statement.
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Examples</title>
-      <screen>
-        <!-- examples -->
-      </screen>
-    </refsect1>
-    <refsect1>
-      <title>Side Effects</title>
-      <para>
-        <!-- side effects --> 
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Affected by</title>
-      <para>
-        <simplelist>
-          <!-- affected by --> 
-        </simplelist>
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Exceptional Situations</title>
-      <para>
-        <!-- execeptional situations -->
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>See Also</title>
-      <para>
-        <simplelist>
-          <!-- see also --> 
-        </simplelist>
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Notes</title>
-      <para>
-        <!-- notes --> 
-      </para>
-    </refsect1>
-  </refentry>
-
-  <refentry id="bind-parameter">
-    <refmeta>
-      <refentrytitle>BIND-PARAMETER</refentrytitle>
-    </refmeta>
-    <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">BIND-PARAMETER</emphasis></refname>
-      <refpurpose>Bind a parameter in a prepared statement.</refpurpose>
-      <refclass>Function</refclass>
-    </refnamediv>
-    <refsect1>
-      <title>Syntax</title>
-      <synopsis>
-      <function>bind-parameter</function> <replaceable>prepared-stmt</replaceable> <replaceable>position</replaceable> <replaceable>value</replaceable> => <returnvalue><!-- result --></returnvalue></synopsis>
-    </refsect1>
-    <refsect1>
-      <title>Arguments and Values</title>
-      <variablelist>
-        <!-- arguments and values --> 
-      </variablelist>
-    </refsect1>
-    <refsect1>
-      <title>Description</title>
-      <para>Sets the value of a parameter in a prepared statement.
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Examples</title>
-      <screen>
-        <!-- examples -->
-      </screen>
-    </refsect1>
-    <refsect1>
-      <title>Side Effects</title>
-      <para>
-        <!-- side effects --> 
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Affected by</title>
-      <para>
-        <simplelist>
-          <!-- affected by --> 
-        </simplelist>
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Exceptional Situations</title>
-      <para>
-        <!-- execeptional situations -->
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>See Also</title>
-      <para>
-        <simplelist>
-          <!-- see also --> 
-        </simplelist>
-      </para>
-    </refsect1>
-    <refsect1>
-      <title>Notes</title>
-      <para>
-        <!-- notes --> 
-      </para>
-    </refsect1>
-  </refentry>
-
 </reference> 
+

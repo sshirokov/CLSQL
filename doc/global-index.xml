@@ -19,7 +19,7 @@
     <member><link hovertext="variable *DEFAULT-DATABASE* is of type T" linkend="default-database">*DEFAULT-DATABASE*</link></member>
     <member><link hovertext="variable *DEFAULT-DATABASE-TYPE* is of type T" linkend="default-database-type">*DEFAULT-DATABASE-TYPE*</link></member>
     <member><link hovertext="variable *DEFAULT-UPDATE-OBJECTS-MAX-LEN* is of type T" linkend="default-update-objects-max-len">*DEFAULT-UPDATE-OBJECTS-MAX-LEN*</link></member>
-    <member><link hovertext="variable *DEFAULT-VARCHAR-LENGTH* is of type T [parameter]" linkend="default-varchar-length">*DEFAULT-VARCHAR-LENGTH*</link></member>
+    <member><link hovertext="variable *DEFAULT-STRING-LENGTH* is of type T [parameter]" linkend="default-varchar-length">*DEFAULT-STRING-LENGTH*</link></member>
     <member><link hovertext="variable *INITIALIZED-DATABASE-TYPES* is of type T" linkend="initialized-database-types">*INITIALIZED-DATABASE-TYPES*</link></member>
 
     <!-- OTHER SYMBOLS IN ALPHABETICAL ORDER --> 
@@ -28,14 +28,12 @@
     <member><link hovertext="(ADD-TRANSACTION-COMMIT-HOOK DATABASE COMMIT-HOOK) [function]" linkend="add-transaction-commit-hook">ADD-TRANSACTION-COMMIT-HOOK</link></member>
     <member><link hovertext="(ADD-TRANSACTION-ROLLBACK-HOOK DATABASE ROLLBACK-HOOK) [function]" linkend="add-transaction-rollback-hook">ADD-TRANSACTION-ROLLBACK-HOOK</link></member>
     <member><link hovertext="(ATTRIBUTE-TYPE ATTRIBUTE TABLE &amp;KEY (OWNER NIL) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="attribute-type">ATTRIBUTE-TYPE</link></member>
-    <member><link hovertext="(BIND-PARAMETER PREPARED-STMT POSITION VALUE) [function]" linkend="bind-parameter">BIND-PARAMETER</link></member>
     <member><link hovertext="(CACHE-TABLE-QUERIES TABLE &amp;KEY (ACTION NIL) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="cache-table-queries">CACHE-TABLE-QUERIES</link></member>
     <member><link hovertext="(COMMIT &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="commit">COMMIT</link></member>
     <member><link hovertext="(CONNECT CONNECTION-SPEC &amp;KEY (IF-EXISTS *CONNECT-IF-EXISTS*) (MAKE-DEFAULT T) (POOL NIL) (DATABASE-TYPE *DEFAULT-DATABASE-TYPE*)) [function]" linkend="connect">CONNECT</link></member>
     <member><link hovertext="(CONNECTED-DATABASES ) [function]" linkend="connected-databases">CONNECTED-DATABASES</link></member>
     <member><link hovertext="(CREATE-DATABASE CONNECTION-SPEC &amp;KEY DATABASE-TYPE) [function]" linkend="create-database">CREATE-DATABASE</link></member>
     <member><link hovertext="(CREATE-INDEX NAME &amp;KEY ON (UNIQUE NIL) ATTRIBUTES (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="create-index">CREATE-INDEX</link></member>
-    <member><link hovertext="(CREATE-LARGE-OBJECT &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="create-large-object">CREATE-LARGE-OBJECT</link></member>
     <member><link hovertext="(CREATE-SEQUENCE NAME &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="create-sequence">CREATE-SEQUENCE</link></member>
     <member><link hovertext="(CREATE-TABLE NAME DESCRIPTION &amp;KEY (DATABASE *DEFAULT-DATABASE*) (CONSTRAINTS NIL) (TRANSACTIONS T)) [function]" linkend="create-table">CREATE-TABLE</link></member>
     <member><link hovertext="(CREATE-VIEW NAME &amp;KEY AS COLUMN-LIST (WITH-CHECK-OPTION NIL) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="create-view">CREATE-VIEW</link></member>
@@ -46,7 +44,6 @@
     <member><link hovertext="(DATABASE-TYPE (OBJ DATABASE)) [reader]" linkend="database-type">DATABASE-TYPE</link></member>
     <member><link hovertext="(DEF-VIEW-CLASS CLASS SUPERS SLOTS &amp;REST CL-OPTIONS) [macro]" linkend="def-view-class">DEF-VIEW-CLASS</link></member>
     <member><link hovertext="(DELETE-INSTANCE-RECORDS OBJECT) [generic]" linkend="delete-instance-records">DELETE-INSTANCE-RECORDS</link></member>
-    <member><link hovertext="(DELETE-LARGE-OBJECT OBJECT-ID &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="delete-large-object">DELETE-LARGE-OBJECT</link></member>
     <member><link hovertext="(DELETE-RECORDS &amp;KEY (FROM NIL) (WHERE NIL) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="delete-records">DELETE-RECORDS</link></member>
     <member><link hovertext="(DELETE-SQL-STREAM STREAM &amp;KEY (TYPE :COMMANDS) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="delete-sql-stream">DELETE-SQL-STREAM</link></member>
     <member><link hovertext="(DESTROY-DATABASE CONNECTION-SPEC &amp;KEY DATABASE-TYPE) [function]" linkend="destroy-database">DESTROY-DATABASE</link></member>
@@ -62,8 +59,6 @@
     <member><link hovertext="(ENABLE-SQL-READER-SYNTAX ) [macro]" linkend="enable-sql-reader-syntax">ENABLE-SQL-READER-SYNTAX</link></member>
     <member><link hovertext="(EXECUTE-COMMAND EXPRESSION &amp;KEY DATABASE) [generic]" linkend="execute-command">EXECUTE-COMMAND</link></member>
     <member><link hovertext="(FIND-DATABASE DATABASE &amp;KEY (ERRORP T) (DB-TYPE NIL)) [function]" linkend="find-database">FIND-DATABASE</link></member>
-    <member><link hovertext="(FOR-EACH-ROW &amp;KEY FROM ORDER-BY WHERE DISTINCT LIMIT &amp;REST FIELDS &amp;BODY BODY) [macro]" linkend="for-each-row">FOR-EACH-ROW</link></member>
-    <member><link hovertext="(FREE-PREPARED-SQL PREPARED-STMT) [function]" linkend="free-prepared-sql">FREE-PREPARED-SQL</link></member>
     <member><link hovertext="(IN-TRANSACTION-P &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="in-transaction-p">IN-TRANSACTION-P</link></member>
     <member><link hovertext="(INDEX-EXISTS-P NAME &amp;KEY (OWNER NIL) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="index-exists-p">INDEX-EXISTS-P</link></member>
     <member><link hovertext="(INITIALIZE-DATABASE-TYPE &amp;KEY (DATABASE-TYPE *DEFAULT-DATABASE-TYPE*)) [function]" linkend="initialize-database-type">INITIALIZE-DATABASE-TYPE</link></member>
@@ -82,14 +77,11 @@
     <member><link hovertext="(LOCALLY-ENABLE-SQL-READER-SYNTAX ) [macro]" linkend="locally-enable-sql-reader-syntax">LOCALLY-ENABLE-SQL-READER-SYNTAX</link></member>
     <member><link hovertext="(LOOP FOR AS TUPLES)" linkend="loop-tuples">LOOP-FOR-AS-TUPLES</link></member>
     <member><link hovertext="(MAP-QUERY OUTPUT-TYPE-SPEC FUNCTION QUERY-EXPRESSION &amp; DATABASE RESULT-TYPES" linkend="map-query">MAP-QUERY</link></member>
-    <member><link hovertext="(PREPARE-SQL SQL-STMT TYPES &amp;KEY (DATABASE *DEFAULT-DATABASE*) (RESULT-TYPES :AUTO) FIELD-NAMES) [function]" linkend="prepare-sql">PREPARE-SQL</link></member>
     <member><link hovertext="(PROBE-DATABASE CONNECTION-SPEC &amp;KEY DATABASE-TYPE) [function]" linkend="probe-database">PROBE-DATABASE</link></member>
     <member><link hovertext="(QUERY QUERY-EXPRESSION &amp;KEY DATABASE RESULT-TYPES FLATP FIELD-NAMES) [generic]" linkend="query">QUERY</link></member>
-    <member><link hovertext="(READ-LARGE-OBJECT OBJECT-ID &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="read-large-object">READ-LARGE-OBJECT</link></member>
     <member><link hovertext="(RECONNECT &amp;KEY (DATABASE *DEFAULT-DATABASE*) (ERROR NIL) (FORCE T)) [function]" linkend="reconnect">RECONNECT</link></member>
     <member><link hovertext="(RESTORE-SQL-READER-SYNTAX-STATE ) [macro]" linkend="restore-sql-reader-syntax-state">RESTORE-SQL-READER-SYNTAX-STATE</link></member>
     <member><link hovertext="(ROLLBACK &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="rollback">ROLLBACK</link></member>
-    <member><link hovertext="(RUN-PREPARED-SQL PREPARED-STMT) [function]" linkend="run-prepared-sql">RUN-PREPARED-SQL</link></member>
     <member><link hovertext="(SELECT &amp;REST SELECT-ALL-ARGS) [function]" linkend="select">SELECT</link></member>
     <member><link hovertext="(SEQUENCE-EXISTS-P NAME &amp;KEY (OWNER NIL) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="sequence-exists-p">SEQUENCE-EXISTS-P</link></member>
     <member><link hovertext="(SEQUENCE-LAST NAME &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="sequence-last">SEQUENCE-LAST</link></member>
@@ -97,11 +89,22 @@
     <member><link hovertext="(SET-AUTOCOMMIT VALUE &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="set-autocommit">SET-AUTOCOMMIT</link></member>
     <member><link hovertext="(SET-SEQUENCE-POSITION NAME POSITION &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="set-sequence-position">SET-SEQUENCE-POSITION</link></member>
     <member><link hovertext="(SQL &amp;REST ARGS) [function]" linkend="sql">SQL</link></member>
+    <member><link hovertext="SQL-CONDITION" linkend="sql-condition">SQL-CONDITION</link></member>
+    <member><link hovertext="SQL-CONNECTION-ERROR" linkend="sql-connection-error">SQL-CONNECTION-ERROR</link></member>
+    <member><link hovertext="SQL-DATABASE-DATA-ERROR" linkend="sql-database-data-error">SQL-DATABASE-DATA-ERROR</link></member>
+    <member><link hovertext="SQL-DATABASE-ERROR" linkend="sql-database-error">SQL-DATABASE-ERROR</link></member>
+    <member><link hovertext="SQL-DATABASE-WARNING" linkend="sql-database-warning">SQL-DATABASE-WARNING</link></member>
+    <member><link hovertext="SQL-ERROR" linkend="sql-error">SQL-ERROR</link></member>
     <member><link hovertext="(SQL-EXPRESSION &amp;KEY STRING TABLE ALIAS ATTRIBUTE TYPE) [function]" linkend="sql-expression">SQL-EXPRESSION</link></member>
+    <member><link hovertext="SQL-FATAL-ERROR" linkend="sql-fatal-error">SQL-FATAL-ERROR</link></member>
     <member><link hovertext="(SQL-OPERATION OPERATOR &amp;REST ARGS) [function]" linkend="sql-operation">SQL-OPERATION</link></member>
     <member><link hovertext="(SQL-OPERATOR OPERATOR) [function]" linkend="sql-operator">SQL-OPERATOR</link></member>
     <member><link hovertext="(SQL-RECORDING-P &amp;KEY (TYPE :COMMANDS) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="sql-recording-p">SQL-RECORDING-P</link></member>
     <member><link hovertext="(SQL-STREAM &amp;KEY (TYPE :COMMANDS) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="sql-stream">SQL-STREAM</link></member>
+    <member><link hovertext="SQL-TEMPORARY-ERROR" linkend="sql-temporary-error">SQL-TEMPORARY-ERROR</link></member>
+    <member><link hovertext="SQL-TIMEOUT-ERROR" linkend="sql-timeout-error">SQL-TIMEOUT-ERROR</link></member>
+    <member><link hovertext="SQL-USER-ERROR" linkend="sql-user-error">SQL-USER-ERROR</link></member>
+    <member><link hovertext="SQL-WARNING" linkend="sql-warning">SQL-WARNING</link></member>
     <member><link hovertext="(START-SQL-RECORDING &amp;KEY (TYPE :COMMANDS) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="start-sql-recording">START-SQL-RECORDING</link></member>
     <member><link hovertext="(START-TRANSACTION &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="start-transaction">START-TRANSACTION</link></member>
     <member><link hovertext="(STATUS &amp;OPTIONAL FULL) [function]" linkend="status">STATUS</link></member>
@@ -119,7 +122,6 @@
     <member><link hovertext="(WITH-DATABASE DB-VAR CONNECTION-SPEC &amp;REST CONNECT-ARGS &amp;BODY BODY) [macro]" linkend="with-database">WITH-DATABASE</link></member>
     <member><link hovertext="(WITH-DEFAULT-DATABASE DATABASE &amp;REST BODY) [macro]" linkend="with-default-database">WITH-DEFAULT-DATABASE</link></member>
     <member><link hovertext="(WITH-TRANSACTION &amp;KEY (DATABASE '*DEFAULT-DATABASE*) &amp;REST BODY) [macro]" linkend="with-transaction">WITH-TRANSACTION</link></member>
-    <member><link hovertext="(WRITE-LARGE-OBJECT OBJECT-ID DATA &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="write-large-object">WRITE-LARGE-OBJECT</link></member>
   </simplelist>
 </refsect1>
 </refentry>

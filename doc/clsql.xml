@@ -21,9 +21,9 @@
   <xi:include href="ref-oodml.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="ref-recording.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="ref-conditions.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-  <xi:include href="ref-lob.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
-
-  <xi:include href="ref-clsql-sys.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <!-- <xi:include href="ref-lob.xml" xmlns:xi="http://www.w3.org/2001/XInclude" /> --> 
+  <!-- <xi:include href="ref-prepared.xml" xmlns:xi="http://www.w3.org/2001/XInclude" /> --> 
+  <!-- <xi:include href="ref-clsql-sys.xml" xmlns:xi="http://www.w3.org/2001/XInclude" /> --> 
   <xi:include href="global-index.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="appendix.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="glossary.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />

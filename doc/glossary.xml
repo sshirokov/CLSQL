@@ -184,5 +184,14 @@
       </para>
     </glossdef>
   </glossentry>
+  <glossentry id="gloss-view-class">
+    <glossterm>View Class</glossterm>
+    <glossdef>
+      <para>
+        The class <function>standard-db-object</function> or one of
+        its subclasses. 
+      </para>
+    </glossdef>
+  </glossentry>
 </glossary>
 

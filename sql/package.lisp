@@ -237,6 +237,12 @@
 	 #:sql-error
 	 #:sql-warning
 	 #:sql-database-warning
+         #:sql-error-database 
+         #:sql-error-database-type 
+         #:sql-error-connection-spec 
+         #:sql-error-expression 
+         #:sql-warning-database 
+         #:sql-user-error-message 
          #:*backend-warning-behavior*
 
          ;; Connection/initialisation (base-classes.lisp, database.lisp, 
@@ -314,7 +320,6 @@
 	 #:map-query                    
 	 #:loop
          ;; CLSQL Extensions 
-         #:for-each-row
 	 #:prepare-sql
 	 #:bind-parameter
 	 #:run-prepared-sql

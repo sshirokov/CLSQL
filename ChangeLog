@@ -1,3 +1,18 @@
+2 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* doc/ref-recording.xml: document SQL I/O recording. 
+	* doc/ref-prepared.xml: new file for documenting prepared statements. 
+	* doc/clsql.xml: comment out include for large object and CLSQL-SYS 
+	documentation. 
+	* doc/ref-conditions.xml: complete documentation of condition system. 
+	* doc/global-index.xml: add symbols from condition system and remove
+	those from LOB and prepared statement APIs. 
+	* doc/ref-fdml.xml: complete documentation of FDML.
+	* doc/glossary.xml: add View Class. 
+	* doc/TODO: remove items done. 
+	* sql/conditions.lisp: make SQL-CONDITION a parent of SQL-ERROR. 
+	* sql/package.lisp: remove FOR-EACH-ROW from exports list. Export 
+	additional slot accessors for condition classes. 
+
 1 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* doc/ref-ooddl.lisp: Add documentation
 	* doc/ooddl.lisp: Move *DEFAULT-VARCHAR-LENGTH* from oodml.lisp
