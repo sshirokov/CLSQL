@@ -1,7 +1,7 @@
 13 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
-	* Version 2.6.13
+	* Version 2.6.13. Requires UFFI version 1.4.9
 	* db-odbc/*.lisp: Further porting.
-	Very alpha code! But, basic query is now working.
+	Pre-alpha code! But, basic query is now working.
 
 13 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.6.12
