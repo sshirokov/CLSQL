@@ -1,4 +1,4 @@
-cl-sql (1.6.2-1) unstable; urgency=low
+cl-sql (1.6.3-1) unstable; urgency=low
 
   * New upstream
   * Fix dependencies for clsql-postgresql and clsql-postgresql-socket
