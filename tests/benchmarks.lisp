@@ -27,7 +27,7 @@
    (c :initarg :c
       :type float)))
    
-(defun run-benchmarks (&key (report-stream *standard-output*) (sexp-report-stream nil) (count 1000))
+(defun run-benchmarks (&key (report-stream *standard-output*) (sexp-report-stream nil) (count 10000))
   (let ((specs (read-specs))
 	(*report-stream* report-stream)
 	(*sexp-report-stream* sexp-report-stream))
@@ -50,7 +50,7 @@
   (drop-view-from-class 'bench))
 
 (defun benchmark-init ()
-  (dotimes (i 100)
+  (dotimes (i 10)
     (execute-command "INSERT INTO BENCH (A,B,C) VALUES (123,'A Medium size string',3.14159)")))
 
 (defun benchmark-selects (n)

@@ -379,7 +379,7 @@
       (clsql:initialize-database-type :database-type db-type))))
 
 (defun write-report-banner (report-type db-type stream)
-  (format *report-stream* 
+  (format stream
 	  "~&
 ******************************************************************************
 ***     CLSQL ~A begun at ~A
@@ -443,6 +443,7 @@
 
 
 (defun compute-tests-for-backend (db-type db-underlying-type)
+  (declare (ignorable db-type))
   (let ((test-forms '())
 	(skip-tests '()))
     (dolist (test-form (append (test-basic-forms)

@@ -18,7 +18,7 @@
 (defun synchronize-keys (src srckey dest destkey)
   (let ((skeys (if (listp srckey) srckey (list srckey)))
 	(dkeys (if (listp destkey) destkey (list destkey))))
-    (mapcar #'(lambda (sk dk)
+    (mapc #'(lambda (sk dk)
 		(setf (slot-value dest dk)
 		      (typecase sk
 			(symbol
@@ -28,7 +28,7 @@
 
 (defun desynchronize-keys (dest destkey)
   (let ((dkeys (if (listp destkey) destkey (list destkey))))
-    (mapcar #'(lambda (dk)
+    (mapc #'(lambda (dk)
 		(setf (slot-value dest dk) nil))
 	    dkeys)))
 
@@ -43,7 +43,7 @@
 	 (homekey (gethash :home-key dbinfo))
 	 (foreignkey (gethash :foreign-key dbinfo))
 	 (to-many (gethash :set dbinfo)))
-    (unless (equal (type-of value) join-class)
+    (unless (subtypep (type-of value) join-class)
       (error 'clsql-type-error :slotname slot-name :typespec join-class
              :value value))
     (when (gethash :target-slot dbinfo)
