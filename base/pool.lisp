@@ -20,7 +20,7 @@
 
 (defun make-process-lock (name) 
   #+allegro (mp:make-process-lock :name name)
-  #+cmu (mp:make-lock :name name)
+  #+cmu (mp:make-lock name)
   #+lispworks (mp:make-lock :name name)
   #+openmcl (ccl:make-lock :name name)
   #+sb-thread (sb-thread:make-mutex :name name)

@@ -15,8 +15,6 @@
 
 (in-package #:clsql-sys)
 
-
-
 (defclass standard-db-object ()
   ((stored :db-kind :virtual
            :initarg :stored
@@ -24,49 +22,40 @@
   (:metaclass standard-db-class)
   (:documentation "Superclass for all CLSQL View Classes."))
 
-(defvar *deserializing* nil)
-(defvar *initializing* nil)
-
-(defmethod initialize-instance :around ((object standard-db-object)
-					&rest all-keys &key &allow-other-keys)
-  (declare (ignore all-keys))
-  (let ((*initializing* t))
-    (call-next-method)
-    (unless *deserializing*
-      #+nil (created-object object)
-      (update-records-from-instance object))))
+(defvar *db-deserializing* nil)
+(defvar *db-initializing* nil)
 
 (defmethod slot-value-using-class ((class standard-db-class) instance slot-def)
   (declare (optimize (speed 3)))
-  (unless *deserializing*
-    (let ((slot-name (%slot-def-name slot-def))
+  (unless *db-deserializing*
+    (let ((slot-name (slot-defition-name-name slot-def))
           (slot-kind (view-class-slot-db-kind slot-def)))
       (when (and (eql slot-kind :join)
                  (not (slot-boundp instance slot-name)))
-        (let ((*deserializing* t))
+        (let ((*db-deserializing* t))
           (setf (slot-value instance slot-name)
                 (fault-join-slot class instance slot-def))))))
   (call-next-method))
 
 (defmethod (setf slot-value-using-class) :around (new-value (class standard-db-class) instance slot-def)
   (declare (ignore new-value))
-  (let* ((slot-name (%slot-def-name slot-def))
+  (let* ((slot-name (slot-definition-name slot-def))
          (slot-kind (view-class-slot-db-kind slot-def))
          (no-update? (or (eql slot-kind :virtual)
-                         *initializing*
-                         *deserializing*)))
+                         *db-initializing*
+                         *db-deserializing*)))
     (call-next-method)
     (unless no-update?
       (update-record-from-slot instance slot-name))))
 
-(defun %slot-def-name (slot)
-  #+lispworks slot
-  #-lispworks (slot-definition-name slot))
-
-(defun %slot-object (slot class)
-  (declare (ignorable class))
-  #+lispworks (clos:find-slot-definition slot class)
-  #-lispworks slot)
+(defmethod initialize-instance :around ((object standard-db-object)
+					&rest all-keys &key &allow-other-keys)
+  (declare (ignore all-keys))
+  (let ((*db-initializing* t))
+    (call-next-method)
+    (unless *db-deserializing*
+      #+nil (created-object object)
+      (update-records-from-instance object))))
 
 (defun sequence-from-class (view-class-name)
   (sql-escape
@@ -99,38 +88,6 @@
 
 
 
-#+noschema
-(progn
-#.(locally-enable-sql-reader-syntax)
-
-(defun ensure-schema-version-table (database)
-  (unless (table-exists-p "clsql_object_v" :database database)
-    (create-table [clsql_object_v] '(([name] string)
-                                    ([vers] integer)
-                                    ([def] string))
-                  :database database)))
-
-(defun update-schema-version-records (view-class-name
-                                      &key (database *default-database*))
-  (let ((schemadef nil)
-        (tclass (find-class view-class-name)))
-    (dolist (slotdef (class-slots tclass))
-      (let ((res (database-generate-column-definition view-class-name
-                                                      slotdef database)))
-        (when res (setf schemadef (cons res schemadef)))))
-    (when schemadef
-      (delete-records :from [clsql_object_v]
-                      :where [= [name] (sql-escape (class-name tclass))]
-                      :database database)
-      (insert-records :into [clsql_object_v]
-                      :av-pairs `(([name] ,(sql-escape (class-name tclass)))
-                                  ([vers] ,(car (object-version tclass)))
-                                  ([def] ,(prin1-to-string
-                                           (object-definition tclass))))
-                      :database database))))
-
-#.(restore-sql-reader-syntax-state)
-)
 
 (defun create-view-from-class (view-class-name
                                &key (database *default-database*))
@@ -907,9 +864,9 @@ DATABASE-NULL-VALUE on the type of the slot."))
            (optimize (debug 3) (speed 1)))
   ;; (cmsg "Args = ~s" args)
   (remf args :from)
-  (let* ((*deserializing* t)
+  (let* ((*db-deserializing* t)
          (*default-database* (or database
-                                 (error 'usql-nodb-error))))
+                                 (error 'clsql-no-database-error nil))))
     (flet ((table-sql-expr (table)
              (sql-expression :table (view-table table)))
            (ref-equal (ref1 ref2)
@@ -959,7 +916,7 @@ DATABASE-NULL-VALUE on the type of the slot."))
           (mapcar #'build-object res))))))
 
 (defun %make-fresh-object (class-name slots values)
-  (let* ((*initializing* t)
+  (let* ((*db-initializing* t)
          (obj (make-instance class-name
                              :stored t)))
     (setf obj (get-slot-values-from-view obj slots values))

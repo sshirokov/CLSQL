@@ -32,9 +32,10 @@
 (defmethod slot-value-using-class ((class standard-db-class) instance slot)
   (declare (optimize (speed 3)))
   (unless *db-deserializing*
-    (let ((slot-name (%slot-name slot))
-          (slot-object (%slot-object slot class)))
-      (when (and (eql (view-class-slot-db-kind slot-object) :join)
+    (let* ((slot-name (%svuc-slot-name slot))
+	   (slot-object (%svuc-slot-object slot class))
+	   (slot-kind (view-class-slot-db-kind slot-object)))
+      (when (and (eql slot-kind :join)
                  (not (slot-boundp instance slot-name)))
         (let ((*db-deserializing* t))
           (if (view-database instance)
@@ -47,21 +48,6 @@
 					  instance slot)
   (declare (ignore new-value instance slot))
   (call-next-method))
-
-;; JMM - Can't go around trying to slot-access a symbol!  Guess in
-;; CMUCL slot-name is the actual slot _object_, while in lispworks it
-;; is a lowly symbol (the variable is called slot-name after all) so
-;; the object (or in MOP terminology- the "slot definition") has to be
-;; retrieved using find-slot-definition
-
-(defun %slot-name (slot)
-  #+lispworks slot
-  #-lispworks (slot-definition-name slot))
-
-(defun %slot-object (slot class)
-  (declare (ignorable class))
-  #+lispworks (clos:find-slot-definition slot class)
-  #-lispworks slot)
 
 (defmethod initialize-instance :around ((class standard-db-object)
                                         &rest all-keys
@@ -100,36 +86,6 @@
               (database-output-sql keylist database)))))
 
 
-#.(locally-enable-sql-reader-syntax)
-
-(defun ensure-schema-version-table (database)
-  (unless (table-exists-p "clsql_object_v" :database database)
-    (create-table [clsql_object_v] '(([name] string)
-                                    ([vers] integer)
-                                    ([def] string))
-                  :database database)))
-
-(defun update-schema-version-records (view-class-name
-                                      &key (database *default-database*))
-  (let ((schemadef nil)
-        (tclass (find-class view-class-name)))
-    (dolist (slotdef (class-slots tclass))
-      (let ((res (database-generate-column-definition view-class-name
-                                                      slotdef database)))
-        (when res (setf schemadef (cons res schemadef)))))
-    (when schemadef
-      (delete-records :from [clsql_object_v]
-                      :where [= [name] (sql-escape (class-name tclass))]
-                      :database database)
-      (insert-records :into [clsql_object_v]
-                      :av-pairs `(([name] ,(sql-escape (class-name tclass)))
-                                  ([vers] ,(car (object-version tclass)))
-                                  ([def] ,(prin1-to-string
-                                           (object-definition tclass))))
-                      :database database))))
-
-#.(restore-sql-reader-syntax-state)
-
 (defun create-view-from-class (view-class-name
                                &key (database *default-database*))
   "Creates a view in DATABASE based on VIEW-CLASS-NAME which defines
@@ -138,9 +94,7 @@ the view. The argument DATABASE has a default value of
   (let ((tclass (find-class view-class-name)))
     (if tclass
         (let ((*default-database* database))
-          (%install-class tclass database)
-          (ensure-schema-version-table database)
-          (update-schema-version-records view-class-name :database database))
+          (%install-class tclass database))
         (error "Class ~s not found." view-class-name)))
   (values))
 

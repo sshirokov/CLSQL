@@ -49,3 +49,14 @@
 (defun ordered-class-slots (class)
   #+(or cmu sbcl) (class-slots class)
   #-(or cmu sbcl) (reverse (class-slots class)))
+
+;; Lispworks has symbol for slot rather than the slot instance
+(defun %svuc-slot-name (slot)
+  #+lispworks slot
+  #-lispworks (slot-definition-name slot))
+
+(defun %svuc-slot-object (slot class)
+  (declare (ignorable class))
+  #+lispworks (clos:find-slot-definition slot class)
+  #-lispworks slot)
+
