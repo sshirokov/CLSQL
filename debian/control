@@ -1,5 +1,5 @@
 Source: cl-sql
-Section: devel
+Section: contrib/devel
 Priority: extra
 Maintainer: Kevin M. Rosenberg <kmr@debian.org>
 Build-Depends: debhelper (>= 4.0.0), libmysqlclient-dev, postgresql-dev

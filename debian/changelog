@@ -1,3 +1,10 @@
+cl-sql (2.11.6-2) unstable; urgency=low
+
+  * New upstream
+  * Move to contrib section (closes:253360)
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Wed,  9 Jun 2004 17:57:10 -0600
+
 cl-sql (2.11.6-1) unstable; urgency=low
 
   * New upstream
