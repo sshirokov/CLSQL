@@ -54,10 +54,10 @@ lispdir		:= $(prefix)/$(clc-clsql)
 lispdir-sql	:= $(prefix)/$(clc-clsql)/sql
 lispdir-base	:= $(prefix-base)/$(clc-clsql)/base
 lispdir-base-uffi := $(prefix-base)/$(clc-clsql)/interfaces/clsql-uffi
-lispdir-mysql	:= $(prefix-mysql)/$(clc-clsql)/mysql
-lispdir-pg	:= $(prefix-pg)/$(clc-clsql)/postgresql
-lispdir-pg-socket := $(prefix-pg-socket)/$(clc-clsql)/postgresql-socket
-lispdir-aodbc	:= $(prefix-aodbc)/$(clc-clsql)/aodbc
+lispdir-mysql	:= $(prefix-mysql)/$(clc-clsql)/interfaces/mysql
+lispdir-pg	:= $(prefix-pg)/$(clc-clsql)/interfaces/postgresql
+lispdir-pg-socket := $(prefix-pg-socket)/$(clc-clsql)/interfaces/postgresql-socket
+lispdir-aodbc	:= $(prefix-aodbc)/$(clc-clsql)/interfaces/aodbc
 
 
 configure: configure-stamp
