@@ -18,58 +18,69 @@
 
 (in-package #:clsql-tests)
 
+(defun test-basic-initialize ()
+  (ignore-errors
+   (clsql:execute-command "DROP TABLE TYPE_TABLE"))
+  (clsql:execute-command 
+   "CREATE TABLE TYPE_TABLE (t_int integer, t_float double precision, t_bigint BIGINT, t_str VARCHAR(30))")
+  (dotimes (i 11)
+    (let* ((test-int (- i 5))
+	   (test-flt (transform-float-1 test-int)))
+      (clsql:execute-command
+       (format nil "INSERT INTO TYPE_TABLE VALUES (~a,~a,~a,'~a')"
+	       test-int
+	       (clsql-base:number-to-sql-string test-flt)
+	       (transform-bigint-1 test-int)
+	       (clsql-base:number-to-sql-string test-flt)
+	       )))))
 
-(defun test-basic (spec type)
-  (let ((db (clsql:connect spec :database-type type :if-exists :new)))
-    (unwind-protect
-	 (if (eq type :sqlite)
-	     (%test-basic-untyped db type)
-	     (%test-basic db type))
-      (disconnect :database db))))
+(defun test-basic-forms ()
+  nil)
 
-(defun %test-basic (db type)
-  (create-test-table db)
-  (dolist (row (query "select * from test_clsql" :database db :result-types :auto))
-    (test-table-row row :auto type))
-  (dolist (row (query "select * from test_clsql" :database db :result-types nil))
-    (test-table-row row nil type))
-  (loop for row across (map-query 'vector #'list "select * from test_clsql" 
-				  :database db :result-types :auto)
-	do (test-table-row row :auto type))
-  (loop for row across (map-query 'vector #'list "select * from test_clsql" 
-				  :database db :result-types nil)
-	do (test-table-row row nil type))
-  (loop for row in (map-query 'list #'list "select * from test_clsql" 
-			      :database db :result-types nil)
-	do (test-table-row row nil type))
-  (loop for row in (map-query 'list #'list "select * from test_clsql" 
-			      :database db :result-types :auto)
-	do (test-table-row row :auto type))
-  (test (map-query nil #'list "select * from test_clsql" 
-		   :database db :result-types :auto)
+(defun test-basic-forms-untyped ()
+  nil)
+
+
+(defun %test-basic-forms ()
+  (dolist (row (query "select * from TYPE_TABLE" :result-types :auto))
+    (test-table-row row :auto))
+  (dolist (row (query "select * from TYPE_TABLE" :result-types nil))
+    (test-table-row row nil))
+  (loop for row across (map-query 'vector #'list "select * from TYPE_TABLE" 
+				  :result-types :auto)
+	do (test-table-row row :auto))
+  (loop for row across (map-query 'vector #'list "select * from TYPE_TABLE" 
+				  :result-types nil)
+	do (test-table-row row nil))
+  (loop for row in (map-query 'list #'list "select * from TYPE_TABLE" 
+			      :result-types nil)
+	do (test-table-row row nil))
+  (loop for row in (map-query 'list #'list "select * from TYPE_TABLE" 
+			      :result-types :auto)
+	do (test-table-row row :auto))
+  (test (map-query nil #'list "select * from TYPE_TABLE" 
+		   :result-types :auto)
 	nil
 	:fail-info "Expected NIL result from map-query nil")
-  (do-query ((int float bigint str) "select * from test_clsql")
-    (test-table-row (list int float bigint str) nil type))
-  (do-query ((int float bigint str) "select * from test_clsql" :result-types :auto)
-    (test-table-row (list int float bigint str) :auto type))
-  (drop-test-table db))
+  (do-query ((int float bigint str) "select * from TYPE_TABLE")
+    (test-table-row (list int float bigint str) nil))
+  (do-query ((int float bigint str) "select * from TYPE_TABLE" :result-types :auto)
+    (test-table-row (list int float bigint str) :auto)))
 
 
-(defun %test-basic-untyped (db type)
-  (create-test-table db)
-  (dolist (row (query "select * from test_clsql" :database db :result-types nil))
-    (test-table-row row nil type))
-  (loop for row across (map-query 'vector #'list "select * from test_clsql" 
-				  :database db :result-types nil)
-	do (test-table-row row nil type))
-  (loop for row in (map-query 'list #'list "select * from test_clsql" 
-			      :database db :result-types nil)
-	do (test-table-row row nil type))
+(defun %test-basic-forms-untyped ()
+  (dolist (row (query "select * from TYPE_TABLE" :result-types nil))
+    (test-table-row row nil))
+  (loop for row across (map-query 'vector #'list "select * from TYPE_TABLE" 
+				  :result-types nil)
+	do (test-table-row row nil))
+  (loop for row in (map-query 'list #'list "select * from TYPE_TABLE" 
+			      :result-types nil)
+	do (test-table-row row nil))
   
-  (do-query ((int float bigint str) "select * from test_clsql")
-    (test-table-row (list int float bigint str) nil type))
-  (drop-test-table db))
+  (do-query ((int float bigint str) "select * from TYPE_TABLE")
+    (test-table-row (list int float bigint str) nil)))
+
 
 ;;;; Testing functions
 
@@ -79,30 +90,13 @@
 (defun transform-bigint-1 (i)
   (* i (expt 10 (* 3 (abs i)))))
 
-(defun create-test-table (db)
-  (ignore-errors
-    (clsql:execute-command 
-     "DROP TABLE test_clsql" :database db))
-  (clsql:execute-command 
-   "CREATE TABLE test_clsql (t_int integer, t_float double precision, t_bigint BIGINT, t_str VARCHAR(30))" 
-   :database db)
-  (dotimes (i 11)
-    (let* ((test-int (- i 5))
-	   (test-flt (transform-float-1 test-int)))
-      (clsql:execute-command
-       (format nil "INSERT INTO test_clsql VALUES (~a,~a,~a,'~a')"
-	       test-int
-	       (clsql-base:number-to-sql-string test-flt)
-	       (transform-bigint-1 test-int)
-	       (clsql-base:number-to-sql-string test-flt)
-	       )
-       :database db))))
+
 
 (defun parse-double (num-str)
   (let ((*read-default-float-format* 'double-float))
     (coerce (read-from-string num-str) 'double-float)))
 
-(defun test-table-row (row types db-type)
+(defun test-table-row (row types)
   (test (and (listp row)
 	     (= 4 (length row)))
 	t
@@ -113,7 +107,8 @@
       ((eq types :auto)
        (test (and (integerp int)
 		  (typep float 'double-float)
-		  (or (member db-type '(:odbc :aodbc))  ;; aodbc considers bigints as strings
+		  (or (member *test-database-type* 
+			      '(:odbc :aodbc))  ;; aodbc considers bigints as strings
 		      (integerp bigint)) 
 		  (stringp str))
 	     t
@@ -139,7 +134,7 @@
 	(test t nil
 	      :fail-info
 	      (format nil "Invalid types field (~S) passed to test-table-row" types))))
-    (unless (eq db-type :sqlite)		; SQLite is typeless.
+    (unless (eq *test-database-type* :sqlite)		; SQLite is typeless.
       (test (transform-float-1 int)
 	    float
 	    :test #'double-float-equal
@@ -161,6 +156,3 @@
 	(if (> diff (* 10 double-float-epsilon))
 	    nil
 	    t))))
-	 
-(defun drop-test-table (db)
-  (clsql:execute-command "DROP TABLE test_clsql" :database db))

@@ -524,7 +524,7 @@ DATABASE-NULL-VALUE on the type of the slot."))
 
 (defmethod database-get-type-specifier (type args database)
   (declare (ignore type args))
-  (if (member (database-type database) '(:postgresql :postgresql-socket))
+  (if (member (database-underlying-type database) '(:postgresql :postgresql-socket))
           "VARCHAR"
           "VARCHAR(255)"))
 
@@ -539,7 +539,7 @@ DATABASE-NULL-VALUE on the type of the slot."))
                                         database)
   (if args
       (format nil "VARCHAR(~A)" (car args))
-      (if (member (database-type database) '(:postgresql :postgresql-socket))
+      (if (member (database-underlying-type database) '(:postgresql :postgresql-socket))
           "VARCHAR"
           "VARCHAR(255)")))
 
@@ -547,20 +547,20 @@ DATABASE-NULL-VALUE on the type of the slot."))
                                         database)
   (if args
       (format nil "VARCHAR(~A)" (car args))
-      (if (member (database-type database) '(:postgresql :postgresql-socket))
+      (if (member (database-underlying-type database) '(:postgresql :postgresql-socket))
           "VARCHAR"
           "VARCHAR(255)")))
 
 (defmethod database-get-type-specifier ((type (eql 'string)) args database)
   (if args
       (format nil "VARCHAR(~A)" (car args))
-      (if (member (database-type database) '(:postgresql :postgresql-socket))
+      (if (member (database-underlying-type database) '(:postgresql :postgresql-socket))
           "VARCHAR"
           "VARCHAR(255)")))
 
 (defmethod database-get-type-specifier ((type (eql 'wall-time)) args database)
   (declare (ignore args))
-  (case (database-type database)
+  (case (database-underlying-type database)
     (:postgresql
      "TIMESTAMP WITHOUT TIME ZONE")
     (:postgresql-socket

@@ -1,9 +1,9 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; ======================================================================
-;;;; File:    test-fddl.lisp
-;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>
-;;;; Created: 30/03/2004
-;;;; Updated: $Id$
+;;;; File:     test-fddl.lisp
+;;;; Authors:  Marcus Pearce <m.t.pearce@city.ac.uk> and Kevin Rosenberg
+;;;; Created:  30/03/2004
+;;;; Updated:  $Id$
 ;;;;
 ;;;; Tests for the CLSQL Functional Data Definition Language
 ;;;; (FDDL).
@@ -27,8 +27,8 @@
     (apply #'values 
            (sort (mapcar #'string-downcase
                          (clsql:list-tables :owner *test-database-user*))
-                 #'string>))
-  "employee" "company")
+                 #'string<))
+  "company" "employee" "type_table")
 
 ;; create a table, test for its existence, drop it and test again 
 (deftest :fddl/table/2

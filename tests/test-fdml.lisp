@@ -152,23 +152,22 @@
 
 
 ;; compare min, max and average hieghts in inches (they're quite short
-;; these guys!) -- only works with pgsql 
+;; these guys!) 
 (deftest :fdml/select/1
-    (if (member *test-database-type* '(:postgresql-socket :postgresql))
-        (let ((max (clsql:select [function "floor"
-                                          [/ [* [max [height]] 100] 2.54]]
-                                :from [employee]
-                                :flatp t))
-              (min (clsql:select [function "floor"
-                                          [/ [* [min [height]] 100] 2.54]]
-                                :from [employee]
-                                :flatp t))
-              (avg (clsql:select [function "floor"
-                                          [avg [/ [* [height] 100] 2.54]]]
-                                :from [employee]
-                                :flatp t)))
-          (apply #'< (mapcar #'parse-integer (append min avg max))))
-        t)
+    (let ((max (clsql:select [function "floor"
+			     [/ [* [max [height]] 100] 2.54]]
+			     :from [employee]
+			     :flatp t))
+	  (min (clsql:select [function "floor"
+			     [/ [* [min [height]] 100] 2.54]]
+			     :from [employee]
+			     :flatp t))
+	  (avg (clsql:select [function "floor"
+			     [avg [/ [* [height] 100] 2.54]]]
+			     :from [employee]
+			     :flatp t)))
+      (apply #'< (mapcar #'(lambda (s) (parse-integer s :junk-allowed t))
+			 (append min avg max))))
   t)
 
 (deftest :fdml/select/2
@@ -198,12 +197,12 @@
   ("lenin@soviet.org"))
 
 (deftest :fdml/select/6
-    (if (member *test-database-type* '(:postgresql-socket :postgresql))
-        (mapcar #'parse-integer
-                (clsql:select [function "trunc" [height]] :from [employee]
-                             :flatp t))
-        (mapcar #'(lambda (s) (truncate (parse-integer s :junk-allowed t)))
-                (clsql:select [height] :from [employee] :flatp t)))
+    (if (db-type-has-fancy-math? *test-database-underlying-type*)
+        (mapcar #'(lambda (s) (parse-integer s :junk-allowed t))
+	 (clsql:select [function "trunc" [height]] :from [employee]
+		       :flatp t))
+      (mapcar #'(lambda (s) (truncate (parse-integer s :junk-allowed t)))
+       (clsql:select [height] :from [employee] :flatp t)))
   (1 1 1 1 1 1 1 1 1 1))
 
 (deftest :fdml/select/7

@@ -120,20 +120,26 @@
 
 
 
-(defun test-connect-to-database (database-type spec)
-  (setf *test-database-type* database-type)
-  (when (>= (length spec) 3)
-    (setq *test-database-user* (third spec)))
+(defun test-connect-to-database (db-type)
+  (let ((spec (db-type-spec db-type (read-specs))))
+    (when (db-backend-has-create/destroy-db? db-type)
+      (ignore-errors (destroy-database spec :database-type db-type))
+      (ignore-errors (create-database spec :database-type db-type)))
+    
 
-  ;; Connect to the database
-  (clsql:connect spec
-		 :database-type database-type
-		 :make-default t
-		 :if-exists :old)
-
+    (setf *test-database-type* db-type)
+    (when (>= (length spec) 3)
+      (setq *test-database-user* (third spec)))
+    
+    ;; Connect to the database
+    (clsql:connect spec
+		   :database-type db-type
+		   :make-default t
+		   :if-exists :old))
+  
   (setf *test-database-underlying-type*
-	(clsql-sys:database-underlying-type *default-database*))
-
+    (clsql-sys:database-underlying-type *default-database*))
+  
   *default-database*)
 
 (defparameter company1 nil)
@@ -149,10 +155,12 @@
 (defparameter employee10 nil)
 
 (defun test-initialise-database ()
-  ;; Remove the tables to support cases when destroy-database isn't supported, like odbc
-  (ignore-errors (clsql:drop-table "EMPLOYEE"))
-  (ignore-errors (clsql:drop-table "COMPANY"))
-  (ignore-errors (clsql:drop-table "FOO"))
+  ;; Ensure that old objects are removed
+  (unless (db-backend-has-create/destroy-db? *test-database-type*)
+    (truncate-database *default-database*)) 
+  
+  (test-basic-initialize)
+  
   (clsql:create-view-from-class 'employee)
   (clsql:create-view-from-class 'company)
 
@@ -299,9 +307,8 @@
       (return-from run-tests :skipped))
     (load-necessary-systems specs)
     (dolist (db-type +all-db-types+)
-      (let ((spec (db-type-spec db-type specs)))
-	(when spec
-	  (do-tests-for-backend spec db-type))))
+      (when (db-type-spec db-type specs)
+	(do-tests-for-backend db-type)))
     (zerop *error-count*)))
 
 (defun load-necessary-systems (specs)
@@ -309,58 +316,69 @@
     (when (db-type-spec db-type specs)
       (db-type-ensure-system db-type))))
 
-(defun do-tests-for-backend (spec db-type)
+(defun do-tests-for-backend (db-type)
   (format t 
 	  "~&
 *******************************************************************
 ***     Running CLSQL tests with ~A backend.
 *******************************************************************
 " db-type)
-  (regression-test:rem-all-tests)
   
-  ;; Tests of clsql-base
-  (ignore-errors (destroy-database spec :database-type db-type))
-  (ignore-errors (create-database spec :database-type db-type))
-  (with-tests (:name "CLSQL")
-    (test-basic spec db-type))
-  (incf *error-count* *test-errors*)
+  (test-connect-to-database db-type)
+  (unwind-protect
+      (multiple-value-bind (test-forms skip-tests)
+	  (compute-tests-for-backend db-type *test-database-underlying-type*)
+	
+	(test-initialise-database)
 
-  (when (db-backend-has-create/destroy-db? db-type)
-    (ignore-errors (destroy-database spec :database-type db-type))
-    (ignore-errors (create-database spec :database-type db-type)))
+	(regression-test:rem-all-tests)
+	(dolist (test-form test-forms)
+	  (eval test-form))
+	
+	(let ((remaining (rtest:do-tests)))
+	  (when (consp remaining)
+	    (incf *error-count* (length remaining))))
+	
+	(format t "~&Tests skipped for ~A:" db-type)
+	(if skip-tests
+	    (dolist (skipped skip-tests)
+	      (format t "~&   ~20A ~A~%" (car skipped) (cdr skipped)))
+	  (format t " None~%")))
+    (disconnect)))
 
-  (test-connect-to-database db-type spec)
 
-  (dolist (test-form (append *rt-connection* *rt-fddl* *rt-fdml*
+(defun compute-tests-for-backend (db-type db-underlying-type)
+  (declare (ignore db-type))
+  (let ((test-forms '())
+	(skip-tests '()))
+    (dolist (test-form (append
+			(if (eq db-type :sqlite)
+			    (test-basic-forms-untyped)
+			  (test-basic-forms))
+			*rt-connection* *rt-fddl* *rt-fdml*
 			*rt-ooddl* *rt-oodml* *rt-syntax*))
-    (let ((test (second test-form)))
-      (cond
-	((and (null (db-type-has-views? *test-database-underlying-type*))
-	      (clsql-base-sys::in test :fddl/view/1 :fddl/view/2 :fddl/view/3 :fddl/view/4))
-	 ;; skip test
-	 )
-	((and (null (db-type-has-boolean-where? *test-database-underlying-type*))
-	      (clsql-base-sys::in test :fdml/select/11 :oodml/select/5))
-	 ;; skip tests
-	 )
-	((and (null (db-type-has-subqueries? *test-database-underlying-type*))
-	      (clsql-base-sys::in test :fdml/select/5 :fdml/select/10))
-	 ;; skip tests
-	 )
-	((and (null (db-type-transaction-capable? *test-database-underlying-type* *default-database*))
-	      (clsql-base-sys::in test :fdml/transaction/1 :fdml/transaction/2 :fdml/transaction/3 :fdml/transaction/4))
-	 ;; skip tests
-	 )
-	((and (eql *test-database-type* :sqlite)
-	      (clsql-base-sys::in test :fddl/view/4 :fdml/select/10))
-	 ;; skip tests
-	 )
-	(t
-	 (eval test-form)))))
-  
-  (test-initialise-database)
-  (let ((remaining (rtest:do-tests)))
-    (when (consp remaining)
-      (incf *error-count* (length remaining))))
-  (disconnect))
+      (let ((test (second test-form)))
+	(cond
+	  ((and (null (db-type-has-views? db-underlying-type))
+		(clsql-base-sys::in test :fddl/view/1 :fddl/view/2 :fddl/view/3 :fddl/view/4))
+	   (push (cons test "views not supported") skip-tests))
+	  ((and (null (db-type-has-boolean-where? db-underlying-type))
+		(clsql-base-sys::in test :fdml/select/11 :oodml/select/5))
+	   (push (cons test "boolean where not supported") skip-tests))
+	  ((and (null (db-type-has-subqueries? db-underlying-type))
+		(clsql-base-sys::in test :fdml/select/5 :fdml/select/10))
+	   (push (cons test "subqueries not supported") skip-tests))
+	  ((and (null (db-type-transaction-capable? db-underlying-type
+						    *default-database*))
+		(clsql-base-sys::in test :fdml/transaction/1 :fdml/transaction/2 :fdml/transaction/3 :fdml/transaction/4))
+	   (push (cons test "transactions not supported") skip-tests))
+	  ((and (null (db-type-has-fancy-math? db-underlying-type))
+		(clsql-base-sys::in test :fdml/select/1))
+	   (push (cons test "fancy math not supported") skip-tests))
+	  ((and (eql *test-database-type* :sqlite)
+		(clsql-base-sys::in test :fddl/view/4 :fdml/select/10))
+	   (push (cons test "not supported by sqlite") skip-tests))
+	  (t
+	   (push test-form test-forms)))))
+    (values (nreverse test-forms) (nreverse skip-tests))))
 

@@ -504,5 +504,15 @@ doesn't depend on UFFI."
            (sql-escape (string-downcase table)))
    database :auto))
 
+
+;; Database capabilities
+
+(defmethod db-backend-has-create/destroy-db? ((db-type (eql :postgresql-socket)))
+  nil)
+
+(defmethod db-type-has-fancy-math? ((db-type (eql :postgresql-socket)))
+  t)
+
+
 (when (clsql-base-sys:database-type-library-loaded :postgresql-socket)
   (clsql-base-sys:initialize-database-type :database-type :postgresql-socket))

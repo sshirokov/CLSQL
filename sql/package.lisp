@@ -239,6 +239,7 @@
        #:db-type-has-subqueries?
        #:db-type-has-boolean-where?
        #:db-type-transaction-capable?
+       #:db-type-has-fancy-math?
        #:database-underlying-type
        ))
    (:export
@@ -276,6 +277,7 @@
     #:db-type-has-subqueries?
     #:db-type-has-boolean-where?
     #:db-type-transaction-capable?
+    #:db-type-has-fancy-math?
     #:database-underlying-type
    
    .

@@ -1,4 +1,16 @@
 21 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.9.3
+	* test/test-init.lisp: Display names of skipped tests.
+	Use unwind-protect to ensure disconnect
+	* sql/objects.lisp: Change database-type to database-underlying-type
+	so that actual database engine is properly identified
+	* db-odbc/odbc-api.lisp: Have default *time-conversion-function*
+	return an ISO timestring for compatibility with other drivers
+	* test/test-fdml.lisp: Accomodate that odbc-postgresql driver
+	returns floating-point values for floor and truncate operations 
+	* db-aodbc/aodbc-sql: Implement DATABASE-LIST-VIEWS
+	
+21 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.9.2: Improvments in database capability introspection
 	and querying. Support transactions in MySQL where available.
 	All tests now pass on MySQL and SQLite in addition to postgresql

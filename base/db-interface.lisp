@@ -224,6 +224,12 @@ the given lisp type and parameters."))
 	   t)
   (:documentation "T [default] if database-type supports views."))
 
+(defgeneric db-type-has-fancy-math? (db-type)
+  (:method (db-type)
+	   (declare (ignore db-type))
+	   nil)
+  (:documentation "NIL [default] if database-type does not have fancy math."))
+
 (defgeneric db-type-has-subqueries? (db-type)
   (:method (db-type)
 	   (declare (ignore db-type))
@@ -233,7 +239,7 @@ the given lisp type and parameters."))
 (defgeneric db-type-has-boolean-where? (db-type)
   (:method (db-type)
 	   (declare (ignore db-type))
-	   ;; SQL92 has boolean where
+	   ;; SQL99 has boolean where
 	   t)
   (:documentation "T [default] if database-type supports boolean WHERE clause, such as 'WHERE MARRIED'."))
 

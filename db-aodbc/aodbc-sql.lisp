@@ -37,7 +37,8 @@
 ;; AODBC interface
 
 (defclass aodbc-database (database)
-  ((aodbc-conn :accessor database-aodbc-conn :initarg :aodbc-conn)))
+  ((aodbc-conn :accessor database-aodbc-conn :initarg :aodbc-conn)
+   (aodbc-db-type :accessor database-aodbc-db-type :initform :unknown)))
 
 (defmethod database-name-from-spec (connection-spec
 				    (database-type (eql :aodbc)))
@@ -202,6 +203,20 @@
 		    (string-equal "TABLE" (nth 3 row)))
 	  collect (nth 2 row))))
 
+(defmethod database-list-views ((database aodbc-database)
+				 &key (owner nil))
+  (declare (ignore owner))
+  #+aodbc-v2
+  (multiple-value-bind (rows col-names)
+      (dbi:list-all-database-tables :db (database-aodbc-conn database))
+    (declare (ignore col-names))
+    ;; TABLE_SCHEM is hard-coded in second column by ODBC Driver Manager
+    ;; TABLE_NAME in third column, TABLE_TYPE in fourth column
+    (loop for row in rows
+	when (and (not (string-equal "information_schema" (nth 1 row)))
+		  (string-equal "VIEW" (nth 3 row)))
+	collect (nth 2 row))))
+
 (defmethod database-list-attributes ((table string) (database aodbc-database)
                                      &key (owner nil))
   (declare (ignore owner))
@@ -223,6 +238,11 @@
       (when pos
 	(loop for row in rows
 	    collect (nth pos row))))))
+
+(defmethod database-list-indexes ((database aodbc-database)
+				 &key (owner nil))
+  (warn "database-list-indexes not implemented for AODBC.")
+  nil)
 
 (defmethod database-set-sequence-position (sequence-name
                                            (position integer)
@@ -274,6 +294,9 @@
   (warn "Not implemented."))
 
 ;;; Backend capabilities
+
+(defmethod database-underlying-type ((database aodbc-database))
+  (database-aodbc-db-type database))
 
 (defmethod db-backend-has-create/destroy-db? ((db-type (eql :aodbc)))
   nil)

@@ -109,12 +109,16 @@
   (%make-wall-time :mjd (time-mjd time)
                    :second (time-second time)))
 
-(defun get-time ()
+(defun utime->time (utime)
   "Return a pair: (GREGORIAN DAY . TIME-OF-DAY)"
   (multiple-value-bind (second minute hour day mon year)
-      (decode-universal-time (get-universal-time))
+      (decode-universal-time utime)
     (make-time :year year :month mon :day day :hour hour :minute minute
                :second second)))
+
+(defun get-time ()
+  "Return a pair: (GREGORIAN DAY . TIME-OF-DAY)"
+  (utime->time (get-universal-time)))
 
 (defun make-duration (&key (year 0) (month 0) (day 0) (hour 0) (minute 0)
                            (second 0))
@@ -680,31 +684,32 @@ TIME2."
                     (internal-separator " "))
   "produces on stream the timestring corresponding to the wall-time
 with the given options"
-  (multiple-value-bind (second minute hour day month year dow)
-      (decode-time time)
-    (case format
-      (:pretty
-       (format stream "~A ~A, ~A ~D, ~D"
-               (pretty-time hour minute)
-               (day-name dow)
-               (month-name month)
-               day
-               year))
-      (:short-pretty
-       (format stream "~A, ~D/~D/~D"
-               (pretty-time hour minute)
-               month day year))
-      (:iso
-       (let ((string (iso-timestring time)))
-         (if stream
-             (write-string string stream)
+  (let ((*print-circle* nil))
+    (multiple-value-bind (second minute hour day month year dow)
+	(decode-time time)
+      (case format
+	(:pretty
+	 (format stream "~A ~A, ~A ~D, ~D"
+		 (pretty-time hour minute)
+		 (day-name dow)
+		 (month-name month)
+		 day
+		 year))
+	(:short-pretty
+	 (format stream "~A, ~D/~D/~D"
+		 (pretty-time hour minute)
+		 month day year))
+	(:iso
+	 (let ((string (iso-timestring time)))
+	   (if stream
+	       (write-string string stream)
              string)))
-      (t
-       (format stream "~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D"
-               year date-separator month date-separator day
-               internal-separator hour time-separator minute time-separator
-               second)))))
-
+	(t
+	 (format stream "~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D"
+		 year date-separator month date-separator day
+		 internal-separator hour time-separator minute time-separator
+		 second))))))
+  
 (defun pretty-time (hour minute)
   (cond
    ((eq hour 0)

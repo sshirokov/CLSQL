@@ -178,6 +178,7 @@
 	 #:format-duration
 	 #:format-time
 	 #:get-time
+	 #:utime->time
 	 #:interval-clear
 	 #:interval-contained
 	 #:interval-data
@@ -291,6 +292,7 @@
 	 #:db-type-has-views?
 	 #:db-type-has-subqueries?
 	 #:db-type-has-boolean-where?
+	 #:db-type-has-fancy-math?
 	 #:db-backend-has-create/destroy-db?
 	 #:db-type-transaction-capable?
 	 ))

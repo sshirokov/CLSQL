@@ -601,5 +601,10 @@
 	(setf conn-ptr (%pg-database-connection connection-spec))
 	database))))
 
+;;; Database capabilities
+
+(defmethod db-type-has-fancy-math? ((db-type (eql :postgresql)))
+  t)
+
 (when (clsql-base-sys:database-type-library-loaded :postgresql)
   (clsql-base-sys:initialize-database-type :database-type :postgresql))
