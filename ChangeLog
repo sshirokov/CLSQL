@@ -1,4 +1,9 @@
 30 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* db-postgresql/postgresl-sql.lisp: Avoid computing
+	result-types lisp when nil result-types. Return only
+	one value when field-types nil.
+	
+30 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.11.4: MySQL 4.1 now passes all tests
 	* sql/package.lisp: Add API for prepared statments.
 	* sql/fdml.lisp: Change implicit flatp processing

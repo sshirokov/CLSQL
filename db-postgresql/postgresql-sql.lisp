@@ -165,21 +165,22 @@
                nil)
               (#.pgsql-exec-status-type#tuples-ok
 	       (let ((num-fields (PQnfields result)))
-		 (setq result-types
-		   (canonicalize-types result-types num-fields
-					     result))
-                 (values
-                  (loop for tuple-index from 0 below (PQntuples result)
-                        collect
-                        (loop for i from 0 below num-fields
-                              collect
-                              (if (zerop (PQgetisnull result tuple-index i))
-                                  (convert-raw-field
-                                   (PQgetvalue result tuple-index i)
-                                   result-types i)
-                                nil)))
-                  (when field-names
-                    (result-field-names num-fields result)))))
+		 (when result-types
+		   (setq result-types
+		     (canonicalize-types result-types num-fields
+					 result)))
+		 (let ((res (loop for tuple-index from 0 below (PQntuples result)
+				collect
+				  (loop for i from 0 below num-fields
+				      collect
+					(if (zerop (PQgetisnull result tuple-index i))
+					    (convert-raw-field
+					     (PQgetvalue result tuple-index i)
+					     result-types i)
+					  nil)))))
+		   (if field-names
+		       (values res (result-field-names num-fields result))
+		     res))))
               (t
                (error 'sql-database-data-error
                       :database database
