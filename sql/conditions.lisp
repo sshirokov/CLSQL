@@ -58,9 +58,11 @@ set to :error to signal an error or :ignore/nil to silently ignore the warning."
 		  :reader sql-error-connection-spec))
   (:report (lambda (c stream)
 	     (format stream "While trying to connect to database ~A~%  using database-type ~A:~%  Error ~D / ~A~%  has occurred."
-		     (database-name-from-spec
-		      (sql-error-connection-spec c)
-		      (sql-error-database-type c))
+		     (when (and (sql-error-connection-spec c)
+				(sql-error-database-type c))
+		       (database-name-from-spec
+			(sql-error-connection-spec c)
+			(sql-error-database-type c)))
 		     (sql-error-database-type c)
 		     (sql-error-error-id c)
 		     (sql-error-database-message c))))
@@ -111,6 +113,8 @@ connection is no longer usable."))
 (defun signal-closed-database-error (database)
   (error 'sql-fatal-error
 	 :database database
+	 :connection-spec (when database (connection-spec database))
+	 :database-type (when database (database-type database))
 	 :message "Database is closed."))
 
 (defun signal-no-database-error (database)
