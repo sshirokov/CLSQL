@@ -1,3 +1,9 @@
+cl-sql (0.8.0-2) unstable; urgency=low
+
+  * Fix preinst template type to properly remove old symlinks
+
+ -- Kevin M. Rosenberg <kevin@rosenberg.net>  Fri,  2 Aug 2002 09:12:32 -0600
+
 cl-sql (0.8.0-1) unstable; urgency=low
 
   * New upstream, restructure directories for improved Common Lisp

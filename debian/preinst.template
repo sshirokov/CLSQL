@@ -5,12 +5,12 @@
 # Copyright (c) 2002 Kevin M. Rosenberg
 
 pkg=%%
-dir=/usr/share/common-lisp-source/source/$pkg
+dir=/usr/share/common-lisp/source/$pkg
 
 case "$1" in
     install|upgrade|abort-upgrade)
 	test -h $dir && rm $dir 
-	rm -rf ${dir}-[0-9\.]+
+	rm -rf ${dir}-[0-9\.]*
 
 	;;
     *)
