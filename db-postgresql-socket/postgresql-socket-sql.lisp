@@ -357,7 +357,7 @@ doesn't depend on UFFI."
 (defmethod db-type-default-case ((db-type (eql :postgresql-socket)))
   :lower)
 
-(defmethod db-underlying-type ((database postgresql-socket-database))
+(defmethod database-underlying-type ((database postgresql-socket-database))
   :postgresql)
 
 (when (clsql-sys:database-type-library-loaded :postgresql-socket)

@@ -176,7 +176,7 @@ the query against." ))
      ((zerop count)
       (close-query query)
       (when eof-errorp
-	(error 'sql-database-data-error
+	(error 'clsql:sql-database-data-error
 	       :message "ODBC: Ran out of data in fetch-row"))
       eof-value)
      (t
@@ -584,7 +584,9 @@ This makes the functions db-execute-command and db-query thread safe."
   ;; support SQLDescribeParam. To do: put code in here for drivers that do
   ;; support it.
   (unless (string-equal sql "insert" :end1 6)
-    (error "Only insert expressions are supported in literal ODBC: '~a'." sql))
+    (error 'clsql:sql-database-error
+	   (format nil
+		   "Only insert expressions are supported in literal ODBC: '~a'." sql)))
   (%db-execute query (format nil "select ~{~a~^,~} from ~a where 0 = 1"
                              (or parameter-columns '("*")) parameter-table))
   (%initialize-query query nil nil)

@@ -1,7 +1,7 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; ======================================================================
 ;;;; File:    test-fdml.lisp
-;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>
+;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>, Kevin Rosenberg
 ;;;; Created: 30/03/2004
 ;;;; Updated: $Id$
 ;;;;

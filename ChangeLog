@@ -3,6 +3,10 @@
 	* sql/*.lisp: Add db-type parameter to generic functions READ-SQL-VALUE,
 	DATABASE-GET-TYPE-SPECIFIER, and OUTPUT-SQL-VALUE-AS-TYPE. Update methods to use these.
 	* sql/generic-postgresql.lisp, sql/generic-odbc.lisp: New files
+	* db-odbc/odbc-sql.lisp, db-aodbc/aodbc-sql.lisp: Move common code to 
+	sql/generic-odbc.lisp
+	* db-postgresql/postgresql-sql.lisp, db-postgresql-socket/postgresql-socket-sql.lisp: 
+	Move common code to  sql/generic-postgresql.lisp
 	* sql/classes.lisp: honor case of string tables when outputting queries 
 	* sql/objects.lisp: Add database type to default database-get-type-specifier method
 	* sql/sql.lisp:  Add database type to default database-abort-transaction method

@@ -443,11 +443,5 @@
 
 ;;; Database capabilities
 
-(defmethod db-type-has-fancy-math? ((db-type (eql :postgresql)))
-  t)
-
-(defmethod db-type-default-case ((db-type (eql :postgresql)))
-  :lower)
-
 (when (clsql-sys:database-type-library-loaded :postgresql)
   (clsql-sys:initialize-database-type :database-type :postgresql))

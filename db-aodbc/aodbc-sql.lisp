@@ -52,6 +52,7 @@
 	(make-instance 'aodbc-database
 	  :name (database-name-from-spec connection-spec :aodbc)
 	  :database-type :aodbc
+	  :dbi-package (find-package '#:dbi)
 	  :aodbc-conn
 	  (dbi:connect :user user
 		       :password password
@@ -64,89 +65,7 @@
 	       :connection-spec connection-spec
 	       :message "Connection failed")))))
 
-(defmethod database-disconnect ((database aodbc-database))
-  #+aodbc-v2
-  (dbi:disconnect (database-aodbc-conn database))
-  (setf (database-aodbc-conn database) nil)
-  t)
 
-(defmethod database-query (query-expression (database aodbc-database) result-types field-names) 
-  #+aodbc-v2
-  (handler-case
-      (dbi:sql query-expression :db (database-aodbc-conn database)
-	       :types result-types
-               :column-names field-names)
-      (clsql-error (e)
-	(error e))
-    (error ()
-      (error 'sql-database-data-error
-	     :database database
-	     :expression query-expression
-	     :message "Query failed."))))
-
-(defmethod database-execute-command (sql-expression 
-				     (database aodbc-database))
-  #+aodbc-v2
-  (handler-case
-      (dbi:sql sql-expression :db (database-aodbc-conn database))
-      (clsql-error (e)
-	(error e))
-    (error ()
-      (error 'sql-database-data-error
-	     :database database
-	     :expression sql-expression
-	     :error "Execute command failed."))))
-
-(defstruct aodbc-result-set
-  (query nil)
-  (types nil :type cons)
-  (full-set nil :type boolean))
-
-(defmethod database-query-result-set ((query-expression string)
-				      (database aodbc-database) 
-				      &key full-set result-types)
-  #+aodbc-v2
-  (handler-case 
-      (multiple-value-bind (query column-names)
-	  (dbi:sql query-expression 
-		   :db (database-aodbc-conn database) 
-		   :row-count nil
-		   :column-names t
-		   :query t
-		   :types result-types
-		   )
-	(values
-	 (make-aodbc-result-set :query query :full-set full-set 
-				:types result-types)
-	 (length column-names)
-	 nil ;; not able to return number of rows with aodbc
-	 ))
-      (clsql-error (e)
-	(error e))
-    (error ()
-      (error 'sql-database-data-error
-	     :database database
-	     :expression query-expression
-	     :error "Query result set failed."))))
-
-(defmethod database-dump-result-set (result-set (database aodbc-database))
-  #+aodbc-v2
-  (dbi:close-query (aodbc-result-set-query result-set))
-  t)
-
-(defmethod database-store-next-row (result-set
-				    (database aodbc-database)
-				    list)
-  #+aodbc-v2
-  (let ((row (dbi:fetch-row (aodbc-result-set-query result-set) nil 'eof)))
-    (if (eq row 'eof)
-	nil
-      (progn
-	(loop for elem in row
-	    for rest on list
-	    do
-	      (setf (car rest) elem))
-	list))))
 
 ;;; Sequence functions
 
@@ -182,55 +101,6 @@
   (warn "database-list-sequences not implemented for AODBC.")
   nil)
 
-(defmethod database-list-tables ((database aodbc-database)
-				 &key (owner nil))
-  (declare (ignore owner))
-  #+aodbc-v2
-  (multiple-value-bind (rows col-names)
-      (dbi:list-all-database-tables :db (database-aodbc-conn database))
-    (declare (ignore col-names))
-      ;; TABLE_SCHEM is hard-coded in second column by ODBC Driver Manager
-      ;; TABLE_NAME in third column, TABLE_TYPE in fourth column
-      (loop for row in rows
-	  when (and (not (string-equal "information_schema" (nth 1 row)))
-		    (string-equal "TABLE" (nth 3 row)))
-	  collect (nth 2 row))))
-
-(defmethod database-list-views ((database aodbc-database)
-				 &key (owner nil))
-  (declare (ignore owner))
-  #+aodbc-v2
-  (multiple-value-bind (rows col-names)
-      (dbi:list-all-database-tables :db (database-aodbc-conn database))
-    (declare (ignore col-names))
-    ;; TABLE_SCHEM is hard-coded in second column by ODBC Driver Manager
-    ;; TABLE_NAME in third column, TABLE_TYPE in fourth column
-    (loop for row in rows
-	when (and (not (string-equal "information_schema" (nth 1 row)))
-		  (string-equal "VIEW" (nth 3 row)))
-	collect (nth 2 row))))
-
-(defmethod database-list-attributes ((table string) (database aodbc-database)
-                                     &key (owner nil))
-  (declare (ignore owner))
-  #+aodbc-v2
-  (multiple-value-bind (rows col-names)
-      (dbi:list-all-table-columns table :db (database-aodbc-conn database))
-    (let ((pos (position "COLUMN_NAME" col-names :test #'string-equal)))
-      (when pos
-	(loop for row in rows
-	    collect (nth pos row))))))
-
-(defmethod database-attribute-type ((attribute string) (table string) (database aodbc-database)
-                                     &key (owner nil))
-  (declare (ignore owner))
-  #+aodbc-v2
-  (multiple-value-bind (rows col-names)
-      (dbi:list-all-table-columns table :db (database-aodbc-conn database))
-    (let ((pos (position "TYPE_NAME" col-names :test #'string-equal)))
-      (when pos
-	(loop for row in rows
-	    collect (nth pos row))))))
 
 (defmethod database-list-indexes ((database aodbc-database)
 				 &key (owner nil))

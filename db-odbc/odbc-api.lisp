@@ -44,8 +44,10 @@ as possible second argument) to the desired representation of date/time/timestam
   (let ((size (gensym)))
     `(let ((,size (length ,string)))
        (when (and ,max-length (> ,size ,max-length))
-         (error "string \"~a\" of length ~d is longer than max-length: ~d"
-                ,string ,size ,max-length))
+         (error 'clsql:sql-database-data-error
+		:message
+		(format nil "string \"~a\" of length ~d is longer than max-length: ~d"
+			,string ,size ,max-length)))
       (with-cast-pointer (char-ptr ,ptr :byte)
 	(dotimes (i ,size)
 	  (setf (deref-array char-ptr '(:array :byte) i) 
@@ -127,7 +129,7 @@ as possible second argument) to the desired representation of date/time/timestam
             (error
 	     'clsql-sys:sql-database-error
 	     :message error-message
-	     :sql-state sql-state)))
+	     :secondary-error-id sql-state)))
 	 (#.$SQL_NO_DATA_FOUND
 	  (progn ,result-code ,@body))
 	 ;; work-around for Allegro 7.0beta AMD64 which
@@ -252,7 +254,7 @@ as possible second argument) to the desired representation of date/time/timestam
 	     (SQLAllocStmt hdbc hstmt-ptr) 
 	     (deref-pointer hstmt-ptr 'sql-handle)))))
     (if (uffi:null-pointer-p statement-handle)
-	(error "Received null statement handle.")
+	(error 'clsql:sql-database-error :message "Received null statement handle.")
 	statement-handle)))
 	
 (defun %sql-get-info (hdbc info-type)
@@ -756,7 +758,8 @@ as possible second argument) to the desired representation of date/time/timestam
              (prog1
                (cond (flatp 
                       (when (> column-count 1)
-                        (error "If more than one column is to be fetched, flatp has to be nil."))
+                        (error 'clsql:sql-database-error
+			       :message "If more than one column is to be fetched, flatp has to be nil."))
                       (loop until (= (%sql-fetch hstmt) $SQL_NO_DATA_FOUND)
                             collect
                             (read-data (aref data-ptrs 0) 
@@ -860,7 +863,7 @@ as possible second argument) to the desired representation of date/time/timestam
                                       data-ptr str 
                                       offset 
                                       data-length)))
-                    (error "wrong type. preliminary."))
+                    (error 'clsql:sql-database-error :message "wrong type. preliminary."))
                while (and (= res $SQL_SUCCESS_WITH_INFO)
                           (equal (sql-state +null-handle-ptr+ +null-handle-ptr+ hstmt)
                                  "01004"))
@@ -878,7 +881,7 @@ as possible second argument) to the desired representation of date/time/timestam
                                     data-ptr str 
                                     offset 
                                     (min out-len (1- +max-precision+))))
-                    (error "wrong type. preliminary."))
+                    (error 'clsql:sql-database-error :message "wrong type. preliminary."))
                while 
                (and (= res $SQL_SUCCESS_WITH_INFO)
                     #+ingore(eq (sql-state +null-handle-ptr+ +null-handle-ptr+ hstmt)

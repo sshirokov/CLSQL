@@ -26,8 +26,7 @@
 ;; ODBC interface
 
 (defclass odbc-database (generic-odbc-database)
-  ((odbc-conn :accessor database-odbc-conn :initarg :odbc-conn)
-   (odbc-db-type :accessor database-odbc-db-type)))
+  ((odbc-db-type :accessor database-odbc-db-type)))
 
 (defmethod database-name-from-spec (connection-spec
 				    (database-type (eql :odbc)))
@@ -40,19 +39,16 @@
   (check-connection-spec connection-spec database-type (dsn user password))
   (destructuring-bind (dsn user password) connection-spec
     (handler-case
-	(let ((db
-	       (make-instance 'odbc-database
-		 :name (database-name-from-spec connection-spec :odbc)
-		 :database-type :odbc
-		 :odbc-conn
-		 (odbc-dbi:connect :user user
-				   :password password
-				   :data-source-name dsn))))
+	(let ((db (make-instance 'odbc-database
+				 :name (database-name-from-spec connection-spec :odbc)
+				 :database-type :odbc
+				 :dbi-package (find-package '#:odbc-dbi)
+				 :odbc-conn
+				 (odbc-dbi:connect :user user
+						   :password password
+						   :data-source-name dsn))))
 	  (store-type-of-connected-database db)
 	  db)
-      #+ignore
-      (sql-condition (e)
-	(error e))
       (error () 	;; Init or Connect failed
 	(error 'sql-connection-error
 	       :database-type database-type
@@ -63,7 +59,7 @@
   (database-odbc-db-type database))
 
 (defun store-type-of-connected-database (db)
-  (let* ((odbc-conn (database-odbc-conn db))
+  (let* ((odbc-conn (clsql-sys::odbc-conn db))
 	 (server-name (odbc-dbi::get-odbc-info odbc-conn odbc::$SQL_SERVER_NAME))
 	 (dbms-name (odbc-dbi::get-odbc-info odbc-conn odbc::$SQL_DBMS_NAME))
 	 (type
@@ -80,83 +76,8 @@
 	    :oracle))))
     (setf (database-odbc-db-type db) type)))
   
-(defmethod database-disconnect ((database odbc-database))
-  (odbc-dbi:disconnect (database-odbc-conn database))
-  (setf (database-odbc-conn database) nil)
-  t)
 
-(defmethod database-query (query-expression (database odbc-database) 
-			   result-types field-names) 
-  (handler-case
-      (odbc-dbi:sql query-expression :db (database-odbc-conn database)
-		    :result-types result-types
-                    :column-names field-names)
-    #+ignore
-    (sql-error (e)
-      (error e))
-    (error ()
-      (error 'sql-database-data-error
-	     :database database
-	     :expression query-expression
-	     :message "Query failed"))))
 
-(defmethod database-execute-command (sql-expression 
-				     (database odbc-database))
-  (handler-case
-      (odbc-dbi:sql sql-expression :db (database-odbc-conn database))
-    #+ignore
-    (sql-error (e)
-      (error e))
-    (error ()
-      (error 'sql-database-data-error
-	     :database database
-	     :expression sql-expression
-	     :message "Execute command failed"))))
-
-(defstruct odbc-result-set
-  (query nil)
-  (types nil)
-  (full-set nil :type boolean))
-
-(defmethod database-query-result-set ((query-expression string)
-				      (database odbc-database) 
-				      &key full-set result-types)
-  (handler-case 
-      (multiple-value-bind (query column-names)
-	  (odbc-dbi:sql query-expression 
-		   :db (database-odbc-conn database) 
-		   :row-count nil
-		   :column-names t
-		   :query t
-		   :result-types result-types)
-	(values
-	 (make-odbc-result-set :query query :full-set full-set 
-				:types result-types)
-	 (length column-names)
-	 nil ;; not able to return number of rows with odbc
-	 ))
-    (error ()
-      (error 'sql-database-data-error
-	     :database database
-	     :expression query-expression
-	     :message "Query result set failed"))))
-
-(defmethod database-dump-result-set (result-set (database odbc-database))
-  (odbc-dbi:close-query (odbc-result-set-query result-set))
-  t)
-
-(defmethod database-store-next-row (result-set
-				    (database odbc-database)
-				    list)
-  (let ((row (odbc-dbi:fetch-row (odbc-result-set-query result-set) nil 'eof)))
-    (if (eq row 'eof)
-	nil
-      (progn
-	(loop for elem in row
-	    for rest on list
-	    do
-	      (setf (car rest) elem))
-	list))))
 
 ;;; Sequence functions
 
@@ -202,63 +123,6 @@
 	    (database-query "SELECT RELNAME FROM pg_class WHERE RELNAME LIKE '%clsql_seq%'" 
 			    database nil nil)))))
 
-(defmethod database-list-tables ((database odbc-database)
-				 &key (owner nil))
-  (declare (ignore owner))
-    (multiple-value-bind (rows col-names)
-	(odbc-dbi:list-all-database-tables :db (database-odbc-conn database))
-      (declare (ignore col-names))
-      ;; TABLE_SCHEM is hard-coded in second column by ODBC Driver Manager
-      ;; TABLE_NAME in third column, TABLE_TYPE in fourth column
-      (loop for row in rows
-	  when (and (not (string-equal "information_schema" (nth 1 row)))
-		    (string-equal "TABLE" (nth 3 row)))
-	  collect (nth 2 row))))
-
-(defmethod database-list-views ((database odbc-database)
-				 &key (owner nil))
-  (declare (ignore owner))
-    (multiple-value-bind (rows col-names)
-	(odbc-dbi:list-all-database-tables :db (database-odbc-conn database))
-      (declare (ignore col-names))
-      ;; TABLE_SCHEM is hard-coded in second column by ODBC Driver Manager
-      ;; TABLE_NAME in third column, TABLE_TYPE in fourth column
-      (loop for row in rows
-	  when (and (not (string-equal "information_schema" (nth 1 row)))
-		    (string-equal "VIEW" (nth 3 row)))
-	  collect (nth 2 row))))
-
-(defmethod database-list-attributes ((table string) (database odbc-database)
-                                     &key (owner nil))
-  (declare (ignore owner))
-  (multiple-value-bind (rows col-names)
-      (odbc-dbi:list-all-table-columns table :db (database-odbc-conn database))
-    (declare (ignore col-names))
-    ;; COLUMN_NAME is hard-coded by odbc spec as fourth position
-    (loop for row in rows
-	collect (fourth row))))
-
-(defmethod database-attribute-type ((attribute string) (table string) (database odbc-database)
-                                     &key (owner nil))
-  (declare (ignore owner))
-  (multiple-value-bind (rows col-names)
-      (odbc-dbi:list-all-table-columns table :db (database-odbc-conn database))
-    (declare (ignore col-names))
-    ;; COLUMN_NAME is hard-coded by odbc spec as fourth position
-    ;; TYPE_NAME is the sixth column
-    ;; PRECISION/COLUMN_SIZE is the seventh column
-    ;; SCALE/DECIMAL_DIGITS is the ninth column
-    ;; NULLABLE is the eleventh column
-    (loop for row in rows
-	when (string-equal attribute (fourth row))
-	do
-	(let ((size (seventh row))
-	      (precision (ninth row))
-	      (scale (nth 10 row)))
-	  (return (values (ensure-keyword (sixth row))
-			  (when size (parse-integer size))
-			  (when precision (parse-integer precision))
-			  (when scale (parse-integer scale))))))))
 
 (defmethod database-set-sequence-position (sequence-name
                                            (position integer)
@@ -326,13 +190,10 @@
 (defmethod database-list-table-indexes (table (database odbc-database)
 					&key (owner nil))
   (declare (ignore owner))
-  (odbc-list-table-indexes table database))
-
-(defun odbc-list-table-indexes (table database)
   (multiple-value-bind (rows col-names)
       (odbc-dbi:list-table-indexes 
        table
-       :db (database-odbc-conn database))
+       :db (clsql-sys::odbc-conn database))
     (declare (ignore col-names))
     ;; INDEX_NAME is hard-coded in sixth position by ODBC driver
     ;; FIXME: ??? is hard-coded in the fourth position
