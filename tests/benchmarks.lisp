@@ -42,6 +42,7 @@
 
 (defun do-benchmarks-for-backend (db-type spec count)
   (test-connect-to-database db-type spec)
+  (test-initialise-database)
   (write-report-banner "Benchmarks" db-type *report-stream*)
 
   (create-view-from-class 'bench)
@@ -67,6 +68,10 @@
     (time
      (dotimes (i n)
        (query "SELECT * FROM BENCH" :field-names nil)))
+    (format *report-stream* "~&~%*** OBJECT QUERY ***~%")
+    (time
+     (dotimes (i n)
+       (mapcar #'(lambda (ea) (slot-value ea 'address)) (select 'employee-address :flatp t))))
     ))
 
 
