@@ -7,7 +7,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.3 2002/04/01 17:33:48 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.4 2002/04/03 04:06:05 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -16,46 +16,37 @@
 # (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ###########################################################################
 
-AR=ar
 
 # These variables are correct for GCC
-# you'll need to modify these for other compilers
 CC=gcc
-SHARED_CC_OPT=-fpic
+SHARED_CC_OPT=-fPIC -DPIC
 
-SHARED_LD_OPT=-shared # For Linux
-#SHARED_LD_OPT=-r # For FreeBSD and Solaris
+#SHARED_LD_OPT=-r # For FreeBSD and Solaris (CMUCL)
+SHARED_LD_OPT=-Bshareable -Bdynamic  # For Linux (ALL) and FreeBSD (ACL)
 
-# If you are using Solaris, these are the correct values
-# for creating a shared library
+# Use these for Sun's C compiler and Solaris (ACL)
 #CC=cc
 #SHARED_CC_OPT=-KPIC
 #SHARED_LD_OPT=-G
 
+
 # Nothing to configure beyond this point
 
-BASE=clsql-uffi
-SRC=$(BASE).c
-OBJECT=$(BASE).o
-SHARED=$(BASE).so
-STATIC=$(BASE).a
+base=clsql-uffi
+source=$(base).c
+object=$(base).o
+shared_lib=$(base).so
 
-all: $(SHARED) $(STATIC)
+all: $(shared_lib)
 
-$(SHARED): $(SRC)
-	$(CC) $(SHARED_CC_OPT) -c $(SRC) -o $(OBJECT)
-	ld $(SHARED_LD_OPT) $(OBJECT) -o $(SHARED)
-	@rm $(OBJECT)
-
-$(STATIC): $(SRC) 
-	$(CC) -c $(SRC) -o $(OBJECT)
-	$(AR) r $(STATIC) $(OBJECT)
-	@rm $(OBJECT)
+$(shared_lib): $(source) Makefile
+	$(CC) ${SHARED_CC_OPT} -c $(source) -o $(object)
+	ld ${SHARED_LD_OPT} $(object) -o $(shared_lib)
+	rm $(object)
 
 clean:
-	rm -f $(SHARED) $(STATIC)
+	rm -f $(object) $(shared_lib)
 
 realclean: clean
 	rm -f *~
-
 
