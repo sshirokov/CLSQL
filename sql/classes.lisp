@@ -32,8 +32,7 @@
 (defclass %sql-expression ()
   ())
 
-(defmethod output-sql ((expr %sql-expression) &optional
-                       (database *default-database*))
+(defmethod output-sql ((expr %sql-expression) database)
   (declare (ignore database))
   (write-string +null-string+ *sql-stream*))
 
@@ -56,7 +55,7 @@
     sql
     `(make-instance 'sql :string ',text)))
 
-(defmethod output-sql ((expr sql) &optional (database *default-database*))
+(defmethod output-sql ((expr sql) database)
   (declare (ignore database))
   (write-string (slot-value expr 'text) *sql-stream*)
   t)
@@ -64,7 +63,7 @@
 (defmethod print-object ((ident sql) stream)
   (format stream "#<~S \"~A\">"
           (type-of ident)
-          (sql-output ident)))
+          (sql-output ident nil)))
 
 ;; For SQL Identifiers of generic type
 (defclass sql-ident (%sql-expression)
@@ -81,13 +80,13 @@
 
 (defvar *output-hash* (make-hash-table :test #'equal))
 
-(defmethod output-sql-hash-key (expr &optional (database *default-database*))
+(defmethod output-sql-hash-key (expr database)
   (declare (ignore expr database))
   nil)
 
-(defmethod output-sql :around ((sql t) &optional (database *default-database*))
-  (declare (ignore database))
-  (let* ((hash-key (output-sql-hash-key sql))
+#+ignore
+(defmethod output-sql :around ((sql t) database)
+  (let* ((hash-key (output-sql-hash-key sql database))
          (hash-value (when hash-key (gethash hash-key *output-hash*))))
     (cond ((and hash-key hash-value)
            (write-string hash-value *sql-stream*))
@@ -100,17 +99,17 @@
           (t
            (call-next-method)))))
 
-(defmethod output-sql ((expr sql-ident) &optional
-                       (database *default-database*))
-  (declare (ignore database))
+(defmethod output-sql ((expr sql-ident) database)
   (with-slots (name)
-    expr
-    (etypecase name
-      (string
-       (write-string name *sql-stream*))
-      (symbol
-       (write-string (symbol-name name) *sql-stream*)))
-    t))
+      expr
+    (write-string
+     (convert-to-db-default-case 
+      (etypecase name
+	(string name)
+	(symbol (symbol-name name)))
+      database)
+     *sql-stream*))
+  t)
 
 ;; For SQL Identifiers for attributes
 
@@ -144,21 +143,18 @@
       :qualifier ',qualifier
       :type ',type)))
 
-(defmethod output-sql ((expr sql-ident-attribute) &optional
-                       (database *default-database*))
-  (declare (ignore database))
+(defmethod output-sql ((expr sql-ident-attribute) database)
   (with-slots (qualifier name type params)
-    expr
-    (if (and name (not qualifier) (not type))
-        (write-string (sql-escape (symbol-name name)) *sql-stream*)
-        (format *sql-stream* "~@[~A.~]~A~@[ ~A~]"
-                (if qualifier (sql-escape qualifier) qualifier)
-                (sql-escape name)
-                type))
+      expr
+    (if (and (not qualifier) (not type))
+	(write-string (sql-escape (convert-to-db-default-case (symbol-name name) database)) *sql-stream*)
+      (format *sql-stream* "~@[~A.~]~A~@[ ~A~]"
+	      (if qualifier (sql-escape qualifier) qualifier)
+	      (sql-escape (convert-to-db-default-case name database))
+	      type))
     t))
 
-(defmethod output-sql-hash-key ((expr sql-ident-attribute) &optional
-                                (database *default-database*))
+(defmethod output-sql-hash-key ((expr sql-ident-attribute) database)
   (declare (ignore database))
   (with-slots (qualifier name type params)
     expr
@@ -176,20 +172,18 @@
     sql
     `(make-instance 'sql-ident-table :name name :alias ',alias)))
 
-(defun generate-sql (expr)
+(defun generate-sql (expr database)
   (let ((*sql-stream* (make-string-output-stream)))
-    (output-sql expr)
+    (output-sql expr database)
     (get-output-stream-string *sql-stream*)))
 
-(defmethod output-sql ((expr sql-ident-table) &optional
-                       (database *default-database*))
-  (declare (ignore database))
+(defmethod output-sql ((expr sql-ident-table) database)
   (with-slots (name alias)
     expr
     (if (null alias)
-        (write-string (sql-escape (symbol-name name)) *sql-stream*)
+        (write-string (sql-escape (convert-to-db-default-case (symbol-name name) database)) *sql-stream*)
         (progn
-          (write-string (sql-escape (symbol-name name)) *sql-stream*)
+          (write-string (sql-escape (convert-to-db-default-case (symbol-name name) database)) *sql-stream*)
           (write-char #\Space *sql-stream*)
           (format *sql-stream* "~s" alias))))
   t)
@@ -204,8 +198,7 @@
 |#
 
 
-(defmethod output-sql-hash-key ((expr sql-ident-table) &optional
-                                (database *default-database*))
+(defmethod output-sql-hash-key ((expr sql-ident-table) database)
   (declare (ignore database))
   (with-slots (name alias)
     expr
@@ -236,8 +229,7 @@
 ;; Write SQL for relational operators (like 'AND' and 'OR').
 ;; should do arity checking of subexpressions
 
-(defmethod output-sql ((expr sql-relational-exp) &optional
-                       (database *default-database*))
+(defmethod output-sql ((expr sql-relational-exp) database)
   (with-slots (operator sub-expressions)
     expr
     (let ((subs (if (consp (car sub-expressions))
@@ -260,8 +252,7 @@
 ;; Write SQL for relational operators (like 'AND' and 'OR').
 ;; should do arity checking of subexpressions
   
-(defmethod output-sql ((expr sql-upcase-like) &optional
-                       (database *default-database*))
+(defmethod output-sql ((expr sql-upcase-like) database)
   (flet ((write-term (term)
            (write-string "upper(" *sql-stream*)
            (output-sql term database)
@@ -284,8 +275,7 @@
   (:documentation "An SQL Assignment expression."))
 
 
-(defmethod output-sql ((expr sql-assignment-exp) &optional
-                       (database *default-database*))
+(defmethod output-sql ((expr sql-assignment-exp) database)
   (with-slots (operator sub-expressions)
     expr
     (do ((sub sub-expressions (cdr sub)))
@@ -322,8 +312,7 @@
 
 
 
-(defmethod output-sql ((expr sql-value-exp) &optional
-                       (database *default-database*))
+(defmethod output-sql ((expr sql-value-exp) database)
   (with-slots (modifier components)
     expr
     (if modifier
@@ -339,8 +328,7 @@
   ()
   (:documentation "An SQL typecast expression."))
 
-(defmethod output-sql ((expr sql-typecast-exp) &optional
-                       (database *default-database*))
+(defmethod output-sql ((expr sql-typecast-exp) database)
   (database-output-sql expr database))
 
 (defmethod database-output-sql ((expr sql-typecast-exp) database)
@@ -373,8 +361,7 @@
                                (equal (slot-value tab1 'name)
                                       (slot-value tab2 'name))))))
 
-(defmethod output-sql ((expr sql-function-exp) &optional
-                       (database *default-database*))
+(defmethod output-sql ((expr sql-function-exp) database)
   (with-slots (name args)
     expr
     (output-sql name database)
@@ -465,8 +452,7 @@ uninclusive, and the args from that keyword to the end."
 
 (defvar *in-subselect* nil)
 
-(defmethod output-sql ((query sql-query) &optional
-                       (database *default-database*))
+(defmethod output-sql ((query sql-query) database)
   (with-slots (distinct selections from where group-by having order-by
                         order-by-descending limit offset)
       query
@@ -541,8 +527,7 @@ uninclusive, and the args from that keyword to the end."
   (:documentation
    "An SQL INSERT statement."))
 
-(defmethod output-sql ((ins sql-insert) &optional
-                       (database *default-database*))
+(defmethod output-sql ((ins sql-insert) database)
   (with-slots (into attributes values query)
     ins
     (write-string "INSERT INTO " *sql-stream*)
@@ -570,8 +555,7 @@ uninclusive, and the args from that keyword to the end."
   (:documentation
    "An SQL DELETE statement."))
 
-(defmethod output-sql ((stmt sql-delete) &optional
-                       (database *default-database*))
+(defmethod output-sql ((stmt sql-delete) database)
   (with-slots (from where)
     stmt
     (write-string "DELETE FROM " *sql-stream*)
@@ -600,8 +584,7 @@ uninclusive, and the args from that keyword to the end."
     :initform nil))
   (:documentation "An SQL UPDATE statement."))
 
-(defmethod output-sql ((expr sql-update) &optional
-                       (database *default-database*))
+(defmethod output-sql ((expr sql-update) database)
   (with-slots (table where attributes values)
     expr
     (flet ((update-assignments ()
@@ -644,8 +627,7 @@ uninclusive, and the args from that keyword to the end."
       (list x)
       x))
 
-(defmethod output-sql ((stmt sql-create-table) &optional
-                       (database *default-database*))
+(defmethod output-sql ((stmt sql-create-table) database)
   (flet ((output-column (column-spec)
            (destructuring-bind (name type &optional db-type &rest constraints)
                column-spec
@@ -693,7 +675,7 @@ uninclusive, and the args from that keyword to the end."
    (with-check-option :initarg :with-check-option :initform nil))
   (:documentation "An SQL CREATE VIEW statement."))
 
-(defmethod output-sql ((stmt sql-create-view) &optional database)
+(defmethod output-sql ((stmt sql-create-view) database)
   (with-slots (name column-list query with-check-option) stmt
     (write-string "CREATE VIEW " *sql-stream*)
     (output-sql name database)

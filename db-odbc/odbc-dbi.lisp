@@ -187,7 +187,8 @@ the query against." ))
     (unwind-protect
 	(progn
 	  (with-slots (hstmt) query
-	    (unless hstmt (setf hstmt (%new-statement-handle (hdbc db))))
+	    (unless hstmt
+	      (setf hstmt (%new-statement-handle (hdbc db))))
 	    (%table-statistics table hstmt :unique unique)
 	    (%initialize-query query nil nil)
 	    (values

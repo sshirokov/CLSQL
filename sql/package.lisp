@@ -240,6 +240,8 @@
        #:db-type-has-boolean-where?
        #:db-type-transaction-capable?
        #:db-type-has-fancy-math?
+       #:db-type-default-case
+       #:convert-to-db-default-case
        #:database-underlying-type
        ))
    (:export
@@ -278,6 +280,7 @@
     #:db-type-has-boolean-where?
     #:db-type-transaction-capable?
     #:db-type-has-fancy-math?
+    #:db-type-default-case
     #:database-underlying-type
    
    .

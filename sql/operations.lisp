@@ -26,7 +26,7 @@
   `(progn
      (defun ,function ,@body)
      (let ((symbol (cadr (member :symbol ',definition-keys))))
-       (setf (gethash (if symbol (string-upcase symbol) ',function)
+       (setf (gethash (if symbol (clsql-base-sys:symbol-name-default-case symbol) ',function)
 		      *sql-op-table*)
 	     ',function))))
 

@@ -1,5 +1,6 @@
 21 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.9.3
+	* sql/generics.lisp: New file for generic function definitions.
 	* test/test-init.lisp: Display names of skipped tests.
 	Use unwind-protect to ensure disconnect
 	* sql/objects.lisp: Change database-type to database-underlying-type
@@ -12,6 +13,11 @@
 	* db-aodbc/aodbc-sql.lisp: Implement DATABASE-LIST-VIEWS
 	* tests/test-basic.lisp: Port to regression tester
 	* test/test-init.lisp: Output to *report-stream*
+	* docs/appendix.xml: Document ODBC and SQLite backends.
+	* sql/classes.lisp: Make output-sql require a database parameter.
+	This allows SQL generation to have the proper case to support
+	the differences in case handling between CommonSQL API,
+	Postgresql, MySQL, Oracle.
 	
 21 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.9.2: Improvments in database capability introspection

@@ -16,7 +16,8 @@
 
 (in-package #:clsql-tests)
 
-(defvar *report-stream*)
+(defvar *report-stream* nil "Stream to send text report.")
+(defvar *sexp-report-stream* nil "Stream to send sexp report.")
 (defvar *rt-connection*)
 (defvar *rt-fddl*)
 (defvar *rt-fdml*)
@@ -136,6 +137,9 @@
 		 :make-default t
 		 :if-exists :old)
   
+  (unless (db-backend-has-create/destroy-db? db-type)
+    (truncate-database :database *default-database*))
+  
   (setf *test-database-underlying-type*
 	(clsql-sys:database-underlying-type *default-database*))
   
@@ -154,10 +158,6 @@
 (defparameter employee10 nil)
 
 (defun test-initialise-database ()
-  ;; Ensure that old objects are removed
-  (unless (db-backend-has-create/destroy-db? *test-database-type*)
-    (truncate-database *default-database*)) 
-  
   (test-basic-initialize)
   
   (clsql:create-view-from-class 'employee)
@@ -300,16 +300,28 @@
   (clsql:update-records-from-instance company1))
 
 (defvar *error-count* 0)
+(defvar *error-list* nil)
 
 (defun run-tests-append-report-file (report-file)
-  (with-open-file (out report-file :direction :output
-		       :if-exists :append
-		       :if-does-not-exist :create)
-    (run-tests out)))
+  (let* ((report-path (etypecase report-file
+			(pathname report-file)
+			(string (parse-namestring report-file))))
+	 (sexp-report-path (make-pathname :defaults report-path
+					  :type "sexp")))
+  (with-open-file (rs report-path :direction :output
+		      :if-exists :append
+		      :if-does-not-exist :create)
+    (with-open-file (srs sexp-report-path :direction :output
+			 :if-exists :append
+			 :if-does-not-exist :create)
+      (run-tests :report-stream rs :sexp-report-stream srs)))))
     
-(defun run-tests (&optional (*report-stream* *standard-output*))
+(defun run-tests (&key (report-stream *standard-output*) (sexp-report-stream nil))
   (let ((specs (read-specs))
-	(*error-count* 0))
+	(*report-stream* report-stream)
+	(*sexp-report-stream* sexp-report-stream)
+	(*error-count* 0)
+	(*error-list* nil))
     (unless specs
       (warn "Not running tests because test configuration file is missing")
       (return-from run-tests :skipped))
@@ -331,33 +343,49 @@
       (multiple-value-bind (test-forms skip-tests)
 	  (compute-tests-for-backend db-type *test-database-underlying-type*)
 	
-  (format *report-stream* 
-	  "~&
+	(format *report-stream* 
+		"~&
 ******************************************************************************
 ***     CLSQL Test Suite begun at ~A
 ***     ~A
-***     ~A
+***     ~A on ~A
 ***     Database ~A backend~A.
 ******************************************************************************
 " 
-(clsql-base:format-time nil (clsql-base:utime->time (get-universal-time)))
-(lisp-implementation-type)
-(lisp-implementation-version)
-db-type
-(if (not (eq db-type *test-database-underlying-type*))
-    (format nil " with underlying type ~A" *test-database-underlying-type*)
-    "")
-)
-  
+		(clsql-base:format-time 
+		 nil 
+		 (clsql-base:utime->time (get-universal-time)))
+		(lisp-implementation-type)
+		(lisp-implementation-version)
+		(machine-type)
+		db-type
+		(if (not (eq db-type *test-database-underlying-type*))
+		    (format nil " with underlying type ~A" 
+			    *test-database-underlying-type*)
+		  "")
+		)
+	
 	(test-initialise-database)
-
+	
 	(regression-test:rem-all-tests)
 	(dolist (test-form test-forms)
 	  (eval test-form))
 	
 	(let ((remaining (rtest:do-tests *report-stream*)))
-	  (when (consp remaining)
+	  (when (rt:pending-tests)
 	    (incf *error-count* (length remaining))))
+	
+	(let ((sexp-error (list db-type 
+				*test-database-underlying-type* 
+				(get-universal-time)
+				(length test-forms)
+				(rt:pending-tests)
+				(lisp-implementation-type) 
+				(lisp-implementation-version)
+				(machine-type))))
+	  (when *sexp-report-stream*
+	    (write sexp-error :stream *sexp-report-stream*)) 
+	  (push sexp-error *error-list*))
 	
 	(format *report-stream* "~&Tests skipped:")
 	(if skip-tests

@@ -224,6 +224,13 @@ the given lisp type and parameters."))
 	   t)
   (:documentation "T [default] if database-type supports views."))
 
+(defgeneric db-type-default-case (db-type)
+  (:method (db-type)
+	   (declare (ignore db-type))
+	   ;; By default, CommonSQL converts identifiers to UPPER case. 
+	   :upper)
+  (:documentation ":upper [default] if means identifiers mapped to UPPER case SQL like CommonSQL API. However, Postgresql maps identifiers to lower case, so PostgreSQL uses a value of :lower for this result."))
+
 (defgeneric db-type-has-fancy-math? (db-type)
   (:method (db-type)
 	   (declare (ignore db-type))

@@ -33,7 +33,7 @@
   (query (sql-output expr database) :database database :flatp flatp
          :result-types result-types))
 
-(defun truncate-database (database)
+(defun truncate-database (&key database)
   (unless (typep database 'database)
     (clsql-base-sys::signal-no-database-error database))
   (unless (is-database-open database)
@@ -69,7 +69,7 @@ value of T. This specifies that *STANDARD-OUTPUT* is used."
                        (mapcan #'(lambda (s f) (list s f)) sizes record)))))
     (let* ((query-exp (etypecase query-exp
                         (string query-exp)
-                        (sql-query (sql-output query-exp))))
+                        (sql-query (sql-output query-exp database))))
            (data (query query-exp :database database))
            (sizes (if (or (null sizes) (listp sizes)) sizes 
                       (compute-sizes (if titles (cons titles data) data))))
@@ -234,17 +234,17 @@ condition is true."
            :format-arguments (list (type-of thing) (type-of database)))))
 
 
-(defmethod output-sql-hash-key ((arg vector) &optional database)
+(defmethod output-sql-hash-key ((arg vector) database)
   (list 'vector (map 'list (lambda (arg)
                              (or (output-sql-hash-key arg database)
                                  (return-from output-sql-hash-key nil)))
                      arg)))
 
-(defmethod output-sql (expr &optional (database *default-database*))
+(defmethod output-sql (expr database)
   (write-string (database-output-sql expr database) *sql-stream*)
   (values))
 
-(defmethod output-sql ((expr list) &optional (database *default-database*))
+(defmethod output-sql ((expr list) database)
   (if (null expr)
       (write-string +null-string+ *sql-stream*)
       (progn
@@ -261,7 +261,7 @@ condition is true."
 			   &key (database *default-database*))
   (database-describe-table
    database
-   (string-downcase (symbol-name (slot-value table 'name)))))
+   (convert-to-db-default-case (symbol-name (slot-value table 'name)) database)))
 
 #+nil
 (defmethod add-storage-class ((self database) (class symbol) &key (sequence t))

@@ -188,7 +188,7 @@
   ;; Query is copied from .table command of sqlite comamnd line utility.
   (remove-if #'(lambda (s)
                  (and (>= (length s) 11)
-                      (string= (subseq s 0 11) "_CLSQL_SEQ_")))
+                      (string-equal (subseq s 0 11) "_CLSQL_SEQ_")))
              (mapcar #'car (database-query
                             "SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name"
                             database '()))))

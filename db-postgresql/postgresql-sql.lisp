@@ -606,5 +606,8 @@
 (defmethod db-type-has-fancy-math? ((db-type (eql :postgresql)))
   t)
 
+(defmethod db-type-default-case ((db-type (eql :postgresql)))
+  :lower)
+
 (when (clsql-base-sys:database-type-library-loaded :postgresql)
   (clsql-base-sys:initialize-database-type :database-type :postgresql))

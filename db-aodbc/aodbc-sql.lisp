@@ -161,7 +161,7 @@
 
 (defun %table-name-to-sequence-name (table-name)
   (and (>= (length table-name) 11)
-       (string= (subseq table-name 0 11) "_CLSQL_SEQ_")
+       (string-equal (subseq table-name 0 11) "_CLSQL_SEQ_")
        (subseq table-name 11)))
 
 (defmethod database-create-sequence (sequence-name

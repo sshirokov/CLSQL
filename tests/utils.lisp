@@ -66,3 +66,34 @@
 				       (symbol-name db-type))))))
 
 
+
+(defun summarize-test-report (sexp &optional (output *standard-output*))
+  (flet ((db-title (db-type underlying-db-type)
+	   (format nil "~A~A"
+		   db-type 
+		   (if (eq db-type underlying-db-type)
+		       ""
+		       (format nil "/~A" underlying-db-type)))))
+    (with-open-file (in sexp :direction :input)
+      (let ((eof (cons nil nil)))
+	(do ((form (read in nil eof) (read in nil eof)))
+	    ((eq form eof))
+	  (destructuring-bind (db-type
+			       underlying-db-type
+			       utime
+			       total-tests
+			       failed-tests
+			       impl-type
+			       impl-version
+			       machine-type)
+	      form
+	    (if failed-tests
+		(format output "~&~A: ~D of ~D tests failed (~A).~&"
+			(db-title db-type underlying-db-type)
+			(length failed-tests)
+			total-tests
+			impl-type)
+		(format output "~&~A: All ~D tests passed (~A).~%"
+			(db-title db-type underlying-db-type)
+			total-tests
+			impl-type))))))))

@@ -261,7 +261,7 @@
   (declare (ignore owner))
   (remove-if #'(lambda (s)
                  (and (>= (length s) 11)
-                      (string= (subseq s 0 11) "_CLSQL_SEQ_")))
+                      (string-equal (subseq s 0 11) "_CLSQL_SEQ_")))
              (mapcar #'car (database-query "SHOW TABLES" database nil))))
     
 ;; MySQL 4.1 does not support views 
@@ -322,7 +322,7 @@
 
 (defun %table-name-to-sequence-name (table-name)
   (and (>= (length table-name) 11)
-       (string= (subseq table-name 0 11) "_CLSQL_SEQ_")
+       (string-equal (subseq table-name 0 11) "_CLSQL_SEQ_")
        (subseq table-name 11)))
 
 (defmethod database-create-sequence (sequence-name
@@ -346,9 +346,10 @@
 (defmethod database-list-sequences ((database mysql-database)
                                     &key (owner nil))
   (declare (ignore owner))
-  (mapcar #'(lambda (s) (%table-name-to-sequence-name (car s)))
-          (database-query "SHOW TABLES LIKE '%clsql_seq%'" 
-                          database nil)))
+  (mapcan #'(lambda (s)
+              (let ((sn (%table-name-to-sequence-name (car s))))
+                (and sn (list sn))))
+	  (database-query "SHOW TABLES" database nil)))
 
 (defmethod database-set-sequence-position (sequence-name
                                            (position integer)
@@ -438,7 +439,6 @@
 (defmethod db-type-transaction-capable? ((db-type (eql :mysql)) database)
   (let ((has-innodb (caar (database-query "SHOW VARIABLES LIKE 'HAVE_INNODB'" database :auto))))
     (and has-innodb (string-equal "YES" has-innodb))))
-
 
 (when (clsql-base-sys:database-type-library-loaded :mysql)
   (clsql-base-sys:initialize-database-type :database-type :mysql))

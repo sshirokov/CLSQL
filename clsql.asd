@@ -39,7 +39,8 @@ a functional and an object oriented interface."
 				     (:file "kmr-mop" :depends-on ("package"))))
 	       (:module :core
 			:pathname ""
-			:components ((:file "classes")
+			:components ((:file "generics")
+				     (:file "classes")
 				     (:file "operations" :depends-on ("classes"))
 				     (:file "syntax"))
 			:depends-on (:package))

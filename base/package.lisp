@@ -80,7 +80,9 @@
      #:make-process-lock
      #:with-process-lock
      #:command-output
-
+     #:symbol-name-default-case
+     #:convert-to-db-default-case
+     
      ;; Shared exports for re-export by CLSQL-BASE
      .
      #1=(#:clsql-condition
@@ -293,6 +295,7 @@
 	 #:db-type-has-subqueries?
 	 #:db-type-has-boolean-where?
 	 #:db-type-has-fancy-math?
+	 #:db-type-default-case 
 	 #:db-backend-has-create/destroy-db?
 	 #:db-type-transaction-capable?
 	 ))

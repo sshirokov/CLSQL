@@ -20,14 +20,14 @@
 
 ;; Utilities
 
-(defun database-identifier (name)
+(defun database-identifier (name database)
   (sql-escape (etypecase name
                 (string
-                 (string-upcase name))
+                 (convert-to-db-default-case name database))
                 (sql-ident
-                 (sql-output name))
+                 (sql-output name database))
                 (symbol
-                 (sql-output name)))))
+                 (sql-output name database)))))
 
 
 ;; Tables 
@@ -54,7 +54,7 @@ a list containing lists of attribute-name and type information pairs."
 *DEFAULT-DATABASE*. If the table does not exist and IF-DOES-NOT-EXIST
 is :ignore then DROP-TABLE returns nil whereas an error is signalled
 if IF-DOES-NOT-EXIST is :error."
-  (let ((table-name (database-identifier name)))
+  (let ((table-name (database-identifier name database)))
     (ecase if-does-not-exist
       (:ignore
        (unless (table-exists-p table-name :database database)
@@ -80,7 +80,7 @@ tables are considered. This is the default. If OWNER is :all , all
 tables are considered. If OWNER is a string, this denotes a username
 and only tables owned by OWNER are considered. Table names are
 returned as a list of strings."
-  (when (member (database-identifier name)
+  (when (member (database-identifier name database)
                 (list-tables :owner owner :database database)
                 :test #'string-equal)
     t))
@@ -112,7 +112,7 @@ is NIL. The default value of DATABASE is *DEFAULT-DATABASE*."
 *DEFAULT-DATABASE*. If the view does not exist and IF-DOES-NOT-EXIST
 is :ignore then DROP-VIEW returns nil whereas an error is signalled if
 IF-DOES-NOT-EXIST is :error."
-  (let ((view-name (database-identifier name)))
+  (let ((view-name (database-identifier name database)))
     (ecase if-does-not-exist
       (:ignore
        (unless (view-exists-p view-name :database database)
@@ -137,7 +137,7 @@ are considered. This is the default. If OWNER is :all , all views are
 considered. If OWNER is a string, this denotes a username and only
 views owned by OWNER are considered. View names are returned as a list
 of strings."
-  (when (member (database-identifier name)
+  (when (member (database-identifier name database)
                 (list-views :owner owner :database database)
                 :test #'string-equal)
     t))
@@ -152,9 +152,9 @@ attributes of the table to index are given by ATTRIBUTES. Setting
 UNIQUE to T includes UNIQUE in the SQL index command, specifying that
 the columns indexed must contain unique values. The default value of
 UNIQUE is nil. The default value of DATABASE is *DEFAULT-DATABASE*."
-  (let* ((index-name (database-identifier name))
-         (table-name (database-identifier on))
-         (attributes (mapcar #'database-identifier (listify attributes)))
+  (let* ((index-name (database-identifier name database))
+         (table-name (database-identifier on database))
+         (attributes (mapcar #'(lambda (a) (database-identifier a database)) (listify attributes)))
          (stmt (format nil "CREATE ~A INDEX ~A ON ~A (~{~A~^, ~})"
                        (if unique "UNIQUE" "")
                        index-name table-name attributes)))
@@ -168,7 +168,7 @@ UNIQUE is nil. The default value of DATABASE is *DEFAULT-DATABASE*."
 is :ignore then DROP-INDEX returns nil whereas an error is signalled
 if IF-DOES-NOT-EXIST is :error. The argument ON allows the optional
 specification of a table to drop the index from."
-  (let ((index-name (database-identifier name)))
+  (let ((index-name (database-identifier name database)))
     (ecase if-does-not-exist
       (:ignore
        (unless (index-exists-p index-name :database database)
@@ -180,7 +180,7 @@ specification of a table to drop the index from."
     (execute-command (format nil "DROP INDEX ~A~A" index-name
                              (if (null on) ""
                                  (concatenate 'string " ON "
-                                              (database-identifier on))))
+                                              (database-identifier on database))))
                      :database database)))
 
 (defun list-indexes (&key (owner nil) (database *default-database*))
@@ -196,7 +196,7 @@ OWNER are considered. Index names are returned as a list of strings."
 *default-database*. If OWNER is :all , all indexs are considered. If
 OWNER is a string, this denotes a username and only indexs owned by
 OWNER are considered. Index names are returned as a list of strings."
-  (database-list-table-indexes (database-identifier table)
+  (database-list-table-indexes (database-identifier table database)
 			       database :owner owner))
   
 (defun index-exists-p (name &key (owner nil) (database *default-database*))
@@ -205,7 +205,7 @@ defaults to *DEFAULT-DATABASE*. If OWNER is :all , all indexs are
 considered. If OWNER is a string, this denotes a username and only
 indexs owned by OWNER are considered. Index names are returned as a
 list of strings."
-  (when (member (database-identifier name)
+  (when (member (database-identifier name database)
                 (list-indexes :owner owner :database database)
                 :test #'string-equal)
     t))
@@ -220,7 +220,7 @@ attributes are considered. If OWNER is a string, this denotes a
 username and only attributes owned by OWNER are considered. Attribute
 names are returned as a list of strings. Attributes are returned as a
 list of strings."
-  (database-list-attributes (database-identifier name) database :owner owner))
+  (database-list-attributes (database-identifier name database) database :owner owner))
 
 (defun attribute-type (attribute table &key (owner nil)
                                  (database *default-database*))
@@ -231,8 +231,8 @@ considered. This is the default. If OWNER is :all , all attributes are
 considered. If OWNER is a string, this denotes a username and only
 attributes owned by OWNER are considered. Attribute names are returned
 as a list of strings. Attributes are returned as a list of strings."
-  (database-attribute-type (database-identifier attribute)
-                           (database-identifier table)
+  (database-attribute-type (database-identifier attribute database)
+                           (database-identifier table database)
                            database
                            :owner owner))
 
@@ -265,7 +265,7 @@ is the vendor-specific type returned by ATTRIBUTE-TYPE."
 (defun create-sequence (name &key (database *default-database*))
   "Create a sequence called NAME in DATABASE which defaults to
 *DEFAULT-DATABASE*."
-  (let ((sequence-name (database-identifier name)))
+  (let ((sequence-name (database-identifier name database)))
     (database-create-sequence sequence-name database))
   (values))
 
@@ -275,7 +275,7 @@ is the vendor-specific type returned by ATTRIBUTE-TYPE."
 *DEFAULT-DATABASE*. If the sequence does not exist and
 IF-DOES-NOT-EXIST is :ignore then DROP-SEQUENCE returns nil whereas an
 error is signalled if IF-DOES-NOT-EXIST is :error."
-  (let ((sequence-name (database-identifier name)))
+  (let ((sequence-name (database-identifier name database)))
     (ecase if-does-not-exist
       (:ignore
        (unless (sequence-exists-p sequence-name :database database)
@@ -297,20 +297,20 @@ as a list of strings."
                                (database *default-database*))
   "Test for existence of a sequence called NAME in DATABASE which
 defaults to *DEFAULT-DATABASE*."
-  (when (member (database-identifier name)
+  (when (member (database-identifier name database)
                 (list-sequences :owner owner :database database)
                 :test #'string-equal)
     t))
   
 (defun sequence-next (name &key (database *default-database*))
   "Return the next value in the sequence NAME in DATABASE."
-  (database-sequence-next (database-identifier name) database))
+  (database-sequence-next (database-identifier name database) database))
 
 (defun set-sequence-position (name position &key (database *default-database*))
   "Explicitly set the the position of the sequence NAME in DATABASE to
 POSITION."
-  (database-set-sequence-position (database-identifier name) position database))
+  (database-set-sequence-position (database-identifier name database) position database))
 
 (defun sequence-last (name &key (database *default-database*))
   "Return the last value of the sequence NAME in DATABASE."
-  (database-sequence-last (database-identifier name) database))
+  (database-sequence-last (database-identifier name database) database))

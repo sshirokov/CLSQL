@@ -513,6 +513,8 @@ doesn't depend on UFFI."
 (defmethod db-type-has-fancy-math? ((db-type (eql :postgresql-socket)))
   t)
 
+(defmethod db-type-default-case ((db-type (eql :postgresql)))
+  :lower)
 
 (when (clsql-base-sys:database-type-library-loaded :postgresql-socket)
   (clsql-base-sys:initialize-database-type :database-type :postgresql-socket))

@@ -331,3 +331,23 @@ list of characters and replacement strings."
 	  (setf (char new-string dpos) c)
 	  (incf dpos))))))
 
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (when (char= #\a (schar (symbol-name '#:a) 0))
+    (pushnew :lowercase-reader *features*)))
+
+(defun symbol-name-default-case (str)
+  #-lowercase-reader
+  (string-upcase str)
+  #+lowercase-reader
+  (string-downcase str))
+
+(defmethod convert-to-db-default-case (str database)
+  (if database
+      (case (db-type-default-case (database-underlying-type database))
+	(:upper (string-upcase str))
+	(:lower (string-downcase str))
+	(t str))
+    ;; Default CommonSQL behavior is to upcase strings
+    (string-upcase str)))
+	    

@@ -8,77 +8,6 @@
 <appendix id="appendix">
   <title>Database Back-ends</title>
   
-  <sect1 id="mysql">
-    <title>MySQL</title>
-    <sect2>
-      <title>Libraries</title>
-      <para>The MySQL back-end needs access to the MySQL C 
-	client library (<filename>libmysqlclient.so</filename>).
-	The location of this library is specified 
-	via <symbol>*mysql-so-load-path*</symbol>, which defaults
-	to <filename>/usr/lib/libmysqlclient.so</filename>.
-	Additional flags to <application>ld</application> needed for
-	linking are specified via <symbol>*mysql-so-libraries*</symbol>,
-	which defaults to <symbol>("-lc")</symbol>.
-      </para>
-    </sect2>
-    <sect2>
-      <title>Initialization</title>
-      <para>
-	Use 
-	<screen>
-(asdf:operate 'asdf:load-op 'clsql-mysql)
-	</screen>
-	to load the MySQL back-end.  The database type for the MySQL
-	back-end is <symbol>:mysql</symbol>.
-      </para>
-      </sect2>
-      <sect2>
-	<title>Connection Specification</title>
-	<sect3>
-	  <title>Syntax of connection-spec</title>
-	  <synopsis>(<replaceable>host</replaceable> <replaceable>db</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable>)</synopsis>
-	</sect3>
-	<sect3>
-	  <title>Description of connection-spec</title>
-	  <variablelist>
-	    <varlistentry>
-	      <term><parameter>host</parameter></term>
-	      <listitem>
-		<para>String representing the hostname or IP address
-		  the MySQL server resides on, or <symbol>nil</symbol>
-		  to indicate the localhost.</para>
-	      </listitem>
-	    </varlistentry>
-	    <varlistentry>
-	      <term><parameter>db</parameter></term>
-	      <listitem>
-		<para>String representing the name of the database on
-		  the server to connect to.</para>
-	      </listitem>
-	    </varlistentry>
-	    <varlistentry>
-	      <term><parameter>user</parameter></term>
-	      <listitem>
-		<para>String representing the user name to use for
-		  authentication, or <symbol>nil</symbol> to use the
-		  current Unix user ID.</para>
-	      </listitem>
-	    </varlistentry>
-	    <varlistentry>
-	      <term><parameter>password</parameter></term>
-	      <listitem>
-		<para>String representing the unencrypted password to
-		  use for authentication, or <symbol>nil</symbol> if
-		  the authentication record has an empty password
-		  field.</para>
-	      </listitem>
-	    </varlistentry>
-	  </variablelist>
-	</sect3>
-      </sect2>
-    </sect1>
-
     <sect1 id="postgresql">
       <title>PostgreSQL</title>
       <sect2>
@@ -105,13 +34,9 @@
 	<title>Connection Specification</title>
 	<sect3>
 	  <title>Syntax of connection-spec</title>
-	  <synopsis>(<replaceable>host</replaceable>
-	  <replaceable>db</replaceable>
-	  <replaceable>user</replaceable>
-	  <replaceable>password</replaceable> &amp;optional
-	  <replaceable>port</replaceable>
-	  <replaceable>options</replaceable>
-	  <replaceable>tty</replaceable>)</synopsis>
+	  <synopsis>
+	    (<replaceable>host</replaceable> <replaceable>db</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable> &amp;optional <replaceable>port</replaceable> <replaceable>options</replaceable> <replaceable>tty</replaceable>)
+	  </synopsis>
 	</sect3>
 	<sect3>
 	  <title>Description of connection-spec</title>
@@ -207,13 +132,9 @@
 	<title>Connection Specification</title>
 	<sect3>
 	  <title>Syntax of connection-spec</title>
-	  <synopsis>(<replaceable>host</replaceable>
-	  <replaceable>db</replaceable>
-	  <replaceable>user</replaceable>
-	  <replaceable>password</replaceable> &amp;optional
-	  <replaceable>port</replaceable>
-	  <replaceable>options</replaceable>
-	  <replaceable>tty</replaceable>)</synopsis>
+	  <synopsis>
+	    (<replaceable>host</replaceable> <replaceable>db</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable> &amp;optional <replaceable>port</replaceable> <replaceable>options</replaceable> <replaceable>tty</replaceable>)
+	  </synopsis>
 	</sect3>
 	<sect3>
 	  <title>Description of connection-spec</title>
@@ -284,31 +205,111 @@
       </sect2>
     </sect1>
 
-    <sect1 id="aodbc">
-      <title>AODBC</title>
+  <sect1 id="mysql">
+    <title>MySQL</title>
+    <sect2>
+      <title>Libraries</title>
+      <para>The &mysql; back-end needs access to the &mysql; C 
+	client library (<filename>libmysqlclient.so</filename>).
+	The location of this library is specified 
+	via <symbol>*mysql-so-load-path*</symbol>, which defaults
+	to <filename>/usr/lib/libmysqlclient.so</filename>.
+	Additional flags to <application>ld</application> needed for
+	linking are specified via <symbol>*mysql-so-libraries*</symbol>,
+	which defaults to <symbol>("-lc")</symbol>.
+      </para>
+    </sect2>
+    <sect2>
+      <title>Initialization</title>
+      <para>
+	Use 
+	<screen>
+(asdf:operate 'asdf:load-op 'clsql-mysql)
+	</screen>
+	to load the &mysql; back-end.  The database type for the MySQL
+	back-end is <symbol>:mysql</symbol>.
+      </para>
+      </sect2>
       <sect2>
-	<title>Libraries</title>
-	<para>The AODBC back-end requires access to the ODBC interface
-          of &acl;.</para>
+	<title>Connection Specification</title>
+	<sect3>
+	  <title>Syntax of connection-spec</title>
+	  <synopsis>(<replaceable>host</replaceable> <replaceable>db</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable>)</synopsis>
+	</sect3>
+	<sect3>
+	  <title>Description of connection-spec</title>
+	  <variablelist>
+	    <varlistentry>
+	      <term><parameter>host</parameter></term>
+	      <listitem>
+		<para>String representing the hostname or IP address
+		  the &mysql; server resides on, or <symbol>nil</symbol>
+		  to indicate the localhost.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>db</parameter></term>
+	      <listitem>
+		<para>String representing the name of the database on
+		  the server to connect to.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>user</parameter></term>
+	      <listitem>
+		<para>String representing the user name to use for
+		  authentication, or <symbol>nil</symbol> to use the
+		  current Unix user ID.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>password</parameter></term>
+	      <listitem>
+		<para>String representing the unencrypted password to
+		  use for authentication, or <symbol>nil</symbol> if
+		  the authentication record has an empty password
+		  field.</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</sect3>
+      </sect2>
+    </sect1>
+
+    <sect1 id="odbc">
+      <title>&odbc;</title>
+      <sect2>
+	<title>Libraries</title> 
+	<para>
+	  The &odbc; back-end requires access to an &odbc; driver
+	  manager as well as &odbc; drivers for the underlying
+	  database server. &clsql; has been tested with
+	  <application>unixODBC</application> ODBC Driver Manager as
+	  well as Microsoft's ODBC manager.  These driver managers
+	  have been tested with the <ulink
+	  url="http://odbc.postgresql.org">
+	  <citetitle>psqlODBC</citetitle></ulink> driver for
+	  &postgresql; and the <ulink
+	  url="http://www.mysql.com/products/connector/odbc/">
+	  <citetitle>MyODBC</citetitle></ulink> driver for &mysql;.
+	</para>
       </sect2>
       <sect2>
 	<title>Initialization</title>
 	<para>
 	  Use 
 	  <screen>
-(asdf:operate 'asdf:load-op 'clsql-aodbc)
+(asdf:operate 'asdf:load-op 'clsql-odbc)
 	  </screen>
-	  to load the MySQL back-end.  The database type for the AODBC
-	  back-end is <symbol>:aodbc</symbol>.
+	  to load the &odbc; back-end.  The database type for the &odbc;
+	  back-end is <symbol>:odbc</symbol>.
 	</para>
       </sect2>
       <sect2>
 	<title>Connection Specification</title>
 	<sect3>
 	  <title>Syntax of connection-spec</title>
-	  <synopsis>(<replaceable>dsn</replaceable>
-	  <replaceable>user</replaceable>
-	  <replaceable>password</replaceable>)</synopsis>
+	  <synopsis>(<replaceable>dsn</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable>)</synopsis>
 	</sect3>
 	<sect3>
 	  <title>Description of connection-spec</title>
@@ -331,6 +332,101 @@
 	      <listitem>
 		<para>String representing the unencrypted password to
 		  use for authentication.</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</sect3>
+      </sect2>
+    </sect1>
+
+    <sect1 id="aodbc">
+      <title>&aodbc;</title>
+      <sect2>
+	<title>Libraries</title> <para>The &aodbc; back-end requires
+	access to the &odbc; interface of &acl; named DBI. This
+	interface is not available in the trial version of
+	&acl;</para>
+      </sect2>
+      <sect2>
+	<title>Initialization</title>
+	<para>
+	  Use 
+	  <screen>
+(require 'aodbc-v2)
+(asdf:operate 'asdf:load-op 'clsql-aodbc)
+	  </screen>
+	  to load the &aodbc; back-end.  The database type for the &aodbc;
+	  back-end is <symbol>:aodbc</symbol>.
+	</para>
+      </sect2>
+      <sect2>
+	<title>Connection Specification</title>
+	<sect3>
+	  <title>Syntax of connection-spec</title>
+	  <synopsis>
+	    (<replaceable>dsn</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable>)
+	  </synopsis>
+	</sect3>
+	<sect3>
+	  <title>Description of connection-spec</title>
+	  <variablelist>
+	    <varlistentry>
+	      <term><parameter>dsn</parameter></term>
+	      <listitem>
+		<para>String representing the ODBC data source name.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>user</parameter></term>
+	      <listitem>
+		<para>String representing the user name to use for
+		  authentication.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>password</parameter></term>
+	      <listitem>
+		<para>String representing the unencrypted password to
+		  use for authentication.</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</sect3>
+      </sect2>
+    </sect1>
+
+    <sect1 id="sqlite">
+      <title>&sqlite;</title>
+      <sect2>
+	<title>Libraries</title> <para>The &sqlite; back-end requires
+	access to the &sqlite; shared library file. Its default file
+	name is <filename>/usr/lib/libsqlite.so</filename>.</para>
+      </sect2>
+      <sect2>
+	<title>Initialization</title>
+	<para>
+	  Use 
+	  <screen>
+(asdf:operate 'asdf:load-op 'clsql-sqlite)
+	  </screen>
+	  to load the &sqlite; back-end.  The database type for the &sqlite;
+	  back-end is <symbol>:sqlite</symbol>.
+	</para>
+      </sect2>
+      <sect2>
+	<title>Connection Specification</title>
+	<sect3>
+	  <title>Syntax of connection-spec</title>
+	  <synopsis>(<replaceable>filename</replaceable>)</synopsis>
+	</sect3>
+	<sect3>
+	  <title>Description of connection-spec</title>
+	  <variablelist>
+	    <varlistentry>
+	      <term><parameter>filename</parameter></term>
+	      <listitem>
+		<para>String representing the filename of the &sqlite;
+		database file.</para>
 	      </listitem>
 	    </varlistentry>
 	  </variablelist>

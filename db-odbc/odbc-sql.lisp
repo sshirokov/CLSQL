@@ -165,11 +165,11 @@
 ;;; Sequence functions
 
 (defun %sequence-name-to-table (sequence-name)
-  (concatenate 'string "_CLSQL_SQL__" (sql-escape sequence-name)))
+  (concatenate 'string "_CLSQL_SEQ_" (sql-escape sequence-name)))
 
 (defun %table-name-to-sequence-name (table-name)
   (and (>= (length table-name) 11)
-       (string= (subseq table-name 0 11) "_CLSQL_SEQ_")
+       (string-equal (subseq table-name 0 11) "_CLSQL_SEQ_")
        (subseq table-name 11)))
 
 (defmethod database-create-sequence (sequence-name
@@ -194,17 +194,17 @@
                                     &key (owner nil))
   (declare (ignore owner))
   ;; FIXME: Underlying database backend stuff should come from that backend
-  ;; Would need to use ASDF to ensure underlying backend was loaded
   
   (case (database-odbc-db-type database)
     (:mysql
-     (mapcar #'(lambda (s) (%table-name-to-sequence-name (car s)))
-	     (database-query "SHOW TABLES LIKE '%clsql_seq%'" 
-			     database nil)))
+     (mapcan #'(lambda (s)
+		 (let ((sn (%table-name-to-sequence-name (car s))))
+		   (and sn (list sn))))
+	     (database-query "SHOW TABLES" database nil)))
     ((:postgresql :postgresql-socket)
      (mapcar #'(lambda (s) (%table-name-to-sequence-name (car s)))
-	     (database-query "SELECT RELNAME FROM pg_class WHERE RELNAME LIKE '%clsql_seq%'" 
-			     database nil)))))
+	    (database-query "SELECT RELNAME FROM pg_class WHERE RELNAME LIKE '%clsql_seq%'" 
+			    database nil)))))
 
 (defmethod database-list-tables ((database odbc-database)
 				 &key (owner nil))
@@ -318,21 +318,7 @@
 (defmethod database-list-table-indexes (table (database odbc-database)
 					&key (owner nil))
   (declare (ignore owner))
-  (if (eq :mysql (database-odbc-db-type database))
-      (mysql-workaround-bug-list-table-indexes table database)
-      (odbc-list-table-indexes table database)))
-
-(defun mysql-workaround-bug-list-table-indexes (table database)
-  ;; MyODBC 3.52 does not properly return results from SQLStatistics
-  (do ((results nil)
-       (rows (database-query 
-	      (format nil "SHOW INDEX FROM ~A" (string-upcase table))
-	      database nil)
-	     (cdr rows)))
-      ((null rows) (nreverse results))
-    (let ((col (nth 2 (car rows))))
-      (unless (find col results :test #'string-equal)
-	(push col results)))))
+  (odbc-list-table-indexes table database))
 
 (defun odbc-list-table-indexes (table database)
   (multiple-value-bind (rows col-names)
