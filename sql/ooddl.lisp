@@ -50,12 +50,13 @@
   (let* ((slot-name (%svuc-slot-name slot-def))
 	 (slot-object (%svuc-slot-object slot-def class))
 	 (slot-kind (view-class-slot-db-kind slot-object)))
-    (call-next-method)
-    (when (and *db-auto-sync* 
-	       (not *db-initializing*)
-	       (not *db-deserializing*)
-	       (not (eql slot-kind :virtual)))
-      (update-record-from-slot instance slot-name))))
+    (prog1
+      (call-next-method)
+      (when (and *db-auto-sync* 
+                 (not *db-initializing*)
+                 (not *db-deserializing*)
+                 (not (eql slot-kind :virtual)))
+        (update-record-from-slot instance slot-name)))))
 
 (defmethod initialize-instance ((object standard-db-object)
 					&rest all-keys &key &allow-other-keys)

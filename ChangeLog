@@ -1,3 +1,7 @@
+27 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/ooddl.lisp: Commit patch from Edi Weitz fixing return
+	type (setf slot-value-using-class)
+	
 26 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/oodml.lisp: Commit universal-time typo patch from Edi Weitz
 	* test/test-init.lisp: Add universal-time slot to person.

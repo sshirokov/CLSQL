@@ -23,18 +23,14 @@
 to load the SQLite library succesfully.  If this differs at your site,
 set to the right path before compiling or loading the system.")
 
-(defvar *sqlite-library-loaded* #+clisp t
-	                        #-clisp	nil
-    "T if foreign library was able to be loaded successfully")
+(defvar *sqlite-library-loaded* nil
+  "T if foreign library was able to be loaded successfully")
 
 (defmethod database-type-library-loaded ((database-type (eql :sqlite)))
   "T if foreign library was able to be loaded successfully. "
   *sqlite-library-loaded*)
 
 (defmethod database-type-load-foreign ((database-type (eql :sqlite)))
-  #+clisp
-   t
-  #-clisp
   (let ((libpath (uffi:find-foreign-library
 		  '("libsqlite" "sqlite")
 		  '(#+64bit "/usr/lib64/"
