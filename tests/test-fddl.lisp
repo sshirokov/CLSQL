@@ -244,7 +244,7 @@
     (let ((names '("foo" foo [foo]))
           (result '()))
       (dolist (name names)
-        (clsql:create-index name :on [employee] :attributes '([emplid]))
+        (clsql:create-index name :on [employee] :attributes '([last-name]))
         (push (clsql:index-exists-p name :owner *test-database-user*) result)
 	(clsql:drop-index name :on [employee] :if-does-not-exist :ignore))
       (apply #'values result))

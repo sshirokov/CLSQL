@@ -593,7 +593,8 @@
 		(clsql-sys:in test :fdml/query/6 :fdml/select/31))
 	   (push (cons test "union not supported") skip-tests))
 	  ((and (eq *test-database-type* :oracle)
-		(clsql-sys:in test :fdml/query/8 :fdml/select/21))
+		(clsql-sys:in test :fdml/query/8 :fdml/select/21 
+                              :fddl/table/6))
 	   (push (cons test "syntax not supported") skip-tests))
           ((and (not (member *test-database-underlying-type* 
                              '(:postgresql :oracle)))
