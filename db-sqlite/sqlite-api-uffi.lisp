@@ -66,8 +66,6 @@
 (defconstant SQLITE-ROW         100  "sqlite_step() has another row ready")
 (defconstant SQLITE-DONE        101  "sqlite_step() has finished executing")
 
-(defvar +null-char-char-pointer+ (make-null-pointer 'string-pointer))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
 ;;;; Conditions.
@@ -99,6 +97,10 @@
 (def-foreign-type sqlite-vm :pointer-void)
 (def-foreign-type string-pointer (* (* :char)))
 (def-foreign-type sqlite-row-pointer (* string-pointer))
+
+(defvar +null-errmsg-pointer+ (make-null-pointer 'errmsg))
+(defvar +null-string-pointer-pointer+ (make-null-pointer 'string-pointer))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -217,7 +219,7 @@
 
 (defun sqlite-open (db-name &optional (mode 0))
   (with-cstring (db-name-native db-name) 
-    (let ((db (%open db-name-native mode +null-char-char-pointer+)))
+    (let ((db (%open db-name-native mode +null-errmsg-pointer+)))
       (if (null-pointer-p db)
 	  (signal-sqlite-error SQLITE-ERROR
 			       (format nil "unable to open ~A" db-name))
@@ -227,7 +229,7 @@
   (with-cstring (sql-native sql)
     (let ((vm (allocate-foreign-object 'sqlite-vm)))
       (with-foreign-object (sql-tail '(* :char))
-	(let ((result (%compile db sql-native sql-tail vm +null-char-char-pointer+)))
+	(let ((result (%compile db sql-native sql-tail vm +null-errmsg-pointer+)))
 	  (if (= result SQLITE-OK)
 	      vm
 	      (progn
@@ -249,7 +251,7 @@
 	  ((= result SQLITE-DONE)
 	   (free-foreign-object cols)
 	   (free-foreign-object col-names)
-	   (values 0 +null-char-char-pointer+ +null-char-char-pointer+))
+	   (values 0 +null-string-pointer-pointer+ +null-string-pointer-pointer+))
 	  (t
 	   (free-foreign-object cols)
 	   (free-foreign-object col-names)
@@ -257,7 +259,7 @@
 
 (defun sqlite-finalize (vm)
   (declare (type sqlite-vm-pointer vm))
-  (let ((result (%finalize (deref-pointer vm 'sqlite-vm) +null-char-char-pointer+)))
+  (let ((result (%finalize (deref-pointer vm 'sqlite-vm) +null-errmsg-pointer+)))
     (if (= result SQLITE-OK)
 	(progn
 	  (free-foreign-object vm)
@@ -271,7 +273,7 @@
       (declare (type sqlite-row-pointer-type rows))
       (with-foreign-object (rows-n :int)
 	(with-foreign-object (cols-n :int)
-	  (let ((result (%get-table db sql-native rows rows-n cols-n +null-char-char-pointer+)))
+	  (let ((result (%get-table db sql-native rows rows-n cols-n +null-errmsg-pointer+)))
 	    (if (= result SQLITE-OK)
 		(let ((cn (deref-pointer cols-n :int))
 		      (rn (deref-pointer rows-n :int)))
@@ -291,7 +293,7 @@
 ;;;;
 (declaim (inline make-null-row))
 (defun make-null-row ()
-  +null-char-char-pointer+)
+  +null-string-pointer-pointer+)
 
 (declaim (inline make-null-vm))
 (defun make-null-vm ()

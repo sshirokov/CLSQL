@@ -7,8 +7,8 @@
 	* classic-tests/tests.lisp: Fix package name of
 	number-to-sql-string. 
 	* clsql.asd/clsql-tests.asd: Add support for asdf:test-op
-	* db-sqlite/sqlite-api-uffi.lisp: Fix type UFFI usage
-	found by testing on OpenMCL
+	* db-sqlite/sqlite-api-{uffi,sql}.lisp: Multiple UFFI fixes,
+	now passes tests on all support UFFI platforms.
 	* db-postgresql-socket/postgresql-socket-api.list: Ported to 
 	SBCL
 	* multiple: Finish renaming of :types keyword to :result-types for
