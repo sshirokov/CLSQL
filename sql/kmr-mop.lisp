@@ -57,8 +57,8 @@
       (b (pushnew :mop-slot-order-reversed cl:*features*)))))
        
 (defun ordered-class-slots (class)
-  #+mop-slot-order-reversed (class-slots class)
-  #-mop-slot-order-reversed (reverse (class-slots class)))
+  #+mop-slot-order-reversed (reverse (class-slots class))
+  #-mop-slot-order-reversed (class-slots class))
 
 ;; Lispworks has symbol for slot rather than the slot instance
 (defun %svuc-slot-name (slot)

@@ -89,7 +89,7 @@ in DATABASE which defaults to *DEFAULT-DATABASE*."
         (push res schemadef))))
   (unless schemadef
     (error "Class ~s has no :base slots" self))
-  (create-table (sql-expression :table (view-table self)) schemadef
+  (create-table (sql-expression :table (view-table self)) (nreverse schemadef)
                 :database database
                 :constraints (database-pkey-constraint self database))
   (push self (database-view-classes database))
