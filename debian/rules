@@ -36,7 +36,7 @@ srcs-aodbc	:= $(wildcard db-aodbc/*.cl)
 clc-base	:= usr/share/common-lisp
 clc-source	:= $(clc-base)/source
 clc-systems	:= $(clc-base)/systems
-doc-dir		:= usr/share/doc/cl-sql-base
+doc-dir		:= usr/share/doc/cl-sql
 
 clc-clsql	:= $(clc-source)/$(plain-pkg)
 
