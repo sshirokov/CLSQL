@@ -1,10 +1,12 @@
-31 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
+06 Apr 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* src/usql.cl:
 	Reinstated commented out sections
 	* interfaces/postgresql/postgresql-loader.cl:
 	* interfaces/mysql/mysql-loader.cl:
 	Updated find-forieign-library support.
-
+	* interfaces/postgresql-socket/postgresql-socket-package.cl:
+	Fixed require form for Lispworks (Thanks Marc Battyani!)
+	
 31 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* Added interface to support USQL high-level rouines
 	
