@@ -10,7 +10,8 @@
 <!ENTITY commonsql "<application>CommonSQL</application>">
 <!ENTITY mysql "<application>MySQL</application>">
 <!ENTITY postgresql "<application>PostgreSQL</application>">
-<!ENTITY sqlite "<application>SQLite</application>">
+<!ENTITY sqlite "<application>SQLite version 2</application>">
+<!ENTITY sqlite3 "<application>SQLite version 3</application>">
 <!ENTITY oracle "<application>Oracle</application>">
 <!ENTITY odbc "<application>ODBC</application>">
 <!ENTITY aodbc "<application>AODBC</application>">

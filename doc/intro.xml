@@ -42,7 +42,8 @@
 	  <para>Optimized loading of integer and floating-point fields.</para>
 	</listitem>
 	<listitem>
-	  <para>Additional database backends: &odbc;, &aodbc;, and &sqlite;.</para>
+	  <para>Additional database backends: &odbc;, &aodbc;, &sqlite;
+	  and &sqlite3;.</para>
 	</listitem>
 	<listitem>
 	  <para>A compatibility layer for &cmucl; specific code.</para>
@@ -131,6 +132,7 @@
 	<listitem><para>&postgresql; v7.4 with both direct API and TCP
 	socket connections.</para></listitem>
 	<listitem><para>&sqlite;.</para></listitem>
+	<listitem><para>&sqlite3;.</para></listitem>
 	<listitem><para>Direct &odbc; interface.</para></listitem>
         <listitem><para>&oracle; OCI.</para></listitem>
 	<listitem><para>Allegro's DB interface (&aodbc;).</para></listitem>

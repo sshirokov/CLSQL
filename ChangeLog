@@ -1,10 +1,10 @@
 09 Nov 2004 Kevin Rosenberg <kevin@rosenberg.net>
-	* sql/operations.lisp: Add lower and upper SQL
-	functions from Daniel Lowe.
+	* Version 3.1.0 released: New SQLite3 backend by Aurelio Bignoli
+	* doc/appendix.xml: Document SQLITE3 backend, patch by Aurelio Bignoli
+	* sql/operations.lisp: Add lower and upper SQL functions [Daniel Lowe].
 	
 08 Nov 2004 Kevin Rosenberg <kevin@rosenberg.net>
-	* sql/expressions.lisp: Fix slot name [thanks to
-	Daniel Lowe]
+	* sql/expressions.lisp: Fix slot name [thanks to Daniel Lowe]
 
 31 Oct 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* clsql-sqlite3, db-sqlite3/*: NEW BACKEND
