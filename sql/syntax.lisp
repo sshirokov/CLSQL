@@ -13,7 +13,7 @@
 ;;;;
 ;;;; ======================================================================
 
-(in-package :clsql-usql-sys)
+(in-package #:clsql-sys)
 
 (defvar *original-reader-enter* nil)
 

@@ -11,7 +11,7 @@
 ;;;;
 ;;;; ======================================================================
 
-(in-package :clsql-usql-sys)
+(in-package #:clsql-sys)
 
   
 ;;; Basic operations on databases

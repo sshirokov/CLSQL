@@ -14,7 +14,7 @@
 ;;;;
 ;;;; ======================================================================
 
-(in-package :clsql-usql-sys)
+(in-package #:clsql-sys)
 
 
 ;; Utilities

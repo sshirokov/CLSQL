@@ -16,7 +16,7 @@
 ;;; re-exports into CLSQL-USQL-SYS them to hide differences in
 ;;; MOP implementations.
 
-(in-package #:clsql-usql-sys)
+(in-package #:clsql-sys)
 
 #+lispworks
 (defun intern-eql-specializer (slot)

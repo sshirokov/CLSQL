@@ -1,9 +1,9 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; ======================================================================
 ;;;; File:    package.lisp
-;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>, Kevin Rosenberg
+;;;; Authors: Marcus Pearce <m.t.pearce@city.ac.uk> and Kevin Rosenberg
 ;;;; Created: 30/03/2004
-;;;; Updated: <04/04/2004 12:21:50 marcusp>
+;;;; Updated: $Id: $
 ;;;; ======================================================================
 ;;;;
 ;;;; Description ==========================================================
@@ -19,22 +19,21 @@
 
 #+sbcl
   (if (find-package 'sb-mop)
-      (pushnew :usql-sbcl-mop cl:*features*)
-      (pushnew :usql-sbcl-pcl cl:*features*))
+      (pushnew :clsql-sbcl-mop cl:*features*)
+      (pushnew :clsql-sbcl-pcl cl:*features*))
 
   #+cmu
   (if (eq (symbol-package 'pcl:find-class)
 	  (find-package 'common-lisp))
-      (pushnew :usql-cmucl-mop cl:*features*)
-      (pushnew :usql-cmucl-pcl cl:*features*)))
+      (pushnew :clsql-cmucl-mop cl:*features*)
+      (pushnew :clsql-cmucl-pcl cl:*features*)))
 
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defpackage #:clsql-usql-sys
-    (:nicknames #:usql-sys)
+  (defpackage #:clsql-sys
     (:use #:common-lisp #:clsql-base-sys
-	  #+usql-sbcl-mop #:sb-mop
-	  #+usql-cmucl-mop #:mop
+	  #+clsql-sbcl-mop #:sb-mop
+	  #+clsql-cmucl-mop #:mop
 	  #+allegro #:mop
 	  #+lispworks #:clos
 	  #+scl #:clos
@@ -46,11 +45,11 @@
    #+lispworks
    (:shadowing-import-from 
     #:clos)
-   #+usql-sbcl-mop 
+   #+clsql-sbcl-mop 
    (:shadowing-import-from 
     #:sb-pcl
     #:generic-function-lambda-list)
-   #+usql-sbcl-pcl
+   #+clsql-sbcl-pcl
    (:shadowing-import-from 
     #:sb-pcl
     #:name
@@ -68,11 +67,11 @@
     #:make-method-lambda #:generic-function-lambda-list
     #:class-precedence-list #:slot-definition-type
     #:class-direct-superclasses)
-   #+usql-cmucl-mop 
+   #+clsql-cmucl-mop 
    (:shadowing-import-from 
     #:pcl
     #:generic-function-lambda-list)
-   #+usql-cmucl-pcl
+   #+clsql-cmucl-pcl
    (:shadowing-import-from 
     #:pcl
     #:class-direct-slots
@@ -397,15 +396,14 @@
 (setf *packages-for-warn-on-redefinition* 
       (delete "SQL" *packages-for-warn-on-redefinition* :test 'string=))
 
-(defpackage #:clsql-usql
-  (:nicknames #:usql #:sql)
-  (:use :common-lisp)
-  (:import-from :clsql-usql-sys . #2#)
+(defpackage #:clsql
+  (:use #:common-lisp)
+  (:import-from :clsql-sys . #2#)
   (:export . #2#)
   (:documentation "This is the SQL-Interface package of USQL."))
 
   ;; This is from USQL's pcl-patch  
-  #+(or usql-sbcl-pcl usql-cmucl-pcl)
+  #+(or clsql-sbcl-pcl clsql-cmucl-pcl)
   (progn
     ;; Note that this will no longer required for cmucl as of version 19a. 
     (in-package #+cmu :pcl #+sbcl :sb-pcl)
@@ -420,13 +418,13 @@
   
   #+sbcl
   (if (find-package 'sb-mop)
-      (setq cl:*features* (delete :usql-sbcl-mop cl:*features*))
-      (setq cl:*features* (delete :usql-sbcl-pcl cl:*features*)))
+      (setq cl:*features* (delete :clsql-sbcl-mop cl:*features*))
+      (setq cl:*features* (delete :clsql-sbcl-pcl cl:*features*)))
   
   #+cmu
   (if (find-package 'mop)
-      (setq cl:*features* (delete :usql-cmucl-mop cl:*features*))
-      (setq cl:*features* (delete :usql-cmucl-pcl cl:*features*)))
+      (setq cl:*features* (delete :clsql-cmucl-mop cl:*features*))
+      (setq cl:*features* (delete :clsql-cmucl-pcl cl:*features*)))
   
 );eval-when                                      
 
