@@ -56,6 +56,10 @@ HTMLFILE:=${DOCFILE_BASE}.html
 TMPFILES:=${DOCFILE_BASE}.aux ${DOCFILE_BASE}.out ${DOCFILE_BASE}.log
 DOCFILES:=$(shell echo *.xml *.xsl)
 
+ifeq ($(XSLTPROC),)
+  XSLTPROC:=xsltproc
+endif
+
 CATALOG:=`pwd`/catalog-${OS}.xml
 CHECK:=XML_CATALOG_FILES="$(CATALOG)" xmllint --noout --xinclude --postvalid $(DOCFILE) || exit 1
 
