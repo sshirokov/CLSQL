@@ -23,11 +23,9 @@ prefix-pg	:= debian/$(pkg-pg)
 prefix-pg-socket := debian/$(pkg-pg-socket)
 prefix-aodbc	:= debian/$(pkg-aodbc)
 
-##
-## lisp sources per pkg
-##
+## Lisp sources
 srcs		:= sql/pool.cl sql/sql.cl sql/transactions.cl sql/utils.cl sql/functional.cl sql/usql.cl
-srcs-cmucl-compat := $(wilcard cmucl-compat/*.cl)
+srcs-cmucl-compat := $(wildcard cmucl-compat/*.cl)
 srcs-base	:= sql/package.cl sql/db-interface.cl sql/classes.cl sql/conditions.cl
 srcs-base-uffi	:= $(wildcard interfaces/clsql-uffi/*.cl) $(wildcard interfaces/clsql-uffi/*.so)
 srcs-mysql	:= $(wildcard interfaces/mysql/*.cl) $(wildcards interfaces/mysl/*.so)
