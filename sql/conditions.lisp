@@ -104,7 +104,7 @@ and signal an clsql-invalid-spec-error if they don't match."
    (error :initarg :error :initarg nil :reader clsql-sql-error-error))
   (:report (lambda (c stream)
 	     (if (clsql-sql-error-message c)
-		 (format stream "While accessing database ~A~%, Error~%  ~A~%  has occurred."
+		 (format stream "While accessing database ~A,~%  Error ~A~%  has occurred."
 			 (clsql-sql-error-database c)
 			 (clsql-sql-error-message c))
 	       (format stream "While accessing database ~A~%  with expression ~S:~%  Error ~D / ~A~%  has occurred."
