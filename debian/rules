@@ -8,7 +8,7 @@ export DH_VERBOSE=1
 # This is the debhelper compatibility version to use.
 export DH_COMPAT=3
 
-pkg	:= cl-uffi
+pkg	:= cl-sql
 prefix	:= debian/$(pkg)
 
 INSTALL	:= install
@@ -16,9 +16,9 @@ INSTALLFLAGS	:= -g root -o root -m 0644
 INSTALLDIRFLAGS	:= -d -g root -o root -m 0755
 
 SOURCEDIR	:= $(prefix)/usr/share/common-lisp/source
-REPOSITORYDIR	:= $(prefix)/usr/share/common-lisp/repositories/uffi
+REPOSITORYDIR	:= $(prefix)/usr/share/common-lisp/repositories/clsql
 SYSDIR		:= $(prefix)/usr/share/common-lisp/systems
-DOCDIR		:= $(prefix)/usr/share/doc/cl-uffi
+DOCDIR		:= $(prefix)/usr/share/doc/cl-sql
 
 
 configure: configure-stamp
@@ -36,7 +36,7 @@ build-stamp: configure-stamp
 
 	# Add here commands to compile the package.
 	$(MAKE) doc
-	#/usr/bin/docbook-to-man debian/uffi.sgml > uffi.1
+	#/usr/bin/docbook-to-man debian/clsql.sgml > cl-sql.1
 
 	touch build-stamp
 
@@ -56,18 +56,18 @@ install: build
 	dh_clean -k
 	dh_installdirs
 
-	# Add here commands to install the package into debian/uffi.
+	# Add here commands to install the package into debian/cl-sql.
 	$(INSTALL) $(INSTALLDIRFLAGS) $(REPOSITORYDIR) $(REPOSITORYDIR)/mcl $(SYSDIR) $(DOCDIR) $(DOCDIR)/html $(SOURCEDIR)
-	$(INSTALL) $(INSTALLFLAGS) uffi.system.debian $(SYSDIR)
-	mv $(SYSDIR)/uffi.system.debian $(SYSDIR)/uffi.system
-	$(INSTALL) $(INSTALLFLAGS) $(shell echo src/*.cl) $(REPOSITORYDIR)
-	$(INSTALL) $(INSTALLFLAGS) $(shell echo src/mcl/*.cl) $(REPOSITORYDIR)/mcl
+	$(INSTALL) $(INSTALLFLAGS) clsql.system.debian $(SYSDIR)
+	mv $(SYSDIR)/clsql.system.debian $(SYSDIR)/clsql.system
+	$(INSTALL) $(INSTALLFLAGS) $(shell echo sql/*.cl) $(REPOSITORYDIR)/sql
+	$(INSTALL) $(INSTALLFLAGS) $(shell echo src/interfaces/*.cl) $(REPOSITORYDIR)/interfaces
 	$(INSTALL) $(INSTALLFLAGS) doc/html/* $(DOCDIR)/html
-	cp doc/uffi.ps doc/cl-uffi.ps
-	rm -f doc/cl-uffi.ps.gz
-	gzip doc/cl-uffi.ps
-	$(INSTALL) $(INSTALLFLAGS) doc/cl-uffi.ps.gz $(DOCDIR)
-	rm -f doc/cl-uffi.ps.gz
+	cp doc/clsql.ps doc/cl-sql.ps
+	rm -f doc/cl-sql.ps.gz
+	gzip doc/cl-sql.ps
+	$(INSTALL) $(INSTALLFLAGS) doc/cl-sql.ps.gz $(DOCDIR)
+	rm -f doc/cl-sql.ps.gz
 
 # Build architecture-independent files here.
 binary-indep: build install
