@@ -174,17 +174,17 @@
        #:sql-escape
 
        ;; database.lisp -- Connection
-       #:*default-database-type*	          ; clsql-base xx
-       #:*default-database*	          ; classes    xx
-       #:connect			          ; database   xx
-       #:*connect-if-exists*	          ; database   xx
-       #:connected-databases	          ; database   xx
-       #:database		          ; database   xx
-       #:database-name                     ; database   xx
-       #:disconnect		          ; database   xx
-       #:reconnect                         ; database
-       #:find-database                     ; database   xx
-       #:status                            ; database   xx
+       #:*default-database-type*          ; database   xx
+       #:*default-database*               ; database   xx
+       #:connect                          ; database   xx
+       #:*connect-if-exists*              ; database   xx
+       #:connected-databases              ; database   xx
+       #:database                         ; database   xx
+       #:database-name                    ; database   xx
+       #:disconnect                       ; database   xx
+       #:reconnect                        ; database   xx
+       #:find-database                    ; database   xx
+       #:status                           ; database   xx
        #:with-database
        #:with-default-database
        #:create-database
@@ -207,13 +207,13 @@
        
        ;; recording.lisp -- SQL I/O Recording 
        #:record-sql-action
-       #:add-sql-stream                 ; recording  xx
-       #:delete-sql-stream	          ; recording  xx
-       #:list-sql-streams	          ; recording  xx
-       #:sql-recording-p	          ; recording  xx
-       #:sql-stream			  ; recording  xx
-       #:start-sql-recording		  ; recording  xx
-       #:stop-sql-recording		  ; recording  xx
+       #:add-sql-stream                   ; recording  xx
+       #:delete-sql-stream                ; recording  xx
+       #:list-sql-streams                 ; recording  xx
+       #:sql-recording-p                  ; recording  xx
+       #:sql-stream                       ; recording  xx
+       #:start-sql-recording              ; recording  xx
+       #:stop-sql-recording               ; recording  xx
        
        ;; Transactions
        #:with-transaction
@@ -221,11 +221,11 @@
        #:rollback-transaction
        #:add-transaction-commit-hook
        #:add-transaction-rollback-hook
-       #:commit                            ; transact   xx
-       #:rollback			  ; transact   xx
-       #:with-transaction		  ; transact   xx		.
-       #:start-transaction                 ; transact   xx
-       #:in-transaction-p                  ; transact   xx
+       #:commit                           ; transact   xx
+       #:rollback                         ; transact   xx
+       #:with-transaction                 ; transact   xx		
+       #:start-transaction                ; transact   xx
+       #:in-transaction-p                 ; transact   xx
        #:database-start-transaction
        #:database-abort-transaction
        #:database-commit-transaction
@@ -295,49 +295,49 @@
        #:select                            ; objects    xx
        #:cache-table-queries               ; 
        #:*cache-table-queries-default*     ; 
-       #:delete-records                    ; sql	       xx
+       #:delete-records                    ; sql        xx
        #:insert-records                    ; sql        xx
-       #:update-records                    ; sql	       xx
-       #:execute-command		          ; sql        xx
+       #:update-records                    ; sql        xx
+       #:execute-command                   ; sql        xx
        #:query                             ; sql        xx
-       #:print-query			  ; sql	       xx
-       #:do-query		          ; sql	       xx
-       #:map-query			  ; sql	       xx
-       #:loop				  ; loop-ext   x
+       #:print-query                       ; sql        xx
+       #:do-query                          ; sql        xx
+       #:map-query                         ; sql        xx
+       #:loop                              ; loop-ext   x
        ;;FDDL
-       #:create-table		          ; table      xx
-       #:drop-table		          ; table      xx
-       #:list-tables		          ; table      xx
+       #:create-table                      ; table      xx
+       #:drop-table                        ; table      xx
+       #:list-tables                       ; table      xx
        #:table-exists-p                    ; table      xx 
-       #:list-attributes		          ; table      xx
+       #:list-attributes                   ; table      xx
        #:attribute-type                    ; table      xx
        #:list-attribute-types              ; table      xx
-       #:create-view		          ; table      xx
-       #:drop-view		          ; table      xx
-       #:create-index		          ; table      xx		
-       #:drop-index		          ; table      xx		
+       #:create-view                       ; table      xx
+       #:drop-view                         ; table      xx
+       #:create-index                      ; table      xx		
+       #:drop-index                        ; table      xx		
        #:truncate-database
        ;;OODDL
-       #:standard-db-object		  ; objects    xx
+       #:standard-db-object                ; objects    xx
        #:def-view-class                    ; objects    xx
        #:create-view-from-class            ; objects    xx
-       #:drop-view-from-class	          ; objects    xx
+       #:drop-view-from-class              ; objects    xx
        ;;OODML
-       #:instance-refreshed                ;
+       #:instance-refreshed                ; objects    xx 
        #:update-object-joins               ;
        #:*default-update-objects-max-len*  ; 
        #:update-slot-from-record           ; objects    xx
        #:update-instance-from-records      ; objects    xx
-       #:update-records-from-instance	  ; objects    xx
-       #:update-record-from-slot	          ; objects    xx
-       #:update-record-from-slots	  ; objects    xx
-       #:list-classes		          ; objects    xx
-       #:delete-instance-records	          ; objects    xx
+       #:update-records-from-instance      ; objects    xx
+       #:update-record-from-slot           ; objects    xx
+       #:update-record-from-slots          ; objects    xx
+       #:list-classes                      ; objects    xx
+       #:delete-instance-records           ; objects    xx
        ;;Symbolic SQL Syntax 
-       #:sql				  ; syntax     xx
+       #:sql                               ; syntax     xx
        #:sql-expression                    ; syntax     xx
        #:sql-operation                     ; syntax     xx
-       #:sql-operator			  ; syntax     xx  	
+       #:sql-operator                      ; syntax     xx  	
        #:disable-sql-reader-syntax         ; syntax     xx
        #:enable-sql-reader-syntax          ; syntax     xx
        #:locally-disable-sql-reader-syntax ; syntax     xx
@@ -367,8 +367,6 @@
        #:set-sequence-position             ; table      xx
        ;;OODDL
        #:view-table                        ; metaclass  x
-       #:create-sequence-from-class        ; objects    x
-       #:drop-sequence-from-class          ; objects    x	
        ;;OODML
        #:add-to-relation                   ; objects    x
        #:remove-from-relation              ; objects    x

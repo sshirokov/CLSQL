@@ -1,8 +1,19 @@
+30 Apr 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
+	* Version 2.9.6
+	* sql/objects.lisp: remove create/drop-sequence-from-class. 
+	* sql/objects.lisp: add INSTANCE-REFRESHED generic function. 
+	* sql/objects.lisp: improved CommonSQL compatibility for
+	UPDATE-RECORD-FROM-SLOT, UPDATE-RECORD-FROM-SLOTS,
+	UPDATE-RECORDS-FROM-INSTANCE and DELETE-INSTANCE-RECORDS. 
+	* sql/generics.lisp: move generics from objects.lisp to here. 
+	
 29 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.9.6-pre1
 	* db-mysql/mysql-client-info.lisp: Add client version 4.1
 	detection
-
+	* sql/sql.lisp: Make *default-database* the default for
+	TRUNCATE-DATABASE
+	
 28 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.9.5
 	* db-mysql/mysql-sql.lisp: Fix bug in transaction capability

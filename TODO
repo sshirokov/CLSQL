@@ -12,7 +12,6 @@ COMMONSQL SPEC
   *CACHE-TABLE-QUERIES-DEFAULT*
   *DEFAULT-UPDATE-OBJECTS-MAX-LEN* 
   UPDATE-OBJECT-JOINS 
-  INSTANCE-REFRESHED
 
 
 * Incompatible 
@@ -30,7 +29,7 @@ COMMONSQL SPEC
  >> The functional sql interface 
   
     SELECT 
-      o should accept keyword arg :refresh and call INSTANCE-REFRESHED
+      o keyword arg :refresh should function as advertised 
       o should return (values result-list field-names)
       o should coerce values returned as strings to appropriate lisp type
 

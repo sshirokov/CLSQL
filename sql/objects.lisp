@@ -53,37 +53,9 @@
       #+nil (created-object object)
       (update-records-from-instance object))))
 
-(defun sequence-from-class (view-class-name)
-  (sql-escape
-   (concatenate
-    'string
-    (symbol-name (view-table (find-class view-class-name)))
-    "-SEQ")))
-
-(defun create-sequence-from-class (view-class-name
-                                   &key (database *default-database*))
-  (create-sequence (sequence-from-class view-class-name) :database database))
-
-(defun drop-sequence-from-class (view-class-name
-                                 &key (if-does-not-exist :error)
-                                 (database *default-database*))
-  (drop-sequence (sequence-from-class view-class-name)
-                 :if-does-not-exist if-does-not-exist
-                 :database database))
-
 ;;
 ;; Build the database tables required to store the given view class
 ;;
-
-(defmethod database-pkey-constraint ((class standard-db-class) database)
-  (let ((keylist (mapcar #'view-class-slot-column (keyslots-for-class class))))
-    (when keylist 
-      (convert-to-db-default-case
-       (format nil "CONSTRAINT ~APK PRIMARY KEY~A"
-	       (database-output-sql (view-table class) database)
-	       (database-output-sql keylist database))
-       database))))
-
 
 (defun create-view-from-class (view-class-name
                                &key (database *default-database*))
@@ -110,6 +82,28 @@ the view. The argument DATABASE has a default value of
                 :constraints (database-pkey-constraint self database))
   (push self (database-view-classes database))
   t)
+
+(defmethod database-pkey-constraint ((class standard-db-class) database)
+  (let ((keylist (mapcar #'view-class-slot-column (keyslots-for-class class))))
+    (when keylist 
+      (convert-to-db-default-case
+       (format nil "CONSTRAINT ~APK PRIMARY KEY~A"
+	       (database-output-sql (view-table class) database)
+	       (database-output-sql keylist database))
+       database))))
+
+(defmethod database-generate-column-definition (class slotdef database)
+  (declare (ignore database class))
+  (when (member (view-class-slot-db-kind slotdef) '(:base :key))
+    (let ((cdef
+           (list (sql-expression :attribute (view-class-slot-column slotdef))
+                 (slot-type slotdef))))
+      (setf cdef (append cdef (list (view-class-slot-db-type slotdef))))
+      (let ((const (view-class-slot-db-constraints slotdef)))
+        (when const 
+          (setq cdef (append cdef (list const)))))
+      cdef)))
+
 
 ;;
 ;; Drop the tables which store the given view class
@@ -227,22 +221,6 @@ superclass of the newly-defined View Class."
 	sels
         (error "No slots of type :base in view-class ~A" (class-name vclass)))))
 
-;;
-;; Used by 'create-view-from-class'
-;;
-
-
-(defmethod database-generate-column-definition (class slotdef database)
-  (declare (ignore database class))
-  (when (member (view-class-slot-db-kind slotdef) '(:base :key))
-    (let ((cdef
-           (list (sql-expression :attribute (view-class-slot-column slotdef))
-                 (slot-type slotdef))))
-      (setf cdef (append cdef (list (view-class-slot-db-type slotdef))))
-      (let ((const (view-class-slot-db-constraints slotdef)))
-        (when const 
-          (setq cdef (append cdef (list const)))))
-      cdef)))
 
 ;;
 ;; Called by 'get-slot-values-from-view'
@@ -328,51 +306,35 @@ superclass of the newly-defined View Class."
       (mapc #'update-slot slotdeflist values)
       obj))
 
-(defgeneric update-record-from-slot (object slot &key database)
-  (:documentation
-   "The generic function UPDATE-RECORD-FROM-SLOT updates an individual
-data item in the column represented by SLOT. The DATABASE is only used
-if OBJECT is not yet associated with any database, in which case a
-record is created in DATABASE. Only SLOT is initialized in this case;
-other columns in the underlying database receive default values. The
-argument SLOT is the CLOS slot name; the corresponding column names
-are derived from the View Class definition."))
-   
 (defmethod update-record-from-slot ((obj standard-db-object) slot &key
-					(database *default-database*))
-  (let* ((vct (view-table (class-of obj)))
+				    (database *default-database*))
+  (let* ((database (or (view-database obj) database))
+	 (vct (view-table (class-of obj)))
          (sd (slotdef-for-slot-with-class slot (class-of obj))))
     (check-slot-type sd (slot-value obj slot))
     (let* ((att (view-class-slot-column sd))
            (val (db-value-from-slot sd (slot-value obj slot) database)))
       (cond ((and vct sd (view-database obj))
              (update-records (sql-expression :table vct)
-                             :attributes (list (sql-expression
-                                                :attribute att))
+                             :attributes (list (sql-expression :attribute att))
                              :values (list val)
                              :where (key-qualifier-for-instance
                                      obj :database database)
-                             :database (view-database obj)))
+                             :database database))
             ((and vct sd (not (view-database obj)))
-             (warn "Ignoring (install-instance obj :database database))")
-	     t)
+	     (insert-records :into (sql-expression :table vct)
+                             :attributes (list (sql-expression :attribute att))
+                             :values (list val)
+			     :database database)
+	     (setf (slot-value obj 'view-database) database))
             (t
              (error "Unable to update record.")))))
-  t)
-
-(defgeneric update-record-from-slots (object slots &key database)
-  (:documentation 
-   "The generic function UPDATE-RECORD-FROM-SLOTS updates data in the
-columns represented by SLOTS. The DATABASE is only used if OBJECT is
-not yet associated with any database, in which case a record is
-created in DATABASE. Only slots are initialized in this case; other
-columns in the underlying database receive default values. The
-argument SLOTS contains the CLOS slot names; the corresponding column
-names are derived from the view class definition."))
+  (values))
 
 (defmethod update-record-from-slots ((obj standard-db-object) slots &key
                                      (database *default-database*))
-  (let* ((vct (view-table (class-of obj)))
+  (let* ((database (or (view-database obj) database))
+	 (vct (view-table (class-of obj)))
          (sds (slotdefs-for-slots-with-class slots (class-of obj)))
          (avps (mapcar #'(lambda (s)
                            (let ((val (slot-value
@@ -387,7 +349,7 @@ names are derived from the view class definition."))
                            :av-pairs avps
                            :where (key-qualifier-for-instance
                                    obj :database database)
-                           :database (view-database obj)))
+                           :database database))
           ((and avps (not (view-database obj)))
            (insert-records :into (sql-expression :table vct)
                            :av-pairs avps
@@ -397,65 +359,45 @@ names are derived from the view class definition."))
            (error "Unable to update records"))))
   (values))
 
-(defgeneric update-records-from-instance (object &key database)
-  (:documentation
-   "Using an instance of a view class, update the database table that
-stores its instance data. If the instance is already associated with a
-database, that database is used, and database is ignored. If instance
-is not yet associated with a database, a record is created for
-instance in the appropriate table of database and the instance becomes
-associated with that database."))
-
 (defmethod update-records-from-instance ((obj standard-db-object)
                                          &key (database *default-database*))
-  (labels ((slot-storedp (slot)
-	     (and (member (view-class-slot-db-kind slot) '(:base :key))
-		  (slot-boundp obj (slot-definition-name slot))))
-	   (slot-value-list (slot)
-	     (let ((value (slot-value obj (slot-definition-name slot))))
-	       (check-slot-type slot value)
-	       (list (sql-expression :attribute (view-class-slot-column slot))
-		     (db-value-from-slot slot value database)))))
-    (let* ((view-class (class-of obj))
-	   (view-class-table (view-table view-class))
-	   (slots (remove-if-not #'slot-storedp (ordered-class-slots view-class)))
-	   (record-values (mapcar #'slot-value-list slots)))
-      (unless record-values
-        (error "No settable slots."))
-      (if (view-database obj)
-          (update-records (sql-expression :table view-class-table)
-                          :av-pairs record-values
-                          :where (key-qualifier-for-instance
-                                  obj :database database)
-                          :database (view-database obj))
-          (progn
-            (insert-records :into (sql-expression :table view-class-table)
-                            :av-pairs record-values
-                            :database database)
-            (setf (slot-value obj 'view-database) database)))
-      (values))))
-
-(defgeneric delete-instance-records (instance)
-  (:documentation
-   "Deletes the records represented by INSTANCE from the database
-associated with it. If instance has no associated database, an error
-is signalled."))
+  (let ((database (or (view-database obj) database)))
+    (labels ((slot-storedp (slot)
+	       (and (member (view-class-slot-db-kind slot) '(:base :key))
+		    (slot-boundp obj (slot-definition-name slot))))
+	     (slot-value-list (slot)
+	       (let ((value (slot-value obj (slot-definition-name slot))))
+		 (check-slot-type slot value)
+		 (list (sql-expression :attribute (view-class-slot-column slot))
+		       (db-value-from-slot slot value database)))))
+      (let* ((view-class (class-of obj))
+	     (view-class-table (view-table view-class))
+	     (slots (remove-if-not #'slot-storedp 
+				   (ordered-class-slots view-class)))
+	     (record-values (mapcar #'slot-value-list slots)))
+	(unless record-values
+	  (error "No settable slots."))
+	(if (view-database obj)
+	    (update-records (sql-expression :table view-class-table)
+			    :av-pairs record-values
+			    :where (key-qualifier-for-instance
+				    obj :database database)
+			    :database database)
+	    (progn
+	      (insert-records :into (sql-expression :table view-class-table)
+			      :av-pairs record-values
+			      :database database)
+	      (setf (slot-value obj 'view-database) database))))))
+  (values))
 
 (defmethod delete-instance-records ((instance standard-db-object))
   (let ((vt (sql-expression :table (view-table (class-of instance))))
-	(vd (or (view-database instance) *default-database*)))
-    (when vd
-      (let ((qualifier (key-qualifier-for-instance instance :database vd)))
-	(delete-records :from vt :where qualifier :database vd)
-	(setf (slot-value instance 'view-database) nil))))
-  #+ignore (odcl::deleted-object object))
-
-(defgeneric update-instance-from-records (instance &key database)
-  (:documentation
-   "Updates the values in the slots of the View Class instance
-INSTANCE using the data in the database DATABASE which defaults to the
-database that INSTANCE is associated with, or the value of
-*DEFAULT-DATABASE*."))
+	(vd (view-database instance)))
+    (if vd
+	(let ((qualifier (key-qualifier-for-instance instance :database vd)))
+	  (delete-records :from vt :where qualifier :database vd)
+	  (setf (slot-value instance 'view-database) nil))
+	(error 'clsql-no-database-error nil))))
 
 (defmethod update-instance-from-records ((instance standard-db-object)
                                          &key (database *default-database*))
@@ -470,13 +412,6 @@ database that INSTANCE is associated with, or the value of
     (when res
       (get-slot-values-from-view instance (mapcar #'car sels) (car res)))))
 
-(defgeneric update-slot-from-record (instance slot &key database)
-  (:documentation
-   "Updates the value in the slot SLOT of the View Class instance
-INSTANCE using the data in the database DATABASE which defaults to the
-database that INSTANCE is associated with, or the value of
-*DEFAULT-DATABASE*."))
-
 (defmethod update-slot-from-record ((instance standard-db-object)
                                     slot &key (database *default-database*))
   (let* ((view-class (find-class (class-name (class-of instance))))
@@ -486,12 +421,9 @@ database that INSTANCE is associated with, or the value of
          (slot-def (slotdef-for-slot-with-class slot view-class))
          (att-ref (generate-attribute-reference view-class slot-def))
          (res (select att-ref :from  view-table :where view-qual)))
-    (get-slot-values-from-view instance (list slot-def) (car res))))
+    (when res 
+      (get-slot-values-from-view instance (list slot-def) (car res)))))
 
-
-(defgeneric database-null-value (type)
-  (:documentation "Return an expression of type TYPE which SQL NULL values
-will be converted into."))
 
 (defmethod database-null-value ((type t))
   (cond
@@ -507,12 +439,6 @@ will be converted into."))
     ((subtypep type 'money) nil)
     (t
      (error "Unable to handle null for type ~A" type))))
-
-(defgeneric update-slot-with-null (instance slotname slotdef)
-  (:documentation "Called to update a slot when its column has a NULL
-value.  If nulls are allowed for the column, the slot's value will be
-nil, otherwise its value will be set to the result of calling
-DATABASE-NULL-VALUE on the type of the slot."))
 
 (defmethod update-slot-with-null ((object standard-db-object)
 				  slotname
@@ -810,76 +736,78 @@ DATABASE-NULL-VALUE on the type of the slot."))
                 (apply #'sql-and jc)
                 jc))))))
 
-(defmethod postinitialize ((self t))
-  )
-
 (defun find-all (view-classes &rest args &key all set-operation distinct from
                  where group-by having order-by order-by-descending offset limit
-                 (database *default-database*))
+		 refresh (database *default-database*))
   "tweeze me apart someone pleeze"
-  (declare (ignore all set-operation group-by having
-                   offset limit)
+  (declare (ignore all set-operation group-by having offset limit)
            (optimize (debug 3) (speed 1)))
-  ;; (cmsg "Args = ~s" args)
   (remf args :from)
-  (let* ((*db-deserializing* t)
-         (*default-database* (or database
-                                 (error 'clsql-no-database-error nil))))
-    (flet ((table-sql-expr (table)
-             (sql-expression :table (view-table table)))
-           (ref-equal (ref1 ref2)
-             (equal (sql ref1)
-                    (sql ref2)))
-           (tables-equal (table-a table-b)
-             (string= (string (slot-value table-a 'name))
-                      (string (slot-value table-b 'name)))))
-
-      (let* ((sclasses (mapcar #'find-class view-classes))
-             (sels (mapcar #'generate-selection-list sclasses))
-             (fullsels (apply #'append sels))
-             (sel-tables (collect-table-refs where))
-             (tables (remove-duplicates (append (mapcar #'table-sql-expr sclasses) sel-tables)
-                                        :test #'tables-equal))
-             (res nil))
+  (labels ((table-sql-expr (table)
+	     (sql-expression :table (view-table table)))
+	   (ref-equal (ref1 ref2)
+	     (equal (sql ref1)
+		    (sql ref2)))
+	   (tables-equal (table-a table-b)
+	     (string= (string (slot-value table-a 'name))
+		      (string (slot-value table-b 'name))))
+	   (build-object (vals vclass selects)
+	     (let* ((class-name (class-name vclass))
+		    (db-vals (butlast vals (- (list-length vals)
+					      (list-length selects))))
+		    (*db-initializing* t)
+		    (obj (make-instance class-name :view-database database)))
+	       ;; use refresh keyword here 
+	       (setf obj (get-slot-values-from-view obj (mapcar #'car selects) 
+						    db-vals))
+	       (when refresh (instance-refreshed obj))
+	       obj))
+	   (build-objects (vals sclasses sels)
+	     (let ((objects (mapcar #'(lambda (sclass sel) 
+					(build-object vals sclass sel))
+				    sclasses sels)))
+	       (if (= (length sclasses) 1)
+		   (car objects)
+		   objects))))
+    (let* ((*db-deserializing* t)
+	   (*default-database* (or database
+				   (error 'clsql-no-database-error nil)))
+	   (sclasses (mapcar #'find-class view-classes))
+	   (sels (mapcar #'generate-selection-list sclasses))
+	   (fullsels (apply #'append sels))
+	   (sel-tables (collect-table-refs where))
+	   (tables (remove-duplicates (append (mapcar #'table-sql-expr sclasses)
+					      sel-tables)
+				      :test #'tables-equal))
+	   (res nil))
         (dolist (ob (listify order-by))
           (when (and ob (not (member ob (mapcar #'cdr fullsels)
                                      :test #'ref-equal)))
-            (setq fullsels (append fullsels (mapcar #'(lambda (att) (cons nil att))
-                                                    (listify ob))))))
+            (setq fullsels 
+		  (append fullsels (mapcar #'(lambda (att) (cons nil att))
+					   (listify ob))))))
         (dolist (ob (listify order-by-descending))
           (when (and ob (not (member ob (mapcar #'cdr fullsels)
                                      :test #'ref-equal)))
-            (setq fullsels (append fullsels (mapcar #'(lambda (att) (cons nil att))
-                                                    (listify ob))))))
+            (setq fullsels 
+		  (append fullsels (mapcar #'(lambda (att) (cons nil att))
+					   (listify ob))))))
         (dolist (ob (listify distinct))
-          (when (and (typep ob 'sql-ident) (not (member ob (mapcar #'cdr fullsels)
-                                                        :test #'ref-equal)))
-            (setq fullsels (append fullsels (mapcar #'(lambda (att) (cons nil att))
-                                                    (listify ob))))))
-        ;; (cmsg  "Tables = ~s" tables)
-        ;; (cmsg  "From = ~s" from)
-        (setq res (apply #'select (append (mapcar #'cdr fullsels)
-                                          (cons :from (list (append (when from (listify from)) (listify tables)))) args)))
-        (flet ((build-object (vals)
-                 (flet ((%build-object (vclass selects)
-                          (let ((class-name (class-name vclass))
-                                (db-vals    (butlast vals (- (list-length vals)
-                                                             (list-length selects)))))
-                            ;; (setf vals (nthcdr (list-length selects) vals))
-                            (%make-fresh-object class-name (mapcar #'car selects) db-vals))))
-                   (let ((objects (mapcar #'%build-object sclasses sels)))
-                     (if (= (length sclasses) 1)
-                         (car objects)
-                         objects)))))
-          (mapcar #'build-object res))))))
+          (when (and (typep ob 'sql-ident) 
+		     (not (member ob (mapcar #'cdr fullsels) 
+				  :test #'ref-equal)))
+            (setq fullsels 
+		  (append fullsels (mapcar #'(lambda (att) (cons nil att))
+					   (listify ob))))))
+        (setq res 
+	      (apply #'select 
+		     (append (mapcar #'cdr fullsels)
+			     (cons :from 
+				   (list (append (when from (listify from)) 
+						 (listify tables)))) args)))
+	(mapcar #'(lambda (r) (build-objects r sclasses sels)) res))))
 
-(defun %make-fresh-object (class-name slots values)
-  (let* ((*db-initializing* t)
-         (obj (make-instance class-name
-                             :view-database *default-database*)))
-    (setf obj (get-slot-values-from-view obj slots values))
-    (postinitialize obj)
-    obj))
+(defmethod instance-refreshed ((instance standard-db-object)))
 
 (defun select (&rest select-all-args)
   "Selects data from database given the constraints specified. Returns
@@ -897,7 +825,6 @@ tuples."
                        target-args))))
     (multiple-value-bind (target-args qualifier-args)
         (query-get-selections select-all-args)
-      ;; (cmsg "Qual args = ~s" qualifier-args)
       (if (select-objects target-args)
           (apply #'find-all target-args qualifier-args)
           (let ((expr (apply #'make-query select-all-args)))

@@ -33,7 +33,7 @@
   (query (sql-output expr database) :database database :flatp flatp
          :result-types result-types))
 
-(defun truncate-database (&key database)
+(defun truncate-database (&key (database *default-database*))
   (unless (typep database 'database)
     (clsql-base-sys::signal-no-database-error database))
   (unless (is-database-open database)
