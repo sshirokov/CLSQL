@@ -56,6 +56,7 @@ fi
 scp ${DEBPKG}_${DEBVERSION}.diff.gz ${DEBIAN_DIR}
 scp ${DEBPKG}_${DEBVERSION}.dsc ${DEBIAN_DIR}
 scp ${DEBPKG}_${DEBVERSION}_*.deb ${DEBIAN_DIR}
+scp ${DEBPKG}-*_${DEBVERSION}_*.deb ${DEBIAN_DIR}
 scp ${DEBPKG}_${DEBVERSION}_*.changes ${DEBIAN_DIR} # upload last
 
 popd > /dev/null

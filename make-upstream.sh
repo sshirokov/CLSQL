@@ -56,7 +56,7 @@ if [ ! -z ${opt_tag} ]; then
 
 fi
 
-if [ -z ${opt_force} -a -f ${PACKAGE_DIR}/${DEBPKG}_${VERSION}.orig.tar.gz ]; then
+if [ -f ${PACKAGE_DIR}/${DEBPKG}_${VERSION}.orig.tar.gz ]; then
   echo "File ${PACKAGE_DIR}/${DEBPKG}_${VERSION}.orig.tar.gz already exists."
   echo -n "Are you sure that you want to create a new upstream archive? (y/N): "
   read answer
@@ -76,8 +76,7 @@ cp -a ${TOPDIR} ${DISTDIR}
 
 echo "Cleaning distribution directory ${DISTDIR}"
 cd ${DISTDIR}
-rm -f upload.sh make-debian.sh make-upstream.sh cvsbp-prepare.sh 
-rm -f test-suite/test.config
+rm -f upload.sh make-debian.sh make-upstream.sh cvsbp-prepare.sh test-suite/test.config
 rm -f `find . -type f -name .cvsignore`
 rm -rf `find . -type d -name CVS`
 rm -f `find . -type f -name '*~' -or -name '.#*'  -or -name '#*#' -or -name ".*~"`
