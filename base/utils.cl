@@ -7,7 +7,7 @@
 ;;;; Programmer:   Kevin M. Rosenberg
 ;;;; Date Started: Mar 2002
 ;;;;
-;;;; $Id: utils.cl,v 1.1 2002/05/15 17:19:42 kevin Exp $
+;;;; $Id: utils.cl,v 1.2 2002/05/15 17:23:59 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -32,7 +32,7 @@
   "Convert exponent character for SQL"
   (substitute #\e #\f (substitute #\e #\d (write-to-string num :readably t))))
 
-(defun sql-escape-quotes (s)
+(defun sql-escape (s)
   "Escape single quotes for SQL"
   (substitute-string-for-char s #\' "''"))
 
