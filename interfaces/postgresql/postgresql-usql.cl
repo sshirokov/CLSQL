@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: postgresql-usql.cl,v 1.1 2002/04/01 05:27:55 kevin Exp $
+;;;; $Id: postgresql-usql.cl,v 1.2 2002/04/07 15:11:04 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and by onShore Development Inc.
@@ -33,13 +33,9 @@
 
 
 
-(defmethod database-list-attributes (table (database postgresql-database))
-  (let* ((relname (etypecase table
-		    (clsql::sql-ident
-		     (string-downcase
-		      (symbol-name (slot-value table 'clsql::name))))
-		    (string table)))
-	 (result
+(defmethod database-list-attributes ((table string)
+				     (database postgresql-database))
+  (let* ((result
 	  (mapcar #'car
 		  (database-query
 		   (format nil
@@ -57,7 +53,7 @@
 						"tableoid") :test #'equal)) 
 		    result)))))
 
-(defmethod database-attribute-type (attribute table
+(defmethod database-attribute-type (attribute (table string)
 				    (database postgresql-database))
   (let ((result
 	  (mapcar #'car

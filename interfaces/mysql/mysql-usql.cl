@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: mysql-usql.cl,v 1.2 2002/04/03 04:54:17 kevin Exp $
+;;;; $Id: mysql-usql.cl,v 1.3 2002/04/07 15:11:04 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and by onShore Development Inc.
@@ -26,32 +26,20 @@
   (mapcar #'car (database-query "show tables" database :auto)))
     
 
-(defmethod database-list-attributes (table (database mysql-database))
-  (let* ((relname (etypecase table
-		    (clsql::sql-ident
-		     (string-downcase
-		      (symbol-name (slot-value table 'clsql::name))))
-		    (string table)))
-	 (result
-	  (mapcar #'car
-		  (database-query
-		   (format nil
-			   "SHOW COLUMNS FROM ~A" relname)
-		   database nil))))
-    result)) ;; MySQL returns columns in reverse order defined
 
-(defmethod database-attribute-type (attribute table
+(defmethod database-list-attributes ((table string) (database mysql-database))
+  (mapcar #'car
+	  (database-query
+	   (format nil "SHOW COLUMNS FROM ~A" table)
+	   database nil)))
+
+(defmethod database-attribute-type (attribute (table string)
 				    (database mysql-database))
-  (let* ((relname (etypecase table
-		    (clsql::sql-ident
-		     (string-downcase
-		      (symbol-name (slot-value table 'clsql::name))))
-		    (string table)))
-	 (result
+  (let ((result
 	  (mapcar #'cadr
 		  (database-query
 		   (format nil
-			   "SHOW COLUMNS FROM ~A LIKE '~A'" relname attribute)
+			   "SHOW COLUMNS FROM ~A LIKE '~A'" table attribute)
 		   database nil))))
     (let* ((str (car result))
 	   (end-str (position #\( str))
