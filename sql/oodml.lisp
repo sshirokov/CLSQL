@@ -751,7 +751,8 @@ maximum of MAX-LEN instances updated in each query."
 	 (jc (gethash :join-class dbi)))
     (let ((jq (join-qualifier class object slot-def)))
       (when jq 
-        (select jc :where jq :flatp t :result-types nil)))))
+        (select jc :where jq :flatp t :result-types nil
+		:database (view-database object))))))
 
 (defun fault-join-slot (class object slot-def)
   (let* ((dbi (view-class-slot-db-info slot-def))

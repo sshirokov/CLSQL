@@ -1,3 +1,9 @@
+cl-sql (3.0.11-1) unstable; urgency=low
+
+  * New usptream
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sat, 23 Oct 2004 09:34:31 -0600
+
 cl-sql (3.0.10-1) unstable; urgency=low
 
   * New upstream

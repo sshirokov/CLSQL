@@ -1,3 +1,7 @@
+23 Oct 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/oodml.lisp: Commit patch from Walter Pelis
+	to use an object's database for a select on its slot.
+	
 20 Oct 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* uffi/uffi.c, uffi/clsql-uffi.lisp: Commit patch from
 	Aurelio Bignoli to fix negative 64-bit integers
