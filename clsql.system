@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql.system,v 1.7 2002/04/27 21:48:08 kevin Exp $
+;;;; $Id: clsql.system,v 1.8 2002/05/11 22:23:52 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -37,7 +37,7 @@
     :source-extension "cl"
     :binary-pathname "CLSQL:sql;bin;"
     :components ((:file "package")
-		 (:file "classes")
+		 (:file "classes" :depends-on ("package"))
 		 (:file "conditions" :depends-on ("classes"))
 		 (:file "db-interface" :depends-on ("conditions"))
 		 (:file "pool" :depends-on ("db-interface"))
