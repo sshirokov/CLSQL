@@ -31,14 +31,14 @@ that expression and a list of field names selected in sql-exp."))
 
 (defmethod query ((query-expression string) &key (database *default-database*)
                   (result-types nil) (flatp nil))
-  (record-sql-command query-expression database)
+  (record-sql-action query-expression :query database)
   (let* ((res (database-query query-expression database result-types))
          (res (if (and flatp (= (length
                                  (slot-value query-expression 'selections))
                                 1))
                   (mapcar #'car res)
                   res)))
-    (record-sql-result res database)
+    (record-sql-action res :result database)
     res))
 
 ;;; Execute
@@ -54,11 +54,15 @@ pair."))
 
 (defmethod execute-command ((sql-expression string)
                             &key (database *default-database*))
-  (record-sql-command sql-expression database)
+  (record-sql-action sql-expression :command database)
   (let ((res (database-execute-command sql-expression database)))
-    (record-sql-result res database))
+    (record-sql-action res :result database))
   (values))
 
+
+(defun describe-table (table &key (database *default-database*))
+  "Return list of 2-element lists containing table name and type."
+  (database-describe-table database table))
 
 (defmacro do-query (((&rest args) query-expression
 		     &key (database '*default-database*) (result-types nil))

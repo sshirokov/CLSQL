@@ -231,3 +231,10 @@ returns (VALUES string-output error-output exit-status)"
     (keyword name)
     (string (nth-value 0 (intern (string-default-case name) :keyword)))
     (symbol (nth-value 0 (intern (symbol-name name) :keyword)))))
+
+;; From KMRCL
+(defmacro in (obj &rest choices)
+  (let ((insym (gensym)))
+    `(let ((,insym ,obj))
+       (or ,@(mapcar #'(lambda (c) `(eql ,insym ,c))
+                     choices)))))

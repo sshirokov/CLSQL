@@ -32,11 +32,8 @@
   (when (transaction database)
     (push rollback-hook (rollback-hooks (transaction database)))))
 
-(defmethod database-start-transaction ((database closed-database))
-  (signal-closed-database-error database))
-
 (defmethod database-start-transaction (database)
-  (unless database (error 'clsql-nodb-error))
+  (unless database (error 'clsql-no-database-error))
   (unless (transaction database)
     (setf (transaction database) (make-instance 'transaction)))
   (when (= (incf (transaction-level database) 1))
@@ -46,9 +43,6 @@
             (transaction-status transaction) nil)
       (execute-command "BEGIN" :database database))))
 
-(defmethod database-commit-transaction ((database closed-database))
-  (signal-closed-database-error database))
-
 (defmethod database-commit-transaction (database)
     (if (> (transaction-level database) 0)
         (when (zerop (decf (transaction-level database)))
@@ -57,9 +51,6 @@
         (warn 'clsql-simple-warning
               :format-control "Cannot commit transaction against ~A because there is no transaction in progress."
               :format-arguments (list database))))
-
-(defmethod database-abort-transaction ((database closed-database))
-  (signal-closed-database-error database))
 
 (defmethod database-abort-transaction (database)
     (if (> (transaction-level database) 0)

@@ -20,29 +20,38 @@
 
 (defun make-process-lock (name) 
   #+allegro (mp:make-process-lock :name name)
-  #+scl (thread:make-lock name)
+  #+cmu (mp:make-lock :name name)
   #+lispworks (mp:make-lock :name name)
-  #-(or allegro scl lispworks) (declare (ignore name))
-  #-(or allegro scl lispworks) nil)
+  #+openmcl (ccl:make-lock :name name)
+  #+sb-thread (sb-thread:make-mutex :name name)
+  #+scl (thread:make-lock name)
+  #-(or allegro cmu lispworks openmcl sb-thread scl) (declare (ignore name))
+  #-(or allegro cmu lispworks openmcl sb-thread scl) nil)
 
 (defmacro with-process-lock ((lock desc) &body body)
-  #+scl `(thread:with-lock-held (,lock ,desc) ,@body)
-  #+(or allegro lispworks)
+  #+(or cmu allegro lispworks openmcl sb-thread)
   (declare (ignore desc))
-  #+(or allegro lispworks)
+  #+(or allegro cmu lispworks openmcl sb-thread)
   (let ((l (gensym)))
     `(let ((,l ,lock))
-       #+allegro (mp:with-process-lock (,l) ,@body)
-       #+lispworks (mp:with-lock (,l) ,@body)))
-  #-(or scl allegro lispworks) (declare (ignore lock desc))
-  #-(or scl allegro lispworks) `(progn ,@body))
+      #+allegro (mp:with-process-lock (,l) ,@body)
+      #+cmu `(mp:with-lock-held (,lock) ,@body)
+      #+openmcl (ccl:with-lock-grabbed (,lock) ,@body)
+      #+lispworks (mp:with-lock (,l) ,@body)
+      #+sb-thread (sb-thread:with-recursive-lock (,lock) ,@body)
+      ))
+
+  #+scl `(thread:with-lock-held (,lock ,desc) ,@body)
+
+  #-(or cmu allegro lispworks openmcl sb-thread scl) (declare (ignore lock desc))
+  #-(or cmu allegro lispworks openmcl sb-thread scl) `(progn ,@body))
 
 (defvar *db-pool* (make-hash-table :test #'equal))
 (defvar *db-pool-lock* (make-process-lock "DB Pool lock"))
 
 (defclass conn-pool ()
   ((connection-spec :accessor connection-spec :initarg :connection-spec)
-   (database-type :accessor database-type :initarg :database-type)
+   (database-type :accessor pool-database-type :initarg :pool-database-type)
    (free-connections :accessor free-connections
 		     :initform (make-array 5 :fill-pointer 0 :adjustable t))
    (all-connections :accessor all-connections
@@ -55,7 +64,7 @@
 	(and (plusp (length (free-connections pool)))
 	     (vector-pop (free-connections pool))))
       (let ((conn (connect (connection-spec pool)
-			   :database-type (database-type pool)
+			   :database-type (pool-database-type pool)
 			   :if-exists :new)))
 	(with-process-lock ((conn-pool-lock pool) "Acquire from pool")
 	  (vector-push-extend conn (all-connections pool))
@@ -85,7 +94,7 @@ if not found"
       (unless conn-pool
 	(setq conn-pool (make-instance 'conn-pool
 				       :connection-spec connection-spec
-				       :database-type database-type))
+				       :pool-database-type database-type))
 	(setf (gethash key *db-pool*) conn-pool))
       conn-pool)))
 

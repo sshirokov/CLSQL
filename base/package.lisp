@@ -34,6 +34,7 @@
      #:database-initialize-database-type
      #:database-connect
      #:database-disconnect
+     #:database-reconnect
      #:database-query
      #:database-execute-command
      #:database-query-result-set
@@ -42,7 +43,8 @@
      #:database-create
      #:database-destroy
      #:database-probe
-
+     #:database-describe-table
+     
      #:database-list-tables
      #:database-list-attributes
      #:database-attribute-type
@@ -57,8 +59,6 @@
      #:database-list-indexes
      #:database-list-views
      
-     ;; Support for pooled connections
-     #:database-type
      
      ;; Large objects (Marc B)
      #:database-create-large-object
@@ -67,6 +67,10 @@
      #:database-delete-large-object
 
      #:command-output
+     #:make-process-lock
+     #:with-process-lock
+     #:connection-spec
+     #:ensure-keyword
      
      ;; Shared exports for re-export by CLSQL-BASE
      .
@@ -113,9 +117,9 @@
 	 #:connected-databases
 	 #:database
 	 #:database-name
-	 #:closed-database
 	 #:find-database
 	 #:database-name-from-spec
+	 #:is-database-open
 
 	 ;; accessors for database class
 	 #:name
@@ -125,8 +129,11 @@
 	 #:conn-pool
 	 #:command-recording-stream
 	 #:result-recording-stream
+	 #:query-recording-stream
 	 #:view-classes
-	 
+	 #:database-type
+	 #:database-state
+
 	 ;; utils.lisp
 	 #:number-to-sql-string
 	 #:float-to-sql-string
@@ -207,8 +214,7 @@
 	 #:week-containing
 
 	 ;; recording.lisp -- SQL I/O Recording 
-	 #:record-sql-comand
-	 #:record-sql-result
+	 #:record-sql-action
 	 #:add-sql-stream                 ; recording  xx
 	 #:delete-sql-stream	          ; recording  xx
 	 #:list-sql-streams	          ; recording  xx
@@ -244,6 +250,7 @@
 	 #:delete-large-object
 	 #:do-query
 	 #:map-query
+	 #:describe-table
 
 	 ;; Transactions
 	 #:with-transaction
