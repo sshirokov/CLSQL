@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql.system,v 1.8 2002/05/11 22:23:52 kevin Exp $
+;;;; $Id: clsql.system,v 1.9 2002/05/13 00:45:10 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -19,34 +19,32 @@
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :cl-user)
 
-(load (make-pathname :name "set-logical" :type "cl"
-		     :defaults *load-truename*))
-(set-logical-host-for-pathname "CLSQL" *load-truename*)
+(handler-case
+    (logical-pathname-translations "CL-LIBRARY")
+  (error ()
+      (load (make-pathname :name "set-cl-library" :type "cl"
+			   :defaults *load-truename*))))
 
 ;;; System definitions
 
 (mk:defsystem :cmucl-compat
-    :source-pathname "CLSQL:cmucl-compat;"
+    :source-pathname "CL-LIBRARY:clsql;cmucl-compat;"
     :source-extension "cl"
-    :binary-pathname "CLSQL:cmucl-compat;bin;"
+    :binary-pathname "CL-LIBRARY:clsql;cmucl-compat;bin;"
     :components ((:file "cmucl-compat")
 		 (:file "loop-extension")))
 
 (mk:defsystem :clsql
-    :source-pathname "CLSQL:sql;"
+    :source-pathname "CL-LIBRARY:clsql;sql;"
     :source-extension "cl"
-    :binary-pathname "CLSQL:sql;bin;"
-    :components ((:file "package")
-		 (:file "classes" :depends-on ("package"))
-		 (:file "conditions" :depends-on ("classes"))
-		 (:file "db-interface" :depends-on ("conditions"))
-		 (:file "pool" :depends-on ("db-interface"))
+    :binary-pathname "CL-LIBRARY:clsql;sql;bin;"
+    :components ((:file "pool")
 		 (:file "sql" :depends-on ("pool"))
 		 (:file "transactions" :depends-on ("sql"))
-		 (:file "utils" :depends-on ("package"))
+		 (:file "utils")
 		 (:file "functional" :depends-on ("sql"))
 		 (:file "usql" :depends-on ("sql")))
-    :depends-on (:cmucl-compat)
+    :depends-on (:clsql-base)
     :finally-do
     (pushnew :clsql cl:*features*)
     )
