@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.23 2002/09/18 07:43:40 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.24 2002/09/18 07:51:22 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -15,13 +15,13 @@
 
 PKG	:= clsql
 DEBPKG	:= cl-sql
-SUBDIRS	:= sql clsql-uffi base clsql-mysql clsql-aodbc \
-	   clsql-postgresql clsql-postgresql-socket 
+SUBDIRS	:= sql uffi base db-mysql db-aodbc \
+	   db-postgresql db-postgresql-socket 
 DOCSUBDIRS:=doc
 
 include Makefile.common
 
-LIBSUBDIRS=clsql-mysql clsql-uffi
+LIBSUBDIRS=db-mysql uffi
 .PHONY: subdirs $(LIBSUBDIRS)
 
 .PHONY: all

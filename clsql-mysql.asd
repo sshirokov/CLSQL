@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-mysql.asd,v 1.6 2002/09/17 17:16:43 kevin Exp $
+;;;; $Id: clsql-mysql.asd,v 1.7 2002/09/18 07:50:01 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -24,7 +24,7 @@
 
 (defsystem :clsql-mysql
   :components
-  ((:module :mysql
+  ((:module :db-mysql
 	    :components
 	    ((:file "mysql-package")
 	     (:file "mysql-loader" :depends-on ("mysql-package"))
@@ -34,5 +34,5 @@
   :depends-on (:uffi :clsql-base :clsql-uffi))
    
 (defmethod source-file-type  ((c cl-source-file)
-			      (s (eql (find-system 'clsql-mysql)))) 
+			      (s (eql (find-system :clsql-mysql)))) 
    "cl")

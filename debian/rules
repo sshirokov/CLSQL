@@ -25,13 +25,13 @@ UPSTREAM_VER	:= $(shell sed -n -e "s/${pkg} (\(.*\)-[0-9A-Za-z\.]).*/\1/p" < deb
 ## Lisp sources
 srcs		:= sql clsql.asd
 srcs-base	:= $(wildcard base/*.cl) 
-srcs-uffi	:= $(wildcard clsql-uffi/*.cl) $(wildcard clsql-uffi/*.c)
-srcs-uffi-so:= $(wildcard clsql-uffi/*.so)
-srcs-mysql	:= $(wildcard clsql-mysql/*.cl) $(wildcard clsql-mysql/*.c)
-srcs-mysql-so	:=  $(wildcard clsql-mysql/*.so)
-srcs-pg		:= $(wildcard clsql-postgresql/*.cl)
-srcs-pg-socket	:= $(wildcard clsql-postgresql-socket/*.cl)
-srcs-aodbc	:= $(wildcard clsql-aodbc/*.cl)
+srcs-uffi	:= $(wildcard uffi/*.cl) $(wildcard uffi/*.c)
+srcs-uffi-so	:= $(wildcard uffi/*.so)
+srcs-mysql	:= $(wildcard db-mysql/*.cl) $(wildcard db-mysql/*.c)
+srcs-mysql-so	:=  $(wildcard db-mysql/*.so)
+srcs-pg		:= $(wildcard db-postgresql/*.cl)
+srcs-pg-socket	:= $(wildcard db-postgresql-socket/*.cl)
+srcs-aodbc	:= $(wildcard db-aodbc/*.cl)
 
 clc-base	:= usr/share/common-lisp
 clc-source	:= $(clc-base)/source
@@ -45,17 +45,17 @@ lispdir-sql	:= $(clc-sql)/sql
 clc-base	:= $(clc-source)/clsql-base
 lispdir-base	:= $(clc-base)/base
 clc-uffi	 := $(clc-source)/clsql-uffi
-lispdir-uffi := $(clc-uffi)/clsql-uffi
-sodir-uffi := usr/lib/clsql
+lispdir-uffi 	:= $(clc-uffi)/uffi
+sodir-uffi 	:= usr/lib/clsql
 clc-mysql	:= $(clc-source)/clsql-mysql
-lispdir-mysql	:= $(clc-mysql)/clsql-mysql
+lispdir-mysql	:= $(clc-mysql)/db-mysql
 sodir-mysql	:= usr/lib/clsql
 clc-pg		:= $(clc-source)/clsql-postgresql
-lispdir-pg	:= $(clc-pg)/clsql-postgresql
-clc-socket := $(clc-source)/clsql-postgresql-socket
-lispdir-pg-socket := $(clc-pg-socket)/clsql-postgresql-socket
+lispdir-pg	:= $(clc-pg)/db-postgresql
+clc-socket 	:= $(clc-source)/clsql-postgresql-socket
+lispdir-pg-socket := $(clc-pg-socket)/db-postgresql-socket
 clc-aodbc	:= $(clc-source)/clsql-aodbc
-lispdir-aodbc	:= $(clc-aodbc)/clsql-aodbc
+lispdir-aodbc	:= $(clc-aodbc)/db-aodbc
 
 
 configure: configure-stamp
