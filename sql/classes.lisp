@@ -515,7 +515,9 @@
 (defvar *select-arguments*
   '(:all :database :distinct :flatp :from :group-by :having :order-by
     :order-by-descending :set-operation :where :offset :limit
-    :inner-join :on))
+    :inner-join :on
+    ;; below keywords are not a SQL argument, but these keywords may terminate select
+    :caching :refresh))
 
 (defun query-arg-p (sym)
   (member sym *select-arguments*))

@@ -24,13 +24,13 @@
 	
 	(deftest :oodml/select/1
 	    (mapcar #'(lambda (e) (slot-value e 'last-name))
-	     (clsql:select 'employee :order-by [last-name] :flatp t))
+	     (clsql:select 'employee :order-by [last-name] :flatp t :caching nil))
 	  ("Andropov" "Brezhnev" "Chernenko" "Gorbachev" "Kruschev" "Lenin" "Putin"
 	   "Stalin" "Trotsky" "Yeltsin"))
 
 	(deftest :oodml/select/2
 	    (mapcar #'(lambda (e) (slot-value e 'name))
-	     (clsql:select 'company :flatp t))
+	     (clsql:select 'company :flatp t :caching nil))
 	  ("Widgets Inc."))
 
 	(deftest :oodml/select/3
@@ -40,7 +40,8 @@
 					  [slot-value 'company 'companyid]]
 				       [= [slot-value 'company 'name]
 					  "Widgets Inc."]]
-			   :flatp t))
+			   :flatp t
+			   :caching nil))
 	  (1 1 1 1 1 1 1 1 1 1))
 
 	(deftest :oodml/select/4
@@ -51,15 +52,16 @@
 	     (clsql:select 'employee :where [= [slot-value 'employee 'first-name]
 					       "Vladamir"]
 			   :flatp t		     
-			   :order-by [last-name]))
+			   :order-by [last-name]
+			   :caching nil))
 	  ("Vladamir Lenin" "Vladamir Putin"))
 
 	(deftest :oodml/select/5
-	    (length (clsql:select 'employee :where [married] :flatp t))
+	    (length (clsql:select 'employee :where [married] :flatp t :caching nil))
 	  3)
 
 	(deftest :oodml/select/6
-	    (let ((a (caar (clsql:select 'address :where [= 1 [addressid]]))))
+	    (let ((a (caar (clsql:select 'address :where [= 1 [addressid]] :caching nil))))
 	      (values
 	       (slot-value a 'street-number)
 	       (slot-value a 'street-name)
@@ -68,7 +70,7 @@
 	  10 "Park Place" "Leningrad" 123)
 
 	(deftest :oodml/select/7
-	    (let ((a (caar (clsql:select 'address :where [= 2 [addressid]]))))
+	    (let ((a (caar (clsql:select 'address :where [= 2 [addressid]] :caching nil))))
 	      (values
 	       (slot-value a 'street-number)
 	       (slot-value a 'street-name)
@@ -78,7 +80,7 @@
 
 	(deftest :oodml/select/8 
 	    (mapcar #'(lambda (e) (slot-value e 'married)) 
-	     (clsql:select 'employee :flatp t :order-by [emplid]))
+	     (clsql:select 'employee :flatp t :order-by [emplid] :caching nil))
 	  (t t t nil nil nil nil nil nil nil))
 
 	(deftest :oodml/select/9
@@ -106,28 +108,28 @@
 	;; test retrieval is deferred
 	(deftest :oodm/retrieval/1
 	    (every #'(lambda (e) (not (slot-boundp e 'company)))
-	     (select 'employee :flatp t))
+	     (select 'employee :flatp t :caching nil))
 	  t)
 
 	;; :retrieval :immediate should be boundp before accessed
 	(deftest :oodm/retrieval/2
 	    (every #'(lambda (ea) (slot-boundp ea 'address))
-	     (select 'employee-address :flatp t))
+	     (select 'employee-address :flatp t :caching nil))
 	  t)
 
 	(deftest :oodm/retrieval/3
 	    (mapcar #'(lambda (ea) (typep (slot-value ea 'address) 'address))
-	     (select 'employee-address :flatp t))
+	     (select 'employee-address :flatp t :caching nil))
 	  (t t t t t))
 
 	(deftest :oodm/retrieval/4
 	    (every #'(lambda (ea) (slot-boundp (slot-value ea 'address) 'addressid))
-	     (select 'employee-address :flatp t))
+	     (select 'employee-address :flatp t :caching nil))
 	  t)
 
 	(deftest :oodm/retrieval/5	    
 	    (mapcar #'(lambda (ea) (slot-value (slot-value ea 'address) 'street-number))
-	     (select 'employee-address :flatp t :order-by [aaddressid]))
+	     (select 'employee-address :flatp t :order-by [aaddressid] :caching nil))
 	  (10 10 nil nil nil))
 
 	;; tests update-records-from-instance 
@@ -137,7 +139,8 @@
 	       (let ((lenin (car (clsql:select 'employee
 					       :where [= [slot-value 'employee 'emplid]
 							 1]
-					       :flatp t))))
+					       :flatp t
+					       :caching nil))))
 		 (concatenate 'string
 			      (first-name lenin)
 			      " "
@@ -152,7 +155,8 @@
 	       (let ((lenin (car (clsql:select 'employee
 					       :where [= [slot-value 'employee 'emplid]
 							 1]
-					       :flatp t))))
+					       :flatp t
+					       :caching nil))))
 		 (concatenate 'string
 			      (first-name lenin)
 			      " "
@@ -167,7 +171,8 @@
 	       (let ((lenin (car (clsql:select 'employee
 					       :where [= [slot-value 'employee 'emplid]
 							 1]
-					       :flatp t))))
+					       :flatp t
+					       :caching nil))))
 		 (concatenate 'string
 			      (first-name lenin)
 			      " "
@@ -184,21 +189,24 @@
 	     (employee-email
 	      (car (clsql:select 'employee
 				 :where [= [slot-value 'employee 'emplid] 1]
-				 :flatp t)))
+				 :flatp t
+				 :caching nil)))
 	     (progn
 	       (setf (slot-value employee1 'email) "lenin-nospam@soviet.org")
 	       (clsql:update-record-from-slot employee1 'email)
 	       (employee-email
 		(car (clsql:select 'employee
 				   :where [= [slot-value 'employee 'emplid] 1]
-				   :flatp t))))
+				   :flatp t
+				   :caching nil))))
 	     (progn 
 	       (setf (slot-value employee1 'email) "lenin@soviet.org")
 	       (clsql:update-record-from-slot employee1 'email)
 	       (employee-email
 		(car (clsql:select 'employee
 				   :where [= [slot-value 'employee 'emplid] 1]
-				   :flatp t)))))
+				   :flatp t
+				   :caching nil)))))
 	  "lenin@soviet.org" "lenin-nospam@soviet.org" "lenin@soviet.org")
 
 	;; tests update-record-from-slots
@@ -207,7 +215,8 @@
 	     (let ((lenin (car (clsql:select 'employee
 					     :where [= [slot-value 'employee 'emplid]
 						       1]
-					     :flatp t))))
+					     :flatp t
+					     :caching nil))))
 	       (concatenate 'string
 			    (first-name lenin)
 			    " "
@@ -222,7 +231,8 @@
 	       (let ((lenin (car (clsql:select 'employee
 					       :where [= [slot-value 'employee 'emplid]
 							 1]
-					       :flatp t))))
+					       :flatp t
+					       :caching nil))))
 		 (concatenate 'string
 			      (first-name lenin)
 			      " "
@@ -237,7 +247,8 @@
 	       (let ((lenin (car (clsql:select 'employee
 					       :where [= [slot-value 'employee 'emplid]
 							 1]
-					       :flatp t))))
+					       :flatp t
+					       :caching nil))))
 		 (concatenate 'string
 			      (first-name lenin)
 			      " "

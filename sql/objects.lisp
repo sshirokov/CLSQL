@@ -963,8 +963,7 @@ superclass of the newly-defined View Class."
 									     jcs))
 								 immediate-join-classes)
 							 sel-tables)
-						 :test #'tables-equal)))
-	   (res nil))
+						 :test #'tables-equal))))
       (dolist (ob (listify order-by))
 	(when (and ob (not (member ob (mapcar #'cdr fullsels)
 				   :test #'ref-equal)))
@@ -1001,18 +1000,19 @@ superclass of the newly-defined View Class."
 				  (when where (listify where))))))
 		     jclasses jslots)))
 	      sclasses immediate-join-classes immediate-join-slots)
-      (setq res 
-	    (apply #'select 
-		   (append (mapcar #'cdr fullsels)
-			   (cons :from 
-				 (list (append (when from (listify from)) 
-					       (listify tables)))) 
-			 (list :result-types result-types)
-			 (when where (list :where where))
-			 args)))
-      (mapcar #'(lambda (r)
-		  (build-objects r sclasses immediate-join-classes sels immediate-join-sels database refresh flatp))
-	    res))))
+      (let* ((rows (apply #'select 
+			  (append (mapcar #'cdr fullsels)
+				  (cons :from 
+					(list (append (when from (listify from)) 
+						      (listify tables)))) 
+				  (list :result-types result-types)
+				  (when where (list :where where))
+				  args)))
+	     (objects (mapcar 
+		       #'(lambda (r)
+			   (build-objects r sclasses immediate-join-classes sels immediate-join-sels database refresh flatp))
+		       rows)))
+	objects))))
 
 (defmethod instance-refreshed ((instance standard-db-object)))
 
@@ -1055,30 +1055,85 @@ ENABLE-SQL-READER-SYNTAX."
                        target-args))))
     (multiple-value-bind (target-args qualifier-args)
         (query-get-selections select-all-args)
-      (if (select-objects target-args)
-	  (apply #'find-all target-args qualifier-args)
-	(let* ((expr (apply #'make-query select-all-args))
-	       (specified-types
-		(mapcar #'(lambda (attrib)
-			    (if (typep attrib 'sql-ident-attribute)
-				(let ((type (slot-value attrib 'type)))
-				  (if type
-				      type
-				    t))
-			      t))
-			(slot-value expr 'selections))))
-	  (destructuring-bind (&key (flatp nil)
-				    (result-types :auto)
-				    (field-names t) 
-				    (database *default-database*)
-			       &allow-other-keys)
-	      qualifier-args
-	    (query expr :flatp flatp 
-		   :result-types 
-		   ;; specifying a type for an attribute overrides result-types
-		   (if (some #'(lambda (x) (not (eq t x))) specified-types) 
-		       specified-types
-		     result-types)
-		   :field-names field-names
-		   :database database)))))))
+	(cond
+	  ((select-objects target-args)
+	   (let ((caching (getf qualifier-args :caching))
+		 (refresh (getf qualifier-args :refresh))
+		 (database (or (getf qualifier-args :database) *default-database*)))
+	     (remf qualifier-args :caching)
+	     (remf qualifier-args :refresh)
+	     (cond
+	       ((null caching)
+		(apply #'find-all target-args qualifier-args))
+	       (t
+		(let ((cached (records-cache-results target-args qualifier-args database)))
+		  (cond
+		    ((and cached (not refresh))
+		     cached)
+		    ((and cached refresh)
+		     (update-cached-results target-args qualifier-args database))
+		    (t
+		     (let ((results (apply #'find-all target-args qualifier-args)))
+		       (setf (records-cache-results target-args qualifier-args database) results)
+		       results))))))))
+	  (t
+	   (let* ((expr (apply #'make-query select-all-args))
+		  (specified-types
+		   (mapcar #'(lambda (attrib)
+			       (if (typep attrib 'sql-ident-attribute)
+				   (let ((type (slot-value attrib 'type)))
+				     (if type
+					 type
+					 t))
+				   t))
+			   (slot-value expr 'selections))))
+	     (destructuring-bind (&key (flatp nil)
+				       (result-types :auto)
+				       (field-names t) 
+				       (database *default-database*)
+				       &allow-other-keys)
+		 qualifier-args
+	       (query expr :flatp flatp 
+		      :result-types 
+		      ;; specifying a type for an attribute overrides result-types
+		      (if (some #'(lambda (x) (not (eq t x))) specified-types) 
+			  specified-types
+			  result-types)
+		      :field-names field-names
+		      :database database))))))))
+
+(defun compute-records-cache-key (targets qualifiers)
+  (list targets
+	(do ((args *select-arguments* (cdr args))
+	     (results nil))
+	    ((null args) results)
+	  (let* ((arg (car args))
+		 (value (getf qualifiers arg)))
+	    (when value
+	      (push (list arg
+			  (typecase value
+			    (%sql-expression (sql value))
+			    (t value)))
+		    results))))))
+
+(defun records-cache-results (targets qualifiers database)
+  (when (record-caches database)
+    (gethash (compute-records-cache-key targets qualifiers) (record-caches database)))) 
+
+(defun (setf records-cache-results) (results targets qualifiers database)
+  (unless (record-caches database)
+    (setf (record-caches database)
+	  (make-hash-table :test 'equal
+			   #+allegro :values #+allegro :weak)))
+  (setf (gethash (compute-records-cache-key targets qualifiers)
+		 (record-caches database)) results)
+  results)
+
+(defun update-cached-results (targets qualifiers database)
+  ;; FIXME: this routine will need to update slots in cached objects, perhaps adding or removing objects from cached
+  ;; for now, dump cache entry and perform fresh search
+  (let ((res (apply #'find-all targets qualifiers)))
+    (setf (gethash (compute-records-cache-key targets qualifiers)
+		   (record-caches database)) res)
+    res))
 

@@ -1,4 +1,6 @@
-10 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+11 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* sql/objects.lisp: Initial caching support for SELECT
+	* tests/test-oodml.lisp: Avoid using cache when testing select.
 	* sql/kmr-mop.lisp: Explicitly check slot order and
 	store as a cl:*feature*
 	* sql/recording.lisp: Remove additional types to
