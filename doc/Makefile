@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.4 2002/03/26 20:51:41 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.5 2002/04/07 09:24:22 kevin Exp $
 #
 # This file, part of UFFI, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -55,9 +55,11 @@ DVIFILE=${DOCFILE_BASE}.dvi
 TMPFILES=${DOCFILE_BASE}.aux ${DOCFILE_BASE}.out ${DOCFILE_BASE}.log
 DOCFILES=$(shell echo *.sgml)
 
+.PHONY: all dist check html tex pdf ps clean distclean
+
 all: html pdf ps dvi
 
-dist-doc: html pdf
+dist: html pdf
 
 CHECK=nsgmls -s -C catalog || exit 1
 
