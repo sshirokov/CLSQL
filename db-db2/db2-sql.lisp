@@ -2,7 +2,7 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          oracle-sql.lisp
+;;;; Name:          db2-sql.lisp
 ;;;;
 ;;;; $Id$
 ;;;;
@@ -13,9 +13,9 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-oracle)
+(in-package #:clsql-db2)
 
-(defmethod database-initialize-database-type ((database-type (eql :oracle)))
+(defmethod database-initialize-database-type ((database-type (eql :db2)))
   t)
 
 ;;;; arbitrary parameters, tunable for performance or other reasons
@@ -66,7 +66,7 @@ likely that we'll have to worry about the CMUCL limit."))
 
 (uffi:def-type pointer-pointer-void '(* :pointer-void))
 
-(defclass oracle-database (database)    ; was struct db
+(defclass db2-database (database)    ; was struct db
   ((envhp
     :reader envhp
     :initarg :envhp
@@ -112,13 +112,13 @@ the length of that format.")
     :initarg :server-version
     :reader server-version
     :documentation
-    "Version string of Oracle server.")
+    "Version string of Db2 server.")
    (major-server-version
     :type (or null fixnum)
     :initarg :major-server-version
     :reader major-server-version
     :documentation
-    "The major version number of the Oracle server, should be 8, 9, or 10")))
+    "The major version number of the Db2 server, should be 8, 9, or 10")))
 
 
 ;;; Handle the messy case of return code=+oci-error+, querying the
@@ -185,7 +185,7 @@ the length of that format.")
 
 ;; Return the INDEXth string of the OCI array, represented as Lisp
 ;; SIMPLE-STRING. SIZE is the size of the fixed-width fields used by
-;; Oracle to store strings within the array.
+;; Db2 to store strings within the array.
 
 (uffi:def-type string-pointer (* :unsigned-char))
 
@@ -200,7 +200,7 @@ the length of that format.")
     (if (string-equal str "NULL") nil str)))
 
 ;; the OCI library, part Z: no-longer used logic to convert from
-;; Oracle's binary date representation to Common Lisp's native date
+;; Db2's binary date representation to Common Lisp's native date
 ;; representation
 
 #+nil
@@ -232,7 +232,7 @@ the length of that format.")
       (encode-universal-time second minute hour day month year))))
 
 
-(defmethod database-list-tables ((database oracle-database) &key owner)
+(defmethod database-list-tables ((database db2-database) &key owner)
   (let ((query
 	  (if owner
 	      (format nil
@@ -242,7 +242,7 @@ the length of that format.")
     (mapcar #'car (database-query query database nil nil))))
 
 
-(defmethod database-list-views ((database oracle-database) &key owner)
+(defmethod database-list-views ((database db2-database) &key owner)
   (let ((query
 	  (if owner
 	      (format nil
@@ -252,7 +252,7 @@ the length of that format.")
     (mapcar #'car
 	  (database-query query database nil nil))))
 
-(defmethod database-list-indexes ((database oracle-database)
+(defmethod database-list-indexes ((database db2-database)
                                   &key (owner nil))
   (let ((query
 	  (if owner
@@ -262,7 +262,7 @@ the length of that format.")
 	      "select index_name from user_indexes")))
     (mapcar #'car (database-query query database nil nil))))
 
-(defmethod database-list-table-indexes (table (database oracle-database)
+(defmethod database-list-table-indexes (table (database db2-database)
 					&key (owner nil))
   (let ((query
 	  (if owner
@@ -274,7 +274,7 @@ the length of that format.")
     (mapcar #'car (database-query query database nil nil))))
 
 
-(defmethod database-list-attributes (table (database oracle-database) &key owner)
+(defmethod database-list-attributes (table (database db2-database) &key owner)
   (let ((query
 	  (if owner
 	      (format nil
@@ -286,7 +286,7 @@ the length of that format.")
     (mapcar #'car (database-query query database nil nil))))
 
 (defmethod database-attribute-type (attribute (table string)
-					 (database oracle-database)
+					 (database db2-database)
 					 &key (owner nil))
   (let ((query 	 
 	 (if owner
@@ -323,11 +323,11 @@ the length of that format.")
 (uffi:def-type double-pointer '(* :double))
 
 ;;; the result of a database query: a cursor through a table
-(defstruct (oracle-result-set (:print-function print-query-cursor)
+(defstruct (db2-result-set (:print-function print-query-cursor)
                               (:conc-name qc-)
                               (:constructor %make-query-cursor))
   (db (error "missing DB")   ; db conn. this table is associated with
-    :type oracle-database
+    :type db2-database
     :read-only t)
   (stmthp (error "missing STMTHP")      ; the statement handle used to create
 ;;  :type alien			; this table. owned by the QUERY-CURSOR
@@ -562,7 +562,7 @@ the length of that format.")
 
 (defun make-query-cursor-cds (database stmthp result-types field-names)
   (declare (optimize (safety 3) #+nil (speed 3))
-	   (type oracle-database database)
+	   (type db2-database database)
 	   (type pointer-pointer-void stmthp))
   (with-slots (errhp) database
     (uffi:with-foreign-objects ((dtype-foreign :unsigned-short)
@@ -699,14 +699,14 @@ the length of that format.")
   (values))
 
 
-(defmethod database-name-from-spec (connection-spec (database-type (eql :oracle)))
+(defmethod database-name-from-spec (connection-spec (database-type (eql :db2)))
   (check-connection-spec connection-spec database-type (dsn user password))
   (destructuring-bind (dsn user password) connection-spec
     (declare (ignore password))
     (concatenate 'string  dsn "/" user)))
 
 
-(defmethod database-connect (connection-spec (database-type (eql :oracle)))
+(defmethod database-connect (connection-spec (database-type (eql :db2)))
   (check-connection-spec connection-spec database-type (dsn user password))
   (destructuring-bind (data-source-name user password)
       connection-spec
@@ -753,13 +753,13 @@ the length of that format.")
       ;; oci-handle-alloc((dvoid *)encvhp, (dvoid **)&stmthp, OCI_HTYPE_STMT, 0, 0);
       ;;#+nil
 
-      (let ((db (make-instance 'oracle-database
+      (let ((db (make-instance 'db2-database
 		  :name (database-name-from-spec connection-spec
 						 database-type)
 		  :connection-spec connection-spec
 		  :envhp envhp
 		  :errhp errhp
-		  :database-type :oracle
+		  :database-type :db2
 		  :svchp svchp
 		  :dsn data-source-name
 		  :user user)))
@@ -776,7 +776,7 @@ the length of that format.")
 	 (format nil "ALTER SESSION SET NLS_DATE_FORMAT='~A'" (date-format db)) db)
 	(let ((server-version
 	       (caar (database-query
-		      "SELECT BANNER FROM V$VERSION WHERE BANNER LIKE '%Oracle%'" db nil nil))))
+		      "SELECT BANNER FROM V$VERSION WHERE BANNER LIKE '%Db2%'" db nil nil))))
 	  (setf (slot-value db 'server-version) server-version
 		(slot-value db 'major-server-version) (major-client-version-from-string
 						       server-version)))
@@ -787,9 +787,9 @@ the length of that format.")
   (cond 
     ((search " 10g " str)
      10)
-    ((search "Oracle9i " str)
+    ((search "Db29i " str)
      9)
-    ((search "Oracle8" str)
+    ((search "Db28" str)
      8)))
 
 (defun major-server-version-from-string (str)
@@ -805,7 +805,7 @@ the length of that format.")
 
 ;; Close a database connection.
 
-(defmethod database-disconnect ((database oracle-database))
+(defmethod database-disconnect ((database db2-database))
   (osucc (oci-logoff (deref-vp (svchp database))
 		     (deref-vp (errhp database))))
   (osucc (oci-handle-free (deref-vp (envhp database)) +oci-htype-env+))
@@ -826,7 +826,7 @@ the length of that format.")
 ;;; to construct the table. The Allegro version supports several possible
 ;;; values for this argument, but we only support :AUTO.
 
-(defmethod database-query (query-expression (database oracle-database) result-types field-names)
+(defmethod database-query (query-expression (database db2-database) result-types field-names)
   (let ((cursor (sql-stmt-exec query-expression database result-types field-names)))
     ;; (declare (type (or query-cursor null) cursor))
     (if (null cursor) ; No table was returned.
@@ -845,17 +845,17 @@ the length of that format.")
 	  (push row reversed-result))))))
 
 
-(defmethod database-create-sequence (sequence-name (database oracle-database))
+(defmethod database-create-sequence (sequence-name (database db2-database))
   (execute-command
    (concatenate 'string "CREATE SEQUENCE " (sql-escape sequence-name))
    :database database))
 
-(defmethod database-drop-sequence (sequence-name (database oracle-database))
+(defmethod database-drop-sequence (sequence-name (database db2-database))
   (execute-command
    (concatenate 'string "DROP SEQUENCE " (sql-escape sequence-name))
    :database database))
 
-(defmethod database-sequence-next (sequence-name (database oracle-database))
+(defmethod database-sequence-next (sequence-name (database db2-database))
   (caar
    (database-query
     (concatenate 'string "SELECT "
@@ -864,7 +864,7 @@ the length of that format.")
 		 )
     database :auto nil)))
 
-(defmethod database-set-sequence-position (name position (database oracle-database))
+(defmethod database-set-sequence-position (name position (database db2-database))
   (without-interrupts
    (let* ((next (database-sequence-next name database))
 	  (incr (- position next)))
@@ -876,7 +876,7 @@ the length of that format.")
       (format nil "ALTER SEQUENCE ~A INCREMENT BY 1" name)
       database))))
 
-(defmethod database-list-sequences ((database oracle-database) &key owner)
+(defmethod database-list-sequences ((database db2-database) &key owner)
   (let ((query
 	 (if owner
 	     (format nil
@@ -885,10 +885,10 @@ the length of that format.")
 	     "select sequence_name from user_sequences")))
     (mapcar #'car (database-query query database nil nil))))
 
-(defmethod database-execute-command (sql-expression (database oracle-database))
+(defmethod database-execute-command (sql-expression (database db2-database))
   (database-query sql-expression database nil nil)
   (when (database-autocommit database)
-    (oracle-commit database))
+    (db2-commit database))
   t)
 
 
@@ -937,7 +937,7 @@ the length of that format.")
 
 
 (defmethod database-query-result-set ((query-expression string)
-				      (database oracle-database) 
+				      (database db2-database) 
 				      &key full-set result-types)
   (let ((cursor (sql-stmt-exec query-expression database result-types nil)))
     (if full-set
@@ -945,10 +945,10 @@ the length of that format.")
 	(values cursor (length (qc-cds cursor))))))
 
 
-(defmethod database-dump-result-set (result-set (database oracle-database))
+(defmethod database-dump-result-set (result-set (database db2-database))
   (close-query result-set)) 
 
-(defmethod database-store-next-row (result-set (database oracle-database) list)
+(defmethod database-store-next-row (result-set (database db2-database) list)
   (let* ((eof-value :eof)
 	 (row (fetch-row result-set nil eof-value)))
     (unless (eq eof-value row)
@@ -956,7 +956,7 @@ the length of that format.")
 	  do (setf (nth i list) (nth i row)))
       list)))
 
-(defmethod database-start-transaction ((database oracle-database))
+(defmethod database-start-transaction ((database db2-database))
   (call-next-method)
   ;; Not needed with simple transaction
   #+ignore
@@ -968,18 +968,18 @@ the length of that format.")
   t)
 
 
-(defun oracle-commit (database)
+(defun db2-commit (database)
   (with-slots (svchp errhp) database
     (osucc (oci-trans-commit (deref-vp svchp)
 			     (deref-vp errhp)
 			     0))))
 
-(defmethod database-commit-transaction ((database oracle-database))
+(defmethod database-commit-transaction ((database db2-database))
   (call-next-method)
-  (oracle-commit database)
+  (db2-commit database)
   t)
 
-(defmethod database-abort-transaction ((database oracle-database))
+(defmethod database-abort-transaction ((database db2-database))
   (call-next-method)
   (osucc (oci-trans-rollback (deref-vp (svchp database))
 			     (deref-vp (errhp database))
@@ -988,14 +988,14 @@ the length of that format.")
 
 ;; Specifications
 
-(defmethod db-type-has-bigint? ((type (eql :oracle)))
+(defmethod db-type-has-bigint? ((type (eql :db2)))
   nil)
 
-(defmethod db-type-has-fancy-math? ((db-type (eql :oracle)))
+(defmethod db-type-has-fancy-math? ((db-type (eql :db2)))
   t)
 
-(defmethod db-type-has-boolean-where? ((db-type (eql :oracle)))
+(defmethod db-type-has-boolean-where? ((db-type (eql :db2)))
   nil)
 
-(when (clsql-sys:database-type-library-loaded :oracle)
-  (clsql-sys:initialize-database-type :database-type :oracle))
+(when (clsql-sys:database-type-library-loaded :db2)
+  (clsql-sys:initialize-database-type :database-type :db2))

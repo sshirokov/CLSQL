@@ -1,7 +1,7 @@
 # FILE IDENTIFICATION
 #
 #  Name:    Makefile
-#  Purpose: Makefile for CLSQL Oracle interface
+#  Purpose: Makefile for CLSQL Db2 interface
 #  Author:  Kevin M. Rosenberg
 #  Created: May 2004
 #

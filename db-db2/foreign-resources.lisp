@@ -11,7 +11,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-oracle)
+(in-package #:clsql-db2)
 
 (defparameter *foreign-resource-hash* (make-hash-table :test #'equal))
 

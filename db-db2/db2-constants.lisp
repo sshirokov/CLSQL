@@ -2,8 +2,8 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          oracle-package.cl
-;;;; Purpose:       Package definition for CLSQL Oracle interface
+;;;; Name:          db2-constants.lisp
+;;;; Purpose:       Constants for CLSQL Db2 interface
 ;;;;
 ;;;; $Id$
 ;;;;
@@ -14,12 +14,4 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:cl-user)
-
-(defpackage #:clsql-oracle
-  (:use #:common-lisp #:clsql-sys #:clsql-uffi)
-  (:export #:oracle-database
-	   #:*oracle-server-version*
-	   #:*oracle-so-load-path*
-	   #:*oracle-so-libraries*)
-  (:documentation "This is the CLSQL interface to Oracle."))
+(in-package #:clsql-db2)

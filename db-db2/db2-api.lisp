@@ -2,8 +2,8 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          oracle.lisp
-;;;; Purpose:       Package definition for CLSQL Oracle interface
+;;;; Name:          db2.lisp
+;;;; Purpose:       Package definition for CLSQL Db2 interface
 ;;;;
 ;;;; $Id$
 ;;;;
@@ -14,7 +14,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-oracle)
+(in-package #:clsql-db2)
 
 
 ;;
@@ -71,7 +71,7 @@
 	     (#.+oci-continue+
 	      (error 'sql-database-error :message "OCI Continue"))
 	     (1804
-	      (error 'sql-database-error :message "Check ORACLE_HOME and NLS settings."))
+	      (error 'sql-database-error :message "Check DB2_HOME and NLS settings."))
 	     (t
 	      (error 'sql-database-error
 		     :message
