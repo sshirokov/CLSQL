@@ -29,6 +29,14 @@ Description: UncommonSQL database backend, MySQL
  This package enables you to use the CLSQL data access package
  with MySQL databases.
 
+Package: cl-sql-aodbc
+Architecture: all
+Depends: cl-sql-base (>= ${Source-Version}), acl-installer
+Provides: cl-sql-backend
+Description: UncommonSQL database backend, AODBC
+ This package enables you to use the CLSQL data access package
+ with AllegroCL's AODBC databases.
+
 Package: cl-sql-postgresql
 Architecture: all
 Depends: cl-sql-base (>= ${Source-Version}), postgresql-client

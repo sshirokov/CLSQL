@@ -13,23 +13,27 @@ pkg-base	:= cl-sql-base
 pkg-mysql	:= cl-sql-mysql
 pkg-pg		:= cl-sql-postgresql
 pkg-pg-socket	:= cl-sql-postgresql-socket
-all-pkgs	:= $(pkg) $(pkg-base) $(pkg-mysql) $(pkg-pg) $(pkg-pg-socket)
+pkg-mysql	:= cl-sql-aodbc
+all-pkgs	:= $(pkg) $(pkg-base) $(pkg-mysql) $(pkg-pg) $(pkg-pg-socket) $(pkg-aodbc)
 
 prefix		:= debian/$(pkg)
 prefix-base	:= debian/$(pkg-base)
 prefix-mysql	:= debian/$(pkg-mysql)
 prefix-pg	:= debian/$(pkg-pg)
 prefix-pg-socket := debian/$(pkg-pg-socket)
+prefix-aodbc	:= debian/$(pkg-aodbc)
 
 ##
 ## lisp sources per pkg
 ##
 srcs		:= sql/pool.cl sql/sql.cl sql/transactions.cl sql/utils.cl sql/functional.cl sql/usql.cl
 srcs-cmucl-compat := $(wilcard cmucl-compat/*.cl)
-srcs-base	:= sql/package.cl sql/db-interface.cl sql/classes.cl sql/conditions.cl $(wilcard cmu-compat/*.cl)
-srcs-mysql	:= $(wildcard interfaces/mysql/*.cl)
+srcs-base	:= sql/package.cl sql/db-interface.cl sql/classes.cl sql/conditions.cl
+srcs-base-uffi	:= $(wildcard interfaces/clsql-uffi/*.cl) $(wildcard interfaces/clsql-uffi/*.so)
+srcs-mysql	:= $(wildcard interfaces/mysql/*.cl) $(wildcards interfaces/mysl/*.so)
 srcs-pg		:= $(wildcard interfaces/postgresql/*.cl)
 srcs-pg-socket	:= $(wildcard interfaces/postgresql-socket/*.cl)
+srcs-aodbc	:= $(wildcard interfaces/aodbc/*.cl)
 
 INSTALL	:= install
 INSTALLFLAGS	:= -g root -o root -m 0644
@@ -53,7 +57,8 @@ build: build-stamp
 
 build-stamp: configure-stamp 
 	dh_testdir
-	# Add here commands to compile the package.
+	# Compile helper libraries
+	$(MAKE)
 	touch build-stamp
 
 clean:
@@ -61,6 +66,7 @@ clean:
 	dh_testroot
 	rm -f build-stamp configure-stamp
 	# Add here commands to clean up after the build process.
+	$(MAKE) clean
 	dh_clean
 
 install: build
@@ -69,12 +75,18 @@ install: build
 	dh_clean -k
 	dh_installdirs
 
-	$(INSTALL) $(INSTALLFLAGS) $(srcs-base) $(prefix-base)/$(clc-repos)/clsql
+	# Main package
 	$(INSTALL) $(INSTALLFLAGS) $(srcs) $(prefix)/$(clc-repos)/clsql
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-cmucl-compat) $(prefix)/$(clc-repos)/clsql/cmucl-compat
+
+	# Base
+	$(INSTALL) $(INSTALLFLAGS) $(srcs-base) $(prefix-base)/$(clc-repos)/clsql
+	$(INSTALL) $(INSTALLFLAGS) $(srcs-base-uffi) $(prefix-base)/$(clc-repos)/clsql/interfaces/clsql-uffi
+
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-mysql) $(prefix-mysql)/$(clc-repos)/clsql/interfaces/mysql
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-pg) $(prefix-pg)/$(clc-repos)/clsql/interfaces/postgresql
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-pg-socket) $(prefix-pg-socket)/$(clc-repos)/clsql/interfaces/postgresql-socket
+	$(INSTALL) $(INSTALLFLAGS) $(srcs-aodbc) $(prefix-aodbc)/$(clc-repos)/clsql/interfaces/aodbc
 
 	dh_link ../repositories/clsql $(prefix-base)/$(clc-source)/clsql
 
@@ -84,6 +96,7 @@ install: build
 	$(INSTALL) $(INSTALLFLAGS) clsql-mysql.system $(prefix-mysql)/$(clc-systems)/
 	$(INSTALL) $(INSTALLFLAGS) clsql-postgresql.system $(prefix-pg)/$(clc-systems)/
 	$(INSTALL) $(INSTALLFLAGS) clsql-postgresql-socket.system $(prefix-pg-socket)/$(clc-systems)/
+	$(INSTALL) $(INSTALLFLAGS) clsql-aodbc.system $(prefix-aodbc)/$(clc-systems)/
 
 	# Test suite
 	$(INSTALL) $(INSTALLFLAGS) test-suite/tester-clsql.cl test-suite/acl-compat-tester.cl $(doc-dir)/test-suite
