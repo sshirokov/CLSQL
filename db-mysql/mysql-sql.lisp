@@ -685,7 +685,8 @@
   #-mysql-client-v4.1 nil)
 
 (defmethod db-type-has-boolean-where? ((db-type (eql :mysql)))
-  nil)
+  #+mysql-client-v4.1 t
+  #-mysql-client-v4.1 nil)
 
 (defmethod db-type-has-union? ((db-type (eql :mysql)))
   (not (eql (schar mysql::*mysql-client-info* 0) #\3)))
