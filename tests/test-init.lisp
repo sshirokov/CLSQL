@@ -371,15 +371,15 @@
 	(dolist (test-form test-forms)
 	  (eval test-form))
 	
-	(let ((remaining (rtest:do-tests *report-stream*)))
-	  (when (rt:pending-tests)
+	(let ((remaining (regression-test:do-tests *report-stream*)))
+	  (when (regression-test:pending-tests)
 	    (incf *error-count* (length remaining))))
 	
 	(let ((sexp-error (list db-type 
 				*test-database-underlying-type* 
 				(get-universal-time)
 				(length test-forms)
-				(rt:pending-tests)
+				(regression-test:pending-tests)
 				(lisp-implementation-type) 
 				(lisp-implementation-version)
 				(machine-type))))

@@ -14,6 +14,12 @@ MYSQL: All 83 tests passed (X86, CMU Common Lisp).
 SQLITE: All 88 tests passed (X86, CMU Common Lisp).
 ODBC/MYSQL: All 83 tests passed (X86, CMU Common Lisp).
 ODBC/POSTGRESQL: All 95 tests passed (X86, CMU Common Lisp).
+POSTGRESQL: All 95 tests passed (NIL, LispWorks).
+POSTGRESQL-SOCKET: All 95 tests passed (NIL, LispWorks).
+MYSQL: All 83 tests passed (NIL, LispWorks).
+SQLITE: All 88 tests passed (NIL, LispWorks).
+ODBC/MYSQL: All 83 tests passed (NIL, LispWorks).
+ODBC/POSTGRESQL: All 95 tests passed (NIL, LispWorks).
 POSTGRESQL: All 95 tests passed (X86, SBCL).
 POSTGRESQL-SOCKET: All 95 tests passed (X86, SBCL).
 MYSQL: All 83 tests passed (X86, SBCL).
