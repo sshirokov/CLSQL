@@ -19,16 +19,16 @@
 (in-package #:clsql-aodbc)
 
 ;; interface foreign library loading routines
-(defmethod clsql-base:database-type-library-loaded ((database-type (eql :aodbc)))
+(defmethod clsql-sys:database-type-library-loaded ((database-type (eql :aodbc)))
   "T if foreign library was able to be loaded successfully. "
   (when (find-package :dbi) ;; finds Allegro's DBI (AODBC) package
     t))
 
-(defmethod clsql-base:database-type-load-foreign ((databae-type (eql :aodbc)))
+(defmethod clsql-sys:database-type-load-foreign ((databae-type (eql :aodbc)))
   t)
 
 (when (find-package :dbi)
-  (clsql-base:database-type-load-foreign :aodbc)) 
+  (clsql-sys:database-type-load-foreign :aodbc)) 
 
 (defmethod database-initialize-database-type ((database-type (eql :aodbc)))
   t)
@@ -304,5 +304,5 @@
 (defmethod database-initialize-database-type ((database-type (eql :aodbc)))
   t)
 
-(when (clsql-base:database-type-library-loaded :aodbc)
-  (clsql-base:initialize-database-type :database-type :aodbc))
+(when (clsql-sys:database-type-library-loaded :aodbc)
+  (clsql-sys:initialize-database-type :database-type :aodbc))
