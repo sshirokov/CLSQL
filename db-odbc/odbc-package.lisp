@@ -25,9 +25,9 @@
 
      #:connect
      #:disconnect
-     #:query
-     #:execute
+     #:sql
      #:close-query
      #:fetch-row
+     
      )
     (:documentation "This is the low-level interface ODBC."))

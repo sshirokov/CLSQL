@@ -59,7 +59,7 @@
 
 (defmethod database-query (query-expression (database odbc-database) result-types) 
   (handler-case
-      (odbc:query query-expression :db (database-odbc-conn database)
+      (odbc:sql query-expression :db (database-odbc-conn database)
 	       :types result-types)
     (error ()
       (error 'clsql-sql-error
@@ -71,7 +71,7 @@
 (defmethod database-execute-command (sql-expression 
 				     (database odbc-database))
   (handler-case
-      (odbc:execute sql-expression (database-odbc-conn database))
+      (odbc:sql sql-expression (database-odbc-conn database))
     (error ()
       (error 'clsql-sql-error
 	     :database database
@@ -89,7 +89,7 @@
 				      &key full-set result-types)
   (handler-case 
       (multiple-value-bind (query column-names)
-	  (odbc:query query-expression 
+	  (odbc:sql query-expression 
 		   :db (database-odbc-conn database) 
 		   :row-count nil
 		   :column-names t
