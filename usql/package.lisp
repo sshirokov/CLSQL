@@ -193,7 +193,9 @@
        #:write-large-object
        #:read-large-object
        #:delete-large-object
-       
+       #:do-query
+       #:map-query
+
        ;; recording.lisp -- SQL I/O Recording 
        #:record-sql-comand
        #:record-sql-result

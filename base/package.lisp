@@ -231,6 +231,8 @@
 	 #:write-large-object
 	 #:read-large-object
 	 #:delete-large-object
+	 #:do-query
+	 #:map-query
 
 	 ;; Transactions
 	 #:with-transaction

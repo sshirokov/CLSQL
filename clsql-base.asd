@@ -45,7 +45,7 @@
 	     (:file "time" :depends-on ("package"))
 	     (:file "database" :depends-on ("initialize"))
 	     (:file "recording" :depends-on ("time" "database"))
-	     (:file "basic-sql" :depends-on ("database"))
+	     (:file "basic-sql" :depends-on ("database" "cmucl-compat"))
 	     (:file "pool" :depends-on ("basic-sql"))
 	     (:file "transaction" :depends-on ("basic-sql"))
 	     ))))

@@ -95,6 +95,8 @@
 	 #:write-large-object
 	 #:read-large-object
 	 #:delete-large-object
+	 #:do-query
+	 #:map-query
 
 	 ;; Transactions
 	 #:with-transaction
@@ -116,15 +118,7 @@
 	 ))
     (:export
      ;; sql.cl
-     #:map-query
-     #:do-query
      #:for-each-row
-     
-     ;; functional.cl
-     #:insert-records
-     #:delete-records
-     #:update-records
-     #:with-database
      
      ;; Large objects (Marc B)
      #:create-large-object
@@ -132,6 +126,13 @@
      #:read-large-object
      #:delete-large-object
 
+     ;; functional.lisp
+     ;; These are no longer export since different functions are
+     ;; exported by the CLSQL-USQL package
+     ;; #:insert-records
+     ;; #:delete-records
+     ;; #:update-records
+     
      .
      #1#
      )
