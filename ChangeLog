@@ -1,7 +1,8 @@
 14 Aug 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* TODO: Add bug report about SQL generation with a table
 	containing two join slots.
-
+	* sql/oodml.lisp: Add optional size to VARCHAR type
+	
 3 Aug 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.0.0 Release
 	* sql/expressions.lisp: Change declaration that

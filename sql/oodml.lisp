@@ -342,8 +342,9 @@
   (declare (ignore args database db-type))
   "BIGINT")
 
-(deftype varchar () 
+(deftype varchar (&optional size) 
   "A variable length string for the SQL varchar type."
+  (declare (ignore size))
   'string)
 
 (defmethod database-get-type-specifier ((type (eql 'varchar)) args
