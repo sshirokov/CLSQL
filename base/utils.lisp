@@ -342,7 +342,7 @@ list of characters and replacement strings."
   #+lowercase-reader
   (string-downcase str))
 
-(defmethod convert-to-db-default-case (str database)
+(defun convert-to-db-default-case (str database)
   (if database
       (case (db-type-default-case (database-underlying-type database))
 	(:upper (string-upcase str))

@@ -432,7 +432,7 @@ uninclusive, and the args from that keyword to the end."
                 (subseq select-args first-key-arg))
         select-args)))
 
-(defmethod make-query (&rest args)
+(defun make-query (&rest args)
   (multiple-value-bind (selections arglist)
       (query-get-selections args)
     (destructuring-bind (&key all flatp set-operation distinct from where

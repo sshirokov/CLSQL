@@ -785,6 +785,9 @@ with the given options"
         (t
          (values hours "AM"))))
 
+(defgeneric to-string (val &rest keys)
+  )
+
 (defmethod to-string ((time wall-time) &rest keys)
   (destructuring-bind (&key (style :daytime) &allow-other-keys)
       keys

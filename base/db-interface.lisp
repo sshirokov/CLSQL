@@ -30,13 +30,6 @@
    "The internal generic implementation for checking if
 database type library loaded successfully."))
 
-(defgeneric database-type (database)
-  (:documentation
-   "Returns database type")
-  (:method (database)
-	   (signal-no-database-error database)))
-
-
 (defgeneric database-initialize-database-type (database-type)
   (:documentation
    "The internal generic implementation of initialize-database-type."))
