@@ -58,14 +58,6 @@
 (defun db-type-spec (db-type specs)
   (funcall (spec-fn db-type) specs))
 
-(defun db-type-ensure-system (db-type)
-  (unless (find-package (symbol-name db-type))
-    (asdf:operate 'asdf:load-op
-		  (intern (concatenate 'string
-				       (symbol-name '#:clsql-)
-				       (symbol-name db-type))))))
-
-
 
 (defun summarize-test-report (sexp &optional (output *standard-output*))
   (flet ((db-title (db-type underlying-db-type)

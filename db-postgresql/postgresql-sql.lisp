@@ -192,7 +192,7 @@
   (let ((names '()))
     (dotimes (i num-fields (nreverse names))
       (declare (fixnum i))
-      (push (uffi:convert-from-foreign-string (PQfname res-ptr i)) names))))
+      (push (uffi:convert-from-foreign-string (PQfname result i)) names))))
 
 (defmethod database-execute-command (sql-expression
                                      (database postgresql-database))
@@ -394,7 +394,7 @@
 		   "SELECT relname FROM pg_class WHERE (relkind = '~A')~A"
 		   type
 		   (owner-clause owner))
-	   database nil)))
+	   database nil nil)))
 
 (defmethod database-list-tables ((database postgresql-database)
                                  &key (owner nil))
@@ -418,15 +418,14 @@
 	   "select indexrelid from pg_index where indrelid=(select relfilenode from pg_class where relname='~A'~A)"
 	   (string-downcase table)
 	   (owner-clause owner))
-	  database :auto))
+	  database :auto nil))
 	(result nil))
     (dolist (indexrelid indexrelids (nreverse result))
       (push 
        (caar (database-query
 	      (format nil "select relname from pg_class where relfilenode='~A'"
 		      (car indexrelid))
-	      database
-	      nil))
+	      database nil nil))
        result))))
 
 (defmethod database-list-attributes ((table string)
@@ -443,7 +442,7 @@
 		   (format nil "SELECT attname FROM pg_class,pg_attribute WHERE pg_class.oid=attrelid AND relname='~A'~A"
                            (string-downcase table)
                            owner-clause)
-                   database nil))))
+                   database nil nil))))
     (if result
 	(reverse
          (remove-if #'(lambda (it) (member it '("cmin"
@@ -459,21 +458,22 @@
 (defmethod database-attribute-type (attribute (table string)
 				    (database postgresql-database)
                                     &key (owner nil))
-  (let* ((owner-clause
-          (cond ((stringp owner)
-                 (format nil " AND (relowner=(SELECT usesysid FROM pg_user WHERE usename='~A'))" owner))
-                ((null owner) " AND (not (relowner=1))")
-                (t "")))
-         (result
-	  (mapcar #'car
-		  (database-query
-		   (format nil "SELECT pg_type.typname FROM pg_type,pg_class,pg_attribute WHERE pg_class.oid=pg_attribute.attrelid AND pg_class.relname='~A' AND pg_attribute.attname='~A' AND pg_attribute.atttypid=pg_type.oid~A"
+  (let ((row (car (database-query
+		   (format nil "SELECT pg_type.typname,pg_attribute.attlen,pg_attribute.atttypmod,pg_attribute.attnotnull FROM pg_type,pg_class,pg_attribute WHERE pg_class.oid=pg_attribute.attrelid AND pg_class.relname='~A' AND pg_attribute.attname='~A' AND pg_attribute.atttypid=pg_type.oid~A"
 			   (string-downcase table)
-                           (string-downcase attribute)
-                           owner-clause)
-		   database nil))))
-    (when result
-      (intern (string-upcase (car result)) :keyword))))
+			   (string-downcase attribute)
+			   (owner-clause owner))
+		   database nil nil))))
+    (when row
+      (values
+       (ensure-keyword (first row))
+       (if (string= "-1" (second row))
+	   (- (parse-integer (third row) :junk-allowed t) 4)
+	 (parse-integer (second row)))
+       nil
+       (if (string-equal "f" (fourth row))
+	   1
+	 0)))))
 
 (defmethod database-create-sequence (sequence-name
 				     (database postgresql-database))
@@ -497,7 +497,7 @@
     (caar
      (database-query
       (format nil "SELECT SETVAL ('~A', ~A)" name position)
-      database nil)))))
+      database nil nil)))))
 
 (defmethod database-sequence-next (sequence-name 
 				   (database postgresql-database))
@@ -506,7 +506,7 @@
     (caar
      (database-query
       (concatenate 'string "SELECT NEXTVAL ('" (sql-escape sequence-name) "')")
-      database nil)))))
+      database nil nil)))))
 
 (defmethod database-sequence-last (sequence-name (database postgresql-database))
   (values
@@ -514,7 +514,7 @@
     (caar
      (database-query
       (concatenate 'string "SELECT LAST_VALUE ('" sequence-name "')")
-      database nil)))))
+      database nil nil)))))
   
 (defmethod database-create (connection-spec (type (eql :postgresql)))
   (destructuring-bind (host name user password) connection-spec
@@ -565,7 +565,7 @@
 	   (progn
 	     (setf (slot-value database 'clsql-base-sys::state) :open)
 	     (mapcar #'car (database-query "select datname from pg_database" 
-					   database nil)))
+					   database nil nil)))
 	(progn
 	  (database-disconnect database)
 	  (setf (slot-value database 'clsql-base-sys::state) :closed))))))
@@ -579,7 +579,7 @@
                                    and a.attrelid = c.oid
                                    and a.atttypid = t.oid"
            (sql-escape (string-downcase table)))
-   database :auto))
+   database :auto nil))
 
 (defun %pg-database-connection (connection-spec)
   (check-connection-spec connection-spec :postgresql
@@ -591,15 +591,15 @@
         connection-spec
       (coerce-string db)
       (coerce-string user)
-      (let ((connection (pqsetdblogin host port options tty db user password)))
+      (let ((connection (PQsetdbLogin host port options tty db user password)))
         (declare (type postgresql::pgsql-conn-ptr connection))
-        (unless (eq (pqstatus connection) :connection-ok)
+        (unless (eq (PQstatus connection) :connection-ok)
           ;; Connect failed
           (error 'clsql-connect-error
                  :database-type :postgresql
                  :connection-spec connection-spec
-                 :errno (pqstatus connection)
-                 :error (pqerrormessage connection)))
+                 :errno (PQstatus connection)
+                 :error (PQerrorMessage connection)))
         connection))))
 
 (defmethod database-reconnect ((database postgresql-database))

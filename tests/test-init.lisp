@@ -334,7 +334,7 @@
 (defun load-necessary-systems (specs)
   (dolist (db-type +all-db-types+)
     (when (db-type-spec db-type specs)
-      (db-type-ensure-system db-type))))
+      (clsql:initialize-database-type :database-type db-type))))
 
 (defun do-tests-for-backend (db-type spec)
   (test-connect-to-database db-type spec)

@@ -257,23 +257,6 @@ returns (VALUES string-output error-output exit-status)"
 
     ))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (when (char= #\a (schar (symbol-name '#:a) 0))
-    (pushnew :lowercase-reader *features*)))
-
-(defun string-default-case (str)
-  #-lowercase-reader
-  (string-upcase str)
-  #+lowercase-reader
-  (string-downcase str))
-
-;; From KMRCL
-(defun ensure-keyword (name)
-  "Returns keyword for a name"
-  (etypecase name
-    (keyword name)
-    (string (nth-value 0 (intern (string-default-case name) :keyword)))
-    (symbol (nth-value 0 (intern (symbol-name name) :keyword)))))
 
 ;; From KMRCL
 (defmacro in (obj &rest choices)
@@ -351,3 +334,10 @@ list of characters and replacement strings."
     ;; Default CommonSQL behavior is to upcase strings
     (string-upcase str)))
 	    
+
+(defun ensure-keyword (name)
+  "Returns keyword for a name"
+  (etypecase name
+    (keyword name)
+    (string (nth-value 0 (intern (symbol-name-default-case name) :keyword)))
+    (symbol (nth-value 0 (intern (symbol-name name) :keyword)))))

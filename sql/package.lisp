@@ -159,7 +159,6 @@
        ;; initialize
        #:*loaded-database-types*
        #:reload-database-types
-       #:*default-database-type*
        #:*initialized-database-types*
        #:initialize-database-type
        ;; classes
@@ -170,6 +169,7 @@
        #:database-view-classes
        #:conn-pool
        #:print-object 
+
        ;; utils
        #:sql-escape
 
@@ -311,7 +311,8 @@
        #:table-exists-p                    ; table      xx 
        #:list-attributes                   ; table      xx
        #:attribute-type                    ; table      xx
-       #:list-attribute-types              ; table      xx
+       #:list-attribute-types		   ; table      xx
+       #:*cache-table-queries-default*
        #:create-view                       ; table      xx
        #:drop-view                         ; table      xx
        #:create-index                      ; table      xx		
@@ -326,7 +327,7 @@
        #:instance-refreshed                ; objects    xx 
        #:update-object-joins               ;
        #:*default-update-objects-max-len*  ; 
-       #:update-slot-from-record           ; objects    xx
+       #:update-slot-from-record   	   ; objects    xx
        #:update-instance-from-records      ; objects    xx
        #:update-records-from-instance      ; objects    xx
        #:update-record-from-slot           ; objects    xx

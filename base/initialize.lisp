@@ -43,10 +43,16 @@ to initialize-database-type.")
 (defun initialize-database-type (&key (database-type *default-database-type*))
   "Initialize the given database-type, if it is not already
 initialized, as indicated by `*initialized-database-types*'."
-  (if (member database-type *initialized-database-types*)
-      database-type
-      (when (database-initialize-database-type database-type)
-	(push database-type *initialized-database-types*)
-	database-type)))
-
+  (when (member database-type *initialized-database-types*)
+    (return-from initialize-database-type database-type))
+  
+  (let ((system (intern (concatenate 'string 
+			  (symbol-name '#:clsql-)
+			  (symbol-name database-type)))))
+    (when (not (find-package system))
+      (asdf:operate 'asdf:load-op system)))
+  
+  (when (database-initialize-database-type database-type)
+    (push database-type *initialized-database-types*)
+    database-type))
 

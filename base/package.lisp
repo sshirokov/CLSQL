@@ -62,7 +62,6 @@
      #:database-list-table-indexes
      #:database-list-views
      
-     
      ;; Large objects (Marc B)
      #:database-create-large-object
      #:database-write-large-object
@@ -82,6 +81,7 @@
      #:command-output
      #:symbol-name-default-case
      #:convert-to-db-default-case
+     #:ensure-keyword
      
      ;; Shared exports for re-export by CLSQL-BASE
      .
@@ -146,7 +146,8 @@
 	 #:view-classes
 	 #:database-type
 	 #:database-state
-
+	 #:attribute-cache
+	 
 	 ;; utils.lisp
 	 #:number-to-sql-string
 	 #:float-to-sql-string

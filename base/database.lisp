@@ -85,6 +85,9 @@ to the new connection, otherwise *default-database is not changed. If
 pool is t the connection will be taken from the general pool, if pool
 is a conn-pool object the connection will be taken from this pool."
 
+  (unless database-type
+    (error "Must specify a database-type."))
+  
   (when (stringp connection-spec)
     (setq connection-spec (string-to-list-connection-spec connection-spec)))
   

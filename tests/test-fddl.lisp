@@ -79,6 +79,25 @@
   "birthday" "companyid" "email" "emplid" "first_name" "groupid" "height"
   "last_name" "managerid" "married")
 
+;; Attribute types are vendor specific so need to test a range
+(deftest :fddl/attributes/3
+    (and (member (clsql:attribute-type [emplid] [employee]) '(:int :integer :int4)) t)
+  t)
+
+(deftest :fddl/attributes/4
+    (clsql:attribute-type [first-name] [employee]) 
+  :varchar 30 nil 1)
+
+(deftest :fddl/attributes/5
+    (and (member (clsql:attribute-type [birthday] [employee]) '(:datetime :timestamp)) t)
+  t)
+
+(deftest :fddl/attributes/6
+    (and (member (clsql:attribute-type [height] [employee]) '(:float :float8)) t)
+  t)
+
+
+
 ;; create a view, test for existence, drop it and test again
 (deftest :fddl/view/1
     (progn (clsql:create-view [lenins-group]

@@ -201,11 +201,11 @@
      (mapcan #'(lambda (s)
 		 (let ((sn (%table-name-to-sequence-name (car s))))
 		   (and sn (list sn))))
-	     (database-query "SHOW TABLES" database nil)))
+	     (database-query "SHOW TABLES" database nil nil)))
     ((:postgresql :postgresql-socket)
      (mapcar #'(lambda (s) (%table-name-to-sequence-name (car s)))
 	    (database-query "SELECT RELNAME FROM pg_class WHERE RELNAME LIKE '%clsql_seq%'" 
-			    database nil)))))
+			    database nil nil)))))
 
 (defmethod database-list-tables ((database odbc-database)
 				 &key (owner nil))
@@ -238,20 +238,28 @@
   (declare (ignore owner))
   (multiple-value-bind (rows col-names)
       (odbc-dbi:list-all-table-columns table :db (database-odbc-conn database))
-    (let ((pos (position "COLUMN_NAME" col-names :test #'string-equal)))
-      (when pos
-	(loop for row in rows
-	    collect (nth pos row))))))
+    (declare (ignore col-names))
+    ;; COLUMN_NAME is hard-coded by odbc spec as fourth position
+    (loop for row in rows
+	collect (fourth row))))
 
 (defmethod database-attribute-type ((attribute string) (table string) (database odbc-database)
                                      &key (owner nil))
   (declare (ignore owner))
   (multiple-value-bind (rows col-names)
       (odbc-dbi:list-all-table-columns table :db (database-odbc-conn database))
-    (let ((pos (position "TYPE_NAME" col-names :test #'string-equal)))
-      (when pos
-	(loop for row in rows
-	    collect (nth pos row))))))
+    (declare (ignore col-names))
+    ;; COLUMN_NAME is hard-coded by odbc spec as fourth position
+    ;; TYPE_NAME is the sixth column
+    ;; PRECISION/COLUMN_SIZE is the seventh column
+    ;; SCALE/DECIMAL_DIGITS is the ninth column
+    ;; NULLABLE is the eleventh column
+    (loop for row in rows
+	when (string-equal attribute (fourth row))
+	do (return (values (ensure-keyword (sixth row))
+			   (parse-integer (seventh row) :junk-allowed t)
+			   (parse-integer (ninth row) :junk-allowed t)
+			   (parse-integer (nth 10 row) :junk-allowed t))))))
 
 (defmethod database-set-sequence-position (sequence-name
                                            (position integer)
@@ -270,8 +278,7 @@
 	   (car (database-query 
 		 (concatenate 'string "SELECT last_value,is_called FROM " 
 			      table-name)
-		 database
-		 :auto))))
+		 database :auto nil))))
      (cond
        ((char-equal (schar (second tuple) 0) #\f)
 	(database-execute-command
@@ -290,13 +297,14 @@
    (caar (database-query 
 	  (concatenate 'string "SELECT last_value FROM " 
 		       (%sequence-name-to-table sequence-name))
-	  database
-	  :auto))))
+	  database :auto nil))))
 
 (defmethod database-create (connection-spec (type (eql :odbc)))
+  (declare (ignore connection-spec))
   (warn "Not implemented."))
 
 (defmethod database-destroy (connection-spec (type (eql :odbc)))
+  (declare (ignore connection-spec))
   (warn "Not implemented."))
 
 (defmethod database-probe (connection-spec (type (eql :odbc)))

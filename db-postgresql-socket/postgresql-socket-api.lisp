@@ -560,8 +560,7 @@ connection, if it is still open."
   (force-output (postgresql-connection-socket connection)))
 
 (defun wait-for-query-results (connection)
-  (asse
-rt (postgresql-connection-open-p connection))
+  (assert (postgresql-connection-open-p connection))
   (let ((socket (postgresql-connection-socket connection))
 	(cursor-name nil)
 	(error nil))

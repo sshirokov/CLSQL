@@ -1,12 +1,31 @@
 30 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
-	* Version 2.9.7-pre1
+	* Version 2.10.0: New API function: CACHE-TABLE-QUERIES.
 	* base/basic-sql.lisp, db-*/*-sql.lisp: More CommonSQL conformance.
 	Return field names as second value for QUERY. This can be overridden
-	for efficiency sake with the new keyword :FIELD-NAMES set to NIL
+	for efficiency with the new keyword :FIELD-NAMES set to NIL
 	in the QUERY invocation.
+	* test/test-fdml.lisp: Add tests for new field-name feature
 	* sql/metaclass.lisp: Remove old Lispworks cruft
 	and replace it with invocation of new code in kmr-mop.lisp
 	which actually works with Lispworks 4.2
+	* doc/ref_clsql.xml: Document new :FIELD-NAMES keyword to
+	QUERY function
+	* base/db-interface.lisp: Document the multiple values
+	returned by DATABASE-ATTRIBUTE-TYPE so matches the
+	undocumented CommonSQL behavior. 
+	* sql/table.lisp: Add *CACHE-TABLE-QUERIES-DEFAULT* and
+	*DEFAULT-UPDATE-OBJECTS-MAX-LEN* variables and export them.
+	LIST-ATTRIBUTE-TYPES now conforms to CommonSQL spec.
+	Implement CACHE-TABLE-QUERIES.
+	* db-odbc/odbc-sql.lisp: Fix attribute-type function
+	* test/test-fddl.lisp: Add tests for attribute type	
+	* db-mysql/mysql-sql.lisp: Mild optimization in accessing
+	field structures.
+	* base/classes.lisp: Add attribute-cache slot to database clas
+	* base/initialize.lisp: initialize-database-type now automatically
+	loads database-type backend as needed.
+	* base/test-init.lisp: Utilize new initialize-database-type functionality.
+	* TODO: remove items done
 	
 30 Apr 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* Version 2.9.6

@@ -38,7 +38,9 @@ that expression and a list of field names selected in sql-exp."))
                       (mapcar #'car rows)
                     rows)))
       (record-sql-action result :result database)
-      (values result names))))
+      (if field-names
+	  (values result names)
+	result))))
 
 ;;; Execute
 

@@ -36,7 +36,11 @@
    (schema :accessor database-schema :initform nil)
    (transaction-level :initform 0 :accessor transaction-level)
    (transaction :initform nil :accessor transaction)
-   (conn-pool :initform nil :initarg :conn-pool :accessor conn-pool))
+   (conn-pool :initform nil :initarg :conn-pool :accessor conn-pool)
+   (attribute-cache :initform (make-hash-table :size 100 :test 'equal) 
+		    :accessor attribute-cache
+		    :documentation "Internal cache of table attributes. It is keyed by table-name. Values
+are a list of ACTION specified for table and any cached value of list-attributes-types."))
   (:documentation
    "This class is the supertype of all databases handled by CLSQL."))
 

@@ -334,7 +334,7 @@ the query against." ))
 	(if (plusp (column-count free-query)) ;; KMR: Added check for commands that don't return columns
 	    (values
 	     (db-fetch-query-results free-query nil)
-	     (column-names free-query))
+	     (map 'list #'identity (column-names free-query)))
 	  (values
 	   (result-rows-count (hstmt free-query))
 	   nil)))
@@ -469,6 +469,7 @@ This makes the functions db-execute-command and db-query thread safe."
         (dotimes (col-nr count)
           (let ((data-ptr (aref column-data-ptrs col-nr))
                 (out-len-ptr (aref column-out-len-ptrs col-nr)))
+	    (declare (ignorable data-ptr out-len-ptr))
 	    ;; free-statment :unbind frees these
 	    #+ignore (when data-ptr (uffi:free-foreign-object data-ptr))
 	    #+ignore (when out-len-ptr (uffi:free-foreign-object out-len-ptr)))))
@@ -492,7 +493,7 @@ This makes the functions db-execute-command and db-query thread safe."
 	       column-data-ptrs column-out-len-ptrs column-precisions
 	       computed-result-types)
       query
-    (unless (= (SQLFetch hstmt) odbc::$SQL_NO_DATA_FOUND)
+    (unless (= (odbc::SQLFetch hstmt) odbc::$SQL_NO_DATA_FOUND)
       (values
        (loop for col-nr from 0 to (- column-count 
                                      (if (eq ignore-columns :last) 2 1))

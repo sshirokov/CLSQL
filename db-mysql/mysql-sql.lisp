@@ -28,7 +28,7 @@
 	(field-vec (mysql-fetch-fields res-ptr)))
     (dotimes (i num-fields)
       (declare (fixnum i))
-      (let* ((field (uffi:deref-array field-vec '(:array (* mysql-field)) i))
+      (let* ((field (uffi:deref-array field-vec '(:array mysql-field) i))
              (name (uffi:convert-from-foreign-string
                     (uffi:get-slot-value field 'mysql-field 'mysql::name))))
         (push name names)))
@@ -40,7 +40,7 @@
         (field-vec (mysql-fetch-fields res-ptr)))
     (dotimes (i num-fields)
       (declare (fixnum i))
-      (let* ((field (uffi:deref-array field-vec '(:array (* mysql-field)) i))
+      (let* ((field (uffi:deref-array field-vec '(:array mysql-field) i))
 	      (type (uffi:get-slot-value field 'mysql-field 'type)))
 	(push
 	 (case type
@@ -298,7 +298,7 @@
   (do ((results nil)
        (rows (database-query 
 	      (format nil "SHOW INDEX FROM ~A" (string-upcase table))
-	      database nil)
+	      database nil nil)
 	     (cdr rows)))
       ((null rows) (nreverse results))
     (let ((col (nth 2 (car rows))))
@@ -311,23 +311,27 @@
   (mapcar #'car
 	  (database-query
 	   (format nil "SHOW COLUMNS FROM ~A" table)
-	   database nil)))
+	   database nil nil)))
 
 (defmethod database-attribute-type (attribute (table string)
 				    (database mysql-database)
                                     &key (owner nil))
   (declare (ignore owner))
-  (let ((result
-         (mapcar #'cadr
-                 (database-query
-                  (format nil
-                          "SHOW COLUMNS FROM ~A LIKE '~A'" table attribute)
-                  database nil))))
-    (let* ((str (car result))
-	   (end-str (position #\( str))
-	   (substr (subseq str 0 end-str)))
-      (if substr
-      (intern (string-upcase substr) :keyword) nil))))
+  (let ((row (car (database-query
+		   (format nil
+			   "SHOW COLUMNS FROM ~A LIKE '~A'" table attribute)
+		   database nil nil))))
+    (let* ((raw-type (second row))
+	   (null (third row))
+	   (start-length (position #\( raw-type))
+	   (type (if start-length
+		     (subseq raw-type 0 start-length)
+		     raw-type))
+	   (length (when start-length
+		     (parse-integer (subseq raw-type (1+ start-length))
+				    :junk-allowed t))))
+      (when type
+	(values (ensure-keyword type) length nil (if (string-equal null "YES") 1 0))))))
 
 ;;; Sequence functions
 

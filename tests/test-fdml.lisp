@@ -129,14 +129,17 @@
 
 
 (deftest :fdml/query/1
-    (clsql:query "SELECT COUNT(*) FROM EMPLOYEE WHERE (EMAIL LIKE '%org')")
+    (clsql:query "SELECT COUNT(*) FROM EMPLOYEE WHERE (EMAIL LIKE '%org')" :field-names nil)
   (("10")))
 
 (deftest :fdml/query/2
-    (clsql:query
-     "SELECT FIRST_NAME,LAST_NAME FROM EMPLOYEE WHERE (EMPLID <= 5) ORDER BY LAST_NAME")
+    (multiple-value-bind (rows field-names)
+	(clsql:query
+	 "SELECT FIRST_NAME,LAST_NAME FROM EMPLOYEE WHERE (EMPLID <= 5) ORDER BY LAST_NAME")
+      (values rows (mapcar 'string-upcase field-names)))
   (("Leonid" "Brezhnev") ("Nikita" "Kruschev") ("Vladamir" "Lenin")
- ("Josef" "Stalin") ("Leon" "Trotsky")))
+   ("Josef" "Stalin") ("Leon" "Trotsky"))
+  ("FIRST_NAME" "LAST_NAME"))
 
   
 (deftest :fdml/execute-command/1

@@ -186,7 +186,8 @@ the given lisp type and parameters."))
   (:documentation "List all attributes in TABLE."))
 
 (defgeneric database-attribute-type (attribute table database &key owner)
-  (:documentation "Return the type of ATTRIBUTE in TABLE."))
+  (:documentation "Return the type of ATTRIBUTE in TABLE. Returns multiple values
+of TYPE_NAME (keyword) PRECISION SCALE NULLABLE."))
 
 (defgeneric database-add-attribute (table attribute database)
   (:documentation "Add the attribute to the table."))
@@ -278,7 +279,7 @@ the given lisp type and parameters."))
 
 (defmethod database-query :before (query-expression (database database) 
 				   result-set field-names)
-  (declare (ignore query-expression result-set))
+  (declare (ignore query-expression result-set field-names))
   (unless (is-database-open database)
     (signal-closed-database-error database)))
 

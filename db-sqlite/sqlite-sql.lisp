@@ -81,24 +81,22 @@
       (multiple-value-bind (data row-n col-n)
 	  (sqlite:sqlite-get-table (sqlite-db database) query-expression)
 	#-clisp (declare (type sqlite:sqlite-row-pointer-type data))
-	(if (= row-n 0)
-	    nil
-	    (prog1
-		;; The first col-n elements are column names.
-                (values
-                 (loop for i from col-n below (* (1+ row-n) col-n) by col-n
-                       collect (loop for j from 0 below col-n
-                                     collect
-                                     (#+clisp aref
-                                              #-clisp sqlite:sqlite-aref
-                                              data (+ i j))))
-                 (when field-names
-                   (loop for i from 0 below col-n
-                         collect (#+clisp aref
-                                  #-clisp sqlite:sqlite-aref
-                                  data i))))
-              #-clisp (sqlite:sqlite-free-table data))
-            ))
+	(let ((rows
+	       (when (plusp row-n)
+		 (loop for i from col-n below (* (1+ row-n) col-n) by col-n
+		     collect (loop for j from 0 below col-n
+				 collect
+				   (#+clisp aref
+					    #-clisp sqlite:sqlite-aref
+					    data (+ i j))))))
+	      (names
+	       (when field-names
+		 (loop for j from 0 below col-n
+		     collect (#+clisp aref
+				      #-clisp sqlite:sqlite-aref
+				      data j)))))
+	  #-clisp (sqlite:sqlite-free-table data)
+	  (values rows names)))
     (sqlite:sqlite-error (err)
                          (error 'clsql-sql-error
                                 :database database
@@ -197,21 +195,21 @@
                       (string-equal (subseq s 0 11) "_CLSQL_SEQ_")))
              (mapcar #'car (database-query
                             "SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name"
-                            database '()))))
+                            database nil nil))))
 
 (defmethod database-list-views ((database sqlite-database)
                                 &key (owner nil))
   (declare (ignore owner))
   (mapcar #'car (database-query
                  "SELECT name FROM sqlite_master WHERE type='view' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='view' ORDER BY name"
-                 database nil)))
+                 database nil nil)))
 
 (defmethod database-list-indexes ((database sqlite-database)
                                   &key (owner nil))
   (declare (ignore owner))
   (mapcar #'car (database-query
                  "SELECT name FROM sqlite_master WHERE type='index' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='index' ORDER BY name"
-                 database nil)))
+                 database nil nil)))
 
 (defmethod database-list-table-indexes (table (database sqlite-database)
 					&key (owner nil))
@@ -223,12 +221,12 @@
 	      nil
 	      "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='~A' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='index' AND tbl_name='~A' ORDER BY name"
 	      table table)
-	     database nil))))
+	     database nil nil))))
 
 (declaim (inline sqlite-table-info))
 (defun sqlite-table-info (table database)
   (database-query (format nil "PRAGMA table_info('~A')" table)
-			  database '()))
+		  database nil nil))
 
 (defmethod database-list-attributes (table (database sqlite-database)
                                            &key (owner nil))
@@ -241,8 +239,22 @@
                                     &key (owner nil))
   (declare (ignore owner))
   (loop for field-info in (sqlite-table-info table database)
-	when (string= attribute (second field-info))
-	return (third field-info)))
+      when (string= attribute (second field-info))
+      return 
+	(let* ((raw-type (third field-info))
+	       (start-length (position #\( raw-type))
+	       (type (if start-length
+			 (subseq raw-type 0 start-length)
+		       raw-type))
+	       (length (if start-length
+			   (parse-integer (subseq raw-type (1+ start-length))
+					  :junk-allowed t)
+			 nil)))
+	  (values (when type (ensure-keyword type)) 
+		  length
+		  nil
+		  (if (string-equal (fourth field-info) "0")
+		      1 0)))))
 
 (defun %sequence-name-to-table-name (sequence-name)
   (concatenate 'string "_CLSQL_SEQ_" (sql-escape sequence-name)))
@@ -279,7 +291,7 @@
                 (and sn (list sn))))
           (database-query
            "SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name"
-           database '())))
+           database nil nil)))
 
 (defmethod database-sequence-next (sequence-name (database sqlite-database))
   (without-interrupts
@@ -288,8 +300,7 @@
 	   (car (database-query 
 		 (concatenate 'string "SELECT last_value,is_called FROM " 
 			      table-name)
-		 database
-		 :auto))))
+		 database :auto nil))))
      (cond
        ((char-equal (schar (second tuple) 0) #\f)
 	(database-execute-command
@@ -309,8 +320,7 @@
      (caar (database-query 
 	    (concatenate 'string "SELECT last_value FROM " 
 			 (%sequence-name-to-table-name sequence-name))
-	    database
-	    :auto)))))
+	    database :auto nil)))))
 
 (defmethod database-set-sequence-position (sequence-name
                                            (position integer)

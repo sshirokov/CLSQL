@@ -2099,7 +2099,7 @@ Error: While trying to access database localhost/test2/root
       </refnamediv>
       <refsect1>
 	<title>Syntax</title>
-	<synopsis><function>query</function> <replaceable>query-expression</replaceable> &amp;key <replaceable>database</replaceable> <replaceable>result-types</replaceable> => <returnvalue>result</returnvalue></synopsis>
+	<synopsis><function>query</function> <replaceable>query-expression</replaceable> &amp;key <replaceable>database</replaceable> <replaceable>result-types</replaceable> <replaceable>field-names</replaceable> => <returnvalue>result</returnvalue></synopsis>
       </refsect1>
       <refsect1>
 	<title>Arguments and Values</title>
@@ -2163,6 +2163,15 @@ Error: While trying to access database localhost/test2/root
 		  </simplelist>
 		</para>
 	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term><parameter>field-names</parameter></term>
+	    <para>
+	      A boolean with a default value of &t;. When &t;, this
+	      function results a second value of a list of field
+	      names. When &nil;, this function only returns one value
+	      - the list of rows.
+	    </para>
 	  </varlistentry>
 	  <varlistentry>
 	    <term><returnvalue>result</returnvalue></term>

@@ -212,6 +212,59 @@ list of strings."
 
 ;; Attributes 
 
+(defvar *cache-table-queries-default* "Default atribute type caching behavior.")
+
+(defun cache-table-queries (table &key (action nil) (database *default-database*))
+  "Provides per-table control on the caching in a particular database
+connection of attribute type information using during update
+operations. If TABLE is a string, it is the name of the table for
+which caching is to be altered. If TABLE is t, then the action applies
+to all tables. If TABLE is :default, then the default caching action
+is set for those tables which do not have an explicit setting. ACTION
+specifies the caching action. The value t means cache the attribute
+type information. The value nil means do not cache the attribute type
+information. If TABLE is :default, the setting applies to all tables
+which do not have an explicit setup. The value :flush means remove any
+existing cache for table in database, but continue to cache. This
+function should be called with action :flush when the attribute
+specifications in table have changed."
+  (with-slots (attribute-cache) database
+    (cond
+      ((stringp table)
+       (multiple-value-bind (val found) (gethash table attribute-cache)
+	 (cond
+	   ((and found (eq action :flush))
+	    (setf (gethash table attribute-cache) (list t nil)))
+	   ((and found (eq action t))
+	    (setf (gethash table attribute-cache) (list t (second val))))
+	   ((and found (null action))
+	    (setf (gethash table attribute-cache) (list nil nil)))
+	   ((not found)
+	    (setf (gethash table attribute-cache) (list action nil))))))
+      ((eq table t)
+       (maphash (lambda (k v)
+		  (cond
+		    ((eq action :flush)
+		     (setf (gethash k attribute-cache) (list t nil)))
+		    ((null action)
+		     (setf (gethash k attribute-cache) (list nil nil)))
+		    ((eq t action)
+		     (setf (gethash k attribute-cache) (list t (second value))))))
+		attribute-cache))
+      ((eq table :default)
+       (maphash (lambda (k v)
+		  (when (eq (first v) :unspecified)
+		    (cond
+		      ((eq action :flush)
+		       (setf (gethash k attribute-cache) (list t nil)))
+		      ((null action)
+		       (setf (gethash k attribute-cache) (list nil nil)))
+		      ((eq t action)
+		       (setf (gethash k attribute-cache) (list t (second value)))))))
+		attribute-cache))))
+  (values))
+		  
+
 (defun list-attributes (name &key (owner nil) (database *default-database*))
   "List the attributes of a attribute called NAME in DATABASE which
 defaults to *DEFAULT-DATABASE*. If OWNER is nil, only user-owned
@@ -246,19 +299,27 @@ denotes a username and only attributes owned by OWNER are
 considered. Returns a list in which each element is a list (attribute
 datatype). Attribute is a string denoting the atribute name. Datatype
 is the vendor-specific type returned by ATTRIBUTE-TYPE."
-  (mapcar #'(lambda (type)
-              (list type (attribute-type type table :database database
-                                         :owner owner)))
-          (list-attributes table :database database :owner owner)))
-
-;(defun add-attribute (table attribute &key (database *default-database*))
-;  (database-add-attribute table attribute database))
-
-;(defun rename-attribute (table oldatt newname
-;                               &key (database *default-database*))
-;  (error "(rename-attribute ~a ~a ~a ~a) is not implemented"
-;         table oldatt newname database))
-
+  (with-slots (attribute-cache) database
+    (let ((table-ident (database-identifier table database)))
+      (multiple-value-bind (val found) (gethash table-ident attribute-cache)
+	(if (and found (second val))
+	    (second val)
+	    (let ((types (mapcar #'(lambda (attribute)
+				     (cons attribute
+					   (multiple-value-list
+					    (database-attribute-type
+					     (database-identifier attribute database)
+					     table-ident
+					     database
+					     :owner owner))))
+				 (list-attributes table :database database :owner owner))))
+	      (cond
+		((and (not found) (eq t *cache-table-queries-default*))
+		 (setf (gethash table-ident attribute-cache) (list :unspecified types)))
+		((and found (eq t (first val)) 
+		      (setf (gethash table-ident attribute-cache) (list t types)))))
+	      types))))))
+  
 
 ;; Sequences 
 
@@ -314,3 +375,9 @@ POSITION."
 (defun sequence-last (name &key (database *default-database*))
   "Return the last value of the sequence NAME in DATABASE."
   (database-sequence-last (database-identifier name database) database))
+
+;;; Remote Joins
+
+(defvar *default-update-objects-max-len* nil
+  "The default maximum number of objects supplying data for a query when updating remote joins.")
+

@@ -1,25 +1,17 @@
 GENERAL 
 
-* implement remaining functions for CLSQL AODBC backend;
 * port Oracle backend to UFFI.
 
 COMMONSQL SPEC
 
 * Missing: 
 
-  CACHE-TABLE-QUERIES 
-  *CACHE-TABLE-QUERIES-DEFAULT*
-  *DEFAULT-UPDATE-OBJECTS-MAX-LEN* 
   UPDATE-OBJECT-JOINS 
-
 
 * Incompatible 
 
 
  >> Initialisation and connection 
-
-    INITIALIZE-DATABASE-TYPE
-     o should initialise appropriate backend 
 
     STATUS 
      o what is the behaviour in CommonSQL (esp :full parameter)? 
@@ -34,10 +26,8 @@ COMMONSQL SPEC
 
     QUERY 
       o should coerce values returned as strings to appropriate lisp type
-
-    LIST-ATTRIBUTE-TYPES
-      o should return list of (attribute datatype precision scale nullable) 	
-
+	(except for SQLite interface, this works when :result-types is :auto).
+	Perhaps that should be the default?
 
  >> The object-oriented sql interface
 
