@@ -729,18 +729,6 @@ the length of that format.")
       ;; error-handling mechanism themselves) so we just assert they
       ;; work.
 
-      ;; Using (SETF DEREF-VP) to initialize this pointer fails in OpenMCL
-      ;; due to incorrect evaluation of the :POINTER-VOID argument to
-      ;; UFFI:DEREF-POINTER:
-      ;;
-      ;; > Error in process listener(1): Unknown foreign type: :g10
-      ;; > While executing: ccl::%parse-foreign-type
-      ;;
-      ;; The following works around this for OpenMCL as I'm not
-      ;; certain where the actual problem is. -- JJB 20040713
-      #+openmcl
-      (setf (uffi:deref-pointer envhp :pointer-void) +null-void-pointer+)
-      #-openmcl
       (setf (deref-vp envhp) +null-void-pointer+)
 
       #-oci7

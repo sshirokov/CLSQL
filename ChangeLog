@@ -1,3 +1,8 @@
+15 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 2.11.16
+	* db-oracle/oracle-sql.lisp: Remove OpenMCL specific
+	code in favor of fixing UFFI with James Bielman's patch
+	
 14 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.11.15
 	* db-oracle/oracle-sql.lisp: Apply patch for OpenMCL/OSX
