@@ -38,6 +38,7 @@
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
+;; deprecated
 (def-function "SQLAllocConnect"
     ((henv sql-handle)          ; HENV        henv
      (*phdbc sql-handle-ptr)    ; HDBC   FAR *phdbc
@@ -75,6 +76,7 @@
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
   
+;; deprecated
 (def-function "SQLAllocStmt"
     ((hdbc sql-handle)          ; HDBC        hdbc
      (*phstmt sql-handle-ptr)   ; HSTMT  FAR *phstmt

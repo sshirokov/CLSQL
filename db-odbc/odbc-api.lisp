@@ -249,11 +249,11 @@ as possible second argument) to the desired representation of date/time/timestam
 
 (defun %new-statement-handle (hdbc)
   (let ((statement-handle
-	 (with-foreign-object (hstmt-ptr 'sql-handle)
+	 (with-foreign-object (phstmt 'sql-handle)
 	   (with-error-handling 
 	       (:hdbc hdbc)
-	     (SQLAllocStmt hdbc hstmt-ptr) 
-	     (deref-pointer hstmt-ptr 'sql-handle)))))
+	     (SQLAllocHandle $SQL_HANDLE_STMT hdbc phstmt) 
+	     (deref-pointer phstmt 'sql-handle)))))
     (if (uffi:null-pointer-p statement-handle)
 	(error 'clsql:sql-database-error :message "Received null statement handle.")
 	statement-handle)))

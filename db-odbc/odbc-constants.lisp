@@ -1,4 +1,4 @@
-;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Package: odbc -*-
+ ;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Package: odbc -*-
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;

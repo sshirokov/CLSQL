@@ -71,9 +71,14 @@
 	  (cond 
 	   ((or (search "postgresql" server-name :test #'char-equal)
 		(search "postgresql" dbms-name :test #'char-equal))
+	    (unless (find-package 'clsql-postgresql)
+	      (ignore-errors (asdf:operate 'asdf:load-op 'clsql-postgresql-socket)))
 	    :postgresql)
 	   ((or (search "mysql" server-name :test #'char-equal)
 		(search "mysql" dbms-name :test #'char-equal))
+	    (unless (find-package 'clsql-mysql)
+	      ;; ignore errors on platforms where the shared libraries are not available
+	      (ignore-errors (asdf:operate 'asdf:load-op 'clsql-mysql)))
 	    :mysql)
 	   ((or (search "oracle" server-name :test #'char-equal)
 		(search "oracle" dbms-name :test #'char-equal))

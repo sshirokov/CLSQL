@@ -458,14 +458,16 @@ connection, if it is still open."
 		    (3
 		     (send-unencrypted-password-message
 		      socket
-		      (postgresql-connection-password connection)))
+		      (postgresql-connection-password connection))
+                      (force-output socket))
 		    (4
 		     (let ((salt (make-string 2)))
 		       (read-socket-sequence salt socket)
 		       (send-encrypted-password-message
 			socket
 			(crypt-password
-			 (postgresql-connection-password connection) salt))))
+			 (postgresql-connection-password connection) salt)))
+                     (force-output socket))
 		    (5
 		     (let ((salt (make-string 4)))
 		       (read-socket-sequence salt socket)
@@ -474,7 +476,8 @@ connection, if it is still open."
 			      (pwd (encrypt-md5 pwd2 salt)))
 			 (send-encrypted-password-message
 			  socket
-			  (concatenate 'string "md5" pwd)))))
+			  (concatenate 'string "md5" pwd))))
+                     (force-output socket))
 		    (t
 		     (error 'postgresql-login-error
 			    :connection connection

@@ -1,3 +1,12 @@
+07 Sep 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.0.3 Release
+	* db-postgresql-socket/postgresql-socket-api.lisp: Commit patch
+	from Tagore Smith to call force-output after sending authentication
+	* db-odbc/odbc-api.lisp: Move ODBC v3 conversons
+	* db-odbc/odbc-sql.lisp: Load mysql or postgresql package when connecting
+	to a database of that type so that functions that indicate capabilities of
+	database are available.
+	
 02 Sep 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* db-odbc/odbc-api.lisp: More conversions to ODBC v3
 	
