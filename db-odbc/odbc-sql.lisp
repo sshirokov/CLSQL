@@ -256,10 +256,14 @@
     ;; NULLABLE is the eleventh column
     (loop for row in rows
 	when (string-equal attribute (fourth row))
-	do (return (values (ensure-keyword (sixth row))
-			   (parse-integer (seventh row) :junk-allowed t)
-			   (parse-integer (ninth row) :junk-allowed t)
-			   (parse-integer (nth 10 row) :junk-allowed t))))))
+	do
+	(let ((size (seventh row))
+	      (precision (ninth row))
+	      (scale (nth 10 row)))
+	  (return (values (ensure-keyword (sixth row))
+			  (when size (parse-integer size))
+			  (when precision (parse-integer precision))
+			  (when scale (parse-integer scale))))))))
 
 (defmethod database-set-sequence-position (sequence-name
                                            (position integer)

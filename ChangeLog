@@ -1,7 +1,9 @@
 3 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* db-odbc/odbc-api.lisp: Fix changing nil to "NIL" 
 	for odbc/postgresql backend.
-
+	* db-odbc/odbc-sql.lisp: Fix ATTRIBUTE-TYPE so that
+	it can handle NIL values from the ODBC driver
+	
 3 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.8	
 	* base/conditions.lisp: Add *backend-warning-behavior*
