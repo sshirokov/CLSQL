@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-loader.cl,v 1.16 2002/05/17 17:09:55 kevin Exp $
+;;;; $Id: mysql-loader.cl,v 1.17 2002/05/18 17:37:48 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -29,11 +29,11 @@
   (uffi:find-foreign-library
    "clsql-mysql"
    `(,(directory-namestring
-       ((translate-logical-pathname 
-	 "CL-LIBRARY:clsql;interfaces;mysql;"))
-     "/usr/share/common-lisp/source/clsql/interfaces/mysql/"))
+       (translate-logical-pathname 
+	"CL-LIBRARY:clsql;interfaces;mysql;"))
+     "/usr/share/common-lisp/source/clsql/interfaces/mysql/")
    :drive-letters '("C" "D" "E" "F" "G")))
-
+  
 (defvar *mysql-library-filename*
     (cond
      ((probe-file "/opt/mysql/lib/mysql/libmysqlclient.so")

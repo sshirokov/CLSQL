@@ -39,7 +39,7 @@ Description: UncommonSQL database backend, AODBC
 
 Package: cl-sql-postgresql
 Architecture: all
-Depends: cl-sql-base (>= ${Source-Version}), postgresql-client
+Depends: cl-sql-base (>= ${Source-Version}), postgresql-client, postgresql-dev
 Provides: cl-sql-backend
 Description: UncommonSQL database backend, PostgreSQL
  This package enables you to use the CLSQL data access package
