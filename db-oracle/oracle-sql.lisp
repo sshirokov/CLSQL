@@ -118,19 +118,7 @@ the length of that format.")
     :initarg :major-server-version
     :reader major-server-version
     :documentation
-    "The major version number of the Oracle server, should be 8, 9, or 10")
-   (client-version 
-    :type (or null string)
-    :initarg :client-version
-    :reader client-version
-    :documentation
-    "Version string of Oracle client.")
-   (major-client-version
-    :type (or null fixnum)
-    :initarg :major-client-version
-    :reader major-client-version
-    :documentation
-    "The major version number of the Oracle client, should be 8, 9, or 10")))
+    "The major version number of the Oracle server, should be 8, 9, or 10")))
 
 
 ;;; Handle the messy case of return code=+oci-error+, querying the
@@ -748,11 +736,14 @@ the length of that format.")
 			+oci-htype-error+ 0 +null-void-pointer-pointer+)
       (oci-handle-alloc (deref-vp envhp) srvhp
 			+oci-htype-server+ 0 +null-void-pointer-pointer+)
+
+      #+ignore ;; not used since CLSQL uses the OCILogon function instead
       (uffi:with-cstring (dblink nil)
 	(oci-server-attach (deref-vp srvhp)
 			   (deref-vp errhp)
 			   dblink 
 			   0 +oci-default+))
+      
       (oci-handle-alloc (deref-vp envhp) svchp
 			+oci-htype-svcctx+ 0 +null-void-pointer-pointer+)
       (oci-attr-set (deref-vp svchp)
@@ -761,40 +752,17 @@ the length of that format.")
 		    (deref-vp errhp))
       ;; oci-handle-alloc((dvoid *)encvhp, (dvoid **)&stmthp, OCI_HTYPE_STMT, 0, 0);
       ;;#+nil
-      ;; Actually, oci-server-version returns the client version, not the server versions
-      ;; will use "SELECT VERSION FROM V$INSTANCE" to get actual server version.
-      (let (db server-version client-version)
-	(declare (ignorable server-version))
-	(uffi:with-foreign-object (buf '(:array :unsigned-char #.+errbuf-len+))
-	  (oci-server-version (deref-vp svchp)
-			      (deref-vp errhp)
-			      (uffi:char-array-to-pointer buf)
-			      +errbuf-len+ +oci-htype-svcctx+)
-	  (setf client-version (uffi:convert-from-foreign-string buf))
-	  ;; This returns the client version, not the server version, so diable it
-	  #+ignore
-	  (oci-server-version (deref-vp srvhp)
-			      (deref-vp errhp)
-			      (uffi:char-array-to-pointer buf)
-			      +errbuf-len+ +oci-htype-server+)
-	  #+ignore
-	  (setf server-version (uffi:convert-from-foreign-string buf)))
-	(setq db (make-instance 'oracle-database
-				:name (database-name-from-spec connection-spec
-							       database-type)
-				:connection-spec connection-spec
-				:envhp envhp
-				:errhp errhp
-				:database-type :oracle
-				:svchp svchp
-				:dsn data-source-name
-				:user user
-				:client-version client-version
-				:server-version server-version
-				:major-client-version (major-client-version-from-string
-						       client-version)
-				:major-server-version (major-client-version-from-string
-						       server-version)))
+
+      (let ((db (make-instance 'oracle-database
+		  :name (database-name-from-spec connection-spec
+						 database-type)
+		  :connection-spec connection-spec
+		  :envhp envhp
+		  :errhp errhp
+		  :database-type :oracle
+		  :svchp svchp
+		  :dsn data-source-name
+		  :user user)))
 	(oci-logon (deref-vp envhp)
 		   (deref-vp errhp) 
 		   svchp
