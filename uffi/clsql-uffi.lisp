@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.14 2003/05/16 09:14:39 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.15 2003/05/16 09:16:25 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -197,6 +197,6 @@
     (do ((i 0))
 	((= i len))
       (declare (fixnum i))
-      (setf (aref str1 i) (uffi:deref-array s '(:array :unsigned-char) i))
+      (setf (aref str i) (uffi:deref-array s '(:array :unsigned-char) i))
       (incf i))
     str))))
