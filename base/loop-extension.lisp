@@ -51,8 +51,11 @@
       (setq from-phrase '(clsql-base:*default-database*)))
     (cond
       ;; Object query resulting in a list of returned object instances
-      #+ignore
-      ((consp (car in-phrase))
+      ((and (consp in-phrase)
+	    (consp (car in-phrase))
+	    (consp (second (car in-phrase)))
+	    (eq 'quote (first (second (car in-phrase))))
+	    (symbolp (second (second (car in-phrase)))))
        (ansi-loop::loop-error "object query not yet supported"))
       
       ((consp variable)
@@ -70,7 +73,7 @@
 	    (,result-set-var nil)
 	    (,step-var nil))
 	   ((multiple-value-bind (%rs %cols)
-		(clsql-base:database-query-result-set ,query-var ,db-var)
+		(clsql-base:database-query-result-set ,query-var ,db-var :result-types :auto)
 	      (setq ,result-set-var %rs ,step-var (make-list %cols))))
 	   ()
 	   ()
@@ -93,7 +96,7 @@
 	    (,db-var ,(first from-phrase))
 	    (,result-set-var nil))
 	   ((multiple-value-bind (%rs %cols)
-		(clsql-base:database-query-result-set ,query-var ,db-var)
+		(clsql-base:database-query-result-set ,query-var ,db-var :result-types :auto)
 	      (setq ,result-set-var %rs ,variable (make-list %cols))))
 	   ()
 	   ()
@@ -149,9 +152,12 @@
 
     (cond
       ;; Object query resulting in a list of returned object instances
-      #+ignore
-      ((consp (car in-phrase))
-       (error "Object query not yet supported."))
+      ((and (consp in-phrase)
+	    (consp (car in-phrase))
+	    (consp (second (car in-phrase)))
+	    (eq 'quote (first (second (car in-phrase))))
+	    (symbolp (second (second (car in-phrase)))))
+       (loop-error "object query not yet supported"))
       
       ((consp iter-var)
        (let ((query-var (gensym "LOOP-RECORD-"))
@@ -167,7 +173,7 @@
 	    (,result-set-var nil)
 	    (,step-var nil))
 	  `((multiple-value-bind (%rs %cols)
-		(clsql-base:database-query-result-set ,query-var ,db-var)
+		(clsql-base:database-query-result-set ,query-var ,db-var :result-types :auto)
 	      (setq ,result-set-var %rs ,step-var (make-list %cols))))
 	  ()
 	  ()
@@ -194,7 +200,7 @@
 	    (,db-var ,(first from-phrase))
 	    (,result-set-var nil))
 	  `((multiple-value-bind (%rs %cols)
-		(clsql-base:database-query-result-set ,query-var ,db-var)
+		(clsql-base:database-query-result-set ,query-var ,db-var :result-types :auto)
 	      (setq ,result-set-var %rs ,iter-var (make-list %cols))))
 	  ()
 	  ()

@@ -334,7 +334,21 @@
       collect (concatenate 'string forename " " surname))
   ("Yuri Andropov" "Leonid Brezhnev" "Konstantin Chernenko" "Mikhail Gorbachev"
                    "Nikita Kruschev" "Vladamir Lenin" "Vladamir Putin"
-                   "Josef Stalin" "Leon Trotsky" "Boris Yeltsin"))
+   "Josef Stalin" "Leon Trotsky" "Boris Yeltsin"))
+
+(deftest :fdml/loop/2
+    (loop for emplid
+      being each tuple in
+      [select [emplid] :from [address] :order-by [emplid]]
+      collect emplid)
+  ((1) (2)))
+
+(deftest :fdml/loop/3
+    (loop for emplid
+      being each tuple in
+      [select [emplid] :from [address] :order-by [emplid] :flatp t]
+      collect emplid)
+  (1 2))
 
 ;; starts a transaction deletes a record and then rolls back the deletion 
 (deftest :fdml/transaction/1
