@@ -70,8 +70,8 @@
     "NUMBER"))
 
 (defmethod read-sql-value (val type (database oracle-database))
-  (declare (ignore type database))
   ;;(format t "value is \"~A\" of type ~A~%" val (type-of val))
+  (declare (ignore type))
   (etypecase val
     (string
      (read-from-string val))
@@ -84,7 +84,6 @@
 
 (defmethod read-sql-value
   (val (type (eql 'integer)) (database oracle-database))
-  (declare (ignore database))
   val)
 
 (defmethod read-sql-value (val (type (eql 'float)) (database oracle-database))

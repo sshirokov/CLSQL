@@ -146,15 +146,15 @@ the length of that format.")))
                  (error 'clsql-sql-error
                         :database database
                         :errno subcode
-                        :error (uffi:convert-from-foreign-string errbuf)))))))
+                        :expression (uffi:convert-from-foreign-string errbuf)))))))
 	(nulls-ok
 	 (error 'clsql-sql-error
                 :database database
-                :error "can't handle NULLS-OK without ERRHP"))
+                :message "can't handle NULLS-OK without ERRHP"))
 	(t 
 	 (error 'clsql-sql-error
                 :database database
-                :error "OCI Error (and no ERRHP available to find subcode)"))))
+                :message "OCI Error (and no ERRHP available to find subcode)"))))
 
 ;;; Require an OCI success code.
 ;;;
@@ -334,6 +334,38 @@ the length of that format.")))
 
 (uffi:def-type short-pointer '(* :short))
 (uffi:def-type double-pointer '(* :double))
+
+;;; the result of a database query: a cursor through a table
+(defstruct (oracle-result-set (:print-function print-query-cursor)
+                              (:conc-name qc-)
+                              (:constructor %make-query-cursor))
+  (db (error "missing DB")              ; db conn. this table is associated with
+    :type db
+    :read-only t)
+  (stmthp (error "missing STMTHP")      ; the statement handle used to create
+;;  :type alien			; this table. owned by the QUERY-CURSOR
+    :read-only t)                       ; object, deallocated on CLOSE-QUERY
+  (cds) ;  (error "missing CDS")            ; column descriptors
+;    :type (simple-array cd 1)
+					;    :read-only t)
+  (n-from-oci 
+   0                         ; buffered rows: number of rows recv'd
+   :type (integer 0 #.+n-buf-rows+))   ; from the database on the last read
+  (n-to-dbi
+   0                           ; number of buffered rows returned, i.e.
+   :type (integer 0 #.+n-buf-rows+))   ; the index, within the buffered rows,
+                                        ; of the next row which hasn't already
+                                        ; been returned
+  (total-n-from-oci
+   0                   ; total number of bytes recv'd from OCI
+   :type unsigned-byte)                ; in all reads
+  (oci-end-seen-p nil))                 ; Have we seen the end of OCI
+                                        ; data, i.e. OCI returning
+                                        ; less data than we requested?
+                                        ; OCI doesn't seem to like us
+                                        ; to try to read more data
+                                        ; from it after that..
+
 
 (defun fetch-row (qc &optional (eof-errorp t) eof-value)
   (declare (optimize (speed 3)))
@@ -627,7 +659,7 @@ the length of that format.")))
 
 (defmethod database-connect (connection-spec (database-type (eql :oracle)))
   (check-connection-spec connection-spec database-type (user password dsn))
-  (destructuring-bind (user password data-source-name)
+  (destructuring-bind (data-source-name user password)
       connection-spec
     (let ((envhp (uffi:allocate-foreign-object (* :void)))
           (errhp (uffi:allocate-foreign-object (* :void)))
@@ -638,7 +670,7 @@ the length of that format.")))
       ;; handle errors very gracefully (since they're part of the
       ;; error-handling mechanism themselves) so we just assert they
       ;; work.
-      (setf (uffi:deref-pointer envhp void-pointer) nil)
+      (setf (uffi:deref-pointer envhp void-pointer) +null-void-pointer+)
       #+oci-8-1-5
       (progn
         (oci-env-create (c-& envhp void-pointer) +oci-default+ nil nil nil nil 0 nil)
@@ -646,26 +678,25 @@ the length of that format.")))
 			  (c-& errhp void-pointer) +oci-htype-error+ 0 nil))
       #-oci-8-1-5
       (progn
-	(oci-initialize +oci-object+ nil nil nil nil)
-        (ignore-errors (oci-handle-alloc nil (c-& envhp void-pointer) +oci-htype-env+ 0 nil)) ;no testing return
-        (oci-env-init (c-& envhp void-pointer) +oci-default+ 0 nil)
-        (oci-handle-alloc (uffi:deref-pointer envhp void-pointer) (c-& errhp void-pointer) +oci-htype-error+ 0 nil)
-        (oci-handle-alloc (uffi:deref-pointer envhp void-pointer) (c-& srvhp void-pointer) +oci-htype-server+ 0 nil)
+	(oci-initialize +oci-object+ +null-void-pointer+ +null-void-pointer+ +null-void-pointer+ +null-void-pointer+)
+        (ignore-errors (oci-handle-alloc nil envhp +oci-htype-env+ 0 +null-void-pointer+)) ;no testing return
+        (oci-env-init envhp +oci-default+ 0 +null-void-pointer+)
+        (oci-handle-alloc (uffi:deref-pointer envhp void-pointer) errhp +oci-htype-error+ 0 +null-void-pointer+)
+        (oci-handle-alloc (uffi:deref-pointer envhp void-pointer) srvhp +oci-htype-server+ 0 +null-void-pointer+)
         ;;(osucc (oci-server-attach srvhp errhp nil 0 +oci-default+))
-        (oci-handle-alloc (uffi:deref-pointer envhp void-pointer) (c-& svchp void-pointer) +oci-htype-svcctx+ 0 nil)
+        (oci-handle-alloc (uffi:deref-pointer envhp void-pointer) svchp +oci-htype-svcctx+ 0 +null-void-pointer+)
         ;; oci-handle-alloc((dvoid *)encvhp, (dvoid **)&stmthp, OCI_HTYPE_STMT, 0, 0);
         #+nil
-        (oci-attr-set (uffi:deref-pointer svchp void-pointer) +oci-htype-svcctx+ 
-		      (uffi:deref-pointer srvhp void-pointer) 0 +oci-attr-server+ errhp)
+        (oci-attr-set svchp +oci-htype-svcctx+ 
+		      srvhp 0 +oci-attr-server+ errhp)
 	)
-
       #+nil
       (format t "Logging in as user '~A' to database ~A~%"
 	      user password data-source-name)
       (oci-logon (uffi:deref-pointer envhp void-pointer) (uffi:deref-pointer errhp void-pointer) (c-& svchp void-pointer)
-		 user (length user)
-		 password (length password)
-		 data-source-name (length data-source-name))
+		 (uffi:convert-to-cstring user) (length user)
+		 (uffi:convert-to-cstring password) (length password)
+		 (uffi:convert-to-cstring data-source-name) (length data-source-name))
       (let ((db (make-instance 'oracle-database
                                :name (database-name-from-spec connection-spec
                                                               database-type)
@@ -786,34 +817,6 @@ the length of that format.")))
 	    (cd-name cd)
 	    (cd-oci-data-type cd)
 	    (cd-sizeof cd))))
-
-;;; the result of a database query: a cursor through a table
-(defstruct (oracle-result-set (:print-function print-query-cursor)
-                              (:conc-name "QC-")
-                              (:constructor %make-query-cursor))
-  (db (error "missing DB")              ; db conn. this table is associated with
-    :type db
-    :read-only t)
-  (stmthp (error "missing STMTHP")      ; the statement handle used to create
-;;  :type alien			; this table. owned by the QUERY-CURSOR
-    :read-only t)                       ; object, deallocated on CLOSE-QUERY
-  (cds) ;  (error "missing CDS")            ; column descriptors
-;    :type (simple-array cd 1)
-;    :read-only t)
-  (n-from-oci 0                         ; buffered rows: number of rows recv'd
-    :type (integer 0 #.+n-buf-rows+))   ; from the database on the last read
-  (n-to-dbi 0                           ; number of buffered rows returned, i.e.
-    :type (integer 0 #.+n-buf-rows+))   ; the index, within the buffered rows,
-                                        ; of the next row which hasn't already
-                                        ; been returned
-  (total-n-from-oci 0                   ; total number of bytes recv'd from OCI
-    :type unsigned-byte)                ; in all reads
-  (oci-end-seen-p nil))                 ; Have we seen the end of OCI
-                                        ; data, i.e. OCI returning
-                                        ; less data than we requested?
-                                        ; OCI doesn't seem to like us
-                                        ; to try to read more data
-                                        ; from it after that..
 
 (defun print-query-cursor (qc stream depth)
   (declare (ignore depth))

@@ -94,27 +94,30 @@
 			     ,c-parms
 			     :returning ,c-return)))
        (defun ,lisp-oci-fn (,@ll &key database nulls-ok)
-	 (case (funcall %lisp-oci-fn ,@ll)
-	   (#.+oci-success+
-	    +oci-success+)
-	   (#.+oci-error+
-	    (handle-oci-error :database database :nulls-ok nulls-ok))
-	   (#.+oci-no-data+
-	    (error "OCI No Data Found"))
-	   (#.+oci-success-with-info+
-	    (error "internal error: unexpected +oci-SUCCESS-WITH-INFO"))
-	   (#.+oci-no-data+
-	    (error "OCI No Data"))
-	   (#.+oci-invalid-handle+
-	    (error "OCI Invalid Handle"))
-	   (#.+oci-need-data+
-	    (error "OCI Need Data"))
-	   (#.+oci-still-executing+
-	    (error "OCI Still Executing"))
-	   (#.+oci-continue+
-	    (error "OCI Continue"))
-	   (t
-	    (error "OCI unknown error, code=~A" (values))))))))
+	 (let ((result (funcall %lisp-oci-fn ,@ll)))
+	   (case result
+	     (#.+oci-success+
+	      +oci-success+)
+	     (#.+oci-error+
+	      (handle-oci-error :database database :nulls-ok nulls-ok))
+	     (#.+oci-no-data+
+	      (error "OCI No Data Found"))
+	     (#.+oci-success-with-info+
+	      (error "internal error: unexpected +oci-SUCCESS-WITH-INFO"))
+	     (#.+oci-no-data+
+	      (error "OCI No Data"))
+	     (#.+oci-invalid-handle+
+	      (error "OCI Invalid Handle"))
+	     (#.+oci-need-data+
+	      (error "OCI Need Data"))
+	     (#.+oci-still-executing+
+	      (error "OCI Still Executing"))
+	     (#.+oci-continue+
+	      (error "OCI Continue"))
+	     (1804
+	      (error "Check ORACLE_HOME and NLS settings."))
+	     (t
+	      (error "OCI unknown error, code=~A" result))))))))
   
 
 (defmacro def-raw-oci-routine
@@ -157,11 +160,11 @@
 
 (def-oci-routine ("OCIHandleAlloc" oci-handle-alloc)
     :int
-  (parenth      (* :void))                  ; const dvoid *
-  (hndlpp       (* :void))                  ; dvoid **
-  (type         :unsigned-long)          ; ub4
-  (xtramem_sz   :unsigned-long)          ; size_t
-  (usrmempp     (* :void)))                 ; dvoid **
+  (parenth      (* :void))		; const dvoid *
+  (hndlpp       (* (* :void)))		; dvoid **
+  (type         :unsigned-long)		; ub4
+  (xtramem_sz   :unsigned-long)		; size_t
+  (usrmempp     (* (* :void))))		; dvoid **
 
 (def-oci-routine ("OCIServerAttach" oci-server-attach)
     :int
@@ -317,7 +320,7 @@
     (:error
      (let ((ptr (uffi:make-pointer 0 (* :void))))
        (let ((x (OCIHandleAlloc
-		 (pointer-address (uffi:deref-pointer *oci-env* oci-env))
+		 (uffi:pointer-address (uffi:deref-pointer *oci-env* oci-env))
 		 ptr
 		 +oci-default+
 		 0
