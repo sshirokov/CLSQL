@@ -1,4 +1,7 @@
 19 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.8.2: Build changes for FreeBSD [Slawek Zak]
+
+19 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.8.1
 	* db-odbc/odbc-sql.lisp: Add DATABASE-LIST function 
 	* db-odbc/odbc-dbi.lisp: Add LIST-ALL-DATA-SOURCES function 

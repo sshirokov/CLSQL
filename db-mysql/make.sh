@@ -2,6 +2,7 @@
 
 case "`uname`" in
     Linux) os_linux=1 ;;
+    FreeBSD) os_freebsd=1 ;;
     Darwin) os_darwin=1 ;;
     SunOS) os_sunos=1 ;;
     AIX) os_aix=1 ;;
@@ -9,10 +10,9 @@ case "`uname`" in
        exit 1 ;;	
 esac
     
-if [ "$os_linux" ]; then
+if [ "$os_linux" -o "$os_freebsd" ]; then
     gcc $CFLAGS -fPIC -c $SOURCE -o $OBJECT
     gcc -shared $OBJECT $LDFLAGS -o $SHARED_LIB
-
 elif [ "$os_darwin" ]; then
     cc $CFLAGS -dynamic -c $SOURCE -o $OBJECT
     ld -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress -o $BASE.dylib $OBJECT

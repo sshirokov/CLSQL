@@ -59,7 +59,8 @@
 (defmethod perform ((o compile-op) (c clsql-uffi-source-file))
   #-(or win32 mswindows)
   (unless (zerop (run-shell-command
-		  "cd ~A; make"
+		  #-freebsd "cd ~A; make"
+		  #+freebsd "cd ~A; gmake"
 		  (namestring (make-pathname :name nil
 					     :type nil
 					     :directory *library-file-dir*))))
