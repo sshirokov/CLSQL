@@ -8,7 +8,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: usql.cl,v 1.7 2002/05/19 16:05:23 kevin Exp $
+;;;; $Id: usql.cl,v 1.8 2002/05/19 16:26:06 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and onShore Development Inc
@@ -108,6 +108,10 @@ specifies the database to operation on, defaulting to
                        (database *default-database*))
   (declare (ignore database))
   (write-string +null-string+ *sql-stream*))
+
+(defmethod sql-output ((expr t))
+  (declare (ignore expr))  
+  "")
 
 (defmethod print-object ((self %sql-expression) stream)
   (print-unreadable-object
