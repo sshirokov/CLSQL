@@ -1,5 +1,5 @@
 22 May 2004 Kevin Rosenberg
-	* Version 2.10.19 released: Oracle backend now fails 6 out of 200 tests
+	* Version 2.10.20 released: Oracle backend now fails 6 out of 200 tests
 	* TODO: Added 2 variances from CommonSQL. Add tests for owner phrases
 	and string identifiers with non-default case
 	* sql/table.lisp: Don't convert string table name to a symbol.
