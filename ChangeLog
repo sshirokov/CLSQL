@@ -1,3 +1,7 @@
+12 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* db-oracle/oracle-objects.lisp: Change *default-varchar-length* to 
+	*default-string-length*
+	
 12 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* tests/test-syntax.lisp, tests/test-fdml.lisp: add tests for escaping 
 	of single quotes. 

@@ -17,7 +17,7 @@
 
 (defmethod database-get-type-specifier (type args database (db-type (eql :oracle)))
   (declare (ignore type args database))
-    (format nil "VARCHAR2(~D)" *default-varchar-length*))
+    (format nil "VARCHAR2(~D)" *default-string-length*))
 
 (defmethod database-get-type-specifier ((type (eql 'integer)) args 
 					database (db-type (eql :oracle)))
@@ -42,14 +42,14 @@
   (declare (ignore database)) 
   (if args
       (format nil "CHAR(~A)" (car args))
-    (format nil "VARCHAR2(~D)" *default-varchar-length*)))
+    (format nil "VARCHAR2(~D)" *default-string-length*)))
 
 (defmethod database-get-type-specifier ((type (eql 'varchar)) args
 					database (db-type (eql :oracle)))
   (declare (ignore database)) 
   (if args
       (format nil "VARCHAR2(~A)" (car args))
-    (format nil "VARCHAR2(~D)" *default-varchar-length*)))
+    (format nil "VARCHAR2(~D)" *default-string-length*)))
 
 (defmethod database-get-type-specifier ((type (eql 'float)) args
 					database (db-type (eql :oracle)))
