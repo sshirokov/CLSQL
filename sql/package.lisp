@@ -98,77 +98,77 @@
     .
     #1=(
        ;; conditions 
-       :clsql-condition
-       :clsql-error
-       :clsql-simple-error
-       :clsql-warning
-       :clsql-simple-warning
-       :clsql-invalid-spec-error
-       :clsql-invalid-spec-error-connection-spec
-       :clsql-invalid-spec-error-database-type
-       :clsql-invalid-spec-error-template
-       :clsql-connect-error
-       :clsql-connect-error-database-type
-       :clsql-connect-error-connection-spec
-       :clsql-connect-error-errno
-       :clsql-connect-error-error
-       :clsql-sql-error
-       :clsql-sql-error-database
-       :clsql-sql-error-expression
-       :clsql-sql-error-errno
-       :clsql-sql-error-error
-       :clsql-database-warning
-       :clsql-database-warning-database
-       :clsql-database-warning-message
-       :clsql-exists-condition
-       :clsql-exists-condition-new-db
-       :clsql-exists-condition-old-db
-       :clsql-exists-warning
-       :clsql-exists-error
-       :clsql-closed-error
-       :clsql-closed-error-database
-       :clsql-type-error
-       :clsql-sql-syntax-error
+       #:clsql-condition
+       #:clsql-error
+       #:clsql-simple-error
+       #:clsql-warning
+       #:clsql-simple-warning
+       #:clsql-invalid-spec-error
+       #:clsql-invalid-spec-error-connection-spec
+       #:clsql-invalid-spec-error-database-type
+       #:clsql-invalid-spec-error-template
+       #:clsql-connect-error
+       #:clsql-connect-error-database-type
+       #:clsql-connect-error-connection-spec
+       #:clsql-connect-error-errno
+       #:clsql-connect-error-error
+       #:clsql-sql-error
+       #:clsql-sql-error-database
+       #:clsql-sql-error-expression
+       #:clsql-sql-error-errno
+       #:clsql-sql-error-error
+       #:clsql-database-warning
+       #:clsql-database-warning-database
+       #:clsql-database-warning-message
+       #:clsql-exists-condition
+       #:clsql-exists-condition-new-db
+       #:clsql-exists-condition-old-db
+       #:clsql-exists-warning
+       #:clsql-exists-error
+       #:clsql-closed-error
+       #:clsql-closed-error-database
+       #:clsql-type-error
+       #:clsql-sql-syntax-error
 
        ;; db-interface
-       :check-connection-spec
-       :database-initialize-database-type
-       :database-type-load-foreign
-       :database-name-from-spec
-       :database-create-sequence
-       :database-drop-sequence
-       :database-sequence-next
-       :database-set-sequence-position
-       :database-query-result-set
-       :database-dump-result-set
-       :database-store-next-row
-       :database-get-type-specifier
-       :database-list-tables
-       :database-list-views
-       :database-list-indexes
-       :database-list-sequences
-       :database-list-attributes
-       :database-attribute-type
-       :database-add-attribute
-       :database-type 
+       #:check-connection-spec
+       #:database-initialize-database-type
+       #:database-type-load-foreign
+       #:database-name-from-spec
+       #:database-create-sequence
+       #:database-drop-sequence
+       #:database-sequence-next
+       #:database-set-sequence-position
+       #:database-query-result-set
+       #:database-dump-result-set
+       #:database-store-next-row
+       #:database-get-type-specifier
+       #:database-list-tables
+       #:database-list-views
+       #:database-list-indexes
+       #:database-list-sequences
+       #:database-list-attributes
+       #:database-attribute-type
+       #:database-add-attribute
+       #:database-type 
        ;; initialize
-       :*loaded-database-types*
-       :reload-database-types
-       :*default-database-type*
-       :*initialized-database-types*
-       :initialize-database-type
+       #:*loaded-database-types*
+       #:reload-database-types
+       #:*default-database-type*
+       #:*initialized-database-types*
+       #:initialize-database-type
        ;; classes
-       :database
-       :closed-database
-       :database-name
-       :command-recording-stream
-       :result-recording-stream
-       :database-view-classes
-       :database-schema
-       :conn-pool
-       :print-object 
+       #:database
+       #:closed-database
+       #:database-name
+       #:command-recording-stream
+       #:result-recording-stream
+       #:database-view-classes
+       #:database-schema
+       #:conn-pool
+       #:print-object 
        ;; utils
-       :sql-escape
+       #:sql-escape
 
        ;; database.lisp -- Connection
        #:*default-database-type*	          ; clsql-base xx
@@ -227,31 +227,31 @@
        ))
    (:export
     ;; "Private" exports for use by interface packages
-    :check-connection-spec
-    :database-initialize-database-type
-    :database-type-load-foreign
-    :database-name-from-spec
-    :database-connect
-   :database-query
-   :database-execute-command
-   :database-create-sequence
-   :database-drop-sequence
-   :database-sequence-next
-   :database-set-sequence-position
-   :database-query-result-set
-   :database-dump-result-set
-   :database-store-next-row
-   :database-get-type-specifier
-   :database-list-tables
-   :database-table-exists-p
-   :database-list-views
-   :database-view-exists-p
-   :database-list-indexes
-   :database-index-exists-p
-   :database-list-sequences
-   :database-sequence-exists-p
-   :database-list-attributes
-   :database-attribute-type
+    #:check-connection-spec
+    #:database-initialize-database-type
+    #:database-type-load-foreign
+    #:database-name-from-spec
+    #:database-connect
+   #:database-query
+   #:database-execute-command
+   #:database-create-sequence
+   #:database-drop-sequence
+   #:database-sequence-next
+   #:database-set-sequence-position
+   #:database-query-result-set
+   #:database-dump-result-set
+   #:database-store-next-row
+   #:database-get-type-specifier
+   #:database-list-tables
+   #:database-table-exists-p
+   #:database-list-views
+   #:database-view-exists-p
+   #:database-list-indexes
+   #:database-index-exists-p
+   #:database-list-sequences
+   #:database-sequence-exists-p
+   #:database-list-attributes
+   #:database-attribute-type
 
    .
    ;; Shared exports for re-export by CLSQL. 
@@ -262,130 +262,130 @@
        ;; CommonSQL API 
        ;;------------------------------------------------
       ;;FDML 
-       :select                            ; objects    xx
-       :cache-table-queries               ; 
-       :*cache-table-queries-default*     ; 
-       :delete-records                    ; sql	       xx
-       :insert-records                    ; sql        xx
-       :update-records                    ; sql	       xx
-       :execute-command		          ; sql        xx
-       :query                             ; sql        xx
-       :print-query			  ; sql	       xx
-       :do-query		          ; sql	       xx
-       :map-query			  ; sql	       xx
-       :loop				  ; loop-ext   x
+       #:select                            ; objects    xx
+       #:cache-table-queries               ; 
+       #:*cache-table-queries-default*     ; 
+       #:delete-records                    ; sql	       xx
+       #:insert-records                    ; sql        xx
+       #:update-records                    ; sql	       xx
+       #:execute-command		          ; sql        xx
+       #:query                             ; sql        xx
+       #:print-query			  ; sql	       xx
+       #:do-query		          ; sql	       xx
+       #:map-query			  ; sql	       xx
+       #:loop				  ; loop-ext   x
        ;;FDDL
-       :create-table		          ; table      xx
-       :drop-table		          ; table      xx
-       :list-tables		          ; table      xx
-       :table-exists-p                    ; table      xx 
-       :list-attributes		          ; table      xx
-       :attribute-type                    ; table      xx
-       :list-attribute-types              ; table      xx
-       :create-view		          ; table      xx
-       :drop-view		          ; table      xx
-       :create-index		          ; table      xx		
-       :drop-index		          ; table      xx		
+       #:create-table		          ; table      xx
+       #:drop-table		          ; table      xx
+       #:list-tables		          ; table      xx
+       #:table-exists-p                    ; table      xx 
+       #:list-attributes		          ; table      xx
+       #:attribute-type                    ; table      xx
+       #:list-attribute-types              ; table      xx
+       #:create-view		          ; table      xx
+       #:drop-view		          ; table      xx
+       #:create-index		          ; table      xx		
+       #:drop-index		          ; table      xx		
        ;;OODDL
-       :standard-db-object		  ; objects    xx
-       :def-view-class                    ; objects    xx
-       :create-view-from-class            ; objects    xx
-       :drop-view-from-class	          ; objects    xx
+       #:standard-db-object		  ; objects    xx
+       #:def-view-class                    ; objects    xx
+       #:create-view-from-class            ; objects    xx
+       #:drop-view-from-class	          ; objects    xx
        ;;OODML
-       :instance-refreshed                ;
-       :update-object-joins               ;
-       :*default-update-objects-max-len*  ; 
-       :update-slot-from-record           ; objects    xx
-       :update-instance-from-records      ; objects    xx
-       :update-records-from-instance	  ; objects    xx
-       :update-record-from-slot	          ; objects    xx
-       :update-record-from-slots	  ; objects    xx
-       :list-classes		          ; objects    xx
-       :delete-instance-records	          ; objects    xx
+       #:instance-refreshed                ;
+       #:update-object-joins               ;
+       #:*default-update-objects-max-len*  ; 
+       #:update-slot-from-record           ; objects    xx
+       #:update-instance-from-records      ; objects    xx
+       #:update-records-from-instance	  ; objects    xx
+       #:update-record-from-slot	          ; objects    xx
+       #:update-record-from-slots	  ; objects    xx
+       #:list-classes		          ; objects    xx
+       #:delete-instance-records	          ; objects    xx
        ;;Symbolic SQL Syntax 
-       :sql				  ; syntax     xx
-       :sql-expression                    ; syntax     xx
-       :sql-operation                     ; syntax     xx
-       :sql-operator			  ; syntax     xx  	
-       :disable-sql-reader-syntax         ; syntax     xx
-       :enable-sql-reader-syntax          ; syntax     xx
-       :locally-disable-sql-reader-syntax ; syntax     xx
-       :locally-enable-sql-reader-syntax  ; syntax     xx
-       :restore-sql-reader-syntax-state   ; syntax     xx
+       #:sql				  ; syntax     xx
+       #:sql-expression                    ; syntax     xx
+       #:sql-operation                     ; syntax     xx
+       #:sql-operator			  ; syntax     xx  	
+       #:disable-sql-reader-syntax         ; syntax     xx
+       #:enable-sql-reader-syntax          ; syntax     xx
+       #:locally-disable-sql-reader-syntax ; syntax     xx
+       #:locally-enable-sql-reader-syntax  ; syntax     xx
+       #:restore-sql-reader-syntax-state   ; syntax     xx
 
        ;;------------------------------------------------
        ;; Miscellaneous Extensions
        ;;------------------------------------------------
        ;;Initialization
-       :*loaded-database-types*           ; clsql-base xx
-       :reload-database-types             ; clsql-base xx
-       :closed-database 	          ; database   xx
-       :database-type                     ; database   x
-       :in-schema                         ; classes    x
+       #:*loaded-database-types*           ; clsql-base xx
+       #:reload-database-types             ; clsql-base xx
+       #:closed-database 	          ; database   xx
+       #:database-type                     ; database   x
+       #:in-schema                         ; classes    x
        ;;FDDL 
-       :list-views                        ; table      xx
-       :view-exists-p                     ; table      xx
-       :list-indexes                      ; table      xx
-       :index-exists-p                    ; table      xx
-       :create-sequence                   ; table      xx
-       :drop-sequence                     ; table      xx
-       :list-sequences                    ; table      xx
-       :sequence-exists-p                 ; table      xx
-       :sequence-next                     ; table      xx
-       :sequence-last                     ; table      xx
-       :set-sequence-position             ; table      xx
+       #:list-views                        ; table      xx
+       #:view-exists-p                     ; table      xx
+       #:list-indexes                      ; table      xx
+       #:index-exists-p                    ; table      xx
+       #:create-sequence                   ; table      xx
+       #:drop-sequence                     ; table      xx
+       #:list-sequences                    ; table      xx
+       #:sequence-exists-p                 ; table      xx
+       #:sequence-next                     ; table      xx
+       #:sequence-last                     ; table      xx
+       #:set-sequence-position             ; table      xx
        ;;OODDL
-       :view-table                        ; metaclass  x
-       :create-sequence-from-class        ; objects    x
-       :drop-sequence-from-class          ; objects    x	
+       #:view-table                        ; metaclass  x
+       #:create-sequence-from-class        ; objects    x
+       #:drop-sequence-from-class          ; objects    x	
        ;;OODML
-       :add-to-relation                   ; objects    x
-       :remove-from-relation              ; objects    x
-       :read-sql-value                    ; objects    x
-       :database-output-sql-as-type       ; objects    x
-       :database-get-type-specifier       ; objects    x
-       :database-output-sql               ; sql/class  xx
+       #:add-to-relation                   ; objects    x
+       #:remove-from-relation              ; objects    x
+       #:read-sql-value                    ; objects    x
+       #:database-output-sql-as-type       ; objects    x
+       #:database-get-type-specifier       ; objects    x
+       #:database-output-sql               ; sql/class  xx
 
        ;;-----------------------------------------------
        ;; Symbolic Sql Syntax 
        ;;-----------------------------------------------
-       :sql-and-qualifier
-       :sql-escape
-       :sql-query
-       :sql-any
-       :sql-all
-       :sql-not
-       :sql-union
-       :sql-intersection
-       :sql-minus
-       :sql-group-by
-       :sql-having
-       :sql-null
-       :sql-not-null
-       :sql-exists
-       :sql-*
-       :sql-+
-       :sql-/
-       :sql-like
-       :sql-uplike
-       :sql-and
-       :sql-or
-       :sql-in
-       :sql-||
-       :sql-is
-       :sql-=
-       :sql-==
-       :sql-<
-       :sql->
-       :sql->=
-       :sql-<=
-       :sql-count
-       :sql-max
-       :sql-min
-       :sql-avg
-       :sql-sum
-       :sql-view-class
-       :sql_slot-value
+       #:sql-and-qualifier
+       #:sql-escape
+       #:sql-query
+       #:sql-any
+       #:sql-all
+       #:sql-not
+       #:sql-union
+       #:sql-intersection
+       #:sql-minus
+       #:sql-group-by
+       #:sql-having
+       #:sql-null
+       #:sql-not-null
+       #:sql-exists
+       #:sql-*
+       #:sql-+
+       #:sql-/
+       #:sql-like
+       #:sql-uplike
+       #:sql-and
+       #:sql-or
+       #:sql-in
+       #:sql-||
+       #:sql-is
+       #:sql-=
+       #:sql-==
+       #:sql-<
+       #:sql->
+       #:sql->=
+       #:sql-<=
+       #:sql-count
+       #:sql-max
+       #:sql-min
+       #:sql-avg
+       #:sql-sum
+       #:sql-view-class
+       #:sql_slot-value
 
        . 
        #1#
@@ -400,9 +400,15 @@
 
 (defpackage #:clsql
   (:use #:common-lisp)
-  (:import-from :clsql-sys . #2#)
+  (:import-from #:clsql-sys . #2#)
   (:export . #2#)
   (:documentation "This is the SQL-Interface package of CLSQL."))
+
+(defpackage #:clsql-user
+  (:use #:common-lisp)
+  (:import-from #:clsql-sys . #2#)
+  (:export . #2#)
+  (:documentation "This is the user package with CLSQL symbols."))
 
   ;; This is from USQL's pcl-patch  
   #+(or clsql-sbcl-pcl clsql-cmucl-pcl)
