@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.cl,v 1.3 2002/03/29 09:51:20 kevin Exp $
+;;;; $Id: clsql-uffi.cl,v 1.4 2002/03/29 14:03:27 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -44,6 +44,14 @@
 		     :double)
 		    (t
 		     t)))
+		 (:int32
+		  (if (eq :int32 (nth i auto-list))
+		      :int32
+		    t))
+		 (:int64
+		  (if (eq :int64 (nth i auto-list))
+		      :int64
+		    t))
 		 (t
 		  t))
 	       new-types)))
@@ -82,7 +90,7 @@
     (case type
       (:double
        (atof char-ptr))
-      (:int32
+      ((or :int32 :int)
        (atoi char-ptr))
       (:int64
        (uffi:with-foreign-object (high32-ptr :int)

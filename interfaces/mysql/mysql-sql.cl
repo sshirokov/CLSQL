@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.cl,v 1.16 2002/03/29 09:37:24 kevin Exp $
+;;;; $Id: mysql-sql.cl,v 1.17 2002/03/29 14:03:27 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -72,12 +72,13 @@
       nil
       (let ((auto-list (make-type-list-for-auto num-fields res-ptr)))
 	(cond
-	  ((listp types)
-	   (canonicalize-type-list types auto-list))
+	 ((listp types)
+	  (canonicalize-type-list types auto-list))
+	  types)
 	  ((eq types :auto)
 	   auto-list)
 	  (t
-	   nil)))))
+	   nil))))
 
 (defmethod database-initialize-database-type ((database-type (eql :mysql)))
   t)
