@@ -5,6 +5,8 @@
 	Fix loading on Win32
 	* test-suite/tester-clsql.cl
 	Fix type coercion of double-float
+	* doc/*
+	Added debian docbook catalog, made it the default
 	
 19 Apr 2002 Marc Battyani (marc.battyani@fractalconcept.com)
 	* interface/postgresql/postgresql-api.cl:
