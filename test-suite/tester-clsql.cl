@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: tester-clsql.cl,v 1.2 2002/04/08 02:52:39 kevin Exp $
+;;;; $Id: tester-clsql.cl,v 1.3 2002/04/08 03:50:00 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -30,7 +30,6 @@
 					 :type "config"
 					 :defaults *load-truename*))
 
-
 (defclass conn-specs ()
   ((aodbc-spec :accessor aodbc-spec)
    (mysql-spec :accessor mysql-spec)
@@ -39,22 +38,18 @@
   (:documentation "Test fixture for CLSQL testing"))
 
 
-(error "Not yet implemented")
-
-(defmethod setup ((fix conn-specs))
-  (if (probe-file *config-pathname*)
-      (let (config)
-	(with-open-file (stream *config-pathname* :direction :input)
-	  (setq config (read stream)))
-	(setf (aodbc-spec fix) (cadr (assoc :aodbc config)))
-	(setf (mysql-spec fix) (cadr (assoc :mysql config)))
-	(setf (pgsql-spec fix) (cadr (assoc :postgresql config)))
-	(setf (pgsql-socket-spec fix) 
-	      (cadr (assoc :postgresql-socket config))))
-      (error "XPTest Config file ~S not found" *config-pathname*)))
-
-(defmethod teardown ((fix conn-specs))
-  t)
+(defun read-specs (&optional (path *config-pathname*))
+  (if (probe-file path)
+      (with-open-file (stream path :direction :input)
+	(let ((config (read stream))
+	      (specs (make-instance 'conn-specs)))
+	  (setf (aodbc-spec specs) (cadr (assoc :aodbc config)))
+	  (setf (mysql-spec specs) (cadr (assoc :mysql config)))
+	  (setf (pgsql-spec specs) (cadr (assoc :postgresql config)))
+	  (setf (pgsql-socket-spec specs) 
+		(cadr (assoc :postgresql-socket config)))
+	  specs))
+      (error "CLSQL tester config file ~S not found" path)))
 
 (defmethod mysql-table-test ((test conn-specs))
   (test-table (mysql-spec test) :mysql))
@@ -68,7 +63,6 @@
 (defmethod pgsql-socket-table-test ((test conn-specs))
   (test-table (pgsql-socket-spec test) :postgresql-socket))
 
-
 (defmethod test-table (spec type)
   (when spec
     (let ((db (clsql:connect spec :database-type type :if-exists :new)))
@@ -76,28 +70,29 @@
 	   (progn
 	     (create-test-table db)
 	     (dolist (row (query "select * from test_clsql" :database db :types :auto))
-	       (test-table-row row :auto))
+	       (test-table-row row :auto type))
 	     (dolist (row (query "select * from test_clsql" :database db :types nil))
-	       (test-table-row row nil))
+	       (test-table-row row nil type))
 	     (loop for row across (map-query 'vector #'list "select * from test_clsql" 
 					     :database db :types :auto)
-		   do (test-table-row row :auto))
+		   do (test-table-row row :auto type))
 	     (loop for row across (map-query 'vector #'list "select * from test_clsql" 
 					     :database db :types nil)
-		   do (test-table-row row nil))
+		   do (test-table-row row nil type))
 	     (loop for row in (map-query 'list #'list "select * from test_clsql" 
 					 :database db :types nil)
-		   do (test-table-row row nil))
+		   do (test-table-row row nil type))
 	     (loop for row in (map-query 'list #'list "select * from test_clsql" 
 					 :database db :types :auto)
-		   do (test-table-row row :auto))
-	     (when (map-query nil #'list "select * from test_clsql" 
-					 :database db :types :auto)
-	       (failure "Expected NIL result from map-query nil"))
+		 do (test-table-row row :auto type))
+	     (test (map-query nil #'list "select * from test_clsql" 
+			      :database db :types :auto)
+		   nil
+		   :fail-info "Expected NIL result from map-query nil")
 	     (do-query ((int float bigint str) "select * from test_clsql")
-	       (test-table-row (list int float bigint str) nil))
+	       (test-table-row (list int float bigint str) nil type))
 	     (do-query ((int float bigint str) "select * from test_clsql" :types :auto)
-	       (test-table-row (list int float bigint str) :auto))
+	       (test-table-row (list int float bigint str) :auto type))
 	     (drop-test-table db)
 	     )
 	(disconnect :database db)))))
@@ -117,35 +112,16 @@
 		   (number-to-sql-string (sqrt i)))
 	   db))
 	(let ((res (clsql-mysql::database-query-result-set "select * from test_clsql" db :full-set t :types nil)))
-	  (unless (= 10 (mysql:mysql-num-rows (clsql-mysql::mysql-result-set-res-ptr res)))
-	    (failure "Error calling mysql-num-rows"))
+	  (test (mysql:mysql-num-rows
+		 (clsql-mysql::mysql-result-set-res-ptr res))
+		10
+		:test #'eql
+		:fail-info "Error calling mysql-num-rows")
 	  (clsql-mysql::database-dump-result-set res db))
 	(clsql-mysql::database-execute-command "DROP TABLE test_clsql" db)
 	(clsql-mysql::database-disconnect db)))))
 
-(defparameter clsql-test-suite 
-    (make-test-suite
-     "CLSQL Test Suite"
-     "Basic test suite for database operations."
-     ("MySQL Low Level Interface" 'conn-specs
-		   :test-thunk 'mysql-low-level
-		   :description "A test of MySQL low-level interface")
-     ("MySQL Table" 'conn-specs
-		   :test-thunk 'mysql-table-test
-		   :description "A test of MySQL")
-     ("PostgreSQL Table" 'conn-specs
-		   :test-thunk 'pgsql-table-test
-		   :description "A test of PostgreSQL tables")     
-     ("PostgreSQL Socket Table" 'conn-specs
-		   :test-thunk 'pgsql-socket-table-test
-		   :description "A test of PostgreSQL Socket tables")
-  ))
 
-#+allegro 
-(add-test (make-test-case "AODBC table test" 'conn-specs
-			  :test-thunk 'aodbc-table-test
-			  :description "Test AODBC table")
-	  clsql-test-suite)
 
 ;;;; Testing functions
 
@@ -178,24 +154,31 @@
   (let ((*read-default-float-format* 'double-float))
     (coerce (read-from-string num-str) 'double-float)))
 
-(defun test-table-row (row types)
-  (unless (and (listp row)
-	       (= 4 (length row)))
-    (failure "Row ~S is incorrect format" row))
+(defun test-table-row (row types db-type)
+  (test (and (listp row)
+	     (= 4 (length row)))
+	t
+	:fail-info 
+	(format nil "Row ~S is incorrect format" row))
   (destructuring-bind (int float bigint str) row
     (cond
       ((eq types :auto)
-       (unless (and (integerp int)
-		    (typep float 'double-float)
-		    (integerp bigint)
-		    (stringp str))
-	 (failure "Incorrect field type for row ~S" row)))
+       (test (and (integerp int)
+		  (typep float 'double-float)
+		  (or (eq db-type :aodbc) ;; aodbc doesn't handle bigint conversions
+		      (integerp bigint)) 
+		  (stringp str))
+	     t
+	     :fail-info 
+	     (format nil "Incorrect field type for row ~S (types :auto)" row)))
        ((null types)
-	(unless (and (stringp int)
+	(test (and (stringp int)
 		     (stringp float)
 		     (stringp bigint)
 		     (stringp str))
-	  (failure "Incorrect field type for row ~S" row))
+	      t
+	      :fail-info 
+	      (format nil "Incorrect field type for row ~S (types nil)" row))
 	(setq int (parse-integer int))
 	(setq bigint (parse-integer bigint))
 	(setq float (parse-double float)))
@@ -203,16 +186,33 @@
 	(error "NYI")
 	)
        (t 
-	(failure "Invalid types field (~S) passed to test-table-row" types)))
-    (unless (= float (transform-float-1 int))
-      (failure "Wrong float value ~A for int ~A (row ~S)" float int row))
-    (unless (= float (parse-double str))
-      (failure "Wrong string value ~A" str))))
+	(test t nil
+	      :fail-info
+	      (format nil "Invalid types field (~S) passed to test-table-row" types))))
+    (test (transform-float-1 int)
+	  float
+	  :test #'=
+	  :fail-info 
+	  (format nil "Wrong float value ~A for int ~A (row ~S)" float int row))
+    (test  (parse-double str)
+	   float
+	   :test #'eql
+	   :fail-info (format nil "Wrong string value ~A" str))))
 
 
 (defun drop-test-table (db)
   (clsql:execute-command "DROP TABLE test_clsql"))
 
-(report-result (run-test clsql-test-suite :handle-errors nil) :verbose t)
 
 
+(defun do-test ()
+    (let ((specs (read-specs)))
+      (mysql-low-level specs)
+      (mysql-table-test specs)
+      (pgsql-table-test specs)
+      (pgsql-socket-table-test specs)
+      (aodbc-table-test specs)
+      ))
+
+
+(do-test)
