@@ -382,6 +382,17 @@
  ("Boris" "Josef" "Konstantin" "Leon" "Leonid" "Mikhail" "Nikita" "Vladamir"
   "Yuri"))
 
+(deftest :fdml/select/26
+ (clsql:select ["table" first-name] ["table" last-name] 
+  :from '([employee "table"] [employee "join"])
+  :where [and [= ["table" first-name] 
+                 ["join" first-name]]
+              [not [= ["table" emplid] 
+                      ["join" emplid]]]]
+  :order-by '(["table" last-name])
+  :result-types nil :field-names nil)
+ (("Vladamir" "Lenin") ("Vladamir" "Putin")))
+  
 ;(deftest :fdml/select/11
 ;    (clsql:select [emplid] :from [employee]
 ;                :where [= [emplid] [any [select [companyid] :from [company]]]]

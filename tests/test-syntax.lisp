@@ -50,24 +50,25 @@
   "FOO.BAR")
 
 (deftest :syntax/ident/3
-    (clsql:sql ["foo" bar])
-  "FOO.BAR")
-
-;(deftest :syntax/ident/4
-;    (clsql:sql [foo "bar"])
-;  "FOO \"bar\"")
-
-(deftest :syntax/ident/5
     (clsql:sql [foo :integer])
   "FOO")
 
-(deftest :syntax/ident/6
+(deftest :syntax/ident/4
     (clsql:sql [foo bar :integer])
   "FOO.BAR")
 
+(deftest :syntax/ident/5
+    (clsql:sql [foo "bar"])
+  "FOO \"bar\"")
+
+(deftest :syntax/ident/6
+    (clsql:sql ["foo" bar])
+ "\"foo\".BAR")
+
 (deftest :syntax/ident/7
     (clsql:sql ["foo" bar :integer])
-  "FOO.BAR")
+ "\"foo\".BAR")
+
 
 
 (deftest :syntax/subquery/1

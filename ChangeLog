@@ -1,8 +1,10 @@
 15 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* sql/classes.lisp: SELECT now accepts table identifiers as strings 
-	for CommonSQL compliance. 
-	* tests/test-fdml.lisp: added test for table identifiers as strings 
-	in SELECT. 
+	for CommonSQL compliance. Add support for qualified sql identifiers 
+	with aliased table names. 
+	* tests/test-fdml.lisp: added tests for table identifiers as strings 
+	in SELECT and for aliased definitions. 
+	* tests/test-syntax.lisp: added tests for alias definitions. 
 
 15 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* sql/sql.lisp: PRINT-QUERY now calls QUERY with result-types and 

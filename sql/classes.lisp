@@ -160,7 +160,10 @@
 		(convert-to-db-default-case (symbol-name type) database)))
       (format *sql-stream* "~@[~A.~]~A"
 	      (when qualifier
-		(convert-to-db-default-case (sql-escape qualifier) database))
+                (typecase qualifier 
+                  (string (format nil "~s" qualifier))
+                  (t (convert-to-db-default-case (sql-escape qualifier) 
+                                                 database))))
 	      (sql-escape (convert-to-db-default-case name database))))
     t))
 
@@ -581,7 +584,9 @@ uninclusive, and the args from that keyword to the end."
       (write-string " FROM " *sql-stream*)
       (typecase from 
         (list (output-sql (apply #'vector from) database))
-        (string (write-string from *sql-stream*))
+        (string (write-string 
+                 (sql-escape 
+                  (convert-to-db-default-case from database)) *sql-stream*))
         (t (output-sql from database))))
     (when inner-join
       (write-string " INNER JOIN " *sql-stream*)
