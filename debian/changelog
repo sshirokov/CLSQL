@@ -1,3 +1,9 @@
+cl-sql (0.9.6-1) unstable; urgency=low
+
+  * Remove cl-library logical hosts from load-library calls
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sun, 29 Sep 2002 23:32:22 -0600
+
 cl-sql (0.9.5-1) unstable; urgency=low
 
   * OpenMCL is now supported
