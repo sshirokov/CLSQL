@@ -9,8 +9,7 @@
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
-;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
+;;;; This file, part of CLSQL, is Copyright (c) 2004 by Kevin M. Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
@@ -30,12 +29,17 @@
     :returning :cstring)
 
   (setf *mysql-client-info* (uffi:convert-from-cstring (mysql-get-client-info)))
-  
+
   (cond
     ((eql (schar *mysql-client-info* 0) #\3)
      (pushnew :mysql-client-v3 cl:*features*))
     ((eql (schar *mysql-client-info* 0) #\4)
-     (pushnew :mysql-client-v4 cl:*features*))
+     (pushnew :mysql-client-v4 cl:*features*)
+     (when (and (>= (length *mysql-client-info*) 3)
+		(string-equal "4.1" *mysql-client-info* :end2 3))
+       (pushnew :mysql-client-v4.1)))
     (t
-     (error "Unknown mysql client version '~A'." *mysql-client-info*))))
+     (error "Unknown mysql client version '~A'." *mysql-client-info*)))
+
+  )
 

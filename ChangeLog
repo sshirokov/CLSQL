@@ -1,3 +1,8 @@
+29 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.9.6-pre1
+	* db-mysql/mysql-client-info.lisp: Add client version 4.1
+	detection
+
 28 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.9.5
 	* db-mysql/mysql-sql.lisp: Fix bug in transaction capability
