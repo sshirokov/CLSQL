@@ -18,12 +18,6 @@
 
 (in-package #:mysql)
 
-;;;; Modified by Kevin Rosenberg 
-;;;;  - probe potential directories to find library
-;;;;  - Changed from CMUCL functions to UFFI to
-;;;;      -- prevent library from being loaded multiple times
-;;;;      -- support Allegro CL and Lispworks
-
 (defparameter *clsql-mysql-library-path* 
   (uffi:find-foreign-library
    "mysql"
@@ -37,6 +31,7 @@
   (uffi:find-foreign-library
    '("libz" "zlib")
    `(,(make-pathname :directory (pathname-directory *load-truename*))
+     #+64bit "/usr/lib64/"
       "/usr/lib/"
       "/sw/lib/"
       "/usr/local/lib/"
@@ -50,7 +45,9 @@
 
 (defparameter *mysql-library-candidate-directories*
     `(,(pathname-directory *load-pathname*)
-      "/opt/mysql/lib/mysql/" "/usr/local/lib/" "/usr/lib/" "/usr/local/lib/mysql/" "/usr/lib/mysql/" "/mysql/lib/opt/" "/sw/lib/mysql/"))
+      "/opt/mysql/lib/mysql/" "/usr/local/lib/"
+      #+64bit "/usr/lib64/"
+      "/usr/lib/" "/usr/local/lib/mysql/" "/usr/lib/mysql/" "/mysql/lib/opt/" "/sw/lib/mysql/"))
 
 (defvar *mysql-library-candidate-drive-letters* '("C" "D" "E"))
 

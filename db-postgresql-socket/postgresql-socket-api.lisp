@@ -220,13 +220,14 @@ socket interface"
   (unless *crypt-library-loaded*
     (uffi:load-foreign-library 
      (uffi:find-foreign-library "libcrypt"
-			   '("/usr/lib/" "/usr/local/lib/" "/lib/"))
+			   '(#+64bit "/usr/lib64/"
+			     "/usr/lib/" "/usr/local/lib/" "/lib/"))
      :supporting-libraries '("c"))
     (setq *crypt-library-loaded* t)))
 
 (in-package :postgresql-socket)
 
-(uffi:def-function "crypt" 
+(uffi:def-function ("crypt" crypt)
     ((key :cstring)
      (salt :cstring))
   :returning :cstring)
