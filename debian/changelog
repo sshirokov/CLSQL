@@ -1,3 +1,10 @@
+cl-sql (1.2.0-1) unstable; urgency=low
+
+  * sql/pool.lisp: Add full support for multiprocessing locks for ACL, LW,
+    SCL.
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Mon, 21 Oct 2002 07:44:02 -0600
+
 cl-sql (1.1.3-1) unstable; urgency=low
 
   * Add more support for SCL and performance improvements to postgresql-socket
