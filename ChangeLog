@@ -1,4 +1,5 @@
 21 Sep 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.0.5 release
 	* doc/appendix.xml: Add note about loading Oracle8 version
 	* db-oracle/oracle-loader.lisp: Support Oracle8 based on
 	data from David Young.
