@@ -1,3 +1,9 @@
+cl-sql (0.9.9-1) unstable; urgency=high
+
+  * Add version depends for common-lisp-controller
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Wed,  2 Oct 2002 07:50:27 -0600
+
 cl-sql (0.9.8-1) unstable; urgency=low
 
   * Rename .cl files to .lisp files

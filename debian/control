@@ -14,7 +14,7 @@ Description: SQL Interface for Common Lisp
 
 Package: cl-sql-base
 Architecture: any
-Depends: common-lisp-controller
+Depends: common-lisp-controller (>= 3.37) 
 Recommends: cl-sql-backend
 Description: SQL Interface for Common Lisp
  CLSQL uses the UFFI library to provide SQL to multiple SQL databases
@@ -24,7 +24,7 @@ Description: SQL Interface for Common Lisp
 
 Package: cl-sql-uffi
 Architecture: any
-Depends: common-lisp-controller, cl-uffi, cl-sql-base
+Depends: common-lisp-controller (>= 3.37), cl-uffi, cl-sql-base
 Recommends: cl-sql-backend
 Description: Common UFFI functions for CLSQL database backends
  This package provides an interface to several UFFI functions used by multiple CLSQL database backends.
