@@ -1,7 +1,4 @@
-clsql-uffi.so
-clsql-uffi.dll
-clsql-uffi.lib
-clsql-uffi.dylib
+clsql-mysql.dylib
 libmysqlclient.dylib
 libz.dylib
 .bin
