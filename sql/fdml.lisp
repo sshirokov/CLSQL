@@ -62,24 +62,6 @@
 			    (list :flatp t))
 			  (list :database database))))
 
-(defun truncate-database (&key (database *default-database*))
-  (unless (typep database 'database)
-    (signal-no-database-error database))
-  (unless (is-database-open database)
-    (database-reconnect database))
-  (when (eq :oracle (database-type database))
-    (ignore-errors (execute-command "PURGE RECYCLEBIN" :database database)))
-  (when (db-type-has-views? (database-underlying-type database))
-    (dolist (view (list-views :database database))
-      (drop-view view :database database)))
-  (dolist (table (list-tables :database database))
-    (drop-table table :database database))
-  (dolist (index (list-indexes :database database))
-    (drop-index index :database database))
-  (dolist (seq (list-sequences :database database))
-    (drop-sequence seq :database database))
-  (when (eq :oracle (database-type database))
-    (ignore-errors (execute-command "PURGE RECYCLEBIN" :database database))))
 
 (defun print-query (query-exp &key titles (formats t) (sizes t) (stream t)
 			      (database *default-database*))
@@ -195,12 +177,11 @@ the SQL expression WHERE in the table specified by TABLE in
 DATABASE which defaults to *DEFAULT-DATABASE*. There are three
 ways of specifying the values to update for each row. In the
 first, VALUES contains a list of values to use in the update and
-ATTRIBUTES, AV-PAIRS and QUERY are nil. This can be used when
-values are supplied for all attributes in TABLE. In the second,
-ATTRIBUTES is a list of column names, VALUES is a corresponding
-list of values and AV-PAIRS and QUERY are nil. In the third,
-ATTRIBUTES, VALUES and QUERY are nil and AV-PAIRS is an alist
-of (attribute value) pairs."
+ATTRIBUTES and AV-PAIRS are nil. This can be used when values are
+supplied for all attributes in TABLE. In the second, ATTRIBUTES
+is a list of column names, VALUES is a corresponding list of
+values and AV-PAIRS is nil. In the third, ATTRIBUTES and VALUES
+are nil and AV-PAIRS is an alist of (attribute value) pairs."
   (when av-pairs
     (setf attributes (mapcar #'car av-pairs)
           values (mapcar #'cadr av-pairs)))
@@ -210,8 +191,6 @@ of (attribute value) pairs."
 			     :where where)))
     (execute-command stmt :database database)))
 
-
-;; iteration 
 
 ;; output-sql
 
@@ -322,8 +301,8 @@ of (attribute value) pairs."
       (when sequence
         (create-sequence-from-class class)))))
  
-;;; Iteration
 
+;;; Iteration
 
 (defmacro do-query (((&rest args) query-expression
 		     &key (database '*default-database*) (result-types :auto))
@@ -483,7 +462,8 @@ computed for each field."
 
 ;;; Row processing macro from CLSQL
 
-(defmacro for-each-row (((&rest fields) &key from order-by where distinct limit) &body body)
+(defmacro for-each-row (((&rest fields) &key from order-by where distinct limit)
+                        &body body)
   (let ((d (gensym "DISTINCT-"))
 	(bind-fields (loop for f in fields collect (car f)))
 	(w (gensym "WHERE-"))

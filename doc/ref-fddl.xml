@@ -2506,4 +2506,101 @@
     </refsect1>
   </refentry>
 
+  <refentry id="truncate-database">
+    <refmeta>
+      <refentrytitle>TRUNCATE-DATABASE</refentrytitle>
+    </refmeta>
+    <refnamediv>
+      <refname><emphasis>Function</emphasis> <emphasis role="bold">TRUNCATE-DATABASE</emphasis></refname>
+      <refpurpose>Drop all tables, views, indexes and sequences in a database.</refpurpose>
+      <refclass>Function</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function>truncate-database</function> &amp;key <replaceable>database</replaceable> => <returnvalue></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <varlistentry>
+          <term><parameter>database</parameter></term>
+          <listitem>
+            <para>A 
+            <glossterm linkend="gloss-database-object">database
+            object</glossterm>. This will default to the value
+            of <symbol>*default-database*</symbol>.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>
+        Drop all tables, views, indexes and sequences in
+        <parameter>database</parameter> which defaults to
+        <symbol>*default-database*</symbol>.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+(list-tables)
+=> ("type_table" "type_bigint" "employee" "company" "addr" "ea_join" "big")
+(list-indexes)
+=> ("employeepk" "companypk" "addrpk")
+(list-views)
+=> ("lenins_group")
+(list-sequences)
+=> ("foo" "bar")
+(truncate-database)
+=> 
+(list-tables)
+=> NIL
+(list-indexes)
+=> NIL
+(list-views)
+=> NIL
+(list-sequences)
+=> NIL
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        Modifications are made to the underlying database. 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>
+        None. 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        Signals an error of type <symbol>sql-database-error</symbol> if 
+        <parameter>database</parameter> is not a database object. 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <member><link linkend="drop-table"><function>drop-table</function></link></member>
+          <member><link linkend="drop-view"><function>drop-view</function></link></member>
+          <member><link linkend="drop-index"><function>drop-index</function></link></member>
+          <member><link linkend="drop-sequence"><function>drop-sequence</function></link></member>
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        <function>truncate-database</function> is a &clsql; extension. 
+      </para>
+    </refsect1>
+  </refentry>
+
 </reference> 

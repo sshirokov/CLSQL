@@ -16,16 +16,13 @@ DOCUMENTATION TO DO LIST
 
 3. CLSQL extensions to CommonSQL
 
- - RESULT-TYPES, FIELD-NAMES keywords for SELECT, QUERY, DO-QUERY and 
-   MAP-QUERY. 
-
  - New types such as wall-time, boolean, and bigint
 
  - SQL operators: group-by, limit, not-null, ==, is, having, the, uplike,
    sql-view-class, coalesce, except (just from a quick scan of 
    operations.lisp)
 
- - FDML: TRUNCATE-DATABASE, FOR-EACH-ROW and large object support. 
+ - FDML: FOR-EACH-ROW, prepared statements and large object support. 
 
  - OODML: *db-auto-sync*
 

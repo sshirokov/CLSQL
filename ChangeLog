@@ -1,3 +1,11 @@
+30 Jun 2004 Marcus Pearce <m.t.pearce@city.ac.uk>
+	* doc/ref-fdml.xml: document the FDML. 
+	* doc/ref-fddl.xml: move documentation for TRUNCATE-DATABASE here. 
+	* sql/fdml.lisp: move TRUNCATE-DATABASE to sql/fddl.lisp. 
+	* sql/fddl.lisp: move TRUNCATE-DATABASE here from sql/fdml.lisp 
+	and add docstring. 
+	* doc/TODO: removed items done. 
+
 23 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/oodml.lisp: Add keyword :transactions to def-view-from-class
 	to allow specifying transactionless table creation

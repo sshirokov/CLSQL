@@ -287,6 +287,7 @@
 	 #:create-index                   
 	 #:drop-index                     
          ;; CLSQL Extensions 
+         #:truncate-database
 	 #:list-views                  
 	 #:view-exists-p               
 	 #:list-indexes                
@@ -313,7 +314,6 @@
 	 #:map-query                    
 	 #:loop
          ;; CLSQL Extensions 
-         #:truncate-database
          #:for-each-row
 	 #:prepare-sql
 	 #:bind-parameter

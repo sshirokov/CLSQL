@@ -29,6 +29,31 @@
                 (symbol (sql-output name database)))))
 
 
+;; Truncate database 
+
+(defun truncate-database (&key (database *default-database*))
+  "Drops all tables, views, indexes and sequences in DATABASE which
+defaults to *DEFAULT-DATABASE*."
+  (unless (typep database 'database)
+    (signal-no-database-error database))
+  (unless (is-database-open database)
+    (database-reconnect database))
+  (when (eq :oracle (database-type database))
+    (ignore-errors (execute-command "PURGE RECYCLEBIN" :database database)))
+  (when (db-type-has-views? (database-underlying-type database))
+    (dolist (view (list-views :database database))
+      (drop-view view :database database)))
+  (dolist (table (list-tables :database database))
+    (drop-table table :database database))
+  (dolist (index (list-indexes :database database))
+    (drop-index index :database database))
+  (dolist (seq (list-sequences :database database))
+    (drop-sequence seq :database database))
+  (when (eq :oracle (database-type database))
+    (ignore-errors (execute-command "PURGE RECYCLEBIN" :database database)))
+  (values))
+
+
 ;; Tables 
 
 (defun create-table (name description &key (database *default-database*)
