@@ -46,7 +46,7 @@ INSTALLDIRFLAGS	:= -d -g root -o root -m 0755
 clc-base	:= usr/share/common-lisp
 clc-source	:= $(clc-base)/source
 clc-systems	:= $(clc-base)/systems
-doc-dir		:= $(prefix-base)/usr/share/doc/cl-sql
+doc-dir		:= $(prefix-base)/usr/share/doc/cl-sql-base
 
 clc-clsql	:= $(clc-source)/$(plain-pkg)-$(UPSTREAM_VER)
 

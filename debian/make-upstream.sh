@@ -42,6 +42,7 @@ cp -a ${WORK_DIR} ${DISTDIR}
 
 echo "Cleaning distribution directory ${DISTDIR}"
 cd ${DISTDIR}
+make clean
 rm -f debian/upload.sh debian/make-debian.sh debian/make-upstream.sh debian/cvsbp-prepare.sh test-suite/test.config
 rm -f `find . -type f -name "*.so" -or -name "*.o"`
 rm -f `find . -type f -name .cvsignore`
