@@ -1,3 +1,9 @@
+cl-sql (2.9.5-1) unstable; urgency=low
+
+  * New upstream
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Tue, 27 Apr 2004 15:40:18 -0600
+
 cl-sql (2.9.4-2) unstable; urgency=low
 
   * Change depends to libmysqlclient-dev (closes:246039) 

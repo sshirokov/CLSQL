@@ -1,3 +1,8 @@
+27 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.9.5
+	* db-mysql/mysql-sql.lisp: Fix bug in transaction capability
+	detection
+
 24 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.9.4: Multiple changes to support Allegro's "modern"
 	lisp which uses a lowercase reader and has case-sensitive symbols

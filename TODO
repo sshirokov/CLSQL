@@ -2,13 +2,12 @@ GENERAL
 
 * test on mcl. SCL no longer affordable to individuals;
 * implement remaining functions for CLSQL AODBC backend;
-* port Oracle and ODBC backend to UFFI.
+* port Oracle backend to UFFI.
 
 COMMONSQL SPEC
 
 * Missing: 
 
-  RECONNECT 
   CACHE-TABLE-QUERIES 
   *CACHE-TABLE-QUERIES-DEFAULT*
   *DEFAULT-UPDATE-OBJECTS-MAX-LEN* 

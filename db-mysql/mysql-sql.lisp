@@ -437,8 +437,8 @@
   nil)
 
 (defmethod db-type-transaction-capable? ((db-type (eql :mysql)) database)
-  (let ((has-innodb (caar (database-query "SHOW VARIABLES LIKE 'HAVE_INNODB'" database :auto))))
-    (and has-innodb (string-equal "YES" has-innodb))))
+  (let ((tuple (car (database-query "SHOW VARIABLES LIKE 'HAVE_INNODB'" database :auto))))
+    (and tuple (string-equal "YES" (second tuple)))))
 
 (when (clsql-base-sys:database-type-library-loaded :mysql)
   (clsql-base-sys:initialize-database-type :database-type :mysql))
