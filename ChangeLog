@@ -5,6 +5,9 @@
 	to utilize field types, yet.
 
 	* Changed postgresql-socket result set from cons to a structure
+
+	* Updated test-clsql.cl to use automated testing with a config
+	file
 	
 23 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	
