@@ -213,7 +213,7 @@
       (apply #'values result))
   t t t)
 
-;; test list-table-indexes
+;; test list-indexes with keyword :ON 
 (deftest :fddl/index/3
     (progn
       (clsql:create-table [i3test] '(([a] (string 10))
@@ -229,7 +229,7 @@
        (sort 
 	(mapcar 
 	 #'string-downcase
-	 (clsql:list-table-indexes [i3test] :owner *test-database-user*))
+	 (clsql:list-indexes :on [i3test] :owner *test-database-user*))
 	#'string-lessp)
        (progn
 	 (clsql:drop-index [bar] :on [i3test])

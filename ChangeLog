@@ -1,3 +1,29 @@
+18 Jun 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* sql/expressions.lisp: when removing duplicate table identifiers 
+	in the FROM clause of a query, check both table name and alias 
+	are equivalent. 
+	* sql/fdml.lisp: remove DESCRIBE-TABLE. 
+	* sql/db-interface.lisp: remove generics DESCRIBE-TABLE and 
+	DATABASE-DESCRIBE-TABLE. 
+	* sql/package.lisp: remove DESCRIBE-TABLE, DATABASE-DESCRIBE-TABLE 
+	and LIST-TABLE-INDEXES. 
+	* sql/generic-postgresql.lisp: add reader conditional #+nil for 
+	DATABASE-DESCRIBE-TABLE and comment about its uses for 
+	re-implementing LIST-ATTRIBUTE-TYPES with a single SQL query 
+	returning type info for all attributes. 
+	Fix DATABASE-SEQUENCE-LAST. 
+	* sql/fddl.lisp: remove LIST-TABLE-INDEXES and redefine 
+	LIST-INDEXES with additional keyword parameter :ON. 
+	* tests/test-fddl.lisp: replace LIST-TABLE-INDEXES in :fddl/index/3 
+	with LIST-INDEXES (with :ON parameter). 
+	* doc/global-index.xml: remove DESCRIBE-TABLE and LIST-TABLE-INDEXES. 
+	* doc/ref-connect.xml: minor tidying. 
+	* doc/ref-fddl.xml: document the FDDL. 
+	* doc/TODO: removed items done. Moved note about transaction handling 
+	from TODO to here. 
+	* TODO: move note about transaction handling to doc/TODO. Added 
+	optimization note about LIST-ATTRIBUTE-TYPES and LIST-INDEXES. 
+	
 13 Jun 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* Version 2.11.10
 	* sql/syntax.lisp: updated docstrings. 

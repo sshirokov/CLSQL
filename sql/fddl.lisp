@@ -198,24 +198,25 @@ the index from."
                                               (database-identifier on database))))
                      :database database)))
 
-(defun list-indexes (&key (owner nil) (database *default-database*))
+(defun list-indexes (&key (owner nil) (database *default-database*) (on nil))
   "Returns a list of strings representing index names in DATABASE
 which defaults to *DEFAULT-DATABASE*. OWNER is nil by default
 which means that only indexes owned by users are listed. If OWNER
 is a string denoting a user name, only indexes owned by OWNER are
-listed. If OWNER is :all then all indexes are listed."
-  (database-list-indexes database :owner owner))
-
-(defun list-table-indexes (table &key (owner nil)
-				      (database *default-database*))
-  "Returns a list of strings representing index names on the
-table specified by TABLE in DATABASE which defaults to
-*DEFAULT-DATABASE*. OWNER is nil by default which means that only
-indexes owned by users are listed. If OWNER is a string denoting
-a user name, only indexes owned by OWNER are listed. If OWNER
-is :all then all indexes are listed."
-  (database-list-table-indexes (database-identifier table database)
-			       database :owner owner))
+listed. If OWNER is :all then all indexes are listed. The keyword
+argument ON limits the results to indexes on the specified
+tables. Meaningful values for ON are nil (the default) which
+means that all tables are considered, a string, symbol or SQL
+expression representing a table name in DATABASE or a list of
+such table identifiers."
+  (if (null on) 
+      (database-list-indexes database :owner owner)
+      (let ((tables (typecase on (cons on) (t (list on)))))
+        (reduce #'append 
+                (mapcar #'(lambda (table) (database-list-table-indexes 
+                                           (database-identifier table database)
+                                           database :owner owner))
+                        tables)))))
   
 (defun index-exists-p (name &key (owner nil) (database *default-database*))
   "Tests for the existence of an SQL index called NAME in DATABASE
@@ -299,15 +300,15 @@ attributes are listed."
 
 (defun attribute-type (attribute table &key (owner nil)
                                  (database *default-database*))
-  "Returns a string representing the field type of the supplied
-attribute ATTRIBUTE in the table specified by TABLE in DATABASE
-which defaults to *DEFAULT-DATABASE*. OWNER is nil by default
-which means that the attribute specified by ATTRIBUTE, if it
-exists, must be user owned else nil is returned. If OWNER is a
-string denoting a user name, the attribute, if it exists, must be
-owned by OWNER else nil is returned, whereas if OWNER is :all
-then the attribute, if it exists, will be returned regardless of
-its owner."
+  "Returns a keyword representing the vendor-specific field type
+of the supplied attribute ATTRIBUTE in the table specified by
+TABLE in DATABASE which defaults to *DEFAULT-DATABASE*. OWNER is
+nil by default which means that the attribute specified by
+ATTRIBUTE, if it exists, must be user owned else nil is
+returned. If OWNER is a string denoting a user name, the
+attribute, if it exists, must be owned by OWNER else nil is
+returned, whereas if OWNER is :all then the attribute, if it
+exists, will be returned regardless of its owner."
   (database-attribute-type (database-identifier attribute database)
                            (database-identifier table database)
                            database
@@ -399,18 +400,19 @@ sequences are examined."
     t))
   
 (defun sequence-next (name &key (database *default-database*))
-  "Return the next value in the sequence called NAME in DATABASE
-  which defaults to *DEFAULT-DATABASE*."
+  "Increment and return the next value in the sequence called
+  NAME in DATABASE which defaults to *DEFAULT-DATABASE*."
   (database-sequence-next (database-identifier name database) database))
 
 (defun set-sequence-position (name position &key (database *default-database*))
   "Explicitly set the the position of the sequence called NAME in
-DATABASE, which defaults to *DEFAULT-DATABSE*, to POSITION."
+DATABASE, which defaults to *DEFAULT-DATABSE*, to POSITION which
+is returned."
   (database-set-sequence-position (database-identifier name database) 
                                   position database))
 
 (defun sequence-last (name &key (database *default-database*))
-  "Return the last value of the sequence called NAME in DATABASE
+  "Return the last value allocated in the sequence called NAME in DATABASE
   which defaults to *DEFAULT-DATABASE*."
   (database-sequence-last (database-identifier name database) database))
 

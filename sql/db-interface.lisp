@@ -128,12 +128,6 @@ if not found. May signal an error if unable to communicate with database server.
     (signal-no-database-error database))
   (:documentation "Remove all data from database."))
 
-(defgeneric database-describe-table (database table)
-  (:method ((database t) table)
-    (declare (ignore table))
-    (signal-no-database-error database))
-  (:documentation "Return a list of name/type for columns in table"))
-
 (defgeneric database-destory (connection-spec type)
   (:documentation
    "Destroys a database, returns T if successfull or signals an error
@@ -405,6 +399,4 @@ of TYPE_NAME (keyword) PRECISION SCALE NULLABLE.")
   (unless (is-database-open database)
     (signal-closed-database-error database)))
 
-(defgeneric describe-table (table &key database)
-  (:documentation "Describes a table, returns a list of name/type for columns in table"))
 

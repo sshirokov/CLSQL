@@ -49,7 +49,6 @@
     <member><link hovertext="(DELETE-LARGE-OBJECT OBJECT-ID &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="delete-large-object">DELETE-LARGE-OBJECT</link></member>
     <member><link hovertext="(DELETE-RECORDS &amp;KEY (FROM NIL) (WHERE NIL) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="delete-records">DELETE-RECORDS</link></member>
     <member><link hovertext="(DELETE-SQL-STREAM STREAM &amp;KEY (TYPE :COMMANDS) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="delete-sql-stream">DELETE-SQL-STREAM</link></member>
-    <member><link hovertext="(DESCRIBE-TABLE TABLE &amp;KEY DATABASE) [generic]" linkend="describe-table">DESCRIBE-TABLE</link></member>
     <member><link hovertext="(DESTROY-DATABASE CONNECTION-SPEC &amp;KEY DATABASE-TYPE) [function]" linkend="destroy-database">DESTROY-DATABASE</link></member>
     <member><link hovertext="(DISABLE-SQL-READER-SYNTAX ) [macro]" linkend="disable-sql-reader-syntax">DISABLE-SQL-READER-SYNTAX</link></member>
     <member><link hovertext="(DISCONNECT &amp;KEY (DATABASE *DEFAULT-DATABASE*) (ERROR NIL)) [function]" linkend="disconnect">DISCONNECT</link></member>
@@ -77,7 +76,6 @@
     <member><link hovertext="(LIST-INDEXES &amp;KEY (OWNER NIL) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="list-indexes">LIST-INDEXES</link></member>
     <member><link hovertext="(LIST-SEQUENCES &amp;KEY (OWNER NIL) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="list-sequences">LIST-SEQUENCES</link></member>
     <member><link hovertext="(LIST-SQL-STREAMS &amp;KEY (TYPE :COMMANDS) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="list-sql-streams">LIST-SQL-STREAMS</link></member>
-    <member><link hovertext="(LIST-TABLE-INDEXES TABLE &amp;KEY (OWNER NIL) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="list-table-indexes">LIST-TABLE-INDEXES</link></member>
     <member><link hovertext="(LIST-TABLES &amp;KEY (OWNER NIL) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="list-tables">LIST-TABLES</link></member>
     <member><link hovertext="(LIST-VIEWS &amp;KEY (OWNER NIL) (DATABASE *DEFAULT-DATABASE*)) [function]" linkend="list-views">LIST-VIEWS</link></member>
     <member><link hovertext="(LOCALLY-DISABLE-SQL-READER-SYNTAX ) [macro]" linkend="locally-disable-sql-reader-syntax">LOCALLY-DISABLE-SQL-READER-SYNTAX</link></member>

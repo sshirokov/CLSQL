@@ -137,12 +137,12 @@
     </refnamediv>
     <refsect1>
       <title>Value Type</title>
-      <para>Any object of type <type>database</type>, or nil to
+      <para>Any object of type <type>database</type>, or &nil; to
       indicate no default database.</para>
     </refsect1>
     <refsect1>
       <title>Initial Value</title>
-      <para><symbol>nil</symbol></para>
+      <para>&nil;</para>
     </refsect1>
     <refsect1>
       <title>Description</title>
@@ -160,13 +160,13 @@
       <symbol>*default-database*</symbol> to the first database
       that remains in the list of active databases as returned by
       <function>connected-databases</function>, or
-      <symbol>nil</symbol> if no further active databases
+      &nil; if no further active databases
       exist.</para>
       <para>The user may change <symbol>*default-database*</symbol>
       at any time to a valid value of his choice.</para>
       <caution>
         <para>If the value of <symbol>*default-database*</symbol> is
-        <symbol>nil</symbol>, then all calls to &clsql; functions on
+        &nil;, then all calls to &clsql; functions on
         databases must provide a suitable
         <parameter>database</parameter> parameter, or an error will be
         signalled.</para>
@@ -248,11 +248,11 @@
     <refsect1>
       <title>Value Type</title>
       <para>Any keyword representing a valid database back-end of
-      &clsql;, or <symbol>nil</symbol>.</para>
+      &clsql;, or &nil;.</para>
     </refsect1>
     <refsect1>
       <title>Initial Value</title>
-      <para><symbol>nil</symbol></para>
+      <para>&nil;</para>
     </refsect1>
     <refsect1>
       <title>Description</title>
@@ -261,7 +261,7 @@
       <function>connect</function> as the default value of the
       <parameter>database-type</parameter> parameter.</para>
       <caution>
-        <para>If the value of this variable is <symbol>nil</symbol>,
+        <para>If the value of this variable is &nil;,
         then all calls to
         <function>initialize-database-type</function> or
         <function>connect</function> will have to specify the
@@ -311,7 +311,7 @@
     </refsect1>
     <refsect1>
       <title>Initial Value</title>
-      <para><symbol>nil</symbol></para>
+      <para>&nil;</para>
     </refsect1>
     <refsect1>
       <title>Description</title>
@@ -406,8 +406,7 @@
           <listitem>
             <para>A boolean flag. If &t;, acquire connection from a
             pool of open connections. If the pool is empty, a new
-            connection is created. The default is &nil;. This is a
-            &clsql; extension.
+            connection is created. The default is &nil;. 
             </para>
           </listitem>
         </varlistentry>
@@ -417,8 +416,7 @@
             <para>A boolean flag. If &t;,
             <symbol>*default-database*</symbol> is set to the new
             connection, otherwise <symbol>*default-database*</symbol>
-            is not changed. The default is &t;. This is a &clsql;
-            extension.
+            is not changed. The default is &t;. 
             </para>
           </listitem>
         </varlistentry>
@@ -580,7 +578,9 @@
       </refsect1>
       <refsect1>
 	<title>Notes</title>
-	<para>None.</para>
+	<para>The <parameter>pool</parameter> and
+	<parameter>make-default</parameter> keyword arguments to
+	<function>connect</function> are &clsql; extensions.</para>
       </refsect1>
     </refentry>
 
@@ -1015,7 +1015,7 @@
 	    <term><parameter>error</parameter></term>
 	    <listitem>
 	      <para>A boolean flag indicating whether to signal an error 
-              if <parameter>database</parameter> is non-nil but cannot 
+              if <parameter>database</parameter> is non-&nil; but cannot 
               be found. 
               </para>
 	    </listitem>
@@ -1044,8 +1044,8 @@
 	returned by <function>connect</function>, and closes the
 	connection. If no matching database is found and
 	<parameter>error</parameter> and
-	<parameter>database</parameter> are both non-nil an error is
-	signaled, otherwise nil is returned. If the database is from a
+	<parameter>database</parameter> are both non-&nil; an error is
+	signaled, otherwise &nil; is returned. If the database is from a
 	pool it will be released to this pool.
         </para> 
 
@@ -1077,7 +1077,7 @@
 	<symbol>*default-database*</symbol>, then
 	<symbol>*default-database*</symbol> is set to the first
 	remaining database from
-	<function>connected-databases</function> or to nil if no
+	<function>connected-databases</function> or to &nil; if no
 	further active database exists.</para>
       </refsect1>
       <refsect1>
@@ -1209,8 +1209,7 @@
 	    <term><parameter>db-type</parameter></term>
 	    <listitem>
 	      <para>
-                A keyword symbol denoting a known database back-end. This 
-                is a &clsql; extension. 
+                A keyword symbol denoting a known database back-end. 
               </para> 
 	    </listitem>
 	  </varlistentry>          
@@ -1218,8 +1217,8 @@
 	    <term><returnvalue>result</returnvalue></term>
 	    <listitem>
 	      <para>Either a database object, or, if
-		<parameter>errorp</parameter> is <symbol>nil</symbol>, 
-		possibly <symbol>nil</symbol>.</para>
+		<parameter>errorp</parameter> is &nil;, 
+		possibly &nil;.</para>
 	    </listitem>
 	  </varlistentry>
 	</variablelist>
@@ -1240,11 +1239,11 @@
         <parameter>database</parameter>. If it succeeds, it returns
         the first database found.</para>
         <para> 
-          If <parameter>db-type</parameter> is nil all databases
+          If <parameter>db-type</parameter> is &nil; all databases
           matching the string <parameter>database</parameter> are
           considered. If no matching databases are found and
-          <parameter>errorp</parameter> is nil then nil is
-          returned. If <parameter>errorp</parameter> is nil and one or
+          <parameter>errorp</parameter> is &nil; then &nil; is
+          returned. If <parameter>errorp</parameter> is &nil; and one or
           more matching databases are found, then the most recently
           connected database is returned as a first value and the
           number of matching databases is returned as a second
@@ -1321,7 +1320,9 @@
       </refsect1>
       <refsect1>
 	<title>Notes</title>
-	<para>None.</para>
+        <para>The <parameter>db-type</parameter> keyword argument to
+        <function>find-database</function> is a &clsql;
+        extension. </para>
       </refsect1>
     </refentry>
 
@@ -1354,7 +1355,7 @@
         <varlistentry>
           <term><returnvalue>result</returnvalue></term>
           <listitem>
-            <para>Either <symbol>nil</symbol> if the initialization
+            <para>Either &nil; if the initialization
             attempt fails, or <symbol>t</symbol> otherwise.</para>
           </listitem>
         </varlistentry>
@@ -1373,7 +1374,7 @@
 	  <symbol>*initialized-database-types*</symbol>, if not
 	  already present.</para>
 	<para>If initialization fails, the function returns
-	  <symbol>nil</symbol>, and/or signals an error of type
+	  &nil;, and/or signals an error of type
 	  <errortype>clsql-error</errortype>.  The kind of action
 	  taken depends on the back-end and the cause of the
 	  problem.</para>
@@ -1503,13 +1504,13 @@
       database whose name matches <parameter>database</parameter> is
       sought in the list of connected databases. If no matching
       database is found and <parameter>error</parameter> and
-      <parameter>database</parameter> are both non-nil an error is
-      signaled, otherwise nil is returned.</para> 
+      <parameter>database</parameter> are both non-&nil; an error is
+      signaled, otherwise &nil; is returned.</para> 
 
       <para> When the current database connection has been lost, if
-      <parameter>force</parameter> is non-nil as it is by default, the
+      <parameter>force</parameter> is non-&nil; as it is by default, the
       connection is closed and errors are suppressed. If
-      <parameter>force</parameter> is nil and the database connection
+      <parameter>force</parameter> is &nil; and the database connection
       cannot be closed, an error is signalled.
       </para>
     </refsect1>
@@ -1595,7 +1596,7 @@
       <title>Description</title>
       <para>Prints information about the currently connected databases
       to <symbol>*STANDARD-OUTPUT*</symbol>. The argument
-      <parameter>full</parameter> is nil by default and a value of t
+      <parameter>full</parameter> is &nil; by default and a value of t
       means that more detailed information about each database is
       printed.
       </para>
@@ -1612,7 +1613,7 @@ CLSQL STATUS: 2004-06-13 15:07:39
    localhost/test/petrov    mysql              nil        
    localhost/test/petrov    postgresql         nil        
    localhost/test/petrov    postgresql-socket  nil        
-   mysql-test/petrov        odbc               nil        
+   test/petrov              odbc               nil        
 *  :memory:                 sqlite             nil        
 --------------------------------------------------------
 
@@ -2206,8 +2207,9 @@ Error: While trying to access database localhost/test2/root
     </refsect1>
     <refsect1>
       <title>Description</title>
-      <para>Perform BODY with DATABASE bound as
-      *default-database*.
+      <para>Perform <parameter>body</parameter> with
+      <parameter>DATABASE</parameter> bound as
+      <symbol>*default-database*</symbol>.
       </para>
     </refsect1>
     <refsect1>

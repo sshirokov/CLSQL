@@ -128,7 +128,6 @@
      #:database-sequence-exists-p
      #:database-list-attributes
      #:database-attribute-type
-     #:database-describe-table
      #:database-type-library-loaded
      #:database-create
      #:database-destroy
@@ -288,11 +287,9 @@
 	 #:create-index                   
 	 #:drop-index                     
          ;; CLSQL Extensions 
-         #:describe-table
 	 #:list-views                  
 	 #:view-exists-p               
 	 #:list-indexes                
-	 #:list-table-indexes          
 	 #:index-exists-p              
 	 #:create-sequence             
 	 #:drop-sequence               

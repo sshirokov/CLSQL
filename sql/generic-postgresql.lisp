@@ -178,7 +178,7 @@
    (parse-integer
     (caar
      (database-query
-      (concatenate 'string "SELECT LAST_VALUE ('" sequence-name "')")
+      (concatenate 'string "SELECT LAST_VALUE FROM " sequence-name)
       database nil nil)))))
 
 (defun postgresql-database-list (connection-spec type)
@@ -201,8 +201,12 @@
 (defmethod database-list (connection-spec (type (eql :postgresql-socket)))
   (postgresql-database-list connection-spec type))
 
-
+#+nil 
 (defmethod database-describe-table ((database generic-postgresql-database) table)
+  ;; MTP: LIST-ATTRIBUTE-TYPES currently executes separate queries for
+  ;; each attribute. It would be more efficient to have a single SQL
+  ;; query return the type data for all attributes. This code is
+  ;; retained as an example of how to do this for PostgreSQL.
   (database-query 
    (format nil "select a.attname, t.typname
                                from pg_class c, pg_attribute a, pg_type t

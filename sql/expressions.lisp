@@ -578,15 +578,21 @@ uninclusive, and the args from that keyword to the end."
     (output-sql (apply #'vector selections) database)
     (when from
       (write-string " FROM " *sql-stream*)
-      (typecase from 
-        (list (output-sql (apply #'vector (remove-duplicates 
-					   from 
-					   :test #'(lambda (a b)
-						     (string-equal (symbol-name (slot-value a 'name))
-								   (symbol-name (slot-value b 'name))))))
-			  database))
-        (string (write-string from *sql-stream*))
-        (t (output-sql from database))))
+      (flet ((ident-table-equal (a b) 
+               (and (if (and (eql (type-of a) 'sql-ident-table)
+                             (eql (type-of b) 'sql-ident-table))
+                        (string-equal (slot-value a 'alias)
+                                      (slot-value b 'alias))
+                        t)
+                    (string-equal (symbol-name (slot-value a 'name))
+                                  (symbol-name (slot-value b 'name))))))
+        (typecase from 
+          (list (output-sql (apply #'vector 
+                                   (remove-duplicates from 
+                                                      :test #'ident-table-equal))
+                            database))
+          (string (write-string from *sql-stream*))
+          (t (output-sql from database)))))
     (when inner-join
       (write-string " INNER JOIN " *sql-stream*)
       (output-sql inner-join database))
