@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-package.cl,v 1.3 2002/03/27 08:09:25 kevin Exp $
+;;;; $Id: postgresql-socket-package.cl,v 1.4 2002/04/03 19:50:03 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -19,7 +19,7 @@
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :cl-user)
 
-(in-package :cl-user)
+#+lispworks (require :comm)
 
 (defpackage :postgresql-socket
   (:use :common-lisp)
