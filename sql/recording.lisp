@@ -16,12 +16,16 @@
 (in-package #:clsql-sys)
 
 (defun start-sql-recording (&key (type :commands) (database *default-database*))
-  "Begin recording SQL command or result traffic. By default the
-broadcast stream is just *STANDARD-OUTPUT* but this can be modified
-using ADD-SQL-STREAM or DELETE-SQL-STREAM. TYPE determines whether SQL
-command or result traffic is recorded, or both. It must be either
-:commands, :results or :both, and defaults to :commands. DATABASE
-defaults to *default-database*."
+  "Starts recording of SQL commands sent to and/or results
+returned from DATABASE which defaults to *DEFAULT-DATABASE*. The
+SQL is output on one or more broadcast streams, initially just
+*STANDARD-OUTPUT*, and the functions ADD-SQL-STREAM and
+DELETE-SQL-STREAM may be used to add or delete command or result
+recording streams. The default value of TYPE is :commands which
+means that SQL commands sent to DATABASE are recorded. If TYPE
+is :results then SQL results returned from DATABASE are
+recorded. Both commands and results may be recorded by passing
+TYPE value of :both."
   (when (or (eq type :both) (eq type :commands))
     (setf (command-recording-stream database)
           (make-broadcast-stream *standard-output*)))
@@ -31,10 +35,13 @@ defaults to *default-database*."
   (values))
 
 (defun stop-sql-recording (&key (type :commands) (database *default-database*))
-  "Stops recording of SQL command or result traffic.  TYPE determines
-whether to stop SQL command or result traffic, or both.  It must be
-either :commands, :results or :both, defaulting to :commands. DATABASE
-defaults to *default-database*."
+  "Stops recording of SQL commands sent to and/or results
+returned from DATABASE which defaults to *DEFAULT-DATABASE*. The
+default value of TYPE is :commands which means that SQL commands
+sent to DATABASE will no longer be recorded. If TYPE is :results
+then SQL results returned from DATABASE will no longer be
+recorded. Recording may be stopped for both commands and results
+by passing TYPE value of :both."
   (when (or (eq type :both) (eq type :commands))
     (setf (command-recording-stream database) nil))
   (when (or (eq type :both) (eq type :results))
@@ -42,9 +49,10 @@ defaults to *default-database*."
   (values))
 
 (defun sql-recording-p (&key (type :commands) (database *default-database*))
-  "Returns t if recording of TYPE of SQL interaction specified is
-enabled.  TYPE must be either :commands, :results, :both or :either.
-DATABASE defaults to *default-database*."
+  "Predicate to test whether the SQL recording specified by TYPE
+is currently enabled for DATABASE which defaults to *DEFAULT-DATABASE*.  
+TYPE may be one of :commands, :results, :both or :either, defaulting to
+:commands, otherwise nil is returned."
   (when (or (and (eq type :commands)
                  (command-recording-stream database))
             (and (eq type :results)
@@ -59,10 +67,13 @@ DATABASE defaults to *default-database*."
 
 (defun add-sql-stream (stream &key (type :commands)
                               (database *default-database*))
-  "Add the given STREAM as a component stream for the recording
-broadcast stream for the given SQL interaction TYPE.  TYPE must be
-either :commands, :results, or :both, defaulting to :commands.
-DATABASE defaults to *default-database*."
+  "Adds the supplied stream STREAM (or T for *standard-output*)
+as a component of the recording broadcast stream for the SQL
+recording type specified by TYPE on DATABASE which defaults to
+*DEFAULT-DATABASE*. TYPE must be one of :commands, :results,
+or :both, defaulting to :commands, depending on whether the
+stream is to be added for recording SQL commands, results or
+both."
   (when (or (eq type :both) (eq type :commands))
     (unless (member stream
                     (list-sql-streams :type :commands :database database))
@@ -80,10 +91,12 @@ DATABASE defaults to *default-database*."
 			      
 (defun delete-sql-stream (stream &key (type :commands)
                                  (database *default-database*))
-  "Removes the given STREAM from the recording broadcast stream for
-the given TYPE of SQL interaction.  TYPE must be either :commands,
-:results, or :both, defaulting to :commands.  DATABASE defaults to
-*default-database*."
+ "Removes the supplied stream STREAM from the recording broadcast
+stream for the SQL recording type specified by TYPE on DATABASE
+which defaults to *DEFAULT-DATABASE*. TYPE must be one
+of :commands, :results, or :both, defaulting to :commands,
+depending on whether the stream is to be added for recording SQL
+commands, results or both."
   (when (or (eq type :both) (eq type :commands))
     (setf (command-recording-stream database)
           (apply #'make-broadcast-stream
@@ -97,10 +110,12 @@ the given TYPE of SQL interaction.  TYPE must be either :commands,
   stream)
 
 (defun list-sql-streams (&key (type :commands) (database *default-database*))
-  "Returns the set of streams which the recording broadcast stream
-send SQL interactions of the given TYPE sends data. TYPE must be
-either :commands, :results, or :both, defaulting to :commands.
-DATABASE defaults to *default-database*."
+  "Returns the list of component streams for the broadcast stream
+recording SQL commands sent to and/or results returned from
+DATABASE which defaults to *DEFAULT-DATABASE*. TYPE must be one
+of :commands, :results, or :both, defaulting to :commands, and
+determines whether the listed streams contain those recording SQL
+commands, results or both."
   (let ((crs (command-recording-stream database))
         (rrs (result-recording-stream database)))
     (cond
@@ -115,9 +130,11 @@ DATABASE defaults to *default-database*."
        (error "Unknown recording type. ~A" type)))))
 
 (defun sql-stream (&key (type :commands) (database *default-database*))
-  "Returns the broadcast streams used for recording SQL commands or
-results traffic. TYPE must be either :commands or :results defaulting
-to :commands while DATABASE defaults to *default-database*."
+  "Returns the broadcast stream used for recording SQL commands
+sent to or results returned from DATABASE which defaults to
+*DEFAULT-DATABASE*. TYPE must be one of :commands or :results,
+defaulting to :commands, and determines whether the stream
+returned is that used for recording SQL commands or results."
   (cond
     ((eq type :commands)
      (command-recording-stream database))
@@ -127,24 +144,24 @@ to :commands while DATABASE defaults to *default-database*."
      (error "Unknown recording type. ~A" type))))
   
 (defun record-sql-command (expr database)
-  (if database
-      (with-slots (command-recording-stream)
-          database
-        (if command-recording-stream 
-            (format command-recording-stream "~&;; ~A ~A => ~A~%"
-                    (iso-timestring (get-time))
-                    (database-name database)
-                    expr)))))
+  (when database
+    (with-slots (command-recording-stream)
+        database
+      (when command-recording-stream 
+        (format command-recording-stream "~&;; ~A ~A => ~A~%"
+                (iso-timestring (get-time))
+                (database-name database)
+                expr)))))
 
 (defun record-sql-result (res database)
-  (if database
-      (with-slots (result-recording-stream)
-          database
-        (if result-recording-stream 
-            (format result-recording-stream "~&;; ~A ~A <= ~A~%"
-                    (iso-timestring (get-time))
-                    (database-name database)
-                    res)))))
+  (when database
+    (with-slots (result-recording-stream)
+        database
+      (when result-recording-stream 
+        (format result-recording-stream "~&;; ~A ~A <= ~A~%"
+                (iso-timestring (get-time))
+                (database-name database)
+                res)))))
 
   
 

@@ -30,15 +30,17 @@
 ;; Exported functions for disabling SQL syntax.
 
 (defmacro disable-sql-reader-syntax ()
-  "Turn off SQL square bracket syntax changing syntax state. Set state
-such that RESTORE-SQL-READER-SYNTAX-STATE will make the syntax
-disabled if it is consequently locally enabled."
+  "Turns off the SQL reader syntax setting the syntax state such
+that if the syntax is subsequently enabled,
+RESTORE-SQL-READER-SYNTAX-STATE will disable it again."
   '(eval-when (:compile-toplevel :load-toplevel :execute)
-     (setf *restore-sql-reader-syntax* nil)
-     (%disable-sql-reader-syntax)))
+    (setf *restore-sql-reader-syntax* nil)
+    (%disable-sql-reader-syntax)))
 
 (defmacro locally-disable-sql-reader-syntax ()
-  "Turn off SQL square bracket syntax and do not change syntax state." 
+  "Turns off the SQL reader syntax without changing the syntax
+state such that RESTORE-SQL-READER-SYNTAX-STATE will re-establish
+the current syntax state."
   '(eval-when (:compile-toplevel :load-toplevel :execute)
     (%disable-sql-reader-syntax)))
 
@@ -52,17 +54,19 @@ disabled if it is consequently locally enabled."
 ;; Exported functions for enabling SQL syntax.
 
 (defmacro enable-sql-reader-syntax ()
-  "Turn on SQL square bracket syntax changing syntax state. Set state
-such that RESTORE-SQL-READER-SYNTAX-STATE will make the syntax enabled
-if it is consequently locally disabled."
+  "Turns on the SQL reader syntax setting the syntax state such
+that if the syntax is subsequently disabled,
+RESTORE-SQL-READER-SYNTAX-STATE will enable it again."
   '(eval-when (:compile-toplevel :load-toplevel :execute)
-     (setf *restore-sql-reader-syntax* t)
-     (%enable-sql-reader-syntax)))
+    (setf *restore-sql-reader-syntax* t)
+    (%enable-sql-reader-syntax)))
 
 (defmacro locally-enable-sql-reader-syntax ()
-  "Turn on SQL square bracket syntax and do not change syntax state."
+  "Turns on the SQL reader syntax without changing the syntax
+state such that RESTORE-SQL-READER-SYNTAX-STATE will re-establish
+the current syntax state."
   '(eval-when (:compile-toplevel :load-toplevel :execute)
-     (%enable-sql-reader-syntax)))
+    (%enable-sql-reader-syntax)))
 
 (defun %enable-sql-reader-syntax ()
   (unless *original-reader-enter*
@@ -72,10 +76,10 @@ if it is consequently locally disabled."
   (values))
 
 (defmacro restore-sql-reader-syntax-state ()
-  "Sets the enable/disable square bracket syntax state to reflect the
-last call to either DISABLE-SQL-READER-SYNTAX or
-ENABLE-SQL-READER-SYNTAX. The default state of the square bracket
-syntax is disabled."
+  "Enables the SQL reader syntax if ENABLE-SQL-READER-SYNTAX has
+been called more recently than DISABLE-SQL-READER-SYNTAX and
+otherwise disables the SQL reader syntax. By default, the SQL
+reader syntax is disabled."
   '(eval-when (:compile-toplevel :load-toplevel :execute)
     (if *restore-sql-reader-syntax*
         (%enable-sql-reader-syntax)
@@ -92,13 +96,15 @@ syntax is disabled."
            (cons (sql-operator (car sqllist)) (cdr sqllist)))
           (t (apply #'generate-sql-reference sqllist)))))
 
-;; Internal function that disables the close syntax when leaving sql context.
 (defun disable-sql-close-syntax ()
+  "Internal function that disables the close syntax when leaving
+  sql context."
   (set-macro-character *sql-macro-close-char* *original-reader-exit*)
   (setf *original-reader-exit* nil))
 
-;; Internal function that enables close syntax when entering SQL context.
 (defun enable-sql-close-syntax ()
+  "Internal function that enables close syntax when entering SQL
+  context."
   (setf *original-reader-exit* (get-macro-character *sql-macro-close-char*))
   (set-macro-character *sql-macro-close-char* (get-macro-character #\))))
 
@@ -106,14 +112,14 @@ syntax is disabled."
   (cond ((= (length arglist) 1)	; string, table or attribute
 	 (if (stringp (car arglist))
 	     (sql-expression :string (car arglist))
-	   (sql-expression :attribute (car arglist))))
+             (sql-expression :attribute (car arglist))))
 	((<= 2 (length arglist))
 	 (let ((sqltype (if (keywordp (caddr arglist))
 			    (caddr arglist) nil))
 	       (sqlparam (if (keywordp (caddr arglist))
 			     (caddr arglist))))
 	   (cond
-	    ((stringp (cadr arglist))
+             ((stringp (cadr arglist))
 	     (sql-expression :table (car arglist)
 			     :alias (cadr arglist)
 			     :type sqltype))
@@ -133,17 +139,17 @@ syntax is disabled."
 ;; Exported functions for dealing with SQL syntax 
 
 (defun sql (&rest args)
-  "Generates SQL from a set of expressions given by ARGS. Each
-argument is translated into SQL and then the args are concatenated
-with a single space between each pair."
+  "Returns an SQL string generated from the SQL expressions
+ARGS. The expressions are translated into SQL strings and then
+concatenated with a single space delimiting each expression."
   (format nil "~{~A~^ ~}" (mapcar #'sql-output args)))
 
 (defun sql-expression (&key string table alias attribute type params)
-  "Generates an SQL expression from the given keywords. Valid
-combinations of the arguments are: string; table; table and alias;
-table and attribute; table, attribute, and type; table or alias, and
-attribute; table or alias, and attribute and type; attribute; and
-attribute and type."
+  "Returns an SQL expression constructed from the supplied arguments
+which may be combined as follows: ATTRIBUTE and TYPE; ATTRIBUTE;
+ALIAS or TABLE and ATTRIBUTE and TYPE; ALIAS or TABLE and
+ATTRIBUTE; TABLE, ATTRIBUTE and TYPE; TABLE and ATTRIBUTE; TABLE
+and ALIAS; TABLE; and STRING."
   (cond
     (string
      (make-instance 'sql :string string))
@@ -157,15 +163,19 @@ attribute and type."
                     :table-alias alias))))
 
 (defun sql-operator (operation)
-  "Takes an SQL operator as an argument and returns the Lisp symbol
-for the operator."
+  "Returns the Lisp symbol corresponding to the SQL operation
+  represented by the symbol OPERATION."
   (typecase operation
     (string nil)
     (symbol (gethash (symbol-name-default-case (symbol-name operation))
                      *sql-op-table*))))
 
 (defun sql-operation (operation &rest rest)
-  "Generates an SQL statement from an operator and arguments." 
+  "Returns an SQL expression constructed from the supplied SQL
+operator or function OPERATION and its arguments REST. If
+OPERATION is passed the symbol FUNCTION then the first value in
+REST is taken to be a valid SQL function and the remaining values
+in REST its arguments."
   (if (sql-operator operation)
       (apply (symbol-function (sql-operator operation)) rest)
       (error "~A is not a recognized SQL operator." operation)))

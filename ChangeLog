@@ -1,3 +1,9 @@
+19 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
+	* sql/recording.lisp: reworked docstrings. 
+	* sql/syntax.lisp: reworked docstrings. 
+	* doc/TODO: added notes about extensions to SQL-RECORDING-P and the 
+	SQL syntax state functions being macros. 
+
 19 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
         * sql/package.lisp: Export initialize-database-type and
 	*initialize-database-types* from CLSQL package.
