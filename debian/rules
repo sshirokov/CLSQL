@@ -25,7 +25,6 @@ prefix-aodbc	:= debian/$(pkg-aodbc)
 
 ## Lisp sources
 srcs		:= $(wildcard sql/*.cl)
-srcs-cmucl-compat:= $(wildcard cmucl-compat/*.cl)
 srcs-base	:= $(wildcard base/*.cl)
 srcs-base-uffi	:= $(wildcard interfaces/clsql-uffi/*.cl) 
 srcs-base-uffi-so:= $(wildcard interfaces/clsql-uffi/*.so)
@@ -78,7 +77,6 @@ install: build
 
 	# Main package
 	$(INSTALL) $(INSTALLFLAGS) $(srcs) $(prefix)/$(clc-repos)/clsql/sql
-	$(INSTALL) $(INSTALLFLAGS) $(srcs-cmucl-compat) $(prefix)/$(clc-repos)/clsql/cmucl-compat
 
 	# Base
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-base) $(prefix-base)/$(clc-repos)/clsql/base
