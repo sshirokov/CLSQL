@@ -10,8 +10,9 @@ Package: cl-sql
 Architecture: all
 Depends: cl-sql-base
 Description: SQL Interface for Common Lisp
- CLSQL uses the UFFI library to provide SQL to multiple SQL databases
- on multiple Common Lisp implementations.
+ CLSQL is a Common Lisp interface for multiple SQL databases
+ on multiple Common Lisp implementations. It uses the UFFI
+ foreign language interface.
 
 Package: cl-sql-base
 Architecture: all
@@ -30,6 +31,7 @@ Recommends: cl-sql-backend
 Description: Common UFFI functions for CLSQL database backends
  This package provides an interface to several UFFI functions used by multiple
  CLSQL database backends.
+ CLSQL is a Common Lisp interface to SQL databases.
 
 Package: cl-sql-mysql
 Architecture: any
@@ -38,6 +40,7 @@ Provides: cl-sql-backend
 Description: CLSQL database backend, MySQL
  This package enables you to use the CLSQL data access package
  with MySQL databases.
+ CLSQL is a Common Lisp interface to SQL databases.
 
 Package: cl-sql-aodbc
 Architecture: all
@@ -47,6 +50,7 @@ Suggests: acl-pro-installer
 Description: CLSQL database backend, AODBC
  This package enables you to use the CLSQL data access package
  with AllegroCL's AODBC databases.
+ CLSQL is a Common Lisp interface to SQL databases.
 
 Package: cl-sql-postgresql
 Architecture: all
@@ -55,6 +59,7 @@ Provides: cl-sql-backend
 Description: CLSQL database backend, PostgreSQL
  This package enables you to use the CLSQL data access package
  with PostgreSQL databases.
+ CLSQL is a Common Lisp interface to SQL databases.
 
 Package: cl-sql-postgresql-socket
 Architecture: all
@@ -63,6 +68,16 @@ Provides: cl-sql-backend
 Description: CLSQL database backend, PostgreSQL
  This package enables you to use the CLSQL data access package
  with PostgreSQL databases via a socket interface.
+ CLSQL is a Common Lisp interface to SQL databases.
+
+Package: cl-sql-sqlite
+Architecture: all
+Depends: cl-sql-base (>= ${Source-Version}), libsqlite0-dev, cl-sql-uffi (>= ${Source-Version})
+Provides: cl-sql-backend
+Description: CLSQL database backend, SQLite
+ This package enables you to use the CLSQL data access package
+ with SQLite databases. 
+ CLSQL is a Common Lisp interface to SQL databases.
 
 Package: cl-sql-tests
 Architecture: all
