@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: cmucl-compat.lisp,v 1.4 2003/05/02 03:05:54 kevin Exp $
+;;;; $Id: cmucl-compat.lisp,v 1.5 2003/05/06 02:29:46 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -56,7 +56,7 @@ Needs to be a macro to overwrite value of VEC."
        (let ((,new-vec (make-array ,len :element-type
 				   (array-element-type ,vec))))
 	 (check-type ,len fixnum)
-	 (locally (declare (speed 3) (safety 0) (space 0)) 
+	 (locally (declare (optimize (speed 3) (safety 0) (space 0)) )
 	   (dotimes (i ,len)
 	     (declare (fixnum i))
 	     (setf (aref ,new-vec i) (aref ,vec i))))

@@ -2,13 +2,12 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          sql.cl
-;;;; Purpose:       High-level SQL interface
-;;;; Programmers:   Kevin M. Rosenberg based on
-;;;;                 Original code by Pierre R. Mai 
-;;;; Date Started:  Feb 2002
+;;;; Name:         sql.cl
+;;;; Purpose:      High-level SQL interface
+;;;; Authors:      Kevin M. Rosenberg based on code by Pierre R. Mai 
+;;;; Date Started: Feb 2002
 ;;;;
-;;;; $Id: sql.lisp,v 1.4 2002/11/14 18:52:47 kevin Exp $
+;;;; $Id: sql.lisp,v 1.5 2003/05/06 02:27:08 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -18,16 +17,10 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :clsql-sys)
+(eval-when (:compile-toplevel)
+  (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0))))
 
-;;; Modified by KMR 
-;;; - to use CMUCL-COMPAT library 
-;;; - fix format strings in error messages 
-;;; - use field types
-
-
-;;; Simple implementation of SQL along the lines of Harlequin's Common SQL
+(in-package #:clsql-sys)
 
 
 ;;; Database handling

@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.4 2003/03/29 22:31:43 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.5 2003/05/06 02:22:58 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -83,8 +83,8 @@
 (defmacro split-64-bit-integer (int64)
   `(values (ash ,int64 -32) (logand ,int64 +2^32-1+)))
 
-(defconstant +ascii-N-value+ (char-code #\N))
-(defconstant +ascii-U-value+ (char-code #\U))
+(defvar +ascii-N-value+ (char-code #\N))
+(defvar +ascii-U-value+ (char-code #\U))
 
 (uffi:def-type char-ptr-def (* :unsigned-char))
 
