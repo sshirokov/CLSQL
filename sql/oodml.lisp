@@ -211,9 +211,8 @@
            (error "Unable to update records"))))
   (values))
 
-(defmethod update-records-from-instance ((obj standard-db-object)
-                                         &key (database *default-database*))
-  (let ((database (or (view-database obj) database)))
+(defmethod update-records-from-instance ((obj standard-db-object) &key database)
+  (let ((database (or database (view-database obj) *default-database*)))
     (labels ((slot-storedp (slot)
 	       (and (member (view-class-slot-db-kind slot) '(:base :key))
 		    (slot-boundp obj (slot-definition-name slot))))
