@@ -1,3 +1,9 @@
+cl-sql (1.4.1-1) unstable; urgency=low
+
+  * Fix typo in clsql-mysql
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Wed, 26 Mar 2003 18:13:22 -0700
+
 cl-sql (1.4.0-2) unstable; urgency=low
 
   * Move cl-md5 dependencies to cl-sql-postgresql-socket (closes: 185738)
