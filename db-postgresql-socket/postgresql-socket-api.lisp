@@ -375,6 +375,23 @@ socket interface"
 			       :remote-port port :remote-host host
 			       :connect :active :nodelay t))))))
 
+#+openmcl
+(defun open-postgresql-socket-stream (host port)
+  (etypecase host
+    (pathname
+     (let ((path (namestring
+		  (make-pathname :name ".s.PGSQL" :type (princ-to-string port)
+				 :defaults host))))
+       (ccl:make-socket :type :stream :address-family :file
+			:connect :active
+			:remote-filename path :local-filename path)))
+    (string
+     (socket:with-pending-connect
+	 (mp:with-timeout (*postgresql-server-socket-timeout* (error "connect failed"))
+	   (ccl:make-socket :type :stream :address-family :internet
+			    :remote-port port :remote-host host
+			    :connect :active :nodelay t))))))
+
 #+lispworks
 (defun open-postgresql-socket-stream (host port)
   (etypecase host

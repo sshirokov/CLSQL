@@ -10,7 +10,7 @@
 	* db-sqlite/sqlite-api-{uffi,sql}.lisp: Multiple UFFI fixes,
 	now passes tests on all support UFFI platforms.
 	* db-postgresql-socket/postgresql-socket-api.list: Ported to 
-	SBCL
+	SBCL and OpenMCL
 	* multiple: Finish renaming of :types keyword to :result-types for
 	greater CommonSQL compatibility, including documentation
 	* sql/basic-cmds.lisp: Remove obsolete file

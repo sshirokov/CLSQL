@@ -4,7 +4,6 @@ GENERAL
   individuals;
 * implement remaining functions for CLSQL AODBC backend;
 * port Oracle and ODBC backend to UFFI.
-* port postgresql-socket backend to OpenMCL
 
 COMMONSQL SPEC
 
