@@ -1,6 +1,8 @@
-- Added optional field types specifier for queries
-to optimize query times, reduce garbage, reduce
-programmer effort to convert strings to numbers.
+- Added optional field types specifier for queries to optimize query 
+times, reduce garbage, reduce programmer effort to convert strings to 
+numbers. By directly parsing integers (32 and 64 bits) and floats, the 
+overhead of temporary strings is eliminated. A value of :auto 
+specifies automatic numeric importing for applicable fields. 
 
 - New test suite using XPTest
 
