@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.9 2002/04/07 07:55:29 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.10 2002/04/07 08:09:11 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -15,24 +15,29 @@
 
 PKG=clsql
 
-.PHONY: all libs clean realclean docs tagcvs dist
+.PHONY: all libs clean realclean doc tagcvs dist
 
-all: libs
+SUBDIRS=interfaces/mysql interfaces/clsql-uffi
+.PHONY: subdirs $(SUBDIRS)
 
-libs:
-	(cd interfaces/mysql; make)
-	(cd interfaces/clsql-uffi; make)
+all: $(SUBDIRS)
+
+$(SUBDIRS):
+	$(MAKE) -C $@
 
 clean:
 	@rm -f $(PKG)-*.tar.gz $(PKG)-*.zip
 	@find . -type d -name .bin |xargs rm -rf 
-	@find . -type f -name \*.a -or -name \*.so |xargs rm -rf 
+	$(MAKE) -C doc clean
+	for i in $(SUBDIRS) ; do \
+		$(MAKE) -C $$i clean; \
+	done
 
 realclean: clean
 	@find . -type f -name "#*" -or -name \*~ -exec rm {} \;
 
-docs:
-	@(cd doc; make dist-doc)
+doc:
+	$(MAKE) -C doc dist-doc
 
 VERSION=$(shell cat VERSION)
 DISTDIR=$(PKG)-$(VERSION)
