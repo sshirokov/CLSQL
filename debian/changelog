@@ -1,3 +1,9 @@
+cl-sql (0.8.1-2) unstable; urgency=low
+
+  * Update depends for cl-sql-aodbc to be acl-pro-instaler, not acl-installer
+
+ -- Kevin M. Rosenberg <kevin@rosenberg.net>  Sat, 10 Aug 2002 01:12:53 -0600
+
 cl-sql (0.8.1-1) unstable; urgency=low
 
   * New upstream version. (Changed RedHat to Debian in upstream documentation!)

@@ -40,7 +40,7 @@ Description: CLSQL database backend, MySQL
 
 Package: cl-sql-aodbc
 Architecture: all
-Depends: cl-sql-base (>= ${Source-Version}), acl-installer
+Depends: cl-sql-base (>= ${Source-Version}), acl-pro-installer
 Provides: cl-sql-backend
 Description: CLSQL database backend, AODBC
  This package enables you to use the CLSQL data access package
