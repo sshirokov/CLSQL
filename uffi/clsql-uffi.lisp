@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.20 2003/05/16 18:53:57 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.21 2003/05/17 07:34:54 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -121,9 +121,9 @@
 		  (make-64-bit-integer high32 low32)))))
 	 (t
 	  ;; Choose optimized routine
-	  #-(or cmu sbcl)
+	  #-(or cmu sbcl lispworks scl)
 	  (native-to-string char-ptr)
-	  #+(or cmu sbcl)
+	  #+(or cmu sbcl lispworks scl)
 	  (uffi:convert-from-foreign-string char-ptr)))))))
   
 
@@ -131,6 +131,7 @@
     ((str (* :unsigned-char)))
   :returning :unsigned-int)
 
+#-allegro
 (defun native-to-string (s)
   (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
 	   (type char-ptr-def s))
