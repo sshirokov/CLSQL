@@ -7,7 +7,7 @@
 ;;;; Programmer:   Kevin M. Rosenberg
 ;;;; Date Started: Mar 2002
 ;;;;
-;;;; $Id: utils.cl,v 1.1 2002/03/26 14:11:59 kevin Exp $
+;;;; $Id: utils.cl,v 1.2 2002/03/27 05:04:19 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -19,6 +19,14 @@
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :clsql-sys)
 
+(defun number-to-sql-string (num)
+  (etypecase num
+    (integer
+     num)
+    (rational
+     (float-to-sql-string (coerce num 'double-float)))
+    (number
+     (float-to-sql-string num))))
 
 (defun float-to-sql-string (num)
   "Convert exponent character for SQL"

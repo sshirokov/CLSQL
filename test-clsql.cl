@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: test-clsql.cl,v 1.9 2002/03/26 14:12:12 kevin Exp $
+;;;; $Id: test-clsql.cl,v 1.10 2002/03/27 05:04:19 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -53,20 +53,22 @@
       (clsql-test-table spec type)))
   )
 
+(defun make-test-float (i)
+  (* i (expt 10 (* i 4))))
 
 (defun create-test-table (db)
   (ignore-errors
     (clsql:execute-command 
      "DROP TABLE test_clsql" :database db))
   (clsql:execute-command 
-   "CREATE TABLE test_clsql (n integer, n_pi float, n_pi_str CHAR(20))" 
+   "CREATE TABLE test_clsql (n integer, flt float, flt_str CHAR(20))" 
    :database db)
   (dotimes (i 11)
     (let ((n (- i 5)))
       (clsql:execute-command
        (format nil "INSERT INTO test_clsql VALUES (~a,~a,'~a')"
-	       n (clsql:float-to-sql-string (* pi n))
-	       (clsql:float-to-sql-string (* pi n)))
+	       n (clsql:number-to-sql-string (make-test-float n))
+	       (clsql:number-to-sql-string (make-test-float n)))
        :database db))))
 
 (defun drop-test-table (db)
@@ -81,7 +83,7 @@
 	  (create-test-table db)
 	  (pprint (clsql:query "select * from test_clsql" 
 			       :database db
-			       :types :auto))
+			       :types nil))
 	  (pprint (clsql:map-query 'vector #'list "select * from test_clsql" 
 				   :database db
 				   :types :auto)) ;;'(:int :double t)))

@@ -9,7 +9,7 @@
 ;;;;                
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-api.cl,v 1.7 2002/03/26 17:16:18 kevin Exp $
+;;;; $Id: postgresql-socket-api.cl,v 1.8 2002/03/27 05:04:19 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -653,7 +653,6 @@ connection, if it is still open."
 	  ((or (= char +char-code-lower-e+) 	      ;; E is for exponent
 	       (= char +char-code-upper-e+))
 	   (setq exponent (read-integer-from-socket socket (- length i)))
-	   (format t "~&exp: ~a" exponent)
 	   (setq exponent (or exponent 0))
 	   (setq i length))
 	  (t 
