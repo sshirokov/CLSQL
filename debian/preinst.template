@@ -1,0 +1,22 @@
+#!/bin/bash
+# This is part of clsql program: 
+#    http://clsql.med-info.com
+#
+# Copyright (c) 2002 Kevin M. Rosenberg
+
+pkg:=%%
+
+case "$1" in
+    install|upgrade|abort-upgrade)
+	rm -rf /usr/share/common-lisp-source/${pkg}
+	rm -rf /usr/share/common-lisp-source/${pkg}-[0-9\.]+
+
+	;;
+    *)
+        echo "preinst called with unknown argument '$1'" >&2
+	;;
+esac
+
+#DEBHELPER#
+
+exit 0

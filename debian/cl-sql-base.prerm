@@ -7,13 +7,9 @@ set -e
 LISP_PKG=%%
 
 case "$1" in
-    remove|upgrade|deconfigure)
+    remove|upgrade|deconfigure|failed-upgrade)
 	rm -fr /usr/share/doc/cl-sql-doc/html
         ;;
-
-    failed-upgrade)
-        ;;
-
     *)
         echo "prerm called with unknown argument \`$1'" >&2
         exit 0

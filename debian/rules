@@ -129,6 +129,7 @@ install: build
 	for p in $(all-pkgs); do \
                 echo "processing maintainer scripts for $$p" ;\
 		l=`echo $$p | sed -e "s/^cl-/cl/;"` ;\
+		sed -e "s/%%/$$l/;" debian/preinst.template > debian/$$p.preinst ;\
 		sed -e "s/%%/$$l/;" debian/prerm.template > debian/$$p.prerm ;\
 		sed -e "s/%%/$$l/;" debian/postinst.template > debian/$$p.postinst ;\
 		chmod +x debian/$$p.prerm debian/$$p.prerm; \
@@ -148,12 +149,6 @@ binary-arch: build install
 	dh_installdocs
 #	dh_installexamples 
 	dh_installchangelogs ChangeLog
-#	dh_link -p $(pkg-base) $(clc-clsql) $(clc-source)/clsql
-#	dh_link -p $(pkg-base) $(clc-clsql) $(clc-source)/clsql-base
-#	dh_link -p $(pkg-mysql) $(clc-clsql) $(clc-source)/clsql-mysql
-#	dh_link -p $(pkg-pg) $(clc-clsql) $(clc-source)/clsql-postgresql
-#	dh_link -p $(pkg-pg-socket) $(clc-clsql) $(clc-source)/clsql-postgresql-socket
-#	dh_link -p $(pkg-aodbc) $(clc-clsql) $(clc-source)/clsql-aodbc
 	dh_strip
 	dh_compress
 	dh_fixperms
