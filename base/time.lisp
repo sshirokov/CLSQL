@@ -160,26 +160,27 @@ month, year, integer day-of-week"
 
 ;; duration specific
 (defun duration-reduce (duration precision &optional round)
-     (:second
-      (+ (duration-second duration)
-         (* (duration-reduce duration :minute) 60)))
-     (:minute
-      (+ (if round
-	     (floor (duration-second duration) 30)
-	     0)
-	 (duration-minute duration)
-         (* (duration-reduce duration :hour) 60)))
-     (:hour
-      (+ (if round
-	     (floor (duration-minute duration) 30)
-	     0)
-	 (duration-hour duration)
-         (* (duration-reduce duration :day) 24)))
-     (:day
-      (+ (if round
-	     (floor (duration-hour duration) 12)
-	     0)
-	 (duration-day duration))))
+  (ecase precision
+    (:second
+     (+ (duration-second duration)
+	(* (duration-reduce duration :minute) 60)))
+    (:minute
+     (+ (if round
+	    (floor (duration-second duration) 30)
+	    0)
+	(duration-minute duration)
+	(* (duration-reduce duration :hour) 60)))
+    (:hour
+     (+ (if round
+	    (floor (duration-minute duration) 30)
+	    0)
+	(duration-hour duration)
+	(* (duration-reduce duration :day) 24)))
+    (:day
+     (+ (if round
+	    (floor (duration-hour duration) 12)
+	    0)
+	(duration-day duration)))))
 
 
 ;; ------------------------------------------------------------
@@ -977,6 +978,12 @@ rules"
     (when (and year (< 1500 year 2500))
       (make-time :year year))))
 
+(defun parse-integer-insensitively (string)
+  (let ((start (position-if #'digit-char-p string))
+        (end   (position-if #'digit-char-p string :from-end t)))
+    (when (and start end)
+      (parse-integer (subseq string start (1+ end)) :junk-allowed t))))
+
 (defvar *roman-digits*
   '((#\M . 1000)
     (#\D . 500)
@@ -988,8 +995,8 @@ rules"
 
 (defun extract-roman (string &aux parse)
   (dotimes (x (length string))
-    (when-bind (val (get-alist (aref string x) *roman-digits*))
-      (when (and parse (< (car parse) val))
+    (let ((val (cdr (assoc (aref string x) *roman-digits*))))
+      (when (and val parse (< (car parse) val))
         (push (- (pop parse)) parse))
       (push val parse)))
   (apply #'+ parse))

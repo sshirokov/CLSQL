@@ -1,7 +1,9 @@
 12 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.6.8
-	* test/test-fddl.lisp: Cleanup fix from Marcus Pearce
-
+	* test/test-fddl.lisp: Cleanup fix [Marcus Pearce]
+	* utils/time.lisp: Multiple fixes [Marcus Pearce]
+	* sql/sql.lisp: Fix for truncate-database [Marcus Pearce]
+	
 12 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.6.7
 	* sql/*.lisp: Remove schema versioning cruft
