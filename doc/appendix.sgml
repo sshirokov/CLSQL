@@ -1,0 +1,305 @@
+<!-- -*- DocBook -*- -->
+
+  <appendix>
+    <title>Database Back-ends</title>
+
+    <sect1>
+      <title>MySQL</title>
+      <sect2>
+	<title>Libraries</title>
+	<para>The MySQL back-end needs access to the MySQL C 
+	  client library (<filename>libmysqlclient.so</filename>).
+	  The location of this library is specified via 
+	  <symbol>*mysql-so-load-path*</symbol>, which defaults
+	  to <filename>/usr/lib/libmysqlclient.so</filename>.
+	  Additional flags to <application>ld</application> needed for
+	  linking are specified via
+	  <symbol>*mysql-so-libraries*</symbol>,
+	  which defaults to <symbol>("-lc")</symbol>.</para>
+      </sect2>
+      <sect2>
+	<title>Initialization</title>
+	<para>Use 
+	  <programlisting>(mk:load-system :clsql-mysql)</programlisting>
+	  to load the MySQL back-end.  The database type for the MySQL
+	  back-end is <symbol>:mysql</symbol>.</para>
+      </sect2>
+      <sect2>
+	<title>Connection Specification</title>
+	<sect3>
+	  <title>Syntax of connection-spec</title>
+	  <synopsis>(<replaceable>host</replaceable> <replaceable>db</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable>)</synopsis>
+	</sect3>
+	<sect3>
+	  <title>Description of connection-spec</title>
+	  <variablelist>
+	    <varlistentry>
+	      <term><parameter>host</parameter></term>
+	      <listitem>
+		<para>String representing the hostname or IP address
+		  the MySQL server resides on, or <symbol>nil</symbol>
+		  to indicate the localhost.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>db</parameter></term>
+	      <listitem>
+		<para>String representing the name of the database on
+		  the server to connect to.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>user</parameter></term>
+	      <listitem>
+		<para>String representing the user name to use for
+		  authentication, or <symbol>nil</symbol> to use the
+		  current Unix user ID.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>password</parameter></term>
+	      <listitem>
+		<para>String representing the unencrypted password to
+		  use for authentication, or <symbol>nil</symbol> if
+		  the authentication record has an empty password
+		  field.</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</sect3>
+      </sect2>
+    </sect1>
+
+    <sect1>
+      <title>AODBC</title>
+      <sect2>
+	<title>Libraries</title>
+	<para>The AODBC back-end requires access to the ODBC interface
+          of &acl;.</para>
+      </sect2>
+      <sect2>
+	<title>Initialization</title>
+	<para>Use 
+	  <programlisting>(mk:load-system :clsql-aodbc)</programlisting>
+	  to load the MySQL back-end.  The database type for the AODBC
+	  back-end is <symbol>:aodbc</symbol>.</para>
+      </sect2>
+      <sect2>
+	<title>Connection Specification</title>
+	<sect3>
+	  <title>Syntax of connection-spec</title>
+	  <synopsis>(<replaceable>dsn</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable>)</synopsis>
+	</sect3>
+	<sect3>
+	  <title>Description of connection-spec</title>
+	  <variablelist>
+	    <varlistentry>
+	      <term><parameter>dsn</parameter></term>
+	      <listitem>
+		<para>String representing the ODBC data source name.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>user</parameter></term>
+	      <listitem>
+		<para>String representing the user name to use for
+		  authentication.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>password</parameter></term>
+	      <listitem>
+		<para>String representing the unencrypted password to
+		  use for authentication.</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</sect3>
+      </sect2>
+    </sect1>
+
+    <sect1>
+      <title>PostgreSQL</title>
+      <sect2>
+	<title>Libraries</title>
+	<para>The PostgreSQL back-end needs access to the PostgreSQL C 
+	  client library (<filename>libpq.so</filename>).  The
+	  location of this library is specified via 
+	  <symbol>*postgresql-so-load-path*</symbol>, which defaults
+	  to <filename>/usr/lib/libpq.so</filename>.  Additional flags 
+	  to <application>ld</application> needed for linking are
+	  specified via <symbol>*postgresql-so-libraries*</symbol>,
+	  which defaults to <symbol>("-lcrypt" "-lc")</symbol>.</para>
+      </sect2>
+      <sect2>
+	<title>Initialization</title>
+	<para>Use 
+	  <programlisting>(mk:load-system :clsql-postgresql)</programlisting>
+	  to load the PostgreSQL back-end.  The database type for the
+	  PostgreSQL back-end is <symbol>:postgresql</symbol>.</para>
+      </sect2>
+      <sect2>
+	<title>Connection Specification</title>
+	<sect3>
+	  <title>Syntax of connection-spec</title>
+	  <synopsis>(<replaceable>host</replaceable> <replaceable>db</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable> &amp;optional <replaceable>port</replaceable> <replaceable>options</replaceable> <replaceable>tty</replaceable>)</synopsis>
+	</sect3>
+	<sect3>
+	  <title>Description of connection-spec</title>
+	  <para>For every parameter in the connection-spec,
+	    <symbol>nil</symbol> indicates that the PostgreSQL default
+	    environment variables (see PostgreSQL documentation) will
+	    be used, or if those are unset, the compiled-in defaults
+	    of the C client library are used.</para>
+	  <variablelist>
+	    <varlistentry>
+	      <term><parameter>host</parameter></term>
+	      <listitem>
+		<para>String representing the hostname or IP address
+		  the PostgreSQL server resides on.  Use the empty
+		  string to indicate a connection to localhost via
+		  Unix-Domain sockets instead of TCP/IP.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>db</parameter></term>
+	      <listitem>
+		<para>String representing the name of the database on
+		  the server to connect to.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>user</parameter></term>
+	      <listitem>
+		<para>String representing the user name to use for
+		  authentication.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>password</parameter></term>
+	      <listitem>
+		<para>String representing the unencrypted password to
+		  use for authentication.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>port</parameter></term>
+	      <listitem>
+		<para>String representing the port to use for
+		  communication with the PostgreSQL server.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>options</parameter></term>
+	      <listitem>
+		<para>String representing further runtime options for
+		  the PostgreSQL server.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>tty</parameter></term>
+	      <listitem>
+		<para>String representing the tty or file to use for
+		  debugging messages from the PostgreSQL server.</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</sect3>
+      </sect2>
+    </sect1>
+
+    <sect1>
+      <title>PostgreSQL Socket</title>
+      <sect2>
+	<title>Libraries</title>
+	<para>The PostgreSQL Socket back-end needs
+	  <emphasis>no</emphasis> access to the PostgreSQL C
+	  client library, since it communicates directly with the
+	  PostgreSQL server using the published frontend/backend
+	  protocol, version 2.0.  This eases installation and makes it
+	  possible to dump CMU CL images containing CLSQL and this
+	  backend, contrary to backends which require FFI code.</para>
+      </sect2>
+      <sect2>
+	<title>Initialization</title>
+	<para>Use 
+	  <programlisting>(mk:load-system :clsql-postgresql-socket)</programlisting>
+	  to load the PostgreSQL Socket back-end.  The database type for the
+	  PostgreSQL Socket back-end is 
+	  <symbol>:postgresql-socket</symbol>.</para>
+      </sect2>
+      <sect2>
+	<title>Connection Specification</title>
+	<sect3>
+	  <title>Syntax of connection-spec</title>
+	  <synopsis>(<replaceable>host</replaceable> <replaceable>db</replaceable> <replaceable>user</replaceable> <replaceable>password</replaceable> &amp;optional <replaceable>port</replaceable> <replaceable>options</replaceable> <replaceable>tty</replaceable>)</synopsis>
+	</sect3>
+	<sect3>
+	  <title>Description of connection-spec</title>
+	  <variablelist>
+	    <varlistentry>
+	      <term><parameter>host</parameter></term>
+	      <listitem>
+		<para>If this is a string, it represents the hostname or
+		  IP address the PostgreSQL server resides on.  In
+		  this case communication with the server proceeds via
+		  a TCP connection to the given host and port.</para>
+		<para>
+		  If this is a pathname, then it is assumed to name the
+		  directory that contains the server's Unix-Domain
+		  sockets.  The full name to the socket is then
+		  constructed from this and the port number passed,
+		  and communication will proceed via a connection to
+		  this unix-domain socket.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>db</parameter></term>
+	      <listitem>
+		<para>String representing the name of the database on
+		  the server to connect to.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>user</parameter></term>
+	      <listitem>
+		<para>String representing the user name to use for
+		  authentication.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>password</parameter></term>
+	      <listitem>
+		<para>String representing the unencrypted password to
+		  use for authentication.  This can be the empty
+		  string if no password is required for
+		  authentication.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>port</parameter></term>
+	      <listitem>
+		<para>Integer representing the port to use for
+		  communication with the PostgreSQL server.  This
+		  defaults to 5432.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>options</parameter></term>
+	      <listitem>
+		<para>String representing further runtime options for
+		  the PostgreSQL server.</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><parameter>tty</parameter></term>
+	      <listitem>
+		<para>String representing the tty or file to use for
+		  debugging messages from the PostgreSQL server.</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</sect3>
+      </sect2>
+    </sect1>
+  </appendix>

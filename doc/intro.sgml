@@ -1,0 +1,138 @@
+<!-- -*- DocBook -*- -->
+
+<chapter>
+  <title>Introduction</title>
+
+  <sect1>
+    <title>Purpose</title>
+    <para>&clsql; is a Common Lisp interface to <glossterm
+linkend="gloss-sql">SQL</glossterm> databases.  A number of Common
+Lisp implementations and SQL databases are supported.The general
+structure of &clsql; is based on the
+<application>CommonSQL</application> package by Xanalys.</para>
+  </sect1>
+
+  <sect1>
+    <title>History</title>
+    <para>
+      &clsql; is written by Kevin M. Rosenberg and based substantially
+on Pierre R. Mai's excellent &maisql; package. The main changes have
+been to port the &ffi; to &uffi;, add to Allegro's ODBC interface as a
+supported database, add a compatibility layer for &cmucl; specific
+code, and make the code more robust in terms of &mysql; support.
+    </para>
+  </sect1>
+
+  <sect1>
+    <title>Prerequisites</title>
+
+    <sect2>
+      <title>&defsystem;</title>
+      <para> &clsql; uses &defsystem to compile and load its
+components.  &defsystem; is included in the <ulink
+url="http://clocc.sourceforge.net"><citetitle>&clocc;</citetitle></ulink>. The
+defsystem version in the pre-packaged distribution is rather old and
+may not function well. The version in CVS tree tree works quite
+well. For convenience, a copy of the latest defsystem at the FTP
+<ulink
+url="ftp://ftp.med-info.com/pub/defsystem/"><citetitle>site</citetitle></ulink>
+of &clsql;.
+      </para>
+    </sect2>
+
+    <sect2>
+      <title>&uffi;</title>
+      <para> &clsql; uses <ulink
+url="http://uffi.med-info.com/"><citetitle>&uffi;</citetitle></ulink>
+as a <emphasis>Foreign Function Interface</emphasis> (<glossterm
+linkend="gloss-ffi">FFI</glossterm>) to support multiple &cl;
+implementations.</para> 
+
+<para>You can download &uffi; from its FTP <ulink
+url="ftp://ftp.med-info.com/pub/uffi/"><citetitle>site</citetitle></ulink>. There
+are zip files for Microsoft Windows systems and gzipped tar files for
+other systems.</para>
+    </sect2>
+
+    <sect2>
+      <title>Supported Common Lisp Implementation</title>
+      <para>
+The implementations that support &clsql; is governed by the supported
+implementations of &uffi;. At the time of the initial release of &clsql;,
+the following implementations are supported:
+      </para>
+      <itemizedlist mark="opencircle">
+	<listitem><para>&acl; v6.1 on Redhat Linux 7.2 and Microsoft Windows.</para></listitem>
+	<listitem><para>&lw; v4.2 on Redhat Linux 7.2 and Microsoft Windows.</para></listitem>
+	<listitem><para>&cmucl; 18d on Redhat Linux 7.2.</para></listitem>
+      </itemizedlist>
+    </sect2>
+
+    <sect2>
+      <title>Supported &sql; Implementation</title>
+      <para>
+	Currently, &clsql; supports the following databases:
+      </para>
+      <itemizedlist mark="opencircle">
+	<listitem><para>&mysql; v3.23.49 on Redhat Linux 7.2 and Microsoft Windows.</para></listitem>
+	<listitem><para>&postgresql; v7.1 on Redhat Linux 7.2. Support for both direct API connections and TCP socket connections.</para></listitem>
+	<listitem><para>Allegro's ODBC interface (&aodbc;) on Redhat Linux 7.2 and Microsoft Windows.</para></listitem>
+      </itemizedlist>
+    </sect2>
+
+  </sect1>
+
+  <sect1>
+    <title>Installation</title>
+
+    <sect2>
+      <title>Ensure &defsystem; is loaded</title>
+      <para>
+	Simply load the file <filename>defsystem.lisp</filename>.
+<computeroutput>
+(load "defsystem.lisp")
+</computeroutput>
+      </para>
+    </sect2>
+
+    <sect2>
+      <title>Build <filename>clsql-mysql</filename> helper library</title>
+      <para>&mysql; uses functions that require 64-bit integer
+parameters and return values. The &ffi; in most &clsql;
+implementations do not support 64-bit integers. Thus, a C helper
+library is required to break these 64-bit integers into two compatible
+32-bit integers.</para>
+
+<para><filename>Makefile</filename>'s for Microsoft Windows and GNU/Solaris systems
+are supplied to build this library. In addition, the <type>DLL</type> and <type>LIB</type>
+files for Microsoft Windows are supplied with the distribution.</para>
+
+<para>To build the library, first move to the directory
+<filename>interfaces/mysql</filename> directory. You may need to
+edit <filename>Makefile</filename> or <filename>Makefile.msvc</filename> to
+correctly specify the location of your &mysql; installation. On UNIX systems, use
+the command:
+<programlisting>make</programlisting>. On a Microsoft Windows system,
+use the command: <programlisting>nmake /f
+Makefile.msvc</programlisting>.</para>
+    </sect2>
+
+    <sect2>
+      <title>Load &uffi;</title>
+      <para>
+	Unpack the appropriate &uffi; version for your system which creates a directory
+for the &uffi; files. Add that directory to &defsystem; <varname>*central-registry*</varname>.
+You can do that by either pushing the pathname of the directory onto this variable, or
+use the new <function>add-registry-location</function> present in the newest versions of
+&defsystem;. The below example code assumes the &uffi; files reside in the
+<filename>/usr/local/src/lisp/uffi</filename> directory.
+	<computeroutput>
+	(mk:add-registry-location #P"/usr/local/src/lisp/uffi")
+	(mk:load-system :uffi)
+        </computeroutput>
+      </para>
+    </sect2>
+
+  </sect1>
+
+</chapter>

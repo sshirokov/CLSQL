@@ -1,0 +1,16 @@
+CLSQL is written and Copyright (c) 2002 by Kevin M. Rosenberg and is
+based on the MaiSQL package written and Copyright (c) 1999-2001 by
+Pierre R. Mai.
+
+CLSQL is licensed under the terms of the Lisp Lesser GNU
+Public License (http://opensource.franz.com/preamble.html), known as
+the LLGPL.  The LLGPL consists of a preamble (see above URL) and the
+LGPL.  Where these conflict, the preamble takes precedence. 
+CLSQL is referenced in the preamble as the "LIBRARY."
+
+CLSQL is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+
+
+

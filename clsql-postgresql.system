@@ -1,0 +1,31 @@
+;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
+;;;; *************************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; Name:          clsql-postgresql.system
+;;;; Purpose:       Defsystem-3/4 file for CLSQL PostgresSQL backend
+;;;; Programmer:    Kevin M. Rosenberg
+;;;; Date Started:  Feb 2002
+;;;;
+;;;; $Id: clsql-postgresql.system,v 1.1 2002/03/23 14:04:49 kevin Exp $
+;;;;
+;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;;
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
+
+(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
+(in-package :make)
+
+(defsystem :clsql-postgresql
+    :source-pathname "CLSQL:interfaces;postgresql;"
+    :source-extension "cl"
+    :binary-pathname "CLSQL:interfaces;postgresql;bin;"
+    :source-extension "cl"
+    :components ((:file "postgresql-package")
+		 (:file "postgresql-loader" :depends-on ("postgresql-package"))
+		 (:file "postgresql-uffi" :depends-on ("postgresql-loader"))
+		 (:file "postgresql-sql" :depends-on ("postgresql-uffi")))
+    :depends-on (:uffi :clsql))

@@ -1,0 +1,38 @@
+<!-- -*- DocBook -*- -->
+
+<!DOCTYPE BOOK PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
+<!ENTITY defsystem "<application><emphasis>Defsystem</emphasis></application>">
+<!ENTITY clocc "<application><emphasis>CLOCC</emphasis></application>">
+<!ENTITY uffi "<application><emphasis>UFFI</emphasis></application>">
+<!ENTITY ffi "<emphasis>FFI</emphasis>">
+<!ENTITY clsql "<application><emphasis>CLSQL</emphasis></application>">
+<!ENTITY maisql "<application><emphasis>MaiSQL</emphasis></application>">
+<!ENTITY sql "<application>SQL</application>">
+<!ENTITY mysql "<application>MySQL</application>">
+<!ENTITY postgresql "<application>PostgreSQL</application>">
+<!ENTITY aodbc "<application>AODBC</application>">
+<!ENTITY cmucl "<application>CMUCL</application>">
+<!ENTITY lw "<application>Lispworks</application>">
+<!ENTITY acl "<application>AllegroCL</application>">
+<!ENTITY cl "<application>ANSI Common Lisp</application>">
+<!ENTITY t "<constant>T</constant>">
+<!ENTITY nil "<constant>NIL</constant>">
+<!ENTITY null "<constant>NULL</constant>">
+<!ENTITY c "<computeroutput>C</computeroutput>">
+<!ENTITY defsystem "<application>defsystem</application>">
+<!ENTITY bookinfo SYSTEM "bookinfo.sgml">
+<!ENTITY preface SYSTEM "preface.sgml">
+<!ENTITY intro SYSTEM "intro.sgml">
+<!ENTITY ref SYSTEM "ref.sgml">
+<!ENTITY appendix SYSTEM "appendix.sgml">
+<!ENTITY glossary SYSTEM "glossary.sgml">
+]>
+
+<book>
+&bookinfo;
+&preface;
+&intro;
+&ref;
+&appendix;
+&glossary;
+</book>

@@ -1,0 +1,55 @@
+<!-- -*- DocBook -*- -->
+
+<bookinfo>
+  <title>&clsql; Users' Guide</title>
+  <author>
+    <firstname>Pierre</firstname>
+    <othername>R.</othername>
+    <surname>Mai</surname>
+  </author>
+  <author>
+    <firstname>Kevin</firstname>
+    <othername>M.</othername>
+    <surname>Rosenberg</surname>
+  </author>
+  <printhistory>
+    <simpara>Release $Name:  $</simpara>
+    <simpara>File $Date: 2002/03/23 14:04:50 $</simpara>
+    <simpara>$Id: bookinfo.sgml,v 1.1 2002/03/23 14:04:50 kevin Exp $</simpara>
+  </printhistory>
+  <copyright>
+    <year>1999</year>
+    <year>2001</year>
+    <year>2002</year>
+    <holder>Pierre R. Mai and Kevin M. Rosenberg</holder>
+  </copyright>
+  <legalnotice>
+    <itemizedlist>
+      <listitem>
+	<para>&clsql; is Copyright &copy;
+	  1999-2001 by Pierre R. Mai and Copyright &copy; 2002 by
+	  Kevin M. Rosenberg.</para>
+       </listitem>
+       <listitem>
+	 <para><application>Allegro CL</application>&reg; is a registered
+	   trademark of Franz Inc.</para>
+	</listitem>
+	<listitem>
+          <para><application>Common SQL</application>,
+	      <application>LispWorks</application> and
+	<application>Xanalys</application> are trademarks or
+	registered trademarks of Xanalys Inc.</para>
+      </listitem>
+      <listitem>
+        <para><application>Microsoft
+	  Windows</application>&reg; is a registered trademark of
+	  Microsoft Inc.</para>
+      </listitem>
+      <listitem>
+        <para>Other brand or
+	    product names are the registered trademarks or trademarks of
+	    their respective holders.</para>
+      </listitem>
+    </itemizedlist>
+  </legalnotice>
+</bookinfo>

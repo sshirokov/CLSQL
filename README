@@ -1,0 +1,11 @@
+CLSQL is a Common Lisp to SQL engine interface written by Kevin M.
+Rosenberg. It is based Pierre R. Mai's excellent MaiSQL package. It
+uses the UFFI (http://uffi.med-info.com) library for compatibility
+with Allegro CL, Lispworks, and CMUCL.
+
+CLSQL's home is http://clsql.med-info.com.
+
+Documentation is availabe as a PDF file in doc/clsql.pdf and
+as HTML files in doc/html/.
+
+
