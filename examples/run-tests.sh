@@ -1,43 +1,78 @@
 #!/bin/bash
-#
-# Run CLSQL tests on all installed CL implementations
-# Need to setup ~/.clsql-tests.config as show in
-# tests/test-init.lisp
 
-CMD='(asdf:operate (quote asdf:test-op) :clsql-classic)
-  (asdf:operate (quote asdf:test-op) :clsql)
-  #+allegro (excl:exit :quiet t)
+REPORT_FILE=/tmp/clsql-test-report.txt
+SEXP_REPORT_FILE=/tmp/clsql-test-report.sexp
+LISP_CMD_FILE=/tmp/clsql-test.lisp
+
+CMD="
+(setq *print-readably* nil)
+(let ((boot-file
+       (merge-pathnames
+        (parse-namestring #+allegro \".clinit.cl\"
+                          #+cmu \".cmucl-init.lisp\"
+                          #+lispworks \".lispworks\"
+                          #+openmcl \"openmcl-init.lisp\"
+                          #+sbcl \".sbclrc\"
+                          #+scl \".scl-init.lisp\"
+                          )
+        (user-homedir-pathname))))
+  (if (probe-file boot-file)
+    (load boot-file)
+    (warn \"Unable to load boot file ~A.\" boot-file)))
+
+  (asdf:operate 'asdf:load-op 'clsql-tests)
+  (clsql-tests:run-tests-append-report-file \"${REPORT_FILE}\")
+
+  #+allegro (excl:exit)
   #+clisp (#+lisp=cl ext:quit #-lisp=cl lisp:quit)
   #+cmu (ext:quit)
   #+lispworks (lw:quit)
   #+openmcl (ccl:quit)
-  #+sbcl (sb-ext:quit))
-  #+scl (ext:quit)'
+  #+sbcl (sb-ext:quit)
+  #+scl (ext:quit)"
 
+SUMMARY_CMD="
+(asdf:operate 'asdf:load-op 'clsql-tests)
+(clsql-tests:summarize-test-report \"${SEXP_REPORT_FILE}\")
 
+#+allegro (excl:exit :quiet t)
+#+clisp (#+lisp=cl ext:quit #-lisp=cl lisp:quit)
+#+cmu (ext:quit)
+#+lispworks (lw:quit)
+#+openmcl (ccl:quit)
+#+sbcl (sb-ext:quit))
+#+scl (ext:quit)"
 
-ALLEGRO=alisp
+rm -rf $REPORT_FILE $SEXP_REPORT_FILE $LISP_CMD_FILE
+echo $CMD > $LISP_CMD_FILE
+
+ALLEGRO=mlisp
 if [ "`which $ALLEGRO`" ]; then
-  echo "$CMD" | $ALLEGRO
+  $ALLEGRO -q -L $LISP_CMD_FILE
 fi
 
 CMUCL=lisp
 if [ "`which $CMUCL`" ]; then
-  echo "$CMD" | $CMUCL
+  $CMUCL -init $LISP_CMD_FILE
 fi
 
 LISPWORKS=lw-console
-#LISPWORKS=lispworks-4300
-if [ "`which $LISPWORKS`" ]; then
-  echo "$CMD" | $LISPWORKS
-fi
+#if [ "`which $LISPWORKS`" ]; then
+ $LISPWORKS -init $LISP_CMD_FILE
+#fi
 
 OPENCML=openmcl
-if [ "`which $OPENMCL`" ]; then
-  echo "$CMD" | $OPENMCL
-fi
+#if [ "`which $OPENMCL`" ]; then
+  $OPENMCL -init $LISP_CMD_FILE
+#fi
 
 SBCL=sbcl
 if [ "`which $SBCL`" ]; then
-  echo "$CMD" | $SBCL
+  $SBCL --noinform --disable-debugger --userinit $LISP_CMD_FILE
 fi
+
+if [ -s $SEXP_REPORT_FILE ]; then
+    echo "$SUMMARY_CMD" | $SBCL
+fi
+
+#rm -rf $LISP_CMD_FILE
