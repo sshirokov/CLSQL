@@ -415,7 +415,7 @@
 (defmethod database-destroy (connection-spec (type (eql :mysql)))
   (destructuring-bind (host name user password) connection-spec
     (multiple-value-bind (output status)
-	(clsql-base-sys:command-output "mysqladmin drop -u~A -p~A -h~A ~A"
+	(clsql-base-sys:command-output "mysqladmin drop -f -u~A -p~A -h~A ~A"
 				       user password 
 				       (if host host "localhost")
 				       name)
