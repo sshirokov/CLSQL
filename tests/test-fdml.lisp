@@ -303,6 +303,16 @@
      :field-names nil)
   ((1)))
 
+(deftest :fdml/select/17
+    (clsql:select [emplid] [last-name] :from [employee] :where [= 1 [emplid]]
+     :field-names nil)
+  ((1 "Lenin")))
+
+(deftest :fdml/select/18
+    (clsql:select [emplid :string] [last-name] :from [employee] :where [= 1 [emplid]]
+     :field-names nil)
+  (("1" "Lenin")))
+
 ;(deftest :fdml/select/11
 ;    (clsql:select [emplid] :from [employee]
 ;                :where [= [emplid] [any [select [companyid] :from [company]]]]

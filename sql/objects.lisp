@@ -841,14 +841,37 @@ superclass of the newly-defined View Class."
 
 (defmethod instance-refreshed ((instance standard-db-object)))
 
-(defmethod select (&rest select-all-args)
-  "Selects data from database given the constraints specified. Returns
-a list of lists of record values as specified by select-all-args. By
-default, the records are each represented as lists of attribute
-values. The selections argument may be either db-identifiers, literal
-strings or view classes.  If the argument consists solely of view
-classes, the return value will be instances of objects rather than raw
-tuples."
+(defun select (&rest select-all-args) 
+   "The function SELECT selects data from DATABASE, which has a
+default value of *DEFAULT-DATABASE*, given the constraints
+specified by the rest of the ARGS. It returns a list of objects
+as specified by SELECTIONS. By default, the objects will each be
+represented as lists of attribute values. The argument SELECTIONS
+consists either of database identifiers, type-modified database
+identifiers or literal strings. A type-modifed database
+identifier is an expression such as [foo :string] which means
+that the values in column foo are returned as Lisp strings.  The
+FLATP argument, which has a default value of nil, specifies if
+full bracketed results should be returned for each matched
+entry. If FLATP is nil, the results are returned as a list of
+lists. If FLATP is t, the results are returned as elements of a
+list, only if there is only one result per row. The arguments
+ALL, SET-OPERATION, DISTINCT, FROM, WHERE, GROUP-BY, HAVING and
+ORDER-by have the same function as the equivalent SQL expression.
+The SELECT function is common across both the functional and
+object-oriented SQL interfaces. If selections refers to View
+Classes then the select operation becomes object-oriented. This
+means that SELECT returns a list of View Class instances, and
+SLOT-VALUE becomes a valid SQL operator for use within the where
+clause. In the View Class case, a second equivalent select call
+will return the same View Class instance objects. If REFRESH is
+true, then existing instances are updated if necessary, and in
+this case you might need to extend the hook INSTANCE-REFRESHED.
+The default value of REFRESH is nil. SQL expressions used in the
+SELECT function are specified using the square bracket syntax,
+once this syntax has been enabled using
+ENABLE-SQL-READER-SYNTAX."
+
   (flet ((select-objects (target-args)
            (and target-args
                 (every #'(lambda (arg)
@@ -859,13 +882,28 @@ tuples."
         (query-get-selections select-all-args)
       (if (select-objects target-args)
           (apply #'find-all target-args qualifier-args)
-          (let ((expr (apply #'make-query select-all-args)))
-            (destructuring-bind (&key (flatp nil)
-				      (result-types :auto)
-				      (field-names t) 
-				      (database *default-database*)
-                                      &allow-other-keys)
-                qualifier-args
-	      (query expr :flatp flatp :result-types result-types 
-		     :field-names field-names :database database)))))))
+	(let* ((expr (apply #'make-query select-all-args))
+	       (specified-types
+		(mapcar #'(lambda (attrib)
+			    (if (typep attrib 'sql-ident-attribute)
+				(let ((type (slot-value attrib 'type)))
+				  (if type
+				      type
+				    t))
+			      t))
+			(slot-value expr 'selections))))
+	  (destructuring-bind (&key (flatp nil)
+				    (result-types :auto)
+				    (field-names t) 
+				    (database *default-database*)
+			       &allow-other-keys)
+	      qualifier-args
+	    (query expr :flatp flatp 
+		   :result-types 
+		   ;; specifying a type for an attribute overrides result-types
+		   (if (some #'(lambda (x) (not (eq t x))) specified-types) 
+		       specified-types
+		     result-types)
+		   :field-names field-names
+		   :database database)))))))
 

@@ -60,9 +60,11 @@
 			       :db-writer :db-info))
 (defvar +extra-class-options+ '(:base-table))
 
+#+lispworks
 (dolist (slot-option +extra-slot-options+)
   (process-slot-option standard-db-class slot-option))
 
+#+lispworks
 (dolist (class-option +extra-class-options+)
   (process-class-option standard-db-class class-option))
 

@@ -18,38 +18,6 @@
 
 (in-package #:clsql)
 
-(defgeneric select (&rest args) 
-  (:documentation
-   "The function SELECT selects data from DATABASE, which has a
-default value of *DEFAULT-DATABASE*, given the constraints
-specified by the rest of the ARGS. It returns a list of objects
-as specified by SELECTIONS. By default, the objects will each be
-represented as lists of attribute values. The argument SELECTIONS
-consists either of database identifiers, type-modified database
-identifiers or literal strings. A type-modifed database
-identifier is an expression such as [foo :string] which means
-that the values in column foo are returned as Lisp strings.  The
-FLATP argument, which has a default value of nil, specifies if
-full bracketed results should be returned for each matched
-entry. If FLATP is nil, the results are returned as a list of
-lists. If FLATP is t, the results are returned as elements of a
-list, only if there is only one result per row. The arguments
-ALL, SET-OPERATION, DISTINCT, FROM, WHERE, GROUP-BY, HAVING and
-ORDER-by have the same function as the equivalent SQL expression.
-The SELECT function is common across both the functional and
-object-oriented SQL interfaces. If selections refers to View
-Classes then the select operation becomes object-oriented. This
-means that SELECT returns a list of View Class instances, and
-SLOT-VALUE becomes a valid SQL operator for use within the where
-clause. In the View Class case, a second equivalent select call
-will return the same View Class instance objects. If REFRESH is
-true, then existing instances are updated if necessary, and in
-this case you might need to extend the hook INSTANCE-REFRESHED.
-The default value of REFRESH is nil. SQL expressions used in the
-SELECT function are specified using the square bracket syntax,
-once this syntax has been enabled using
-ENABLE-SQL-READER-SYNTAX."))
-
 (defgeneric update-record-from-slot (object slot &key database)
   (:documentation
    "The generic function UPDATE-RECORD-FROM-SLOT updates an individual

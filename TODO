@@ -25,10 +25,7 @@ COMMONSQL SPEC
   
     SELECT 
       o keyword arg :refresh should function as advertised 
-      o should accept type-modified database identifiers (e.g., 
-        [foo :string] which means that the values in column foo are returned 
-        as Lisp strings) 
-
+ 
  >> The object-oriented sql interface
 
     DEF-VIEW-CLASS
