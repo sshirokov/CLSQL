@@ -9,9 +9,11 @@
 	* Updated test-clsql.cl to use automated testing with a config
 	file
 
-	* Changed return types of field accessors from cstring to (* :unsigned-char).
-	This prepares for being able to use specified type conversions when taking
-	field data into lisp.
+	* Changed return types of field accessors from cstring to
+	(* :unsigned-char).  This prepares for being able to use specified
+	type conversions when taking field data into lisp.
+
+	* Added field-type processing for most interfaces. Not done yet.
 	
 23 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	

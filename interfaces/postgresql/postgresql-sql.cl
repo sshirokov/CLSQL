@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.cl,v 1.6 2002/03/24 22:25:51 kevin Exp $
+;;;; $Id: postgresql-sql.cl,v 1.7 2002/03/25 06:07:06 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -27,6 +27,54 @@
     (:documentation "This is the CLSQL interface to PostgreSQL."))
 
 (in-package :clsql-postgresql)
+
+;;; Field conversion functions
+
+(defun canonicalize-field-types  (types num-fields)
+  (if (listp types)
+      (let ((length-types (length types))
+	    new-types)
+	(loop for i from 0 below num-fields
+	      do
+	      (if (>= i length-types)
+		  (push t new-types) ;; types is shorted than num-fields
+		  (push
+		   (case (nth i types)
+		     ((:int :long :double t)
+		      (nth i types))
+		     (t
+		      t))
+		   new-types)))
+	(nreverse new-types))
+      (if (eq types :auto)
+	  :auto
+	  nil)))
+
+(uffi:def-function "atoi"
+    ((str :cstring))
+  :returning :int)
+
+(uffi:def-function "atol"
+    ((str :cstring))
+  :returning :long)
+
+(uffi:def-function "atof"
+    ((str :cstring))
+  :returning :double)
+
+(defun convert-raw-field (char-ptr types index)
+  (let ((type (if (listp types)
+		  (nth index types)
+		  types)))
+    (case type
+      (:int
+       (atoi char-ptr))
+      (:long
+       (atol char-ptr))
+      (:double
+       (atof char-ptr))
+      (otherwise
+       (uffi:convert-from-foreign-string char-ptr)))))
 
 
 (defun tidy-error-message (message)
@@ -115,14 +163,18 @@
               (#.pgsql-exec-status-type#empty-query
                nil)
               (#.pgsql-exec-status-type#tuples-ok
-               (loop for tuple-index from 0 below (PQntuples result)
-                   collect
-                     (loop for i from 0 below (PQnfields result)
-                         collect
-                           (if (zerop (PQgetisnull result tuple-index i))
-                               (uffi:convert-from-foreign-string
-                                (PQgetvalue result tuple-index i))
-                             nil))))
+	       (let ((num-fields (PQnfields result)))
+		 (setq field-types
+		       (canonicalize-field-types field-types num-fields))
+		 (loop for tuple-index from 0 below (PQntuples result)
+		       collect
+		       (loop for i from 0 below num-fields
+			     collect
+			     (if (zerop (PQgetisnull result tuple-index i))
+				 (convert-raw-field
+				  (PQgetvalue result tuple-index i)
+				  field-types i)
+				 nil)))))
               (t
                (error 'clsql-sql-error
                       :database database
@@ -184,22 +236,21 @@
         (case (PQresultStatus result)
           ((#.pgsql-exec-status-type#empty-query
             #.pgsql-exec-status-type#tuples-ok)
-           (if full-set
-               (values (make-postgresql-result-set
+	   (let ((result-set (make-postgresql-result-set
                         :res-ptr result
                         :num-fields (PQnfields result)
                         :num-tuples (PQntuples result)
-			:field-types field-types)
-                       (PQnfields result)
-                       (PQntuples result))
-	     (values (make-postgresql-result-set
-		      :res-ptr result
-		      :num-fields (PQnfields result)
-		      :num-tuples (PQntuples result)
-		      :field-types field-types)
-		     (PQnfields result))))
-          (t
-           (unwind-protect
+			:field-types (canonicalize-field-types 
+				      field-types
+				      (PQnfields result)))))
+	     (if full-set
+		 (values result-set
+			 (PQnfields result)
+			 (PQntuples result))
+		 (values result-set
+			 (PQnfields result)))))
+	  (t
+	   (unwind-protect
                (error 'clsql-sql-error
                       :database database
                       :expression query-expression
@@ -216,7 +267,8 @@
 
 (defmethod database-store-next-row (result-set (database postgresql-database) 
                                     list)
-  (let ((result (postgresql-result-set-res-ptr result-set)))
+  (let ((result (postgresql-result-set-res-ptr result-set))
+	(field-types (postgresql-result-set-field-types result-set)))
     (declare (type pgsql-result-def result))
     (if (>= (postgresql-result-set-tuple-index result-set)
 	    (postgresql-result-set-num-tuples result-set))
@@ -227,8 +279,9 @@
           do
             (setf (car rest)
               (if (zerop (PQgetisnull result tuple-index i))
-                  (uffi:convert-from-foreign-string 
-                   (PQgetvalue result tuple-index i))
+                  (convert-raw-field
+                   (PQgetvalue result tuple-index i)
+		   field-types i)
                 nil))
           finally
             (incf (postgresql-result-set-tuple-index result-set))

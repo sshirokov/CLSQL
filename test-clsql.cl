@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: test-clsql.cl,v 1.4 2002/03/24 22:25:51 kevin Exp $
+;;;; $Id: test-clsql.cl,v 1.5 2002/03/25 06:07:06 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -69,7 +69,9 @@
 	     (format nil "INSERT INTO test_clsql VALUES (~d,~d,'~a')"
 		     i (sqrt i) (format nil "~d" (sqrt i)))
 	     :database db))
-	  (pprint (clsql:map-query 'vector #'list "select * from test_clsql" :database db))
+	  (pprint (clsql:map-query 'vector #'list "select * from test_clsql" 
+				   :database db
+				   :field-types '(:int :double t)))
 	  (clsql:execute-command "DROP TABLE test_clsql"))
       (clsql:disconnect :database db)))
   )

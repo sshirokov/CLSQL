@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.cl,v 1.6 2002/03/24 22:25:51 kevin Exp $
+;;;; $Id: mysql-sql.cl,v 1.7 2002/03/25 06:07:06 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -39,6 +39,54 @@
 
 (in-package :clsql-mysql)
 
+;;; Field conversion functions
+
+(defun canonicalize-field-types  (types num-fields)
+  (if (listp types)
+      (let ((length-types (length types))
+	    new-types)
+	(loop for i from 0 below num-fields
+	      do
+	      (if (>= i length-types)
+		  (push t new-types) ;; types is shorted than num-fields
+		  (push
+		   (case (nth i types)
+		     ((:int :long :double t)
+		      (nth i types))
+		     (t
+		      t))
+		   new-types)))
+	(nreverse new-types))
+      (if (eq types :auto)
+	  :auto
+	  nil)))
+
+(uffi:def-function "atoi"
+    ((str :cstring))
+  :returning :int)
+
+(uffi:def-function "atol"
+    ((str :cstring))
+  :returning :long)
+
+(uffi:def-function "atof"
+    ((str :cstring))
+  :returning :double)
+
+(defun convert-raw-field (char-ptr types index)
+  (let ((type (if (listp types)
+		  (nth index types)
+		  types)))
+    (case type
+      (:int
+       (atoi char-ptr))
+      (:long
+       (atol char-ptr))
+      (:double
+       (atof char-ptr))
+      (otherwise
+       (uffi:convert-from-foreign-string char-ptr)))))
+
 (defmethod database-initialize-database-type ((database-type (eql :mysql)))
   t)
 
@@ -55,6 +103,7 @@
   (destructuring-bind (host db user password) connection-spec
     (declare (ignore password))
     (concatenate 'string host "/" db "/" user)))
+
 
 (defmethod database-connect (connection-spec (database-type (eql :mysql)))
   (check-connection-spec connection-spec database-type (host db user password))
@@ -98,30 +147,35 @@
   t)
 
 
-(defstruct mysql-result-set
-  (res-ptr (uffi:make-null-pointer 'mysql-mysql-res)
-	   :type mysql-mysql-res-ptr-def)
-  (field-types nil)
-  (full-set nil :type boolean))
-
-(defmethod database-dump-result-set (result-set (database mysql-database))
-  (mysql-free-result (mysql-result-set-res-ptr result-set))
-  t)
-
-
-(defmethod database-store-next-row (result-set (database mysql-database) list)
-  (let* ((res-ptr (mysql-result-set-res-ptr result-set))
-	 (row (mysql-fetch-row res-ptr)))
-    (declare (type mysql-mysql-res-ptr-def res-ptr)
-	     (type mysql-row-def row))
-    (unless (uffi:null-pointer-p row)
-      (loop for i from 0 below (mysql-num-fields res-ptr)
-	  for rest on list
-	  do
-	    (setf (car rest) 
-	      (uffi:convert-from-foreign-string (uffi:deref-array row 'mysql-row i))))
-      list)))
-
+(defmethod database-query (query-expression (database mysql-database) 
+			   field-types)
+  (with-slots (mysql-ptr) database
+    (uffi:with-cstring (query-native query-expression)
+       (if (zerop (mysql-query mysql-ptr query-native))
+	   (let ((res-ptr (mysql-use-result mysql-ptr)))
+	     (if res-ptr
+		 (let ((num-fields (mysql-num-fields res-ptr)))
+		   (setq field-types (canonicalize-field-types 
+				      field-types num-fields))
+		   (unwind-protect
+			(loop for row = (mysql-fetch-row res-ptr)
+			      until (uffi:null-pointer-p row)
+			      collect
+			      (loop for i from 0 below num-fields
+				    collect
+				    (uffi:convert-from-foreign-string
+				     (uffi:deref-array row 'mysql-row i))))
+		     (mysql-free-result res-ptr)))
+	       (error 'clsql-sql-error
+		      :database database
+		      :expression query-expression
+		      :errno (mysql-errno mysql-ptr)
+		      :error (mysql-error-string mysql-ptr))))
+	 (error 'clsql-sql-error
+		:database database
+		:expression query-expression
+		:errno (mysql-errno mysql-ptr)
+		:error (mysql-error-string mysql-ptr))))))
 
 (defmethod database-execute-command (sql-expression (database mysql-database))
   (uffi:with-cstring (sql-native sql-expression)
@@ -135,37 +189,16 @@
 	       :errno (mysql-errno mysql-ptr)
 	       :error (mysql-error-string mysql-ptr))))))
 
+(defstruct mysql-result-set
+  (res-ptr (uffi:make-null-pointer 'mysql-mysql-res)
+	   :type mysql-mysql-res-ptr-def)
+  (field-types nil)
+  (num-fields nil :type fixnum)
+  (full-set nil :type boolean))
 
 
-(defmethod database-query (query-expression (database mysql-database) 
-			   field-types)
-  (with-slots (mysql-ptr) database
-    (uffi:with-cstring (query-native query-expression)
-       (if (zerop (mysql-query mysql-ptr query-native))
-	   (let ((res-ptr (mysql-use-result mysql-ptr)))
-	     (if res-ptr
-		 (unwind-protect
-		     (loop for row = (mysql-fetch-row res-ptr)
-			 until (uffi:null-pointer-p row)
-			 collect
-			   (loop for i from 0 below (mysql-num-fields res-ptr)
-			       collect
-				 (uffi:convert-from-foreign-string
-				  (uffi:deref-array row 'mysql-row i))))
-		   (mysql-free-result res-ptr))
-	       (error 'clsql-sql-error
-		      :database database
-		      :expression query-expression
-		      :errno (mysql-errno mysql-ptr)
-		      :error (mysql-error-string mysql-ptr))))
-	 (error 'clsql-sql-error
-		:database database
-		:expression query-expression
-		:errno (mysql-errno mysql-ptr)
-		:error (mysql-error-string mysql-ptr))))))
-
-
-(defmethod database-query-result-set (query-expression (database mysql-database)
+(defmethod database-query-result-set (query-expression 
+				      (database mysql-database)
 				      &key full-set field-types)
   (uffi:with-cstring (query-native query-expression)
     (let ((mysql-ptr (database-mysql-ptr database)))
@@ -176,14 +209,21 @@
 			   (mysql-use-result mysql-ptr))))
 	    (declare (type mysql-mysql-res-ptr-def res-ptr))
 	    (if (not (uffi:null-pointer-p res-ptr))
-		(if full-set
-		    (values (make-mysql-result-set :res-ptr res-ptr :full-set t
-						   :field-types field-types)
-			    (mysql-num-fields res-ptr)
-			    (mysql-num-rows res-ptr))
-		  (values (make-mysql-result-set :res-ptr res-ptr)
-			  (mysql-num-fields res-ptr)))
-	      (error 'clsql-sql-error
+		(let* ((num-fields (mysql-num-fields res-ptr))
+		       (result-set (make-mysql-result-set
+				    :res-ptr res-ptr
+				    :num-fields num-fields
+				    :full-set full-set
+				    :field-types
+				    (canonicalize-field-types 
+				     field-types num-fields)))) 
+		  (if full-set
+		      (values result-set
+			      num-fields
+			      (mysql-num-rows res-ptr))
+		      (values result-set
+			      num-fields)))
+		(error 'clsql-sql-error
 		     :database database
 		     :expression query-expression
 		     :errno (mysql-errno mysql-ptr)
@@ -193,5 +233,28 @@
 	       :expression query-expression
 	       :errno (mysql-errno mysql-ptr)
 	       :error (mysql-error-string mysql-ptr))))))
+
+(defmethod database-dump-result-set (result-set (database mysql-database))
+  (mysql-free-result (mysql-result-set-res-ptr result-set))
+  t)
+
+
+
+(defmethod database-store-next-row (result-set (database mysql-database) list)
+  (let* ((res-ptr (mysql-result-set-res-ptr result-set))
+	 (row (mysql-fetch-row res-ptr))
+	 (field-types (mysql-result-set-field-types result-set)))
+    (declare (type mysql-mysql-res-ptr-def res-ptr)
+	     (type mysql-row-def row))
+    (unless (uffi:null-pointer-p row)
+      (loop for i from 0 below (mysql-result-set-num-fields result-set)
+	    for rest on list
+	    do
+	    (setf (car rest) 
+		  (convert-raw-field
+		   (uffi:deref-array row 'mysql-row i)
+		   field-types
+		   i)))
+      list)))
 
 
