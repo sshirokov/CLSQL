@@ -1,6 +1,9 @@
 16 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* doc/TODO: New file
-
+	* test/test-fdml.lisp: Added FDML/SELECT/34 to test
+	run-time instantiation of variables in reader macros.
+	* TODO: Remove item already complete
+	
 16 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* sql/syntax.lisp: added condition to the reader macro to treat [*] 
 	as a column identifier (rather than an operation) for CommonSQL 

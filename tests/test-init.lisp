@@ -557,6 +557,9 @@
                                 :fdml/select/33))
 	   (push (cons test "not supported by sqlite") skip-tests))
 	  ((and (eql *test-database-underlying-type* :mysql)
+		(clsql-sys:in test :fdml/select/26))
+	   (push (cons test "string table aliases not supported") skip-tests))
+	  ((and (eql *test-database-underlying-type* :mysql)
 		(clsql-sys:in test :fdml/select/22 :fdml/query/5 
 				:fdml/query/7 :fdml/query/8))
 	   (push (cons test "not supported by mysql") skip-tests))

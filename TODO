@@ -11,7 +11,6 @@ TESTS TO ADD
 
 COMMONSQL INCOMPATIBILITY
 
-   o variables (e.g., table identifiers) should be instantiated at runtime 
    o userenv (Oracle specific but deprecated in Oracle 9) 
 
 VARIANCES FROM COMMONSQL

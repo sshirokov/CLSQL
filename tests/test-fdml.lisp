@@ -447,6 +447,15 @@
 ("Andropov" "Brezhnev" "Chernenko" "Gorbachev" "Kruschev" "Putin" "Stalin"
  "Trotsky" "Yeltsin"))
 
+(deftest :fdml/select/34
+  (loop for x from 1 below 5
+   collect
+   (car
+    (clsql:select [last-name] :from [employee] 
+		  :where [= [emplid] x]
+		  :flatp t :result-types nil :field-names nil)))
+  ("Lenin" "Stalin" "Trotsky" "Kruschev"))
+
 (deftest :fdml/do-query/1
     (let ((result '()))
     (clsql:do-query ((name) [select [last-name] :from [employee]
