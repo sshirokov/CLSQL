@@ -712,34 +712,41 @@ superclass of the newly-defined View Class."
       (when jq 
         (select jc :where jq :flatp t :result-types nil)))))
 
+;; FIXME: Create a single join query for efficiency
+(defun fault-join-target-slot (class object slot-def)
+  (let* ((res (fault-join-slot-raw class object slot-def))
+	 (dbi (view-class-slot-db-info slot-def))
+	 (target-name (gethash :target-slot dbi))
+	 (target-class (find-class target-name)))
+    (when res
+      (mapcar (lambda (obj)
+		(list 
+		 (car
+		  (fault-join-slot-raw 
+		   target-class
+		   obj
+		   (find target-name (class-slots (class-of obj))
+			 :key #'slot-definition-name)))
+		 obj))
+	      res)
+      #+ignore ;; this doesn't work when attempting to call slot-value
+      (mapcar (lambda (obj)
+		(cons obj (slot-value obj ts))) res))))
+
 (defun fault-join-slot (class object slot-def)
   (let* ((dbi (view-class-slot-db-info slot-def))
-	 (ts (gethash :target-slot dbi))
-	 (res (fault-join-slot-raw class object slot-def)))
-    (when res
-      (cond
-       ((and ts (gethash :target-slot dbi) (gethash :set dbi))
-	(mapcar (lambda (obj)
-		  (let* ((target-name (gethash :target-slot dbi))
-			 (target-class (find-class target-name)))
-		    (list 
-		     (car
-		      (fault-join-slot-raw 
-		       target-class
-		       obj
-		       (find target-name (class-slots (class-of obj))
-			     :key #'slot-definition-name)))
-		     obj)))
-		 res))
-	((and ts (gethash :set dbi))
-	 (mapcar (lambda (obj)
-		   (cons obj (slot-value obj ts))) res))
-	((and ts (not (gethash :set dbi)))
-	 (mapcar (lambda (obj) (slot-value obj ts)) res))
-	((and (not ts) (not (gethash :set dbi)))
-	 (car res))
-	((and (not ts) (gethash :set dbi))
-	 res)))))
+	 (ts (gethash :target-slot dbi)))
+    (if (and ts (gethash :set dbi))
+	(fault-join-target-slot class object slot-def)
+	(let ((res (fault-join-slot-raw class object slot-def)))
+	  (when res
+	    (cond
+	      ((and ts (not (gethash :set dbi)))
+	       (mapcar (lambda (obj) (slot-value obj ts)) res))
+	      ((and (not ts) (not (gethash :set dbi)))
+	       (car res))
+	      ((and (not ts) (gethash :set dbi))
+	       res)))))))
 
 (defun join-qualifier (class object slot-def)
     (declare (ignore class))
