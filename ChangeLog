@@ -1,29 +1,31 @@
 26 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
-	* interfaces/postgresql-socket/postgresql-socket-api.cl
+	* interfaces/postgresql-socket/postgresql-socket-api.cl:
 	Implemented direct socket reading for field type :double
 
 	* Added usage information for :types to documentation
 
-	* interfaces/mysql/mysql-sql.cl
-	Fixed type specifiers in ato* calls
+	* interfaces/mysql/mysql-sql.cl: Fixed type specifiers in atoi,
+	atol, atof calls
 
-	* interfaces/mysql/clsql-mysql.c
-	* interfaces/mysql/mysql-sql.cl
-	Added atol64 function, :longlong translations
+	* interfaces/clsql-uffi: Created new directory. Split common
+	interface routines that use UFFI into this package. Required
+	especially to support direct reading of 64-bit integers into
+	bignums and bypassing temporary strings.
+
+	* test-clsql.cl: Updated to test postgresql-socket's
+	read-double-from-socket function.
 	
 25 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 
-	* interfaces/mysql/mysql-api.cl
-	Added mysql-fetch-fields, mysql-fetch-field-direct
-	Got :auto types working
+	* interfaces/mysql/mysql-api.cl: Added mysql-fetch-fields,
+	mysql-fetch-field-direct Got :auto types working
 
 	* interfaces/postgresql/postgresql-api.cl
 	* interfaces/postgresql-socket/postgresql-socket-api.cl
-	Added pgsql-field-types enum
-	Got :auto types working
+	Added pgsql-field-types enum. Got :auto types working.
 
 	* multiple-files
-	Renamed :field-types to :types
+	Renamed :field-types to :types.
 	
 24 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 

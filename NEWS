@@ -1,1 +1,3 @@
-Initial release of CLSQL
+Added :types specifier to optimize querys with
+integer (32 and 64 bit) and double field types.
+
