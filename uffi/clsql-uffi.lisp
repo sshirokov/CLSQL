@@ -1,4 +1,4 @@
-;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
+l;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.23 2003/05/17 07:50:55 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.24 2003/05/17 07:52:21 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -120,32 +120,13 @@
 		  low32
 		  (make-64-bit-integer high32 low32)))))
 	 (t
-	  ;; Choose optimized routine
-	  #-(or cmu sbcl lispworks scl)
-	  (native-to-string char-ptr)
-	  #+(or cmu sbcl lispworks scl)
-	  (uffi:convert-from-foreign-string char-ptr)))))))
+	  #+allegro (native-to-string char-ptr) ;; optimized
+	  #-allegro (uffi:convert-from-foreign-string char-ptr)))))))
   
 
 (uffi:def-function "strlen"
     ((str (* :unsigned-char)))
   :returning :unsigned-int)
-
-#-allegro
-(defun native-to-string (s)
-  (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
-	   (type char-ptr-def s))
-  (let* ((len (strlen s))
-	 (str (make-string len)))
-    (declare (fixnum len)
-	     (simple-string str))
-    (do ((i 0))
-	((= i len))
-      (declare (fixnum i))
-      (setf (schar str i)
-	(code-char (uffi:deref-array s '(:array :unsigned-char) i)))
-      (incf i))
-    str))
 
 #+(and allegro ics)
 (defun native-to-string (s)
