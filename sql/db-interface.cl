@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: db-interface.cl,v 1.1 2002/03/29 07:42:10 kevin Exp $
+;;;; $Id: db-interface.cl,v 1.2 2002/03/29 08:12:16 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -48,12 +48,17 @@ was called with the connection-spec."))
 (defgeneric database-disconnect (database)
   (:method ((database closed-database))
 	   (signal-closed-database-error database))
+  (:method ((database t))
+	   (signal-nodb-error database))
   (:documentation "Internal generic implementation of disconnect."))
 
 (defgeneric database-query (query-expression database types)
   (:method (query-expression (database closed-database) types)
 	   (declare (ignore query-expression types))
-	   (signal-closed-database-error database))
+	   (signal-closed-database-error database))  
+  (:method (query-expression (database t) types)
+	   (declare (ignore query-expression types))
+	   (signal-nodb-error database))
   (:documentation "Internal generic implementation of query."))
 
 
@@ -61,6 +66,9 @@ was called with the connection-spec."))
   (:method (sql-expression (database closed-database))
 	   (declare (ignore sql-expression))
 	   (signal-closed-database-error database))
+  (:method (sql-expression (database t))
+	   (declare (ignore sql-expression))
+	   (signal-nodb-error database))
   (:documentation "Internal generic implementation of execute-command."))
 
 ;;; Mapping and iteration
@@ -69,6 +77,10 @@ was called with the connection-spec."))
   (:method (query-expression (database closed-database) &key full-set types)
 	   (declare (ignore query-expression full-set types))
 	   (signal-closed-database-error database)
+	   (values nil nil nil))
+  (:method (query-expression (database t) &key full-set types)
+	   (declare (ignore query-expression full-set types))
+	   (signal-nodb-error database)
 	   (values nil nil nil))
   (:documentation
    "Internal generic implementation of query mapping.  Starts the
@@ -89,12 +101,18 @@ function should signal a clsql-sql-error."))
   (:method (result-set (database closed-database))
 	   (declare (ignore result-set))
 	   (signal-closed-database-error database))
+  (:method (result-set (database t))
+	   (declare (ignore result-set))
+	   (signal-nodb-error database))
   (:documentation "Dumps the received result-set."))
 
 (defgeneric database-store-next-row (result-set database list)
   (:method (result-set (database closed-database) list)
 	   (declare (ignore result-set list))
 	   (signal-closed-database-error database))
+  (:method (result-set (database t) list)
+	   (declare (ignore result-set list))
+	   (signal-nodb-error database))
   (:documentation
    "Returns t and stores the next row in the result set in list or
 returns nil when result-set is finished."))

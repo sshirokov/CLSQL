@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: sql.cl,v 1.8 2002/03/29 07:42:10 kevin Exp $
+;;;; $Id: sql.cl,v 1.9 2002/03/29 08:12:16 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -73,35 +73,7 @@ initialized, as indicated by `*initialized-database-types*'."
 (defvar *default-database* nil
   "Specifies the default database to be used.")
 
-(defclass database ()
-  ((name :initarg :name :reader database-name))
-  (:documentation
-   "This class is the supertype of all databases handled by CLSQL."))
 
-(defmethod print-object ((object database) stream)
-  (print-unreadable-object (object stream :type t :identity t)
-    (write-string (if (slot-boundp object 'name)
-		      (database-name object)
-		      "<unbound>")
-		  stream)))
-
-(defclass closed-database ()
-  ((name :initarg :name :reader database-name))
-  (:documentation
-   "This class represents all databases after they are closed via
-`disconnect'."))
-
-(defmethod print-object ((object closed-database) stream)
-  (print-unreadable-object (object stream :type t :identity t)
-    (write-string (if (slot-boundp object 'name)
-		      (database-name object)
-		      "<unbound>")
-		  stream)))
-
-(defun signal-closed-database-error (database)
-  (cerror "Ignore this error and return nil."
-	  'clsql-closed-error
-	  :database database))
 
 (defun find-database (database &optional (errorp t))
   (etypecase database

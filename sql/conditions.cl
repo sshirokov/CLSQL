@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: conditions.cl,v 1.1 2002/03/29 07:42:10 kevin Exp $
+;;;; $Id: conditions.cl,v 1.2 2002/03/29 08:12:16 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -137,4 +137,24 @@ although there is an existing connection (~A)."
   (:report (lambda (c stream)
 	     (format stream "The database ~A has already been closed."
 		     (clsql-closed-error-database c)))))
+
+(define-condition clsql-nodb-error (clsql-error)
+  ((database :initarg :database :reader clsql-nodb-error-database))
+  (:report (lambda (c stream)
+	     (format stream "No such database ~S is open." 
+		     (clsql-nodb-error-database c)))))
+
+
+;; Signal conditions
+
+
+(defun signal-closed-database-error (database)
+  (cerror "Ignore this error and return nil."
+	  'clsql-closed-error
+	  :database database))
+
+(defun signal-nodb-error (database)
+  (cerror "Ignore this error and return nil."
+	  'clsql-nodb-error
+	  :database database))
 
