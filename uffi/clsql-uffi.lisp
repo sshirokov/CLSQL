@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.27 2003/05/27 21:40:16 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.28 2003/05/29 05:19:50 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -16,8 +16,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :clsql-uffi)
+(in-package #:clsql-uffi)
 
 
 (defun canonicalize-type-list (types auto-list)
@@ -120,15 +119,15 @@
 		  low32
 		  (make-64-bit-integer high32 low32)))))
 	 (t
-	  #+allegro (native-to-string char-ptr) ;; optimized
-	  #-allegro (uffi:convert-from-foreign-string char-ptr)))))))
+	  #+(or allegro lispworks) (native-to-string char-ptr) ;; optimized
+	  #-(or allegro lispworks) (uffi:convert-from-foreign-string char-ptr)))))))
   
 
 (uffi:def-function "strlen"
     ((str (* :unsigned-char)))
   :returning :unsigned-int)
 
-#+(and allegro ics)
+#+(or lispworks (and allegro ics))
 (defun native-to-string (s)
   (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
 	   (type char-ptr-def s))
