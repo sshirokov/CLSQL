@@ -356,7 +356,7 @@
 
 (defmethod collect-table-refs ((sql sql-function-exp))
   (let ((tabs nil))
-    (dolist (exp (slot-value sql 'components))
+    (dolist (exp (slot-value sql 'args))
       (let ((refs (collect-table-refs exp)))
         (if refs (setf tabs (append refs tabs)))))
     (remove-duplicates tabs
@@ -830,8 +830,8 @@ uninclusive, and the args from that keyword to the end."
 ;; 
 
 (defmethod database-output-sql ((str string) database)
-  (declare (ignore database)
-           (optimize (speed 3) (safety 1) #+cmu (extensions:inhibit-warnings 3))
+  (declare (optimize (speed 3) (safety 1)
+		     #+cmu (extensions:inhibit-warnings 3))
            (simple-string str))
   (let ((len (length str)))
     (declare (type fixnum len))

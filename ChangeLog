@@ -1,3 +1,7 @@
+08 Nov 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/expressions.lisp: Fix slot name [thanks to
+	Daniel Lowe]
+
 31 Oct 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* clsql-sqlite3, db-sqlite3/*: NEW BACKEND
 	contributed by Aurelio Bignoli
