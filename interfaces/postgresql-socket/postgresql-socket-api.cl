@@ -9,7 +9,7 @@
 ;;;;                
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-api.cl,v 1.9 2002/03/27 08:09:25 kevin Exp $
+;;;; $Id: postgresql-socket-api.cl,v 1.10 2002/03/27 10:48:12 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -586,28 +586,30 @@ connection, if it is still open."
 (uffi:def-constant +char-code-upper-e+ (char-code #\E))
 
 (defun read-integer-from-socket (socket length)
-  (let ((val 0)
-	(first-char (read-byte socket))
-	(minusp nil))
-    (declare (fixnum first-char))
-    (if (zerop length)
-	nil
-	(progn
-	  (cond
-	    ((= first-char +char-code-minus+)
-	     (setq minusp t))
-	    ((= first-char +char-code-plus+)
-	     ) ; nothing to do
-	    (t
-	     (setq val (- first-char +char-code-zero+))))
-	  (dotimes (i (1- length))
-	    (declare (fixnum i))
-	    (setq val (+
-		       (* 10 val)
-		       (- (read-byte socket) +char-code-zero+))))
-	  (if minusp
-	      (- val)
-	      val)))))
+  (declare (fixnum length))
+  (if (zerop length)
+      nil
+    (let ((val 0)
+	  (first-char (read-byte socket))
+	  (minusp nil))
+      (declare (fixnum first-char))
+      (decf length) ;; read first char
+      (cond
+       ((= first-char +char-code-minus+)
+	(setq minusp t))
+       ((= first-char +char-code-plus+)
+	)		;; nothing to do
+       (t
+	(setq val (- first-char +char-code-zero+))))
+      
+      (dotimes (i length)
+	(declare (fixnum i))
+	(setq val (+
+		   (* 10 val)
+		   (- (read-byte socket) +char-code-zero+))))
+      (if minusp
+	  (- val)
+	val))))
 
 (defmacro ascii-digit (int)
   (let ((offset (gensym)))
@@ -619,6 +621,7 @@ connection, if it is still open."
 	  nil))))
       
 (defun read-double-from-socket (socket length)
+  (declare (fixnum length))
   (let ((before-decimal 0)
 	(after-decimal 0)
 	(decimal-count 0)
@@ -627,33 +630,35 @@ connection, if it is still open."
 	(minusp nil)
 	(result nil)
 	(char (read-byte socket)))
-    (declare (fixnum char))
+    (declare (fixnum char exponent decimal-count))
     (decf length) ;; already read first character
     (cond
       ((= char +char-code-minus+)
-       (setq minusp t)
-       (setq char (read-byte socket))
-       (decf length))
+       (setq minusp t))
       ((= char +char-code-plus+)
-       (setq char (read-byte socket))
-       (decf length)))
+       )
+      ((= char +char-code-period+)
+       (setq decimalp t))
+      (t
+       (setq before-decimal (ascii-digit char))
+       (unless before-decimal
+	 (error "Unexpected value"))))
     
     (dotimes (i length)
+      (setq char (read-byte socket))
+;;      (format t "~&len:~D, i:~D, char:~D, minusp:~A, decimalp:~A" length i char minusp decimalp)
       (let ((weight (ascii-digit char)))
 	(cond 
 	  ((and weight (not decimalp)) ;; before decimal point
-	   (setq before-decimal (+ weight (* 10 before-decimal)))
-	   (setq char (read-byte socket)))
+	   (setq before-decimal (+ weight (* 10 before-decimal))))
 	  ((and weight decimalp) ;; after decimal point
 	   (setq after-decimal (+ weight (* 10 after-decimal)))
-	   (incf decimal-count)
-	   (setq char (read-byte socket)))
+	   (incf decimal-count))
 	  ((and (= char +char-code-period+))
-	   (setq decimalp t)
-	   (setq char (read-byte socket)))
+	   (setq decimalp t))
 	  ((or (= char +char-code-lower-e+) 	      ;; E is for exponent
 	       (= char +char-code-upper-e+))
-	   (setq exponent (read-integer-from-socket socket (- length i)))
+	   (setq exponent (read-integer-from-socket socket (- length i 1)))
 	   (setq exponent (or exponent 0))
 	   (setq i length))
 	  (t 
