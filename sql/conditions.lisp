@@ -25,7 +25,10 @@ set to :error to signal an error or :ignore/nil to silently ignore the warning."
 (define-condition sql-condition ()
   ())
 
-(define-condition sql-database-error (simple-error sql-condition)
+(define-condition sql-error (simple-error)
+  ())
+
+(define-condition sql-database-error (sql-error)
   ((error-id :initarg :error-id 
 	     :initform nil
 	     :reader sql-error-error-id)
@@ -74,7 +77,7 @@ set to :error to signal an error or :ignore/nil to silently ignore the warning."
 (define-condition sql-temporary-error (sql-database-error)
   ())
 
-(define-condition sql-user-error (simple-error sql-condition)
+(define-condition sql-user-error (sql-error)
   ((message :initarg :message
 	    :initform "Unspecified error"
 	    :reader sql-user-error-message))

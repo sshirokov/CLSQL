@@ -1021,16 +1021,7 @@ superclass of the newly-defined View Class."
 						 :test #'tables-equal)))
 	   (order-by-slots (mapcar #'(lambda (ob) (if (atom ob) ob (car ob)))
 				   (listify order-by))))
-				    
 				 
-      (when (and order-by-slots (= 1 (length tables)))
-	;; Add explicity table name if not specified and only one selected table
-	(let ((table-name (sql-output (car tables) database)))
-	  (loop for i from 0 below (length order-by-slots)
-	      do (when (typep (nth i order-by-slots) 'sql-ident-attribute)
-		   (unless (slot-value (nth i order-by-slots) 'qualifier)
-		     (setf (slot-value (nth i order-by-slots) 'qualifier) table-name)))))) 
-	
       (dolist (ob order-by-slots)
 	(when (and ob (not (member ob (mapcar #'cdr fullsels)
 				   :test #'ref-equal)))
@@ -1136,10 +1127,30 @@ ENABLE-SQL-READER-SYNTAX."
 	   (let ((caching (getf qualifier-args :caching t))
 		 (result-types (getf qualifier-args :result-types :auto))
 		 (refresh (getf qualifier-args :refresh nil))
-		 (database (or (getf qualifier-args :database) *default-database*)))
+		 (database (or (getf qualifier-args :database) *default-database*))
+		 (order-by (getf qualifier-args :order-by)))
 	     (remf qualifier-args :caching)
 	     (remf qualifier-args :refresh)
 	     (remf qualifier-args :result-types)
+	     
+	     
+	     ;; Add explicity table name to order-by if not specified and only
+	     ;; one selected table. This is required so FIND-ALL won't duplicate
+	     ;; the field
+	     (when (and order-by (= 1 (length target-args)))
+	       (let ((table-name  (view-table (find-class (car target-args))))
+		     (order-by-list (copy-seq (listify order-by))))
+		 
+		 (loop for i from 0 below (length order-by-list)
+		     do (etypecase (nth i order-by-list)
+			  (sql-ident-attribute
+			   (unless (slot-value (nth i order-by-list) 'qualifier)
+			     (setf (slot-value (nth i order-by-list) 'qualifier) table-name)))
+			  (cons
+			   (unless (slot-value (car (nth i order-by-list)) 'qualifier)
+			     (setf (slot-value (car (nth i order-by-list)) 'qualifier) table-name)))))
+		 (setf (getf qualifier-args :order-by) order-by-list)))
+	
 	     (cond
 	       ((null caching)
 		(apply #'find-all target-args
@@ -1194,6 +1205,7 @@ ENABLE-SQL-READER-SYNTAX."
 	    (when value
 	      (push (list arg
 			  (typecase value
+			    (cons (cons (sql (car value)) (cdr value)))
 			    (%sql-expression (sql value))
 			    (t value)))
 		    results))))))

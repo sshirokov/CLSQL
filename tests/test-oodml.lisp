@@ -154,7 +154,7 @@
 
 	(deftest :oodm/retrieval/8	    
 	    (mapcar #'(lambda (ea) (slot-value (slot-value ea 'address) 'street-number))
-	     (select 'employee-address :flatp t :order-by [ea_join aaddressid] :caching nil))
+	     (select 'employee-address :flatp t :order-by [aaddressid] :caching nil))
 	  (10 10 nil nil nil))
 
 	(deftest :oodm/retrieval/9
@@ -403,7 +403,7 @@
 	  t)
 
 	(deftest :oodml/refresh/2
-	    (let* ((addresses (select 'address :order-by [addressid] :flatp t))
+	    (let* ((addresses (select 'address :order-by [addressid] :flatp t :refresh t))
 		   (city (slot-value (car addresses) 'city)))
 	      (clsql:update-records [addr] 
                               :av-pairs '((city_field "A new city"))
@@ -427,7 +427,7 @@
 	  nil nil)
 	
 	(deftest :oodml/refresh/4
-	    (let* ((addresses (select 'address :order-by [addressid] :flatp t))
+	    (let* ((addresses (select 'address :order-by [addressid] :flatp t :refresh t))
 		   (*db-auto-sync* t))
 	      (make-instance 'address :addressid 1000 :city "A new address city")
 	      (let ((new-addresses (select 'address :order-by [addressid] :flatp t :refresh t)))

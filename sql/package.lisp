@@ -229,10 +229,11 @@
 	 #:sql-error-database-message
 
 	 ;; CLSQL Extensions
-	 #:sql-database-warning
-	 #:sql-warning
 	 #:sql-condition
-
+	 #:sql-error
+	 #:sql-warning
+	 #:sql-database-warning
+	 
 	 ;;FDDL
 	 #:create-table                      ; table      xx
 	 #:drop-table                        ; table      xx
