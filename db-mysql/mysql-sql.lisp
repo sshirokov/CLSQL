@@ -459,7 +459,7 @@
     ((in type :short) mysql-field-types#short)
     ((in type :bigint) mysql-field-types#longlong)
     ((in type :float :double :number) mysql-field-types#double)
-    ((and (consp type) (in (car type) :char :varchar)) mysql-field-types#var-string)
+    ((and (consp type) (in (car type) :char :string :varchar)) mysql-field-types#var-string)
     (t
        (error 'sql-user-error 
 	      :message 
@@ -493,9 +493,17 @@
       
       (let* ((field-vec (mysql-fetch-fields rs))
 	     (num-fields (mysql-num-fields rs))
+	     (input-bind (uffi:allocate-foreign-object mysql-bind (length types)))
 	     (output-bind (uffi:allocate-foreign-object mysql-bind num-fields))
 	     (length-ptr (uffi:allocate-foreign-object :unsigned-long num-fields))
-	     (is-null-ptr (uffi:allocate-foreign-object :byte num-fields)))
+	     (is-null-ptr (uffi:allocate-foreign-object :byte num-fields))
+	     (mysql-types (mapcar 'clsql-type->mysql-type types)))
+	
+	(dotimes (i (length types))
+	  (let* ((binding (uffi:deref-array input-bind '(:array mysql-bind) i)))
+	    (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-type) 
+		  (nth i mysql-types))
+	    (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-length) 0)))	    
 
 	(dotimes (i num-fields)
 	  (declare (fixnum i))
@@ -503,16 +511,17 @@
 		 (type (uffi:get-slot-value field 'mysql-field 'type))
 		 (binding (uffi:deref-array output-bind '(:array mysql-bind) i)))
 	    (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-type) type)
+	    
 	    (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-length) 0)
 	    (setf (uffi:get-slot-value binding 'mysql-bind 'is-null) 
-		  (uffi:pointer-address (uffi:deref-array is-null-ptr '(:array :byte) i)))
+		  (+ i (uffi:pointer-address is-null-ptr)))
 	    (setf (uffi:get-slot-value binding 'mysql-bind 'length) 
-		  (uffi:pointer-address (uffi:deref-array length-ptr '(:array :unsigned-long) i)))
-
+		  (+ (* i 8) (uffi:pointer-address length-ptr)))
+	    
 	    (case type
 	      ((#.mysql-field-types#var-string #.mysql-field-types#string
-	       #.mysql-field-types#tiny-blob #.mysql-field-types#blob
-	       #.mysql-field-types#medium-blob #.mysql-field-types#long-blob)
+					       #.mysql-field-types#tiny-blob #.mysql-field-types#blob
+					       #.mysql-field-types#medium-blob #.mysql-field-types#long-blob)
 	       (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-length) 1024)
 	       (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
 		     (uffi:allocate-foreign-object :unsigned-char 1024)))
@@ -524,7 +533,8 @@
 		     (uffi:allocate-foreign-object :short)))
 	      (#.mysql-field-types#long
 	       (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
-		     (uffi:allocate-foreign-object :int)))
+		     ;; segfaults if supply :int on amd64
+		     (uffi:allocate-foreign-object :long)))
 	      #+64bit
 	      (#.mysql-field-types#longlong
 	       (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
@@ -536,28 +546,28 @@
 	       (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
 		     (uffi:allocate-foreign-object :double)))
 	      ((#.mysql-field-types#time #.mysql-field-types#date
-  	        #.mysql-field-types#datetime #.mysql-field-types#timestamp)
+					 #.mysql-field-types#datetime #.mysql-field-types#timestamp)
 	       (uffi:allocate-foreign-object 'mysql-time))
 	      (t
 	       (error "mysql type ~D not supported." type)))))
-
+	
 	(unless (zerop (mysql-stmt-bind-result stmt output-bind))
 	  (error 'sql-database-error
 		 :error-id (mysql-stmt-errno stmt)
 		 :message  (uffi:convert-from-cstring
 			    (mysql-stmt-error stmt))))
-
+	
 	(make-instance 'mysql-stmt
 		       :database database
 		       :stmt stmt
 		       :num-fields num-fields
-		       :input-bind (uffi:allocate-foreign-object mysql-bind (length types))
+		       :input-bind input-bind
 		       :output-bind output-bind
 		       :result-set rs
 		       :result-types result-types
 		       :length-ptr length-ptr
 		       :is-null-ptr is-null-ptr
-		       :types (mapcar 'clsql-type->mysql-type types)
+		       :types mysql-types
 		       :field-names field-names)))))
 
 #+mysql-client-v4.1
@@ -569,29 +579,31 @@
     (setf (uffi:get-slot-value binding 'mysql-bind 'length) 0)
     (cond
      ((null value)
-      (setf (uffi:get-slot-value binding 'mysql-bind 'is-null) 1))
+      (setf (uffi:deref-array (is-null-ptr stmt) '(:array :byte) (1- position)) 1))
      (t
-      (setf (uffi:get-slot-value binding 'mysql-bind 'is-null) 0)
-      (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-type) type)
+      (setf (uffi:deref-array (is-null-ptr stmt) '(:array :byte) (1- position)) 0)
       (case type
 	(#.mysql-field-types#long
-	 (let ((ptr (uffi:allocate-foreign-object :long)))
-	   (setf (uffi:deref-pointer ptr :long) value)
-	   (setf (uffi:get-slot-value binding 'mysql-bind 'buffer) ptr)))
+	 (setf (uffi:get-slot-value binding 'mysql-bind 'buffer) value))
+	(t
+	 (warn "Unknown input bind type ~D." type))
 	)))))
 
 #+mysql-client-v4.1
 (defmethod database-run-prepared ((stmt mysql-stmt))
+  (print 'a1)
   (unless (zerop (mysql-stmt-bind-param (stmt stmt) (input-bind stmt)))
     (error 'sql-database-error
 	   :error-id (mysql-stmt-errno (stmt stmt))
 	   :message  (uffi:convert-from-cstring
 		      (mysql-stmt-error (stmt stmt)))))
+  (print 'a2)
   (unless (zerop (mysql-stmt-execute (stmt stmt)))
     (error 'sql-database-error
 	   :error-id (mysql-stmt-errno (stmt stmt))
 	   :message  (uffi:convert-from-cstring
 		      (mysql-stmt-error (stmt stmt)))))
+  (print 'a3)
   (unless (zerop (mysql-stmt-store-result (stmt stmt)))
     (error 'sql-database-error
 	   :error-id (mysql-stmt-errno (stmt stmt))
@@ -602,10 +614,11 @@
 #+mysql-client-v4.1
 (defun database-fetch-prepared-rows (stmt)
   (do ((rc (mysql-stmt-fetch (stmt stmt)) (mysql-stmt-fetch (stmt stmt)))
+       (num-fields (num-fields stmt))
        (rows '()))
       ((not (zerop rc)) (nreverse rows))
     (push
-     (loop for i from 0 below (num-fields stmt)
+     (loop for i from 0 below num-fields
 	   collect
 	   (let ((is-null 
 		  (not (zerop (uffi:ensure-char-integer
