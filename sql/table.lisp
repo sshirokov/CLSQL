@@ -34,9 +34,15 @@
 
 (defun create-table (name description &key (database *default-database*)
                           (constraints nil) (transactions t))
-  "Create a table called NAME, in DATABASE which defaults to
-*DEFAULT-DATABASE*, containing the attributes in DESCRIPTION which is
-a list containing lists of attribute-name and type information pairs."
+  "Creates a table called NAME, which may be a string, symbol or
+SQL table identifier, in DATABASE which defaults to
+*DEFAULT-DATABASE*. DESCRIPTION is a list whose elements are
+lists containing the attribute names, types, and other
+constraints such as not-null or primary-key for each column in
+the table.  CONSTRAINTS is a string representing an SQL table
+constraint expression or a list of such strings. With MySQL
+databases, if TRANSACTIONS is t an InnoDB table is created which
+supports transactions."
   (let* ((table-name (etypecase name 
                        (symbol (sql-expression :attribute name))
                        (string (sql-expression :attribute (make-symbol name)))
@@ -50,10 +56,10 @@ a list containing lists of attribute-name and type information pairs."
 
 (defun drop-table (name &key (if-does-not-exist :error)
                         (database *default-database*))
-  "Drops table NAME from DATABASE which defaults to
-*DEFAULT-DATABASE*. If the table does not exist and IF-DOES-NOT-EXIST
-is :ignore then DROP-TABLE returns nil whereas an error is signalled
-if IF-DOES-NOT-EXIST is :error."
+  "Drops the table called NAME from DATABASE which defaults to
+*DEFAULT-DATABASE*. If the table does not exist and
+IF-DOES-NOT-EXIST is :ignore then DROP-TABLE returns nil whereas
+an error is signalled if IF-DOES-NOT-EXIST is :error."
   (let ((table-name (database-identifier name database)))
     (ecase if-does-not-exist
       (:ignore
@@ -68,21 +74,20 @@ if IF-DOES-NOT-EXIST is :error."
       (execute-command expr :database database))))
 
 (defun list-tables (&key (owner nil) (database *default-database*))
-  "List all tables in DATABASE which defaults to
-*DEFAULT-DATABASE*. If OWNER is nil, only user-owned tables are
-considered. This is the default. If OWNER is :all , all tables are
-considered. If OWNER is a string, this denotes a username and only
-tables owned by OWNER are considered. Table names are returned as a
-list of strings."
+  "Returns a list of strings representing table names in DATABASE
+which defaults to *DEFAULT-DATABASE*. OWNER is nil by default
+which means that only tables owned by users are listed. If OWNER
+is a string denoting a user name, only tables owned by OWNER are
+listed. If OWNER is :all then all tables are listed."
   (database-list-tables database :owner owner))
 
 (defun table-exists-p (name &key (owner nil) (database *default-database*))
-  "Test for existence of an SQL table called NAME in DATABASE which
-defaults to *DEFAULT-DATABASE*. If OWNER is nil, only user-owned
-tables are considered. This is the default. If OWNER is :all , all
-tables are considered. If OWNER is a string, this denotes a username
-and only tables owned by OWNER are considered. Table names are
-returned as a list of strings."
+  "Tests for the existence of an SQL table called NAME in DATABASE
+which defaults to *DEFAULT-DATABASE*. OWNER is nil by default
+which means that only tables owned by users are examined. If
+OWNER is a string denoting a user name, only tables owned by
+OWNER are examined. If OWNER is :all then all tables are
+examined."
   (when (member (database-identifier name database)
                 (list-tables :owner owner :database database)
                 :test #'string-equal)
@@ -93,11 +98,12 @@ returned as a list of strings."
 
 (defun create-view (name &key as column-list (with-check-option nil)
                          (database *default-database*))
-  "Creates a view called NAME using the AS query and the optional
-COLUMN-LIST and WITH-CHECK-OPTION. The COLUMN-LIST argument is a list
-of columns to add to the view. The WITH-CHECK-OPTION adds 'WITH CHECK
-OPTION' to the resulting SQL. The default value of WITH-CHECK-OPTION
-is NIL. The default value of DATABASE is *DEFAULT-DATABASE*."
+  "Creates a view called NAME in DATABASE which defaults to
+*DEFAULT-DATABASE*. The view is created using the query AS and
+the columns of the view may be specified using the COLUMN-LIST
+parameter. The WITH-CHECK-OPTION is nil by default but if it has
+a non-nil value, then all insert/update commands on the view are
+checked to ensure that the new data satisfy the query AS."
   (let* ((view-name (etypecase name 
                       (symbol (sql-expression :attribute name))
                       (string (sql-expression :attribute (make-symbol name)))
@@ -111,10 +117,10 @@ is NIL. The default value of DATABASE is *DEFAULT-DATABASE*."
 
 (defun drop-view (name &key (if-does-not-exist :error)
                        (database *default-database*))
-  "Deletes view NAME from DATABASE which defaults to
-*DEFAULT-DATABASE*. If the view does not exist and IF-DOES-NOT-EXIST
-is :ignore then DROP-VIEW returns nil whereas an error is signalled if
-IF-DOES-NOT-EXIST is :error."
+  "Drops the view called NAME from DATABASE which defaults to
+*DEFAULT-DATABASE*. If the view does not exist and
+IF-DOES-NOT-EXIST is :ignore then DROP-VIEW returns nil whereas
+an error is signalled if IF-DOES-NOT-EXIST is :error."
   (let ((view-name (database-identifier name database)))
     (ecase if-does-not-exist
       (:ignore
@@ -126,20 +132,19 @@ IF-DOES-NOT-EXIST is :error."
       (execute-command expr :database database))))
 
 (defun list-views (&key (owner nil) (database *default-database*))
-  "List all views in DATABASE which defaults to *DEFAULT-DATABASE*. If
-OWNER is nil, only user-owned views are considered. This is the
-default. If OWNER is :all , all views are considered. If OWNER is a
-string, this denotes a username and only views owned by OWNER are
-considered. View names are returned as a list of strings."
+  "Returns a list of strings representing view names in DATABASE
+which defaults to *DEFAULT-DATABASE*. OWNER is nil by default
+which means that only views owned by users are listed. If OWNER
+is a string denoting a user name, only views owned by OWNER are
+listed. If OWNER is :all then all views are listed."
   (database-list-views database :owner owner))
 
 (defun view-exists-p (name &key (owner nil) (database *default-database*))
-  "Test for existence of an SQL view called NAME in DATABASE which
-defaults to *DEFAULT-DATABASE*. If OWNER is nil, only user-owned views
-are considered. This is the default. If OWNER is :all , all views are
-considered. If OWNER is a string, this denotes a username and only
-views owned by OWNER are considered. View names are returned as a list
-of strings."
+  "Tests for the existence of an SQL view called NAME in DATABASE
+which defaults to *DEFAULT-DATABASE*. OWNER is nil by default
+which means that only views owned by users are examined. If OWNER
+is a string denoting a user name, only views owned by OWNER are
+examined. If OWNER is :all then all views are examined."
   (when (member (database-identifier name database)
                 (list-views :owner owner :database database)
                 :test #'string-equal)
@@ -150,11 +155,12 @@ of strings."
 
 (defun create-index (name &key on (unique nil) attributes
                           (database *default-database*))
-  "Creates an index called NAME on the table specified by ON. The
-attributes of the table to index are given by ATTRIBUTES. Setting
-UNIQUE to T includes UNIQUE in the SQL index command, specifying that
-the columns indexed must contain unique values. The default value of
-UNIQUE is nil. The default value of DATABASE is *DEFAULT-DATABASE*."
+  "Creates an index called NAME on the table specified by ON in
+DATABASE which default to *DEFAULT-DATABASE*. The table
+attributes to use in constructing the index NAME are specified by
+ATTRIBUTES. The UNIQUE argument is nil by default but if it has a
+non-nil value then the indexed attributes must have unique
+values."
   (let* ((index-name (database-identifier name database))
          (table-name (database-identifier on database))
          (attributes (mapcar #'(lambda (a) (database-identifier a database)) (listify attributes)))
@@ -166,11 +172,12 @@ UNIQUE is nil. The default value of DATABASE is *DEFAULT-DATABASE*."
 (defun drop-index (name &key (if-does-not-exist :error)
                         (on nil)
                         (database *default-database*))
-  "Deletes index NAME from table FROM in DATABASE which defaults to
-*DEFAULT-DATABASE*. If the index does not exist and IF-DOES-NOT-EXIST
-is :ignore then DROP-INDEX returns nil whereas an error is signalled
-if IF-DOES-NOT-EXIST is :error. The argument ON allows the optional
-specification of a table to drop the index from."
+  "Drops the index called NAME in DATABASE which defaults to
+*DEFAULT-DATABASE*. If the index does not exist and
+IF-DOES-NOT-EXIST is :ignore then DROP-INDEX returns nil whereas
+an error is signalled if IF-DOES-NOT-EXIST is :error. The
+argument ON allows the optional specification of a table to drop
+the index from."
   (let ((index-name (database-identifier name database)))
     (ecase if-does-not-exist
       (:ignore
@@ -187,27 +194,31 @@ specification of a table to drop the index from."
                      :database database)))
 
 (defun list-indexes (&key (owner nil) (database *default-database*))
-  "List all indexes in DATABASE, which defaults to
-*default-database*. If OWNER is :all , all indexs are considered. If
-OWNER is a string, this denotes a username and only indexs owned by
-OWNER are considered. Index names are returned as a list of strings."
+  "Returns a list of strings representing index names in DATABASE
+which defaults to *DEFAULT-DATABASE*. OWNER is nil by default
+which means that only indexes owned by users are listed. If OWNER
+is a string denoting a user name, only indexes owned by OWNER are
+listed. If OWNER is :all then all indexes are listed."
   (database-list-indexes database :owner owner))
 
 (defun list-table-indexes (table &key (owner nil)
 				      (database *default-database*))
-  "List all indexes in DATABASE for a TABLE, which defaults to
-*default-database*. If OWNER is :all , all indexs are considered. If
-OWNER is a string, this denotes a username and only indexs owned by
-OWNER are considered. Index names are returned as a list of strings."
+  "Returns a list of strings representing index names on the
+table specified by TABLE in DATABASE which defaults to
+*DEFAULT-DATABASE*. OWNER is nil by default which means that only
+indexes owned by users are listed. If OWNER is a string denoting
+a user name, only indexes owned by OWNER are listed. If OWNER
+is :all then all indexes are listed."
   (database-list-table-indexes (database-identifier table database)
 			       database :owner owner))
   
 (defun index-exists-p (name &key (owner nil) (database *default-database*))
-  "Test for existence of an index called NAME in DATABASE which
-defaults to *DEFAULT-DATABASE*. If OWNER is :all , all indexs are
-considered. If OWNER is a string, this denotes a username and only
-indexs owned by OWNER are considered. Index names are returned as a
-list of strings."
+  "Tests for the existence of an SQL index called NAME in DATABASE
+which defaults to *DEFAULT-DATABASE*. OWNER is nil by default
+which means that only indexes owned by users are examined. If
+OWNER is a string denoting a user name, only indexes owned by
+OWNER are examined. If OWNER is :all then all indexes are
+examined."
   (when (member (database-identifier name database)
                 (list-indexes :owner owner :database database)
                 :test #'string-equal)
@@ -215,22 +226,25 @@ list of strings."
 
 ;; Attributes 
 
-(defvar *cache-table-queries-default* "Default atribute type caching behavior.")
+(defvar *cache-table-queries-default* nil 
+  "Specifies the default behaivour for caching of attribute
+  types. Meaningful values are t, nil and :flush as described for
+  the action argument to CACHE-TABLE-QUERIES.")
 
 (defun cache-table-queries (table &key (action nil) (database *default-database*))
-  "Provides per-table control on the caching in a particular database
-connection of attribute type information using during update
-operations. If TABLE is a string, it is the name of the table for
-which caching is to be altered. If TABLE is t, then the action applies
-to all tables. If TABLE is :default, then the default caching action
-is set for those tables which do not have an explicit setting. ACTION
-specifies the caching action. The value t means cache the attribute
-type information. The value nil means do not cache the attribute type
-information. If TABLE is :default, the setting applies to all tables
-which do not have an explicit setup. The value :flush means remove any
-existing cache for table in database, but continue to cache. This
-function should be called with action :flush when the attribute
-specifications in table have changed."
+  "Controls the caching of attribute type information on the
+table specified by TABLE in DATABASE which defaults to
+*DEFAULT-DATABASE*. ACTION specifies the caching behaviour to
+adopt. If its value is t then attribute type information is
+cached whereas if its value is nil then attribute type
+information is not cached. If ACTION is :flush then all existing
+type information in the cache for TABLE is removed, but caching
+is still enabled. TABLE may be a string representing a table for
+which the caching action is to be taken while the caching action
+is applied to all tables if TABLE is t. Alternativly, when TABLE
+is :default, the default caching action specified by
+*CACHE-TABLE-QUERIES-DEFAULT* is applied to all table for which a
+caching action has not been explicitly set."
   (with-slots (attribute-cache) database
     (cond
       ((stringp table)
@@ -269,24 +283,26 @@ specifications in table have changed."
 		  
 
 (defun list-attributes (name &key (owner nil) (database *default-database*))
-  "List the attributes of a attribute called NAME in DATABASE which
-defaults to *DEFAULT-DATABASE*. If OWNER is nil, only user-owned
-attributes are considered. This is the default. If OWNER is :all , all
-attributes are considered. If OWNER is a string, this denotes a
-username and only attributes owned by OWNER are considered. Attribute
-names are returned as a list of strings. Attributes are returned as a
-list of strings."
-  (database-list-attributes (database-identifier name database) database :owner owner))
+  "Returns a list of strings representing the attributes of table
+NAME in DATABASE which defaults to *DEFAULT-DATABASE*. OWNER is
+nil by default which means that only attributes owned by users
+are listed. If OWNER is a string denoting a user name, only
+attributes owned by OWNER are listed. If OWNER is :all then all
+attributes are listed."
+  (database-list-attributes (database-identifier name database) database 
+                            :owner owner))
 
 (defun attribute-type (attribute table &key (owner nil)
                                  (database *default-database*))
-  "Return the field type of the ATTRIBUTE in TABLE.  The optional
-keyword argument DATABASE specifies the database to query, defaulting
-to *DEFAULT-DATABASE*. If OWNER is nil, only user-owned attributes are
-considered. This is the default. If OWNER is :all , all attributes are
-considered. If OWNER is a string, this denotes a username and only
-attributes owned by OWNER are considered. Attribute names are returned
-as a list of strings. Attributes are returned as a list of strings."
+  "Returns a string representing the field type of the supplied
+attribute ATTRIBUTE in the table specified by TABLE in DATABASE
+which defaults to *DEFAULT-DATABASE*. OWNER is nil by default
+which means that the attribute specified by ATTRIBUTE, if it
+exists, must be user owned else nil is returned. If OWNER is a
+string denoting a user name, the attribute, if it exists, must be
+owned by OWNER else nil is returned, whereas if OWNER is :all
+then the attribute, if it exists, will be returned regardless of
+its owner."
   (database-attribute-type (database-identifier attribute database)
                            (database-identifier table database)
                            database
@@ -294,14 +310,17 @@ as a list of strings. Attributes are returned as a list of strings."
 
 (defun list-attribute-types (table &key (owner nil)
                                    (database *default-database*))
-  "Returns type information for the attributes in TABLE from DATABASE
-which has a default value of *default-database*. If OWNER is nil, only
-user-owned attributes are considered. This is the default. If OWNER is
-:all, all attributes are considered. If OWNER is a string, this
-denotes a username and only attributes owned by OWNER are
-considered. Returns a list in which each element is a list (attribute
-datatype). Attribute is a string denoting the atribute name. Datatype
-is the vendor-specific type returned by ATTRIBUTE-TYPE."
+  "Returns a list containing information about the SQL types of
+each of the attributes in the table specified by TABLE in
+DATABASE which has a default value of *DEFAULT-DATABASE*. OWNER
+is nil by default which means that only attributes owned by users
+are listed. If OWNER is a string denoting a user name, only
+attributes owned by OWNER are listed. If OWNER is :all then all
+attributes are listed. The elements of the returned list are
+lists where the first element is the name of the attribute, the
+second element is its SQL type, the third is the type precision,
+the fourth is the scale of the attribute and the fifth is 1 if
+the attribute accepts null values and otherwise 0."
   (with-slots (attribute-cache) database
     (let ((table-ident (database-identifier table database)))
       (multiple-value-bind (val found) (gethash table-ident attribute-cache)
@@ -311,23 +330,27 @@ is the vendor-specific type returned by ATTRIBUTE-TYPE."
 				     (cons attribute
 					   (multiple-value-list
 					    (database-attribute-type
-					     (database-identifier attribute database)
+					     (database-identifier attribute 
+                                                                  database)
 					     table-ident
 					     database
 					     :owner owner))))
-				 (list-attributes table :database database :owner owner))))
+				 (list-attributes table :database database 
+                                                  :owner owner))))
 	      (cond
 		((and (not found) (eq t *cache-table-queries-default*))
-		 (setf (gethash table-ident attribute-cache) (list :unspecified types)))
+		 (setf (gethash table-ident attribute-cache) 
+                       (list :unspecified types)))
 		((and found (eq t (first val)) 
-		      (setf (gethash table-ident attribute-cache) (list t types)))))
+		      (setf (gethash table-ident attribute-cache) 
+                            (list t types)))))
 	      types))))))
   
 
 ;; Sequences 
 
 (defun create-sequence (name &key (database *default-database*))
-  "Create a sequence called NAME in DATABASE which defaults to
+  "Creates a sequence called NAME in DATABASE which defaults to
 *DEFAULT-DATABASE*."
   (let ((sequence-name (database-identifier name database)))
     (database-create-sequence sequence-name database))
@@ -335,10 +358,10 @@ is the vendor-specific type returned by ATTRIBUTE-TYPE."
 
 (defun drop-sequence (name &key (if-does-not-exist :error)
                            (database *default-database*))
-  "Drops sequence NAME from DATABASE which defaults to
+  "Drops the sequence called NAME from DATABASE which defaults to
 *DEFAULT-DATABASE*. If the sequence does not exist and
-IF-DOES-NOT-EXIST is :ignore then DROP-SEQUENCE returns nil whereas an
-error is signalled if IF-DOES-NOT-EXIST is :error."
+IF-DOES-NOT-EXIST is :ignore then DROP-SEQUENCE returns nil
+whereas an error is signalled if IF-DOES-NOT-EXIST is :error."
   (let ((sequence-name (database-identifier name database)))
     (ecase if-does-not-exist
       (:ignore
@@ -349,38 +372,40 @@ error is signalled if IF-DOES-NOT-EXIST is :error."
   (values))
 
 (defun list-sequences (&key (owner nil) (database *default-database*))
-  "List all sequences in DATABASE, which defaults to
-*default-database*. If OWNER is nil, only user-owned sequences are
-considered. This is the default. If OWNER is :all , all sequences are
-considered. If OWNER is a string, this denotes a username and only
-sequences owned by OWNER are considered. Sequence names are returned
-as a list of strings."
+  "Returns a list of strings representing sequence names in
+DATABASE which defaults to *DEFAULT-DATABASE*. OWNER is nil by
+default which means that only sequences owned by users are
+listed. If OWNER is a string denoting a user name, only sequences
+owned by OWNER are listed. If OWNER is :all then all sequences
+are listed."
   (database-list-sequences database :owner owner))
 
 (defun sequence-exists-p (name &key (owner nil)
                                (database *default-database*))
-  "Test for existence of a sequence called NAME in DATABASE which
-defaults to *DEFAULT-DATABASE*."
+  "Tests for the existence of an SQL sequence called NAME in
+DATABASE which defaults to *DEFAULT-DATABASE*. OWNER is nil by
+default which means that only sequences owned by users are
+examined. If OWNER is a string denoting a user name, only
+sequences owned by OWNER are examined. If OWNER is :all then all
+sequences are examined."
   (when (member (database-identifier name database)
                 (list-sequences :owner owner :database database)
                 :test #'string-equal)
     t))
   
 (defun sequence-next (name &key (database *default-database*))
-  "Return the next value in the sequence NAME in DATABASE."
+  "Return the next value in the sequence called NAME in DATABASE
+  which defaults to *DEFAULT-DATABASE*."
   (database-sequence-next (database-identifier name database) database))
 
 (defun set-sequence-position (name position &key (database *default-database*))
-  "Explicitly set the the position of the sequence NAME in DATABASE to
-POSITION."
-  (database-set-sequence-position (database-identifier name database) position database))
+  "Explicitly set the the position of the sequence called NAME in
+DATABASE, which defaults to *DEFAULT-DATABSE*, to POSITION."
+  (database-set-sequence-position (database-identifier name database) 
+                                  position database))
 
 (defun sequence-last (name &key (database *default-database*))
-  "Return the last value of the sequence NAME in DATABASE."
+  "Return the last value of the sequence called NAME in DATABASE
+  which defaults to *DEFAULT-DATABASE*."
   (database-sequence-last (database-identifier name database) database))
-
-;;; Remote Joins
-
-(defvar *default-update-objects-max-len* nil
-  "The default maximum number of objects supplying data for a query when updating remote joins.")
 

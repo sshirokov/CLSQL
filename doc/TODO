@@ -33,13 +33,21 @@ DOCUMENTATION TO DO LIST
  - SQL-RECORDING-P: also accepts :both and :either values for the TYPE 
    parameter. 
 
- - SQL-EXPRESSION: also accepts a :params keyword arg which is passed 
+ - DROP-TABLE/DROP-VIEW/DROP-INDEX: keyword arg :if-does-not-exist. 
+
+ - DROP-INDEX: keyword arg :on (for MySQL). 
+
+ - DEF-VIEW-CLASS: DB-CONSTRAINTS and DB-TYPE slot options. 
+
+ - CREATE-TABLE: keyword args :TRANSACTIONS (for MySQL) and :CONSTRAINTS 
+                 description arg accepts optional DB-TYPE string. 
 
 4. Documenting lower level, non-CommonSQL functions (some of this is already 
    done). 
 
  - connection pools
  - database-query-result-set 
+
 
 5. Notes on any peculiarities of each of the backends (e.g., unsupported 
    features, notable extensions etc.). 
@@ -51,6 +59,8 @@ DOCUMENTATION TO DO LIST
    queries:      nested subqueries are not supported
    syntax:       doesn't support the sql concatenation operator (||). 
                  doesn't support INTERSECT/EXCEPT set operations. 
+   create-table: the transactions keyword arg controls whether the created 
+                 table is an InnoDB table (supporting transactions) or not. 
 
  - SQLITE 
 

@@ -114,23 +114,18 @@ reader syntax is disabled."
 	     (sql-expression :string (car arglist))
              (sql-expression :attribute (car arglist))))
 	((<= 2 (length arglist))
-	 (let ((sqltype (if (keywordp (caddr arglist))
-			    (caddr arglist) nil))
-	       (sqlparam (if (keywordp (caddr arglist))
-			     (caddr arglist))))
-	   (cond
+	 (let ((sqltype (when (keywordp (caddr arglist)) (caddr arglist) nil)))
+           (cond
              ((stringp (cadr arglist))
 	     (sql-expression :table (car arglist)
 			     :alias (cadr arglist)
 			     :type sqltype))
 	    ((keywordp (cadr arglist))
 	     (sql-expression :attribute (car arglist)
-			     :type (cadr arglist)
-			     :params sqlparam))
+			     :type (cadr arglist)))
 	    (t
 	     (sql-expression :attribute (cadr arglist)
 			     :table (car arglist)
-			     :params sqlparam
 			     :type sqltype)))))
 	(t
 	 (error 'sql-user-error :message "bad expression syntax"))))
@@ -144,7 +139,7 @@ ARGS. The expressions are translated into SQL strings and then
 concatenated with a single space delimiting each expression."
   (format nil "~{~A~^ ~}" (mapcar #'sql-output args)))
 
-(defun sql-expression (&key string table alias attribute type params)
+(defun sql-expression (&key string table alias attribute type)
   "Returns an SQL expression constructed from the supplied arguments
 which may be combined as follows: ATTRIBUTE and TYPE; ATTRIBUTE;
 ALIAS or TABLE and ATTRIBUTE and TYPE; ALIAS or TABLE and
@@ -156,8 +151,7 @@ and ALIAS; TABLE; and STRING."
     (attribute
      (make-instance 'sql-ident-attribute  :name attribute
                     :qualifier (or table alias)
-                    :type type
-                    :params params))
+                    :type type))
     ((and table (not attribute))
      (make-instance 'sql-ident-table :name table
                     :table-alias alias))))

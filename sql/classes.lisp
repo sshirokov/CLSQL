@@ -119,10 +119,7 @@
     :initform "NULL")
    (type
     :initarg :type
-    :initform "NULL")
-   (params
-    :initarg :params
-    :initform nil))
+    :initform "NULL"))
   (:documentation "An SQL Attribute identifier."))
 
 (defmethod collect-table-refs (sql)
@@ -144,7 +141,7 @@
       :type ',type)))
 
 (defmethod output-sql ((expr sql-ident-attribute) database)
-  (with-slots (qualifier name type params)
+  (with-slots (qualifier name type)
       expr
     (if (and (not qualifier) (not type))
 	(write-string (sql-escape (convert-to-db-default-case 
@@ -169,9 +166,9 @@
 
 (defmethod output-sql-hash-key ((expr sql-ident-attribute) database)
   (declare (ignore database))
-  (with-slots (qualifier name type params)
+  (with-slots (qualifier name type)
     expr
-    (list 'sql-ident-attribute qualifier name type params)))
+    (list 'sql-ident-attribute qualifier name type)))
 
 ;; For SQL Identifiers for tables
 (defclass sql-ident-table (sql-ident)
@@ -770,8 +767,11 @@ uninclusive, and the args from that keyword to the end."
                 (if (stringp db-type) db-type ; override definition
                     (database-get-type-specifier (car type) (cdr type) database))
                 *sql-stream*)
-               (let ((constraints
-                      (database-constraint-statement constraints database)))
+               (let ((constraints (database-constraint-statement  
+                                   (if (and db-type (symbolp db-type))
+                                       (cons db-type constraints)
+                                       constraints)
+                                   database)))
                  (when constraints
                    (write-string " " *sql-stream*)
                    (write-string constraints *sql-stream*)))))))
@@ -824,7 +824,11 @@ uninclusive, and the args from that keyword to the end."
 (defparameter *constraint-types*
   (list 
    (cons (symbol-name-default-case "NOT-NULL") "NOT NULL") 
-   (cons (symbol-name-default-case "PRIMARY-KEY") "PRIMARY KEY")))
+   (cons (symbol-name-default-case "PRIMARY-KEY") "PRIMARY KEY")
+   (cons (symbol-name-default-case "NOT") "NOT") 
+   (cons (symbol-name-default-case "NULL") "NULL") 
+   (cons (symbol-name-default-case "PRIMARY") "PRIMARY") 
+   (cons (symbol-name-default-case "KEY") "KEY")))
 
 ;;
 ;; Convert type spec to sql syntax

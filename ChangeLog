@@ -1,3 +1,15 @@
+20 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
+	* sql/classes.lisp: remove unused PARAMS slot in SQL-IDENT-ATTRIBUTE. 
+	* sql/syntax.lisp: remove unused PARAMS keyword arg to SQL-EXPRESSION. 
+	* sql/table.lisp: reworked docstrings. 
+	* sql/objects.lisp: moved *default-update-objects-max-len* here from 
+	table.lisp. 
+	* doc/TODO: notes about :if-does-not-exist arg to DROP-TABLE, 
+	DROP-VIEW and DROP-INDEX and the use of the :transactions and 
+	:constraints keyword args to CREATE-TABLE. 
+	* sql/classes.lisp: the DESCRIPTION argument to CREATE-TABLE is now 
+	CommonSQL compatible with respect to column constraints. 
+
 20 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* sql/oracle-sql.lisp: Now compiles and runs on SBCL.
 	Requires UFFI 1.5.0 or higher

@@ -808,6 +808,13 @@ superclass of the newly-defined View Class."
 		     :from (sql-expression :table jc-view-table)
 		     :where jq)))))))
 
+
+;;; Remote Joins
+
+(defvar *default-update-objects-max-len* nil
+  "The default maximum number of objects supplying data for a
+  query when updating remote joins.")
+
 (defun update-object-joins (objects &key (slots t) (force-p t)
 			    class-name (max-len *default-update-objects-max-len*))
   "Updates the remote join slots, that is those slots defined without
