@@ -6,6 +6,9 @@ TESTS TO ADD
 * Number and Char field types
 * symbol slot
 * generalized-boolean slot
+* Table with two join slots (bug reported on clsql-help 8/13/04 about
+  SQL FROM clause missing the second join table and the WHERE clause
+  having an ',' instead of ' AND ' joining phrases.
 
 OPTIMIZATIONS
  

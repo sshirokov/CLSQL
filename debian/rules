@@ -20,9 +20,9 @@ UPSTREAM_VER	:= $(shell sed -n -e "s/${pkg} (\(.*\)-[0-9A-Za-z\.]).*/\1/p" < deb
 ## Lisp sources
 srcs		:= $(wildcard sql/*.lisp) clsql.asd
 srcs-uffi	:= $(wildcard uffi/*.lisp) $(wildcard uffi/*.c)
-srcs-uffi-so	:= $(wildcard uffi/*.so)
+srcs-uffi-so	= $(wildcard uffi/*.so)
 srcs-mysql	:= $(wildcard db-mysql/*.lisp) $(wildcard db-mysql/*.c)
-srcs-mysql-so	:=  $(wildcard db-mysql/*.so)
+srcs-mysql-so	=  $(wildcard db-mysql/*.so)
 srcs-pg		:= $(wildcard db-postgresql/*.lisp)
 srcs-pg-socket	:= $(wildcard db-postgresql-socket/*.lisp)
 srcs-aodbc	:= $(wildcard db-aodbc/*.lisp)
