@@ -703,15 +703,12 @@ the length of that format.")
 				 defnp
 				 (deref-vp errhp)
 				 (1+ icolumn) ; OCI 1-based indexing again
-				 (uffi:with-cast-pointer (vp (foreign-resource-buffer buffer) :void)
-				   vp)
+				 (foreign-resource-buffer buffer)
 				 sizeof
 				 dtype
-				 (uffi:with-cast-pointer (vp (foreign-resource-buffer indicators) :void)
-				   vp)
+				 (foreign-resource-buffer indicators)
 				 (uffi:make-null-pointer :unsigned-short)
-				 (uffi:with-cast-pointer (vp (foreign-resource-buffer retcodes) :unsigned-short)
-				   vp)
+				 (foreign-resource-buffer retcodes)
 				 +oci-default+))))))))
   
 ;; Release the resources associated with a QUERY-CURSOR.
