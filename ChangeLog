@@ -1,4 +1,9 @@
 15 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.7.1: Fix for new ODBC backend.
+	clsql-odbc now works on SBCL, CMUCL, OpenMCL
+	in addition to AllegroCL and Lispworks.
+
+15 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.7.0: New backend: ODBC. Tests as
 	well as AODBC backend on Allegro,Lispworks.
 	SBCL and CMUCL don't work quite yet.  Requires UFFI v1.4.11+

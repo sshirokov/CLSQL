@@ -64,7 +64,6 @@ as possible second argument) to the desired representation of date/time/timestam
 		#.$SQL_MAX_MESSAGE_LENGTH msg-length)
       (let ((err (convert-from-foreign-string error-message))
 	    (state (convert-from-foreign-string sql-state)))
-	
 	(free-foreign-object error-message)
 	(free-foreign-object sql-state)
 	(values
