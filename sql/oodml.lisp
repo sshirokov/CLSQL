@@ -317,6 +317,14 @@
       (format nil "INT(~A)" (car args))
     "INT"))
 
+(deftype tinyint () 
+  "An 8-bit integer, this width may vary by SQL implementation."
+  'integer)
+
+(defmethod database-get-type-specifier ((type (eql 'tinyint)) args database db-type)
+  (declare (ignore args database db-type))
+  "INT")
+
 (deftype smallint () 
   "An integer smaller than a 32-bit integer, this width may vary by SQL implementation."
   'integer)

@@ -407,6 +407,10 @@
 	      <member><parameter>(number n)</parameter></member>
 	      <member><parameter>(number n p)</parameter></member>
 	      <member>
+		<parameter>tinyint</parameter> - An integer column 8-bits
+		wide. [not supported by all database backends]
+	      </member>
+	      <member>
 		<parameter>smallint</parameter> - An integer column 16-bits
 		wide. [not supported by all database backends]
 	      </member>

@@ -1,3 +1,6 @@
+11 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/oodml.lisp, sql/package.lisp, doc/ref-ooddl.lisp, db-mysql/mysql-objects.lisp: Add tinyint type
+	
 10 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.11.14
 	* doc/*.xml: documentation additionals and fixes so

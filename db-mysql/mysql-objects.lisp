@@ -25,6 +25,11 @@
   (declare (ignore args database))
   "SMALLINT")
 
+(defmethod database-get-type-specifier ((type (eql 'tinyint)) args database
+					(db-type (eql :mysql)))
+  (declare (ignore args database))
+  "TINYINT")
+
 (defmethod database-output-sql-as-type ((type (eql 'boolean)) val database
 					(db-type (eql :mysql)))
   (declare (ignore database))
