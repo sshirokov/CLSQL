@@ -842,6 +842,8 @@ uninclusive, and the args from that keyword to the end."
    (cons (symbol-name-default-case "NULL") "NULL") 
    (cons (symbol-name-default-case "PRIMARY") "PRIMARY") 
    (cons (symbol-name-default-case "KEY") "KEY")
+   (cons (symbol-name-default-case "UNSIGNED") "UNSIGNED") 
+   (cons (symbol-name-default-case "ZEROFILL") "ZEROFILL") 
    (cons (symbol-name-default-case "AUTO-INCREMENT") "AUTO_INCREMENT")
    (cons (symbol-name-default-case "UNIQUE") "UNIQUE")))
 

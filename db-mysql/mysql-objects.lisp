@@ -20,6 +20,11 @@
   (declare (ignore args database))
   "DATETIME")
 
+(defmethod database-get-type-specifier ((type (eql 'smallint)) args database
+					(db-type (eql :mysql)))
+  (declare (ignore args database))
+  "SMALLINT")
+
 (defmethod database-output-sql-as-type ((type (eql 'boolean)) val database
 					(db-type (eql :mysql)))
   (declare (ignore database))

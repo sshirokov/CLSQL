@@ -348,6 +348,7 @@
 	 #:bigint
 	 #:varchar
 	 #:generalized-boolean
+	 #:smallint
 	 #:*default-string-length*
 
 	 ;; OODML (oodml.lisp) 

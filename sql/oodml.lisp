@@ -315,7 +315,15 @@
   (declare (ignore database db-type))
   (if args
       (format nil "INT(~A)" (car args))
-      "INT"))
+    "INT"))
+
+(deftype smallint () 
+  "An integer smaller than a 32-bit integer, this width may vary by SQL implementation."
+  'integer)
+
+(defmethod database-get-type-specifier ((type (eql 'smallint)) args database db-type)
+  (declare (ignore args database db-type))
+  "INT")
 
 (deftype bigint () 
   "An integer larger than a 32-bit integer, this width may vary by SQL implementation."
@@ -492,6 +500,14 @@
       (read-from-string val))))
 
 (defmethod read-sql-value (val (type (eql 'integer)) database db-type)
+  (declare (ignore database db-type))
+  (etypecase val
+    (string
+     (unless (string-equal "NIL" val)
+       (parse-integer val)))
+    (number val)))
+
+(defmethod read-sql-value (val (type (eql 'smallint)) database db-type)
   (declare (ignore database db-type))
   (etypecase val
     (string

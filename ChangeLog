@@ -1,3 +1,11 @@
+7 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/ooddl.lisp: Added SMALLINT type
+	* sql/generic-postgresql.lisp: Added INT2 as SMALLINT type
+	* db-mysql/mysql-objects.lisp: Added SMALLINT type
+	* sql/package.lisp: Export SMALLINT
+	* sql/expressions.lisp: Add MYSQL's UNSIGNED and ZEROFILL as
+	db-constraints
+	
 6 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* sql/expressions.lisp: add AUTO-INCREMENT and UNIQUE to the 
 	recognised column constraints for CREATE-TABLE and the :DB-CONSTRAINTS 

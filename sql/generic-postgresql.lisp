@@ -32,7 +32,12 @@
   (declare (ignore database))
   (if args
       (format nil "CHAR(~A)" (car args))
-      "VARCHAR"))
+    "VARCHAR"))
+
+(defmethod database-get-type-specifier ((type (eql 'smallint)) args database
+					(db-type (eql :postgresql)))
+  (declare (ignore args database))
+  "INT2")
 
 (defmethod database-get-type-specifier ((type (eql 'wall-time)) args database
 					(db-type (eql :postgresql)))
