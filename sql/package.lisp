@@ -360,7 +360,9 @@
 	 #:delete-instance-records          
 	 ;; CLSQL Extensions 
 	 #:*db-auto-sync*    
-
+	 #:write-instance-to-stream
+	 #:read-instance-from-stream
+	 
 	 ;; Symbolic SQL Syntax (syntax.lisp) 
 	 #:sql                              
 	 #:sql-expression                   

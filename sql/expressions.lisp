@@ -579,7 +579,12 @@ uninclusive, and the args from that keyword to the end."
     (when from
       (write-string " FROM " *sql-stream*)
       (typecase from 
-        (list (output-sql (apply #'vector from) database))
+        (list (output-sql (apply #'vector (remove-duplicates 
+					   from 
+					   :test #'(lambda (a b)
+						     (string-equal (symbol-name (slot-value a 'name))
+								   (symbol-name (slot-value b 'name))))))
+			  database))
         (string (write-string from *sql-stream*))
         (t (output-sql from database))))
     (when inner-join

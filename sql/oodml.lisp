@@ -1081,3 +1081,27 @@ as elements of a list."
   results)
 
 
+
+;;; Serialization functions
+
+(defun write-instance-to-stream (obj stream)
+  "Writes an instance to a stream where it can be later be read.
+NOTE: an error will occur if a slot holds a value which can not be written readably."
+  (let* ((class (class-of obj))
+	 (alist '()))
+    (dolist (slot (ordered-class-slots (class-of obj)))
+      (let ((name (slot-definition-name slot)))
+	(when (and (not (eq 'view-database name))
+		   (slot-boundp obj name))
+	  (push (cons name (slot-value obj name)) alist))))
+    (setq alist (reverse alist))
+    (write (cons (class-name class) alist) :stream stream :readably t))
+  obj)
+
+(defun read-instance-from-stream (stream)
+  (let ((raw (read stream nil nil)))
+    (when raw
+      (let ((obj (make-instance (car raw))))
+	(dolist (pair (cdr raw))
+	  (setf (slot-value obj (car pair)) (cdr pair)))
+	obj))))

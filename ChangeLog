@@ -1,4 +1,10 @@
 13 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/oodml.lisp: Add new serialization functions:
+	WRITE-INSTANCE-TO-STREAM and READ-INSTANCE-FROM-STREAM
+	* sql/expressions.lisp: Avoid duplicate FROM names when selecting
+	from a table that has more than one primary index.
+	
+13 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.11.9
 	* sql/conditions.lisp: Set initial slot value for message in SQL-WARNING
 	* sql/transactions.lisp: Correctly set slots of SQL-WARNING
