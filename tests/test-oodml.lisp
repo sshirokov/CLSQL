@@ -59,7 +59,7 @@
   3)
 
 (deftest :oodml/select/6
-    (let ((a (caar (clsql:select 'address :where [= 1 [emplid]]))))
+    (let ((a (caar (clsql:select 'address :where [= 1 [addressid]]))))
       (values
        (slot-value a 'street-number)
        (slot-value a 'street-name)
@@ -68,7 +68,7 @@
   10 "Park Place" "Leningrad" 123)
 
 (deftest :oodml/select/7
-    (let ((a (caar (clsql:select 'address :where [= 2 [emplid]]))))
+    (let ((a (caar (clsql:select 'address :where [= 2 [addressid]]))))
       (values
        (slot-value a 'street-number)
        (slot-value a 'street-name)
@@ -80,6 +80,27 @@
     (mapcar #'(lambda (e) (slot-value e 'married)) 
               (clsql:select 'employee :flatp t :order-by [emplid]))
   (t t t nil nil nil nil nil nil nil))
+
+(deftest :oodml/select/9
+    (mapcar #'(lambda (pair)
+		(list
+		 (typep (car pair) 'address)
+		 (typep (cdr pair) 'employee-address)
+		 (slot-value (car pair) 'addressid)
+		 (slot-value (cdr pair) 'addressid)))
+     (employee-addresses employee1))
+  ((t t 1 1) (t t 2 2)))
+
+(deftest :oodml/select/10
+    (mapcar #'(lambda (pair)
+		(list
+		 (typep (car pair) 'address)
+		 (typep (cdr pair) 'employee-address)
+		 (slot-value (car pair) 'addressid)
+		 (slot-value (cdr pair) 'addressid)))
+     (employee-addresses employee2))
+  ((t t 2 2)))
+
 
 ;; tests update-records-from-instance 
 (deftest :oodml/update-records/1

@@ -289,14 +289,14 @@
 
 (deftest :fdml/select/15
     (multiple-value-bind (rows field-names)
-	(clsql:select [emplid] [street-number] [street-name] [city_field] [zip] 
+	(clsql:select [addressid] [street-number] [street-name] [city_field] [zip] 
 	 :from [address]
-	 :where [= 1 [emplid]])
+	 :where [= 1 [addressid]])
       (values
        rows
        (mapcar #'string-downcase field-names)))
   ((1 10 "Park Place" "Leningrad" 123))
-  ("emplid" "street_number" "street_name" "city_field" "zip"))
+  ("addressid" "street_number" "street_name" "city_field" "zip"))
 
 (deftest :fdml/select/16
     (clsql:select [emplid] :from [employee] :where [= 1 [emplid]]
@@ -352,17 +352,17 @@
    "Josef Stalin" "Leon Trotsky" "Boris Yeltsin"))
 
 (deftest :fdml/loop/2
-    (loop for (emplid)
+    (loop for (addressid)
       being each tuple in
-      [select [emplid] :from [address] :order-by [emplid]]
-     collect emplid)
+      [select [addressid] :from [address] :order-by [addressid]]
+     collect addressid)
   (1 2))
 
 (deftest :fdml/loop/3
-    (loop for emplid
+    (loop for addressid
       being each tuple in
-      [select [emplid] :from [address] :order-by [emplid]]
-      collect emplid)
+      [select [addressid] :from [address] :order-by [addressid]]
+      collect addressid)
   (1 2))
 
 ;; starts a transaction deletes a record and then rolls back the deletion 

@@ -65,7 +65,8 @@
     :type (string 100)
     :initarg :email)
    (companyid
-    :type integer)
+    :type integer
+    :initarg :companyid)
    (company
     :accessor employee-company
     :db-kind :join
@@ -74,14 +75,23 @@
 			  :foreign-key companyid
 			  :set nil))
    (managerid
-    :type integer)
+    :type integer
+    :initarg :managerid)
    (manager
     :accessor employee-manager
     :db-kind :join
     :db-info (:join-class employee
 			  :home-key managerid
 			  :foreign-key emplid
-			  :set nil)))
+			  :set nil))
+   (addresses
+    :accessor employee-addresses
+    :db-kind :join
+    :db-info (:join-class employee-address
+			  :home-key emplid
+			  :foreign-key emplid
+			  :target-slot address
+			  :set t)))
   (:base-table employee))
 
 (def-view-class company ()
@@ -99,7 +109,8 @@
     :type (string 100)
     :initarg :name)
    (presidentid
-    :type integer)
+    :type integer
+    :initarg :presidentid)
    (president
     :reader president
     :db-kind :join
@@ -118,11 +129,11 @@
 
 
 (def-view-class address ()
-  ((emplid
+  ((addressid
     :db-kind :key
     :db-constraints :not-null
     :type integer
-    :initarg :emplid)
+    :initarg :addressid)
    (street-number
     :type integer
     :initarg :street-number)
@@ -140,6 +151,18 @@
     :type integer
     :void-value 0
     :initarg :postal-code)))
+
+;; many employees can reside at many addressess
+(def-view-class employee-address ()
+  ((emplid :type integer
+	   :initarg :emplid)
+   (addressid :type integer
+	      :initarg :addressid)
+   (address :db-kind :join
+	    :db-info (:join-class address
+				  :home-key addressid
+				  :foreign-key addressid
+				  :retrieval :immediate))))
 
 (defun test-connect-to-database (db-type spec)
   (when (db-backend-has-create/destroy-db? db-type)
@@ -177,6 +200,11 @@
 (defparameter employee10 nil)
 (defparameter address1 nil)
 (defparameter address2 nil)
+(defparameter employee-address1 nil)
+(defparameter employee-address2 nil)
+(defparameter employee-address3 nil)
+(defparameter employee-address4 nil)
+(defparameter employee-address5 nil)
 
 (defun test-initialise-database ()
   (test-basic-initialize)
@@ -187,118 +215,153 @@
 	   :warn)))
     (clsql:create-view-from-class 'employee)
     (clsql:create-view-from-class 'company)
-    (clsql:create-view-from-class 'address))
+    (clsql:create-view-from-class 'address)
+    (clsql:create-view-from-class 'employee-address))
 
-  (setf company1 (make-instance 'company
-		   :companyid 1
-		   :groupid 1
-		   :name "Widgets Inc.")
-	employee1 (make-instance 'employee
-		    :emplid 1
-		    :groupid 1
-		    :married t 
-		    :height (1+ (random 1.00))
-		    :birthday (clsql-base:get-time)
-		    :first-name "Vladamir"
-		    :last-name "Lenin"
-		    :email "lenin@soviet.org")
-	employee2 (make-instance 'employee
-		    :emplid 2
-		    :groupid 1
-		    :height (1+ (random 1.00))
-		    :married t 
-		    :birthday (clsql-base:get-time)
-		    :first-name "Josef"
-		    :last-name "Stalin"
-		    :email "stalin@soviet.org")
-	employee3 (make-instance 'employee
-		    :emplid 3
-		    :groupid 1
-		    :height (1+ (random 1.00))
-		    :married t 
-		    :birthday (clsql-base:get-time)
-		    :first-name "Leon"
-		    :last-name "Trotsky"
-		    :email "trotsky@soviet.org")
-	employee4 (make-instance 'employee
-		    :emplid 4
-		    :groupid 1
-		    :height (1+ (random 1.00))
-		    :married nil
-		    :birthday (clsql-base:get-time)
-		    :first-name "Nikita"
-		    :last-name "Kruschev"
-		    :email "kruschev@soviet.org")
-	
-	employee5 (make-instance 'employee
-		    :emplid 5
-		    :groupid 1
-		    :married nil
-		    :height (1+ (random 1.00))
-		    :birthday (clsql-base:get-time)
-		    :first-name "Leonid"
-		    :last-name "Brezhnev"
-		    :email "brezhnev@soviet.org")
-
-	employee6 (make-instance 'employee
-		    :emplid 6
-		    :groupid 1
-		    :married nil
-		    :height (1+ (random 1.00))
-		    :birthday (clsql-base:get-time)
-		    :first-name "Yuri"
-		    :last-name "Andropov"
-		    :email "andropov@soviet.org")
-	employee7 (make-instance 'employee
-		    :emplid 7
-		    :groupid 1
-		    :height (1+ (random 1.00))
-		    :married nil
-		    :birthday (clsql-base:get-time)
-		    :first-name "Konstantin"
-		    :last-name "Chernenko"
-		    :email "chernenko@soviet.org")
-	employee8 (make-instance 'employee
-		    :emplid 8
-		    :groupid 1
-		    :height (1+ (random 1.00))
-		    :married nil
-		    :birthday (clsql-base:get-time)
-		    :first-name "Mikhail"
-		    :last-name "Gorbachev"
-		    :email "gorbachev@soviet.org")
-	employee9 (make-instance 'employee
-		    :emplid 9
-		    :groupid 1 
-		    :married nil
-		    :height (1+ (random 1.00))
-		    :birthday (clsql-base:get-time)
-		    :first-name "Boris"
-		    :last-name "Yeltsin"
-		    :email "yeltsin@soviet.org")
-	employee10 (make-instance 'employee
-		     :emplid 10
-		     :groupid 1
-		     :married nil
-		     :height (1+ (random 1.00))
-		     :birthday (clsql-base:get-time)
-		     :first-name "Vladamir"
-		     :last-name "Putin"
-		     :email "putin@soviet.org")
-
-	address1 (make-instance 'address
-				:emplid 1
-				:street-number 10
-				:street-name "Park Place"
-				:city "Leningrad"
-				:postal-code 123)
-
-	address2 (make-instance 'address
-				:emplid 2))
-  
+  (let ((*update-records-on-make-instance* t))
+    (setf company1 (make-instance 'company
+				  :presidentid 1
+				  :companyid 1
+				  :groupid 1
+				  :name "Widgets Inc.")
+	  employee1 (make-instance 'employee
+				   :emplid 1
+				   :groupid 1
+				   :married t 
+				   :height (1+ (random 1.00))
+				   :birthday (clsql-base:get-time)
+				   :first-name "Vladamir"
+				   :last-name "Lenin"
+				   :email "lenin@soviet.org"
+				   :companyid 1)
+	  employee2 (make-instance 'employee
+				   :emplid 2
+				   :groupid 1
+				   :height (1+ (random 1.00))
+				   :married t 
+				   :birthday (clsql-base:get-time)
+				   :first-name "Josef"
+				   :last-name "Stalin"
+				   :email "stalin@soviet.org"
+				   :managerid 1
+				   :companyid 1)
+	  employee3 (make-instance 'employee
+				   :emplid 3
+				   :groupid 1
+				   :height (1+ (random 1.00))
+				   :married t 
+				   :birthday (clsql-base:get-time)
+				   :first-name "Leon"
+				   :last-name "Trotsky"
+				   :email "trotsky@soviet.org"
+				   :managerid 1
+				   :companyid 1)
+	  employee4 (make-instance 'employee
+				   :emplid 4
+				   :groupid 1
+				   :height (1+ (random 1.00))
+				   :married nil
+				   :birthday (clsql-base:get-time)
+				   :first-name "Nikita"
+				   :last-name "Kruschev"
+				   :email "kruschev@soviet.org"
+				   :managerid 1
+				   :companyid 1)
+	  employee5 (make-instance 'employee
+				   :emplid 5
+				   :groupid 1
+				   :married nil
+				   :height (1+ (random 1.00))
+				   :birthday (clsql-base:get-time)
+				   :first-name "Leonid"
+				   :last-name "Brezhnev"
+				   :email "brezhnev@soviet.org"
+				   :managerid 1
+				   :companyid 1)
+	  employee6 (make-instance 'employee
+				   :emplid 6
+				   :groupid 1
+				   :married nil
+				   :height (1+ (random 1.00))
+				   :birthday (clsql-base:get-time)
+				   :first-name "Yuri"
+				   :last-name "Andropov"
+				   :email "andropov@soviet.org"
+				   :managerid 1
+				   :companyid 1)
+	  employee7 (make-instance 'employee
+				   :emplid 7
+				   :groupid 1
+				   :height (1+ (random 1.00))
+				   :married nil
+				   :birthday (clsql-base:get-time)
+				   :first-name "Konstantin"
+				   :last-name "Chernenko"
+				   :email "chernenko@soviet.org"
+				   :managerid 1
+				   :companyid 1)
+	  employee8 (make-instance 'employee
+				   :emplid 8
+				   :groupid 1
+				   :height (1+ (random 1.00))
+				   :married nil
+				   :birthday (clsql-base:get-time)
+				   :first-name "Mikhail"
+				   :last-name "Gorbachev"
+				   :email "gorbachev@soviet.org"
+				   :managerid 1
+				   :companyid 1)
+	  employee9 (make-instance 'employee
+				   :emplid 9
+				   :groupid 1 
+				   :married nil
+				   :height (1+ (random 1.00))
+				   :birthday (clsql-base:get-time)
+				   :first-name "Boris"
+				   :last-name "Yeltsin"
+				   :email "yeltsin@soviet.org"
+				   :managerid 1
+				   :companyid 1)
+	  employee10 (make-instance 'employee
+				    :emplid 10
+				    :groupid 1
+				    :married nil
+				    :height (1+ (random 1.00))
+				    :birthday (clsql-base:get-time)
+				    :first-name "Vladamir"
+				    :last-name "Putin"
+				    :email "putin@soviet.org"
+				    :managerid 1
+				    :companyid 1)
+	  address1 (make-instance 'address
+				  :addressid 1
+				  :street-number 10
+				  :street-name "Park Place"
+				  :city "Leningrad"
+				  :postal-code 123)
+	  address2 (make-instance 'address
+				  :addressid 2)
+	  employee-address1 (make-instance 'employee-address
+					   :emplid 1
+					   :addressid 1)
+	  employee-address2 (make-instance 'employee-address
+					   :emplid 2
+					   :addressid 2)
+	  employee-address3 (make-instance 'employee-address
+					   :emplid 3
+					   :addressid 1)
+	  employee-address4 (make-instance 'employee-address
+					   :emplid 1
+					   :addressid 2)
+	  employee-address5 (make-instance 'employee-address
+					   :emplid 3
+					   :addressid 2)
+	  ))
+    
   ;; sleep to ensure birthdays are no longer at current time
-  (sleep 2) 
-
+  (sleep 1) 
+  
+  #||
   ;; Lenin manages everyone
   (clsql:add-to-relation employee2 'manager employee1)
   (clsql:add-to-relation employee3 'manager employee1)
@@ -322,7 +385,10 @@
   (clsql:add-to-relation company1 'employees employee10)
   ;; Lenin is president of Widgets Inc.
   (clsql:add-to-relation company1 'president employee1)
-  ;; store these instances 
+  ||#
+  
+  ;; store these instances
+  #||
   (clsql:update-records-from-instance employee1)
   (clsql:update-records-from-instance employee2)
   (clsql:update-records-from-instance employee3)
@@ -335,7 +401,9 @@
   (clsql:update-records-from-instance employee10)
   (clsql:update-records-from-instance company1)
   (clsql:update-records-from-instance address1)
-  (clsql:update-records-from-instance address2))
+  (clsql:update-records-from-instance address2)
+  ||#
+  )
 
 (defvar *error-count* 0)
 (defvar *error-list* nil)
