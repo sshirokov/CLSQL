@@ -231,6 +231,10 @@
        #:database-commit-transaction
        #:transaction-level
        #:transaction
+       
+       ;; Database capabilities
+       #:db-use-column-on-drop-index?
+       
        ))
    (:export
     ;; "Private" exports for use by interface packages

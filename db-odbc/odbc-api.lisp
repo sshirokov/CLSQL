@@ -943,9 +943,6 @@ as possible second argument) to the desired representation of date/time/timestam
 (defun %table-statistics (table hstmt &key unique (ensure t))
   (with-cstrings ((table-cs table))
     (with-error-handling (:hstmt hstmt)
-      (print hstmt)
-      (print table-cs)
-      (print (uffi:convert-from-cstring table-cs))
       (SQLStatistics 
        hstmt
        +null-ptr+ 0

@@ -285,6 +285,9 @@
 	 #:transaction-level
 	 #:transaction
 
+	 ;; Database features specialized by backend
+	 #:db-use-column-on-drop-index?
+	 
 	 ))
     (:documentation "This is the INTERNAL SQL-Interface package of CLSQL-BASE."))
 

@@ -419,6 +419,11 @@
 	  (database-disconnect database)
 	  (setf (slot-value database 'clsql-base-sys::state) :closed))))))
 
+;;; Database capabilities
+
+(defmethod db-use-column-on-drop-index? ((database mysql-database))
+  t)
 
 (when (clsql-base-sys:database-type-library-loaded :mysql)
   (clsql-base-sys:initialize-database-type :database-type :mysql))
+

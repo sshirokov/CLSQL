@@ -286,17 +286,33 @@
                                   &key (owner nil))
   (let ((result '()))
     (dolist (table (database-list-tables database :owner owner) result)
-      (append (database-list-table-indexes table database :owner owner)
-	      result))))
+      (setq result
+	(append (database-list-table-indexes table database :owner owner)
+		result)))))
 
 (defmethod database-list-table-indexes (table (database odbc-database)
 					&key (owner nil))
+  (declare (ignore owner))
   (multiple-value-bind (rows col-names)
-      (odbc-dbi:list-table-indexes table :db (database-odbc-conn database))
+      (odbc-dbi:list-table-indexes 
+       (string-downcase table)
+       :db (database-odbc-conn database))
     (declare (ignore col-names))
     ;; INDEX_NAME is hard-coded in sixth position by ODBC driver
-    (loop for row in rows collect (nth 5 row))))
+    ;; FIXME: ??? is hard-coded in the fourth position
+    (do ((results nil)
+	 (loop-rows rows (cdr loop-rows)))
+	((null loop-rows) (nreverse results))
+      (let* ((row (car loop-rows))
+	     (col (nth 5 row))
+	     (type (nth 3 row)))
+	(unless (or (find col results :test #'string-equal)
+		    #+ignore (equal "0" type))
+	  (push col results))))))
 
-#+ignore
+(defmethod database-initialize-database-type ((database-type (eql :odbc)))
+  ;; nothing to do
+  t)
+
 (when (clsql-base-sys:database-type-library-loaded :odbc)
   (clsql-base-sys:initialize-database-type :database-type :odbc))

@@ -204,6 +204,15 @@ the given lisp type and parameters."))
 (defgeneric oid (object)
   (:documentation "Return the unique ID of a database object."))
 
+;;; Database backend capabilities
+
+(defgeneric db-use-column-on-drop-index? (database)
+  (:method (database)
+	   (declare (ignore database))
+	   ;; Standard SQL does not use column name on DROP INDEX
+	   nil)
+  (:documentation "NIL [default] lif database does not use column name on DROP INDEX."))
+
 
 ;;; Large objects support (Marc Battyani)
 

@@ -176,24 +176,24 @@
 ;; test list-table-indexes
 (deftest :fddl/index/3
     (progn
-      (clsql:create-index [bar] :on [employee] :attributes
-			  '([last-name]) :unique nil)
-      (clsql:create-index [foo] :on [employee] :attributes
-			  '([first-name]) :unique nil)
+      (clsql:execute-command "CREATE TABLE I3TEST (a char(10), b integer)")
+      (clsql:create-index [bar] :on [i3test] :attributes
+			  '([a]) :unique t)
+      (clsql:create-index [foo] :on [i3test] :attributes
+			  '([b]) :unique nil)
       (values
        
        (sort 
 	(mapcar 
 	 #'string-downcase
-	 (clsql:list-table-indexes [employee] :owner *test-database-user*))
+	 (clsql:list-table-indexes [i3test] :owner *test-database-user*))
 	    #'string-lessp)
        (sort (clsql:list-table-indexes [company] :owner *test-database-user*)
 	     #'string-lessp)
        (progn
-	 (clsql:drop-index [bar] :on [employee])
-	 (clsql:drop-index [foo] :on [employee])
+	 (clsql:drop-index [bar] :on [i3test])
+	 (clsql:drop-index [foo] :on [i3test])
 	 t)))
-
   ("bar" "foo") nil t)
 
 ;; create an sequence, test for existence, drop it and test again 
