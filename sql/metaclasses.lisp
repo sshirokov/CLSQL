@@ -165,11 +165,13 @@
                (nth (1+ pos) list)))))
     (mapcar #'extract keys)))
 
+(defvar *impl-type-attrib-name* #-clisp 'type #+clisp 'clos::$type)
+
 (defun describe-db-layout (class)
   (flet ((not-db-col (col)
            (not (member (nth 2 col)  '(nil :base :key))))
          (frob-slot (slot)
-           (let ((type (slot-value slot 'type)))
+           (let ((type (slot-value slot *impl-type-attrib-name*)))
              (if (eq type t)
                  (setq type nil))
              (list (slot-value slot 'name)
@@ -442,7 +444,7 @@ which does type checking before storing a value in a slot."
 	       (null (specified-type dsd)))
       (setf (specified-type dsd)
 	(slot-definition-type dsd))
-      (setf (slot-value dsd 'type)
+      (setf (slot-value dsd *impl-type-attrib-name*)
 	(compute-lisp-type-from-slot-specification 
 	 dsd (slot-definition-type dsd))))
       
