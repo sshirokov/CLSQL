@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql.system,v 1.19 2002/08/23 19:39:56 kevin Exp $
+;;;; $Id: clsql.system,v 1.20 2002/09/06 10:56:13 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -28,7 +28,9 @@
 ;;; System definitions
 
 (defsystem :clsql
-  :source-pathname #.(format nil "~A:clsql;" +clsql-logical-host+)
+  :source-pathname #.(format nil "~A:clsql;"
+			     #+common-lisp-controller "cl-library"
+			     #-common-lisp-controller "clsql")
   :source-extension "cl"
   :components ((:file "package")
 	       (:file "pool" :depends-on ("package"))

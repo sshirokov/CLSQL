@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql-base.asd,v 1.7 2002/09/06 10:31:51 kevin Exp $
+;;;; $Id: clsql-base.asd,v 1.8 2002/09/06 10:56:13 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -31,16 +31,13 @@
 		    :device (pathname-device *load-truename*)
 		    :directory (pathname-directory *load-truename*)))))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defconstant +clsql-logical-host+
-      #+common-lisp-controller "cl-library"
-      #-common-lisp-controller "clsql"
-      "Logical hostname for loading system"))
 
  ;;; System definitions
 
 (defsystem clsql-base
-  :pathname #.(format nil "~A:clsql-base;" +clsql-logical-host+)
+    :pathname #.(format nil "~A:clsql-base;" 
+      #+common-lisp-controller "cl-library"
+      #-common-lisp-controller "clsql")
   :perform (load-op :after (op clsql-base)
 		    (pushnew :clsql-base cl:*features*))
   :components ((:file "cmucl-compat")

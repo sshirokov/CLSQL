@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-aodbc.asd,v 1.4 2002/09/06 10:26:17 kevin Exp $
+;;;; $Id: clsql-aodbc.asd,v 1.5 2002/09/06 10:56:13 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -20,10 +20,12 @@
 (in-package :asdf)
 
 (defsystem clsql-aodbc
-  :pathname #.(format nil "~A:clsql-aodbc;" +clsql-logical-host+)
-  :components ((:file "aodbc-package")
-	       (:file "aodbc-sql" :depends-on ("aodbc-package")))
-  :depends-on (:clsql-base))
+    :pathname #.(format nil "~A:clsql-aodbc;"
+			#+common-lisp-controller "cl-library"
+			#-common-lisp-controller "clsql")
+    :components ((:file "aodbc-package")
+		 (:file "aodbc-sql" :depends-on ("aodbc-package")))
+    :depends-on (:clsql-base))
 
     
 (defmethod source-file-type  ((c cl-source-file)
