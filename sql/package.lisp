@@ -184,7 +184,10 @@
        #:status                            ; database   xx
        #:with-database
        #:with-default-database
-       
+
+       ;; pool.lisp
+       #:disconnect-pooled
+
        ;; basic-sql.lisp
        #:query
        #:execute-command
