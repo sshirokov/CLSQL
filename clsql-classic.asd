@@ -38,6 +38,6 @@
 	     (:file "functional" :depends-on ("sql"))))))
 
 #+(or allegro lispworks cmu sbcl openmcl mcl scl)
-(defmethod perform ((o test-op) (c (eql (find-system :clsql-classic))))
-  (oos 'load-op 'clsql-classic-tests)
-  (oos 'test-op 'clsql-classic-tests))
+(defmethod perform ((o test-op) (c (eql (find-system 'clsql-classic))))
+  (operate 'load-op 'clsql-classic-tests)
+  (operate 'test-op 'clsql-classic-tests))

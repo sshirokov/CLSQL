@@ -2,10 +2,10 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; File:    clsql-tests.asd
-;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>
-;;;; Created: 30/03/2004
-;;;; Updated: <04/04/2004 12:34:41 marcusp>
+;;;; File:     clsql-tests.asd
+;;;; Authors:  Marcus Pearce <m.t.pearce@city.ac.uk> and Kevin Rosenberg 
+;;;; Created:  30/03/2004
+;;;; Updated:  $Id$
 ;;;;
 ;;;; $Id$
 ;;;;
@@ -16,8 +16,10 @@
 ;;;; ======================================================================
 
 (in-package #:cl-user)
+(defpackage #:clsql-classic-tests-system (:use #:asdf #:cl))
+(in-package #:clsql-classic-tests-system)
 
-(asdf:defsystem clsql-tests
+(defsystem clsql-tests
     :name "CLSQL Tests"
     :author ""
     :maintainer ""
@@ -36,3 +38,10 @@
 			   (:file "test-ooddl")
 			   (:file "test-oodml")
 			   (:file "test-syntax")))))
+
+(defmethod perform ((o test-op) (c (eql (find-system 'clsql-tests))))
+  (error "Automated performing of test-op is not yet supported.")
+  #+ignore
+  (unless (funcall (intern (symbol-name '#:run-tests)
+			   (find-package '#:clsql-tests)))
+    (error "test-op failed")))

@@ -141,7 +141,7 @@
   (setf (database-conn-ptr database) nil)
   t)
 
-(defmethod database-query (query-expression (database postgresql-database) types)
+(defmethod database-query (query-expression (database postgresql-database) result-types)
   (let ((conn-ptr (database-conn-ptr database)))
     (declare (type pgsql-conn-def conn-ptr))
     (uffi:with-cstring (query-native query-expression)
@@ -158,8 +158,8 @@
                nil)
               (#.pgsql-exec-status-type#tuples-ok
 	       (let ((num-fields (PQnfields result)))
-		 (setq types
-		   (canonicalize-types types num-fields
+		 (setq result-types
+		   (canonicalize-types result-types num-fields
 					     result))
 		 (loop for tuple-index from 0 below (PQntuples result)
 		       collect
@@ -168,7 +168,7 @@
 			     (if (zerop (PQgetisnull result tuple-index i))
 				 (convert-raw-field
 				  (PQgetvalue result tuple-index i)
-				  types i)
+				  result-types i)
 				 nil)))))
               (t
                (error 'clsql-sql-error
@@ -218,7 +218,7 @@
 
 (defmethod database-query-result-set ((query-expression string)
 				      (database postgresql-database) 
-                                      &key full-set types)
+                                      &key full-set result-types)
   (let ((conn-ptr (database-conn-ptr database)))
     (declare (type pgsql-conn-def conn-ptr))
     (uffi:with-cstring (query-native query-expression)
@@ -237,7 +237,7 @@
                         :num-fields (PQnfields result)
                         :num-tuples (PQntuples result)
 			:types (canonicalize-types 
-				      types
+				      result-types
 				      (PQnfields result)
 				      result))))
 	     (if full-set

@@ -1,4 +1,16 @@
 08 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.3.4 released
+	* db-mysql/mysql-sql.lisp: Fix array dereferencing
+	* classic-tests/tests.lisp: Fix package name of
+	number-to-sql-string. 
+	* clsql.asd/clsql-tests.asd: Add support for asdf:test-op
+	* Finish renaming of :types keyword to :result-types for
+	greater CommonSQL compatibility, including documentation
+	* sql/basic-cmds.lisp: Remove obsolete file
+	* All tests for clsql-classic now finish correctly on
+	Allegro, Lispworks, CMUCL, SBCL
+	
+08 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.3.3 released
 	* Fixes for sequences on mysql and sqlite [Marcus Pearce]
 	* Fixes for uffi sqlite backend [Aurelio Bignoli / Kevin Rosenberg]

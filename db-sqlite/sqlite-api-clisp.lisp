@@ -19,10 +19,10 @@
 
 ;; $Id$
 
-(in-package :cl-user)
+(in-package #:cl-user)
 
-(defpackage :sqlite
-  (:use :common-lisp :ffi)
+(defpackage #:sqlite
+  (:use #:common-lisp #:ffi)
   (:export
            ;;; Conditions
            #:sqlite-error

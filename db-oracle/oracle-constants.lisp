@@ -1,7 +1,7 @@
 ;;; -*- Mode: Lisp -*-
 ;;; $Id$
 
-(in-package :clsql-oracle)
+(in-package #:clsql-oracle)
 
 (defconstant +oci-default+	#x00)	; default value for parameters and attributes
 (defconstant +oci-threaded+	#x01)	; application is in threaded environment

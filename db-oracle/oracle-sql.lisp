@@ -8,7 +8,7 @@
 ;;;
 ;;; derived from postgresql.lisp
 
-(in-package :clsql-oracle)
+(in-package #:clsql-oracle)
 
 (defmethod database-initialize-database-type
     ((database-type (eql :oracle)))

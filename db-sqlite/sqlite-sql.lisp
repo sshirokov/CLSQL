@@ -73,8 +73,8 @@
 	     :error (sqlite:sqlite-error-message err))))
   t)
 
-(defmethod database-query (query-expression (database sqlite-database) types)
-  (declare (ignore types))		; SQLite is typeless!
+(defmethod database-query (query-expression (database sqlite-database) result-types)
+  (declare (ignore result-types))		; SQLite is typeless!
   (handler-case
       (multiple-value-bind (data row-n col-n)
 	  (sqlite:sqlite-get-table (sqlite-db database) query-expression)
@@ -112,8 +112,8 @@
   (n-col 0 :type fixnum))
 
 (defmethod database-query-result-set
-    ((query-expression string) (database sqlite-database) &key full-set types)
-  (declare (ignore full-set types))
+    ((query-expression string) (database sqlite-database) &key full-set result-types)
+  (declare (ignore full-set result-types))
   (handler-case
       (let* ((vm (sqlite:sqlite-compile (sqlite-db database)
 					query-expression))

@@ -16,8 +16,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :postgresql)
+(in-package #:postgresql)
 
 
 (defvar *postgresql-supporting-libraries* '("crypt" "c")

@@ -18,9 +18,9 @@
 
 
 (defmethod database-query-result-set ((expr %sql-expression) database
-                                      &key full-set types)
+                                      &key full-set result-types)
   (database-query-result-set (sql-output expr database) database
-                             :full-set full-set :types types))
+                             :full-set full-set :result-types result-types))
 
 (defmethod execute-command ((expr %sql-expression)
                             &key (database *default-database*))

@@ -124,7 +124,7 @@
 
 
 (defmethod database-query (query-expression (database mysql-database) 
-			   types)
+			   result-types)
   (declare (optimize (speed 3) (safety 0) (debug 0) (space 0)))
   (let ((mysql-ptr (database-mysql-ptr database)))
     (uffi:with-cstring (query-native query-expression)
@@ -135,8 +135,8 @@
 		(unwind-protect
 		     (let ((num-fields (mysql-num-fields res-ptr)))
 		       (declare (fixnum num-fields))
-		       (setq types (canonicalize-types 
-				    types num-fields
+		       (setq result-types (canonicalize-types 
+				    result-types num-fields
 				    res-ptr))
 		       (loop for row = (mysql-fetch-row res-ptr)
                              for lengths = (mysql-fetch-lengths res-ptr)
@@ -152,7 +152,7 @@
 				  (uffi:deref-array row '(:array
 							  (* :unsigned-char))
 						    i)
-				  types i
+				  result-types i
                                   (uffi:deref-array lengths '(:array :unsigned-long)
 						    i))))))
 		  (mysql-free-result res-ptr))
@@ -169,7 +169,7 @@
 
 #+ignore
 (defmethod database-query (query-expression (database mysql-database) 
-			   types)
+			   result-types)
   (declare (optimize (speed 3) (safety 0) (debug 0) (space 0)))
   (let ((mysql-ptr (database-mysql-ptr database)))
     (uffi:with-cstring (query-native query-expression)
@@ -179,8 +179,8 @@
 		(unwind-protect
 		     (let ((num-fields (mysql-num-fields res-ptr)))
 		       (declare (fixnum num-fields))
-		       (setq types (canonicalize-types 
-				    types num-fields
+		       (setq result-types (canonicalize-types 
+				    result-types num-fields
 				    res-ptr))
 		       (loop for row = (mysql-fetch-row res-ptr)
 			     until (uffi:null-pointer-p row)
@@ -191,7 +191,7 @@
 				    (uffi:deref-array row '(:array
 							    (* :unsigned-char))
 						      i)
-				    types i))))
+				    result-types i))))
 		  (mysql-free-result res-ptr))
 		(error 'clsql-sql-error
 		       :database database
@@ -227,7 +227,7 @@
 
 (defmethod database-query-result-set ((query-expression string)
 				      (database mysql-database)
-				      &key full-set types)
+				      &key full-set result-types)
   (uffi:with-cstring (query-native query-expression)
     (let ((mysql-ptr (database-mysql-ptr database)))
      (declare (type mysql-mysql-ptr-def mysql-ptr))
@@ -245,7 +245,7 @@
 				    :full-set full-set
 				    :types
 				    (canonicalize-types 
-				     types num-fields
+				     result-types num-fields
 				     res-ptr)))) 
 		  (if full-set
 		      (values result-set
@@ -285,7 +285,7 @@
 		   (uffi:deref-array row '(:array (* :unsigned-char)) i)
 		   types
 		   i
-                   (uffi:deref-array lengths :unsigned-long i))))
+                   (uffi:deref-array lengths '(:array :unsigned-long) i))))
       list)))
 
 

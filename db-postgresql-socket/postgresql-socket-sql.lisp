@@ -18,15 +18,14 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :cl-user)
+(in-package #:cl-user)
 
 (defpackage :clsql-postgresql-socket
-    (:use :common-lisp :clsql-base-sys :postgresql-socket)
+    (:use #:common-lisp #:clsql-base-sys #:postgresql-socket)
     (:export #:postgresql-socket-database)
     (:documentation "This is the CLSQL socket interface to PostgreSQL."))
 
-(in-package :clsql-postgresql-socket)
+(in-package #:clsql-postgresql-socket)
 
 ;; interface foreign library loading routines
 
@@ -200,7 +199,7 @@ doesn't depend on UFFI."
   (close-postgresql-connection (database-connection database))
   t)
 
-(defmethod database-query (expression (database postgresql-socket-database) types)
+(defmethod database-query (expression (database postgresql-socket-database) result-types)
   (let ((connection (database-connection database)))
     (with-postgresql-handlers (database expression)
       (start-query-execution connection expression)
@@ -213,8 +212,8 @@ doesn't depend on UFFI."
 		 :expression expression
 		 :errno 'missing-result
 		 :error "Didn't receive result cursor for query."))
-	(setq types (canonicalize-types types cursor))
-	(loop for row = (read-cursor-row cursor types)
+	(setq result-types (canonicalize-types result-types cursor))
+	(loop for row = (read-cursor-row cursor result-types)
 	      while row
 	      collect row
 	      finally
@@ -267,7 +266,7 @@ doesn't depend on UFFI."
 
 (defmethod database-query-result-set ((expression string)
 				      (database postgresql-socket-database) 
-				      &key full-set types)
+				      &key full-set result-types)
   (declare (ignore full-set))
   (let ((connection (database-connection database)))
     (with-postgresql-handlers (database expression)
@@ -284,7 +283,7 @@ doesn't depend on UFFI."
 	(values (make-postgresql-socket-result-set
 		 :done nil 
 		 :cursor cursor
-		 :types (canonicalize-types types cursor))
+		 :types (canonicalize-types result-types cursor))
 		(length (postgresql-cursor-fields cursor)))))))
 
 (defmethod database-dump-result-set (result-set

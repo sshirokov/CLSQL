@@ -29,8 +29,7 @@
 ;;;;  - Added field type processing
 
  
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :postgresql-socket)
+(in-package #:postgresql-socket)
 
 (uffi:def-enum pgsql-ftype
     ((:bytea 17)
@@ -332,6 +331,15 @@ socket interface"
    :buffering :none
    :timeout *postgresql-server-socket-timeout*))
 
+
+#+sbcl
+(defun open-postgresql-socket-stream (host port)
+  (sb-sys:make-fd-stream
+   (open-postgresql-socket host port)
+   :input t :output t :element-type '(unsigned-byte 8)
+   :buffering :none
+   :timeout *postgresql-server-socket-timeout*))
+
 #+allegro
 (defun open-postgresql-socket-stream (host port)
   (etypecase host
@@ -347,8 +355,7 @@ socket interface"
 	 (mp:with-timeout (*postgresql-server-socket-timeout* (error "connect failed"))
 	   (socket:make-socket :type :stream :address-family :internet
 			       :remote-port port :remote-host host
-			       :connect :active :nodelay t))))
-    ))
+			       :connect :active :nodelay t))))))
 
 #+lispworks
 (defun open-postgresql-socket-stream (host port)
@@ -849,12 +856,12 @@ connection, if it is still open."
 	     (error 'postgresql-fatal-error :connection connection
 		    :message "Received garbled message from backend")))))))
 
-(defun run-query (connection query &optional (types nil))
+(defun run-query (connection query &optional (result-types nil))
   (start-query-execution connection query)
   (multiple-value-bind (status cursor)
       (wait-for-query-results connection)
     (assert (eq status :cursor))
-    (loop for row = (read-cursor-row cursor types)
+    (loop for row = (read-cursor-row cursor result-types)
 	  while row
 	  collect row
 	  finally

@@ -16,9 +16,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :clsql-aodbc)
-
+(in-package #:clsql-aodbc)
 
 ;; interface foreign library loading routines
 (defmethod clsql-base-sys:database-type-library-loaded ((database-type (eql :aodbc)))
@@ -72,11 +70,11 @@
   (setf (database-aodbc-conn database) nil)
   t)
 
-(defmethod database-query (query-expression (database aodbc-database) types) 
+(defmethod database-query (query-expression (database aodbc-database) result-types) 
   #+aodbc-v2
   (handler-case
       (dbi:sql query-expression :db (database-aodbc-conn database)
-	       :types types)
+	       :types result-types)
     (error ()
       (error 'clsql-sql-error
 	     :database database
@@ -103,7 +101,7 @@
 
 (defmethod database-query-result-set ((query-expression string)
 				      (database aodbc-database) 
-				      &key full-set types)
+				      &key full-set result-types)
   #+aodbc-v2
   (handler-case 
       (multiple-value-bind (query column-names)
@@ -112,11 +110,11 @@
 		   :row-count nil
 		   :column-names t
 		   :query t
-		   :types types
+		   :types result-types
 		   )
 	(values
 	 (make-aodbc-result-set :query query :full-set full-set 
-				:types types)
+				:types result-types)
 	 (length column-names)
 	 nil ;; not able to return number of rows with aodbc
 	 ))

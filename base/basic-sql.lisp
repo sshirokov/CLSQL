@@ -61,7 +61,7 @@ pair."))
 
 
 (defmacro do-query (((&rest args) query-expression
-		     &key (database '*default-database*) (types nil))
+		     &key (database '*default-database*) (result-types nil))
 		    &body body)
   "Repeatedly executes BODY within a binding of ARGS on the attributes
 of each record resulting from QUERY. The return value is determined by
@@ -74,7 +74,7 @@ the result of executing BODY. The default value of DATABASE is
     `(let ((,db ,database))
       (multiple-value-bind (,result-set ,columns)
           (database-query-result-set ,query-expression ,db
-                                     :full-set nil :types ,types)
+                                     :full-set nil :result-types ,result-types)
         (when ,result-set
           (unwind-protect
                (do ((,row (make-list ,columns)))
@@ -86,7 +86,7 @@ the result of executing BODY. The default value of DATABASE is
 
 (defun map-query (output-type-spec function query-expression
 		  &key (database *default-database*)
-		  (types nil))
+		  (result-types nil))
   "Map the function over all tuples that are returned by the query in
 query-expression.  The results of the function are collected as
 specified in output-type-spec and returned like in MAP."
@@ -94,21 +94,21 @@ specified in output-type-spec and returned like in MAP."
 	       `(if (atom ,type) ,type (car ,type))))
     (case (type-specifier-atom output-type-spec)
       ((nil) 
-       (map-query-for-effect function query-expression database types))
+       (map-query-for-effect function query-expression database result-types))
       (list 
-       (map-query-to-list function query-expression database types))
+       (map-query-to-list function query-expression database result-types))
       ((simple-vector simple-string vector string array simple-array
 	bit-vector simple-bit-vector base-string
 	simple-base-string)
-       (map-query-to-simple output-type-spec function query-expression database types))
+       (map-query-to-simple output-type-spec function query-expression database result-types))
       (t
        (funcall #'map-query (cmucl-compat:result-type-or-lose output-type-spec t)
-              function query-expression :database database :types types)))))
+              function query-expression :database database :result-types result-types)))))
 
-(defun map-query-for-effect (function query-expression database types)
+(defun map-query-for-effect (function query-expression database result-types)
   (multiple-value-bind (result-set columns)
       (database-query-result-set query-expression database :full-set nil
-				 :types types)
+				 :result-types result-types)
     (when result-set
       (unwind-protect
 	   (do ((row (make-list columns)))
@@ -117,10 +117,10 @@ specified in output-type-spec and returned like in MAP."
 	     (apply function row))
 	(database-dump-result-set result-set database)))))
 		     
-(defun map-query-to-list (function query-expression database types)
+(defun map-query-to-list (function query-expression database result-types)
   (multiple-value-bind (result-set columns)
       (database-query-result-set query-expression database :full-set nil
-				 :types types)
+				 :result-types result-types)
     (when result-set
       (unwind-protect
 	   (let ((result (list nil)))
@@ -132,10 +132,10 @@ specified in output-type-spec and returned like in MAP."
 	(database-dump-result-set result-set database)))))
 
 
-(defun map-query-to-simple (output-type-spec function query-expression database types)
+(defun map-query-to-simple (output-type-spec function query-expression database result-types)
   (multiple-value-bind (result-set columns rows)
       (database-query-result-set query-expression database :full-set t
-				 :types types)
+				 :result-types result-types)
     (when result-set
       (unwind-protect
 	   (if rows

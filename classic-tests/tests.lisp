@@ -83,29 +83,29 @@
       (unwind-protect
 	   (progn
 	     (create-test-table db)
-	     (dolist (row (query "select * from test_clsql" :database db :types :auto))
+	     (dolist (row (query "select * from test_clsql" :database db :result-types :auto))
 	       (test-table-row row :auto type))
-	     (dolist (row (query "select * from test_clsql" :database db :types nil))
+	     (dolist (row (query "select * from test_clsql" :database db :result-types nil))
 	       (test-table-row row nil type))
 	     (loop for row across (map-query 'vector #'list "select * from test_clsql" 
-					     :database db :types :auto)
+					     :database db :result-types :auto)
 		   do (test-table-row row :auto type))
 	     (loop for row across (map-query 'vector #'list "select * from test_clsql" 
-					     :database db :types nil)
+					     :database db :result-types nil)
 		   do (test-table-row row nil type))
 	     (loop for row in (map-query 'list #'list "select * from test_clsql" 
-					 :database db :types nil)
+					 :database db :result-types nil)
 		   do (test-table-row row nil type))
 	     (loop for row in (map-query 'list #'list "select * from test_clsql" 
-					 :database db :types :auto)
+					 :database db :result-types :auto)
 		 do (test-table-row row :auto type))
 	     (test (map-query nil #'list "select * from test_clsql" 
-			      :database db :types :auto)
+			      :database db :result-types :auto)
 		   nil
 		   :fail-info "Expected NIL result from map-query nil")
 	     (do-query ((int float bigint str) "select * from test_clsql")
 	       (test-table-row (list int float bigint str) nil type))
-	     (do-query ((int float bigint str) "select * from test_clsql" :types :auto)
+	     (do-query ((int float bigint str) "select * from test_clsql" :result-types :auto)
 	       (test-table-row (list int float bigint str) :auto type))
 	     (drop-test-table db)
 	     )
@@ -120,13 +120,13 @@
       (unwind-protect
 	   (progn
 	     (create-test-table db)
-	     (dolist (row (query "select * from test_clsql" :database db :types nil))
+	     (dolist (row (query "select * from test_clsql" :database db :result-types nil))
 	       (test-table-row row nil type))
 	     (loop for row across (map-query 'vector #'list "select * from test_clsql" 
-					     :database db :types nil)
+					     :database db :result-types nil)
 		   do (test-table-row row nil type))
 	     (loop for row in (map-query 'list #'list "select * from test_clsql" 
-					 :database db :types nil)
+					 :database db :result-types nil)
 		   do (test-table-row row nil type))
 
 	     (do-query ((int float bigint str) "select * from test_clsql")
@@ -146,10 +146,10 @@
 	(dotimes (i 10)
 	  (clsql-mysql::database-execute-command
 	   (format nil "INSERT INTO test_clsql VALUES (~d,~d,'~a')"
-		   i (clsql:number-to-sql-string (sqrt i))
-		   (clsql:number-to-sql-string (sqrt i)))
+		   i (clsql-base:number-to-sql-string (sqrt i))
+		   (clsql-base:number-to-sql-string (sqrt i)))
 	   db))
-	(let ((res (clsql-mysql::database-query-result-set "select * from test_clsql" db :full-set t :types nil)))
+	(let ((res (clsql-mysql::database-query-result-set "select * from test_clsql" db :full-set t :result-types nil)))
 	  (test (mysql:mysql-num-rows
 		 (clsql-mysql::mysql-result-set-res-ptr res))
 		10
@@ -182,9 +182,9 @@
       (clsql:execute-command
        (format nil "INSERT INTO test_clsql VALUES (~a,~a,~a,'~a')"
 	       test-int
-	       (number-to-sql-string test-flt)
+	       (clsql-base:number-to-sql-string test-flt)
 	       (transform-bigint-1 test-int)
-	       (number-to-sql-string test-flt)
+	       (clsql-base:number-to-sql-string test-flt)
 	       )
        :database db))))
 
@@ -254,17 +254,16 @@
   (clsql:execute-command "DROP TABLE test_clsql" :database db))
 
 (defun run-tests ()
-    (let ((specs (read-specs)))
-      (unless specs
-	(warn "Not running test because test configuration file is missing")
-	(return-from run-tests :skipped))
-      (with-tests (:name "CLSQL")
-	(mysql-low-level specs)
-	(mysql-table-test specs)
-	(pgsql-table-test specs)
-	(pgsql-socket-table-test specs)
-	(aodbc-table-test specs)
-	(sqlite-table-test specs)
+  (let ((specs (read-specs)))
+    (unless specs
+      (warn "Not running test because test configuration file is missing")
+      (return-from run-tests :skipped))
+    (with-tests (:name "CLSQL")
+      (mysql-low-level specs)
+      (mysql-table-test specs)
+      (pgsql-table-test specs)
+      (pgsql-socket-table-test specs)
+      (aodbc-table-test specs)
+      (sqlite-table-test specs)
       ))
-    t)
-
+  t)

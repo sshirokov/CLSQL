@@ -9,7 +9,7 @@
 ;;; The present content of this file is orented specifically towards
 ;;; Oracle 8.0.5.1 under Linux, linking against libclntsh.so
 
-(in-package :clsql-oracle)
+(in-package #:clsql-oracle)
 
 ;;
 

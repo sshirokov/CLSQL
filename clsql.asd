@@ -14,7 +14,11 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(asdf:defsystem #:clsql
+(in-package #:cl-user)
+(defpackage #:clsql-system (:use #:asdf #:cl))
+(in-package #:clsql-system)
+
+(defsystem #:clsql
     :name "CLSQL"
     :author ""
     :maintainer ""
@@ -50,3 +54,7 @@ a functional and an object oriented interface."
 				    (:file "objects" :depends-on ("metaclasses")))
 		       :depends-on (:functional))))))
      
+
+(defmethod perform ((o test-op) (c (eql (find-system 'clsql))))
+  (operate 'load-op 'clsql-tests)
+  (operate 'test-op 'clsql-tests))

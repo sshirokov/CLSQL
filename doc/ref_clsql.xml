@@ -1868,7 +1868,7 @@ The default is &nil;.
       </refnamediv>
       <refsect1>
 	<title>Syntax</title>
-	<synopsis><function>query</function> <replaceable>query-expression</replaceable> &amp;key <replaceable>database</replaceable> <replaceable>types</replaceable> => <returnvalue>result</returnvalue></synopsis>
+	<synopsis><function>query</function> <replaceable>query-expression</replaceable> &amp;key <replaceable>database</replaceable> <replaceable>result-types</replaceable> => <returnvalue>result</returnvalue></synopsis>
       </refsect1>
       <refsect1>
 	<title>Arguments and Values</title>
@@ -1892,11 +1892,11 @@ The default is &nil;.
 	    </listitem>
 	  </varlistentry>
 	  <varlistentry>
-	    <term><parameter>types</parameter></term>
+	    <term><parameter>result-types</parameter></term>
 	    <listitem>
 	      <para>A 
 		<glossterm linkend="gloss-field-types">field type
-		  specififier</glossterm>. The default is &nil;.
+		  specifier</glossterm>. The default is &nil;.
 		</para>
 		<para>
 		  The purpose of this argument is cause &clsql; to
@@ -2019,7 +2019,7 @@ The default is &nil;.
       </refnamediv>
       <refsect1>
 	<title>Syntax</title>
-	<synopsis><function>map-query</function> <replaceable>output-type-spec</replaceable> <replaceable>function</replaceable> <replaceable>query-expression</replaceable> &amp;key <replaceable>database</replaceable> <replaceable>types</replaceable> => <returnvalue>result</returnvalue></synopsis>
+	<synopsis><function>map-query</function> <replaceable>output-type-spec</replaceable> <replaceable>function</replaceable> <replaceable>query-expression</replaceable> &amp;key <replaceable>database</replaceable> <replaceable>result-types</replaceable> => <returnvalue>result</returnvalue></synopsis>
       </refsect1>
       <refsect1>
 	<title>Arguments and Values</title>
@@ -2060,10 +2060,10 @@ The default is &nil;.
 	    </listitem>
 	  </varlistentry>
 	  <varlistentry>
-	    <term><parameter>types</parameter></term>
+	    <term><parameter>result-types</parameter></term>
 	    <listitem>
 	      <para>
-		A <glossterm linkend="gloss-field-types">field type specififier</glossterm>. 
+		A <glossterm linkend="gloss-field-types">field type specifier</glossterm>. 
 		The default is &nil;. See <link
 		linkend="query"><function>query</function></link>
 		for the semantics of this argument.  
@@ -2190,7 +2190,7 @@ The default is &nil;.
       </refnamediv>
       <refsect1>
 	<title>Syntax</title>
-	<synopsis><function>do-query</function> ((&amp;rest <replaceable>args</replaceable>) <replaceable>query-expression</replaceable> &amp;key <replaceable>database</replaceable> <replaceable>types</replaceable>) &amp;body <replaceable>body</replaceable> => <returnvalue>nil</returnvalue></synopsis>
+	<synopsis><function>do-query</function> ((&amp;rest <replaceable>args</replaceable>) <replaceable>query-expression</replaceable> &amp;key <replaceable>database</replaceable> <replaceable>result-types</replaceable>) &amp;body <replaceable>body</replaceable> => <returnvalue>nil</returnvalue></synopsis>
       </refsect1>
       <refsect1>
 	<title>Arguments and Values</title>
@@ -2221,10 +2221,10 @@ The default is &nil;.
 	    </listitem>
 	  </varlistentry>
 	  <varlistentry>
-	    <term><parameter>types</parameter></term>
+	    <term><parameter>result-types</parameter></term>
 	    <listitem>
 	      <para>
-		A <glossterm linkend="gloss-field-types">field type specififier</glossterm>. 
+		A <glossterm linkend="gloss-field-types">field type specifier</glossterm>. 
 		The default is &nil;. See <link
 		linkend="query"><function>query</function></link>
 		for the semantics of this argument.  
