@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-uffi.asd,v 1.12 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: clsql-uffi.asd,v 1.13 2002/10/14 04:09:02 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -22,7 +22,7 @@
 
 ;;; System definition
 
-#+(or allegro lispworks cmu openmcl mcl)
+#+(or allegro lispworks cmu sbcl openmcl mcl)
 (defsystem :clsql-uffi
   :name "cl-sql-base"
   :author "Kevin M. Rosenberg <kmr@debian.org>"

@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: mysql-sql.lisp,v 1.2 2002/10/14 04:09:02 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -33,7 +33,7 @@
 ;;;; Added field types
 
 (defpackage :clsql-mysql
-    (:use :common-lisp :clsql-base-sys :mysql :clsql-uffi)
+    (:use #:common-lisp #:clsql-base-sys #:mysql #:clsql-uffi)
     (:export #:mysql-database)
     (:documentation "This is the CLSQL interface to MySQL."))
 

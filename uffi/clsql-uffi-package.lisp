@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi-package.lisp,v 1.1 2002/09/30 10:19:24 kevin Exp $
+;;;; $Id: clsql-uffi-package.lisp,v 1.2 2002/10/14 04:09:02 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -20,6 +20,7 @@
 (in-package :cl-user)
 
 (defpackage :clsql-uffi
+  (:use #:common-lisp)
   (:export
    #:canonicalize-type-list
    #:convert-raw-field

@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: cmucl-compat.lisp,v 1.1 2002/09/30 10:19:01 kevin Exp $
+;;;; $Id: cmucl-compat.lisp,v 1.2 2002/10/14 04:09:02 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -20,6 +20,7 @@
 (in-package :cl-user)
 
 (defpackage :cmucl-compat
+  (:use #:common-lisp)
   (:export
    #:shrink-vector
    #:make-sequence-of-type
@@ -40,7 +41,11 @@
 (defmacro shrink-vector (vec len)
   `(lisp::shrink-vector ,vec ,len))
 
-#-cmu
+#+sbcl
+(defmacro shrink-vector (vec len)
+  `(sb-kernel::shrink-vector ,vec ,len))
+
+#-(or cmu sbcl)
 (defmacro shrink-vector (vec len)
   "Shrinks a vector. Optimized if vector has a fill pointer.
 Needs to be a macro to overwrite value of VEC."
@@ -64,7 +69,7 @@ Needs to be a macro to overwrite value of VEC."
 
 
 
-#-cmu
+#-(or cmu sbcl)
 (defun make-sequence-of-type (type length)
   "Returns a sequence of the given TYPE and LENGTH."
   (declare (fixnum length))
@@ -91,9 +96,12 @@ Needs to be a macro to overwrite value of VEC."
       (lisp::make-sequence-of-type type len))
   (defun make-sequence-of-type (type len)
     (system::make-sequence-of-type type len)))
-  
 
-#-cmu
+#+sbcl
+(defun make-sequence-of-type (type len)
+  (sb-impl::make-sequence-of-type type len))
+
+#-(or cmu sbcl)
 (defun result-type-or-lose (type nil-ok)
   (unless (or type nil-ok)
     (error "NIL output type invalid for this sequence function"))
@@ -113,3 +121,7 @@ Needs to be a macro to overwrite value of VEC."
 #+cmu
 (defun result-type-or-lose (type nil-ok)
   (lisp::result-type-or-lose type nil-ok))
+
+#+sbcl
+(defun result-type-or-lose (type nil-ok)
+  (sb-impl::result-type-or-lose type nil-ok))

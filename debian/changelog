@@ -1,3 +1,9 @@
+cl-sql (1.0.0-1) unstable; urgency=low
+
+  * Add SBCL support
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sun, 13 Oct 2002 20:52:41 -0600
+
 cl-sql (0.9.9-1) unstable; urgency=high
 
   * Add version depends for common-lisp-controller

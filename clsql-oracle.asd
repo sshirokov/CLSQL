@@ -1,13 +1,13 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; This is copyrighted software.  See interfaces/oracle/* files for terms.
 ;;;; 
-;;;; $Id: clsql-oracle.asd,v 1.10 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: clsql-oracle.asd,v 1.11 2002/10/14 04:09:02 kevin Exp $
 
 (in-package :asdf)
 
 ;;; System definition
 
-#+(or allegro lispworks cmu openmcl mcl)
+#+(or allegro lispworks cmu sbcl openmcl mcl)
 (defsystem :clsql-oracle
   :name "cl-sql-oracle"
   :author "Kevin M. Rosenberg <kmr@debian.org>"

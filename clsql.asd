@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql.asd,v 1.13 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: clsql.asd,v 1.14 2002/10/14 04:09:02 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -18,7 +18,7 @@
 
 (in-package :asdf)
 
-#+(or allegro lispworks cmu openmcl mcl)
+#+(or allegro lispworks cmu sbcl openmcl mcl)
 (defsystem :clsql
   :name "cl-sql"
   :author "Kevin M. Rosenberg <kmr@debian.org>"
@@ -43,7 +43,7 @@
   :depends-on (:clsql-base)
   )
 
-#+(or allegro lispworks cmu openmcl mcl)
+#+(or allegro lispworks cmu sbcl openmcl mcl)
 (when (ignore-errors (find-class 'load-compiled-op))
   (defmethod perform :after ((op load-compiled-op) (c (eql (find-system :clsql))))
     (pushnew :clsql cl:*features*)))
