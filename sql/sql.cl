@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: sql.cl,v 1.13 2002/04/27 20:58:11 kevin Exp $
+;;;; $Id: sql.cl,v 1.14 2002/05/01 20:22:16 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -76,8 +76,6 @@ initialized, as indicated by `*initialized-database-types*'."
 (defvar *default-database* nil
   "Specifies the default database to be used.")
 
-
-
 (defun find-database (database &optional (errorp t))
   (etypecase database
     (database
@@ -100,15 +98,15 @@ initialized, as indicated by `*initialized-database-types*'."
   "Connects to a database of the given database-type, using the type-specific
 connection-spec.  if-exists is currently ignored."
   (let* ((db-name (database-name-from-spec connection-spec database-type))
-	 (old-db (find-database db-name nil))
+	 (old-db (unless (eq if-exists :new) (find-database db-name nil)))
 	 (result nil))
     (if pool
 	(setq result (acquire-from-pool connection-spec database-type))
       (if old-db
 	  (case if-exists
-	    (:new
-	     (setq result
-	       (database-connect connection-spec database-type)))
+;	    (:new
+;	     (setq result
+;	       (database-connect connection-spec database-type)))
 	    (:warn-new
 	     (setq result
 	       (database-connect connection-spec database-type))

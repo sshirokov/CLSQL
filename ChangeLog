@@ -1,3 +1,11 @@
+01 May 2002 Marc Battyani (marc.battyani@fractalconcept.com)
+	* sql/sql.cl:
+	* sql/pool.cl:
+	* sql/classes.cl:
+	* sql/package.cl:
+	Completed connection pool.
+	Added with-db-from-pool macro.
+	
 27 Apr 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* Multiple files:
 	Added initial support for connection pool
