@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<locatingRules xmlns="http://thaiopensource.com/ns/locating-rules/1.0">
+  <uri resource="appendix.xml" typeId="DocBook"/>
+  <uri resource="bookinfo.xml" typeId="DocBook"/>
+  <uri resource="clsql.xml" typeId="DocBook"/>
+  <uri resource="glossary.xml" typeId="DocBook"/>
+  <uri resource="intro.xml" typeId="DocBook"/>
+  <uri resource="preface.xml" typeId="DocBook"/>
+  <uri resource="ref_clsql_sys.xml" typeId="DocBook"/>
+  <uri resource="ref_clsql.xml" typeId="DocBook"/>
+</locatingRules>
