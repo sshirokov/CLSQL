@@ -940,6 +940,20 @@ as possible second argument) to the desired representation of date/time/timestam
   (with-error-handling (:hstmt hstmt)
     (SQLTables hstmt +null-ptr+ 0 +null-ptr+ 0 +null-ptr+ 0 +null-ptr+ 0)))
 
+(defun %table-statistics (table hstmt &key unique (ensure t))
+  (with-cstrings ((table-cs table))
+    (with-error-handling (:hstmt hstmt)
+      (print hstmt)
+      (print table-cs)
+      (print (uffi:convert-from-cstring table-cs))
+      (SQLStatistics 
+       hstmt
+       +null-ptr+ 0
+       +null-ptr+ 0
+       table-cs (length table) ;;$SQL_NTS
+       (if unique $SQL_INDEX_UNIQUE $SQL_INDEX_ALL)
+       (if ensure $SQL_ENSURE $SQL_QUICK)))))
+
 (defun %list-data-sources (henv)
   (let ((dsn (allocate-foreign-string (1+ $SQL_MAX_DSN_LENGTH)))
 	(desc (allocate-foreign-string 256))

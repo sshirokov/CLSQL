@@ -314,22 +314,27 @@ doesn't depend on UFFI."
 
 ;;; Object listing
 
+(defun owner-clause (owner)
+  (cond 
+   ((stringp owner)
+    (format
+     nil
+     " AND (relowner=(SELECT usesysid FROM pg_user WHERE (usename='~A')))" 
+     owner))
+   ((null owner)
+    (format nil " AND (NOT (relowner=1))"))
+   (t "")))
+
 (defmethod database-list-objects-of-type ((database postgresql-socket-database)
                                           type owner)
-  (let ((owner-clause
-         (cond ((stringp owner)
-                (format nil " AND (relowner=(SELECT usesysid FROM pg_user WHERE (usename='~A')))" owner))
-               ((null owner)
-                (format nil " AND (NOT (relowner=1))"))
-               (t ""))))
-    (mapcar #'car
-            (database-query
-             (format nil
-                     "SELECT relname FROM pg_class WHERE (relkind = '~A')~A"
-                     type
-                     owner-clause)
-             database nil))))
-    
+  (mapcar #'car
+	  (database-query
+	   (format nil
+		   "SELECT relname FROM pg_class WHERE (relkind = '~A')~A"
+		   type
+		   (owner-clause owner))
+	   database nil)))
+
 (defmethod database-list-tables ((database postgresql-socket-database)
                                  &key (owner nil))
   (database-list-objects-of-type database "r" owner))
@@ -341,7 +346,28 @@ doesn't depend on UFFI."
 (defmethod database-list-indexes ((database postgresql-socket-database)
                                   &key (owner nil))
   (database-list-objects-of-type database "i" owner))
-  
+
+(defmethod database-list-table-indexes (table
+					(database postgresql-socket-database)
+					&key (owner nil))
+  (let ((indexrelids
+	 (database-query
+	  (format 
+	   nil
+	   "select indexrelid from pg_index where indrelid=(select relfilenode from pg_class where relname='~A'~A)"
+	   (string-downcase table)
+	   (owner-clause owner))
+	  database :auto))
+	(result nil))
+    (dolist (indexrelid indexrelids (nreverse result))
+      (push 
+       (caar (database-query
+	      (format nil "select relname from pg_class where relfilenode='~A'"
+		      (car indexrelid))
+	      database
+	      nil))
+       result))))
+
 (defmethod database-list-attributes ((table string)
 				     (database postgresql-socket-database)
                                      &key (owner nil))

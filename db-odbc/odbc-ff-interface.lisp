@@ -369,3 +369,16 @@
   :returning :short)
 
 
+(def-function "SQLStatistics"
+    ((hstmt :pointer-void)
+     (catalog-name :pointer-void)
+     (catalog-name-length :short)
+     (schema-name :pointer-void)
+     (schema-name-length :short)
+     (table-name :cstring)
+     (table-name-length :short)
+     (unique :short)
+     (reserved :short))
+  :returning :short)
+
+

@@ -1,5 +1,13 @@
 20 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
-	* Version 2.8.3: Fix regression test
+	* Version 2.9.0: New API function: LIST-TABLE-INDEXES,
+	supported by all database backends (except AODBC since
+	AODBC doesn't support index querying)
+	* db-obdc/odbc-sql.lisp: Support DATABASE-LIST-INDEXES
+	* db-odbc/odbc-api.lisp: Add %TABLE-STATISTICS function
+	to support index queries
+	* db-aodbc/aodbc-sql.lisp: Filter driver manager
+	"information_schema" tables from LIST-TABLES
+	* tests/test-basic.lisp: Remove table after testing
 
 19 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.8.2: Build changes for FreeBSD [Slawek Zak]

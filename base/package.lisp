@@ -58,6 +58,7 @@
      #:database-list-attributes
      #:database-list-sequences
      #:database-list-indexes
+     #:database-list-table-indexes
      #:database-list-views
      
      

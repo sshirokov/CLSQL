@@ -185,6 +185,15 @@ specification of a table to drop the index from."
 OWNER is a string, this denotes a username and only indexs owned by
 OWNER are considered. Index names are returned as a list of strings."
   (database-list-indexes database :owner owner))
+
+(defun list-table-indexes (table &key (owner nil)
+				      (database *default-database*))
+  "List all indexes in DATABASE for a TABLE, which defaults to
+*default-database*. If OWNER is :all , all indexs are considered. If
+OWNER is a string, this denotes a username and only indexs owned by
+OWNER are considered. Index names are returned as a list of strings."
+  (database-list-table-indexes (database-identifier table)
+			       database :owner owner))
   
 (defun index-exists-p (name &key (owner nil) (database *default-database*))
   "Test for existence of an index called NAME in DATABASE which

@@ -21,7 +21,7 @@
 
 (setq *rt-fddl*
       '(
-      
+	
 ;; list current tables 
 (deftest :fddl/table/1
     (apply #'values 
@@ -157,12 +157,8 @@
            (values
             (clsql:index-exists-p [bar] :owner *test-database-user*)
             (progn
-              (case *test-database-type*
-                (:mysql 
-                 (clsql:drop-index [bar] :on [employee]
-                                  :if-does-not-exist :ignore))
-                (t 
-                 (clsql:drop-index [bar]:if-does-not-exist :ignore)))
+	      (clsql:drop-index [bar] :on [employee]
+				:if-does-not-exist :ignore)
               (clsql:index-exists-p [bar] :owner *test-database-user*))))
   t nil)
 
@@ -173,12 +169,32 @@
       (dolist (name names)
         (clsql:create-index name :on [employee] :attributes '([emplid]))
         (push (clsql:index-exists-p name :owner *test-database-user*) result)
-        (case *test-database-type*
-          (:mysql 
-           (clsql:drop-index name :on [employee] :if-does-not-exist :ignore))
-          (t (clsql:drop-index name :if-does-not-exist :ignore))))
+	(clsql:drop-index name :on [employee] :if-does-not-exist :ignore))
       (apply #'values result))
   t t t)
+
+;; test list-table-indexes
+(deftest :fddl/index/3
+    (progn
+      (clsql:create-index [bar] :on [employee] :attributes
+			  '([last-name]) :unique nil)
+      (clsql:create-index [foo] :on [employee] :attributes
+			  '([first-name]) :unique nil)
+      (values
+       
+       (sort 
+	(mapcar 
+	 #'string-downcase
+	 (clsql:list-table-indexes [employee] :owner *test-database-user*))
+	    #'string-lessp)
+       (sort (clsql:list-table-indexes [company] :owner *test-database-user*)
+	     #'string-lessp)
+       (progn
+	 (clsql:drop-index [bar] :on [employee])
+	 (clsql:drop-index [foo] :on [employee])
+	 t)))
+
+  ("bar" "foo") nil t)
 
 ;; create an sequence, test for existence, drop it and test again 
 (deftest :fddl/sequence/1

@@ -33,6 +33,7 @@
    #:list-all-data-sources
    #:list-all-database-tables
    #:list-all-table-columns
+   #:list-table-indexes
    #:loop-over-results
    #:prepare-sql
    #:rr-sql
@@ -174,6 +175,20 @@ the query against." ))
 	  (with-slots (hstmt) query
 	    (unless hstmt (setf hstmt (%new-statement-handle (hdbc db))))
 	    (%list-tables hstmt)
+	    (%initialize-query query nil nil)
+	    (values
+	     (db-fetch-query-results query)
+	     (coerce (column-names query) 'list))))
+      (db-close-query query))))
+
+(defun list-table-indexes (table &key db unique hstmt)
+  (declare (ignore hstmt))
+  (let ((query (get-free-query db)))
+    (unwind-protect
+	(progn
+	  (with-slots (hstmt) query
+	    (unless hstmt (setf hstmt (%new-statement-handle (hdbc db))))
+	    (%table-statistics table hstmt :unique unique)
 	    (%initialize-query query nil nil)
 	    (values
 	     (db-fetch-query-results query)

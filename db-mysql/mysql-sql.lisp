@@ -274,10 +274,22 @@
                                   &key (owner nil))
   (let ((result '()))
     (dolist (table (database-list-tables database :owner owner) result)
-      (mapc #'(lambda (index) (push (nth 2 index) result))
-            (database-query 
-             (format nil "SHOW INDEX FROM ~A" (string-upcase table))
-             database nil)))))
+      (setq result
+	(append (database-list-table-indexes table database :owner owner)
+		result)))))
+
+(defmethod database-list-table-indexes (table (database mysql-database)
+					&key (owner nil))
+  (declare (ignore owner))
+  (do ((results nil)
+       (rows (database-query 
+	      (format nil "SHOW INDEX FROM ~A" (string-upcase table))
+	      database nil)
+	     (cdr rows)))
+      ((null rows) (nreverse results))
+    (let ((col (nth 2 (car rows))))
+      (unless (find col results :test #'string-equal)
+	(push col results)))))
   
 (defmethod database-list-attributes ((table string) (database mysql-database)
                                      &key (owner nil))

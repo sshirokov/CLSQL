@@ -207,6 +207,17 @@
                  "SELECT name FROM sqlite_master WHERE type='index' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='index' ORDER BY name"
                  database nil)))
 
+(defmethod database-list-table-indexes (table (database sqlite-database)
+					&key (owner nil))
+  (declare (ignore owner))
+  (mapcar #'car 
+	  (database-query
+	   (format
+	    nil
+	    "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='~A' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='index' AND tbl_name='~A' ORDER BY name"
+	    table table)
+	   database nil)))
+
 (declaim (inline sqlite-table-info))
 (defun sqlite-table-info (table database)
   (database-query (format nil "PRAGMA table_info('~A')" table)

@@ -149,6 +149,7 @@
        #:database-list-tables
        #:database-list-views
        #:database-list-indexes
+       #:database-list-table-indexes
        #:database-list-sequences
        #:database-list-attributes
        #:database-attribute-type
@@ -253,6 +254,7 @@
     #:database-list-views
     #:database-view-exists-p
     #:database-list-indexes
+    #:database-list-table-indexes
     #:database-index-exists-p
     #:database-list-sequences
     #:database-sequence-exists-p
@@ -333,6 +335,7 @@
        #:list-views                        ; table      xx
        #:view-exists-p                     ; table      xx
        #:list-indexes                      ; table      xx
+       #:list-table-indexes                ; table      xx
        #:index-exists-p                    ; table      xx
        #:create-sequence                   ; table      xx
        #:drop-sequence                     ; table      xx

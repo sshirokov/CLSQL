@@ -198,11 +198,14 @@
 				 &key (owner nil))
   (declare (ignore owner))
     (multiple-value-bind (rows col-names)
-      (odbc-dbi:list-all-database-tables :db (database-odbc-conn database))
-    (let ((pos (position "TABLE_NAME" col-names :test #'string-equal)))
-      (when pos
-	(loop for row in rows
-	    collect (nth pos row))))))
+	(odbc-dbi:list-all-database-tables :db (database-odbc-conn database))
+      (declare (ignore col-names))
+      ;; TABLE_SCHEM is hard-coded in second column by ODBC Driver Manager
+      ;; TABLE_NAME in third column, TABLE_TYPE in fourth column
+      (loop for row in rows
+	  when (and (not (string-equal "information_schema" (nth 1 row)))
+		    (string-equal "TABLE" (nth 3 row)))
+	  collect (nth 2 row))))
 
 (defmethod database-list-attributes ((table string) (database odbc-database)
                                      &key (owner nil))
@@ -279,6 +282,21 @@
   (declare (ignore connection-spec))
   (odbc-dbi:list-all-data-sources))
 
-#+ignore		       
+(defmethod database-list-indexes ((database odbc-database)
+                                  &key (owner nil))
+  (let ((result '()))
+    (dolist (table (database-list-tables database :owner owner) result)
+      (append (database-list-table-indexes table database :owner owner)
+	      result))))
+
+(defmethod database-list-table-indexes (table (database odbc-database)
+					&key (owner nil))
+  (multiple-value-bind (rows col-names)
+      (odbc-dbi:list-table-indexes table :db (database-odbc-conn database))
+    (declare (ignore col-names))
+    ;; INDEX_NAME is hard-coded in sixth position by ODBC driver
+    (loop for row in rows collect (nth 5 row))))
+
+#+ignore
 (when (clsql-base-sys:database-type-library-loaded :odbc)
   (clsql-base-sys:initialize-database-type :database-type :odbc))

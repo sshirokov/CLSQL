@@ -194,11 +194,13 @@
   #+aodbc-v2
   (multiple-value-bind (rows col-names)
       (dbi:list-all-database-tables :db (database-aodbc-conn database))
-    (let ((pos (position "TABLE_NAME" col-names :test #'string-equal)))
-      (when pos
-	(loop for row in rows
-	    collect (nth pos row))))))
-
+    (declare (ignore col-names))
+      ;; TABLE_SCHEM is hard-coded in second column by ODBC Driver Manager
+      ;; TABLE_NAME in third column, TABLE_TYPE in fourth column
+      (loop for row in rows
+	  when (and (not (string-equal "information_schema" (nth 1 row)))
+		    (string-equal "TABLE" (nth 3 row)))
+	  collect (nth 2 row))))
 
 (defmethod database-list-attributes ((table string) (database aodbc-database)
                                      &key (owner nil))

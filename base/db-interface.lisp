@@ -186,6 +186,9 @@ the given lisp type and parameters."))
 (defgeneric database-list-indexes (database &key owner)
   (:documentation "List all indexes in the DATABASE."))
 
+(defgeneric database-list-table-indexes (table database &key owner)
+  (:documentation "List all indexes for a table in the DATABASE."))
+
 (defgeneric database-list-attributes (table database &key owner)
   (:documentation "List all attributes in TABLE."))
 
