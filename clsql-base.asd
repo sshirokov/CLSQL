@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql-base.asd,v 1.1 2002/08/18 02:57:50 kevin Exp $
+;;;; $Id: clsql-base.asd,v 1.2 2002/08/18 04:08:56 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -39,5 +39,4 @@
 	       (:file "conditions" :depends-on ("classes"))
 	       (:file "db-interface" :depends-on ("conditions"))
 	       (:file "initialize" :depends-on ("db-interface")))
-  :finally-do
   )
