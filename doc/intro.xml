@@ -1,4 +1,4 @@
-<?xml version='1.0' ?>   <!-- -*- DocBook -*- -->
+<?xml version='1.0' ?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
                "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
 <!ENTITY % myents SYSTEM "entities.xml">
@@ -228,7 +228,7 @@ make libs
 	source directory. After creating that file, you can run the test suite
 	with &asdf;:
 	<programlisting>
-(asdf:operate 'asdf:test-op 'clsql)
+	  (asdf:operate 'asdf:test-op 'clsql)
         </programlisting>.	.
       </para>
     </sect2>

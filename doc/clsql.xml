@@ -1,10 +1,9 @@
-<?xml version='1.0' ?>   <!-- -*- DocBook -*- -->
+<?xml version='1.0' ?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
                "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
 <!ENTITY % myents SYSTEM "entities.xml">
 %myents;
 ]>
-
 
 <book xmlns:xi="http://www.w3.org/2001/XInclude">
   <xi:include href="bookinfo.xml" />
