@@ -901,17 +901,17 @@ the length of that format.")
 		 )
     database :auto nil)))
 
-;; FIXME: use lock
 (defmethod database-set-sequence-position (name position (database oracle-database))
-  (let* ((next (database-sequence-next name database))
-	 (incr (- position next)))
-    (database-execute-command
-     (format nil "ALTER SEQUENCE ~A INCREMENT BY ~D" name incr)
-     database)
-    (database-sequence-next name database)
-    (database-execute-command
-     (format nil "ALTER SEQUENCE ~A INCREMENT BY 1" name)
-     database)))
+  (without-interrupts
+   (let* ((next (database-sequence-next name database))
+	  (incr (- position next)))
+     (database-execute-command
+      (format nil "ALTER SEQUENCE ~A INCREMENT BY ~D" name incr)
+      database)
+     (database-sequence-next name database)
+     (database-execute-command
+      (format nil "ALTER SEQUENCE ~A INCREMENT BY 1" name)
+      database))))
 
 (defmethod database-list-sequences ((database oracle-database) &key owner)
   (let ((query
