@@ -123,11 +123,16 @@
      #:database-list-table-indexes
      #:database-index-exists-p
      #:database-list-sequences
+     #:database-sequence-last
      #:database-sequence-exists-p
      #:database-list-attributes
      #:database-attribute-type
      #:database-describe-table
      #:database-type-library-loaded
+     #:database-create
+     #:database-destroy
+     #:database-probe
+     #:database-list
      
      #:db-backend-has-create/destroy-db?
      #:db-type-has-views?
