@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: aodbc-sql.cl,v 1.6 2002/03/25 23:48:46 kevin Exp $
+;;;; $Id: aodbc-sql.cl,v 1.7 2002/03/29 08:23:38 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -24,6 +24,12 @@
   "T if foreign library was able to be loaded successfully. "
   (when (find-package :dbi) ;; finds Allegro's DBI (AODBC) package
     t))
+
+(defmethod clsql-sys:database-type-load-foreign ((databae-type (eql :aodbc)))
+  t)
+
+(when (find-package :dbi)
+  (clsql-sys:database-type-load-foreign :aodbc)) ;; doesn't do anything
 
 (defmethod database-initialize-database-type ((database-type (eql :aodbc)))
   t)

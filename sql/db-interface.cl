@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: db-interface.cl,v 1.2 2002/03/29 08:12:16 kevin Exp $
+;;;; $Id: db-interface.cl,v 1.3 2002/03/29 08:23:38 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -21,12 +21,12 @@
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :clsql-sys)
 
-
 (defgeneric database-type-load-foreign (database-type)
   (:documentation
    "The internal generic implementation of reload-database-types.")
   (:method :after (database-type)
-	   (pushnew database-type *loaded-database-types*)))
+	   (when (database-type-library-loaded database-type)
+	     (pushnew database-type *loaded-database-types*))))
 
 (defgeneric database-type-library-loaded (database-type)
   (:documentation

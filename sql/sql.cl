@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: sql.cl,v 1.9 2002/03/29 08:12:16 kevin Exp $
+;;;; $Id: sql.cl,v 1.10 2002/03/29 08:23:38 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -38,7 +38,6 @@
 (defun reload-database-types ()
   "Reloads any foreign code for the loaded database types after a dump."
   (mapc #'database-type-load-foreign *loaded-database-types*))
-
 
 (defvar *default-database-type* nil
   "Specifies the default type of database.  Currently only :mysql is
