@@ -1,4 +1,4 @@
-(in-package :maisql-oracle)
+(in-package :clsql-oracle)
 
 (defparameter *oracle-default-varchar2-length* "512")
 
@@ -77,13 +77,13 @@
 
 ;;; LOCAL-TIME stuff that needs to go into hooks
 #+local-time
-(defmethod maisql-sys::database-get-type-specifier
+(defmethod clsql-sys::database-get-type-specifier
   ((type (eql 'local-time::local-time)) args (database oracle-database))
   (declare (ignore args))
   "DATE")
 
 #+local-time
-(defmethod maisql-sys::database-get-type-specifier
+(defmethod clsql-sys::database-get-type-specifier
   ((type (eql 'local-time::duration))
    args
    (database oracle-database))

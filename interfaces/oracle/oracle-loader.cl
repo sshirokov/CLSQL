@@ -1,12 +1,12 @@
 ;;; -*- Mode: Lisp -*-
-;;; $Id: oracle-loader.cl,v 1.1 2002/05/13 03:52:24 kevin Exp $
+;;; $Id: oracle-loader.cl,v 1.2 2002/05/13 03:57:09 kevin Exp $
 ;;;
 ;;; MaiSQL --- Common Lisp Interface Layer to SQL Databases
 ;;; This is copyrighted software.  See documentation for terms.
 ;;; 
 ;;; oracle-loader.cl --- Foreign Object Loader for Oracle
 
-(in-package :MAISQL-ORACLE)
+(in-package :clsql-oracle)
 
 ;; Load the foreign library
 

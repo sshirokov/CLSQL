@@ -1,7 +1,7 @@
 ;;; -*- Mode: Lisp -*-
-;;; $Id: oracle-constants.cl,v 1.1 2002/05/13 03:52:24 kevin Exp $
+;;; $Id: oracle-constants.cl,v 1.2 2002/05/13 03:57:09 kevin Exp $
 
-(in-package :MAISQL-ORACLE)
+(in-package :clsql-oracle)
 
 (defconstant +oci-default+	#x00)	; default value for parameters and attributes
 (defconstant +oci-threaded+	#x01)	; application is in threaded environment

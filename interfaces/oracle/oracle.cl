@@ -1,5 +1,5 @@
 ;;; -*- Mode: Lisp -*-
-;;; $Id: oracle.cl,v 1.1 2002/05/13 03:52:24 kevin Exp $
+;;; $Id: oracle.cl,v 1.2 2002/05/13 03:57:09 kevin Exp $
 
 ;;; MaiSQL --- Common Lisp Interface Layer to SQL Databases
 ;;; This is copyrighted software.  See documentation for terms.
@@ -9,7 +9,7 @@
 ;;; The present content of this file is orented specifically towards
 ;;; Oracle 8.0.5.1 under Linux, linking against libclntsh.so
 
-(in-package :MAISQL-ORACLE)
+(in-package :clsql-oracle)
 
 ;;
 

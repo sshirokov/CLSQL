@@ -1,18 +1,14 @@
 ;;; -*- Mode: Lisp -*-
-;;; $Id: oracle-package.cl,v 1.1 2002/05/13 03:52:24 kevin Exp $
+;;; $Id: oracle-package.cl,v 1.2 2002/05/13 03:57:09 kevin Exp $
 ;;;
-;;; MaiSQL --- Common Lisp Interface Layer to SQL Databases
 ;;; This is copyrighted software.  See documentation for terms.
-;;; 
-;;; oracle-package.lisp --- Package definition for the Oracle interface
-;;; 
 
 (in-package :cl-user)
 
-(defpackage "MAISQL-ORACLE"
-  (:nicknames "ORACLE")
-  (:use "COMMON-LISP" "MAISQL-SYS" "ALIEN" "C-CALL" "SYSTEM")
-  (:export "ORACLE-DATABASE"
-	   "*ORACLE-SO-LOAD-PATH*"
-	   "*ORACLE-SO-LIBRARIES*")
-  (:documentation "This is the MaiSQL interface to Oracle."))
+(defpackage :clsql-oracle
+  (:nicknames :oracle)
+  (:use :common-lisp :clsql-sys "ALIEN" "C-CALL" "SYSTEM")
+  (:export #:oracle-database
+	   #:*oracle-so-load-path*
+	   #:*oracle-so-libraries*)
+  (:documentation "This is the CLSQL interface to Oracle."))

@@ -1,5 +1,5 @@
 ;;; -*- Mode: Lisp -*-
-;;; $Id: oracle-sql.cl,v 1.1 2002/05/13 03:52:24 kevin Exp $
+;;; $Id: oracle-sql.cl,v 1.2 2002/05/13 03:57:09 kevin Exp $
 
 ;;; MaiSQL --- Common Lisp Interface Layer to SQL Databases
 ;;; This is copyrighted software.  See documentation for terms.
@@ -8,7 +8,7 @@
 ;;;
 ;;; derived from postgresql.lisp
 
-(in-package :MAISQL-ORACLE)
+(in-package :clsql-oracle)
 
 (defmethod database-initialize-database-type
     ((database-type (eql :oracle)))
@@ -131,16 +131,16 @@ the length of that format.")))
              (oci-error-get (deref errhp) 1 "" (c-& errcode 0) (c-& errbuf 0) +errbuf-len+ +oci-htype-error+)
              (let ((subcode (deref errcode 0)))
                (unless (and nulls-ok (= subcode +null-value-returned+))
-                 (error 'maisql-sql-error
+                 (error 'clsql-sql-error
                         :database database
                         :errno subcode
                         :error (cast (c-& errbuf 0) c-string)))))))
 	(nulls-ok
-	 (error 'maisql-sql-error
+	 (error 'clsql-sql-error
                 :database database
                 :error "can't handle NULLS-OK without ERRHP"))
 	(t 
-	 (error 'maisql-sql-error
+	 (error 'clsql-sql-error
                 :database database
                 :error "OCI Error (and no ERRHP available to find subcode)"))))
 

@@ -1,14 +1,13 @@
 ;;; -*- Mode: Lisp -*-
-;;; $Id: alien-resources.cl,v 1.1 2002/05/13 03:52:24 kevin Exp $
+;;; $Id: alien-resources.cl,v 1.2 2002/05/13 03:57:09 kevin Exp $
 
-;;; MaiSQL --- Common Lisp Interface Layer to SQL Databases
 ;;; This is copyrighted software.  See documentation for terms.
 ;;; 
 ;;; oracle-sql.lisp --- SQL-Interface implementation for Oracle
 ;;;
 ;;; derived from postgresql.lisp
 
-(in-package :MAISQL-ORACLE)
+(in-package :clsql-oracle)
 
 (declaim (optimize (speed 3)
 		   (debug 1)))
