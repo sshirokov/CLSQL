@@ -1,9 +1,11 @@
 cl-sql (0.7.4-1) unstable; urgency=low
 
   * Rework upstream source to put html documentation in html.tar.gz
+
   * Move .so files into /usr/lib/cl-sql directory
   
-  * Move documentation into the clsql-base package
+  * Move documentation into the clsql-base package, change doc-base section
+  to programming.
 
  -- Kevin M. Rosenberg <kevin@rosenberg.net>  Mon,  8 Jul 2002 11:10:11 -0600
 
