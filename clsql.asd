@@ -46,12 +46,13 @@ a functional and an object oriented interface."
 	       (:module :functional
 			:pathname ""
 			:components ((:file "sql")
-				     (:file "table"))
+				     (:file "table" :depends-on ("sql")))
 			:depends-on (:core))
 	       (:module :object
 			:pathname ""
 		       :components ((:file "metaclasses")
-				    (:file "objects" :depends-on ("metaclasses")))
+				    (:file "objects" :depends-on ("metaclasses"))
+				    (:file "relations" :depends-on ("objects")))
 		       :depends-on (:functional))))))
      
 
