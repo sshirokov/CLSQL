@@ -88,12 +88,14 @@
 			       machine-type)
 	      form
 	    (if failed-tests
-		(format output "~&~A: ~D of ~D tests failed (~A).~&"
+		(format output "~&~A: ~D of ~D tests failed (~A, ~A).~&"
 			(db-title db-type underlying-db-type)
 			(length failed-tests)
 			total-tests
+			machine-type
 			impl-type)
-		(format output "~&~A: All ~D tests passed (~A).~%"
+		(format output "~&~A: All ~D tests passed (~A, ~A).~%"
 			(db-title db-type underlying-db-type)
 			total-tests
+			machine-type
 			impl-type))))))))
