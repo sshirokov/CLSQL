@@ -44,6 +44,3 @@ Provides: cl-sql-backend
 Description: UncommonSQL database backend, PostgreSQL
  This package enables you to use the CLSQL data access package
  with PostgreSQL databases via a socket interface.
-
-
-

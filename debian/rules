@@ -25,7 +25,6 @@ prefix-pg-socket := debian/$(pkg-pg-socket)
 ## lisp sources per pkg
 ##
 srcs		:= sql/pool.cl sql/sql.cl sql/transactions.cl sql/utils.cl sql/functional.cl sql/usql.cl
-		   $(filter-out sql/metadata.lisp,$(wildcard sql/*.lisp))
 srcs-base	:= sql/package.cl sql/db-interface.cl sql/classes.cl sql/conditions.cl $(wilcard cmu-compat/*.cl)
 srcs-mysql	:= $(wildcard interfaces/mysql/*.cl)
 srcs-pg		:= $(wildcard interfaces/postgresql/*.cl)
@@ -35,9 +34,10 @@ INSTALL	:= install
 INSTALLFLAGS	:= -g root -o root -m 0644
 INSTALLDIRFLAGS	:= -d -g root -o root -m 0755
 
-clc-source	:= /usr/share/common-lisp/source
-clc-repositories:= /usr/share/common-lisp/repositories/clsql
-clc-systems	:= /usr/share/common-lisp/systems
+clc-base	:= usr/share/common-lisp
+clc-source	:= $(clc-base)/source
+clc-repos	:= $(clc-base)/repositories
+clc-systems	:= $(clc-base)/systems
 doc-dir		:= $(prefix)/usr/share/doc/cl-sql
 
 
@@ -68,19 +68,13 @@ install: build
 	dh_clean -k
 	dh_installdirs
 
-	# CLSQL-Base
-	$(INSTALL) $(INSTALLFLAGS) clsql.system.debian $(SYSDIR)
-	mv $(SYSDIR)/clsql.system.debian $(SYSDIR)/clsql.system
-	$(INSTALL) $(INSTALLFLAGS) $(shell echo sql/*.cl) $(REPOSITORYDIR)/sql
-	$(INSTALL) $(INSTALLFLAGS) $(shell echo src/interfaces/*.cl) $(REPOSITORYDIR)/interfaces
+	$(INSTALL) $(INSTALLFLAGS) $(srcs-base) $(prefix-base)/$(clc-repos)/clsql
+	$(INSTALL) $(INSTALLFLAGS) $(srcs) $(prefix)/$(clc-repos)/clsql
+	$(INSTALL) $(INSTALLFLAGS) $(srcs-mysql) $(prefix-mysql)/$(clc-repos)/clsql/interfaces/mysql
+	$(INSTALL) $(INSTALLFLAGS) $(srcs-pg) $(prefix-pg)/$(clc-repos)/clsql/interfaces/postgresql
+	$(INSTALL) $(INSTALLFLAGS) $(srcs-pg-socket) $(prefix-pg-socket)/$(clc-repos)/clsql/interfaces/postgresql-socket
 
-	# Documentation
-	$(INSTALL) $(INSTALLFLAGS) doc/html/* $(DOCDIR)/html
-	cp doc/clsql.pdf doc/cl-sql.pdf
-	rm -f doc/cl-sql.pdf.gz
-	gzip doc/cl-sql.pdf
-	$(INSTALL) $(INSTALLFLAGS) doc/cl-sql.pdf.gz $(DOCDIR)
-	rm -f doc/cl-sql.pdf.gz
+	dh_link ../repositories/clsql $(prefix-base)/$(clc-source)/clsql
 
 	# CLC Systems
 	$(INSTALL) $(INSTALLFLAGS) clsql.system $(prefix)/$(clc-systems)/
@@ -88,6 +82,14 @@ install: build
 	$(INSTALL) $(INSTALLFLAGS) clsql-mysql.system $(prefix-mysql)/$(clc-systems)/
 	$(INSTALL) $(INSTALLFLAGS) clsql-postgresql.system $(prefix-pg)/$(clc-systems)/
 	$(INSTALL) $(INSTALLFLAGS) clsql-postgresql-socket.system $(prefix-pg-socket)/$(clc-systems)/
+
+	# Documentation
+	$(INSTALL) $(INSTALLFLAGS) doc/html/* $(doc-dir)/html
+	cp doc/clsql.pdf doc/cl-sql.pdf
+	rm -f doc/cl-sql.pdf.gz
+	gzip doc/cl-sql.pdf
+	$(INSTALL) $(INSTALLFLAGS) doc/cl-sql.pdf.gz $(doc-dir)
+	rm -f doc/cl-sql.pdf.gz
 
 
 # Build architecture-independent files here.
@@ -101,7 +103,7 @@ binary-arch: build install
 	dh_testroot
 #	dh_installdebconf	
 	dh_installdocs
-	dh_installexamples examples/*.cl
+#	dh_installexamples 
 #	dh_installmenu
 #	dh_installlogrotate
 #	dh_installemacsen
@@ -127,4 +129,3 @@ binary-arch: build install
 
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary install configure
-

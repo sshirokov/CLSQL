@@ -37,9 +37,7 @@
 				  (concatenate 'string
 					       "CL-LIBRARY:" base-dir ";"))))
 	       (unless (equalp dir (pathname-directory logical-dir))
-		 (error 
-		  (format nil "~S does not equal ~S"
-			  dir (pathname-directory logical-dir)))))))
-			
-
-	     ))
+		 (let ((*print-circle* nil))
+		   (error "CL-LIBRARY:~A; directory ~S does not equal *load-truename*'s directory ~S"
+			  base-dir (cdr dir)
+			  (cdr (pathname-directory logical-dir))))))))

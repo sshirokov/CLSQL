@@ -5,10 +5,6 @@ usr/share/common-lisp/systems
 usr/share/common-lisp/source
 usr/share/common-lisp/repositories
 usr/share/common-lisp/repositories/clsql
-usr/share/doc
-usr/share/doc/cl-sql
-usr/share/doc/cl-sql/html
-
 
 
 
