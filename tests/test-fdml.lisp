@@ -96,14 +96,14 @@
                     :where [= [emplid] 1])
        (progn
          (clsql:update-records [employee] 
-                              :av-pairs'((first_name "Vladamir")
+                              :av-pairs'((first_name "Vladimir")
                                          (last_name "Lenin")
                                          (email "lenin@soviet.org"))
                               :where [= [emplid] 1])
          (clsql:select [first-name] [last-name] [email] :from [employee]
                       :where [= [emplid] 1]))))
   (("Yuri" "Gagarin" "gagarin@soviet.org"))
-  (("Vladamir" "Lenin" "lenin@soviet.org")))
+  (("Vladimir" "Lenin" "lenin@soviet.org")))
 
 ;; updates a record using av-pairs and then deletes it
 (deftest :fdml/update/2
@@ -118,14 +118,14 @@
                     :where [= [emplid] 1])
        (progn
          (clsql:update-records [employee]
-                              :av-pairs'((first_name "Vladamir")
+                              :av-pairs'((first_name "Vladimir")
                                          (last_name "Lenin")
                                          (email "lenin@soviet.org"))
                               :where [= [emplid] 1])
          (clsql:select [first-name] [last-name] [email]
                       :from [employee] :where [= [emplid] 1]))))
   (("Yuri" "Gagarin" "gagarin@soviet.org"))
-  (("Vladamir" "Lenin" "lenin@soviet.org")))
+  (("Vladimir" "Lenin" "lenin@soviet.org")))
 
 
 ;; Computed values are not always classified as numeric by psqlodbc
@@ -141,7 +141,7 @@
 	(clsql:query
 	 "SELECT FIRST_NAME,LAST_NAME FROM EMPLOYEE WHERE (EMPLID <= 5) ORDER BY LAST_NAME")
       (values rows (mapcar 'string-upcase field-names)))
-  (("Leonid" "Brezhnev") ("Nikita" "Kruschev") ("Vladamir" "Lenin")
+  (("Leonid" "Brezhnev") ("Nikita" "Kruschev") ("Vladimir" "Lenin")
    ("Josef" "Stalin") ("Leon" "Trotsky"))
   ("FIRST_NAME" "LAST_NAME"))
 
@@ -161,7 +161,7 @@
       (mapcar (lambda (p) (list (car p) (truncate (read-from-string (second p)))))
 	      res))
   (("Josef" 2) ("Leon" 3) ("Nikita" 4) ("Leonid" 5) ("Yuri" 6)
-  ("Konstantin" 7) ("Mikhail" 8) ("Boris" 9) ("Vladamir" 11)))
+  ("Konstantin" 7) ("Mikhail" 8) ("Boris" 9) ("Vladimir" 11)))
 
 (deftest :fdml/query/6
     (let ((res (clsql:query (clsql:sql [union [select [emplid] :from [employee]] 
@@ -227,7 +227,7 @@
                             :field-names nil 
                             :result-types nil 
                             :order-by [first-name])
- ("Boris" "Josef" "Konstantin" "Leon" "Leonid" "Mikhail" "Nikita" "Vladamir"
+ ("Boris" "Josef" "Konstantin" "Leon" "Leonid" "Mikhail" "Nikita" "Vladimir"
   "Yuri"))
 
 (deftest :fdml/select/3
@@ -239,7 +239,7 @@
       (mapcar (lambda (p) (list (car p) (truncate (read-from-string (second p)))))
 	      res))
   (("Boris" 1) ("Josef" 1) ("Konstantin" 1) ("Leon" 1) ("Leonid" 1)
-   ("Mikhail" 1) ("Nikita" 1) ("Vladamir" 2) ("Yuri" 1)))
+   ("Mikhail" 1) ("Nikita" 1) ("Vladimir" 2) ("Yuri" 1)))
 
 (deftest :fdml/select/4
     (clsql:select [last-name] :from [employee] 
@@ -375,9 +375,9 @@
 (deftest :fdml/select/22 
   (clsql:select [|| [first-name] " " [last-name]] :from [employee]
                 :flatp t :order-by [emplid] :field-names nil)
- ("Vladamir Lenin" "Josef Stalin" "Leon Trotsky" "Nikita Kruschev"
+ ("Vladimir Lenin" "Josef Stalin" "Leon Trotsky" "Nikita Kruschev"
  "Leonid Brezhnev" "Yuri Andropov" "Konstantin Chernenko" "Mikhail Gorbachev"
- "Boris Yeltsin" "Vladamir Putin"))
+ "Boris Yeltsin" "Vladimir Putin"))
 
 (deftest :fdml/select/23
  (clsql:select [emplid] :from [employee] :where [in [emplid] '(1 2 3 4)]
@@ -388,7 +388,7 @@
 (deftest :fdml/select/24
  (clsql:select [distinct [first-name]] :from [employee] :flatp t
                :order-by [first-name] :field-names nil :result-types nil)
- ("Boris" "Josef" "Konstantin" "Leon" "Leonid" "Mikhail" "Nikita" "Vladamir"
+ ("Boris" "Josef" "Konstantin" "Leon" "Leonid" "Mikhail" "Nikita" "Vladimir"
   "Yuri"))
 
 (deftest :fdml/select/25
@@ -397,7 +397,7 @@
   :field-names nil 
   :result-types nil 
   :order-by [first-name])
- ("Boris" "Josef" "Konstantin" "Leon" "Leonid" "Mikhail" "Nikita" "Vladamir"
+ ("Boris" "Josef" "Konstantin" "Leon" "Leonid" "Mikhail" "Nikita" "Vladimir"
   "Yuri"))
 
 (deftest :fdml/select/26
@@ -409,7 +409,7 @@
                       ["join" emplid]]]]
   :order-by '(["table" last-name])
   :result-types nil :field-names nil)
- (("Vladamir" "Lenin") ("Vladamir" "Putin")))
+ (("Vladimir" "Lenin") ("Vladimir" "Putin")))
 
 (deftest :fdml/select/27 
     (mapcar
@@ -432,7 +432,7 @@
                        :order-by '(([first-name] :asc) ([last-name] :desc)))
  (("Boris" "Yeltsin") ("Josef" "Stalin") ("Konstantin" "Chernenko")
   ("Leon" "Trotsky") ("Leonid" "Brezhnev") ("Mikhail" "Gorbachev")
-  ("Nikita" "Kruschev") ("Vladamir" "Putin") ("Vladamir" "Lenin")
+  ("Nikita" "Kruschev") ("Vladimir" "Putin") ("Vladimir" "Lenin")
   ("Yuri" "Andropov")))
 
 (deftest :fdml/select/30 
@@ -441,7 +441,7 @@
                        :order-by '(([first-name] :asc) ([last-name] :asc)))
  (("Boris" "Yeltsin") ("Josef" "Stalin") ("Konstantin" "Chernenko")
   ("Leon" "Trotsky") ("Leonid" "Brezhnev") ("Mikhail" "Gorbachev")
-  ("Nikita" "Kruschev") ("Vladamir" "Lenin") ("Vladamir" "Putin")
+  ("Nikita" "Kruschev") ("Vladimir" "Lenin") ("Vladimir" "Putin")
   ("Yuri" "Andropov")))
 
 (deftest :fdml/select/31
@@ -453,7 +453,7 @@
               :field-names nil)
  ("Andropov" "Boris" "Brezhnev" "Chernenko" "Gorbachev" "Josef" "Konstantin"
  "Kruschev" "Lenin" "Leon" "Leonid" "Mikhail" "Nikita" "Putin" "Stalin"
- "Trotsky" "Vladamir" "Yeltsin" "Yuri"))
+ "Trotsky" "Vladimir" "Yeltsin" "Yuri"))
 
 (deftest :fdml/select/32
     (clsql:select [emplid] :from [employee]
@@ -526,8 +526,8 @@
                   [select [first-name] [last-name] :from [employee] 
                           :order-by [last-name]])
  (("Yuri" "Andropov") ("Leonid" "Brezhnev") ("Konstantin" "Chernenko")
-  ("Mikhail" "Gorbachev") ("Nikita" "Kruschev") ("Vladamir" "Lenin")
-  ("Vladamir" "Putin") ("Josef" "Stalin") ("Leon" "Trotsky") 
+  ("Mikhail" "Gorbachev") ("Nikita" "Kruschev") ("Vladimir" "Lenin")
+  ("Vladimir" "Putin") ("Josef" "Stalin") ("Leon" "Trotsky") 
   ("Boris" "Yeltsin")))
   
 (deftest :fdml/loop/1
@@ -536,7 +536,7 @@
       [select [first-name] [last-name] :from [employee] :order-by [last-name]]
       collect (concatenate 'string forename " " surname))
   ("Yuri Andropov" "Leonid Brezhnev" "Konstantin Chernenko" "Mikhail Gorbachev"
-                   "Nikita Kruschev" "Vladamir Lenin" "Vladamir Putin"
+                   "Nikita Kruschev" "Vladimir Lenin" "Vladimir Putin"
    "Josef Stalin" "Leon Trotsky" "Boris Yeltsin"))
 
 (deftest :fdml/loop/2

@@ -50,11 +50,11 @@
 				     " "
 				     (slot-value e 'last-name)))
 	     (clsql:select 'employee :where [= [slot-value 'employee 'first-name]
-					       "Vladamir"]
+					       "Vladimir"]
 			   :flatp t		     
 			   :order-by [last-name]
 			   :caching nil))
-	  ("Vladamir Lenin" "Vladamir Putin"))
+	  ("Vladimir Lenin" "Vladimir Putin"))
 
 	(deftest :oodml/select/5
 	    (length (clsql:select 'employee :where [married] :flatp t :caching nil))
@@ -194,7 +194,7 @@
 			      ": "
 			      (employee-email lenin))))
 	     (progn 
-	       (setf (slot-value employee1 'first-name) "Vladamir" 
+	       (setf (slot-value employee1 'first-name) "Vladimir" 
 		     (slot-value employee1 'last-name) "Lenin"
 		     (slot-value employee1 'email) "lenin@soviet.org")
 	       (clsql:update-records-from-instance employee1)
@@ -209,9 +209,9 @@
 			      (last-name lenin)
 			      ": "
 			      (employee-email lenin)))))
-	  "Vladamir Lenin: lenin@soviet.org"
+	  "Vladimir Lenin: lenin@soviet.org"
 	  "Dimitriy Ivanovich: ivanovich@soviet.org"
-	  "Vladamir Lenin: lenin@soviet.org")
+	  "Vladimir Lenin: lenin@soviet.org")
 
 	;; tests update-record-from-slot 
 	(deftest :oodml/update-records/2
@@ -270,7 +270,7 @@
 			      ": "
 			      (employee-email lenin))))
 	     (progn 
-	       (setf (slot-value employee1 'first-name) "Vladamir" 
+	       (setf (slot-value employee1 'first-name) "Vladimir" 
 		     (slot-value employee1 'last-name) "Lenin"
 		     (slot-value employee1 'email) "lenin@soviet.org")
 	       (clsql:update-record-from-slots employee1 '(first-name last-name email))
@@ -285,9 +285,9 @@
 			      (last-name lenin)
 			      ": "
 			      (employee-email lenin)))))
-	  "Vladamir Lenin: lenin@soviet.org"
+	  "Vladimir Lenin: lenin@soviet.org"
 	  "Dimitriy Ivanovich: ivanovich@soviet.org"
-	  "Vladamir Lenin: lenin@soviet.org")
+	  "Vladimir Lenin: lenin@soviet.org")
 
 	;; tests update-instance-from-records 
 	(deftest :oodml/update-instance/1
@@ -313,7 +313,7 @@
 			    (slot-value employee1 'email)))
 	     (progn 
 	       (clsql:update-records [employee] 
-				     :av-pairs '(([first-name] "Vladamir")
+				     :av-pairs '(([first-name] "Vladimir")
 						 ([last-name] "Lenin")
 						 ([email] "lenin@soviet.org"))
 				     :where [= [emplid] 1])
@@ -324,9 +324,9 @@
 			    (slot-value employee1 'last-name)
 			    ": "
 			    (slot-value employee1 'email))))
-	  "Vladamir Lenin: lenin@soviet.org"
+	  "Vladimir Lenin: lenin@soviet.org"
 	  "Ivan Petrov: petrov@soviet.org"
-	  "Vladamir Lenin: lenin@soviet.org")
+	  "Vladimir Lenin: lenin@soviet.org")
 
 	;; tests update-slot-from-record 
 	(deftest :oodml/update-instance/2

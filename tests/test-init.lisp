@@ -259,7 +259,7 @@
 				   :height (1+ (random 1.00))
 				   :bd-utime *test-start-utime*
 				   :birthday now-time
-				   :first-name "Vladamir"
+				   :first-name "Vladimir"
 				   :last-name "Lenin"
 				   :email "lenin@soviet.org"
 				   :companyid 1)
@@ -366,7 +366,7 @@
 				    :height (1+ (random 1.00))
 				    :bd-utime *test-start-utime*
 				    :birthday now-time
-				    :first-name "Vladamir"
+				    :first-name "Vladimir"
 				    :last-name "Putin"
 				    :email "putin@soviet.org"
 				    :managerid 1
