@@ -256,17 +256,17 @@
 
 (def-oci-routine ("OCIDefineByPos" oci-define-by-pos)
     :int
-  (p0      (* :void))
-  (p1      (* :void))
-  (p2      (* :void))
-  (p3      :unsigned-long)
-  (p4      (* :void))
-  (p5      :unsigned-long)
-  (p6      :unsigned-short)         
-  (p7      (* :void))
-  (p8      (* :void))          
-  (p9      (* :void))          
-  (p10     :unsigned-long))
+  (stmtp      (* :void))
+  (defnpp     (* (* :void)))
+  (errhp      (* :void))
+  (position      :unsigned-long)
+  (valuep      (* :void))
+  (value_sz      :long)
+  (dty      :unsigned-short)         
+  (indp      (* :void))
+  (rlenp      (* :unsigned-short))          
+  (rcodep      (* :unsigned-short))          
+  (mode     :unsigned-long))
 
 (def-oci-routine ("OCIStmtFetch" oci-stmt-fetch)
     :int

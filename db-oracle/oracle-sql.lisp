@@ -210,7 +210,7 @@ the length of that format.")))
   (declare (type (mod #.+n-buf-rows+) string-index))
   (declare (type (and unsigned-byte fixnum) size))
   (let* ((raw (uffi:convert-from-foreign-string 
-	       (uffi:pointer-address (uffi:deref-array arrayptr '(:array :unsigned-char) (* string-index size)))))
+	       (+ (uffi:pointer-address arrayptr) (* string-index size))))
 	 (trimmed (string-trim " " raw)))
     (if (equal trimmed "NULL") nil trimmed)))
 
@@ -390,7 +390,7 @@ the length of that format.")))
 		    (value
 		     (let ((arb (foreign-resource-buffer (cd-indicators cd))))
 		       (declare (type short-pointer arb))
-		       (unless (= (uffi:deref-array arb :int irow) -1)
+		       (unless (= (uffi:deref-array arb '(:array :int) irow) -1)
 			 (ecase (cd-oci-data-type cd)
 			   (#.SQLT-STR  (deref-oci-string b irow (cd-sizeof cd)))
 			   (#.SQLT-FLT  (uffi:deref-array b '(:array :double) irow))
@@ -419,7 +419,9 @@ the length of that format.")))
                                                 :nulls-ok t))))
            (uffi:with-foreign-object (rowcount :long)
              (oci-attr-get (uffi:deref-pointer (qc-stmthp qc) void-pointer) +oci-htype-stmt+
-                           (c-& rowcount :long) nil +oci-attr-row-count+ 
+                           rowcount 
+			   (uffi:make-null-pointer :unsigned-long)
+			   +oci-attr-row-count+ 
                            (uffi:deref-pointer errhp void-pointer))
              (setf (qc-n-from-oci qc)
                    (- (uffi:deref-pointer rowcount :long) (qc-total-n-from-oci qc)))
@@ -555,7 +557,7 @@ the length of that format.")))
             
 
 (defun make-query-cursor-cds (database stmthp types)
-  (declare (optimize (speed 3))
+  (declare (optimize (safety 3) #+nil (speed 3))
 	   (type oracle-database database)
 	   (type pointer-pointer-void stmthp))
   (with-slots (errhp)
@@ -575,7 +577,8 @@ the length of that format.")))
 	    (sizeof nil))
 	(do ((icolumn 0 (1+ icolumn))
 	     (cds-as-reversed-list nil))
-	    ((not (eql (oci-param-get (uffi:deref-pointer stmthp void-pointer) +oci-htype-stmt+
+	    ((not (eql (oci-param-get (uffi:deref-pointer stmthp void-pointer) 
+				      +oci-htype-stmt+
 				      (uffi:deref-pointer errhp void-pointer)
 				      parmdp
 				      (1+ icolumn) :database database)
@@ -633,14 +636,14 @@ the length of that format.")))
 			   :indicators indicators)
 		  cds-as-reversed-list)
 	    (oci-define-by-pos (uffi:deref-pointer stmthp void-pointer)
-			       (uffi:pointer-address defnp)
+			       defnp
 			       (uffi:deref-pointer errhp void-pointer)
 			       (1+ icolumn) ; OCI 1-based indexing again
 			       (foreign-resource-buffer buffer)
 			       sizeof
 			       dtype
 			       (foreign-resource-buffer indicators)
-			       nil
+			       (uffi:make-null-pointer :unsigned-short)
 			       (foreign-resource-buffer retcodes)
 			       +oci-default+)))))))
 
@@ -764,7 +767,7 @@ the length of that format.")))
 
 (defmethod database-query (query-expression (database oracle-database) result-types field-names)
   (let ((cursor (sql-stmt-exec query-expression database :types :auto)))
-    (declare (type (or query-cursor null) cursor))
+    ;; (declare (type (or query-cursor null) cursor))
     (if (null cursor) ; No table was returned.
 	(values)
       (do ((reversed-result nil))

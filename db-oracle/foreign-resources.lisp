@@ -2,8 +2,6 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name: alien-resources.lisp
-;;;;
 ;;;; $Id$
 ;;;;
 ;;;; This file is part of CLSQL.
