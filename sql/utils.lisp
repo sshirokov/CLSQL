@@ -317,12 +317,12 @@ list of characters and replacement strings."
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (when (char= #\a (schar (symbol-name '#:a) 0))
-    (pushnew :lowercase-reader *features*)))
+    (pushnew :clsql-lowercase-reader *features*)))
 
 (defun symbol-name-default-case (str)
-  #-lowercase-reader
+  #-clsql-lowercase-reader
   (string-upcase str)
-  #+lowercase-reader
+  #+clsql-lowercase-reader
   (string-downcase str))
 
 (defun convert-to-db-default-case (str database)
@@ -341,3 +341,6 @@ list of characters and replacement strings."
     (keyword name)
     (string (nth-value 0 (intern (symbol-name-default-case name) :keyword)))
     (symbol (nth-value 0 (intern (symbol-name name) :keyword)))))
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (setq cl:*features* (delete :clsql-lowercase-reader cl:*features*)))

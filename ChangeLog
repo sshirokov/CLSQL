@@ -1,4 +1,6 @@
 12 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.10.17
+	* LATEST-TEST-RESULTS: Run on all platforms, add AMD64
 	* sql/sql.lisp: Add FOR-EACH-ROW macro from clsql-classic/sql.lisp
 	* db-sqlite/sqlite-uffi-api.lisp: Fix row-pointer type
 	* *: Fix minor style warnings

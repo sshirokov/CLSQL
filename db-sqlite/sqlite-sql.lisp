@@ -198,7 +198,7 @@
 			 #-clisp
 			 (clsql-uffi:convert-raw-field
 			  (uffi:deref-array
-			   (uffi:deref-pointer row 'sqlite:sqlite-row-pointer) '(:array (* :char)) i)
+			   (uffi:deref-pointer row 'sqlite:sqlite-row-pointer) '(:array (* :unsigned-char)) i)
 			  result-types
 			  i)
 			 #+clisp

@@ -501,7 +501,7 @@
 				(lisp-implementation-version)
 				(machine-type))))
 	  (when *sexp-report-stream*
-	    (write sexp-error :stream *sexp-report-stream*)) 
+	    (write sexp-error :stream *sexp-report-stream* :readably t)) 
 	  (push sexp-error *error-list*))
 	
 	(format *report-stream* "~&Tests skipped:")
