@@ -624,7 +624,7 @@
 				  :av-pairs
 				  '((emale "lenin-nospam@soviet.org"))
 				  :where [= [emplid] 1]))
-        (clsql:clsql-error ()
+        (clsql:sql-database-error ()
           (progn
             ;; check status 
             (push (clsql:in-transaction-p) results)
