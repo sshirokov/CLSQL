@@ -19,15 +19,9 @@
 (in-package #:cl-user)
 
 (defpackage #:odbc
-    (:use #:cl #:clsql-uffi)
-    (:export 
+  (:use #:cl #:clsql-uffi)
+  (:export 
      #:database-library-loaded
-
-     #:connect
-     #:disconnect
-     #:sql
-     #:close-query
-     #:fetch-row
-     
      )
-    (:documentation "This is the low-level interface ODBC."))
+  (:documentation "This is the low-level interface ODBC."))
+

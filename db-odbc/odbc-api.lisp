@@ -18,22 +18,3 @@
 
 (in-package #:odbc)
 
-(defun connect (&key user password data-source-name)
-  (warn "Not implemented.")
-  nil)
-
-(defun disconnect (conn)
-  (warn "Not implemented."))  
-
-
-(defun query (expr &key db result-types row-count column-names)
-  (warn "Not implemented."))
-
-(defun execute (expr conn)
-  (warn "Not implemented."))
-
-(defun close-query (result-set)
-  (warn "Not implemented."))
-
-(defun fetch-row (result-set error-eof eof-value)
-  (warn "Not implemented."))

@@ -42,7 +42,7 @@
 	(make-instance 'odbc-database
 	  :name (database-name-from-spec connection-spec :odbc)
 	  :odbc-conn
-	  (odbc:connect :user user
+	  (odbc-dbi:connect :user user
 			:password password
 			:data-source-name dsn))
       (error () 	;; Init or Connect failed
@@ -53,13 +53,13 @@
 	       :error "Connection failed")))))
 
 (defmethod database-disconnect ((database odbc-database))
-  (odbc:disconnect (database-odbc-conn database))
+  (odbc-dbi:disconnect (database-odbc-conn database))
   (setf (database-odbc-conn database) nil)
   t)
 
 (defmethod database-query (query-expression (database odbc-database) result-types) 
   (handler-case
-      (odbc:sql query-expression :db (database-odbc-conn database)
+      (odbc-dbi:sql query-expression :db (database-odbc-conn database)
 	       :types result-types)
     (error ()
       (error 'clsql-sql-error
@@ -71,7 +71,7 @@
 (defmethod database-execute-command (sql-expression 
 				     (database odbc-database))
   (handler-case
-      (odbc:sql sql-expression (database-odbc-conn database))
+      (odbc-dbi:sql sql-expression (database-odbc-conn database))
     (error ()
       (error 'clsql-sql-error
 	     :database database
@@ -89,7 +89,7 @@
 				      &key full-set result-types)
   (handler-case 
       (multiple-value-bind (query column-names)
-	  (odbc:sql query-expression 
+	  (odbc-dbi:sql query-expression 
 		   :db (database-odbc-conn database) 
 		   :row-count nil
 		   :column-names t
@@ -110,13 +110,13 @@
 	     :error "Query result set failed"))))
 
 (defmethod database-dump-result-set (result-set (database odbc-database))
-  (odbc:close-query (odbc-result-set-query result-set))
+  (odbc-dbi:close-query (odbc-result-set-query result-set))
   t)
 
 (defmethod database-store-next-row (result-set
 				    (database odbc-database)
 				    list)
-  (let ((row (odbc:fetch-row (odbc-result-set-query result-set) nil 'eof)))
+  (let ((row (odbc-dbi:fetch-row (odbc-result-set-query result-set) nil 'eof)))
     (if (eq row 'eof)
 	nil
       (progn
