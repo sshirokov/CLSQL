@@ -1,0 +1,4 @@
+cl-sql
+files
+cl-sql.prerm.debhelper
+cl-sql.postinst.debhelper

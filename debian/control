@@ -1,0 +1,13 @@
+Source: cl-uffi
+Section: devel
+Priority: optional
+Maintainer: Kevin Rosenberg <kevin@rosenberg.net>
+Build-Depends-Indep: debhelper (>> 3.0.0)
+Standards-Version: 3.5.2
+
+Package: cl-uffi
+Architecture: all
+Depends: common-lisp-controller, cmucl | lisp-compiler
+Description: Universal Foreign Function Library for Common Lisp
+ UFFI provides a universal foreign function interface (FFI) for Common Lisp.
+ UFFI supports CMUCL, Lispworks, and AllegroCL.

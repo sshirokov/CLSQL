@@ -1,0 +1,6 @@
+cl-sql (0.7.0-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Kevin Rosenberg <kevin@rosenberg.net>  Thu, 25 Apr 2002 19:13:41 -0600
+
