@@ -4,27 +4,10 @@
 ;;;; Authors: Marcus Pearce <m.t.pearce@city.ac.uk>, Kevin Rosenberg
 ;;;; Created: 30/03/2004
 ;;;; Updated: $Id$
-;;;; ======================================================================
-;;;;
-;;;; Description ==========================================================
-;;;; ======================================================================
 ;;;;
 ;;;; Initialisation utilities for running regression tests on CLSQL. 
 ;;;;
 ;;;; ======================================================================
-
-;;; This test suite looks for a configuration file named ".clsql-test.config"
-;;; located in the users home directory.
-;;;
-;;; This file contains a single a-list that specifies the connection
-;;; specs for each database type to be tested. For example, to test all
-;;; platforms, a sample "test.config" may look like:
-;;;
-;;; ((:mysql ("localhost" "a-mysql-db" "user1" "secret"))
-;;;  (:aodbc ("my-dsn" "a-user" "pass"))
-;;;  (:postgresql ("localhost" "another-db" "user2" "dont-tell"))
-;;;  (:postgresql-socket ("pg-server" "a-db-name" "user" "secret-password"))
-;;;  (:sqlite ("path-to-sqlite-db")))
 
 (in-package #:clsql-tests)
 

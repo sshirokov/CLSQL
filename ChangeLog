@@ -6,8 +6,9 @@
 	* base/conditions.lisp: Added CLSQL-ACCESS-ERROR
 	* base/utils.lisp: Fix use of position-char.
 	Add COMMAND-OUTPUT used by backends for running
-	shell commands.
-	* base/loop-extension.lisp: Rework packages
+	external programs. Fix parsing of SQL*NET-compatible
+	connection-specs.
+	* base/loop-extension.lisp: Simplify package use
 	for Lispworks and Allegro
 	* db-*/*-sql.lisp: Added DATABASE-CREATE,
 	DATABASE-DESTORY, PROBE-DATABASE methods
@@ -16,6 +17,14 @@
 	testing with empty database
 	* tests/test-connection.lisp: Add tests for
 	parsing of string connection-specs
+	* examples/run-tests.sh: New file for running
+	test suite on all installed CL implementations
+	* examples/clsql-tutorial.lisp: moved from
+	doc directory
+	* examples/dot.clsql-tests.config: New file
+	giving an example test configuration
+	* test/README: Add notes about rtest/ptester
+	downloads and link to sample test configuration file.
 	
 10 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.5.1 released:

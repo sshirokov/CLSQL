@@ -4,14 +4,15 @@
 ;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>
 ;;;; Created: 30/03/2004
 ;;;; Updated: $Id$
-;;;; ======================================================================
-;;;;
-;;;; Description ==========================================================
-;;;; ======================================================================
 ;;;;
 ;;;; Tests for the CLSQL Object Oriented Data Definition Language
 ;;;; (OODDL).
 ;;;;
+;;;; This file is part of CLSQL.
+;;;;
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; ======================================================================
 
 

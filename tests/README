@@ -1,7 +1,13 @@
 * RUNNING THE REGRESSION SUITE
 
-Create a .clsql-tests.config file in your home directory.
-See test-init.lisp for the structure of the data.
+This test suite looks for a configuration file named
+".clsql-test.config" located in the users home directory. This file
+contains a single assoc-list that specifies the connection specs for
+each database type to be tested. There is an example file in
+contained in CLSQL's examples directory.
+
+These tests require the downloading of the rtest and ptester packages
+from http://files.b9.com/.
 
 Load clsql.asd or put it somewhere where ASDF can find it
 and call:

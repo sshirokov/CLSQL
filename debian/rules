@@ -189,7 +189,7 @@ binary-indep: build install
 	dh_testroot -i
 #	dh_installdebconf -i
 	dh_installdocs -i
-	dh_installexamples -i
+	dh_installexamples -i examples
 	dh_installmenu -i
 #	dh_installlogrotate -i
 #	dh_installemacsen -i

@@ -430,16 +430,20 @@ doesn't depend on UFFI."
   
 
 (defmethod database-create (connection-spec (type (eql :postgresql-socket)))
-  (error 'clsql-access-error
-	 :connection-spec connection-spec
-	 :database-type type
-	 :error "Unable to create databases on a socket connection."))
+  (destructuring-bind (host name user password) connection-spec
+    (let ((database (database-connect (list host "template1" user password)
+				      type)))
+      (unwind-protect
+	   (execute-command (format nil "create database ~A" name))
+	(database-disconnect database)))))
 
 (defmethod database-destroy (connection-spec (type (eql :postgresql-socket)))
-  (error 'clsql-access-error
-	 :connection-spec connection-spec
-	 :database-type type
-	 :error "Unable to create databases on a socket connection."))
+  (destructuring-bind (host name user password) connection-spec
+    (let ((database (database-connect (list host "template1" user password)
+				      type)))
+      (unwind-protect
+	  (execute-command (format nil "drop database ~A" name))
+	(database-disconnect database)))))
 
 (defmethod database-probe (connection-spec (type (eql :postgresql-socket)))
   (destructuring-bind (host name user password) connection-spec
