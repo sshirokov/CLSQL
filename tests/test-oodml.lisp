@@ -289,7 +289,7 @@
 
 (deftest :oodml/iteration/3
     (loop for (e) being the records in 
-          [select 'employee :where [married] :order-by [emplid]]
+          [select 'employee :where [< [emplid] 4] :order-by [emplid]]
 	collect (slot-value e 'last-name))
   ("Lenin" "Stalin" "Trotsky"))
 
