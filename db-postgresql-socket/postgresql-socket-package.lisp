@@ -21,7 +21,7 @@
 #+lispworks (require "comm")
 
 (defpackage #:postgresql-socket
-  (:use #:cl)
+  (:use #:cl #-sbcl md5 #+sbcl sb-md5)
   (:export #:pgsql-ftype
 	   #:pgsql-ftype#bytea
 	   #:pgsql-ftype#int2

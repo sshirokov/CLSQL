@@ -1,3 +1,7 @@
+11 Nov 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* clsql-postgresql-socket.asd, db-postgresql-socket/postgresql-socket-package.lisp:
+	Use sb-md5 package on SBCL, recommended by Chris capel
+	
 09 Nov 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.1.0 released: New SQLite3 backend by Aurelio Bignoli
 	* doc/appendix.xml: Document SQLITE3 backend, patch by Aurelio Bignoli
