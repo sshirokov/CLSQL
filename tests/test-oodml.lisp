@@ -381,6 +381,68 @@
 	      (every #'(lambda (a b) (eq a b))
 		     employees (select 'employee))))
 	t)
-			 
+
+	(deftest oodml/cache/2
+	    (let ((employees (select 'employee)))
+	      (equal employees (select 'employee :flatp t)))
+	  nil)
+	
+	(deftest oodml/refresh/1
+	    (let ((addresses (select 'address)))
+	      (equal addresses (select 'address :refresh t)))
+	  t)
+
+	(deftest oodml/refresh/2
+	    (let* ((addresses (select 'address :order-by [addressid] :flatp t))
+		   (city (slot-value (car addresses) 'city)))
+	      (clsql:update-records [addr] 
+                              :av-pairs '((city_field "A new city"))
+                              :where [= [addressid] (slot-value (car addresses) 'addressid)])
+	      (let* ((new-addresses (select 'address :order-by [addressid] :refresh t :flatp t))
+		     (new-city (slot-value (car addresses) 'city))
+)
+		(clsql:update-records [addr] 
+				      :av-pairs `((city_field ,city))
+				      :where [= [addressid] (slot-value (car addresses) 'addressid)])
+		(values (equal addresses new-addresses)
+			city
+			new-city)))
+	  t "Leningrad" "A new city")
+	
+	(deftest oodml/refresh/3
+	    (let* ((addresses (select 'address :order-by [addressid] :flatp t)))
+	      (values
+	       (equal addresses (select 'address :refresh t :flatp t))
+	       (equal addresses (select 'address :flatp t))))
+	  nil nil)
+	
+	(deftest oodml/refresh/4
+	    (let* ((addresses (select 'address :order-by [addressid] :flatp t))
+		   (*db-auto-sync* t))
+	      (make-instance 'address :addressid 1000 :city "A new address city")
+	      (let ((new-addresses (select 'address :order-by [addressid] :flatp t :refresh t)))
+		(delete-records :from [addr] :where [= [addressid] 1000]) 
+		(values
+		 (length addresses)
+		 (length new-addresses)
+		 (eq (first addresses) (first new-addresses))
+		 (eq (second addresses) (second new-addresses)))))
+	  2 3 t t)
+		
+	      
+	(deftest oodml/uoj/1
+	    (progn
+	      (let* ((dea-list (select 'deferred-employee-address :caching nil :order-by [ea_join aaddressid]
+				       :flatp t))
+		     (dea-list-copy (copy-seq dea-list))
+		     (initially-unbound (every #'(lambda (dea) (not (slot-boundp dea 'address))) dea-list)))
+		(update-object-joins dea-list)
+		(values
+		 initially-unbound
+		 (equal dea-list dea-list-copy)
+		 (every #'(lambda (dea) (slot-boundp dea 'address)) dea-list)
+		 (every #'(lambda (dea) (typep (slot-value dea 'address) 'address)) dea-list)
+		 (mapcar #'(lambda (dea) (slot-value (slot-value dea 'address) 'addressid)) dea-list))))
+	  t t t t (1 1 2 2 2))
 	))
 #.(clsql:restore-sql-reader-syntax-state)

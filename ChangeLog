@@ -1,3 +1,11 @@
+15 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.10.18: Caching and refreshing complete 
+	* sql/objects.lisp: implement UPDATE-OBJECT-JOINS,
+	implement REFRESH for SELECT.
+	* tests/test-oodml.lisp: Add tests for deferred retrieval,
+	caching, refresh, and update-object-joins
+	* tests/test-init.lisp: Add deferred-employee-address class
+ 	
 15 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* sql/operations.lisp: make MINUS operator a synonym for EXCEPT. Add 
 	COALESCE operator and make NVL a synonym for this. Make ANY, SOME, 

@@ -171,7 +171,8 @@
 	    :db-info (:join-class address
 				  :home-key aaddressid
 				  :foreign-key addressid
-				  :retrieval :deferred)))
+				  :retrieval :deferred
+				  :set nil)))
   (:base-table "ea_join"))
 
 (defun test-connect-to-database (db-type spec)

@@ -808,27 +808,59 @@ superclass of the newly-defined View Class."
 			    class-name (max-len *default-update-objects-max-len*))
   "Updates the remote join slots, that is those slots defined without
 :retrieval :immediate."
+  (assert (or (null max-len) (plusp max-len)))
   (when objects
     (unless class-name
       (setq class-name (class-name (class-of (first objects)))))
     (let* ((class (find-class class-name))
-	   (deferred-joins (generate-retrieval-joins-list class :deferred)))
-      (cond
-	(deferred-joins
-	    (mapcar
-	     #'(lambda (slotdef)
-		 ;; FIXME: Rather than simply reading the values for each
-		 ;; object, to meet CommonSQL spec need to generate a single
-		 ;; query to read values for all objects, up to max-len count
-		 (mapcar
-		  #'(lambda (object)
-		      (slot-value object (slot-definition-name slotdef)))
-		  objects))
-	     deferred-joins))
-	(t
-	 (warn "Class ~A does not have any deferred join slots." class-name)))
-      )))
-
+	   (class-slots (ordered-class-slots class))
+	   (slotdefs 
+	    (if (eq t slots)
+		(generate-retrieval-joins-list class :deferred)
+	      (remove-if #'null
+			 (mapcar #'(lambda (name)
+				     (let ((slotdef (find name class-slots :key #'slot-definition-name)))
+				       (unless slotdef
+					 (warn "Unable to find slot named ~S in class ~S." name class))
+				       slotdef))
+				 slots)))))
+      (dolist (slotdef slotdefs)
+	(let* ((dbi (view-class-slot-db-info slotdef))
+	       (slotdef-name (slot-definition-name slotdef))
+	       (foreign-key (gethash :foreign-key dbi))
+	       (home-key (gethash :home-key dbi))
+	       (object-keys
+		(remove-duplicates
+		 (if force-p
+		     (mapcar #'(lambda (o) (slot-value o home-key)) objects)
+		   (remove-if #'null
+			      (mapcar
+			       #'(lambda (o) (if (slot-boundp o slotdef-name)
+						 nil
+					       (slot-value o home-key)))
+			       objects)))))
+	       (n-object-keys (length object-keys))
+	       (query-len (or max-len n-object-keys)))
+	  
+	  (do ((i 0 (+ i query-len)))
+	      ((>= i n-object-keys))
+	    (let* ((keys (if max-len
+			     (subseq object-keys i (min (+ i query-len) n-object-keys))
+			   object-keys))
+		   (results (find-all (list (gethash :join-class dbi))
+				      :where (make-instance 'sql-relational-exp
+					       :operator 'in
+					       :sub-expressions (list (sql-expression :attribute foreign-key)
+								      keys))
+				      :flatp t)))
+	      (dolist (object objects)
+		(when (or force-p (not (slot-boundp object slotdef-name)))
+		  (let ((res (find (slot-value object home-key) results 
+				   :key #'(lambda (res) (slot-value res foreign-key))
+				   :test #'equal)))
+		    (when res
+		      (setf (slot-value object slotdef-name) res)))))))))))
+  (values))
   
 (defun fault-join-slot-raw (class object slot-def)
   (let* ((dbi (view-class-slot-db-info slot-def))
@@ -895,49 +927,51 @@ superclass of the newly-defined View Class."
 ;; For example, for (select 'employee-address) in test suite =>
 ;; select addr.*,ea_join.* FROM addr,ea_join WHERE ea_join.aaddressid=addr.addressid\g
 
-(defun build-objects (vals sclasses immediate-join-classes sels immediate-joins database refresh flatp)
+(defun build-objects (vals sclasses immediate-join-classes sels immediate-joins database refresh flatp instances)
   "Used by find-all to build objects."
-  (labels ((build-object (vals vclass jclasses selects immediate-selects)
-	     (let* ((class-name (class-name vclass))
-		    (db-vals (butlast vals (- (list-length vals)
+  (labels ((build-object (vals vclass jclasses selects immediate-selects instance)
+	     (let* ((db-vals (butlast vals (- (list-length vals)
 					      (list-length selects))))
+		    (obj (if instance instance (make-instance (class-name vclass) :view-database database)))
 		    (join-vals (subseq vals (list-length selects)))
-		    (obj (make-instance class-name :view-database database))
 		    (joins (mapcar #'(lambda (c) (when c (make-instance c :view-database database)))
 				   jclasses)))
 	       ;;(format t "db-vals: ~S, join-values: ~S~%" db-vals join-vals)
 	       ;; use refresh keyword here 
-	       (setf obj (get-slot-values-from-view obj (mapcar #'car selects) 
-						    db-vals))
+	       (setf obj (get-slot-values-from-view obj (mapcar #'car selects) db-vals))
 	       (mapc #'(lambda (jc) (get-slot-values-from-view jc (mapcar #'car immediate-selects) join-vals))
 		     joins)
 	       (mapc
-		#'(lambda (jc) (let ((slot (find (class-name (class-of jc)) (class-slots vclass) 
-						 :key #'(lambda (slot) (when (and (eq :join (view-class-slot-db-kind slot))
-										  (eq (slot-definition-name slot)
-										      (gethash :join-class (view-class-slot-db-info slot))))
-									 (slot-definition-name slot))))))
-				 (when slot
-				   (setf (slot-value obj (slot-definition-name slot)) jc))))
-			  
+		#'(lambda (jc) 
+		    (let ((slot (find (class-name (class-of jc)) (class-slots vclass) 
+				      :key #'(lambda (slot) 
+					       (when (and (eq :join (view-class-slot-db-kind slot))
+							  (eq (slot-definition-name slot)
+							      (gethash :join-class (view-class-slot-db-info slot))))
+						 (slot-definition-name slot))))))
+		      (when slot
+			(setf (slot-value obj (slot-definition-name slot)) jc))))
 		joins)
 	       (when refresh (instance-refreshed obj))
 	       obj)))
-    (let ((objects (mapcar #'(lambda (sclass jclass sel immediate-join) 
-			       (prog1 (build-object vals sclass jclass sel immediate-join)
-				 (setf vals (nthcdr (+ (list-length sel) (list-length immediate-join))
-						    vals))))
-			   sclasses immediate-join-classes sels immediate-joins)))
+    (let* ((objects
+	    (mapcar #'(lambda (sclass jclass sel immediate-join instance) 
+			(prog1
+			    (build-object vals sclass jclass sel immediate-join instance)
+			  (setf vals (nthcdr (+ (list-length sel) (list-length immediate-join))
+					     vals))))
+		    sclasses immediate-join-classes sels immediate-joins instances)))
       (if (and flatp (= (length sclasses) 1))
 	  (car objects)
-	  objects))))
+	objects))))
 
 (defun find-all (view-classes 
 		 &rest args
 		 &key all set-operation distinct from where group-by having 
 		      order-by order-by-descending offset limit refresh
 		      flatp result-types inner-join on 
-		      (database *default-database*))
+		      (database *default-database*)
+		      instances)
   "Called by SELECT to generate object query results when the
   View Classes VIEW-CLASSES are passed as arguments to SELECT."
   (declare (ignore all set-operation group-by having offset limit inner-join on)
@@ -956,14 +990,17 @@ superclass of the newly-defined View Class."
     (remf args :flatp)
     (remf args :additional-fields)
     (remf args :result-types)
+    (remf args :instances)
     (let* ((*db-deserializing* t)
 	   (sclasses (mapcar #'find-class view-classes))
-	   (immediate-join-slots (mapcar #'(lambda (c) (generate-retrieval-joins-list c :immediate)) sclasses))
-	   (immediate-join-classes (mapcar #'(lambda (jcs)
-					       (mapcar #'(lambda (slotdef)
-							   (find-class (gethash :join-class (view-class-slot-db-info slotdef))))
-						       jcs))
-					   immediate-join-slots))
+	   (immediate-join-slots 
+	    (mapcar #'(lambda (c) (generate-retrieval-joins-list c :immediate)) sclasses))
+	   (immediate-join-classes
+	    (mapcar #'(lambda (jcs)
+			(mapcar #'(lambda (slotdef)
+				    (find-class (gethash :join-class (view-class-slot-db-info slotdef))))
+				jcs))
+		    immediate-join-slots))
 	   (immediate-join-sels (mapcar #'generate-immediate-joins-selection-list sclasses))
 	   (sels (mapcar #'generate-selection-list sclasses))
 	   (fullsels (apply #'append (mapcar #'append sels immediate-join-sels)))
@@ -1021,10 +1058,22 @@ superclass of the newly-defined View Class."
 				  (list :result-types result-types)
 				  (when where (list :where where))
 				  args)))
+	     (instances-to-add (- (length rows) (length instances)))
+	     (perhaps-extended-instances
+	      (if (plusp instances-to-add)
+		  (append instances (do ((i 0 (1+ i))
+					 (res nil))
+					((= i instances-to-add) res)
+				      (push (make-list (length sclasses) :initial-element nil) res)))
+		instances))
 	     (objects (mapcar 
-		       #'(lambda (r)
-			   (build-objects r sclasses immediate-join-classes sels immediate-join-sels database refresh flatp))
-		       rows)))
+		       #'(lambda (row instance)
+			   (build-objects row sclasses immediate-join-classes sels
+					  immediate-join-sels database refresh flatp 
+					  (if (and flatp (atom instance))
+					      (list instance)
+					    instance)))
+		       rows perhaps-extended-instances)))
 	objects))))
 
 (defmethod instance-refreshed ((instance standard-db-object)))
@@ -1070,8 +1119,8 @@ ENABLE-SQL-READER-SYNTAX."
         (query-get-selections select-all-args)
 	(cond
 	  ((select-objects target-args)
-	   (let ((caching (getf qualifier-args :caching))
-		 (refresh (getf qualifier-args :refresh))
+	   (let ((caching (getf qualifier-args :caching t))
+		 (refresh (getf qualifier-args :refresh nil))
 		 (database (or (getf qualifier-args :database) *default-database*)))
 	     (remf qualifier-args :caching)
 	     (remf qualifier-args :refresh)
@@ -1084,7 +1133,9 @@ ENABLE-SQL-READER-SYNTAX."
 		    ((and cached (not refresh))
 		     cached)
 		    ((and cached refresh)
-		     (update-cached-results target-args qualifier-args database))
+		     (let ((results (apply #'find-all (append (list target-args) qualifier-args `(:instances ,cached)))))
+		       (setf (records-cache-results target-args qualifier-args database) results)
+		       results))
 		    (t
 		     (let ((results (apply #'find-all target-args qualifier-args)))
 		       (setf (records-cache-results target-args qualifier-args database) results)
