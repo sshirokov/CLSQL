@@ -46,18 +46,45 @@
 		:host (pathname-host base-pathname)
 		:device (pathname-device base-pathname)
 		:directory (pathname-directory base-pathname)))
+      ("**;*.cl.*" ,(merge-pathnames
+		    (make-pathname
+		     :name :wild
+		     :type :wild
+		     :directory '(:relative :wild-inferiors))
+		    base-pathname))
+      ("**;*.lisp.*" ,(merge-pathnames
+		    (make-pathname
+		     :name :wild
+		     :type :wild
+		     :directory '(:relative :wild-inferiors))
+		    base-pathname))
+      ("**;*.c.*" ,(merge-pathnames
+		    (make-pathname
+		     :name :wild
+		     :type :wild
+		     :directory '(:relative :wild-inferiors))
+		    base-pathname))
+      ("**;*.h.*" ,(merge-pathnames
+		    (make-pathname
+		     :name :wild
+		     :type :wild
+		     :directory '(:relative :wild-inferiors))
+		    base-pathname))
       ("**;bin;*.*.*" ,(merge-pathnames
 			(make-pathname 
 			 :name :wild
 			 :type :wild
 			 :directory 
 			 (append '(:relative :wild-inferiors
-				   ".bin" #.+set-logical-compiler-name+)))
+					     ".bin" #.+set-logical-compiler-name+)))
 			base-pathname))
+      ;; default is to place in .bin/<compiler> directory
       ("**;*.*.*" ,(merge-pathnames
-		    (make-pathname
+		    (make-pathname 
 		     :name :wild
 		     :type :wild
-		     :directory '(:relative :wild-inferiors))
-		    base-pathname))))
-  )
+		     :directory 
+		     (append '(:relative :wild-inferiors
+					 ".bin" #.+set-logical-compiler-name+)))
+		    base-pathname)))))
+

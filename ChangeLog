@@ -1,7 +1,6 @@
 25 Jul 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* Also change case of logical host in loader files
-	* Remove ;bin; component for .system files if using
-	Common Lisp Controller.
+	* Rework handling of logical pathnames
 	
 05 Jul 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* Change case of logical host
