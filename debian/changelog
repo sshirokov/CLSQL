@@ -1,3 +1,9 @@
+cl-sql (0.8.1-1) unstable; urgency=low
+
+  * New upstream version. (Changed RedHat to Debian in upstream documentation!)
+
+ -- Kevin M. Rosenberg <kevin@rosenberg.net>  Fri,  2 Aug 2002 09:45:08 -0600
+
 cl-sql (0.8.0-2) unstable; urgency=low
 
   * Fix preinst template type to properly remove old symlinks
