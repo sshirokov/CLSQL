@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.14 2002/07/08 17:18:53 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.15 2002/07/08 17:23:29 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -64,9 +64,9 @@ check:
 .PHONY: html
 html: html.tar.gz
 
-html.tar.gz: $(DOCFILES)
+html.tar.gz: $(DOCFILES) Makefile
 	@$(CHECK)
-	@( rm -rf html ; mkdir html; cd html ; jade -t sgml -c ../${CATALOG} -d ${DSSSL_HTML} ../${DOCFILE} > /dev/null; cp book1.html index.html; GZIP='-9' tar czf ../html.tar.gz *; cd ..)
+	@( rm -rf html ; mkdir html; cd html ; jade -t sgml -c ../${CATALOG} -d ${DSSSL_HTML} ../${DOCFILE} > /dev/null; cp book1.html index.html; cd ..; GZIP='-9' tar czf html.tar.gz html)
 
 .PHONY: tex
 tex: ${TEXFILE}
