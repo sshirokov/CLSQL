@@ -1,5 +1,5 @@
 #!/bin/bash -e
 
-bdeb.sh -Sclsql -Dcl-sql -bc #-Hdebian/cvsbp-prepare.sh
+bdeb.sh -Sclsql -Dcl-sql -bc -bp
 
 exit 0
