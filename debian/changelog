@@ -1,3 +1,9 @@
+cl-sql (0.9.7-1) unstable; urgency=low
+
+  * base/conditions.cl: Fix format string error
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Mon, 30 Sep 2002 00:13:36 -0600
+
 cl-sql (0.9.6-1) unstable; urgency=low
 
   * Remove cl-library logical hosts from load-library calls
