@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: sql.cl,v 1.14 2002/05/01 20:22:16 marc.battyani Exp $
+;;;; $Id: sql.cl,v 1.15 2002/05/03 20:50:18 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -96,12 +96,15 @@ initialized, as indicated by `*initialized-database-types*'."
 		(database-type *default-database-type*)
 		(pool nil))
   "Connects to a database of the given database-type, using the type-specific
-connection-spec.  if-exists is currently ignored."
+connection-spec.  if-exists is currently ignored.
+If pool is t the the connection will be taken from the general pool,
+if pool is a conn-pool object the connection will be taken from this pool.
+"
   (let* ((db-name (database-name-from-spec connection-spec database-type))
 	 (old-db (unless (eq if-exists :new) (find-database db-name nil)))
 	 (result nil))
     (if pool
-	(setq result (acquire-from-pool connection-spec database-type))
+	(setq result (acquire-from-pool connection-spec database-type pool))
       (if old-db
 	  (case if-exists
 ;	    (:new
@@ -134,11 +137,11 @@ connection-spec.  if-exists is currently ignored."
       result)))
 
 
-(defun disconnect (&key (database *default-database*)
-		   (pool nil))
+(defun disconnect (&key (database *default-database*))
   "Closes the connection to database. Resets *default-database* if that
-database was disconnected and only one other connection exists."
-  (if pool
+database was disconnected and only one other connection exists.
+if the database is from a pool it will be released to this pool."
+  (if (conn-pool database)
       (release-to-pool database)
     (when (database-disconnect database)
       (setq *connected-databases* (delete database *connected-databases*))

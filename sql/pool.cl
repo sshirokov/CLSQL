@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg, Marc Battyani
 ;;;; Date Started:  Apr 2002
 ;;;;
-;;;; $Id: pool.cl,v 1.3 2002/05/01 20:22:16 marc.battyani Exp $
+;;;; $Id: pool.cl,v 1.4 2002/05/03 20:50:18 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -43,7 +43,8 @@
 
 (defun clear-conn-pool (pool)
   (loop for conn across (all-connections pool)
-	do (disconnect :database conn))
+	do (setf (conn-pool conn) nil)
+	   (disconnect :database conn))
   (setf (fill-pointer (free-connections pool)) 0)
   (setf (fill-pointer (all-connections pool)) 0))
 
@@ -59,7 +60,8 @@
     conn-pool))
 
 (defun acquire-from-pool (connection-spec database-type &optional pool)
-  (unless pool (setf pool (find-or-create-conn-pool connection-spec database-type)))
+  (unless (typep pool 'conn-pool)
+    (setf pool (find-or-create-conn-pool connection-spec database-type)))
   (acquire-from-conn-pool pool))
 
 (defun release-to-pool (database)
