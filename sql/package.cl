@@ -3,12 +3,12 @@
 ;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          package.cl
-;;;; Purpose:       Package definition for base (low-level) SQL interface
+;;;; Purpose:       Package definition for CLSQL (high-level) interface
 ;;;; Programmers:   Kevin M. Rosenberg based on
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: package.cl,v 1.6 2002/05/27 17:19:30 kevin Exp $
+;;;; $Id: package.cl,v 1.16 2002/05/27 17:19:45 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -21,47 +21,16 @@
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :cl-user)
 
-;;;; This file makes the required package definitions for CLSQL's
-;;;; core packages.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-(defpackage :clsql-base-sys
-  (:use :common-lisp)
-  (:export
-     ;; "Private" exports for use by interface packages
-     #:check-connection-spec
-     #:database-type-load-foreign
-     #:database-type-library-loaded ;; KMR - Tests if foreign library okay
-     #:database-initialize-database-type
-     #:database-connect
-     #:database-disconnect
-     #:database-query
-     #:database-execute-command
-     #:database-query-result-set
-     #:database-dump-result-set
-     #:database-store-next-row
-     
-     ;; For UncommonSQL support
-     #:database-list-tables
-     #:database-list-attributes
-     #:database-attribute-type
-     #:database-create-sequence 
-     #:database-drop-sequence
-     #:database-sequence-next
-     #:sql-escape
-
-     ;; Support for pooled connections
-     #:database-type
-
-     ;; Large objects (Marc B)
-     #:database-create-large-object
-     #:database-write-large-object
-     #:database-read-large-object
-     #:database-delete-large-object
-     
-     ;; Shared exports for re-export by CLSQL-BASE
+  (defpackage :clsql-sys
+    (:nicknames :clsql)
+    (:use :common-lisp :clsql-base-sys)
+    (:import-from 
+     :clsql-base
      .
-     #1=(#:clsql-condition
+     #1=(
+	 #:clsql-condition
 	 #:clsql-error
 	 #:clsql-simple-error
 	 #:clsql-warning
@@ -96,33 +65,63 @@
 	 #:*default-database-type*
 	 #:*initialized-database-types*
 	 #:initialize-database-type
-	 #:*connect-if-exists*
-	 #:*default-database*
-	 #:connected-databases
+	 
 	 #:database
 	 #:database-name
 	 #:closed-database
-	 #:find-database
-	 #:database-name-from-spec
+	 #:database-name-from-spec))
+    (:export
+     ;; sql.cl
+     #:*connect-if-exists*
+     #:connected-databases
+     #:*default-database*
+     #:find-database
+     #:connect
+     #:disconnect
+     #:query
+     #:execute-command
+     #:map-query
+     #:do-query
+     
+     ;; functional.cl
+     #:insert-records
+     #:delete-records
+     #:update-records
+     #:with-database
+     
+     ;; For High-level UncommonSQL compatibility
+     #:sql-ident
+     #:list-tables
+     #:list-attributes
+     #:attribute-type
+     #:create-sequence 
+     #:drop-sequence
+     #:sequence-next
+     
+     ;; Pooled connections
+     #:disconnect-pooled
+     #:find-or-create-connection-pool
+     
+     ;; Transactions
+     #:with-transaction
+     #:commit-transaction
+     #:rollback-transaction
+     #:add-transaction-commit-hook
+     #:add-transaction-rollback-hook
+     
+     ;; Large objects (Marc B)
+     #:create-large-object
+     #:write-large-object
+     #:read-large-object
+     #:delete-large-object
+     
+     .
+     #1#
+     )
+    (:documentation "This is the INTERNAL SQL-Interface package of CLSQL."))
+  
+  )					;eval-when
 
-	 ;; accessors for database class
-	 #:name
-	 #:connection-spec
-	 #:transaction
-	 #:transaction-level
-	 #:conn-pool
-	 
-	 ;; utils.cl
-	 #:number-to-sql-string
-	 #:float-to-sql-string
-	 #:sql-escape-quotes
-	 ))
-    (:documentation "This is the INTERNAL SQL-Interface package of CLSQL-BASE."))
-
-(defpackage #:clsql-base
-    (:import-from :clsql-base-sys . #1#)
-    (:export . #1#)
-    (:documentation "This is the SQL-Interface package of CLSQL-BASE."))
-);eval-when
-
-
+(defpackage #:clsql-user
+  (:use #:common-lisp #:clsql)
+  (:documentation "This is the user package for experimenting with CLSQL."))

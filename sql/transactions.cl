@@ -7,7 +7,7 @@
 ;;;; Programmers:   Marc Battyani
 ;;;; Date Started:  Apr 2002
 ;;;;
-;;;; $Id: transactions.cl,v 1.4 2002/05/13 16:55:07 marc.battyani Exp $
+;;;; $Id: transactions.cl,v 1.5 2002/05/27 17:19:30 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -27,7 +27,7 @@
    (status :initform nil :accessor status))) ;can be nil :rolled-back or :commited
 
 (defmethod database-start-transaction ((database closed-database))
-  (signal-closed-database-error database))
+  (error 'clsql-closed-database-error database))
 
 (defmethod database-start-transaction (database)
   (unless (transaction database)
@@ -40,7 +40,7 @@
       (execute-command "BEGIN" :database database))))
 
 (defmethod database-end-transaction ((database closed-database))
-  (signal-closed-database-error database))
+  (error 'clsql-closed-database-error database))
 
 (defmethod database-end-transaction (database)
   (if (> (transaction-level database) 0)
@@ -66,9 +66,9 @@
   (when (and (transaction database)(not (status (transaction database))))
     (setf (status (transaction database)) :commited)))
 
-(defun add-transaction-commit-hook (database abort-hook)
+(defun add-transaction-commit-hook (database commit-hook)
   (when (transaction database)
-    (push abort-hook (abort-hooks (transaction database)))))
+    (push commit-hook (commit-hooks (transaction database)))))
 
 (defun add-transaction-rollback-hook (database rollback-hook)
   (when (transaction database)

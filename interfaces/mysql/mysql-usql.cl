@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: mysql-usql.cl,v 1.5 2002/04/27 21:48:08 kevin Exp $
+;;;; $Id: mysql-usql.cl,v 1.6 2002/05/27 17:19:30 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and by onShore Development Inc.
@@ -80,6 +80,7 @@
 
 ;; Misc USQL functions
 
+#|
 #+ignore
 (defmethod database-output-sql ((expr clsql-sys::sql-typecast-exp) 
 				(database mysql-database))
@@ -101,3 +102,4 @@
     (make-instance 'clsql-sys::sql-typecast-exp
                    :modifier 'int8
                    :components val)))
+|#

@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg 
 ;;;; Date Started:  May 2002
 ;;;;
-;;;; $Id: initialize.cl,v 1.1 2002/05/14 16:23:37 kevin Exp $
+;;;; $Id: initialize.cl,v 1.2 2002/05/27 17:19:30 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -18,7 +18,7 @@
 ;;;; *************************************************************************
 
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :clsql-sys)
+(in-package :clsql-base-sys)
 
 (defvar *loaded-database-types* nil
   "Contains a list of database types which have been defined/loaded.")

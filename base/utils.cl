@@ -7,7 +7,7 @@
 ;;;; Programmer:   Kevin M. Rosenberg
 ;;;; Date Started: Mar 2002
 ;;;;
-;;;; $Id: utils.cl,v 1.3 2002/05/19 16:05:22 kevin Exp $
+;;;; $Id: utils.cl,v 1.4 2002/05/27 17:19:30 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -17,7 +17,7 @@
 ;;;; *************************************************************************
 
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :clsql-sys)
+(in-package :clsql-base-sys)
 
 (defun number-to-sql-string (num)
   (etypecase num

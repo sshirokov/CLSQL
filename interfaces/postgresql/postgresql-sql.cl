@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.cl,v 1.17 2002/05/14 16:29:53 kevin Exp $
+;;;; $Id: postgresql-sql.cl,v 1.18 2002/05/27 17:19:30 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -22,7 +22,7 @@
 (in-package :cl-user)
 
 (defpackage :clsql-postgresql
-    (:use :common-lisp :clsql-sys :postgresql :clsql-uffi)
+    (:use :common-lisp :clsql-base-sys :postgresql :clsql-uffi)
     (:export #:postgresql-database)
     (:documentation "This is the CLSQL interface to PostgreSQL."))
 
@@ -285,6 +285,8 @@
   (lo-create (database-conn-ptr database)
 	     (logior postgresql::+INV_WRITE+ postgresql::+INV_READ+)))
 
+
+#+mb-original
 (defmethod database-write-large-object (object-id (data string) (database postgresql-database))
   (let ((ptr (database-conn-ptr database))
 	(length (length data))
@@ -303,7 +305,26 @@
 	   )))
     result))
 
+(defmethod database-write-large-object (object-id (data string) (database postgresql-database))
+  (let ((ptr (database-conn-ptr database))
+	(length (length data))
+	(result nil)
+	(fd nil))
+    (database-execute-command "begin" database)
+    (unwind-protect
+	(progn 
+	  (setf fd (lo-open ptr object-id postgresql::+INV_WRITE+))
+	  (when (>= fd 0)
+	    (when (= (lo-write ptr fd data length) length)
+	      (setf result t))))
+      (progn
+	(when (and fd (>= fd 0))
+	  (lo-close ptr fd))
+	(database-execute-command (if result "commit" "rollback") database)))
+    result))
+
 ;; (MB) the begin/commit/rollback stuff will be removed when with-transaction wil be implemented
+;; (KMR) Can't use with-transaction since that function is in high-level code
 (defmethod database-read-large-object (object-id (database postgresql-database))
   (let ((ptr (database-conn-ptr database))
 	(buffer nil)
@@ -332,6 +353,6 @@
 (defmethod database-delete-large-object (object-id (database postgresql-database))
   (lo-unlink (database-conn-ptr database) object-id))
 
-(when (clsql-sys:database-type-library-loaded :postgresql)
-  (clsql-sys:initialize-database-type :database-type :postgresql)
+(when (clsql-base-sys:database-type-library-loaded :postgresql)
+  (clsql-base-sys:initialize-database-type :database-type :postgresql)
   (pushnew :postgresql cl:*features*))

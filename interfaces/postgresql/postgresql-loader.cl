@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-loader.cl,v 1.11 2002/05/18 17:37:49 kevin Exp $
+;;;; $Id: postgresql-loader.cl,v 1.12 2002/05/27 17:19:30 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -28,11 +28,11 @@ set to the right path before compiling or loading the system.")
 (defvar *postgresql-library-loaded* nil
   "T if foreign library was able to be loaded successfully")
 
-(defmethod clsql-sys:database-type-library-loaded ((database-type
+(defmethod clsql-base-sys:database-type-library-loaded ((database-type
 						    (eql :postgresql)))
   *postgresql-library-loaded*)
 				      
-(defmethod clsql-sys:database-type-load-foreign ((database-type
+(defmethod clsql-base-sys:database-type-load-foreign ((database-type
 						  (eql :postgresql)))
   (let ((libpath (uffi:find-foreign-library 
 		  "libpq"
@@ -48,5 +48,5 @@ set to the right path before compiling or loading the system.")
 	(setq *postgresql-library-loaded* t)
       (warn "Can't load PostgreSQL client library ~A" libpath))))
 
-(clsql-sys:database-type-load-foreign :postgresql)
+(clsql-base-sys:database-type-load-foreign :postgresql)
 

@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: conditions.cl,v 1.1 2002/05/13 16:22:08 kevin Exp $
+;;;; $Id: conditions.cl,v 1.2 2002/05/27 17:19:30 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -19,7 +19,7 @@
 ;;;; *************************************************************************
 
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :clsql-sys)
+(in-package :clsql-base-sys)
 
 ;;; Conditions
 (define-condition clsql-condition ()

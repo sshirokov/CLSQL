@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-sql.cl,v 1.12 2002/05/13 22:05:21 kevin Exp $
+;;;; $Id: postgresql-socket-sql.cl,v 1.13 2002/05/27 17:19:30 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -22,7 +22,7 @@
 (in-package :cl-user)
 
 (defpackage :clsql-postgresql-socket
-    (:use :common-lisp :clsql-sys :postgresql-socket)
+    (:use :common-lisp :clsql-base-sys :postgresql-socket)
     (:export #:postgresql-socket-database)
     (:documentation "This is the CLSQL socket interface to PostgreSQL."))
 
@@ -33,10 +33,10 @@
 (defmethod database-type-library-loaded ((database-type (eql :postgresql-socket)))
   t)
 
-(defmethod clsql-sys:database-type-load-foreign ((database-type (eql :postgresql-socket)))
+(defmethod clsql-base-sys:database-type-load-foreign ((database-type (eql :postgresql-socket)))
   t)
 
-(clsql-sys:database-type-load-foreign :postgresql-socket)
+(clsql-base-sys:database-type-load-foreign :postgresql-socket)
 
 
 ;; Field type conversion
@@ -305,5 +305,5 @@ doesn't depend on UFFI."
 	    (setf (postgresql-socket-result-set-done result-set) t)
 	    (wait-for-query-results (database-connection database)))))))
 
-(when (clsql-sys:database-type-library-loaded :postgresql-socket)
-  (clsql-sys:initialize-database-type :database-type :postgresql-socket))
+(when (clsql-base-sys:database-type-library-loaded :postgresql-socket)
+  (clsql-base-sys:initialize-database-type :database-type :postgresql-socket))
