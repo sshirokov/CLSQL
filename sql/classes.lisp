@@ -661,7 +661,11 @@ uninclusive, and the args from that keyword to the end."
   (with-slots (into attributes values query)
     ins
     (write-string "INSERT INTO " *sql-stream*)
-    (output-sql into database)
+    (output-sql 
+     (typecase into
+       (string (sql-expression :attribute into))
+       (t into)) 
+     database)
     (when attributes
       (write-char #\Space *sql-stream*)
       (output-sql attributes database))

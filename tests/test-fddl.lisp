@@ -59,6 +59,27 @@
                     (clsql:drop-table [foo] :if-does-not-exist :ignore))))
   "comments" "height" "id" "name")
 
+(deftest :fddl/table/4
+    (values
+     (clsql:table-exists-p "MyMixedCase")
+     (progn
+       (clsql:create-table "MyMixedCase" '(([a] integer)))
+       (clsql:table-exists-p "MyMixedCase"))
+     (progn
+       (clsql:drop-table "MyMixedCase")
+       (clsql:table-exists-p "MyMixedCase")))
+  nil t nil)
+
+(deftest :fddl/table/5
+    (prog1
+	(progn
+	  (clsql:create-table "MyMixedCase" '(([a] integer)))
+	  (clsql:execute-command "insert into MyMixedCase values (5)")
+	   (clsql:insert-records :into "MyMixedCase" :values '(6))
+	   (clsql:select [a] :from "MyMixedCase" :order-by '((a :asc))))
+      (clsql:drop-table "MyMixedCase"))
+  ((5) (6)))
+
 (deftest :fddl/attributes/1
     (apply #'values
            (sort 

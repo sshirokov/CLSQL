@@ -11,7 +11,6 @@ TESTS TO ADD
 * owner phrases for postgresql and oracle backends
 * test of large table with large numbers of rows, greater than 2x the number of
   rows (200) returned by the oracle backend at a time
-* test mixed case table identifiers and column identifiers
 
 COMMONSQL INCOMPATIBILITY
 

@@ -2,6 +2,8 @@
 	* sql/kmr-mop.lisp, sql/objects.lisp: Since SBCL is the only implementation that
 	has reversed class slots, change the default for ordered-class-slots so that slots
 	are now in the same order an in the def-view-class.
+	* sql/sql.lisp: Honor case of string table identifier to INSERT-RECORDS
+	* test/test-fddl.lisp: Add two tests for mixed case names
 	
 22 May 2004 Kevin Rosenberg
 	* Version 2.10.21 released
