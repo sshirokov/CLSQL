@@ -63,7 +63,7 @@
               :format-arguments (list database))))
 
 
-(defmacro with-transaction ((&key (database *default-database*)) &rest body)
+(defmacro with-transaction ((&key (database '*default-database*)) &rest body)
   "Executes BODY within a transaction for DATABASE (which defaults to
 *DEFAULT-DATABASE*). The transaction is committed if the body finishes
 successfully (without aborting or throwing), otherwise the database is

@@ -1,4 +1,9 @@
 12 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.6.12
+	* base/transactions.lisp: Add quote for macro
+	expansion of WITH-TRANSACTIONS [Time Howe]
+
+12 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.6.11
 	* sql/objects.lisp: add :root-class functionality for
 	list-classes and add duration type support [Marcus Pearce]
