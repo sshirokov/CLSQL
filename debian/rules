@@ -85,7 +85,7 @@ install: build
 	dh_testdir
 	dh_testroot
 	dh_clean -k
-	dh_installdirs -all -i $(clc-systems) $(clc-source)
+	dh_installdirs --all -i $(clc-systems) $(clc-source)
 
 	$(INSTALL) $(INSTALLDIRFLAGS) $(lispdir) $(lispdir-base) \
 		$(lispdir-base-uffi) $(lispdir-pg) $(lispdir-pg-socket) \
@@ -107,12 +107,12 @@ install: build
 	$(INSTALL) $(INSTALLFLAGS) $(srcs-aodbc) $(lispdir-aodbc)
 
 	# CLC Systems
-	$(INSTALL) $(INSTALLFLAGS) clsql.system $(prefix)/$(clc-systems)/
-	$(INSTALL) $(INSTALLFLAGS) clsql-base.system clsql-uffi.system $(prefix-base)/$(clc-systems)/
-	$(INSTALL) $(INSTALLFLAGS) clsql-mysql.system $(prefix-mysql)/$(clc-systems)/
-	$(INSTALL) $(INSTALLFLAGS) clsql-postgresql.system $(prefix-pg)/$(clc-systems)/
-	$(INSTALL) $(INSTALLFLAGS) clsql-postgresql-socket.system $(prefix-pg-socket)/$(clc-systems)/
-	$(INSTALL) $(INSTALLFLAGS) clsql-aodbc.system $(prefix-aodbc)/$(clc-systems)/
+	$(INSTALL) $(INSTALLFLAGS) clsql.system $(prefix)/$(clc-systems)
+	$(INSTALL) $(INSTALLFLAGS) clsql-base.system clsql-uffi.system $(prefix-base)/$(clc-systems)
+	$(INSTALL) $(INSTALLFLAGS) clsql-mysql.system $(prefix-mysql)/$(clc-systems)
+	$(INSTALL) $(INSTALLFLAGS) clsql-postgresql.system $(prefix-pg)/$(clc-systems)
+	$(INSTALL) $(INSTALLFLAGS) clsql-postgresql-socket.system $(prefix-pg-socket)/$(clc-systems)
+	$(INSTALL) $(INSTALLFLAGS) clsql-aodbc.system $(prefix-aodbc)/$(clc-systems)
 
 	# Test suite
 	$(INSTALL) $(INSTALLDIRFLAGS) $(doc-dir)/html $(doc-dir)/test-suite
