@@ -6,7 +6,7 @@
  *   Programmer:    Kevin M. Rosenberg
  *   Date Started:  Mar 2002
  *
- * $Id: clsql-mysql.c,v 1.2 2002/03/27 05:37:35 kevin Exp $
+ * $Id: clsql-mysql.c,v 1.3 2002/03/27 05:48:22 kevin Exp $
  *
  * This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
  *
@@ -84,6 +84,13 @@ atol64 (const unsigned char* str, int* pHigh32)
 {
   long long result = 0;
   int minus = 0;
+  int first_char = *str;
+  if (first_char == '+')
+    ++str;
+  else if (first_char == '-') {
+    minus = 1;
+    ++str;
+  }
 
   while (*str) {
     int i = *str - '0';
@@ -92,6 +99,8 @@ atol64 (const unsigned char* str, int* pHigh32)
     result = i + (10 * result);
     str++;
   }
+  if (minus)
+    result = -result;
 
   *pHigh32 = upper_32bits(result);
   return lower_32bits(result);
