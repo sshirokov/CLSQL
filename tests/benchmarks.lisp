@@ -68,12 +68,17 @@
     (time
      (dotimes (i n)
        (query "SELECT * FROM BENCH" :field-names nil)))
-    (format *report-stream* "~&~%*** OBJECT QUERY ***~%")
+    (format *report-stream* "~&~%*** JOINED OBJECT QUERY RETRIEVAL IMMEDIATE ***~%")
     (time
-     (dotimes (i n)
+     (dotimes (i (truncate n 10))
        (mapcar #'(lambda (ea) (slot-value ea 'address)) (select 'employee-address :flatp t))))
-    ))
 
-
-
-
+    (format *report-stream* "~&~%*** JOINED OBJECT QUERY RETRIEVAL DEFERRED ***~%")
+    (let* ((slotdef (find 'address (clsql::class-slots (find-class 'employee-address))
+			  :key #'clsql::slot-definition-name))
+	   (dbi (when slotdef (clsql::view-class-slot-db-info slotdef))))
+      (setf (gethash :retrieval dbi) :deferred)
+      (time
+       (dotimes (i (truncate n 10))
+	 (mapcar #'(lambda (ea) (slot-value ea 'address)) (select 'employee-address :flatp t))))
+      (setf (gethash :retrieval dbi) :immediate))))

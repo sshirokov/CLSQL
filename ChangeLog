@@ -1,4 +1,8 @@
 8 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* tests/benchmarks.lisp: Add immediate vs. deferred
+	join test.
+	
+8 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.13: Now works on openmcl 0.14.2 
 	* sql/objects.lisp: Add :retrieval :immediate for
 	object selections
