@@ -1,4 +1,8 @@
 22 May 2004 Kevin Rosenberg
+	* Version 2.10.21 released
+	* sql/classes.lisp: honor case of string tables when outputting queries 
+	
+22 May 2004 Kevin Rosenberg
 	* Version 2.10.20 released: Oracle backend now fails 6 out of 200 tests
 	* TODO: Added 2 variances from CommonSQL. Add tests for owner phrases
 	and string identifiers with non-default case
