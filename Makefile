@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.8 2002/04/07 03:57:35 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.9 2002/04/07 07:55:29 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -14,6 +14,8 @@
 # (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 
 PKG=clsql
+
+.PHONY: all libs clean realclean docs tagcvs dist
 
 all: libs
 
