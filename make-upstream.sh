@@ -76,9 +76,7 @@ cp -a ${TOPDIR} ${DISTDIR}
 
 echo "Cleaning distribution directory ${DISTDIR}"
 cd ${DISTDIR}
-make distclean
 rm -f upload.sh make-debian.sh make-upstream.sh cvsbp-prepare.sh test-suite/test.config
-rm -f 
 rm -f `find . -type f -name .cvsignore`
 rm -rf `find . -type d -name CVS -or -name .bin`
 rm -f `find . -type f -name '*~' -or -name '.#*'  -or -name '#*#' -or -name ".*~"`
