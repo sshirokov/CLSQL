@@ -244,9 +244,15 @@
                 :make-default t
                 :if-exists :old))
 
+(defmacro with-ignore-errors (&rest forms)
+  `(progn
+     ,@(mapcar
+	(lambda (x) (list 'ignore-errors x))
+	forms)))
+
 (defun test-initialise-database ()
     ;; Delete the instance records
-  (ignore-errors 
+  (with-ignore-errors 
     (usql:delete-instance-records company1)
     (usql:delete-instance-records employee1)
     (usql:delete-instance-records employee2)
