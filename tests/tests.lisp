@@ -26,7 +26,8 @@
 ;;; ((:mysql ("localhost" "a-mysql-db" "user1" "secret"))
 ;;;  (:aodbc ("my-dsn" "a-user" "pass"))
 ;;;  (:postgresql ("localhost" "another-db" "user2" "dont-tell"))
-;;;  (:postgresql-socket ("pg-server" "a-db-name" "user" "secret-password")))
+;;;  (:postgresql-socket ("pg-server" "a-db-name" "user" "secret-password"))
+;;;  (:sqlite ("path-to-sqlite-db")))
 
 (in-package :clsql-tests)
 
@@ -40,7 +41,8 @@
   ((aodbc-spec :accessor aodbc-spec)
    (mysql-spec :accessor mysql-spec)
    (pgsql-spec :accessor pgsql-spec)
-   (pgsql-socket-spec :accessor pgsql-socket-spec))
+   (pgsql-socket-spec :accessor pgsql-socket-spec)
+   (sqlite-spec :accessor sqlite-spec))
   (:documentation "Test fixture for CLSQL testing"))
 
 
@@ -54,6 +56,7 @@
 	  (setf (pgsql-spec specs) (cadr (assoc :postgresql config)))
 	  (setf (pgsql-socket-spec specs) 
 		(cadr (assoc :postgresql-socket config)))
+	  (setf (sqlite-spec specs) (cadr (assoc :sqlite config)))
 	  specs))
       (progn
 	(warn "CLSQL tester config file ~S not found" path)
@@ -70,6 +73,9 @@
 
 (defmethod pgsql-socket-table-test ((test conn-specs))
   (test-table (pgsql-socket-spec test) :postgresql-socket))
+
+(defmethod sqlite-table-test ((test conn-specs))
+  (test-table (sqlite-spec test) :sqlite))
 
 (defmethod test-table (spec type)
   (when spec
@@ -105,8 +111,32 @@
 	     )
 	(disconnect :database db)))))
 
+;;;
+;;; SQLite is typeless: execute untyped tests only.
+;;;
+(defmethod test-table (spec (type (eql :sqlite)))
+  (when spec
+    (let ((db (clsql:connect spec :database-type type :if-exists :new)))
+      (unwind-protect
+	   (progn
+	     (create-test-table db)
+	     (dolist (row (query "select * from test_clsql" :database db :types nil))
+	       (test-table-row row nil type))
+	     (loop for row across (map-query 'vector #'list "select * from test_clsql" 
+					     :database db :types nil)
+		   do (test-table-row row nil type))
+	     (loop for row in (map-query 'list #'list "select * from test_clsql" 
+					 :database db :types nil)
+		   do (test-table-row row nil type))
+
+	     (do-query ((int float bigint str) "select * from test_clsql")
+	       (test-table-row (list int float bigint str) nil type))
+	     (drop-test-table db)
+	     )
+	(disconnect :database db)))))
 
 (defmethod mysql-low-level ((test conn-specs))
+  #-clisp
   (let ((spec (mysql-spec test)))
     (when spec
       (let ((db (clsql-mysql::database-connect spec :mysql)))
@@ -197,11 +227,12 @@
 	(test t nil
 	      :fail-info
 	      (format nil "Invalid types field (~S) passed to test-table-row" types))))
-    (test (transform-float-1 int)
-	  float
-	  :test #'eql
-	  :fail-info 
-	  (format nil "Wrong float value ~A for int ~A (row ~S)" float int row))
+    (unless (eq db-type :sqlite)		; SQLite is typeless.
+      (test (transform-float-1 int)
+	    float
+	    :test #'eql
+	    :fail-info 
+	    (format nil "Wrong float value ~A for int ~A (row ~S)" float int row)))
     (test float
 	  (parse-double str)
 	  :test #'double-float-equal
@@ -233,6 +264,7 @@
 	(pgsql-table-test specs)
 	(pgsql-socket-table-test specs)
 	(aodbc-table-test specs)
+	(sqlite-table-test specs)
       ))
     t)
 
