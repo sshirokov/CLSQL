@@ -1,3 +1,6 @@
+12 Dec 2002 Kevin Rosenberg (kevin@rosenberg.net)
+	* uffi/clsql-uffi.lisp: return NIL for numeric fields that are NULL
+	
 16 Oct 2002 Kevin Rosenberg (kevin@rosenberg.net)
         * Add support for SBCL, OpenMCL, and SCL
 	* Add *load-truename* to search path for clsql's
