@@ -1,4 +1,9 @@
 19 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.8.1
+	* db-odbc/odbc-sql.lisp: Add DATABASE-LIST function 
+	* db-odbc/odbc-dbi.lisp: Add LIST-ALL-DATA-SOURCES function 
+
+19 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.8.0: New API function: LIST-DATABASES
 	* base/utils.lisp: Fix command-output on CMUCL/SBCL
 	* db-*/*-sql.lisp: Add new database-list function

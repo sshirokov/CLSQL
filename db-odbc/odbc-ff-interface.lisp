@@ -306,10 +306,10 @@
      (fDirection :short)
      (*szDSN string-ptr)        ; UCHAR  FAR *szDSN
      (cbDSNMax :short)          ; SWORD       cbDSNMax
-     (*pcbDSN :pointer-void)             ; SWORD      *pcbDSN
+     (*pcbDSN (* :short))             ; SWORD      *pcbDSN
      (*szDescription string-ptr) ; UCHAR     *szDescription
      (cbDescriptionMax :short)  ; SWORD       cbDescriptionMax
-     (*pcbDescription :pointer-void)     ; SWORD      *pcbDescription
+     (*pcbDescription (* :short))     ; SWORD      *pcbDescription
      )
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API

@@ -271,7 +271,13 @@
   (warn "Not implemented."))
 
 (defmethod database-probe (connection-spec (type (eql :odbc)))
-  (warn "Not implemented."))
+  (when (find (car connection-spec) (database-list connection-spec type)
+	      :test #'string-equal)
+    t))
+
+(defmethod database-list (connection-spec (type (eql :odbc)))
+  (declare (ignore connection-spec))
+  (odbc-dbi:list-all-data-sources))
 
 #+ignore		       
 (when (clsql-base-sys:database-type-library-loaded :odbc)

@@ -30,6 +30,7 @@
    #:disconnect
    #:end-transaction
    #:fetch-row
+   #:list-all-data-sources
    #:list-all-database-tables
    #:list-all-table-columns
    #:loop-over-results
@@ -182,6 +183,12 @@ the query against." ))
 (defun list-all-table-columns (table &key db hstmt)
   (declare (ignore hstmt))
   (db-describe-columns db "" "" table ""))
+
+(defun list-all-data-sources ()
+  (let ((db (make-instance 'odbc-db)))
+    (unless (henv db) ;; has class allocation!
+      (setf (henv db) (%new-environment-handle)))
+    (%list-data-sources (henv db))))
 
 (defun rr-sql (hstmt sql-statement &key db)
   (declare (ignore hstmt sql-statement db))

@@ -939,3 +939,34 @@ as possible second argument) to the desired representation of date/time/timestam
 (defun %list-tables (hstmt)
   (with-error-handling (:hstmt hstmt)
     (SQLTables hstmt +null-ptr+ 0 +null-ptr+ 0 +null-ptr+ 0 +null-ptr+ 0)))
+
+(defun %list-data-sources (henv)
+  (let ((dsn (allocate-foreign-string (1+ $SQL_MAX_DSN_LENGTH)))
+	(desc (allocate-foreign-string 256))
+	(results nil))
+    (unwind-protect
+	 (with-foreign-objects ((dsn-len :short)
+				(desc-len :short))
+	   (with-error-handling (:henv henv)
+	     (let ((res
+		    (SQLDataSources henv $SQL_FETCH_FIRST dsn
+				    (1+ $SQL_MAX_DSN_LENGTH)
+				    dsn-len desc 256 desc-len)))
+	       (when (or (eql res $SQL_SUCCESS)
+			 (eql res $SQL_SUCCESS_WITH_INFO))
+		 (push (convert-from-foreign-string dsn) results))
+
+	       (do ((res (SQLDataSources henv $SQL_FETCH_NEXT dsn
+					 (1+ $SQL_MAX_DSN_LENGTH)
+					 dsn-len desc 256 desc-len)
+			 (SQLDataSources henv $SQL_FETCH_NEXT dsn
+					 (1+ $SQL_MAX_DSN_LENGTH)
+					 dsn-len desc 256 desc-len)))
+		   ((not (or (eql res $SQL_SUCCESS)
+			     (eql res $SQL_SUCCESS_WITH_INFO))))
+		 (push (convert-from-foreign-string dsn) results)))))
+      (progn
+	(free-foreign-object dsn)
+	(free-foreign-object desc)))
+    (nreverse results)))
+		

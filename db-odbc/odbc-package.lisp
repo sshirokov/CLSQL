@@ -63,6 +63,7 @@
      #:result-rows-count
      #:sql-to-c-type
      #:%list-tables
+     #:%list-data-sources
      )
   (:documentation "This is the low-level interface ODBC."))
 
