@@ -196,23 +196,9 @@ the length of that format.")
   (setf debug::*debug-print-length* nil))
 
 
-;;;; the OCI library, part V: converting from OCI representations to Lisp
-;;;; representations
-
 ;; Return the INDEXth string of the OCI array, represented as Lisp
 ;; SIMPLE-STRING. SIZE is the size of the fixed-width fields used by
 ;; Oracle to store strings within the array.
-
-;; In the wild world of databases, trailing spaces aren't generally
-;; significant, since e.g. "LARRY " and "LARRY    " are the same string
-;; stored in different fixed-width fields. OCI drops trailing spaces
-;; for us in some cases but apparently not for fields of fixed
-;; character width, e.g.
-;;
-;;   (dbi:sql "create table employees (name char(15), job char(15), city
-;;            char(15), rate float)" :db orcl :types :auto)
-;; In order to map the "same string" property above onto Lisp equality,
-;; we drop trailing spaces in all cases:
 
 (uffi:def-type string-pointer (* :unsigned-char))
 
@@ -220,12 +206,11 @@ the length of that format.")
   (declare (type string-pointer arrayptr))
   (declare (type (mod #.+n-buf-rows+) string-index))
   (declare (type (and unsigned-byte fixnum) size))
-  (let* ((raw (uffi:convert-from-foreign-string 
-	       (uffi:make-pointer
-		(+ (uffi:pointer-address arrayptr) (* string-index size))
-		:unsigned-char)))
-	 (trimmed (string-trim " " raw)))
-     (if (equal trimmed "NULL") nil trimmed)))
+  (let ((str (uffi:convert-from-foreign-string 
+	      (uffi:make-pointer
+	       (+ (uffi:pointer-address arrayptr) (* string-index size))
+	       :unsigned-char))))
+    (if (string-equal str "NULL") nil str)))
 
 ;; the OCI library, part Z: no-longer used logic to convert from
 ;; Oracle's binary date representation to Common Lisp's native date
