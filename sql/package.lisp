@@ -233,8 +233,13 @@
        #:transaction
        
        ;; Database capabilities
-       #:db-use-column-on-drop-index?
-       
+       #:db-type-use-column-on-drop-index?
+       #:db-backend-has-create/destroy-db?
+       #:db-type-has-views?
+       #:db-type-has-subqueries?
+       #:db-type-has-boolean-where?
+       #:db-type-transaction-capable?
+       #:database-underlying-type
        ))
    (:export
     ;; "Private" exports for use by interface packages
@@ -265,6 +270,13 @@
     #:database-list-attributes
     #:database-attribute-type
     #:database-describe-table
+
+    #:db-backend-has-create/destroy-db?
+    #:db-type-has-views?
+    #:db-type-has-subqueries?
+    #:db-type-has-boolean-where?
+    #:db-type-transaction-capable?
+    #:database-underlying-type
    
    .
    ;; Shared exports for re-export by CLSQL. 

@@ -273,6 +273,11 @@
 (defmethod database-probe (connection-spec (type (eql :aodbc)))
   (warn "Not implemented."))
 
+;;; Backend capabilities
+
+(defmethod db-backend-has-create/destroy-db? ((db-type (eql :aodbc)))
+  nil)
+
 #+ignore		       
 (when (clsql-base-sys:database-type-library-loaded :aodbc)
   (clsql-base-sys:initialize-database-type :database-type :aodbc))

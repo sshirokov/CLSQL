@@ -33,7 +33,7 @@
 ;; Tables 
 
 (defun create-table (name description &key (database *default-database*)
-                          (constraints nil))
+                          (constraints nil) (transactions t))
   "Create a table called NAME, in DATABASE which defaults to
 *DEFAULT-DATABASE*, containing the attributes in DESCRIPTION which is
 a list containing lists of attribute-name and type information pairs."
@@ -44,7 +44,8 @@ a list containing lists of attribute-name and type information pairs."
          (stmt (make-instance 'sql-create-table
                               :name table-name
                               :columns description
-                              :modifiers constraints)))
+                              :modifiers constraints
+			      :transactions transactions)))
     (execute-command stmt :database database)))
 
 (defun drop-table (name &key (if-does-not-exist :error)
@@ -173,7 +174,7 @@ specification of a table to drop the index from."
        (unless (index-exists-p index-name :database database)
          (return-from drop-index)))
       (:error t))
-    (unless (db-use-column-on-drop-index? (database-underlying-type database))
+    (unless (db-type-use-column-on-drop-index? (database-underlying-type database))
       (setq on nil))
     (execute-command (format nil "DROP INDEX ~A~A" index-name
                              (if (null on) ""

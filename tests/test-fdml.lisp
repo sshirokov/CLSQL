@@ -221,7 +221,7 @@
 (deftest :fdml/select/10
     (clsql:select [last-name] :from [employee]
                 :where [not [in [emplid]
-                                [select [managerid] :from  [company]]]]
+                                [select [managerid] :from [company]]]]
                 :flatp t
                 :order-by [last-name])
   ("Andropov" "Brezhnev" "Chernenko" "Gorbachev" "Kruschev" "Putin" "Stalin"
@@ -285,8 +285,7 @@
       ;; test if we are in a transaction
       (push (clsql:in-transaction-p) results)
       ;;Putin has got to go
-      (unless (eql *test-database-type* :mysql)
-        (clsql:delete-records :from [employee] :where [= [last-name] "Putin"]))
+      (clsql:delete-records :from [employee] :where [= [last-name] "Putin"])
       ;;Should be nil 
       (push 
        (clsql:select [*] :from [employee] :where [= [last-name] "Putin"])
@@ -312,10 +311,9 @@
       ;; test if we are in a transaction
       (push (clsql:in-transaction-p) results)
       ;;Putin has got to go
-      (unless (eql *test-database-type* :mysql)
-        (clsql:update-records [employee]
-                             :av-pairs '((email "putin-nospam@soviet.org"))
-                             :where [= [last-name] "Putin"]))
+      (clsql:update-records [employee]
+       :av-pairs '((email "putin-nospam@soviet.org"))
+       :where [= [last-name] "Putin"])
       ;;Should be new value  
       (push (clsql:select [email] :from [employee]
                          :where [= [last-name] "Putin"]
@@ -373,19 +371,18 @@
     (let ((results '()))
       ;; check status
       (push (clsql:in-transaction-p) results)
-      (unless (eql *test-database-type* :mysql)
-        (handler-case 
-            (clsql:with-transaction () 
-              ;; valid update
-              (clsql:update-records [employee] 
-                                   :av-pairs '((email "lenin-nospam@soviet.org"))
-                                 :where [= [emplid] 1])
-            ;; invalid update which generates an error 
+      (handler-case 
+	  (clsql:with-transaction () 
+	    ;; valid update
+	    (clsql:update-records [employee] 
+				  :av-pairs '((email "lenin-nospam@soviet.org"))
+				  :where [= [emplid] 1])
+	    ;; invalid update which generates an error 
             (clsql:update-records [employee] 
-                                 :av-pairs
-                                 '((emale "lenin-nospam@soviet.org"))
-                                 :where [= [emplid] 1]))
-        (clsql:clsql-sql-error ()
+				  :av-pairs
+				  '((emale "lenin-nospam@soviet.org"))
+				  :where [= [emplid] 1]))
+        (clsql:clsql-error ()
           (progn
             ;; check status 
             (push (clsql:in-transaction-p) results)
@@ -393,7 +390,7 @@
             (push (clsql:select [email] :from [employee] :where [= [emplid] 1]
                                :flatp t)
                   results)
-            (apply #'values (nreverse results)))))))
+            (apply #'values (nreverse results))))))
   nil nil ("lenin@soviet.org"))
 
 ))

@@ -63,7 +63,7 @@
 
 (deftest :ooddl/time/1
     (let* ((now (clsql-base:get-time)))
-      (when (member *test-database-type* '(:postgresql :postgresql-socket))
+      (when (member *test-database-underlying-type* '(:postgresql :postgresql-socket))
         (clsql:execute-command "set datestyle to 'iso'"))
       (clsql:update-records [employee] :av-pairs `((birthday ,now))
                            :where [= [emplid] 1])
@@ -76,7 +76,7 @@
 (deftest :ooddl/time/2
     (let* ((now (clsql-base:get-time))
            (fail-index -1))
-      (when (member *test-database-type* '(:postgresql :postgresql-socket))
+      (when (member *test-database-underlying-type* '(:postgresql :postgresql-socket))
         (clsql:execute-command "set datestyle to 'iso'"))
       (dotimes (x 40)
         (clsql:update-records [employee] :av-pairs `((birthday ,now))

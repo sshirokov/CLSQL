@@ -421,8 +421,24 @@
 
 ;;; Database capabilities
 
-(defmethod db-use-column-on-drop-index? ((db-type (eql :mysql)))
+(defmethod db-type-use-column-on-drop-index? ((db-type (eql :mysql)))
   t)
+
+(defmethod db-type-has-views? ((db-type (eql :mysql)))
+  ;; MySQL 4.1 will apparently have views, need to check *mysql-client-info*
+  nil)
+
+(defmethod db-type-has-subqueries? ((db-type (eql :mysql)))
+  ;; MySQL 4.1 will apparently have subqueries, need to check *mysql-client-info*
+  nil)
+
+(defmethod db-type-has-boolean-where? ((db-type (eql :mysql)))
+  nil)
+
+(defmethod db-type-transaction-capable? ((db-type (eql :mysql)) database)
+  (let ((has-innodb (caar (database-query "SHOW VARIABLES LIKE 'HAVE_INNODB'" database :auto))))
+    (and has-innodb (string-equal "YES" has-innodb))))
+
 
 (when (clsql-base-sys:database-type-library-loaded :mysql)
   (clsql-base-sys:initialize-database-type :database-type :mysql))

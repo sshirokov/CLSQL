@@ -1,3 +1,9 @@
+cl-sql (2.9.2-1) unstable; urgency=low
+
+  * New upstream
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Wed, 21 Apr 2004 00:46:34 -0600
+
 cl-sql (2.9.1-1) unstable; urgency=low
 
   * Fix shared library loading in .asd files (closes:245004)

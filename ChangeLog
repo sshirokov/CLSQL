@@ -1,3 +1,19 @@
+21 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.9.2: Improvments in database capability introspection
+	and querying. Support transactions in MySQL where available.
+	All tests now pass on MySQL and SQLite in addition to postgresql
+	and postgresql-socket. ODBC fails only with OODDL/TIME/1 and OODDL/TIME/2.
+	* db-odbc/odbc-sql.lisp: Add DATABASE-LIST-VIEWS. Better support
+	DATABASE-LIST-SEQUENCES.
+	* clsql-uffi.asd, clsql-mysql.asd: Improve shared library loading
+	* Database_capabilies: add HAS-VIEWS, HAS-CREATE/DESTROY-DB,
+	HAS-BOOLEAN-WHERE, TRANSACTION-CAPABLE
+	* tests/*.lisp: Check database capabilities and remove tests which
+	the database backend does not support
+	* sql/table.lisp: Add :TRANSACTIONS keyword to create table which
+	controls whether InnoDB tables will be created when supported on
+	the underlying MySQL server.
+	
 20 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.9.0: New API function: LIST-TABLE-INDEXES,
 	supported by all database backends (except AODBC since

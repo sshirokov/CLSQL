@@ -211,13 +211,43 @@ the given lisp type and parameters."))
     (database-type database))
   (:documentation "Returns the type of the underlying database. For ODBC, needs to query ODBC driver."))
 
-(defgeneric db-use-column-on-drop-index? (db-type)
+(defgeneric db-type-use-column-on-drop-index? (db-type)
   (:method (db-type)
 	   (declare (ignore db-type))
-	   ;; Standard SQL does not use column name on DROP INDEX
 	   nil)
-  (:documentation "NIL [default] lif database-type does not use column name on DROP INDEX."))
+  (:documentation "NIL [default] if database-type does not use column name on DROP INDEX."))
 
+(defgeneric db-type-has-views? (db-type)
+  (:method (db-type)
+	   (declare (ignore db-type))
+	   ;; SQL92 has views
+	   t)
+  (:documentation "T [default] if database-type supports views."))
+
+(defgeneric db-type-has-subqueries? (db-type)
+  (:method (db-type)
+	   (declare (ignore db-type))
+	   t)
+  (:documentation "T [default] if database-type supports views."))
+
+(defgeneric db-type-has-boolean-where? (db-type)
+  (:method (db-type)
+	   (declare (ignore db-type))
+	   ;; SQL92 has boolean where
+	   t)
+  (:documentation "T [default] if database-type supports boolean WHERE clause, such as 'WHERE MARRIED'."))
+
+(defgeneric db-backend-has-create/destroy-db? (db-type)
+  (:method (db-type)
+	   (declare (ignore db-type))
+	   t)
+  (:documentation "T [default] if backend can destroy and create databases."))
+
+(defgeneric db-type-transaction-capable? (db database)
+  (:method (db database)
+	   (declare (ignore db database))
+	   t)
+  (:documentation "T [default] if database can supports transactions."))
 
 ;;; Large objects support (Marc Battyani)
 

@@ -210,13 +210,14 @@
 (defmethod database-list-table-indexes (table (database sqlite-database)
 					&key (owner nil))
   (declare (ignore owner))
-  (mapcar #'car 
-	  (database-query
-	   (format
-	    nil
-	    "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='~A' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='index' AND tbl_name='~A' ORDER BY name"
-	    table table)
-	   database nil)))
+  (let ((*print-circle* nil))
+    (mapcar #'car 
+	    (database-query
+	     (format
+	      nil
+	      "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='~A' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='index' AND tbl_name='~A' ORDER BY name"
+	      table table)
+	     database nil))))
 
 (declaim (inline sqlite-table-info))
 (defun sqlite-table-info (table database)
@@ -331,6 +332,11 @@
     ;; TODO: Add a test that this file is a real sqlite database
     (or (string-equal ":memory:" name)
 	(and (probe-file name) t))))
+
+;;; Database capabilities
+
+(defmethod db-type-has-boolean-where? ((db-type (eql :sqlite)))
+  nil)
 
 
 

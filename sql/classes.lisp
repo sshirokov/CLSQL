@@ -630,6 +630,9 @@ uninclusive, and the args from that keyword to the end."
     :initform nil)
    (modifiers
     :initarg :modifiers
+    :initform nil)
+   (transactions
+    :initarg :transactions
     :initform nil))
   (:documentation
    "An SQL CREATE TABLE statement."))
@@ -658,7 +661,7 @@ uninclusive, and the args from that keyword to the end."
                  (when constraints
                    (write-string " " *sql-stream*)
                    (write-string constraints *sql-stream*)))))))
-    (with-slots (name columns modifiers)
+    (with-slots (name columns modifiers transactions)
       stmt
       (write-string "CREATE TABLE " *sql-stream*)
       (output-sql name database)
@@ -673,7 +676,11 @@ uninclusive, and the args from that keyword to the end."
             ((null modifier))
           (write-string ", " *sql-stream*)
           (write-string (car modifier) *sql-stream*)))
-      (write-char #\) *sql-stream*)))
+      (write-char #\) *sql-stream*)
+      (when (and (eq :mysql (database-underlying-type database))
+		 transactions
+		 (db-type-transaction-capable? :mysql database))
+	(write-string " Type=InnoDB" *sql-stream*)))) 
   t)
 
 

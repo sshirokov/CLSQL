@@ -61,7 +61,7 @@
 	     :error "Connection failed")))))
 
 (defmethod database-underlying-type ((database odbc-database))
-  (odbc-db-type database))
+  (database-odbc-db-type database))
 
 (defun store-type-of-connected-database (db)
   (let* ((odbc-conn (database-odbc-conn db))
@@ -193,9 +193,18 @@
 (defmethod database-list-sequences ((database odbc-database)
                                     &key (owner nil))
   (declare (ignore owner))
-  (mapcar #'(lambda (s) (%table-name-to-sequence-name (car s)))
-          (database-query "SHOW TABLES LIKE '%clsql_seq%'" 
-                          database nil)))
+  ;; FIXME: Underlying database backend stuff should come from that backend
+  ;; Would need to use ASDF to ensure underlying backend was loaded
+  
+  (case (database-odbc-db-type database)
+    (:mysql
+     (mapcar #'(lambda (s) (%table-name-to-sequence-name (car s)))
+	     (database-query "SHOW TABLES LIKE '%clsql_seq%'" 
+			     database nil)))
+    ((:postgresql :postgresql-socket)
+     (mapcar #'(lambda (s) (%table-name-to-sequence-name (car s)))
+	     (database-query "SELECT RELNAME FROM pg_class WHERE RELNAME LIKE '%clsql_seq%'" 
+			     database nil)))))
 
 (defmethod database-list-tables ((database odbc-database)
 				 &key (owner nil))
@@ -208,6 +217,19 @@
       (loop for row in rows
 	  when (and (not (string-equal "information_schema" (nth 1 row)))
 		    (string-equal "TABLE" (nth 3 row)))
+	  collect (nth 2 row))))
+
+(defmethod database-list-views ((database odbc-database)
+				 &key (owner nil))
+  (declare (ignore owner))
+    (multiple-value-bind (rows col-names)
+	(odbc-dbi:list-all-database-tables :db (database-odbc-conn database))
+      (declare (ignore col-names))
+      ;; TABLE_SCHEM is hard-coded in second column by ODBC Driver Manager
+      ;; TABLE_NAME in third column, TABLE_TYPE in fourth column
+      (loop for row in rows
+	  when (and (not (string-equal "information_schema" (nth 1 row)))
+		    (string-equal "VIEW" (nth 3 row)))
 	  collect (nth 2 row))))
 
 (defmethod database-list-attributes ((table string) (database odbc-database)
@@ -307,11 +329,15 @@
 	 (loop-rows rows (cdr loop-rows)))
 	((null loop-rows) (nreverse results))
       (let* ((row (car loop-rows))
-	     (col (nth 5 row))
-	     (type (nth 3 row)))
-	(unless (or (find col results :test #'string-equal)
-		    #+ignore (equal "0" type))
+	     (col (nth 5 row)))
+	(unless (find col results :test #'string-equal)
 	  (push col results))))))
+
+;;; Database capabilities
+
+(defmethod db-backend-has-create/destroy-db? ((db-type (eql :odbc)))
+  nil)
+
 
 (defmethod database-initialize-database-type ((database-type (eql :odbc)))
   ;; nothing to do

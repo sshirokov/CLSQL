@@ -287,8 +287,12 @@
 	 #:transaction
 
 	 ;; Database features specialized by backend
-	 #:db-use-column-on-drop-index?
-	 
+	 #:db-type-use-column-on-drop-index?
+	 #:db-type-has-views?
+	 #:db-type-has-subqueries?
+	 #:db-type-has-boolean-where?
+	 #:db-backend-has-create/destroy-db?
+	 #:db-type-transaction-capable?
 	 ))
     (:documentation "This is the INTERNAL SQL-Interface package of CLSQL-BASE."))
 

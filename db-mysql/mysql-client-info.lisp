@@ -21,22 +21,21 @@
 
 (declaim (inline mysql-get-client-info))
 
+(defvar *mysql-client-info* nil)
+
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (uffi:def-function "mysql_get_client_info"
       ()
     :module "mysql"
     :returning :cstring)
 
-  (let ((version (uffi:convert-from-cstring (mysql-get-client-info))))
-    (cond
-      ((eql (schar version 0) #\3)
-       (pushnew :mysql-client-v3 cl:*features*))
-      ((eql (schar version 0) #\4)
-       (pushnew :mysql-client-v4 cl:*features*))
-      (t
-       (error "Unknown mysql client version '~A'." version)))))
-
-;;#-(or :mysql-client-v3 :mysql-client-v4)
-;;(eval-when (:compile-toplevel :load-toplevel :execute)
-;;  (pushnew :mysql-client-v3 cl:*features*))
+  (setf *mysql-client-info* (uffi:convert-from-cstring (mysql-get-client-info)))
+  
+  (cond
+    ((eql (schar *mysql-client-info* 0) #\3)
+     (pushnew :mysql-client-v3 cl:*features*))
+    ((eql (schar *mysql-client-info* 0) #\4)
+     (pushnew :mysql-client-v4 cl:*features*))
+    (t
+     (error "Unknown mysql client version '~A'." *mysql-client-info*))))
 

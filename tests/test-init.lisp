@@ -25,6 +25,7 @@
 (defvar *rt-time*)
 
 (defvar *test-database-type* nil)
+(defvar *test-database-underlying-type* nil)
 (defvar *test-database-user* nil)
 
 (defclass thing ()
@@ -128,7 +129,12 @@
   (clsql:connect spec
 		 :database-type database-type
 		 :make-default t
-		 :if-exists :old))
+		 :if-exists :old)
+
+  (setf *test-database-underlying-type*
+	(clsql-sys:database-underlying-type *default-database*))
+
+  *default-database*)
 
 (defparameter company1 nil)
 (defparameter employee1 nil)
@@ -319,13 +325,39 @@
     (test-basic spec db-type))
   (incf *error-count* *test-errors*)
 
-  (ignore-errors (destroy-database spec :database-type db-type))
-  (ignore-errors (create-database spec :database-type db-type))
+  (when (db-backend-has-create/destroy-db? db-type)
+    (ignore-errors (destroy-database spec :database-type db-type))
+    (ignore-errors (create-database spec :database-type db-type)))
 
-  (dolist (test (append *rt-connection* *rt-fddl* *rt-fdml*
-			*rt-ooddl* *rt-oodml* *rt-syntax*))
-    (eval test))
   (test-connect-to-database db-type spec)
+
+  (dolist (test-form (append *rt-connection* *rt-fddl* *rt-fdml*
+			*rt-ooddl* *rt-oodml* *rt-syntax*))
+    (let ((test (second test-form)))
+      (cond
+	((and (null (db-type-has-views? *test-database-underlying-type*))
+	      (clsql-base-sys::in test :fddl/view/1 :fddl/view/2 :fddl/view/3 :fddl/view/4))
+	 ;; skip test
+	 )
+	((and (null (db-type-has-boolean-where? *test-database-underlying-type*))
+	      (clsql-base-sys::in test :fdml/select/11 :oodml/select/5))
+	 ;; skip tests
+	 )
+	((and (null (db-type-has-subqueries? *test-database-underlying-type*))
+	      (clsql-base-sys::in test :fdml/select/5 :fdml/select/10))
+	 ;; skip tests
+	 )
+	((and (null (db-type-transaction-capable? *test-database-underlying-type* *default-database*))
+	      (clsql-base-sys::in test :fdml/transaction/1 :fdml/transaction/2 :fdml/transaction/3 :fdml/transaction/4))
+	 ;; skip tests
+	 )
+	((and (eql *test-database-type* :sqlite)
+	      (clsql-base-sys::in test :fddl/view/4 :fdml/select/10))
+	 ;; skip tests
+	 )
+	(t
+	 (eval test-form)))))
+  
   (test-initialise-database)
   (let ((remaining (rtest:do-tests)))
     (when (consp remaining)

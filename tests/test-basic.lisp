@@ -84,7 +84,7 @@
     (clsql:execute-command 
      "DROP TABLE test_clsql" :database db))
   (clsql:execute-command 
-   "CREATE TABLE test_clsql (t_int integer, t_float double precision, t_bigint BIGINT, t_str CHAR(30))" 
+   "CREATE TABLE test_clsql (t_int integer, t_float double precision, t_bigint BIGINT, t_str VARCHAR(30))" 
    :database db)
   (dotimes (i 11)
     (let* ((test-int (- i 5))
@@ -113,7 +113,7 @@
       ((eq types :auto)
        (test (and (integerp int)
 		  (typep float 'double-float)
-		  (or (eq db-type :aodbc)  ;; aodbc considers bigints as strings
+		  (or (member db-type '(:odbc :aodbc))  ;; aodbc considers bigints as strings
 		      (integerp bigint)) 
 		  (stringp str))
 	     t

@@ -79,73 +79,69 @@
   "birthday" "companyid" "email" "emplid" "first_name" "groupid" "height"
   "last_name" "managerid" "married")
 
-;; create a view, test for existence, drop it and test again 
+;; create a view, test for existence, drop it and test again
 (deftest :fddl/view/1
     (progn (clsql:create-view [lenins-group]
-                             ;;not in sqlite 
-                             ;;:column-list '([forename] [surname] [email])
-                             :as [select [first-name] [last-name] [email]
-                                         :from [employee]
-                                         :where [= [managerid] 1]])
-           (values  
-            (clsql:view-exists-p [lenins-group] :owner *test-database-user*)
-            (progn
-              (clsql:drop-view [lenins-group] :if-does-not-exist :ignore)
-              (clsql:view-exists-p [lenins-group] :owner *test-database-user*))))
+			      :as [select [first-name] [last-name] [email]
+					  :from [employee]
+					  :where [= [managerid] 1]])
+	   (values  
+	    (clsql:view-exists-p [lenins-group] :owner *test-database-user*)
+	    (progn
+	      (clsql:drop-view [lenins-group] :if-does-not-exist :ignore)
+	      (clsql:view-exists-p [lenins-group] :owner *test-database-user*))))
   t nil)
-
-;; create a view, list its attributes and drop it 
-(deftest :fddl/view/2
-    (progn (clsql:create-view [lenins-group]
-                             ;;not in sqlite 
-                             ;;:column-list '([forename] [surname] [email])
-                              :as [select [first-name] [last-name] [email]
-                                          :from [employee]
-                                          :where [= [managerid] 1]])
-           (prog1
-	       (sort (mapcar #'string-downcase
-			     (clsql:list-attributes [lenins-group]))
-		     #'string<)
-	     (clsql:drop-view [lenins-group] :if-does-not-exist :ignore)))
-  ("email" "first_name" "last_name"))
-
-;; create a view, select stuff from it and drop it 
+  
+  ;; create a view, list its attributes and drop it 
+(when (clsql-base-sys:db-type-has-views? *test-database-underlying-type*)
+  (deftest :fddl/view/2
+      (progn (clsql:create-view [lenins-group]
+				:as [select [first-name] [last-name] [email]
+					    :from [employee]
+					    :where [= [managerid] 1]])
+	     (prog1
+		 (sort (mapcar #'string-downcase
+			       (clsql:list-attributes [lenins-group]))
+		       #'string<)
+	       (clsql:drop-view [lenins-group] :if-does-not-exist :ignore)))
+    ("email" "first_name" "last_name")))
+  
+  ;; create a view, select stuff from it and drop it 
 (deftest :fddl/view/3
     (progn (clsql:create-view [lenins-group]
-                              :as [select [first-name] [last-name] [email]
-                                          :from [employee]
-                                          :where [= [managerid] 1]])
-           (let ((result 
-                  (list 
-                   ;; Shouldn't exist 
-                   (clsql:select [first-name] [last-name] [email]
-                                :from [lenins-group]
-                                :where [= [last-name] "Lenin"])
-                   ;; Should exist 
-                   (car (clsql:select [first-name] [last-name] [email]
-                                     :from [lenins-group]
-                                     :where [= [last-name] "Stalin"])))))
-             (clsql:drop-view [lenins-group] :if-does-not-exist :ignore)
-             (apply #'values result)))
+			      :as [select [first-name] [last-name] [email]
+					  :from [employee]
+					  :where [= [managerid] 1]])
+	   (let ((result 
+		  (list 
+		   ;; Shouldn't exist 
+		   (clsql:select [first-name] [last-name] [email]
+				 :from [lenins-group]
+				 :where [= [last-name] "Lenin"])
+		   ;; Should exist 
+		   (car (clsql:select [first-name] [last-name] [email]
+				      :from [lenins-group]
+				      :where [= [last-name] "Stalin"])))))
+	     (clsql:drop-view [lenins-group] :if-does-not-exist :ignore)
+	     (apply #'values result)))
   nil ("Josef" "Stalin" "stalin@soviet.org"))
-
-;; not in sqlite 
+  
 (deftest :fddl/view/4
     (progn (clsql:create-view [lenins-group]
-	    :column-list '([forename] [surname] [email])
-	    :as [select [first-name] [last-name] [email]
-	    :from [employee]
-	    :where [= [managerid] 1]])
+			      :column-list '([forename] [surname] [email])
+			      :as [select [first-name] [last-name] [email]
+					  :from [employee]
+					  :where [= [managerid] 1]])
 	   (let ((result 
 		  (list
 		   ;; Shouldn't exist 
-                       (clsql:select [forename] [surname] [email]
-				     :from [lenins-group]
-				     :where [= [surname] "Lenin"])
-		       ;; Should exist 
-                       (car (clsql:select [forename] [surname] [email]
-					  :from [lenins-group]
-					  :where [= [surname] "Stalin"])))))
+		   (clsql:select [forename] [surname] [email]
+				 :from [lenins-group]
+				 :where [= [surname] "Lenin"])
+		   ;; Should exist 
+		   (car (clsql:select [forename] [surname] [email]
+				      :from [lenins-group]
+				      :where [= [surname] "Stalin"])))))
 	     (clsql:drop-view [lenins-group] :if-does-not-exist :ignore)
 	     (apply #'values result)))
   nil ("Josef" "Stalin" "stalin@soviet.org"))
@@ -193,6 +189,7 @@
        (progn
 	 (clsql:drop-index [bar] :on [i3test])
 	 (clsql:drop-index [foo] :on [i3test])
+	 (clsql:execute-command "DROP TABLE I3TEST")
 	 t)))
   ("bar" "foo") nil t)
 
