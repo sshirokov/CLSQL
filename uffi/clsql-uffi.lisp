@@ -7,7 +7,7 @@ l;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.24 2003/05/17 07:52:21 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.25 2003/05/22 15:44:30 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -144,7 +144,7 @@ l;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
       (incf i))
     str))
 
-#-(and allegro ics)
+#+(and allegro (not ics))
 (defun native-to-string (s)
   (declare (optimize (speed 3) (space 0) (safety 0) (compilation-speed 0))
 	   (type char-ptr-def s))
@@ -166,6 +166,3 @@ l;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 	(uffi:deref-array s '(:array :unsigned-char) i))
       (incf i))
     str))
-
-
-
