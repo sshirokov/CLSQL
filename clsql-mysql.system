@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql-mysql.system,v 1.9 2002/05/13 22:05:20 kevin Exp $
+;;;; $Id: clsql-mysql.system,v 1.10 2002/05/13 22:16:52 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -21,6 +21,8 @@
 (in-package :cl-user)
 
 ;;; System definition
+
+(mk:load-system :clsql-base)
 
 (mk:defsystem :clsql-mysql
     :source-pathname "CL-LIBRARY:clsql;interfaces;mysql;"

@@ -14,6 +14,7 @@ Creates upstream archives
 Options:
   -c   Commit and tag CVS tree with current version numbers
   -t   Tag CVS tree with current version numbers
+  -f   Force creation of upstream archive, even if exists'
   -h   Print this brief help
 EOF
 }
@@ -25,6 +26,7 @@ while [ $# != 0 ]; do
         -h)  usage; exit 0           ;;
         -c)  opt_commit=1; opt_tag=1 ;;
         -t)  opt_tag=1               ;;
+	-f)  opt_force=1             ;;
          *)  usage; exit 0           ;;
     esac
     shift
@@ -52,7 +54,7 @@ if [ ! -z ${opt_tag} ]; then
 
 fi
 
-if [ -f ${PACKAGE_DIR}/${DEBPKG}_${VERSION}.orig.tar.gz ]; then
+if [ -z ${opt_force} -a -f ${PACKAGE_DIR}/${DEBPKG}_${VERSION}.orig.tar.gz ]; then
   echo "File ${PACKAGE_DIR}/${DEBPKG}_${VERSION}.orig.tar.gz already exists."
   echo -n "Are you sure that you want to create a new upstream archive? (y/N): "
   read answer
