@@ -1,7 +1,9 @@
 10 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 2.11.8
 	* db-mysql/mysql-loader.lisp: Remove load of unnecessary zlib library
 	* multiple: Add generalized-boolean type as requested by
 	Edi Weitz
+	* TODO: Added need for test of generalized-boolean
 	
 9 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.11.7 released
