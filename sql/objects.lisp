@@ -159,7 +159,7 @@ returns a list of all the classes connected to the default database,
 ;; Define a new view class
 ;;
 
-(defmacro def-view-class (class supers slots &rest options)
+(defmacro def-view-class (class supers slots &rest cl-options)
   "Extends the syntax of defclass to allow special slots to be mapped
 onto the attributes of database views. The macro DEF-VIEW-CLASS
 creates a class called CLASS which maps onto a database view. Such a
@@ -172,9 +172,11 @@ instances are filled with attribute values from the database. If
 SUPERS is nil then STANDARD-DB-OBJECT automatically becomes the
 superclass of the newly-defined View Class."
   `(progn
-     (defclass ,class ,supers ,slots ,@options
-	       (:metaclass standard-db-class))
-     (finalize-inheritance (find-class ',class))))
+    (defclass ,class ,supers ,slots 
+      ,@(if (find :metaclass `,cl-options :key #'car)
+	    `,cl-options
+	    (cons '(:metaclass clsql-sys::standard-db-class) `,cl-options)))
+    (finalize-inheritance (find-class ',class))))
 
 (defun keyslots-for-class (class)
   (slot-value class 'key-slots))

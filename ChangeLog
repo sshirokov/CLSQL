@@ -1,13 +1,17 @@
-27 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+28 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.9.5
 	* db-mysql/mysql-sql.lisp: Fix bug in transaction capability
 	detection
+	* sql/objects.lisp: Commit patch from Slawek Zak to allow specifying 
+	:metaclass in DEF-VIEW-CLASS invocation. This allows defining classes 
+	on a metaclass specialized from standard-db-class.
 
+	
 24 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.9.4: Multiple changes to support Allegro's "modern"
 	lisp which uses a lowercase reader and has case-sensitive symbols
 	* sql/classes.lisp: Fix make-load-form bug for sql-ident-table
-	exposed by case-sensitive mlisp
+	exposed by case-sensitive mlisp. 
 
 22 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.9.3: All tests now pass on all platforms!
