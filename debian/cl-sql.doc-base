@@ -5,8 +5,8 @@ Abstract: Describes the
  use the CLSQL Common Lisp library.
 Section: lisp
 
-Format: postscript
-Files: /usr/share/doc/cl-sql/cl-sql.ps.gz
+Format: PDF
+Files: /usr/share/doc/cl-sql/cl-sql.pdf.gz
 
 Format: HTML
 Index: /usr/share/doc/cl-sql/html/index.html

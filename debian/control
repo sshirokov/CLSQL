@@ -2,13 +2,48 @@ Source: cl-sql
 Section: devel
 Priority: optional
 Maintainer: Kevin Rosenberg <kevin@rosenberg.net>
+Uploaders: Adam Di Carlo <aph@debian.org>
 Build-Depends-Indep: debhelper (>> 3.0.0)
 Standards-Version: 3.5.2
 
 Package: cl-sql
 Architecture: all
-Depends: common-lisp-controller, cl-uffi, cmucl | lisp-compiler
+Depends: cl-sql-base
 Description: SQL Interface for Common Lisp
  CLSQL uses the UFFI library to provide SQL to multiple SQL databases
  on multiple Common Lisp implementations.
+
+Package: cl-sql-base
+Architecture: all
+Depends: common-lisp-controller, cl-uffi, cmucl | lisp-compiler
+Recommends: cl-sql-backend
+Description: SQL Interface for Common Lisp
+ CLSQL uses the UFFI library to provide SQL to multiple SQL databases
+ on multiple Common Lisp implementations.
+
+Package: cl-sql-mysql
+Architecture: all
+Depends: cl-sql-base (>= ${Source-Version}), libmysqlclient10-dev
+Provides: cl-sql-backend
+Description: UncommonSQL database backend, MySQL
+ This package enables you to use the CLSQL data access package
+ with MySQL databases.
+
+Package: cl-sql-postgresql
+Architecture: all
+Depends: cl-sql-base (>= ${Source-Version}), postgresql-client
+Provides: cl-sql-backend
+Description: UncommonSQL database backend, PostgreSQL
+ This package enables you to use the CLSQL data access package
+ with PostgreSQL databases.
+
+Package: cl-sql-postgresql-socket
+Architecture: all
+Depends: cl-sql-base (>= ${Source-Version})
+Provides: cl-sql-backend
+Description: UncommonSQL database backend, PostgreSQL
+ This package enables you to use the CLSQL data access package
+ with PostgreSQL databases via a socket interface.
+
+
 
