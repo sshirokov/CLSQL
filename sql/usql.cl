@@ -8,7 +8,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: usql.cl,v 1.3 2002/04/06 19:54:15 kevin Exp $
+;;;; $Id: usql.cl,v 1.4 2002/04/06 22:27:41 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and onShore Development Inc
@@ -57,6 +57,9 @@ specifies the database to operation on, defaulting to
   (error "(rename-attribute ~a ~a ~a ~a) is not implemented" table oldatt newname database))
 
 
+(defclass %sql-expression ()
+    ())
+
 ;; For SQL Identifiers of generic type
 (defclass sql-ident (%sql-expression)
   ((name
@@ -96,12 +99,6 @@ specifies the database to operation on, defaulting to
 (defun sequence-next (name &key (database *default-database*))
   (database-sequence-next name database))
 
-(defclass sql-typecast-exp (sql-value-exp)
-  ()
-  (:documentation
-   "An SQL typecast expression.")
-  )
-
 (defclass sql-value-exp (%sql-expression)
   ((modifier
     :initarg :modifier
@@ -113,6 +110,11 @@ specifies the database to operation on, defaulting to
    "An SQL value expression.")
   )
 
+(defclass sql-typecast-exp (sql-value-exp)
+  ()
+  (:documentation
+   "An SQL typecast expression.")
+  )
 (defvar +null-string+ "NULL")
 
 (defvar *sql-stream* nil
