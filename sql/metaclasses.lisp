@@ -198,15 +198,6 @@
 
 #+(or allegro openmcl)
 (defmethod finalize-inheritance :after ((class standard-db-class))
-  ;; KMRL for slots without a type set, openmcl sets type-predicate to ccl:false
-  ;; for standard-db-class
-  #+openmcl
-  (mapcar 
-   #'(lambda (s)
-       (if (eq 'ccl:false (slot-value s 'ccl::type-predicate))
-	   (setf (slot-value s 'ccl::type-predicate) 'ccl:true)))
-   (class-slots class))
-
   (setf (key-slots class) (remove-if-not (lambda (slot)
 					   (eql (slot-value slot 'db-kind)
 						:key))
@@ -387,7 +378,7 @@ implementations."
 (defun compute-lisp-type-from-slot-specification (slotd specified-type)
   "Computes the Lisp type for a user-specified type. Needed for OpenMCL
 which does type checking before storing a value in a slot."
-  #-openmcl (declare (ignore slotd))
+  (declare (ignore slotd))
   ;; This function is called after the base compute-effective-slots is called.
   ;; OpenMCL sets the type-predicate based on the initial value of the slots type.
   ;; so we have to override the type-predicates here
@@ -396,24 +387,15 @@ which does type checking before storing a value in a slot."
      (cond
        ((and (symbolp (car specified-type))
 	     (string-equal (symbol-name (car specified-type)) "string"))
-	#+openmcl (setf (slot-value slotd 'ccl::type-predicate) 'stringp)
 	'string)
        (t
-	#+openmcl (setf (slot-value slotd 'ccl::type-predicate) 'ccl:true)
 	specified-type)))
     ((eq (ensure-keyword specified-type) :bigint)
      'integer)
     #+openmcl
     ((null specified-type)
-     ;; setting this here is not enough since openmcl later sets the
-     ;; type-predicate to ccl:false. So, have to check slots again
-     ;; in finalize-inheritance 
-     #+openmcl (setf (slot-value slotd 'ccl::type-predicate) 'ccl:true)
      t)
     (t
-     ;; This can be improved for OpenMCL to set a more specific type
-     ;; predicate based on the value specified-type 
-     #+openmcl (setf (slot-value slotd 'ccl::type-predicate) 'ccl:true)
      specified-type)))
 
 ;; Compute the slot definition for slots in a view-class.  Figures out

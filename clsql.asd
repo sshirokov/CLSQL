@@ -42,7 +42,7 @@ a functional and an object oriented interface."
 			:components ((:file "generics")
 				     (:file "classes" :depends-on ("generics"))
 				     (:file "operations" :depends-on ("classes"))
-				     (:file "syntax"))
+				     (:file "syntax" :depends-on ("operations")))
 			:depends-on (:package))
 	       (:module :functional
 			:pathname ""
