@@ -8,7 +8,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: usql.cl,v 1.1 2002/04/01 05:27:55 kevin Exp $
+;;;; $Id: usql.cl,v 1.2 2002/04/03 17:58:23 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and onShore Development Inc
@@ -96,14 +96,14 @@ specifies the database to operation on, defaulting to
 (defun sequence-next (name &key (database *default-database*))
   (database-sequence-next name database))
 
-
+#+ignore
 (defclass sql-typecast-exp (sql-value-exp)
   ()
   (:documentation
    "An SQL typecast expression.")
   )
 
-
+#+ignore
 (defclass sql-value-exp (%sql-expression)
   ((modifier
     :initarg :modifier

@@ -7,7 +7,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.4 2002/04/03 04:06:05 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.5 2002/04/03 17:58:22 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -20,15 +20,14 @@
 # These variables are correct for GCC
 CC=gcc
 SHARED_CC_OPT=-fPIC -DPIC
-
-#SHARED_LD_OPT=-r # For FreeBSD and Solaris (CMUCL)
-SHARED_LD_OPT=-Bshareable -Bdynamic  # For Linux (ALL) and FreeBSD (ACL)
+SHARED_LD_OPT=-shared  # For Linux (ALL) and FreeBSD (ACL)
+LD=gcc
 
 # Use these for Sun's C compiler and Solaris (ACL)
 #CC=cc
 #SHARED_CC_OPT=-KPIC
 #SHARED_LD_OPT=-G
-
+#LD=ld
 
 # Nothing to configure beyond this point
 
@@ -41,7 +40,7 @@ all: $(shared_lib)
 
 $(shared_lib): $(source) Makefile
 	$(CC) ${SHARED_CC_OPT} -c $(source) -o $(object)
-	ld ${SHARED_LD_OPT} $(object) -o $(shared_lib)
+	$(LD) ${SHARED_LD_OPT} $(object) -o $(shared_lib)
 	rm $(object)
 
 clean:
