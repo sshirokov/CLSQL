@@ -79,11 +79,11 @@ Description: CLSQL database backend, SQLite
  with SQLite databases. 
  CLSQL is a Common Lisp interface to SQL databases.
 
-Package: cl-sql-usql
+Package: cl-sql-classic
 Architecture: all
 Depends: cl-sql-base (>= ${Source-Version})
-Description: UncommonSQL high-level CLSQL interface
- This package provides the UncommonSQL high-level interface for CLSQL.
+Description: Classic CLSQL high-level interface
+ This package provides the Classic, original high-level interface for CLSQL.
  CLSQL is a Common Lisp interface to SQL databases.
 
 Package: cl-sql-tests
