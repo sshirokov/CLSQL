@@ -1,4 +1,10 @@
 18 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.7.9
+	* db-sqlite/sqlite-sql.lisp: Fix sequence functions.
+	* db-sqlite/sqlite-api-uffi.lisp: Print error string
+	correctly.
+	
+18 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.7.7
 	* doc/csql.xml, examples/clsql-tutorial.lisp: Patch for db-kind
 	from Eduardo Munoz.

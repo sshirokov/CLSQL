@@ -131,25 +131,23 @@
 
 ;; not in sqlite 
 (deftest :fddl/view/4
-    (if (eql *test-database-type* :sqlite)
-        (values nil '(("Josef" "Stalin" "stalin@soviet.org")))
-        (progn (clsql:create-view [lenins-group]
-                                 :column-list '([forename] [surname] [email])
-                                 :as [select [first-name] [last-name] [email]
-                                             :from [employee]
-                                             :where [= [managerid] 1]])
-               (let ((result 
-                      (list
-                       ;; Shouldn't exist 
+    (progn (clsql:create-view [lenins-group]
+	    :column-list '([forename] [surname] [email])
+	    :as [select [first-name] [last-name] [email]
+	    :from [employee]
+	    :where [= [managerid] 1]])
+	   (let ((result 
+		  (list
+		   ;; Shouldn't exist 
                        (clsql:select [forename] [surname] [email]
-                                    :from [lenins-group]
-                                    :where [= [surname] "Lenin"])
-                       ;; Should exist 
+				     :from [lenins-group]
+				     :where [= [surname] "Lenin"])
+		       ;; Should exist 
                        (car (clsql:select [forename] [surname] [email]
-                                         :from [lenins-group]
-                                         :where [= [surname] "Stalin"])))))
-                 (clsql:drop-view [lenins-group] :if-does-not-exist :ignore)
-                 (apply #'values result))))
+					  :from [lenins-group]
+					  :where [= [surname] "Stalin"])))))
+	     (clsql:drop-view [lenins-group] :if-does-not-exist :ignore)
+	     (apply #'values result)))
   nil ("Josef" "Stalin" "stalin@soviet.org"))
 
 ;; create an index, test for existence, drop it and test again 

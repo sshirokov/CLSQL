@@ -84,7 +84,8 @@
 			 :code code
 			 :message (if message
 				      message
-				      (sqlite-error-string code)))))
+				    (uffi:convert-from-cstring
+				     (sqlite-error-string code))))))
     (unless (signal condition)
       (invoke-debugger condition))))
 

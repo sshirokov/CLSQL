@@ -234,22 +234,23 @@
        (string= (subseq table-name 0 11) "_clsql_seq_")
        (subseq table-name 11)))
 
+
 (defmethod database-create-sequence (sequence-name
 				     (database sqlite-database))
   (let ((table-name (%sequence-name-to-table-name sequence-name)))
     (database-execute-command
      (concatenate 'string "CREATE TABLE " table-name
-		  " (id INTEGER PRIMARY KEY)")
+		  " (last_value integer PRIMARY KEY, increment_by integer, min_value integer, is_called char(1))")
      database)
     (database-execute-command 
-     (format nil "INSERT INTO ~A VALUES (-1)" table-name)
+     (concatenate 'string "INSERT INTO " table-name
+		  " VALUES (1,1,1,'f')")
      database)))
 
 (defmethod database-drop-sequence (sequence-name
 				   (database sqlite-database))
   (database-execute-command
-   (concatenate 'string "DROP TABLE "
-		(%sequence-name-to-table-name sequence-name)) 
+   (concatenate 'string "DROP TABLE " (%sequence-name-to-table-name sequence-name)) 
    database))
 
 (defmethod database-list-sequences ((database sqlite-database)
@@ -263,27 +264,45 @@
            database '())))
 
 (defmethod database-sequence-next (sequence-name (database sqlite-database))
-  (let ((table-name (%sequence-name-to-table-name sequence-name)))
-    (database-execute-command
-     (format nil "UPDATE ~A SET id=(SELECT id FROM ~A)+1"
-	     table-name table-name)
-     database)
-    (sqlite:sqlite-last-insert-rowid (sqlite-db database))
-    (parse-integer
-     (caar (database-query (format nil "SELECT id from ~A" table-name)
-                           database nil)))))
+  (without-interrupts
+   (let* ((table-name (%sequence-name-to-table-name sequence-name))
+	  (tuple
+	   (car (database-query 
+		 (concatenate 'string "SELECT last_value,is_called FROM " 
+			      table-name)
+		 database
+		 :auto))))
+     (cond
+       ((char-equal (schar (second tuple) 0) #\f)
+	(database-execute-command
+	 (format nil "UPDATE ~A SET is_called='t'" table-name)
+	 database)
+	(parse-integer (car tuple)))
+       (t
+	(let ((new-pos (1+ (parse-integer (car tuple)))))
+	 (database-execute-command
+	  (format nil "UPDATE ~A SET last_value=~D" table-name new-pos)
+	  database)
+	 new-pos))))))
+	     
+(defmethod database-sequence-last (sequence-name (database sqlite-database))
+  (without-interrupts
+    (parse-integer 
+     (caar (database-query 
+	    (concatenate 'string "SELECT last_value FROM " 
+			 (%sequence-name-to-table-name sequence-name))
+	    database
+	    :auto)))))
 
 (defmethod database-set-sequence-position (sequence-name
                                            (position integer)
                                            (database sqlite-database))
-  (let ((table-name (%sequence-name-to-table-name sequence-name)))
-    (database-execute-command
-     (format nil "UPDATE ~A SET id=~A" table-name position)
-     database)
-    (sqlite:sqlite-last-insert-rowid (sqlite-db database))))
-
-(defmethod database-sequence-last (sequence-name (database sqlite-database))
-  (declare (ignore sequence-name)))
+  (database-execute-command
+   (format nil "UPDATE ~A SET last_value=~A,is_called='t'" 
+	   (%sequence-name-to-table-name sequence-name)
+           position)
+   database)
+  position)
 
 (defmethod database-create (connection-spec (type (eql :sqlite)))
   (declare (ignore connection-spec))
