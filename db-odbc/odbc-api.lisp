@@ -663,6 +663,7 @@ as possible second argument) to the desired representation of date/time/timestam
     ;; FIXME: this could be better optimized for types which use READ-FROM-STRING above
     
     (if (and (or (eq result-type t) (eq result-type :string))
+	     value
 	     (not (stringp value)))
 	(write-to-string value)
       value)))
