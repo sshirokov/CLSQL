@@ -3,6 +3,9 @@
 	CommonSQL compatibility. 
 	* tests/test-init.lisp: skip test :FDDL/TABLE/6 on Oracle since 
 	this column constraint syntax is not supported. 
+	* tests/test-fddl.lisp: change column indexed in test :FDDL/INDEXES/2
+	from EMPLID to LAST_NAME since Oracle complains that EMPLID is already 
+	indexed. 
 
 17 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* doc/ref-fdml.xml: document CACHE-TABLE-QUERIES. 
