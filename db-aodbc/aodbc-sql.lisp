@@ -159,11 +159,11 @@
   (let ((table-name (%sequence-name-to-table sequence-name)))
     (database-execute-command
      (concatenate 'string "CREATE TABLE " table-name
-		  " (id int NOT NULL PRIMARY KEY AUTO_INCREMENT)")
+		  " (last_value int NOT NULL PRIMARY KEY, increment_by int, min_value int, is_called char(1))")
      database)
     (database-execute-command 
      (concatenate 'string "INSERT INTO " table-name
-		  " VALUES (0)")
+		  " VALUES (1,1,1,'f')")
      database)))
 
 (defmethod database-drop-sequence (sequence-name
@@ -183,16 +183,41 @@
                                            (position integer)
                                            (database aodbc-database))
   (database-execute-command
-   (format nil "UPDATE ~A SET id=~A" (%sequence-name-to-table sequence-name)
+   (format nil "UPDATE ~A SET last-value=~A" 
+	   (%sequence-name-to-table sequence-name)
            position)
    database)
   position)
 
 (defmethod database-sequence-next (sequence-name (database aodbc-database))
-  (warn "Not implemented."))
-
+  (without-interrupts
+   (let* ((table-name (%sequence-name-to-table sequence-name))
+	  (tuple
+	   (car (database-query 
+		 (concatenate 'string "SELECT last_value,is_called FROM " 
+			      table-name)
+		 database
+		 :auto))))
+     (cond
+       ((char-equal (schar (second tuple) 0) #\f)
+	(database-execute-command
+	 (format nil "UPDATE ~A SET is_called='t'" table-name)
+	 database)
+	(car tuple))
+       (t
+	(let ((new-pos (1+ (car tuple))))
+	 (database-execute-command
+	  (format nil "UPDATE ~A SET last_value=~D" table-name new-pos)
+	  database)
+	 new-pos))))))
+	     
 (defmethod database-sequence-last (sequence-name (database aodbc-database))
-  (declare (ignore sequence-name)))
+  (without-interrupts
+   (caar (database-query 
+	  (concatenate 'string "SELECT last_value FROM " 
+		       (%sequence-name-to-table sequence-name))
+	  database
+	  :auto))))
 
 (defmethod database-create (connection-spec (type (eql :aodbc)))
   (warn "Not implemented."))

@@ -170,43 +170,6 @@
 		 :errno (mysql-errno mysql-ptr)
 		 :error (mysql-error-string mysql-ptr))))))
 
-#+ignore
-(defmethod database-query (query-expression (database mysql-database) 
-			   result-types)
-  (declare (optimize (speed 3) (safety 0) (debug 0) (space 0)))
-  (let ((mysql-ptr (database-mysql-ptr database)))
-    (uffi:with-cstring (query-native query-expression)
-      (if (zerop (mysql-query mysql-ptr query-native))
-	  (let ((res-ptr (mysql-use-result mysql-ptr)))
-	    (if res-ptr
-		(unwind-protect
-		     (let ((num-fields (mysql-num-fields res-ptr)))
-		       (declare (fixnum num-fields))
-		       (setq result-types (canonicalize-types 
-				    result-types num-fields
-				    res-ptr))
-		       (loop for row = (mysql-fetch-row res-ptr)
-			     until (uffi:null-pointer-p row)
-			     collect
-			     (loop for i fixnum from 0 below num-fields
-				   collect
-				   (convert-raw-field
-				    (uffi:deref-array row '(:array
-							    (* :unsigned-char))
-						      i)
-				    result-types i))))
-		  (mysql-free-result res-ptr))
-		(error 'clsql-sql-error
-		       :database database
-		       :expression query-expression
-		       :errno (mysql-errno mysql-ptr)
-		       :error (mysql-error-string mysql-ptr))))
-	  (error 'clsql-sql-error
-		 :database database
-		 :expression query-expression
-		 :errno (mysql-errno mysql-ptr)
-		 :error (mysql-error-string mysql-ptr))))))
-
 (defmethod database-execute-command (sql-expression (database mysql-database))
   (uffi:with-cstring (sql-native sql-expression)
     (let ((mysql-ptr (database-mysql-ptr database)))
@@ -385,16 +348,15 @@
   (mysql:mysql-insert-id (clsql-mysql::database-mysql-ptr database)))
 
 (defmethod database-sequence-next (sequence-name (database mysql-database))
-  (database-execute-command 
-   (concatenate 'string "UPDATE " (%sequence-name-to-table sequence-name)
-		" SET id=LAST_INSERT_ID(id+1)")
-   database)
-  (mysql:mysql-insert-id (clsql-mysql::database-mysql-ptr database)))
+  (without-interrupts
+   (database-execute-command 
+    (concatenate 'string "UPDATE " (%sequence-name-to-table sequence-name)
+		 " SET id=LAST_INSERT_ID(id+1)")
+    database)
+   (mysql:mysql-insert-id (clsql-mysql::database-mysql-ptr database))))
 
 (defmethod database-sequence-last (sequence-name (database mysql-database))
   (declare (ignore sequence-name)))
-
-
 
 (defmethod database-create (connection-spec (type (eql :mysql)))
   (destructuring-bind (host name user password) connection-spec

@@ -125,7 +125,8 @@ the query against." ))
 (defun sql (expr &key db result-types row-count column-names query)
   (if query 
       (db-query db expr)
-      (db-execute db expr)))
+      ;; fixme: don't return all query results. 
+      (db-query db expr)))
 
 (defun close-query (result-set)
   (warn "Not implemented."))
@@ -243,13 +244,6 @@ the query against." ))
 						 out-len-ptr nil)))))
 	 query)))))
 
-(defmacro without-interrupts (&body body)
-  #+lispworks `(mp:without-preemption ,@body)
-  #+allegro `(mp:without-scheduling ,@body)
-  #+cmu `(pcl::without-interrupts ,@body)
-  #+sbcl `(sb-sys::without-interrupts ,@body)
-  #+openmcl `(ccl:without-interrupts ,@body))
-
 (defmethod db-query ((database odbc-db) query-expression)
   (let ((free-query
          ;; make it thread safe 
@@ -285,7 +279,7 @@ the query against." ))
   "get-free-query finds or makes a nonactive query object, and then sets it to active.
 This makes the functions db-execute-command and db-query thread safe."
   (with-slots (queries) database
-    (or (without-interrupts ;; not context switch allowed here 
+    (or (clsql-base-sys:without-interrupts ;; not context switch allowed here 
          (let ((inactive-query (find-if (lambda (query)
                                           (not (query-active-p query)))
                                         queries)))

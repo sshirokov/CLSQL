@@ -71,7 +71,13 @@
      #:with-process-lock
      #:connection-spec
      #:ensure-keyword
-     
+
+     ;; utils.lisp
+     #:without-interrupts
+     #:make-process-lock
+     #:with-process-lock
+     #:command-output
+
      ;; Shared exports for re-export by CLSQL-BASE
      .
      #1=(#:clsql-condition
