@@ -52,6 +52,7 @@
   (pointer (uffi:allocate-foreign-object '(* :void))))
 
 (defvar +null-void-pointer+ (uffi:make-null-pointer :void))
+(defvar +null-void-pointer-pointer+ (uffi:make-null-pointer (* :void)))
 
 (uffi:def-function "OCIInitialize"
     ((a :int)
@@ -133,10 +134,10 @@
 (def-oci-routine ("OCIInitialize" oci-initialize)
     :int
   (mode :unsigned-long)			; ub4
-  (ctxp (* :void))                          ; dvoid *
-  (malocfp (* :void))                       ; dvoid *(*)
-  (ralocfp (* :void))                       ; dvoid *(*)
-  (mfreefp (* :void)))                      ; void *(*)
+  (ctxp (* :void))			; dvoid *
+  (malocfp (* :void))			; dvoid *(*)
+  (ralocfp (* :void))			; dvoid *(*)
+  (mfreefp (* (* :void))))		; void *(*)
 
 
 (def-oci-routine ("OCIEnvInit" oci-env-init)
@@ -144,7 +145,7 @@
   (envpp (* :void))                         ; OCIEnv **
   (mode :unsigned-long)                  ; ub4
   (xtramem-sz :unsigned-long)            ; size_t
-  (usermempp (* :void)))                    ; dvoid **
+  (usermempp (* (* :void))))                    ; dvoid **
   
 #+oci-8-1-5
 (def-oci-routine ("OCIEnvCreate" oci-env-create)
@@ -182,15 +183,15 @@
 
 (def-oci-routine ("OCILogon" oci-logon)
     :int
-  (envhp        (* :void))                  ; env
-  (errhp        (* :void))                  ; err
-  (svchp        (* :void))                  ; svc
-  (username     :cstring)               ; username
-  (uname-len    :unsigned-long)          ;
-  (passwd       :cstring)               ; passwd
-  (password-len :unsigned-long)          ;
-  (dsn          :cstring)               ; datasource
-  (dsn-len      :unsigned-long))         ;
+  (envhp        (* :void))		; env
+  (errhp        (* :void))		; err
+  (svchpp       (* (* :void)))		; svc
+  (username     :cstring)		; username
+  (uname-len    :unsigned-long)		;
+  (passwd       :cstring)		; passwd
+  (password-len :unsigned-long)		;
+  (dsn          :cstring)		; datasource
+  (dsn-len      :unsigned-long))	;
 
 (def-oci-routine ("OCILogoff" oci-logoff)
     :int
@@ -198,53 +199,52 @@
   (p1	(* :void)))       ; err
 
 (uffi:def-function ("OCIErrorGet" oci-error-get)
-    ((p0      (* :void))
-     (p1      :unsigned-long)
-     (p2      :cstring)
-     (p3      (* :long))
-     (p4      (* :void))
-     (p5      :unsigned-long)
-     (p6      :unsigned-long))
+    ((handlp  (* :void))
+     (recordno  :unsigned-long)
+     (sqlstate   :cstring)
+     (errcodep   (* :long))
+     (bufp      (* :unsigned-char))
+     (bufsize      :unsigned-long)
+     (type      :unsigned-long))
   :returning :void)
 
 (def-oci-routine ("OCIStmtPrepare" oci-stmt-prepare)
     :int
-  (p0      (* :void))
-  (p1      (* :void))
-  (p2      :cstring)
-  (p3      :unsigned-long)
-  (p4      :unsigned-long)
-  (p5      :unsigned-long))
+  (stmtp      (* :void))
+  (errhp      (* :void))
+  (stmt      :cstring)
+  (stmt_len      :unsigned-long)
+  (language      :unsigned-long)
+  (mode      :unsigned-long))
 
 (def-oci-routine ("OCIStmtExecute" oci-stmt-execute)
     :int
-  (p0      (* :void))
-  (p1      (* :void))
-  (p2      (* :void))
-  (p3      :unsigned-long)
-  (p4      :unsigned-long)
-  (p5      (* :void))
-  (p6      (* :void))
-  (p7      :unsigned-long))
+  (svchp      (* :void))
+  (stmtp1      (* :void))
+  (errhp      (* :void))
+  (iters      :unsigned-long)
+  (rowoff      :unsigned-long)
+  (snap_in      (* :void))
+  (snap_out      (* :void))
+  (mode     :unsigned-long))
 
 (def-raw-oci-routine ("OCIParamGet" oci-param-get)
     :int
-  (p0      (* :void))
-  (p1      :unsigned-long)
-  (p2      (* :void))
-  (p3      (* :void))
-  (p4      :unsigned-long))
+  (hndlp      (* :void))
+  (htype      :unsigned-long)
+  (errhp      (* :void))
+  (parmdpp      (* (* :void)))
+  (pos      :unsigned-long))
 
 (def-oci-routine ("OCIAttrGet" oci-attr-get)
     :int
-  (p0      (* :void))
-  (p1      :unsigned-long)
-  (p2      (* :void))
-  (p3      (* :unsigned-long))
-  (p4      :unsigned-long)
-  (p5      (* :void)))
+  (trgthndlp      (* :void))
+  (trghndltyp      :unsigned-int)
+  (attributep      (* :void))
+  (sizep      (* :unsigned-int))
+  (attrtype      :unsigned-int)
+  (errhp      (* :void)))
 
-#+nil
 (def-oci-routine ("OCIAttrSet" oci-attr-set)
     :int
   (trgthndlp (* :void))
@@ -318,7 +318,7 @@
       (oci-init))
   (case type
     (:error
-     (let ((ptr (uffi:make-pointer 0 (* :void))))
+     (let ((ptr (uffi:make-null-pointer (* :void))))
        (let ((x (OCIHandleAlloc
 		 (uffi:pointer-address (uffi:deref-pointer *oci-env* oci-env))
 		 ptr

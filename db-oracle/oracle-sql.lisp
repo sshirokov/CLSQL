@@ -139,14 +139,16 @@ the length of that format.")))
 				       (errcode :long))
              (setf (uffi:deref-array errbuf '(:array :unsigned-char) 0) (code-char 0)) ; i.e. init to empty string
              (setf (uffi:deref-pointer errcode :long) 0)
-             (oci-error-get (uffi:deref-pointer errhp '(* :void)) 1 "" (c-& errcode :unsigned-char) 
-			    (c-& errbuf :unsigned-char) +errbuf-len+ +oci-htype-error+)
+             (oci-error-get (uffi:deref-pointer errhp void-pointer) 1
+			    (uffi:make-null-pointer :unsigned-char)
+			    errcode errbuf +errbuf-len+ +oci-htype-error+)
              (let ((subcode (uffi:deref-pointer errcode :long)))
                (unless (and nulls-ok (= subcode +null-value-returned+))
                  (error 'clsql-sql-error
                         :database database
                         :errno subcode
-                        :expression (uffi:convert-from-foreign-string errbuf)))))))
+			:expression nil
+                        :error (uffi:convert-from-foreign-string errbuf)))))))
 	(nulls-ok
 	 (error 'clsql-sql-error
                 :database database
@@ -368,7 +370,7 @@ the length of that format.")))
 
 
 (defun fetch-row (qc &optional (eof-errorp t) eof-value)
-  (declare (optimize (speed 3)))
+  ;;(declare (optimize (speed 3)))
   (cond ((zerop (qc-n-from-oci qc))
 	 (if eof-errorp
 	     (error 'clsql-error :message
@@ -445,22 +447,32 @@ the length of that format.")))
 (defun sql-stmt-exec (sql-stmt-string db &key types)
   (with-slots (envhp svchp errhp)
     db
-    (let ((stmthp (uffi:allocate-foreign-object (* :void))))
+    (let ((stmthp (uffi:allocate-foreign-object void-pointer)))
       (uffi:with-foreign-object (stmttype :unsigned-short)
         
-        (oci-handle-alloc (uffi:deref-pointer envhp void-pointer) (c-& stmthp void-pointer) +oci-htype-stmt+ 0 nil)
-        (oci-stmt-prepare (uffi:deref-pointer stmthp void-pointer) (uffi:deref-pointer errhp void-pointer)
-                          sql-stmt-string (length sql-stmt-string)
+        (oci-handle-alloc (uffi:deref-pointer envhp void-pointer)
+			  stmthp
+			  +oci-htype-stmt+ 0 +null-void-pointer-pointer+)
+        (oci-stmt-prepare (uffi:deref-pointer stmthp void-pointer)
+			  (uffi:deref-pointer errhp void-pointer)
+                          (uffi:convert-to-cstring sql-stmt-string)
+			  (length sql-stmt-string)
                           +oci-ntv-syntax+ +oci-default+ :database db)
-        (oci-attr-get (uffi:deref-pointer stmthp void-pointer) +oci-htype-stmt+ 
-                      (c-& stmttype :unsigned-short) nil +oci-attr-stmt-type+ 
-                      (uffi:deref-pointer errhp void-pointer) :database db)
+        (oci-attr-get (uffi:deref-pointer stmthp void-pointer) 
+		      +oci-htype-stmt+ 
+                      stmttype
+		      (uffi:make-null-pointer :unsigned-int)
+		      +oci-attr-stmt-type+ 
+                      (uffi:deref-pointer errhp void-pointer)
+		      :database db)
         (let* ((select-p (= (uffi:deref-pointer stmttype :unsigned-short) 1)) 
                (iters (if select-p 0 1)))
           
-          (oci-stmt-execute (uffi:deref-pointer svchp void-pointer) (uffi:deref-pointer stmthp void-pointer)
+          (oci-stmt-execute (uffi:deref-pointer svchp void-pointer)
+			    (uffi:deref-pointer stmthp void-pointer)
 			    (uffi:deref-pointer errhp void-pointer)
-                            iters 0 nil nil +oci-default+ :database db)
+                            iters 0 +null-void-pointer+ +null-void-pointer+ +oci-default+
+			    :database db)
           (cond (select-p
                  (make-query-cursor db stmthp types))
                 (t
@@ -565,45 +577,54 @@ the length of that format.")))
 	     (cds-as-reversed-list nil))
 	    ((not (eql (oci-param-get (uffi:deref-pointer stmthp void-pointer) +oci-htype-stmt+
 				      (uffi:deref-pointer errhp void-pointer)
-				      (uffi:pointer-address parmdp)
+				      parmdp
 				      (1+ icolumn) :database database)
 		       +oci-success+))
 	     (coerce (reverse cds-as-reversed-list) 'simple-vector))
 	  ;; Decode type of ICOLUMNth column into a type we're prepared to
 	  ;; handle in Lisp.
-	  (oci-attr-get parmdp +oci-dtype-param+ (uffi:pointer-address dtype)
-			nil +oci-attr-data-type+ (uffi:deref-pointer errhp void-pointer))
+	  (oci-attr-get (uffi:deref-pointer parmdp void-pointer)
+			+oci-dtype-param+ 
+			dtype
+			(uffi:make-null-pointer :int) +oci-attr-data-type+
+			(uffi:deref-pointer errhp void-pointer))
 	  (case dtype
 	    (#.SQLT-DATE
-	     (setf buffer (acquire-foreign-resource char (* 32 +n-buf-rows+)))
+	     (setf buffer (acquire-foreign-resource :char (* 32 +n-buf-rows+)))
 	     (setf sizeof 32 dtype #.SQLT-STR))
 	    (2 ;; number
 	     ;;(oci-attr-get parmdp +oci-dtype-param+
 	     ;;(addr precision) nil +oci-attr-precision+
 	     ;;(uffi:deref-pointer errhp))
-	     (oci-attr-get parmdp +oci-dtype-param+
-			   (uffi:pointer-address scale) nil +oci-attr-scale+
+	     (oci-attr-get (uffi:deref-pointer parmdp void-pointer)
+			   +oci-dtype-param+
+			   scale
+			   (uffi:make-null-pointer :int) +oci-attr-scale+
 			   (uffi:deref-pointer errhp void-pointer))
 	     (cond
 	      ((zerop scale)
-	       (setf buffer (acquire-foreign-resource signed +n-buf-rows+)
+	       (setf buffer (acquire-foreign-resource :init +n-buf-rows+)
 		     sizeof 4			;; sizeof(int)
 		     dtype #.SQLT-INT))
 	      (t
-	       (setf buffer (acquire-foreign-resource double-float +n-buf-rows+)
+	       (setf buffer (acquire-foreign-resource :double +n-buf-rows+)
 		     sizeof 8                   ;; sizeof(double)
 		     dtype #.SQLT-FLT))))          
 	    (t  ; Default to SQL-STR
-	     (setf colsize 0
+	     (setf (uffi:deref-pointer colsize :unsigned-long) 0
 		   dtype #.SQLT-STR)
-	     (oci-attr-get parmdp +oci-dtype-param+ (uffi:pointer-address colsize)
-			   (uffi:pointer-address colsizesize) +oci-attr-data-size+
+	     (oci-attr-get (uffi:deref-pointer parmdp void-pointer)
+			   +oci-dtype-param+ 
+			   colsize
+			   (uffi:make-null-pointer :int) ;;  (uffi:pointer-address colsizesize) 
+			   +oci-attr-data-size+
 			   (uffi:deref-pointer errhp void-pointer))
-	     (let ((colsize-including-null (1+ colsize)))
-	       (setf buffer (acquire-foreign-resource char (* +n-buf-rows+ colsize-including-null)))
+	     (let ((colsize-including-null (1+ (uffi:deref-pointer colsize :unsigned-long))))
+	       (setf buffer (acquire-foreign-resource
+			     :char (* +n-buf-rows+ colsize-including-null)))
 	       (setf sizeof colsize-including-null))))
-	  (let ((retcodes (acquire-foreign-resource short +n-buf-rows+))
-		(indicators (acquire-foreign-resource short +n-buf-rows+)))
+	  (let ((retcodes (acquire-foreign-resource :short +n-buf-rows+))
+		(indicators (acquire-foreign-resource :short +n-buf-rows+)))
 	    (push (make-cd :name "col" ;(subseq colname 0 colnamelen)
 			   :sizeof sizeof
 			   :buffer buffer
@@ -642,23 +663,15 @@ the length of that format.")))
   (values))
 
 
-(defmethod print-object ((db oracle-database) stream)
-  (print-unreadable-object (db stream :type t :identity t)
-    (format stream "\"/~a/~a\""
-            (slot-value db 'data-source-name)
-            (slot-value db 'user))))
-
-
 (defmethod database-name-from-spec (connection-spec (database-type (eql :oracle)))
-  (check-connection-spec connection-spec database-type (user password dsn))
-  (destructuring-bind (user password dsn)
-      connection-spec
+  (check-connection-spec connection-spec database-type (dsn user password))
+  (destructuring-bind (dsn user password) connection-spec
     (declare (ignore password))
-    (concatenate 'string "/" dsn "/" user)))
+    (concatenate 'string  dsn "/" user)))
 
 
 (defmethod database-connect (connection-spec (database-type (eql :oracle)))
-  (check-connection-spec connection-spec database-type (user password dsn))
+  (check-connection-spec connection-spec database-type (dsn user password))
   (destructuring-bind (data-source-name user password)
       connection-spec
     (let ((envhp (uffi:allocate-foreign-object (* :void)))
@@ -673,43 +686,55 @@ the length of that format.")))
       (setf (uffi:deref-pointer envhp void-pointer) +null-void-pointer+)
       #+oci-8-1-5
       (progn
-        (oci-env-create (c-& envhp void-pointer) +oci-default+ nil nil nil nil 0 nil)
-	(oci-handle-alloc (uffi:deref-pointer envhp void-pointer) 
-			  (c-& errhp void-pointer) +oci-htype-error+ 0 nil))
+        (oci-env-create envhp +oci-default+ nil nil nil nil 0 nil)
+	(oci-handle-alloc envhp
+			  (c-& errhp void-pointer) +oci-htype-error+ 0 
+			  +null-void-pointer-pointer+))
       #-oci-8-1-5
       (progn
-	(oci-initialize +oci-object+ +null-void-pointer+ +null-void-pointer+ +null-void-pointer+ +null-void-pointer+)
-        (ignore-errors (oci-handle-alloc nil envhp +oci-htype-env+ 0 +null-void-pointer+)) ;no testing return
-        (oci-env-init envhp +oci-default+ 0 +null-void-pointer+)
-        (oci-handle-alloc (uffi:deref-pointer envhp void-pointer) errhp +oci-htype-error+ 0 +null-void-pointer+)
-        (oci-handle-alloc (uffi:deref-pointer envhp void-pointer) srvhp +oci-htype-server+ 0 +null-void-pointer+)
-        ;;(osucc (oci-server-attach srvhp errhp nil 0 +oci-default+))
-        (oci-handle-alloc (uffi:deref-pointer envhp void-pointer) svchp +oci-htype-svcctx+ 0 +null-void-pointer+)
+	(oci-initialize +oci-object+ +null-void-pointer+ +null-void-pointer+
+			+null-void-pointer+ +null-void-pointer-pointer+)
+        (ignore-errors (oci-handle-alloc +null-void-pointer+ envhp
+					 +oci-htype-env+ 0
+					 +null-void-pointer-pointer+)) ;no testing return
+        (oci-env-init envhp +oci-default+ 0 +null-void-pointer-pointer+)
+        (oci-handle-alloc (uffi:deref-pointer envhp void-pointer) errhp
+			  +oci-htype-error+ 0 +null-void-pointer-pointer+)
+        (oci-handle-alloc (uffi:deref-pointer envhp void-pointer) srvhp
+			  +oci-htype-server+ 0 +null-void-pointer-pointer+)
+	(oci-server-attach (uffi:deref-pointer srvhp void-pointer)
+			   (uffi:deref-pointer errhp void-pointer)
+			   (uffi:make-null-pointer :unsigned-char)
+			   0 +oci-default+)
+        (oci-handle-alloc (uffi:deref-pointer envhp void-pointer) svchp
+			  +oci-htype-svcctx+ 0 +null-void-pointer-pointer+)
+        (oci-attr-set (uffi:deref-pointer svchp void-pointer)
+		      +oci-htype-svcctx+
+		      (uffi:deref-pointer srvhp void-pointer) 0 +oci-attr-server+ 
+		      (uffi:deref-pointer errhp void-pointer))
         ;; oci-handle-alloc((dvoid *)encvhp, (dvoid **)&stmthp, OCI_HTYPE_STMT, 0, 0);
-        #+nil
-        (oci-attr-set svchp +oci-htype-svcctx+ 
-		      srvhp 0 +oci-attr-server+ errhp)
+        ;;#+nil
 	)
-      #+nil
-      (format t "Logging in as user '~A' to database ~A~%"
-	      user password data-source-name)
-      (oci-logon (uffi:deref-pointer envhp void-pointer) (uffi:deref-pointer errhp void-pointer) (c-& svchp void-pointer)
-		 (uffi:convert-to-cstring user) (length user)
-		 (uffi:convert-to-cstring password) (length password)
-		 (uffi:convert-to-cstring data-source-name) (length data-source-name))
       (let ((db (make-instance 'oracle-database
                                :name (database-name-from-spec connection-spec
                                                               database-type)
                                :envhp envhp
                                :errhp errhp
-			       :db-type :oracle
+			       :database-type :oracle
                                :svchp svchp
                                :dsn data-source-name
                                :user user)))
-        ;; :date-format-length (1+ (length date-format)))))
-        (clsql:execute-command
-         (format nil "alter session set NLS_DATE_FORMAT='~A'"
-		 (date-format db)) :database db)
+	(oci-logon (uffi:deref-pointer envhp void-pointer)
+		   (uffi:deref-pointer errhp void-pointer) 
+		   svchp
+		   (uffi:convert-to-cstring user) (length user)
+		   (uffi:convert-to-cstring password) (length password)
+		   (uffi:convert-to-cstring data-source-name) (length data-source-name)
+		   :database db)
+	;; :date-format-length (1+ (length date-format)))))
+	(setf (slot-value db 'clsql-sys::state) :open)
+        (database-execute-command
+	 (format nil "alter session set NLS_DATE_FORMAT='~A'" (date-format db)) db)
         db))))
 
 
@@ -775,8 +800,7 @@ the length of that format.")))
 		 ) :database database)))
 
 
-(defmethod database-execute-command
-  (sql-expression (database oracle-database))
+(defmethod database-execute-command (sql-expression (database oracle-database))
   (database-query sql-expression database nil nil)
   ;; HACK HACK HACK
   (database-query "commit" database nil nil)
