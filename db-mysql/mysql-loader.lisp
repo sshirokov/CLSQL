@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-loader.lisp,v 1.4 2002/10/18 01:16:26 kevin Exp $
+;;;; $Id: mysql-loader.lisp,v 1.5 2002/11/23 18:00:26 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -30,33 +30,15 @@
    "clsql-mysql"
    `(,(make-pathname :directory (pathname-directory *load-truename*))
      "/usr/lib/clsql/"
+     "/sw/lib/clsql/"
      "/home/kevin/debian/src/clsql/db-mysql/")
-   :drive-letters '("C" "D" "E" "F" "G")))
+   :drive-letters '("C" "D" "E")))
   
-(defvar *mysql-library-filename*
-    (cond
-     ((probe-file "/opt/mysql/lib/mysql/libmysqlclient.so")
-      "/opt/mysql/lib/mysql/libmysqlclient.so")
-     ((probe-file "/usr/local/lib/libmysqlclient.so")
-      "/usr/local/lib/libmysqlclient.so")
-     ((probe-file "/usr/local/lib/mysql/libmysqlclient.so")
-      "/usr/local/lib/mysql/libmysqlclient.so")
-     ((probe-file "/usr/lib/libmysqlclient.so")
-      "/usr/lib/libmysqlclient.so")
-     ((probe-file "/usr/lib/mysql/libmysqlclient.so")
-      "/usr/lib/mysql/libmysqlclient.so")
-     #+(or win32 mswindows) 
-     ((probe-file "c:/mysql/lib/opt/libmysql.dll")
-      "c:/mysql/lib/opt/libmysql.dll")
-     (t
-      (error "Can't find MySQL client library to load.")))
-  "Location where the MySQL client library is to be found.")
-
 (defvar *mysql-library-candidate-names*
     '("libmysqlclient" "libmysql"))
 
 (defvar *mysql-library-candidate-directories*
-    '("/opt/mysql/lib/mysql/" "/usr/local/lib/" "/usr/lib/" "/usr/local/lib/mysql/" "/usr/lib/mysql/" "/mysql/lib/opt/"))
+    '("/opt/mysql/lib/mysql/" "/usr/local/lib/" "/usr/lib/" "/usr/local/lib/mysql/" "/usr/lib/mysql/" "/mysql/lib/opt/" "/sw/lib/mysql/"))
 
 (defvar *mysql-library-candidate-drive-letters* '("C" "D" "E"))
 
@@ -84,7 +66,7 @@ set to the right path before compiling or loading the system.")
       (error "Can't find mysql client library to load"))
     (unless (probe-file zlib-path)
       (error "Can't find zlib client library to load"))
-    
+
     (uffi:load-foreign-library zlib-path) 
     (if	(and
 	 (uffi:load-foreign-library mysql-path

@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-loader.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: postgresql-loader.lisp,v 1.2 2002/11/23 18:00:26 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -39,7 +39,7 @@ set to the right path before compiling or loading the system.")
 		  '("/opt/postgresql/lib/" "/usr/local/lib/" 
 		    "/usr/lib/" "/postgresql/lib/"
 		    "/usr/local/pgsql/lib/" "/usr/lib/pgsql/"
-		    "/opt/pgsql/lib/pgsql")
+		    "/opt/pgsql/lib/pgsql" "/sw/lib/pgsql/")
 		  :drive-letters '("C" "D" "E"))))
     (if	(uffi:load-foreign-library libpath
 				   :module "postgresql"
