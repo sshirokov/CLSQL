@@ -244,6 +244,12 @@ of TYPE_NAME (keyword) PRECISION SCALE NULLABLE."))
 	   t)
   (:documentation "T [default] if database-type supports boolean WHERE clause, such as 'WHERE MARRIED'."))
 
+(defgeneric db-type-has-union? (db-type)
+  (:method (db-type)
+	   (declare (ignore db-type))
+	   t)
+  (:documentation "T [default] if database-type supports boolean UNION."))
+
 (defgeneric db-backend-has-create/destroy-db? (db-type)
   (:method (db-type)
 	   (declare (ignore db-type))

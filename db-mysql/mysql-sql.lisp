@@ -454,6 +454,9 @@
 (defmethod db-type-has-boolean-where? ((db-type (eql :mysql)))
   nil)
 
+(defmethod db-type-has-union? ((db-type (eql :mysql)))
+  (not (eql (schar mysql::*mysql-client-info* 0) #\3)))
+
 (defmethod db-type-transaction-capable? ((db-type (eql :mysql)) database)
   (let ((tuple (car (database-query "SHOW VARIABLES LIKE 'HAVE_INNODB'" database :auto nil))))
     (and tuple (string-equal "YES" (second tuple)))))

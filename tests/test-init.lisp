@@ -558,6 +558,9 @@
 		(clsql-sys:in test :fdml/select/22 :fdml/query/5 
 				:fdml/query/7 :fdml/query/8))
 	   (push (cons test "not supported by mysql") skip-tests))
+	  ((and (null (clsql-sys:db-type-has-union? db-underlying-type))
+		(clsql-sys:in test :fdml/query/6))
+	   (push (cons test "union not supported") skip-tests))
 	  (t
 	   (push test-form test-forms)))))
       (values (nreverse test-forms) (nreverse skip-tests))))

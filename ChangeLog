@@ -1,5 +1,9 @@
 15 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.18
+	* sql/db-interface.lisp: Add new db-type-has-union? 
+	since Mysql 3.23 does not support unions.
+	* sql/test-init.lisp: Don't try union tests on database
+	backends which do not support it.
 	* db-oracle/*.lisp: initial port to UFFI
 	* sql/objects.lisp: implement UPDATE-OBJECT-JOINS,
 	implement REFRESH for SELECT.

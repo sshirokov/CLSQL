@@ -136,6 +136,7 @@
      
      #:db-backend-has-create/destroy-db?
      #:db-type-has-views?
+     #:db-type-has-union?
      #:db-type-has-subqueries?
      #:db-type-has-boolean-where?
      #:db-type-transaction-capable?
