@@ -22,6 +22,7 @@
   :description "Testing suite for CLSQL"
 
   :depends-on (:clsql :clsql-mysql :clsql-postgresql :clsql-postgresql-socket
+		      :rt
 		      #+(and allegro (not allegro-cl-trial)) :clsql-aodbc)
   :components
   ((:module tests
