@@ -10,6 +10,7 @@
 	* sql/generic-postgresql.lisp: Add support for
 	prepared statements. 
 	* tests/test-internal.lisp: New file
+	* sql/odbc-api.lisp: Update to using ODBC V3 protocol
 	
 27 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.11.3

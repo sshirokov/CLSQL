@@ -894,6 +894,11 @@
 (defconstant $SQL_TINYINT -6)
 (defconstant $SQL_BIT -7)
 
+;; For ODBC3
+(defconstant $SQL_TYPE_DATE 91)
+(defconstant $SQL_TYPE_TIME 92)
+(defconstant $SQL_TYPE_TIMESTAMP 93)
+
 (defconstant $SQL_INTERVAL_YEAR -80)
 (defconstant $SQL_INTERVAL_MONTH -81)
 (defconstant $SQL_INTERVAL_YEAR_TO_MONTH -82)
@@ -929,6 +934,11 @@
 (defconstant $SQL_C_USHORT (+ $SQL_C_SHORT $SQL_UNSIGNED_OFFSET)) ;; UNSIGNED SMALLINT
 (defconstant $SQL_C_UTINYINT (+ $SQL_TINYINT $SQL_UNSIGNED_OFFSET)) ;;UNSIGNED TINYINT
 (defconstant $SQL_C_BOOKMARK $SQL_C_ULONG) ;; BOOKMARK
+
+;;; ODBC3
+(defconstant $SQL_C_TYPE_DATE $SQL_TYPE_DATE)
+(defconstant $SQL_C_TYPE_TIME $SQL_TYPE_TIME)
+(defconstant $SQL_C_TYPE_TIMESTAMP $SQL_TYPE_TIMESTAMP)
 
 ;; Options for SQLDriverConnect
 (defconstant $SQL_DRIVER_NOPROMPT 0)

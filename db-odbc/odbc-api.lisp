@@ -153,7 +153,7 @@ as possible second argument) to the desired representation of date/time/timestam
 	       ()
 	     (SQLAllocEnv phenv)
 	     (deref-pointer phenv 'sql-handle)))))
-    (%set-attr-odbc-version henv $SQL_OV_ODBC2)
+    (%set-attr-odbc-version henv $SQL_OV_ODBC3)
     henv))
 
 
@@ -568,6 +568,9 @@ as possible second argument) to the desired representation of date/time/timestam
     (#.$SQL_DATE $SQL_C_DATE)
     (#.$SQL_TIME $SQL_C_TIME)
     (#.$SQL_TIMESTAMP $SQL_C_TIMESTAMP)
+    (#.$SQL_TYPE_DATE $SQL_C_TYPE_DATE)
+    (#.$SQL_TYPE_TIME $SQL_C_TYPE_TIME)
+    (#.$SQL_TYPE_TIMESTAMP $SQL_C_TYPE_TIMESTAMP)
     ((#.$SQL_BINARY #.$SQL_VARBINARY #.$SQL_LONGVARBINARY) $SQL_C_BINARY)
     (#.$SQL_TINYINT $SQL_C_STINYINT)
     (#.$SQL_BIT $SQL_C_BIT)))
@@ -650,12 +653,12 @@ as possible second argument) to the desired representation of date/time/timestam
 		      (read-from-string (get-cast-foreign-string data-ptr))))
 		   (t 
 		    (case c-type
-		      (#.$SQL_C_DATE
+		      ((#.$SQL_C_DATE #.$SQL_C_TYPE_DATE)
 		       (funcall *time-conversion-function* (date-to-universal-time data-ptr)))
-		      (#.$SQL_C_TIME
+		      ((#.$SQL_C_TIME #.$SQL_C_TYPE_TIME)
 		       (multiple-value-bind (universal-time frac) (time-to-universal-time data-ptr)
 			 (funcall *time-conversion-function* universal-time frac)))
-		      (#.$SQL_C_TIMESTAMP
+		      ((#.$SQL_C_TIMESTAMP #.$SQL_C_TYPE_TIMESTAMP)
 		       (multiple-value-bind (universal-time frac) (timestamp-to-universal-time data-ptr)
 			 (funcall *time-conversion-function* universal-time frac)))
 		      (#.$SQL_INTEGER
@@ -705,9 +708,9 @@ as possible second argument) to the desired representation of date/time/timestam
          (data-ptr
           (case c-type ;; add more?
             (#.$SQL_C_SLONG (uffi:allocate-foreign-object #.$ODBC-LONG-TYPE))
-            (#.$SQL_C_DATE (allocate-foreign-object 'sql-c-date))
-            (#.$SQL_C_TIME (allocate-foreign-object 'sql-c-time))
-            (#.$SQL_C_TIMESTAMP (allocate-foreign-object 'sql-c-timestamp))
+            ((#.$SQL_C_DATE #.$SQL_C_TYPE_DATE) (allocate-foreign-object 'sql-c-date))
+            ((#.$SQL_C_TIME #.$SQL_C_TYPE_TIME) (allocate-foreign-object 'sql-c-time))
+            ((#.$SQL_C_TIMESTAMP #.$SQL_C_TYPE_TIMESTAMP) (allocate-foreign-object 'sql-c-timestamp))
 	    (#.$SQL_C_FLOAT (uffi:allocate-foreign-object :float))
             (#.$SQL_C_DOUBLE (uffi:allocate-foreign-object :double))
             (#.$SQL_C_BIT (uffi:allocate-foreign-object :byte))

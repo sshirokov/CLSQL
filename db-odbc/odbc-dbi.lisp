@@ -559,9 +559,9 @@ This makes the functions db-execute-command and db-query thread safe."
     (#.odbc::$SQL_SMALLINT :short)
     ((#.odbc::$SQL_FLOAT #.odbc::$SQL_DOUBLE) #.odbc::$ODBC-LONG-TYPE)
     (#.odbc::$SQL_REAL #.odbc::$ODBC-LONG-TYPE)
-    (#.odbc::$SQL_DATE 'sql-c-date)
-    (#.odbc::$SQL_TIME 'sql-c-time)
-    (#.odbc::$SQL_TIMESTAMP 'sql-c-timestamp)
+    ((#.odbc::$SQL_DATE #.odbc::$SQL_TYPE_DATE) 'sql-c-date)
+    ((#.odbc::$SQL_TIME #.odbc::$SQL_TYPE_TIME) 'sql-c-time)
+    ((#.odbc::$SQL_TIMESTAMP #.odbc::$SQL_TYPE_TIMESTAMP) 'sql-c-timestamp)
     ;;((#.odbc::$SQL_BINARY #.odbc::$SQL_VARBINARY #.odbc::$SQL_LONGVARBINARY) odbc::$SQL_C_BINARY) ; ??
     (#.odbc::$SQL_TINYINT :short)
     ;;(#.odbc::$SQL_BIT odbc::$SQL_C_BIT) ; ??

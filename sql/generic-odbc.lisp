@@ -67,6 +67,7 @@
 	       query-expression :db (odbc-conn database)
 	       :result-types result-types
 	       :column-names field-names)
+    #+ignore
     (error ()
       (error 'sql-database-data-error
 	     :database database
