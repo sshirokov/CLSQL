@@ -555,12 +555,12 @@
       </refsect1>
       <refsect1>
 	<title>Examples</title>
-	<programlisting>
+	<screen>
 (setf *default-database-type* :mysql)
 => :mysql
 (initialize-database-type)
 => t
-	</programlisting>
+	</screen>
       </refsect1>
       <refsect1>
 	<title>Affected By</title>
@@ -606,14 +606,14 @@
       </refsect1>
       <refsect1>
 	<title>Examples</title>
-	<programlisting>
+	<screen>
 (setf *default-database-type* :mysql)
 => :mysql
 (initialize-database-type)
 => t
 *initialized-database-types*
 => (:MYSQL)
-	</programlisting>
+	</screen>
       </refsect1>
       <refsect1>
 	<title>Affected By</title>
@@ -685,7 +685,7 @@
       </refsect1>
       <refsect1>
 	<title>Examples</title>
-	<programlisting>
+	<screen>
 *initialized-database-types*
 => NIL
 (setf *default-database-type* :mysql)
@@ -701,7 +701,7 @@
 => T
 *initialized-database-types*
 => (:MYSQL)
-	</programlisting>
+	</screen>
       </refsect1>
       <refsect1>
 	<title>Side Effects</title>
@@ -833,7 +833,7 @@
       </refsect1>
       <refsect1>
 	<title>Examples</title>
-	<programlisting>
+	<screen>
 (connected-databases)
 => NIL
 (connect '(nil "template1" "dent" nil) :database-type :postgresql)
@@ -851,7 +851,7 @@
 => T
 (connected-databases)
 => NIL
-	</programlisting>
+	</screen>
       </refsect1>
       <refsect1>
 	<title>Side Effects</title>
@@ -926,7 +926,7 @@
       </refsect1>
       <refsect1>
 	<title>Examples</title>
-	<programlisting>
+	<screen>
 (connected-databases)
 => NIL
 (connect '("dent" "newesim" "dent" "dent") :database-type :mysql)
@@ -951,7 +951,7 @@
 => NIL
 (connected-databases)
 => NIL
-	</programlisting>
+	</screen>
       </refsect1>
       <refsect1>
 	<title>Affected By</title>
@@ -1105,7 +1105,7 @@
       </refsect1>
       <refsect1>
 	<title>Examples</title>
-	<programlisting>
+	<screen>
 (database-name-from-spec '("dent" "newesim" "dent" "dent") :mysql)
 => "dent/newesim/dent"
 (connect '("dent" "newesim" "dent" "dent") :database-type :mysql)
@@ -1122,7 +1122,7 @@
 
 (database-name-from-spec '("www.pmsf.de" "template1" "dent" nil) :postgresql)
 => "www.pmsf.de/template1/dent"
-	</programlisting>
+	</screen>
       </refsect1>
       <refsect1>
 	<title>Side Effects</title>
@@ -1220,7 +1220,7 @@
       </refsect1>
       <refsect1>
 	<title>Examples</title>
-	<programlisting>
+	<screen>
 (database-name-from-spec '("dent" "newesim" "dent" "dent") :mysql)
 => "dent/newesim/dent"
 (connect '("dent" "newesim" "dent" "dent") :database-type :mysql)
@@ -1246,7 +1246,7 @@
 => NIL
 (find-database **)
 => #&lt;CLSQL-POSTGRESQL:POSTGRESQL-DATABASE {48392D2D}>
-	</programlisting>
+	</screen>
       </refsect1>
       <refsect1>
 	<title>Side Effects</title>
@@ -1413,7 +1413,7 @@
       </refsect1>
       <refsect1>
 	<title>Examples</title>
-	<programlisting>
+	<screen>
 (database-name-from-spec '("dent" "newesim" "dent" "dent") :mysql)
 => "dent/newesim/dent"
 (connect '("dent" "newesim" "dent" "dent") :database-type :mysql)
@@ -1442,7 +1442,7 @@
 >>                (SETQ RESULT OLD-DB)))
 >> 0] 0
 => #&lt;CLSQL-MYSQL:MYSQL-DATABASE {480451F5}>
-	</programlisting>
+	</screen>
       </refsect1>
       <refsect1>
 	<title>Side Effects</title>
@@ -1540,10 +1540,10 @@ The default is &nil;.
       </refsect1>
       <refsect1>
 	<title>Examples</title>
-	<programlisting>
+	<screen>
 (disconnect :database (find-database "dent/newesim/dent"))
 => T
-	</programlisting>
+	</screen>
       </refsect1>
       <refsect1>
 	<title>Side Effects</title>
@@ -1610,10 +1610,10 @@ The default is &nil;.
       </refsect1>
       <refsect1>
 	<title>Examples</title>
-	<programlisting>
+	<screen>
 (disconnect-pool)
 => T
-	</programlisting>
+	</screen>
       </refsect1>
       <refsect1>
 	<title>Side Effects</title>
@@ -1701,7 +1701,7 @@ The default is &nil;.
       </refsect1>
       <refsect1>
 	<title>Examples</title>
-	<programlisting>
+	<screen>
 (database-name-from-spec '("dent" "newesim" "dent" "dent") :mysql)
 => "dent/newesim/dent"
 (connect '("dent" "newesim" "dent" "dent") :database-type :mysql)
@@ -1727,7 +1727,7 @@ The default is &nil;.
 => NIL
 (find-database **)
 => #&lt;CLSQL-POSTGRESQL:POSTGRESQL-DATABASE {48392D2D}>
-	</programlisting>
+	</screen>
       </refsect1>
       <refsect1>
 	<title>Side Effects</title>
@@ -1803,7 +1803,7 @@ The default is &nil;.
       </refsect1>
       <refsect1>
 	<title>Examples</title>
-	<programlisting>
+	<screen>
 (execute-command "create table eventlog (time char(30),event char(70))")
 => T
 
@@ -1829,7 +1829,7 @@ The default is &nil;.
 
 (execute-command "drop table eventlog")
 => T
-	</programlisting>
+	</screen>
       </refsect1>
       <refsect1>
 	<title>Side Effects</title>
@@ -1956,7 +1956,7 @@ The default is &nil;.
       </refsect1>
       <refsect1>
 	<title>Examples</title>
-	<programlisting>
+	<screen>
 (execute-command "create table simple (name char(50), salary numeric(10,2))")
 => T
 (execute-command "insert into simple values ('Mai, Pierre',10000)")
@@ -1979,7 +1979,7 @@ The default is &nil;.
 ;; MySQL-specific:
 (query "show tables")
 => (("demo") ("log") ("newlog") ("simple") ("spacetrial"))
-	</programlisting>
+	</screen>
       </refsect1>
       <refsect1>
 	<title>Side Effects</title>
@@ -2116,7 +2116,7 @@ The default is &nil;.
       </refsect1>
       <refsect1>
 	<title>Examples</title>
-	<programlisting>
+	<screen>
 (map-query 'list #'(lambda (salary name) 
 		     (declare (ignorable name))
 		     (read-from-string salary))
@@ -2140,7 +2140,7 @@ The default is &nil;.
 	  list))
 => NIL
 => (("Hacker, Random J." . 8000.5) ("Mai, Pierre" . 10000.0))
-	</programlisting>
+	</screen>
       </refsect1>
       <refsect1>
 	<title>Side Effects</title>
@@ -2264,7 +2264,7 @@ The default is &nil;.
       </refsect1>
       <refsect1>
 	<title>Examples</title>
-	<programlisting>
+	<screen>
 (do-query ((salary name) "select salary,name from simple")
   (format t "~30A gets $~2,5$~%" name (read-from-string salary)))
 >> Mai, Pierre                    gets $10000.00
@@ -2274,7 +2274,7 @@ The default is &nil;.
 (do-query ((salary name) "select salary,name from simple")
   (return (cons salary name)))
 => ("10000.00" . "Mai, Pierre")
-	</programlisting>
+	</screen>
       </refsect1>
       <refsect1>
 	<title>Side Effects</title>
@@ -2378,7 +2378,7 @@ The default is &nil;.
       </refsect1>
       <refsect1>
 	<title>Examples</title>
-	<programlisting>
+	<screen>
 (defvar *my-db* (connect '("dent" "newesim" "dent" "dent"))
   "My database"
 => *MY-DB*
@@ -2411,7 +2411,7 @@ The default is &nil;.
 >> CLOS Benchmark entry                     => 32000
 => #&lt;EQUAL hash table, 3 entries {48350A1D}>
 => #&lt;EQUAL hash table, 5 entries {48350FCD}>
-	</programlisting>
+	</screen>
       </refsect1>
       <refsect1>
 	<title>Side Effects</title>

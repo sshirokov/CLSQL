@@ -126,9 +126,9 @@
       <title>Ensure &asdf; is loaded</title>
       <para>
 	Simply load the file <filename>asdf.lisp</filename>.
-	<programlisting>
+	<screen>
 (load "asdf.lisp")
-	</programlisting>
+	</screen>
       </para>
     </sect2>
     
@@ -155,9 +155,9 @@
 	linking on Linux. If you are using FreeBSD or Solaris, you will need
 	to change the linker setting as instructed in the Makefile. 
 	Then, you can give the command
-	<programlisting>
+	<screen>
 make libs
-	</programlisting>
+	</screen>
 	in the root directory of &clsql; to build the libraries 
 	<filename>interfaces/mysql/clsql-mysql.so</filename>
 	and <filename>interfaces/clsql-uffi/clsql-uffi.so</filename>.
@@ -173,10 +173,10 @@ make libs
 	The following example code assumes the &uffi; files reside in the
 	<filename>/usr/share/lisp/uffi/</filename> 
 	directory.
-	<programlisting>
+	<screen>
 (push #P"/usr/share/lisp/uffi/" asdf:*central-registry*)
 (asdf:oos 'asdf:load-op :uffi)
-	</programlisting>
+	</screen>
       </para>
     </sect2>
    <sect2>
@@ -189,10 +189,10 @@ make libs
         The following example code assumes the cl-md5 files reside in the
        <filename>/usr/share/lisp/cl-md5/</filename> 
        directory.
-       <programlisting>
+       <screen>
 (push #P"/usr/share/lisp/cl-md5/" asdf:*central-registry*)
 (asdf:oos 'asdf:load-op :md5)
-       </programlisting>
+       </screen>
      </para>
    </sect2>
    
@@ -206,7 +206,7 @@ make libs
        <filename>/usr/share/lisp/clsql/</filename> 
        directory. You need to load, at a minimum,
        the main <symbol>:clsql</symbol> system and at least one interface system.
-	<programlisting>
+	<screen>
 (push #P"/usr/share/lisp/clsql/" asdf:*central-repository*)
 (asdf:operate 'asdf:load-op 'clsql-base)        ; base clsql package
 (asdf:operate 'asdf:load-op 'clsql-mysql)       ; MySQL interface
@@ -214,7 +214,7 @@ make libs
 (asdf:operate 'asdf:load-op 'clsql-postgresql-socket) ; Socket PGSQL interface
 (asdf:operate 'asdf:load-op 'clsql-aodbc)       ; Allegro ODBC interface
 (asdf:operate 'asdf:load-op 'clsql)             ; main clsql package
-	</programlisting>
+	</screen>
       </para>
     </sect2>
     
@@ -227,9 +227,9 @@ make libs
 	in the <filename>tests/tests.lisp</filename> file in the &clsql;
 	source directory. After creating that file, you can run the test suite
 	with &asdf;:
-	<programlisting>
+	<screen>
 	  (asdf:operate 'asdf:test-op 'clsql)
-        </programlisting>.	.
+        </screen>
       </para>
     </sect2>
     
