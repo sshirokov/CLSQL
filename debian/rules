@@ -126,7 +126,7 @@ install: build
 
 	# Documentation
 	rm -rf doc/html
-	tar xzf doc/html.tar.gz
+	(cd doc; tar xzf html.tar.gz; cd ..)
 	$(INSTALL) $(INSTALLFLAGS) doc/html/* $(doc-dir)/html
 	rm -rf doc/html
 	cp doc/clsql.pdf doc/cl-sql.pdf
