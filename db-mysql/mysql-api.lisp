@@ -106,11 +106,11 @@
      (:var-string 253)
      (:string 254)))
 
-#-(or mysql-client-v3 mysql-client-v4)
+#-(or :mysql-client-v3 :mysql-client-v4)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (pushnew :mysql-client-v3 cl:*features*))
 
-#+mysql-client-v3
+#+:mysql-client-v3
 (uffi:def-struct mysql-field
     (name (* :char))
   (table (* :char))
@@ -122,7 +122,7 @@
   (decimals :unsigned-int))
 
 ;; structure changed in mysql 4 client
-#+mysql-client-v4
+#+:mysql-client-v4
 (uffi:def-struct mysql-field
     (name (* :char))
   (table (* :char))
@@ -251,7 +251,9 @@
   :module "mysql" 
   :returning (* mysql-mysql))
 
+#-mysql-client-v4
 (declaim (inline mysql-connect))
+#-mysql-client-v4
 (uffi:def-function "mysql_connect"
     ((mysql (* mysql-mysql))
      (host :cstring)
@@ -306,14 +308,18 @@
   :module "mysql"
   :returning :int)
 
+#-mysql-client-v4
 (declaim (inline mysql-create-db))
+#-mysql-client-v4
 (uffi:def-function "mysql_create_db"
   ((mysql (* mysql-mysql))
    (db :cstring))
   :module "mysql"
   :returning :int)
 
+#-mysql-client-v4
 (declaim (inline mysql-drop-db))
+#-mysql-client-v4
 (uffi:def-function "mysql_drop_db"
     ((mysql (* mysql-mysql))
      (db :cstring))
