@@ -1,3 +1,17 @@
+22 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
+	* sql/generics.lisp: reworked docstrings. Remove generics for 
+	ADD-TO-RELATION and REMOVE-FROM-RELATION. 
+	* sql/objects.lisp: reworked docstrings. Changed UPDATE-OBJECT-JOINS 
+	to UPDATE-OBJECTS-JOINS for CommonSQL compatibility. 
+	* sql/package.lisp: Changed UPDATE-OBJECT-JOINS to UPDATE-OBJECTS-JOINS 
+	for CommonSQL compatibility. Remove ADD-TO-RELATION and 
+	REMOVE-FROM-RELATION. 
+	* tests/test-oodml.lisp: Changed UPDATE-OBJECT-JOINS to 
+	UPDATE-OBJECTS-JOINS for CommonSQL compatibility. 
+	* doc/TODO: added notes about extra slot options to DEF-VIEW-CLASS. 
+	* sql/conditions.lisp: add documentation for conditions. Add 
+	SQL-TIMEOUT-ERROR and SQL-FATAL-ERROR for CommonSQL compatibility. 
+
 21 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* sql/basic-sql.lisp: reworked docstrings. 
 	* sql/transactions.lisp: reworked docstrings. 

@@ -241,8 +241,8 @@
 	 #:table-exists-p                    ; table      xx 
 	 #:list-attributes                   ; table      xx
 	 #:attribute-type                    ; table      xx
-	 #:list-attribute-types		   ; table      xx
-	 #:*cache-table-queries-default*
+	 #:list-attribute-types		     ; table      xx
+	 #:*cache-table-queries-default*     ; table      xx 
 	 #:create-view                       ; table      xx
 	 #:drop-view                         ; table      xx
 	 #:create-index                      ; table      xx		
@@ -255,9 +255,9 @@
 	 #:drop-view-from-class              ; objects    xx
 	 ;;OODML
 	 #:instance-refreshed                ; objects    xx 
-	 #:update-object-joins               ;
-	 #:*default-update-objects-max-len*  ; 
-	 #:update-slot-from-record   	   ; objects    xx
+	 #:update-objects-joins              ; objects    xx
+	 #:*default-update-objects-max-len*  ; objects    xx
+	 #:update-slot-from-record           ; objects    xx
 	 #:update-instance-from-records      ; objects    xx
 	 #:update-records-from-instance      ; objects    xx
 	 #:update-record-from-slot           ; objects    xx
@@ -290,12 +290,10 @@
 	 #:set-sequence-position             ; table      xx
 	 ;;OODDL
 	 #:view-table                        ; metaclass  x
-	 #:universal-time    		   ; objects    xx 
+	 #:universal-time                    ; objects    xx 
 	 #:bigint
 	 ;;OODML
 	 #:*db-auto-sync*                    ; objects    xx              
-	 #:add-to-relation                   ; objects    x
-	 #:remove-from-relation              ; objects    x
 	 #:read-sql-value                    ; objects    x
 	 #:database-output-sql-as-type       ; objects    x
 	 #:database-get-type-specifier       ; objects    x

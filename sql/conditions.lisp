@@ -48,7 +48,8 @@ set to :error to signal an error or :ignore/nil to silently ignore the warning."
 			 "")
 		     (sql-error-error-id c)
 		     (sql-error-secondary-error-id c)
-		     (sql-error-database-message c)))))
+		     (sql-error-database-message c))))
+  (:documentation "Used to signal an error in a CLSQL database interface."))
 
 (define-condition sql-connection-error (sql-database-error)
   ((database-type :initarg :database-type :initform nil
@@ -62,7 +63,8 @@ set to :error to signal an error or :ignore/nil to silently ignore the warning."
 		      (sql-error-database-type c))
 		     (sql-error-database-type c)
 		     (sql-error-error-id c)
-		     (sql-error-database-message c)))))
+		     (sql-error-database-message c))))
+  (:documentation "Used to signal an error in connecting to a database."))
 
 (define-condition sql-database-data-error (sql-database-error)
   ((expression :initarg :expression :initarg nil 
@@ -72,10 +74,26 @@ set to :error to signal an error or :ignore/nil to silently ignore the warning."
 		     (sql-error-database c)
 		     (sql-error-expression c)
 		     (sql-error-error-id c)
-		     (sql-error-database-message c)))))
+		     (sql-error-database-message c))))
+  (:documentation "Used to signal an error with the SQL data
+  passed to a database."))
 
 (define-condition sql-temporary-error (sql-database-error)
-  ())
+  ()
+  (:documentation "Used to signal an error when the database
+cannot currently process a valid interaction because, for
+example, it is still executing another command possibly issued by
+another user."))
+
+(define-condition sql-timeout-error (sql-connection-error)
+  ()
+  (:documentation "Used to signal an error when the database
+times out while processing some operation."))
+
+(define-condition sql-fatal-error (sql-connection-error)
+  ()
+  (:documentation "Used to signal an error when the database
+connection is no longer usable."))
 
 (define-condition sql-user-error (sql-error)
   ((message :initarg :message
@@ -83,13 +101,15 @@ set to :error to signal an error or :ignore/nil to silently ignore the warning."
 	    :reader sql-user-error-message))
   (:report (lambda (c stream)
 	     (format stream "A CLSQL lisp code error occurred: ~A "
-		     (sql-user-error-message c)))))
+		     (sql-user-error-message c))))
+  (:documentation  "Used to signal lisp errors inside CLSQL."))
+
 
 
 ;; Signal conditions
 
 (defun signal-closed-database-error (database)
-  (error 'sql-connection-error
+  (error 'sql-fatal-error
 	 :database database
 	 :message "Database is closed."))
 

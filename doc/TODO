@@ -41,9 +41,9 @@ DOCUMENTATION TO DO LIST
 
  - DROP-INDEX: keyword arg :on (for MySQL). 
 
- - DEF-VIEW-CLASS: DB-CONSTRAINTS and DB-TYPE slot options. 
+ - DEF-VIEW-CLASS: DB-CONSTRAINTS, DB-TYPE and VOID-VALUE slot options. 
 
- - CREATE-TABLE: keyword args :TRANSACTIONS (for MySQL) and :CONSTRAINTS 
+ - CREATE-TABLE: keyword args :TRANSACTIONS (for MySQL) and :CONSTRAINTS;  
                  description arg accepts optional DB-TYPE string. 
 
  - transactions: START-TRANSACTION and IN-TRANSACTION-P. 

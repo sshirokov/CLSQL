@@ -72,9 +72,8 @@
 
 (defun create-view-from-class (view-class-name
                                &key (database *default-database*))
-  "Creates a view in DATABASE based on VIEW-CLASS-NAME which defines
-the view. The argument DATABASE has a default value of
-*DEFAULT-DATABASE*."
+  "Creates a table as defined by the View Class VIEW-CLASS-NAME
+in DATABASE which defaults to *DEFAULT-DATABASE*."
   (let ((tclass (find-class view-class-name)))
     (if tclass
         (let ((*default-database* database))
@@ -123,9 +122,8 @@ the view. The argument DATABASE has a default value of
 ;;
 
 (defun drop-view-from-class (view-class-name &key (database *default-database*))
-  "Deletes a view or base table from DATABASE based on VIEW-CLASS-NAME
-which defines that view. The argument DATABASE has a default value of
-*DEFAULT-DATABASE*."
+  "Removes a table defined by the View Class VIEW-CLASS-NAME from
+DATABASE which defaults to *DEFAULT-DATABASE*."
   (let ((tclass (find-class view-class-name)))
     (if tclass
         (let ((*default-database* database))
@@ -148,12 +146,10 @@ which defines that view. The argument DATABASE has a default value of
 (defun list-classes (&key (test #'identity)
 		     (root-class (find-class 'standard-db-object))
 		     (database *default-database*))
-  "The LIST-CLASSES function collects all the classes below
-ROOT-CLASS, which defaults to standard-db-object, that are connected
-to the supplied DATABASE and which satisfy the TEST function. The
-default for the TEST argument is identity. By default, LIST-CLASSES
-returns a list of all the classes connected to the default database,
-*DEFAULT-DATABASE*."
+  "Returns a list of all the View Classes which are connected to
+DATABASE, which defaults to *DEFAULT-DATABASE*, and which descend
+from the class ROOT-CLASS and which satisfy the function TEST. By
+default ROOT-CLASS is STANDARD-DB-OBJECT and TEST is IDENTITY."
   (flet ((find-superclass (class) 
 	   (member root-class (class-precedence-list class))))
     (let ((view-classes (and database (database-view-classes database))))
@@ -167,17 +163,40 @@ returns a list of all the classes connected to the default database,
 ;;
 
 (defmacro def-view-class (class supers slots &rest cl-options)
-  "Extends the syntax of defclass to allow special slots to be mapped
-onto the attributes of database views. The macro DEF-VIEW-CLASS
-creates a class called CLASS which maps onto a database view. Such a
-class is called a View Class. The macro DEF-VIEW-CLASS extends the
-syntax of DEFCLASS to allow special base slots to be mapped onto the
-attributes of database views (presently single tables). When a select
-query that names a View Class is submitted, then the corresponding
-database view is queried, and the slots in the resulting View Class
-instances are filled with attribute values from the database. If
-SUPERS is nil then STANDARD-DB-OBJECT automatically becomes the
-superclass of the newly-defined View Class."
+  "Creates a View Class called CLASS whose slots SLOTS can map
+onto the attributes of a table in a database. If SUPERS is nil
+then the superclass of CLASS will be STANDARD-DB-OBJECT,
+otherwise SUPERS is a list of superclasses for CLASS which must
+include STANDARD-DB-OBJECT or a descendent of this class. The
+syntax of DEFCLASS is extended through the addition of a class
+option :base-table which defines the database table onto which
+the View Class maps and which defaults to CLASS. The DEFCLASS
+syntax is also extended through additional slot
+options. The :db-kind slot option specifies the kind of DB
+mapping which is performed for this slot and defaults to :base
+which indicates that the slot maps to an ordinary column of the
+database table. A :db-kind value of :key indicates that this slot
+is a special kind of :base slot which maps onto a column which is
+one of the unique keys for the database table, the value :join
+indicates this slot represents a join onto another View Class
+which contains View Class objects, and the value :virtual
+indicates a standard CLOS slot which does not map onto columns of
+the database table. If a slot is specified with :db-kind :join,
+the slot option :db-info contains a list which specifies the
+nature of the join. For slots of :db-kind :base or :key,
+the :type slot option has a special interpretation such that Lisp
+types, such as string, integer and float are automatically
+converted into appropriate SQL types for the column onto which
+the slot maps. This behaviour may be over-ridden using
+the :db-type slot option which is a string specifying the
+vendor-specific database type for this slot's column definition
+in the database. The :column slot option specifies the name of
+the SQL column which the slot maps onto, if :db-kind is
+not :virtual, and defaults to the slot name. The :void-value slot
+option specifies the value to store if the SQL value is NULL and
+defaults to NIL. The :db-constraints slot option is a string
+representing an SQL table constraint expression or a list of such
+strings."
   `(progn
     (defclass ,class ,supers ,slots 
       ,@(if (find :metaclass `,cl-options :key #'car)
@@ -812,13 +831,24 @@ superclass of the newly-defined View Class."
 ;;; Remote Joins
 
 (defvar *default-update-objects-max-len* nil
-  "The default maximum number of objects supplying data for a
-  query when updating remote joins.")
+  "The default value to use for the MAX-LEN keyword argument to
+  UPDATE-OBJECT-JOINS.")
 
-(defun update-object-joins (objects &key (slots t) (force-p t)
-			    class-name (max-len *default-update-objects-max-len*))
-  "Updates the remote join slots, that is those slots defined without
-:retrieval :immediate."
+(defun update-objects-joins (objects &key (slots t) (force-p t)
+			    class-name (max-len
+			    *default-update-objects-max-len*))
+  "Updates from the records of the appropriate database tables
+the join slots specified by SLOTS in the supplied list of View
+Class instances OBJECTS.  SLOTS is t by default which means that
+all join slots with :retrieval :immediate are updated. CLASS-NAME
+is used to specify the View Class of all instance in OBJECTS and
+default to nil which means that the class of the first instance
+in OBJECTS is used. FORCE-P is t by default which means that all
+join slots are updated whereas a value of nil means that only
+unbound join slots are updated. MAX-LEN defaults to
+*DEFAULT-UPDATE-OBJECTS-MAX-LEN* and when non-nil specifies that
+UPDATE-OBJECT-JOINS may issue multiple database queries with a
+maximum of MAX-LEN instances updated in each query."
   (assert (or (null max-len) (plusp max-len)))
   (when objects
     (unless class-name
@@ -1088,35 +1118,49 @@ superclass of the newly-defined View Class."
 (defmethod instance-refreshed ((instance standard-db-object)))
 
 (defun select (&rest select-all-args) 
-   "The function SELECT selects data from DATABASE, which has a
-default value of *DEFAULT-DATABASE*, given the constraints
-specified by the rest of the ARGS. It returns a list of objects
-as specified by SELECTIONS. By default, the objects will each be
-represented as lists of attribute values. The argument SELECTIONS
-consists either of database identifiers, type-modified database
-identifiers or literal strings. A type-modifed database
-identifier is an expression such as [foo :string] which means
-that the values in column foo are returned as Lisp strings.  The
-FLATP argument, which has a default value of nil, specifies if
-full bracketed results should be returned for each matched
-entry. If FLATP is nil, the results are returned as a list of
-lists. If FLATP is t, the results are returned as elements of a
-list, only if there is only one result per row. The arguments
-ALL, SET-OPERATION, DISTINCT, FROM, WHERE, GROUP-BY, HAVING and
-ORDER-by have the same function as the equivalent SQL expression.
-The SELECT function is common across both the functional and
-object-oriented SQL interfaces. If selections refers to View
-Classes then the select operation becomes object-oriented. This
-means that SELECT returns a list of View Class instances, and
-SLOT-VALUE becomes a valid SQL operator for use within the where
-clause. In the View Class case, a second equivalent select call
-will return the same View Class instance objects. If REFRESH is
-true, then existing instances are updated if necessary, and in
-this case you might need to extend the hook INSTANCE-REFRESHED.
-The default value of REFRESH is nil. SQL expressions used in the
-SELECT function are specified using the square bracket syntax,
-once this syntax has been enabled using
-ENABLE-SQL-READER-SYNTAX."
+   "Executes a query on DATABASE, which has a default value of
+*DEFAULT-DATABASE*, specified by the SQL expressions supplied
+using the remaining arguments in SELECT-ALL-ARGS. The SELECT
+argument can be used to generate queries in both functional and
+object oriented contexts. 
+
+In the functional case, the required arguments specify the
+columns selected by the query and may be symbolic SQL expressions
+or strings representing attribute identifiers. Type modified
+identifiers indicate that the values selected from the specified
+column are converted to the specified lisp type. The keyword
+arguments ALL, DISTINCT, FROM, GROUP-by, HAVING, ORDER-BY,
+SET-OPERATION and WHERE are used to specify, using the symbolic
+SQL syntax, the corresponding components of the SQL query
+generated by the call to SELECT. RESULT-TYPES is a list of
+symbols which specifies the lisp type for each field returned by
+the query. If RESULT-TYPES is nil all results are returned as
+strings whereas the default value of :auto means that the lisp
+types are automatically computed for each field. FIELD-NAMES is t
+by default which means that the second value returned is a list
+of strings representing the columns selected by the query. If
+FIELD-NAMES is nil, the list of column names is not returned as a
+second value. 
+
+In the object oriented case, the required arguments to SELECT are
+symbols denoting View Classes which specify the database tables
+to query. In this case, SELECT returns a list of View Class
+instances whose slots are set from the attribute values of the
+records in the specified table. Slot-value is a legal operator
+which can be employed as part of the symbolic SQL syntax used in
+the WHERE keyword argument to SELECT. REFRESH is nil by default
+which means that the View Class instances returned are retrieved
+from a cache if an equivalent call to SELECT has previously been
+issued. If REFRESH is true, the View Class instances returned are
+updated as necessary from the database and the generic function
+INSTANCE-REFRESHED is called to perform any necessary operations
+on the updated instances.
+
+In both object oriented and functional contexts, FLATP has a
+default value of nil which means that the results are returned as
+a list of lists. If FLATP is t and only one result is returned
+for each record selected in the query, the results are returned
+as elements of a list."
 
   (flet ((select-objects (target-args)
            (and target-args
