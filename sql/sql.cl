@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: sql.cl,v 1.2 2002/03/24 04:01:26 kevin Exp $
+;;;; $Id: sql.cl,v 1.3 2002/03/24 04:37:09 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -148,10 +148,6 @@ although there is an existing connection (~A)."
 (defvar *loaded-database-types* nil
   "Contains a list of database types which have been defined/loaded.")
 
-(defvar *library-loaded-database-types* nil
-  "Contains a list of database types which have had their
-foreign libraries loaded successfully.")
-
 (defun reload-database-types ()
   "Reloads any foreign code for the loaded database types after a dump."
   (mapc #'database-type-load-foreign *loaded-database-types*))
@@ -165,9 +161,7 @@ foreign libraries loaded successfully.")
 (defgeneric database-type-library-loaded (database-type)
   (:documentation
    "The internal generic implementation for checking if
-database type library loaded successfully.")
-  (:method :after (database-type)
-	   (pushnew database-type *library-loaded-database-types*)))
+database type library loaded successfully."))
 
 (defvar *default-database-type* nil
   "Specifies the default type of database.  Currently only :mysql is
