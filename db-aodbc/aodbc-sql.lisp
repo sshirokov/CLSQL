@@ -185,9 +185,8 @@
 (defmethod database-list-sequences ((database aodbc-database)
                                     &key (owner nil))
   (declare (ignore owner))
-  (mapcar #'(lambda (s) (%table-name-to-sequence-name (car s)))
-          (database-query "SHOW TABLES LIKE '%clsql_seq%'" 
-                          database nil)))
+  (warn "database-list-sequences not implemented for AODBC.")
+  nil)
 
 (defmethod database-list-tables ((database aodbc-database)
 				 &key (owner nil))

@@ -165,10 +165,6 @@
   (let ((*read-default-float-format* 'double-float))
     (coerce (read-from-string num-str) 'double-float)))
 
-(defun test-table-row (row types)
-)
-
-
 (defun double-float-equal (a b)
   (if (zerop a)
       (if (zerop b)

@@ -24,28 +24,28 @@
 		 :type "config"))
 
 (defvar +all-db-types+
-  #-clisp '(:postgresql :postgresql-socket :sqlite :mysql :odbc :aodbc)
+  #-clisp '(:postgresql :postgresql-socket :sqlite :mysql :odbc 
+	    #+allegro :aodbc)
   #+clisp '(:sqlite))
 
 (defclass conn-specs ()
-  ((aodbc-spec :accessor aodbc-spec :initform nil)
-   (odbc-spec :accessor odbc-spec :initform nil)
-   (mysql-spec :accessor mysql-spec :initform nil)
-   (postgresql-spec :accessor postgresql-spec :initform nil)
-   (postgresql-socket-spec :accessor postgresql-socket-spec :initform nil)
-   (sqlite-spec :accessor sqlite-spec :initform nil))
+  ((aodbc :accessor aodbc-spec :initform nil)
+   (odbc :accessor odbc-spec :initform nil)
+   (mysql :accessor mysql-spec :initform nil)
+   (postgresql :accessor postgresql-spec :initform nil)
+   (postgresql-socket :accessor postgresql-socket-spec :initform nil)
+   (sqlite :accessor sqlite-spec :initform nil))
   (:documentation "Connection specs for CLSQL testing"))
 
 
 (defun read-specs (&optional (path *config-pathname*))
   (if (probe-file path)
       (with-open-file (stream path :direction :input)
-	(let ((config (read stream))
-	      (specs (make-instance 'conn-specs)))
-	  (dolist (db-type +all-db-types+)
-	    (setf (slot-value specs (spec-fn db-type))
-		  (cadr (assoc db-type config))))
-	  specs))
+	(let ((specs (make-instance 'conn-specs)))
+	  (dolist (spec (read stream) specs)
+	    (push (second spec)
+		  (slot-value specs (intern (symbol-name (first spec))
+					    (find-package '#:clsql-tests)))))))
       (progn
 	(warn "CLSQL test config file ~S not found" path)
 	nil)))

@@ -121,25 +121,23 @@
 
 
 
-(defun test-connect-to-database (db-type)
-  (let ((spec (db-type-spec db-type (read-specs))))
-    (when (db-backend-has-create/destroy-db? db-type)
-      (ignore-errors (destroy-database spec :database-type db-type))
-      (ignore-errors (create-database spec :database-type db-type)))
-    
-
-    (setf *test-database-type* db-type)
-    (when (>= (length spec) 3)
-      (setq *test-database-user* (third spec)))
-    
-    ;; Connect to the database
-    (clsql:connect spec
-		   :database-type db-type
-		   :make-default t
-		   :if-exists :old))
+(defun test-connect-to-database (db-type spec)
+  (when (db-backend-has-create/destroy-db? db-type)
+    (ignore-errors (destroy-database spec :database-type db-type))
+    (ignore-errors (create-database spec :database-type db-type)))
+  
+  (setf *test-database-type* db-type)
+  (when (>= (length spec) 3)
+    (setq *test-database-user* (third spec)))
+  
+  ;; Connect to the database
+  (clsql:connect spec
+		 :database-type db-type
+		 :make-default t
+		 :if-exists :old)
   
   (setf *test-database-underlying-type*
-    (clsql-sys:database-underlying-type *default-database*))
+	(clsql-sys:database-underlying-type *default-database*))
   
   *default-database*)
 
@@ -261,7 +259,10 @@
 		     :first-name "Vladamir"
 		     :last-name "Putin"
 		     :email "putin@soviet.org"))
-  
+
+  ;; sleep to ensure birthdays are no longer at current time
+  (sleep 2) 
+
   ;; Lenin manages everyone
   (clsql:add-to-relation employee2 'manager employee1)
   (clsql:add-to-relation employee3 'manager employee1)
@@ -314,19 +315,17 @@
       (return-from run-tests :skipped))
     (load-necessary-systems specs)
     (dolist (db-type +all-db-types+)
-      (unless (and (eq db-type :aodbc)
-		   (not (member :allegro cl:*features*)))
-	(when (db-type-spec db-type specs)
-	  (do-tests-for-backend db-type))))
-    (zerop *error-count*)))
+      (dolist (spec (db-type-spec db-type specs))
+	(do-tests-for-backend db-type spec))))
+  (zerop *error-count*))
 
 (defun load-necessary-systems (specs)
   (dolist (db-type +all-db-types+)
     (when (db-type-spec db-type specs)
       (db-type-ensure-system db-type))))
 
-(defun do-tests-for-backend (db-type)
-  (test-connect-to-database db-type)
+(defun do-tests-for-backend (db-type spec)
+  (test-connect-to-database db-type spec)
 
   (unwind-protect
       (multiple-value-bind (test-forms skip-tests)
