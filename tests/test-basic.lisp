@@ -53,20 +53,21 @@
 			  (stringp str))
 		    results))))
       ((t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t)))
-    
 
      (deftest :BASIC/TYPE/2
 	 (let ((results '()))
 	   (dolist (row (query "select * from TYPE_TABLE" :result-types :auto)
 		     results)
 	     (destructuring-bind (int float bigint str) row
-	       (push (list (double-float-equal 
-			    (transform-float-1 int)
-			    float)
-			   (double-float-equal
-			    (parse-double str)
-			    float))
-		     results))))
+	       (setq results
+		     (cons (list (double-float-equal 
+				  (transform-float-1 int)
+				  float)
+				 (double-float-equal
+				  (parse-double str)
+				  float))
+			   results))))
+	   results)
        ((t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t)))
      )))
 
@@ -95,6 +96,7 @@
 	  (dolist (row (query "select * from TYPE_TABLE" :result-types nil)
 		    results)
 	    (destructuring-bind (int float bigint str) row
+	      (declare (ignore bigint))
 	      (push (list (double-float-equal 
 			   (transform-float-1 (parse-integer int))
 			   (parse-double float))
@@ -108,7 +110,7 @@
 	(let ((results '())
 	      (rows (map-query 'vector #'list "select * from TYPE_TABLE" 
 			       :result-types nil)))
-	  (declare (array rows))
+	  (declare (type (simple-array list (*)) rows))
 	  (dotimes (i (length rows) results)
 	    (push
 	     (list
@@ -161,26 +163,31 @@
     (deftest :BASIC/DO/1
 	(let ((results '()))
 	  (do-query ((int float bigint str) "select * from TYPE_TABLE" :result-types nil)
-	    (push (list (double-float-equal 
-			 (transform-float-1 (parse-integer int))
-			 (parse-double float))
-			(double-float-equal
-			 (parse-double str)
-			 (parse-double float)))
-		  results))
+	    (declare (ignore bigint))
+	    (let ((int-number (parse-integer int)))
+	      (setq results
+		    (cons (list (double-float-equal (transform-float-1
+						     int-number)
+						    (parse-double float))
+			      (double-float-equal (parse-double str)
+						  (parse-double float)))
+			results))))
 	  results)
       ((t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t)))
-    
+
     (deftest :BASIC/DO/2
 	(let ((results '()))
 	  (do-query ((int float bigint str) "select * from TYPE_TABLE" :result-types :auto)
-	    (push (list (double-float-equal 
-			 (transform-float-1 int)
-			 float)
-			(double-float-equal
-			 (parse-double str)
-			 float))
-		  results))
+	    (declare (ignore bigint))
+	    (setq results
+		  (cons
+		   (list (double-float-equal 
+			  (transform-float-1 int)
+			  float)
+			 (double-float-equal
+			  (parse-double str)
+			  float))
+		   results)))
 	  results)
       ((t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t)))
     ))
