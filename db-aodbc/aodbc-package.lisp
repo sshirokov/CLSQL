@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: aodbc-package.lisp,v 1.2 2002/12/06 20:46:58 kevin Exp $
+;;;; $Id: aodbc-package.lisp,v 1.3 2003/05/02 04:42:14 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -16,7 +16,6 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :cl-user)
 
 #+allegro 
@@ -26,6 +25,6 @@
 
 (defpackage :clsql-aodbc
     (:nicknames :aodbc)
-    (:use :common-lisp :clsql-base)
+    (:use :common-lisp :clsql-base-sys)
     (:export #:aodbc-database)
     (:documentation "This is the CLSQL interface to Allegro's AODBC"))

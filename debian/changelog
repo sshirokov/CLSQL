@@ -1,3 +1,9 @@
+cl-sql (1.5.1-1) unstable; urgency=low
+
+  * Fix for aodbc driver
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Thu,  1 May 2003 22:42:34 -0600
+
 cl-sql (1.5.0-1) unstable; urgency=low
 
   * Update SBCL support in cmucl-compat package.
