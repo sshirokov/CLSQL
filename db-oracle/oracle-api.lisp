@@ -104,17 +104,17 @@
   (xtramem-sz :unsigned-long)            ; size_t
   (usermempp (* :pointer-void)))                    ; dvoid **
   
-#+oci-8-1-5
+#-oci7
 (def-oci-routine ("OCIEnvCreate" oci-env-create)
     :int
-  (p0 :pointer-void)
-  (p1 :unsigned-int)
-  (p2 :pointer-void)
-  (p3 :pointer-void)
-  (p4 :pointer-void)
-  (p5 :pointer-void)
-  (p6 :unsigned-long)
-  (p7 :pointer-void))
+  (envhpp (* :pointer-void))
+  (mode :unsigned-int)
+  (ctxp :pointer-void)
+  (malocfp :pointer-void)
+  (ralocfp :pointer-void)
+  (mfreefp :pointer-void)
+  (xtramemsz :unsigned-long)
+  (usrmempp (* :pointer-void)))
 
 (def-oci-routine ("OCIHandleAlloc" oci-handle-alloc)
     :int

@@ -37,14 +37,14 @@ likely that we'll have to worry about the CMUCL limit."))
 (defmacro deref-vp (foreign-object)
   `(the vp-type (uffi:deref-pointer (the vpp-type ,foreign-object) :pointer-void)))
 
-;; constants - from OCI?
-
 (defvar +unsigned-char-null-pointer+
   (uffi:make-null-pointer :unsigned-char))
 (defvar +unsigned-short-null-pointer+
   (uffi:make-null-pointer :unsigned-short))
 (defvar +unsigned-int-null-pointer+
   (uffi:make-null-pointer :unsigned-int))
+
+;; constants - from OCI?
 
 (defconstant +var-not-in-list+       1007)
 (defconstant +no-data-found+         1403)
@@ -145,9 +145,9 @@ the length of that format.")
 				       (errcode :long))
 	     ;; ensure errbuf empty string
              (setf (uffi:deref-array errbuf '(:array :unsigned-char) 0)
-		   (uffi:ensure-char-storable (code-char 0)))
-
+	       (uffi:ensure-char-storable (code-char 0)))
              (setf (uffi:deref-pointer errcode :long) 0)
+	     
 	     (uffi:with-cstring (sqlstate nil)
 	       (oci-error-get (deref-vp errhp) 1
 			      sqlstate
@@ -189,7 +189,7 @@ the length of that format.")
 ;;; Enabling this can be handy for low-level debugging.
 #+nil
 (progn
-  (trace oci-initialize #+oci-8-1-5 oci-env-create oci-handle-alloc oci-logon
+  (trace #-oci7 oci-env-create oci-initialize oci-handle-alloc oci-logon
          oci-error-get oci-stmt-prepare oci-stmt-execute
          oci-param-get oci-logon oci-attr-get oci-define-by-pos oci-stmt-fetch)
   (setf debug::*debug-print-length* nil))
@@ -732,41 +732,35 @@ the length of that format.")
       ;; error-handling mechanism themselves) so we just assert they
       ;; work.
       (setf (deref-vp envhp) +null-void-pointer+)
-      #+oci-8-1-5
-      (progn
-        (oci-env-create envhp +oci-default+  +null-void-pointer+
-			+null-void-pointer+  +null-void-pointer+ 
-			+null-void-pointer+ 0 +null-void-pointer-pointer+)
-	(oci-handle-alloc envhp
-			  (deref-vp errhp)
-			  +oci-htype-error+ 0 
-			  +null-void-pointer-pointer+))
-      #-oci-8-1-5
+      #-oci7
+      (oci-env-create envhp +oci-default+ +null-void-pointer+
+		      +null-void-pointer+ +null-void-pointer+ 
+		      +null-void-pointer+ 0 +null-void-pointer-pointer+)
+      #+oci7
       (progn
 	(oci-initialize +oci-object+ +null-void-pointer+ +null-void-pointer+
 			+null-void-pointer+ +null-void-pointer-pointer+)
         (ignore-errors (oci-handle-alloc +null-void-pointer+ envhp
 					 +oci-htype-env+ 0
 					 +null-void-pointer-pointer+)) ;no testing return
-        (oci-env-init envhp +oci-default+ 0 +null-void-pointer-pointer+)
-        (oci-handle-alloc (deref-vp envhp) errhp
-			  +oci-htype-error+ 0 +null-void-pointer-pointer+)
-        (oci-handle-alloc (deref-vp envhp) srvhp
-			  +oci-htype-server+ 0 +null-void-pointer-pointer+)
-	(uffi:with-cstring (dblink nil)
-	  (oci-server-attach (deref-vp srvhp)
-			     (deref-vp errhp)
-			     dblink
-			     0 +oci-default+))
-        (oci-handle-alloc (deref-vp envhp) svchp
-			  +oci-htype-svcctx+ 0 +null-void-pointer-pointer+)
-        (oci-attr-set (deref-vp svchp)
-		      +oci-htype-svcctx+
-		      (deref-vp srvhp) 0 +oci-attr-server+ 
-		      (deref-vp errhp))
-        ;; oci-handle-alloc((dvoid *)encvhp, (dvoid **)&stmthp, OCI_HTYPE_STMT, 0, 0);
-        ;;#+nil
-	)
+        (oci-env-init envhp +oci-default+ 0 +null-void-pointer-pointer+))
+      (oci-handle-alloc (deref-vp envhp) errhp
+			+oci-htype-error+ 0 +null-void-pointer-pointer+)
+      (oci-handle-alloc (deref-vp envhp) srvhp
+			+oci-htype-server+ 0 +null-void-pointer-pointer+)
+      (uffi:with-cstring (dblink nil)
+	(oci-server-attach (deref-vp srvhp)
+			   (deref-vp errhp)
+			   dblink 
+			   0 +oci-default+))
+      (oci-handle-alloc (deref-vp envhp) svchp
+			+oci-htype-svcctx+ 0 +null-void-pointer-pointer+)
+      (oci-attr-set (deref-vp svchp)
+		    +oci-htype-svcctx+
+		    (deref-vp srvhp) 0 +oci-attr-server+ 
+		    (deref-vp errhp))
+      ;; oci-handle-alloc((dvoid *)encvhp, (dvoid **)&stmthp, OCI_HTYPE_STMT, 0, 0);
+      ;;#+nil
       ;; Actually, oci-server-version returns the client version, not the server versions
       ;; will use "SELECT VERSION FROM V$INSTANCE" to get actual server version.
       (let (db server-version client-version)
