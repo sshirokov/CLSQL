@@ -51,7 +51,7 @@
               :format-control "Cannot commit transaction against ~A because there is no transaction in progress."
               :format-arguments (list database))))
 
-(defmethod database-abort-transaction (database)
+(defmethod database-abort-transaction ((database database))
     (if (> (transaction-level database) 0)
         (when (zerop (decf (transaction-level database)))
           (unwind-protect 

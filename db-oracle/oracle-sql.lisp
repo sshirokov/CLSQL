@@ -146,9 +146,12 @@ the length of that format.")
 		   (uffi:ensure-char-storable (code-char 0)))
 
              (setf (uffi:deref-pointer errcode :long) 0)
-             (oci-error-get (deref-vp errhp) 1
-			    (uffi:make-null-pointer :unsigned-char)
-			    errcode errbuf +errbuf-len+ +oci-htype-error+)
+	     (uffi:with-cstring (sqlstate nil)
+	       (oci-error-get (deref-vp errhp) 1
+			      sqlstate
+			      errcode
+			      (uffi:char-array-to-pointer errbuf)
+			      +errbuf-len+ +oci-htype-error+))
              (let ((subcode (uffi:deref-pointer errcode :long)))
                (unless (and nulls-ok (= subcode +null-value-returned+))
                  (error 'sql-database-error
@@ -208,10 +211,10 @@ the length of that format.")
 ;; In order to map the "same string" property above onto Lisp equality,
 ;; we drop trailing spaces in all cases:
 
-(uffi:def-type string-array (:array :unsigned-char))
+(uffi:def-type string-pointer (* :unsigned-char))
 
 (defun deref-oci-string (arrayptr string-index size)
-;;  (declare (type string-array arrayptr))
+  (declare (type string-pointer arrayptr))
   (declare (type (mod #.+n-buf-rows+) string-index))
   (declare (type (and unsigned-byte fixnum) size))
   (let* ((raw (uffi:convert-from-foreign-string 

@@ -499,7 +499,7 @@ strings."
 	    (error "No view-table for class ~A"  classname))
 	  (sql-expression :table (view-table class))))
 
-(defmethod database-get-type-specifier (type args database)
+(defmethod database-get-type-specifier (type args (database database))
   (declare (ignore type args))
   (if (in (database-underlying-type database)
 			  :postgresql :postgresql-socket)

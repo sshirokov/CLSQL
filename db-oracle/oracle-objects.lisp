@@ -17,8 +17,7 @@
 
 (defparameter *oracle-default-varchar2-length* "512")
 
-(defmethod database-get-type-specifier
-  (type args (database oracle-database))
+(defmethod database-get-type-specifier (type args (database oracle-database))
   (declare (ignore type args))
   (concatenate 'string "VARCHAR2(" *oracle-default-varchar2-length* ")"))
 
@@ -28,52 +27,44 @@
 	      (or (first args) 38) (or (second args) 0))
     "INTEGER"))
 
-(defmethod database-get-type-specifier
-  ((type (eql 'bigint)) args (database oracle-database))
+(defmethod database-get-type-specifier ((type (eql 'bigint)) args (database oracle-database))
   (if args
       (format nil "NUMBER(~A,~A)"
 	      (or (first args) 38) (or (second args) 0))
     "NUMBER(38,0)"))
 
-(defmethod database-get-type-specifier
-  ((type (eql 'simple-base-string)) args (database oracle-database))
+(defmethod database-get-type-specifier ((type (eql 'simple-base-string)) args (database oracle-database))
   (if args
       (format nil "VARCHAR2(~A)" (car args))
     (concatenate 'string "VARCHAR2(" *oracle-default-varchar2-length* ")")))
 
-(defmethod database-get-type-specifier
-  ((type (eql 'simple-string)) args (database oracle-database))
+(defmethod database-get-type-specifier ((type (eql 'simple-string)) args (database oracle-database))
   (if args
       (format nil "VARCHAR2(~A)" (car args))
     (concatenate 'string "VARCHAR2(" *oracle-default-varchar2-length* ")")))
 
-(defmethod database-get-type-specifier
-  ((type (eql 'string)) args (database oracle-database))
+(defmethod database-get-type-specifier ((type (eql 'string)) args (database oracle-database))
   (if args
       (format nil "VARCHAR2(~A)" (car args))
     (concatenate 'string "VARCHAR2(" *oracle-default-varchar2-length* ")")))
 
-(defmethod database-get-type-specifier
-  ((type (eql 'raw-string)) args (database oracle-database))
+(defmethod database-get-type-specifier ((type (eql 'raw-string)) args (database oracle-database))
   (if args
       (format nil "VARCHAR2(~A)" (car args))
     (concatenate 'string "VARCHAR2(" *oracle-default-varchar2-length* ")")))
 
-(defmethod database-get-type-specifier
-  ((type (eql 'float)) args (database oracle-database))
+(defmethod database-get-type-specifier ((type (eql 'float)) args (database oracle-database))
   (if args
       (format nil "NUMBER(~A,~A)" (or (first args) 38) (or (second args) 38))
     "double precision"))
 
-(defmethod database-get-type-specifier
-  ((type (eql 'long-float)) args (database oracle-database))
+(defmethod database-get-type-specifier ((type (eql 'long-float)) args (database oracle-database))
   (if args
       (format nil "NUMBER(~A,~A)"
 	      (or (first args) 38) (or (second args) 38))
     "double precision"))
 
-(defmethod database-get-type-specifier
-    ((type (eql 'boolean)) args (database oracle-database))
+(defmethod database-get-type-specifier ((type (eql 'boolean)) args (database oracle-database))
   (declare (ignore args))
   "CHAR(1)")
 
@@ -97,14 +88,10 @@
   (when (char-equal #\t (schar val 0))
     t))
 
-(defmethod database-get-type-specifier
-  ((type (eql 'wall-time)) args (database oracle-database))
+(defmethod database-get-type-specifier ((type (eql 'wall-time)) args (database oracle-database))
   (declare (ignore args))
   "DATE")
 
-(defmethod database-get-type-specifier
-  ((type (eql 'duration))
-   args
-   (database oracle-database))
+(defmethod database-get-type-specifier ((type (eql 'duration)) args (database oracle-database))
   (declare (ignore args))
   "NUMBER(38)")
