@@ -2164,6 +2164,10 @@
 	<refclass>Loop Clause</refclass>
       </refnamediv>
       <refsect1>
+        <title>Compatibility</title>
+        <caution><para><function>loop-for-as-tuples</function> only works with &cmucl;.</para></caution>
+      </refsect1>
+      <refsect1>
 	<title>Syntax</title>
 	<synopsis><replaceable>var</replaceable> [<replaceable>type-spec</replaceable>] being {each | the} {record | records | tuple | tuples} {in | of} <replaceable>query</replaceable> [from <replaceable>database</replaceable>]</synopsis>
       </refsect1>
