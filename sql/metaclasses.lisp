@@ -52,7 +52,7 @@
     :accessor view-class-qualifier
     :initarg :qualifier
     :initform nil))
-  (:documentation "VIEW-CLASS metaclass."))
+  (:documentation "Metaclass for all CLSQL View Classes."))
 
 ;;; Lispworks 4.2 and before requires special processing of extra slot and class options
 
@@ -281,13 +281,13 @@ column definition in the database.")
     :initarg :db-constraints
     :initform nil
     :documentation
-    "A single constraint or list of constraints for this column")
+    "A keyword symbol representing a single SQL column constraint or list of such symbols.")
    (void-value
     :accessor view-class-slot-void-value
     :initarg :void-value
     :initform nil
     :documentation
-    "Value to store is the SQL value is NULL. Default is NIL.")
+    "Value to store if the SQL value is NULL. Default is NIL.")
    (db-info
     :accessor view-class-slot-db-info
     :initarg :db-info

@@ -16,8 +16,8 @@
       SQL columns being mapped to slots of the CLOS object.
     </para>
     <para> 
-      The mapping between SQL tables and CLOS objects is defined
-      with the macro <link
+      The mapping between SQL tables and CLOS objects is defined with
+      the macro <link
       linkend="def-view-class"><function>def-view-class</function></link>. SQL
       tables are created with <link
       linkend="create-view-from-class"><function>create-view-from-class</function></link>
@@ -25,8 +25,10 @@
       linkend="drop-view-from-class"><function>drop-view-from-class</function></link>.
     </para>
     <note>
-      <para>The above functions refer to the Lisp <emphasis>view</emphasis> of the SQL
-    table. This Lisp view should not be confused with SQL <function>VIEW</function> statement.</para>
+      <para>The above functions refer to the Lisp
+      <emphasis>view</emphasis> of the SQL table. This Lisp view
+      should not be confused with SQL <function>VIEW</function>
+      statement.</para>
     </note>
   </partintro>
 
@@ -86,21 +88,27 @@
       <title>Description</title> 
       <para>
 	If a slot of a class defined by
-	<function>DEF-VIEW-CLASS</function> is of the type
-	<parameter>STRING</parameter> or <parameter>VARCHAR</parameter> and does
-	not have a length specified, then the value of this variable
-	is used as SQL length.
+	<function>def-view-class</function> is of the type
+	<parameter>string</parameter> or
+	<parameter>varchar</parameter> and does not have a length
+	specified, then the value of this variable is used as SQL
+	length.
       </para>
     </refsect1>
     <refsect1>
       <title>Examples</title>
       <screen>
-	(let ((*default-string-length* 80))
-	(def-view-class s80 ()
-	((a :type string)
-	(b :type (string 80))
-	(c :type varchar))))
-	(create-view-from-class 's80)   
+(let ((*default-string-length* 80))
+  (def-view-class s80 ()
+    ((a :type string)
+     (b :type (string 80))
+     (c :type varchar))))
+=> #&lt;Standard-Db-Class S80 {480A431D}>
+
+(create-view-from-class 's80)   
+=> 
+(table-exists-p [s80]) 
+=> T
       </screen>
       <para>
 	The above code causes a SQL table to be created with the SQL command
@@ -109,8 +117,10 @@
     </refsect1>
     <refsect1>
       <title>Affected By</title>
-      <para>Some SQL backends do not support <parameter>VARCHAR</parameter>
-      lengths greater than 255 .</para>
+      <para>
+        Some SQL backends do not support
+        <parameter>varchar</parameter> lengths greater than 255.
+      </para>
     </refsect1>
     <refsect1>
       <title>See Also</title>
@@ -125,13 +135,13 @@
   <refentry id="create-view-from-class">
     <refnamediv>
       <refname>CREATE-VIEW-FROM-CLASS</refname>
-      <refpurpose>Create a SQL table from a view class.</refpurpose>
+      <refpurpose>Create a SQL table from a <glossterm linkend="gloss-view-class">View Class</glossterm>.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
     <refsect1>
       <title>Syntax</title>
       <synopsis>
-      <function> (create-view-from-class view-class-name &amp;key (database *default-database*) (transactions t))</function> => <returnvalue><!-- no values --></returnvalue></synopsis>
+      <function>create-view-from-class</function> <replaceable>view-class-name</replaceable> &amp;key <replaceable>database</replaceable> <replaceable>transactions</replaceable> => <returnvalue><!-- no values --></returnvalue></synopsis>
     </refsect1>
     <refsect1>
       <title>Arguments and Values</title>
@@ -140,8 +150,9 @@
 	  <term><parameter>view-class-name</parameter></term>
 	  <listitem>
 	    <para>
-	      The name of a view class that has been defined with
-	      <link linkend="def-view-class"><function>def-view-class</function></link>.
+	      The name of a <glossterm linkend="gloss-view-class">View
+	      Class</glossterm> that has been defined with <link
+	      linkend="def-view-class"><function>def-view-class</function></link>.
 	    </para>
 	  </listitem>
 	</varlistentry>
@@ -149,7 +160,10 @@
 	  <term><parameter>database</parameter></term>
 	  <listitem>
 	    <para>
-	      The database in which to create the SQL table.
+	      The <glossterm
+	      linkend="gloss-database-object">database</glossterm> in
+	      which to create the SQL table. This will default to the
+	      value of <symbol>*default-database*</symbol>.
 	    </para>
 	  </listitem>
 	</varlistentry>
@@ -157,7 +171,8 @@
 	  <term><parameter>transactions</parameter></term>
 	  <listitem>
 	    <para>
-	      When &nil; specifies that a table type which does not support transactions should be used.
+	      When &nil; specifies that a table type which does not
+	      support transactions should be used.
 	    </para>
 	  </listitem>
 	</varlistentry>
@@ -166,18 +181,21 @@
     <refsect1>
       <title>Description</title>
       <para>
-	Creates a table as defined by the View Class
-	<parameter>view-class-name</parameter> in <parameter>database</parameter>.
+	Creates a table as defined by the <glossterm
+	linkend="gloss-view-class">View Class</glossterm>
+	<parameter>view-class-name</parameter> in
+	<parameter>database</parameter>.
       </para>
     </refsect1>
     <refsect1>
       <title>Examples</title>
       <screen>
-	* (def-view-class 'foo () ((a :type (string 80))))
-	#&lt;CLSQL-SYS::STANDARD-DB-CLASS FOO>
-	* (create-view-from-class 'foo)
-	* (list-tables)
-	("FOO")
+(def-view-class foo () ((a :type (string 80))))
+=> #&lt;Standard-Db-Class FOO {4807F7CD}>
+(create-view-from-class 'foo)
+=> 
+(list-tables)
+=> ("FOO")
       </screen>
     </refsect1>
     <refsect1>
@@ -236,7 +254,7 @@
     <refsect1>
       <title>Syntax</title>
       <synopsis>
-      <function>(def-view-class name superclasses slots &amp;rest class-options)</function> => <returnvalue>class</returnvalue></synopsis>
+      <function>def-view-class</function> <replaceable>name</replaceable> <replaceable>superclasses</replaceable> <replaceable>slots</replaceable> &amp;rest <replaceable>class-options</replaceable> => <returnvalue>class</returnvalue></synopsis>
     </refsect1>
     <refsect1>
       <title>Arguments and Values</title>
@@ -250,7 +268,7 @@
 	  </listitem>
 	</varlistentry>
 	<varlistentry>
-	  <term><parameter>name</parameter></term>
+	  <term><parameter>superclasses</parameter></term>
 	  <listitem>
 	    <para>
 	      The superclasses for the defined class.
@@ -262,6 +280,14 @@
 	  <listitem>
 	    <para>
 	      The class slot definitions.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term><parameter>class options</parameter></term>
+	  <listitem>
+	    <para>
+	      The class options.
 	    </para>
 	  </listitem>
 	</varlistentry>
@@ -281,29 +307,30 @@
 	<listitem>
 	  <para>
 	    <parameter>:db-kind</parameter> - specifies the kind of
-	    database mapping which is performed for this slot and defaults
-	    to <parameter>:base</parameter> which indicates that the
-	    slot maps to an ordinary column of the database table. A
-	    <parameter>:db-kind</parameter> value of
-	    <parameter>:key</parameter> indicates that this slot is
-	    a special kind of <parameter>:base</parameter> slot
-	    which maps onto a column which is one of the unique keys
-	    for the database table, the value
-	    <parameter>:join</parameter> indicates this slot
-	    represents a join onto another View Class which contains
-	    View Class objects, and the value
-	    <parameter>:virtual</parameter> indicates a standard
-	    CLOS slot which does not map onto columns of the
-	    database table.
+	    database mapping which is performed for this slot and
+	    defaults to <parameter>:base</parameter> which indicates
+	    that the slot maps to an ordinary column of the database
+	    table. A <parameter>:db-kind</parameter> value of
+	    <parameter>:key</parameter> indicates that this slot is a
+	    special kind of <parameter>:base</parameter> slot which
+	    maps onto a column which is one of the unique keys for the
+	    database table, the value <parameter>:join</parameter>
+	    indicates this slot represents a join onto another
+	    <glossterm linkend="gloss-view-class">View Class</glossterm>
+	    which contains View Class objects, and the value
+	    <parameter>:virtual</parameter> indicates a standard CLOS
+	    slot which does not map onto columns of the database
+	    table.
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    <parameter>:db-info</parameter> - if a slot is specified with
-	    <parameter>:db-kind</parameter> <parameter>:join</parameter>, the
-	    slot option <parameter>:db-info</parameter> contains a property list
-	    which specifies the nature of the join. The valid members of the list
-	    are:
+	    <parameter>:db-info</parameter> - if a slot is specified
+	    with <parameter>:db-kind</parameter>
+	    <parameter>:join</parameter>, the slot option
+	    <parameter>:db-info</parameter> contains a property list
+	    which specifies the nature of the join. The valid members
+	    of the list are:
 	  </para>
 	  <itemizedlist>
 	    <listitem>
@@ -356,13 +383,17 @@
 	    </listitem>
 	    <listitem>
 	      <para>
-		<parameter>:set</parameter>
-		<emphasis>set</emphasis> - This controls what is stored in the join slot.
-		The default value is &t;. When <emphasis>set</emphasis> is &t; and 
-		<emphasis>target-slot</emphasis> is undefined, the join slot will contain
-		a list of instances of the join class. Whereas, if <emphasis>target-slot</emphasis> is defined, 
-		then the join slot will contain a list of pairs of <emphasis>(target-value join-instance)</emphasis>.
-		When <emphasis>set</emphasis> is &nil;, the join slot will contain a single instances.
+		<parameter>:set</parameter> <emphasis>set</emphasis> -
+		This controls what is stored in the join slot.  The
+		default value is &t;. When <emphasis>set</emphasis> is
+		&t; and <emphasis>target-slot</emphasis> is undefined,
+		the join slot will contain a list of instances of the
+		join class. Whereas, if
+		<emphasis>target-slot</emphasis> is defined, then the
+		join slot will contain a list of pairs of
+		<emphasis>(target-value join-instance)</emphasis>.
+		When <emphasis>set</emphasis> is &nil;, the join slot
+		will contain a single instances.
 	      </para>
 	    </listitem>
 	  </itemizedlist>
@@ -380,25 +411,32 @@
 	    option. The valid values are:
 	    <simplelist>
 	      <member>
-		<parameter>string</parameter> - a variable length character field up to
-		<link linkend="default-string-length">*default-string-length*</link> characters.
+		<parameter>string</parameter> - a variable length
+		character field up to <link
+		linkend="default-string-length">*default-string-length*</link>
+		characters.
 	      </member>
 	      <member>
-		<parameter>(string n)</parameter> - a fixed length character field  
-		<parameter>n</parameter> characters long.
+		<parameter>(string n)</parameter> - a fixed length
+		character field <parameter>n</parameter> characters
+		long.
 	      </member>
 	      <member>
-		<parameter>varchar</parameter> - a variable length character field up to
-		<link linkend="default-string-length">*default-string-length*</link> characters.
+		<parameter>varchar</parameter> - a variable length
+		character field up to <link
+		linkend="default-string-length">*default-string-length*</link>
+		characters.
 	      </member>
 	      <member>
-		<parameter>(varchar n)</parameter> - a variable length character field up to
-		<parameter>n</parameter> characters in length.
+		<parameter>(varchar n)</parameter> - a variable length
+		character field up to <parameter>n</parameter>
+		characters in length.
 	      </member>
 	      <member>
-		<parameter>char</parameter> - a single character field 
+		<parameter>char</parameter> - a single character field
 	      </member>
-	      <member><parameter>integer</parameter> - signed integer at least 32-bits wide</member>
+	      <member><parameter>integer</parameter> - signed integer
+	      at least 32-bits wide</member>
 	      <member><parameter>(integer n)</parameter></member>
 	      <member><parameter>float</parameter></member>
 	      <member><parameter>(float n)</parameter></member>
@@ -426,18 +464,19 @@
 		<parameter>BIGINT</parameter>
 	      </member>
 	      <member>
-		<parameter>wall-time</parameter> - a slot which
-		stores a date and time in a SQL timestamp
-		column. &clsql; provides a number of time
-		manipulation functions to support objects of type
-		<type>wall-time</type>.
+		<parameter>wall-time</parameter> - a slot which stores
+		a date and time in a SQL timestamp column. &clsql;
+		provides a number of time manipulation functions to
+		support objects of type <type>wall-time</type>.
 	      </member>
 	      <member>
-		<parameter>duration</parameter> - stores a <type>duration</type> structure.
-		&clsql; provides routines for <type>wall-time</type> and <type>duration</type>
-		processing.
+		<parameter>duration</parameter> - stores a
+		<type>duration</type> structure.  &clsql; provides
+		routines for <type>wall-time</type> and
+		<type>duration</type> processing.
 	      </member>
-	      <member><parameter>boolean</parameter> - stores a &t; or &nil; value.</member>
+	      <member><parameter>boolean</parameter> - stores a &t; or
+	      &nil; value.</member>
 	      <member>
 		<parameter>generalized-boolean</parameter> - similar
 		to a <parameter>boolean</parameter> in that either a
@@ -453,11 +492,14 @@
 	      </member>	
 	      <member><parameter>symbol</parameter> - stores a symbol</member>
 	      <member>
-		<parameter>list</parameter> - stores a list by writing it to a string. The items
-		in the list must be able to be readable written.
+		<parameter>list</parameter> - stores a list by writing
+		it to a string. The items in the list must be able to
+		be readable written.
 	      </member>
-	      <member><parameter>vector</parameter> - stores a vector similarly to <parameter>list</parameter></member>
-	      <member><parameter>array</parameter> - stores a array similarly to <parameter>list</parameter></member>
+	      <member><parameter>vector</parameter> - stores a vector
+	      similarly to <parameter>list</parameter></member>
+	      <member><parameter>array</parameter> - stores a array
+	      similarly to <parameter>list</parameter></member>
 	    </simplelist>
 	  </para>
 	  
@@ -475,16 +517,21 @@
 	</listitem>
 	<listitem>
 	  <para>
-	    <parameter>:void-value</parameter> - specifies
-	    the value to store in the Lisp instance if the SQL value is NULL and defaults
-	    to NIL.
+	    <parameter>:void-value</parameter> - specifies the value
+	    to store in the Lisp instance if the SQL value is NULL and
+	    defaults to NIL.
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    <parameter>:db-constraints</parameter> - is a string
-	    representing an SQL table constraint expression or a
-	    list of such strings.
+	    <parameter>:db-constraints</parameter> - is a keyword
+	    symbol representing an SQL column constraint expression or
+	    a list of such symbols. The following column constraints
+	    are supported: <symbol>:not-null</symbol>,
+	    <symbol>:primary-key</symbol>, <symbol>:unique</symbol>,
+	    <symbol>:unsigned</symbol> (&mysql; specific),
+	    <symbol>:zerofill</symbol> (&mysql; specific) and
+	    <symbol>:auto-increment</symbol> (&mysql; specific).
 	  </para>
 	</listitem>
 	<listitem>
@@ -503,9 +550,10 @@
 	<itemizedlist>
 	  <listitem>
 	    <para>
-	      <parameter>:base-table</parameter> - specifies the name of the
-	      SQL database table. The default value is the class name. Like slot names,
-	      hypens in the class name are converted to underscore characters.
+	      <parameter>:base-table</parameter> - specifies the name
+	      of the SQL database table. The default value is the
+	      class name. Like slot names, hypens in the class name
+	      are converted to underscore characters.
 	    </para>
 	  </listitem>
 	</itemizedlist>
@@ -514,7 +562,8 @@
     <refsect1>
       <title>Description</title>
       <para>
-	Creates a View Class called <parameter>name</parameter> whose
+	Creates a <glossterm linkend="gloss-view-class">View
+	Class</glossterm> called <parameter>name</parameter> whose
 	slots <parameter>slots</parameter> can map onto the attributes
 	of a table in a database. If
 	<parameter>superclasses</parameter> is &nil; then the
@@ -522,8 +571,8 @@
 	<parameter>standard-db-object</parameter>, otherwise
 	<parameter>superclasses</parameter> is a list of superclasses
 	for <parameter>class</parameter> which must include
-	<parameter>standard-db-object</parameter> or a descendent of this
-	class.
+	<parameter>standard-db-object</parameter> or a descendent of
+	this class.
       </para>
 
     </refsect1>
@@ -734,7 +783,7 @@
     <refsect1>
       <title>Syntax</title>
       <synopsis>
-      <function>(drop-view-from-class view-class-name &amp;key (database *default-database*))</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+      <function>drop-view-from-class</function> <replaceable>view-class-name</replaceable> &amp;key <replaceable>database</replaceable> => <returnvalue><!-- result --></returnvalue></synopsis>
     </refsect1>
     <refsect1>
       <title>Arguments and Values</title>
@@ -743,7 +792,18 @@
 	  <term><parameter>view-class-name</parameter></term>
 	  <listitem>
 	    <para>
-	      The name of the view class.
+	      The name of the <glossterm linkend="gloss-view-class">View
+	      Class</glossterm>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+        <varlistentry>
+          <term><parameter>database</parameter></term>
+          <listitem>
+            <para>
+              <glossterm linkend="gloss-database-object">database
+              object</glossterm>. This will default to the value of
+              <symbol>*default-database*</symbol>.
 	    </para>
 	  </listitem>
 	</varlistentry>
@@ -751,20 +811,22 @@
     </refsect1>
     <refsect1>
       <title>Description</title>
-      <para>Removes a table defined by the View Class
-      <parameter>VIEW-CLASS-NAME</parameter> from
-      <parameter>DATABASE</parameter> which defaults to
-      <parameter>*DEFAULT-DATABASE*</parameter>.
+      <para>Removes a table defined by the <glossterm
+      linkend="gloss-view-class">View Class</glossterm>
+      <parameter>view-class-name</parameter> from
+      <parameter>database</parameter> which defaults to
+      <parameter>*default-database*</parameter>.
       </para>
     </refsect1>
     <refsect1>
       <title>Examples</title>
       <screen>
-	* (list-tables)
-	("FOO" "BAR")	
-	* (drop-view-from-class 'foo)
-	* (list-tables)
-	("BAR")	
+(list-tables)
+=> ("FOO" "BAR")	
+(drop-view-from-class 'foo)
+=> 
+(list-tables)
+=> ("BAR")	
       </screen>
     </refsect1>
     <refsect1>
@@ -799,7 +861,7 @@
     <refsect1>
       <title>Notes</title>
       <para>
-	<!-- notes --> 
+        None. 
       </para>
     </refsect1>
   </refentry>
@@ -813,7 +875,7 @@
     <refsect1>
       <title>Syntax</title>
       <synopsis>
-      <function>(list-classes &amp;key (test #'identity) (root-class (find-class 'standard-db-object)) (database *default-database*))</function> => <returnvalue>classes</returnvalue></synopsis>
+      <function>list-classes</function> &amp;key <replaceable>test</replaceable> <replaceable>root-class</replaceable> <replaceable>database</replaceable> => <returnvalue>classes</returnvalue></synopsis>
     </refsect1>
     <refsect1>
       <title>Arguments and Values</title>
@@ -831,8 +893,9 @@
 	  <term><parameter>root-class</parameter></term>
 	  <listitem>
 	    <para>
-	      specifies the root class to the search. By default, <parameter>standard-db-object</parameter> is used
-	      which is the root for all view classes.
+	      specifies the root class to the search. By default,
+	      <parameter>standard-db-object</parameter> is used which
+	      is the root for all view classes.
 	    </para>
 	  </listitem>
 	</varlistentry>
@@ -840,7 +903,10 @@
 	  <term><parameter>database</parameter></term>
 	  <listitem>
 	    <para>
-	      The database to search for view classes.
+	      The <glossterm
+	      linkend="gloss-database-object">database</glossterm> to
+	      search for view classes. This will default to the value
+	      of <symbol>*default-database*</symbol>.
 	    </para>
 	  </listitem>
 	</varlistentry>
@@ -866,14 +932,14 @@
     <refsect1>
       <title>Examples</title>
       <screen>
-	* (list-classes)
-	(#&lt;clsql-sys::standard-db-class big> #&lt;clsql-sys::standard-db-class employee-address>
-	#&lt;clsql-sys::standard-db-class address> #&lt;clsql-sys::standard-db-class company> 
-	#&lt;clsql-sys::standard-db-class employee>)
+(list-classes)
+=> (#&lt;clsql-sys::standard-db-class big> #&lt;clsql-sys::standard-db-class employee-address>
+    #&lt;clsql-sys::standard-db-class address> #&lt;clsql-sys::standard-db-class company> 
+    #&lt;clsql-sys::standard-db-class employee>)
 
-	* (list-classes :test #'(lambda (c) (> (length (symbol-name (class-name c))) 3)))
-	(#&lt;clsql-sys::standard-db-class employee-address> #&lt;clsql-sys::standard-db-class address>
-	#&lt;clsql-sys::standard-db-class company> #&lt;clsql-sys::standard-db-class employee>)
+(list-classes :test #'(lambda (c) (> (length (symbol-name (class-name c))) 3)))
+=> (#&lt;clsql-sys::standard-db-class employee-address> #&lt;clsql-sys::standard-db-class address>
+    #&lt;clsql-sys::standard-db-class company> #&lt;clsql-sys::standard-db-class employee>)
       </screen>
     </refsect1>
     <refsect1>
@@ -886,7 +952,8 @@
       <title>Affected by</title>
       <para>
 	<simplelist>
-	  <member>Which view classes have been defined in the Lisp session.</member>
+	  <member>Which view classes have been defined in the Lisp
+	  session.</member>
 	</simplelist>
       </para>
     </refsect1>
@@ -902,6 +969,12 @@
 	<simplelist>
 	  <member><link linkend="def-view-class"><function>def-view-class</function></link></member>
 	</simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        None. 
       </para>
     </refsect1>
   </refentry>

@@ -471,6 +471,50 @@
 		     (describe obj)
 		     (return nil))))))
 	  555 t)
+
+        (deftest :oodml/db-auto-sync/1 
+            (values
+              (progn 
+                (make-instance 'employee :emplid 20 :groupid 1 
+                               :last-name "Ivanovich")
+                (select [last-name] :from [employee] :where [= [emplid] 20]
+                        :flatp t :field-names nil))
+             (let ((*db-auto-sync* t))
+               (make-instance 'employee :emplid 20 :groupid 1 
+                              :last-name "Ivanovich")
+               (prog1 (select [last-name] :from [employee] :flatp t
+                              :field-names nil 
+                              :where [= [emplid] 20])
+                 (delete-records :from [employee] :where [= [emplid] 20]))))
+          nil ("Ivanovich"))
+
+        (deftest :oodml/db-auto-sync/2
+            (values
+             (let ((instance (make-instance 'employee :emplid 20 :groupid 1 
+                                            :last-name "Ivanovich")))
+               (setf (slot-value instance 'last-name) "Bulgakov")
+               (select [last-name] :from [employee] :where [= [emplid] 20]
+                       :flatp t :field-names nil))
+             (let* ((*db-auto-sync* t)
+                    (instance (make-instance 'employee :emplid 20 :groupid 1 
+                                             :last-name "Ivanovich")))
+               (setf (slot-value instance 'last-name) "Bulgakov")
+               (prog1 (select [last-name] :from [employee] :flatp t
+                              :field-names nil 
+                              :where [= [emplid] 20])
+                 (delete-records :from [employee] :where [= [emplid] 20]))))
+          nil ("Bulgakov"))
 	
+        (deftest :oodml/setf-slot-value/1 
+            (let* ((*db-auto-sync* t)
+                   (instance (make-instance 'employee :emplid 20 :groupid 1)))
+              (prog1 
+                  (setf 
+                   (slot-value instance 'first-name) "Mikhail"
+                   (slot-value instance 'last-name) "Bulgakov")
+                (delete-records :from [employee] :where [= [emplid] 20])))
+          "Bulgakov")
+
 	))
+
 #.(clsql:restore-sql-reader-syntax-state)

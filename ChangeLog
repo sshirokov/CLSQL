@@ -1,3 +1,20 @@
+17 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* doc/ref-fdml.xml: document CACHE-TABLE-QUERIES. 
+	* tests/test-fdml.xml: add test for CACHE-TABLE-QUERIES. 
+	* doc/ref-ooddl.xml: minor changes to syntax and examples entries 
+	for uniformity. 
+	* doc/ref-oodml.xml: add examples for OODML. 
+	* sql/oodml.lisp: ensure SELECT passes on its REFRESH argument 
+	to FIND-ALL. 
+	* sql/metaclasses.lisp: update docstrings. 
+	* tests/test-init.lisp: change :db-constraints for emplid to 
+	(:not-null :unique) as a temporary test for multiple column constraints 
+	in DEF-VIEW-CLASS. 
+	* tests/test-oodml.lisp: add tests for *DB-AUTO-SYNC* and 
+	return type of (SETF SLOT-VALUE-USING-CLASS). 
+	* TODO, doc/TODO: remove items done. 
+	* README: fix typo. 
+	
 16 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* sql/oodml.lisp: on Lispworks, use weak valued hash tables for 
 	object caching. 

@@ -48,7 +48,7 @@
 (def-view-class employee (person)
   ((emplid
     :db-kind :key
-    :db-constraints :not-null
+    :db-constraints (:not-null :unique)
     :type integer
     :initarg :emplid)
    (groupid

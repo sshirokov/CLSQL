@@ -248,7 +248,8 @@
     (if vd
 	(let ((qualifier (key-qualifier-for-instance instance :database vd)))
 	  (delete-records :from vt :where qualifier :database vd)
-	  (setf (slot-value instance 'view-database) nil))
+	  (setf (slot-value instance 'view-database) nil)
+          (values))
 	(signal-no-database-error vd))))
 
 (defmethod update-instance-from-records ((instance standard-db-object)
@@ -990,89 +991,89 @@ a list of lists. If FLATP is t and only one result is returned
 for each record selected in the query, the results are returned
 as elements of a list."
 
-  (flet ((select-objects (target-args)
-           (and target-args
-                (every #'(lambda (arg)
-                           (and (symbolp arg)
-                                (find-class arg nil)))
-                       target-args))))
-    (multiple-value-bind (target-args qualifier-args)
-        (query-get-selections select-all-args)
-      (unless (or *default-database* (getf qualifier-args :database))
-	(signal-no-database-error nil))
-   
-	(cond
-	  ((select-objects target-args)
-	   (let ((caching (getf qualifier-args :caching t))
-		 (result-types (getf qualifier-args :result-types :auto))
-		 (refresh (getf qualifier-args :refresh nil))
-		 (database (or (getf qualifier-args :database) *default-database*))
-		 (order-by (getf qualifier-args :order-by)))
-	     (remf qualifier-args :caching)
-	     (remf qualifier-args :refresh)
-	     (remf qualifier-args :result-types)
-	     
-	     
-	     ;; Add explicity table name to order-by if not specified and only
-	     ;; one selected table. This is required so FIND-ALL won't duplicate
-	     ;; the field
-	     (when (and order-by (= 1 (length target-args)))
-	       (let ((table-name  (view-table (find-class (car target-args))))
-		     (order-by-list (copy-seq (listify order-by))))
-		 
-		 (loop for i from 0 below (length order-by-list)
-		     do (etypecase (nth i order-by-list)
-			  (sql-ident-attribute
-			   (unless (slot-value (nth i order-by-list) 'qualifier)
-			     (setf (slot-value (nth i order-by-list) 'qualifier) table-name)))
-			  (cons
-			   (unless (slot-value (car (nth i order-by-list)) 'qualifier)
-			     (setf (slot-value (car (nth i order-by-list)) 'qualifier) table-name)))))
-		 (setf (getf qualifier-args :order-by) order-by-list)))
-	
-	     (cond
-	       ((null caching)
-		(apply #'find-all target-args
-		       (append qualifier-args (list :result-types result-types))))
-	       (t
-		(let ((cached (records-cache-results target-args qualifier-args database)))
-		  (cond
-		    ((and cached (not refresh))
-		     cached)
-		    ((and cached refresh)
-		     (let ((results (apply #'find-all (append (list target-args) qualifier-args `(:instances ,cached :result-types :auto)))))
-		       (setf (records-cache-results target-args qualifier-args database) results)
-		       results))
-		    (t
-		     (let ((results (apply #'find-all target-args (append qualifier-args
-									  '(:result-types :auto)))))
-		       (setf (records-cache-results target-args qualifier-args database) results)
-		       results))))))))
-	  (t
-	   (let* ((expr (apply #'make-query select-all-args))
-		  (specified-types
-		   (mapcar #'(lambda (attrib)
-			       (if (typep attrib 'sql-ident-attribute)
-				   (let ((type (slot-value attrib 'type)))
-				     (if type
-					 type
-					 t))
-				   t))
-			   (slot-value expr 'selections))))
-	     (destructuring-bind (&key (flatp nil)
-				       (result-types :auto)
-				       (field-names t) 
-				       (database *default-database*)
-				       &allow-other-keys)
-		 qualifier-args
-	       (query expr :flatp flatp 
-		      :result-types 
-		      ;; specifying a type for an attribute overrides result-types
-		      (if (some #'(lambda (x) (not (eq t x))) specified-types) 
-			  specified-types
-			  result-types)
-		      :field-names field-names
-		      :database database))))))))
+   (flet ((select-objects (target-args)
+            (and target-args
+                 (every #'(lambda (arg)
+                            (and (symbolp arg)
+                                 (find-class arg nil)))
+                        target-args))))
+     (multiple-value-bind (target-args qualifier-args)
+         (query-get-selections select-all-args)
+       (unless (or *default-database* (getf qualifier-args :database))
+         (signal-no-database-error nil))
+       
+       (cond
+         ((select-objects target-args)
+          (let ((caching (getf qualifier-args :caching t))
+                (result-types (getf qualifier-args :result-types :auto))
+                (refresh (getf qualifier-args :refresh nil))
+                (database (or (getf qualifier-args :database) *default-database*))
+                (order-by (getf qualifier-args :order-by)))
+            (remf qualifier-args :caching)
+            (remf qualifier-args :refresh)
+            (remf qualifier-args :result-types)
+            
+            ;; Add explicity table name to order-by if not specified and only
+            ;; one selected table. This is required so FIND-ALL won't duplicate
+            ;; the field
+            (when (and order-by (= 1 (length target-args)))
+              (let ((table-name  (view-table (find-class (car target-args))))
+                    (order-by-list (copy-seq (listify order-by))))
+                
+                (loop for i from 0 below (length order-by-list)
+                      do (etypecase (nth i order-by-list)
+                           (sql-ident-attribute
+                            (unless (slot-value (nth i order-by-list) 'qualifier)
+                              (setf (slot-value (nth i order-by-list) 'qualifier) table-name)))
+                           (cons
+                            (unless (slot-value (car (nth i order-by-list)) 'qualifier)
+                              (setf (slot-value (car (nth i order-by-list)) 'qualifier) table-name)))))
+                (setf (getf qualifier-args :order-by) order-by-list)))
+            
+            (cond
+              ((null caching)
+               (apply #'find-all target-args
+                      (append qualifier-args 
+                              (list :result-types result-types :refresh refresh))))
+              (t
+               (let ((cached (records-cache-results target-args qualifier-args database)))
+                 (cond
+                   ((and cached (not refresh))
+                    cached)
+                   ((and cached refresh)
+                    (let ((results (apply #'find-all (append (list target-args) qualifier-args `(:instances ,cached :result-types :auto :refresh ,refresh)))))
+                      (setf (records-cache-results target-args qualifier-args database) results)
+                      results))
+                   (t
+                    (let ((results (apply #'find-all target-args (append qualifier-args
+                                                                         `(:result-types :auto :refresh ,refresh)))))
+                      (setf (records-cache-results target-args qualifier-args database) results)
+                      results))))))))
+         (t
+          (let* ((expr (apply #'make-query select-all-args))
+                 (specified-types
+                  (mapcar #'(lambda (attrib)
+                              (if (typep attrib 'sql-ident-attribute)
+                                  (let ((type (slot-value attrib 'type)))
+                                    (if type
+                                        type
+                                        t))
+                                  t))
+                          (slot-value expr 'selections))))
+            (destructuring-bind (&key (flatp nil)
+                                      (result-types :auto)
+                                      (field-names t) 
+                                      (database *default-database*)
+                                      &allow-other-keys)
+                qualifier-args
+              (query expr :flatp flatp 
+                     :result-types 
+                     ;; specifying a type for an attribute overrides result-types
+                     (if (some #'(lambda (x) (not (eq t x))) specified-types) 
+                         specified-types
+                         result-types)
+                     :field-names field-names
+                     :database database))))))))
 
 (defun compute-records-cache-key (targets qualifiers)
   (list targets
