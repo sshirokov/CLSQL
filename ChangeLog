@@ -1,3 +1,9 @@
+12 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.6.5
+	* sql/relations.lisp: Add missing file
+	* utils/time.lisp: Fixes/extensions [Marcus Pearce]
+	* test/test-time.lips: New file [Marcus Pearce]
+	
 10 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.6.4
 	* test/test-init.lisp: Properly handle object
@@ -5,7 +11,7 @@
 	* sql/sql.lisp: Make DESCRIBE-TABLE a generic
 	function so can have methods specialized on
 	table being a string or an sql-table object.
-	* base/pool.lisp: Really CMUCL locking
+	* base/pool.lisp: Really fix CMUCL locking
 	
 10 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.6.3
