@@ -2,13 +2,13 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          postgresql-sql.sql
+;;;; Name:          postgresql-sql.lisp
 ;;;; Purpose:       High-level PostgreSQL interface using UFFI
 ;;;; Programmers:   Kevin M. Rosenberg based on
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.lisp,v 1.2 2003/06/23 19:25:30 kevin Exp $
+;;;; $Id: postgresql-sql.lisp,v 1.3 2003/07/21 01:45:45 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -353,5 +353,4 @@
   (lo-unlink (database-conn-ptr database) object-id))
 
 (when (clsql-base-sys:database-type-library-loaded :postgresql)
-  (clsql-base-sys:initialize-database-type :database-type :postgresql)
-  (pushnew :postgresql cl:*features*))
+  (clsql-base-sys:initialize-database-type :database-type :postgresql))

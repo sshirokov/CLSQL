@@ -2,13 +2,13 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          mysql-sql.cl
+;;;; Name:          mysql-sql.lisp
 ;;;; Purpose:       High-level MySQL interface using UFFI
 ;;;; Programmers:   Kevin M. Rosenberg based on
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.lisp,v 1.7 2003/06/24 01:12:57 kevin Exp $
+;;;; $Id: mysql-sql.lisp,v 1.8 2003/07/21 01:45:45 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -302,5 +302,4 @@
 
 
 (when (clsql-base-sys:database-type-library-loaded :mysql)
-  (clsql-base-sys:initialize-database-type :database-type :mysql)
-  (pushnew :mysql cl:*features*))
+  (clsql-base-sys:initialize-database-type :database-type :mysql))
