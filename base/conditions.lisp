@@ -36,6 +36,12 @@
 (define-condition clsql-simple-warning (simple-condition clsql-warning)
   ())
 
+(define-condition clsql-generic-error (clsql-error)
+  ((message :initarg :message
+	    :reader clsql-generic-error-message))
+  (:report (lambda (c stream)
+	     (format stream (clsql-generic-error-message c)))))
+
 (define-condition clsql-invalid-spec-error (clsql-error)
   ((connection-spec :initarg :connection-spec
 		    :reader clsql-invalid-spec-error-connection-spec)

@@ -176,9 +176,24 @@ error should be signaled if the existing database connection cannot be
 closed. When non-nil (this is the default value) the connection is
 closed without error checking. When FORCE is nil, an error is signaled
 if the database connection has been lost."
-  ;; TODO: Support all backends. Perhaps integrate with pools
-  ;; Handle error and force keywords
-  (declare (ignore database error force)))
+  (let ((db (etypecase database
+	      (database database)
+	      ((or string list)
+	       (let ((db (find-database database :errorp nil)))
+		 (when (null db)
+		   (if (and database errorp)
+		       (error 'clsql-generic-error
+			      :message
+			      (format nil "Unable to find database with connection-spec ~A." database))
+		       (return-from reconnect nil)))
+		 db)))))
+			      
+    (when (is-database-open db)
+      (if force
+	  (ignore-errors (disconnect db))
+	  (disconnect db :error nil)))
+    
+    (connect (connection-spec db))))
 
   
 (defun status (&optional full)

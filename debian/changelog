@@ -4,7 +4,7 @@ cl-sql (2.7.3-1) unstable; urgency=low
   * Change depends (closes:243977)
   * Add new backend
 
- -- Kevin M. Rosenberg <kmr@debian.org>  Thu, 15 Apr 2004 17:13:52 -0600
+ -- Kevin M. Rosenberg <kmr@debian.org>  Fri, 16 Apr 2004 11:47:51 -0600
 
 cl-sql (2.6.7-1) unstable; urgency=low
 
