@@ -1,3 +1,9 @@
+cl-sql (0.9.1-1) unstable; urgency=low
+
+  * New upstream fixing type in asdf
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Thu, 19 Sep 2002 15:22:51 -0600
+
 cl-sql (0.9.0-1) unstable; urgency=low
 
   * Move entirely to .asd files. Remove pathnames from .asd files.
