@@ -103,6 +103,7 @@
       (odbc-dbi:sql sql-expression :db (database-odbc-conn database))
     (clsql-error (e)
       (error e))
+    #+ignore
     (error ()
       (error 'clsql-sql-error
 	     :database database

@@ -321,7 +321,6 @@
 
   (ignore-errors (destroy-database spec :database-type db-type))
   (ignore-errors (create-database spec :database-type db-type))
-  ;; Also manually delete the tables since destroy-database/create-database doesn't work on ODBC
 
   (dolist (test (append *rt-connection* *rt-fddl* *rt-fdml*
 			*rt-ooddl* *rt-oodml* *rt-syntax*))

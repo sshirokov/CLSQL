@@ -34,9 +34,6 @@ as possible second argument) to the desired representation of date/time/timestam
 (defvar *info-output* nil
   "Stream to send SUCCESS_WITH_INFO messages.")
 
-(defun %null-ptr ()
-  (make-null-pointer :byte))
-
 (defmacro %put-str (ptr string &optional max-length)
   (let ((size (gensym)))
     `(let ((,size (length ,string)))
@@ -534,8 +531,8 @@ as possible second argument) to the desired representation of date/time/timestam
     (#.$SQL_INTEGER $SQL_C_SLONG)
     (#.$SQL_SMALLINT $SQL_C_SSHORT)
     (#.$SQL_DOUBLE $SQL_C_DOUBLE)
-    (#.$SQL_FLOAT $SQL_C_FLOAT)
-    (#.$SQL_REAL $SQL_C_DOUBLE)
+    (#.$SQL_FLOAT $SQL_C_DOUBLE)
+    (#.$SQL_REAL $SQL_C_FLOAT)
     (#.$SQL_DATE $SQL_C_DATE)
     (#.$SQL_TIME $SQL_C_TIME)
     (#.$SQL_TIMESTAMP $SQL_C_TIMESTAMP)
@@ -615,8 +612,7 @@ as possible second argument) to the desired representation of date/time/timestam
 		   (#.$SQL_INTEGER (get-cast-int data-ptr))
 		   (#.$SQL_BIGINT (read-from-string
 				   (get-cast-foreign-string data-ptr)))
-		   (#.$SQL_TINYINT (read-from-string
-				    (get-cast-foreign-string data-ptr)))
+		   (#.$SQL_TINYINT (get-cast-byte data-ptr))
 		   (#.$SQL_DECIMAL 
 		    (let ((*read-base* 10))
 		      (read-from-string (get-cast-foreign-string data-ptr))))
@@ -676,14 +672,13 @@ as possible second argument) to the desired representation of date/time/timestam
          (data-ptr
           (case c-type ;; add more?
             (#.$SQL_C_SLONG (uffi:allocate-foreign-object :long))
-            (#.$SQL_C_DOUBLE (uffi:allocate-foreign-object :double))
             (#.$SQL_C_DATE (allocate-foreign-object 'sql-c-date))
             (#.$SQL_C_TIME (allocate-foreign-object 'sql-c-time))
             (#.$SQL_C_TIMESTAMP (allocate-foreign-object 'sql-c-timestamp))
 	    (#.$SQL_C_FLOAT (uffi:allocate-foreign-object :float))
-	    (#.$SQL_REAL (uffi:allocate-foreign-object :float))
+            (#.$SQL_C_DOUBLE (uffi:allocate-foreign-object :double))
             (#.$SQL_C_BIT (uffi:allocate-foreign-object :byte))
-            (#.$SQL_C_STINYINT (uffi:allocate-foreign-object :byte))
+            (#.$SQL_C_STINYINT (uffi:allocate-foreign-object :short))
             (#.$SQL_C_SSHORT (uffi:allocate-foreign-object :short))
             (#.$SQL_C_CHAR (uffi:allocate-foreign-string (1+ size)))
             (#.$SQL_C_BINARY (uffi:allocate-foreign-string (1+ (* 2 size))))
@@ -692,7 +687,7 @@ as possible second argument) to the desired representation of date/time/timestam
                 (when *break-on-unknown-data-type*
                   (break "SQL type is ~A, precision ~D, size ~D, C type is ~A" 
                          sql-type precision size c-type))
-                (uffi:allocate-foreign-object :pointer-void (1+ size)))))
+                (uffi:allocate-foreign-object :byte (1+ size)))))
          (out-len-ptr (uffi:allocate-foreign-object :long)))
     (values c-type data-ptr out-len-ptr size long-p)))
 
@@ -767,7 +762,7 @@ as possible second argument) to the desired representation of date/time/timestam
 
 ;; depending on option, we return a long int or a string; string not implemented
 (defun get-connection-option (hdbc option)
-  (with-foreign-objects ((param-ptr :long))
+  (with-foreign-object (param-ptr :long)
     (with-error-handling (:hdbc hdbc)
                          (SQLGetConnectOption hdbc option param-ptr)
       (deref-pointer param-ptr :long))))
@@ -868,6 +863,8 @@ as possible second argument) to the desired representation of date/time/timestam
            str))))))
 
 (def-type c-timestamp-ptr-type '(* (:struct sql-c-timestamp)))
+(def-type c-time-ptr-type '(* (:struct sql-c-time)))
+(def-type c-date-ptr-type '(* (:struct sql-c-date)))
 
 (defun timestamp-to-universal-time (ptr)
   (declare (type c-timestamp-ptr-type ptr))
@@ -884,7 +881,7 @@ as possible second argument) to the desired representation of date/time/timestam
 (defun universal-time-to-timestamp (time &optional (fraction 0))
   (multiple-value-bind (sec min hour day month year)
       (decode-universal-time time)
-    (with-foreign-object (ptr 'sql-c-timestamp)
+    (let ((ptr (allocate-foreign-object 'sql-c-timestamp)))
       (setf (get-slot-value ptr 'sql-c-timestamp 'second) sec
             (get-slot-value ptr 'sql-c-timestamp 'minute) min
             (get-slot-value ptr 'sql-c-timestamp 'hour) hour
@@ -908,7 +905,7 @@ as possible second argument) to the desired representation of date/time/timestam
       ptr))
 
 (defun date-to-universal-time (ptr)
-  (declare (type c-timestamp-ptr-type ptr))
+  (declare (type c-date-ptr-type ptr))
   (encode-universal-time
    0 0 0
    (get-slot-value ptr 'sql-c-timestamp 'day)
@@ -916,7 +913,7 @@ as possible second argument) to the desired representation of date/time/timestam
    (get-slot-value ptr 'sql-c-timestamp 'year)))
 
 (defun time-to-universal-time (ptr)
-  (declare (type c-timestamp-type ptr))
+  (declare (type c-time-ptr-type ptr))
   (encode-universal-time 
    (get-slot-value ptr 'sql-c-timestamp 'second)
    (get-slot-value ptr 'sql-c-timestamp 'minute)

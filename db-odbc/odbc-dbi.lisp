@@ -110,7 +110,7 @@ the query against." ))
       (setf (henv db) (%new-environment-handle)))
     (setf (hdbc db) (%new-db-connection-handle (henv db)))
     (%sql-connect (hdbc db) data-source-name user password)
-    (setf (db-hstmt db) (%new-statement-handle (hdbc db)))
+    #+ignore (setf (db-hstmt db) (%new-statement-handle (hdbc db)))
     (when (/= (get-odbc-info db odbc::$SQL_TXN_CAPABLE) odbc::$SQL_TC_NONE)
       (if autocommit
 	  (enable-autocommit (hdbc db))
@@ -125,7 +125,8 @@ the query against." ))
 	    (when hstmt 
 	      (%free-statement hstmt :drop)
 	      (setf hstmt nil)))))
-    (%free-statement (db-hstmt database) :drop)
+    (when (db-hstmt database)
+      (%free-statement (db-hstmt database) :drop))
     (%disconnect hdbc)))
 
 
@@ -314,14 +315,14 @@ the query against." ))
 (defmethod get-free-query ((database odbc-db))
   "get-free-query finds or makes a nonactive query object, and then sets it to active.
 This makes the functions db-execute-command and db-query thread safe."
-  (with-slots (queries) database
+  (with-slots (queries hdbc) database
     (or (clsql-base-sys:without-interrupts
          (let ((inactive-query (find-if (lambda (query)
                                           (not (query-active-p query)))
                                         queries)))
            (when inactive-query 
              (with-slots (column-count column-names column-c-types 
-			  width
+			  width hstmt
 			  column-sql-types column-data-ptrs
 			  column-out-len-ptrs column-precisions
 			  column-scales column-nullables-p)
@@ -330,6 +331,7 @@ This makes the functions db-execute-command and db-query thread safe."
                ;;(%dispose-column-ptrs inactive-query)
                (setf column-count 0
 		     width +max-precision+
+		     hstmt (%new-statement-handle hdbc)
                      (fill-pointer column-names) 0
                      (fill-pointer column-c-types) 0
                      (fill-pointer column-sql-types) 0

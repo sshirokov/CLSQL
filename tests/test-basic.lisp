@@ -84,7 +84,7 @@
     (clsql:execute-command 
      "DROP TABLE test_clsql" :database db))
   (clsql:execute-command 
-   "CREATE TABLE test_clsql (t_int integer, t_float float, t_bigint BIGINT, t_str CHAR(30))" 
+   "CREATE TABLE test_clsql (t_int integer, t_float double, t_bigint BIGINT, t_str CHAR(30))" 
    :database db)
   (dotimes (i 11)
     (let* ((test-int (- i 5))

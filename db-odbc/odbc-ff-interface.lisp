@@ -334,18 +334,17 @@
 
 (def-struct sql-c-date
     (year  :short)
-    (month :short)
-    (day   :short))
+  (month :short)
+  (day   :short))
   
 (def-struct sql-c-timestamp
     (year     :short)
-    (month    :short)
-    (day      :short)
-    (hour     :short)
-    (minute   :short)
-    (second   :short)
-    (fraction :long))
-
+  (month    :short)
+  (day      :short)
+  (hour     :short)
+  (minute   :short)
+  (second   :short)
+  (fraction :long))
 
 ;;; Added by KMR
 
