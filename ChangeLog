@@ -1,3 +1,7 @@
+26 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
+	* interfaces/postgresql-socket/postgresql-socket-api.cl
+	Implemented direct socket reading for field type :double
+	
 25 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 
 	* interfaces/mysql/mysql-api.cl
