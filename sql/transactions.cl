@@ -7,7 +7,7 @@
 ;;;; Programmers:   Marc Battyani
 ;;;; Date Started:  Apr 2002
 ;;;;
-;;;; $Id: transactions.cl,v 1.3 2002/05/10 08:05:48 marc.battyani Exp $
+;;;; $Id: transactions.cl,v 1.4 2002/05/13 16:55:07 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -52,7 +52,7 @@
 	    (map nil #'funcall (commit-hooks transaction)))
 	  (unwind-protect ;status is not :commited
 	       (execute-command "ROLLBACK" :database database)
-	    (map nil #'funcall (rollback-hooks database))))))
+	    (map nil #'funcall (rollback-hooks transaction))))))
     (warn "Continue without commit."
 	  'clsql-simple-error
 	  :format-control "Cannot commit transaction against ~A because there is no transaction in progress."
@@ -79,7 +79,7 @@
     `(let ((,db ,database))
       (unwind-protect
 	   (progn
-	     (start-transaction ,db)
+	     (database-start-transaction ,db)
 	     ,@body
 	     (commit-transaction ,db))
 	(database-end-transaction ,db)))))

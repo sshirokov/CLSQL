@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg, Marc Battyani
 ;;;; Date Started:  Apr 2002
 ;;;;
-;;;; $Id: pool.cl,v 1.5 2002/05/04 16:21:27 marc.battyani Exp $
+;;;; $Id: pool.cl,v 1.6 2002/05/13 16:55:07 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -48,8 +48,8 @@
   (setf (fill-pointer (free-connections pool)) 0)
   (setf (fill-pointer (all-connections pool)) 0))
 
-(defun find-or-create-conn-pool (connection-spec database-type)
-  "Find connection vector in hash table, creates a new conn-vector if not found"
+(defun find-or-create-connection-pool (connection-spec database-type)
+  "Find connection pool in hash table, creates a new connection pool if not found"
   (let* ((key (list connection-spec database-type))
 	 (conn-pool (gethash key *db-pool*)))
     (unless conn-pool
@@ -61,7 +61,7 @@
 
 (defun acquire-from-pool (connection-spec database-type &optional pool)
   (unless (typep pool 'conn-pool)
-    (setf pool (find-or-create-conn-pool connection-spec database-type)))
+    (setf pool (find-or-create-connection-pool connection-spec database-type)))
   (acquire-from-conn-pool pool))
 
 (defun release-to-pool (database)
