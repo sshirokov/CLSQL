@@ -48,6 +48,7 @@
 	   #:make-null-vm
 	   #:null-row-p
 	   #:sqlite-aref
+	   #:sqlite-raw-aref
 	   #:sqlite-free-row
 	   
 	   ;;; Types.
@@ -310,6 +311,11 @@
   (declare (type sqlite-row-pointer-type a))
   (convert-from-foreign-string
    (deref-array (deref-pointer a 'sqlite-row-pointer) '(:array (* :unsigned-char)) n)))
+
+(declaim (inline sqlite-raw-aref))
+(defun sqlite-raw-aref (a n)
+  (declare (type sqlite-row-pointer-type a))
+  (deref-array (deref-pointer a 'sqlite-row-pointer) '(:array (* :unsigned-char)) n))
 
 (declaim (inline sqlite-free-row))
 (defun sqlite-free-row (row)

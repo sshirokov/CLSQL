@@ -87,20 +87,39 @@
 (defmethod database-query (query-expression (database sqlite-database) result-types field-names)
   (declare (optimize (speed 3) (safety 0) (debug 0) (space 0)))
   (handler-case
-      (multiple-value-bind (result-set n-col)
-	  (database-query-result-set query-expression database
-				     :result-types result-types
-				     :full-set nil)
-	(do* ((rows nil)
-	      (col-names (when field-names
-			   (loop for j from 0 below n-col
-				 collect (sqlite:sqlite-aref (sqlite-result-set-col-names result-set) j))))
-	      (new-row (make-list n-col) (make-list n-col))
-	      (row-ok (database-store-next-row result-set database new-row)
-		      (database-store-next-row result-set database new-row)))
-	     ((not row-ok)
-	      (values (nreverse rows) col-names))
-	  (push new-row rows)))
+      (let ((vm (sqlite:sqlite-compile (sqlite-db database)
+				       query-expression))
+	    (rows '())
+	    (col-names '()))
+	(unwind-protect
+	     ;; Read the first row to get column number and names.
+	     (multiple-value-bind (n-col new-row sqlite-col-names)
+		 (sqlite:sqlite-step vm)
+	       (declare (type sqlite:sqlite-row-pointer-type new-row))
+	       (when (> n-col 0)
+		 (when field-names
+		   (setf col-names (loop for i from 0 below n-col
+					 collect (sqlite:sqlite-aref sqlite-col-names i))))
+		 (let ((canonicalized-result-types 
+			(canonicalize-result-types result-types n-col sqlite-col-names)))
+		   (flet ((extract-row-data (row)
+			    (declare (type sqlite:sqlite-row-pointer-type row))
+			    (loop for i from 0 below n-col
+				  collect (clsql-uffi:convert-raw-field
+					   (sqlite:sqlite-raw-aref row i)
+					   canonicalized-result-types i))))
+		     (push (extract-row-data new-row) rows)
+
+		     ;; Read subsequent rows.
+		     (do () (nil)
+		       (multiple-value-bind (n-col new-row)
+			   (sqlite:sqlite-step vm)
+			 (declare (type sqlite:sqlite-row-pointer-type new-row))
+			 (if (> n-col 0)
+			     (push (extract-row-data new-row) rows)
+			     (return))))))))
+	  (sqlite:sqlite-finalize vm))
+	(values (nreverse rows) col-names))
     (sqlite:sqlite-error (err)
       (error 'sql-database-data-error
 	     :database database
@@ -111,31 +130,40 @@
 (defmethod database-query-result-set ((query-expression string)
 				      (database sqlite-database)
 				      &key result-types full-set)
-  (handler-case
-      (let ((vm (sqlite:sqlite-compile (sqlite-db database)
-				       query-expression)))
-	;;; To obtain column number/datatypes we have to read the first row.
-	(multiple-value-bind (n-col cols col-names)
-	    (sqlite:sqlite-step vm)
-	  (let ((result-set (make-sqlite-result-set
-			     :vm vm
-			     :first-row cols
-			     :n-col n-col
-			     :col-names col-names
-			     :result-types
-			     (canonicalize-result-types
-			      result-types
-			      n-col
-			      col-names))))
-	    (if full-set
-		(values result-set n-col nil)
-		(values result-set n-col)))))
-    (sqlite:sqlite-error (err)
-      (error 'sql-database-data-error
-	     :database database
-	     :expression query-expression
-	     :error-id (sqlite:sqlite-error-code err)
-	     :message (sqlite:sqlite-error-message err)))))
+  (let ((vm nil))
+    (handler-case
+	(progn
+	  (setf vm (sqlite:sqlite-compile (sqlite-db database)
+					  query-expression))
+	  ;;; To obtain column number/datatypes we have to read the first row.
+	  (multiple-value-bind (n-col cols col-names)
+	      (sqlite:sqlite-step vm)
+	    (declare (type sqlite:sqlite-row-pointer-type cols))
+	    (let ((result-set (make-sqlite-result-set
+			       :vm vm
+			       :first-row cols
+			       :n-col n-col
+			       :col-names col-names
+			       :result-types
+			       (canonicalize-result-types
+				result-types
+				n-col
+				col-names))))
+	      (if full-set
+		  (values result-set n-col nil)
+		  (values result-set n-col)))))
+      (sqlite:sqlite-error (err)
+	(progn
+	  (when vm
+	    ;; The condition was thrown by sqlite-step, vm must be
+	    ;; deallocated.
+	    (ignore-errors
+	      (sqlite:sqlite-finalize vm)))
+	  (error 'sql-database-data-error
+		 :database database
+		 :expression query-expression
+		 :error-id (sqlite:sqlite-error-code err)
+		 :message (sqlite:sqlite-error-message err))11)))))
 
 (defun canonicalize-result-types (result-types n-col col-names)
   (when result-types
@@ -196,8 +224,7 @@
 		for rest on list
 		do (setf (car rest)
 			 (clsql-uffi:convert-raw-field
-			  (uffi:deref-array
-			   (uffi:deref-pointer row 'sqlite:sqlite-row-pointer) '(:array (* :unsigned-char)) i)
+			  (sqlite:sqlite-raw-aref row i)
 			  result-types
 			  i)))
 	  (sqlite:sqlite-free-row row)

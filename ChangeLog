@@ -1,3 +1,8 @@
+03 Oct 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.0.8 released
+	* db-sqlite/sqlite-*.lisp: Apply patch from
+	Aurelio Bignoli with improvements
+	
 01 Oct 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* multiple: Apply patch from Joerg Hoehle with multiple
 	improvements.
