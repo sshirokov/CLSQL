@@ -1,4 +1,5 @@
 2 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* Version 2.11.12 released
 	* doc/ref-recording.xml: document SQL I/O recording. 
 	* doc/ref-prepared.xml: new file for documenting prepared statements. 
 	* doc/clsql.xml: comment out include for large object and CLSQL-SYS 
