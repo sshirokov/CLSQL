@@ -145,12 +145,14 @@
     (let ((raw-types (if (eq :auto result-types)
 			 (loop for j from n-col below (* 2 n-col)
 			       collect (ensure-keyword (sqlite:sqlite-aref col-names j)))
-			 result-types)))
+		       result-types)))
       (loop for type in raw-types
 	    collect
 	    (case type
-	      ((:int :integer :tinyint :long :bigint)
+	      ((:int :integer :tinyint :long)
 	       :int32)
+	      (:bigint
+	       :int64)
 	      ((:float :double)
 	       :double)
 	      ((:numeric)

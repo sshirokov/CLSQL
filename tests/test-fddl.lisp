@@ -24,11 +24,10 @@
 	
 ;; list current tables 
 (deftest :fddl/table/1
-    (apply #'values 
-           (sort (mapcar #'string-downcase
-                         (clsql:list-tables :owner *test-database-user*))
-                 #'string<))
-  "addr" "company" "ea_join" "employee" "type_bigint" "type_table")
+    (sort (mapcar #'string-downcase
+		  (clsql:list-tables :owner *test-database-user*))
+     #'string<)
+  ("addr" "big" "company" "ea_join" "employee" "type_bigint" "type_table"))
 
 ;; create a table, test for its existence, drop it and test again 
 (deftest :fddl/table/2
@@ -266,6 +265,22 @@
         (clsql:drop-sequence [foo] :if-does-not-exist :ignore)))
   6)
 
+(deftest :fddl/big/1 
+    (let ((rows (clsql:select [*] :from [big] :field-names nil)))
+      (values
+       (length rows)
+       (do ((i 0 (1+ i))
+	    (max (expt 2 60))
+	    (rest rows (cdr rest)))
+	   ((= i (length rows)) t)
+	 (let ((row (car rest))
+	       (index (1+ i)))
+	   (unless (and (eql (first row) index)
+			(eql (second row) (truncate max index)))
+	     (return nil))))))
+  555 t)
+
+	   
 ))
 
 #.(clsql:restore-sql-reader-syntax-state)

@@ -77,10 +77,17 @@
   :returning :unsigned-int)
 
 (uffi:def-constant +2^32+ 4294967296)
+(uffi:def-constant +2^64+ 18446744073709551616)
 (uffi:def-constant +2^32-1+ (1- +2^32+))
 
 (defmacro make-64-bit-integer (high32 low32)
-  `(+ ,low32 (ash ,high32 32)))
+  `(if (zerop (ldb (byte 1 31) ,high32))
+       (+ ,low32 (ash ,high32 32))
+     (- (+ ,low32 (ash ,high32 32)) +2^64+)))
+
+;; From high to low ints
+(defmacro make-128-bit-integer (a b c d)
+  `(+ ,d (ash ,c 32) (ash ,b 64) (ash ,a 96)))
 
 (defmacro split-64-bit-integer (int64)
   `(values (ash ,int64 -32) (logand ,int64 +2^32-1+)))

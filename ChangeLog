@@ -10,7 +10,11 @@
 	CHAR to lisp type character.
 	* sql/generic-postgresql.lisp: (string n) => (CHAR n)
 	* sql/operations.lisp: Add userenv
-	* doc/TODO: Add AUTOCOMMIT
+	* doc/TODO: Add AUTOCOMMIT. Remove need for large table and bigint
+	slot tests
+	* sql/oracle-sql.lisp: Add 64-bit bigint direct conversion
+	* uffi/clsql-uffi.lisp: Handle signed 64-bit integers
+	* test/test-init.lisp: Add large table with bigint slot
 	
 25 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.11.1 released: Much simpler Oracle client library loading.

@@ -17,7 +17,7 @@
 (in-package #:cl-user)
 
 (defpackage #:clsql-oracle
-  (:use #:common-lisp #:clsql-sys)
+  (:use #:common-lisp #:clsql-sys #:clsql-uffi)
   (:export #:oracle-database
 	   #:*oracle-server-version*
 	   #:*oracle-so-load-path*

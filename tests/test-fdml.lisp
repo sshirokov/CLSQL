@@ -657,6 +657,7 @@
             (apply #'values (nreverse results))))))
   nil nil ("lenin@soviet.org"))
 
+
 ))
 
 #.(clsql:restore-sql-reader-syntax-state)

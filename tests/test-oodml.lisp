@@ -454,5 +454,23 @@
 		 (every #'(lambda (dea) (typep (slot-value dea 'address) 'address)) dea-list)
 		 (mapcar #'(lambda (dea) (slot-value (slot-value dea 'address) 'addressid)) dea-list))))
 	  t t t t (1 1 2 2 2))
+	
+	(deftest :oodml/big/1 
+	    (let ((objs (clsql:select 'big :order-by [i] :flatp t)))
+	      (values
+	       (length objs)
+	       (do ((i 0 (1+ i))
+		    (max (expt 2 60))
+		    (rest objs (cdr rest)))
+		   ((= i (length objs)) t)
+		 (let ((obj (car rest))
+		       (index (1+ i)))
+		   (unless (and (eql (slot-value obj 'i) index)
+				(eql (slot-value obj 'bi) (truncate max index)))
+		     (print index)
+		     (describe obj)
+		     (return nil))))))
+	  555 t)
+	
 	))
 #.(clsql:restore-sql-reader-syntax-state)

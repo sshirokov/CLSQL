@@ -176,6 +176,10 @@
 				  :set nil)))
   (:base-table "ea_join"))
 
+(def-view-class big ()
+  ((i :type integer :initarg :i)
+   (bi :type bigint :initarg :bi)))
+
 (defun test-connect-to-database (db-type spec)
   (when (clsql-sys:db-backend-has-create/destroy-db? db-type)
     (ignore-errors (destroy-database spec :database-type db-type))
@@ -229,7 +233,8 @@
     (clsql:create-view-from-class 'employee)
     (clsql:create-view-from-class 'company)
     (clsql:create-view-from-class 'address)
-    (clsql:create-view-from-class 'employee-address))
+    (clsql:create-view-from-class 'employee-address)
+    (clsql:create-view-from-class 'big))
 
   (let ((*db-auto-sync* t))
     (setf company1 (make-instance 'company
@@ -372,8 +377,11 @@
 					   :verified nil)
 	  employee-address5 (make-instance 'employee-address
 					   :emplid 3
-					   :addressid 2)
-	  ))
+					   :addressid 2))
+
+    (let ((max (expt 2 60)))
+      (dotimes (i 555)
+	(make-instance 'big :i (1+ i) :bi (truncate max (1+ i))))))
     
   ;; sleep to ensure birthdays are no longer at current time
   (sleep 1) 
