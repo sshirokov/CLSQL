@@ -19,26 +19,7 @@
     ((database-type (eql :oracle)))
   t)
 
-;;;; KLUDGE: The original prototype of this code was implemented using
-;;;; lots of special variables holding MAKE-ALIEN values. When I was 
-;;;; first converting it to use WITH-ALIEN variables, I was confused
-;;;; about the behavior of MAKE-ALIEN and WITH-ALIEN; I thought that
-;;;; (MAKE-ALIEN TYPEFOO) returned the same type of object as is bound
-;;;; to the name BAR by (WITH-ALIEN ((BAR TYPEFOO)) ..). In fact the
-;;;; value returned by MAKE-ALIEN has an extra level of indirection
-;;;; relative to the value bound by WITH-ALIEN, i.e.  (DEREF
-;;;; (MAKE-ALIEN TYPEFOO)) has the same type as the value bound to the
-;;;; name BAR by (WITH-ALIEN ((BAR TYPEFOO)) ..). Laboring under my
-;;;; misunderstanding, I was unable to use ordinary scalars bound by
-;;;; WITH-ALIEN, and I ended up giving up and deciding to work around
-;;;; this apparent bug in CMUCL by using 1-element arrays instead.
-;;;; This "workaround" for my misunderstanding is obviously unnecessary
-;;;; and confusing, but still remains in the code. -- WHN 20000106
-
-
 ;;;; arbitrary parameters, tunable for performance or other reasons
-
-(uffi:def-foreign-type void-pointer (* :void))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defconstant +errbuf-len+ 512
@@ -82,7 +63,7 @@ likely that we'll have to worry about the CMUCL limit."))
 ;;; database. Thus, there's no obstacle to having any number of DB
 ;;; objects referring to the same database.
 
-(uffi:def-type pointer-pointer-void '(* (* :void)))
+(uffi:def-type pointer-pointer-void '(* :pointer-void))
 
 (defclass oracle-database (database)    ; was struct db
   ((envhp
@@ -147,9 +128,12 @@ the length of that format.")
   (cond (database
          (with-slots (errhp)
 	     database
-           (uffi:with-foreign-objects ((errbuf (:array :unsigned-char #.+errbuf-len+))
+           (uffi:with-foreign-objects ((errbuf :unsigned-char +errbuf-len+)
 				       (errcode :long))
-             (setf (uffi:deref-array errbuf '(:array :unsigned-char) 0) (code-char 0)) ; i.e. init to empty string
+	     ;; ensure errbuf empty string
+             (setf (uffi:deref-array errbuf '(:array :unsigned-char) 0)
+		   (uffi:ensure-char-storable (code-char 0)))
+
              (setf (uffi:deref-pointer errcode :long) 0)
              (oci-error-get (uffi:deref-pointer errhp void-pointer) 1
 			    (uffi:make-null-pointer :unsigned-char)
@@ -222,7 +206,9 @@ the length of that format.")
   (declare (type (mod #.+n-buf-rows+) string-index))
   (declare (type (and unsigned-byte fixnum) size))
   (let* ((raw (uffi:convert-from-foreign-string 
-	       (+ (uffi:pointer-address arrayptr) (* string-index size))))
+	       (uffi:make-pointer
+		(+ (uffi:pointer-address arrayptr) (* string-index size))
+		:unsigned-char)))
 	 (trimmed (string-trim " " raw)))
     (if (equal trimmed "NULL") nil trimmed)))
 
@@ -238,8 +224,10 @@ the length of that format.")
 
 #+nil
 (defun deref-oci-date (arrayptr index)
-  (oci-date->universal-time (uffi:pointer-address (uffi:deref-array arrayptr '(:array :unsigned-char)
-						    (* index +oci-date-bytes+)))))
+  (oci-date->universal-time (uffi:pointer-address 
+			     (uffi:deref-array arrayptr
+					       '(:array :unsigned-char)
+					       (* index +oci-date-bytes+)))))
 #+nil
 (defun oci-date->universal-time (oci-date)
   (declare (type (alien (* :unsigned-char)) oci-date))
@@ -283,12 +271,14 @@ the length of that format.")
   (mapcar #'car
 	  (database-query "select view_name from user_views" database nil nil)))
 
-;; Return a list of all columns in TABLE.
+
+(defmethod database-list-indexes ((database oracle-database)
+                                  &key (owner nil))
+  (mapcar #'car
+	  (database-query "select index_name from user_indexes" database nil nil)))
 
 (defmethod list-all-table-columns (table (db oracle-database))
-  (declare (type string table))
-  (unless db
-    (setf db clsql:*default-database*))
+  (declare (string table))
   (let* ((sql-stmt (concatenate
 		    'simple-string
 		    "select "
@@ -299,7 +289,7 @@ the length of that format.")
 		    "user_tab_columns.DATA_TYPE from user_tab_columns,"
 		    "all_tables where all_tables.table_name = '" table "'"
 		    " and user_tab_columns.table_name = '" table "'"))
-	 (preresult (sql sql-stmt :db db :types :auto)))
+	 (preresult (database-query sql-stmt db :auto nil)))
     ;; PRERESULT is like RESULT except that it has a name instead of
     ;; type codes in the fifth column of each row. To fix this, we
     ;; destructively modify PRERESULT.
@@ -312,24 +302,14 @@ the length of that format.")
 	        1))) ; string
     preresult))
 
-(defmethod database-list-indexes ((database oracle-database)
-                                  &key (owner nil))
-  (mapcar #'car
-	  (database-query "select index_name from user_indexes" database nil nil)))
 
 (defmethod database-list-attributes (table (database oracle-database) &key owner)
-  (let* ((relname (etypecase table
-		    (clsql-sys::sql-ident
-		     (string-upcase
-		      (symbol-name (slot-value table 'clsql-sys::name))))
-		    (string table))))
-    (mapcar #'car
-	    (database-query
-	     (format nil
-		     "select user_tab_columns,column_name from user_tab_columns where user_tab_columns.table_name='~A'"
-		     relname)
-	     database nil nil))))
-
+  (mapcar #'car
+	  (database-query
+	   (format nil
+		   "select user_tab_columns,column_name from user_tab_columns where user_tab_columns.table_name='~A'"
+		   table)
+	   database nil nil))))
 
 
 ;; Return one row of the table referred to by QC, represented as a
@@ -351,6 +331,7 @@ the length of that format.")
 ;; DBI-ERROR instead.
 
 (uffi:def-type short-pointer '(* :short))
+(uffi:def-type int-pointer '(* :int))
 (uffi:def-type double-pointer '(* :double))
 
 ;;; the result of a database query: a cursor through a table
@@ -358,7 +339,7 @@ the length of that format.")
                               (:conc-name qc-)
                               (:constructor %make-query-cursor))
   (db (error "missing DB")              ; db conn. this table is associated with
-    :type db
+    :type oracle-database
     :read-only t)
   (stmthp (error "missing STMTHP")      ; the statement handle used to create
 ;;  :type alien			; this table. owned by the QUERY-CURSOR
@@ -405,28 +386,34 @@ the length of that format.")
 		    (b (foreign-resource-buffer (cd-buffer cd)))
 		    (value
 		     (let ((arb (foreign-resource-buffer (cd-indicators cd))))
-		       (declare (type short-pointer arb))
+		       (declare (type int-pointer arb))
 		       (unless (= (uffi:deref-array arb '(:array :int) irow) -1)
 			 (ecase (cd-oci-data-type cd)
-			   (#.SQLT-STR  (deref-oci-string b irow (cd-sizeof cd)))
-			   (#.SQLT-FLT  (uffi:deref-array b '(:array :double) irow))
-			   (#.SQLT-INT  (uffi:deref-array b '(:array :int) irow))
-			   (#.SQLT-DATE (deref-oci-string b irow (cd-sizeof cd))))))))
+			   (#.SQLT-STR  
+			    (deref-oci-string b irow (cd-sizeof cd)))
+			   (#.SQLT-FLT  
+			    (uffi:with-cast-pointer (bd b :double)
+			      (uffi:deref-array bd '(:array :double) irow)))
+			   (#.SQLT-INT  
+			    (uffi:with-cast-pointer (bi b :int)
+			      (uffi:deref-array bi '(:array :int) irow)))
+			   (#.SQLT-DATE 
+			    (deref-oci-string b irow (cd-sizeof cd))))))))
 	       (push value reversed-result)))
 	   (incf (qc-n-to-dbi qc))
 	   (nreverse reversed-result)))))
 
 (defun refill-qc-buffers (qc)
-  (with-slots (errhp)
-    (qc-db qc)
+  (with-slots (errhp) (qc-db qc)
     (setf (qc-n-to-dbi qc) 0)
     (cond ((qc-oci-end-seen-p qc)
            (setf (qc-n-from-oci qc) 0))
           (t
-           (let ((oci-code (%oci-stmt-fetch (uffi:deref-pointer (qc-stmthp qc) void-pointer)
-                                           (uffi:deref-pointer errhp void-pointer)
-                                           +n-buf-rows+
-                                           +oci-fetch-next+ +oci-default+)))
+           (let ((oci-code (%oci-stmt-fetch 
+			    (uffi:deref-pointer (qc-stmthp qc) void-pointer)
+			    (uffi:deref-pointer errhp void-pointer)
+			    +n-buf-rows+
+			    +oci-fetch-next+ +oci-default+)))
              (ecase oci-code
                (#.+oci-success+ (values))
                (#.+oci-no-data+ (setf (qc-oci-end-seen-p qc) t)
@@ -434,13 +421,15 @@ the length of that format.")
                (#.+oci-error+ (handle-oci-error :database (qc-db qc)
                                                 :nulls-ok t))))
            (uffi:with-foreign-object (rowcount :long)
-             (oci-attr-get (uffi:deref-pointer (qc-stmthp qc) void-pointer) +oci-htype-stmt+
+             (oci-attr-get (uffi:deref-pointer (qc-stmthp qc) void-pointer)
+			   +oci-htype-stmt+
                            rowcount 
 			   (uffi:make-null-pointer :unsigned-long)
 			   +oci-attr-row-count+ 
                            (uffi:deref-pointer errhp void-pointer))
              (setf (qc-n-from-oci qc)
-                   (- (uffi:deref-pointer rowcount :long) (qc-total-n-from-oci qc)))
+                   (- (uffi:deref-pointer rowcount :long)
+		      (qc-total-n-from-oci qc)))
              (when (< (qc-n-from-oci qc) +n-buf-rows+)
                (setf (qc-oci-end-seen-p qc) t))
              (setf (qc-total-n-from-oci qc)
@@ -581,14 +570,14 @@ the length of that format.")
     (unless (eq types :auto)
       (error "unsupported TYPES value"))
     (uffi:with-foreign-objects ((dtype-foreign :unsigned-short)
-			   (parmdp (* :void))
+			   (parmdp ':pointer-void)
 			   (precision :byte)
 			   (scale :byte)
-			   (colname (* :unsigned-char))
+			   (colname '(* :unsigned-char))
 			   (colnamelen :unsigned-long)
 			   (colsize :unsigned-long)
 			   (colsizesize :unsigned-long)
-			   (defnp (* :void)))
+			   (defnp ':pointer-void))
       (let ((buffer nil)
 	    (sizeof nil))
 	(do ((icolumn 0 (1+ icolumn))
@@ -622,7 +611,7 @@ the length of that format.")
 			     (uffi:make-null-pointer :int) +oci-attr-scale+
 			     (uffi:deref-pointer errhp void-pointer))
 	       (cond
-		((zerop scale)
+		((zerop (uffi:deref-pointer scale :byte))
 		 (setf buffer (acquire-foreign-resource :init +n-buf-rows+)
 		       sizeof 4			;; sizeof(int)
 		       dtype #.SQLT-INT))
@@ -694,10 +683,10 @@ the length of that format.")
   (check-connection-spec connection-spec database-type (dsn user password))
   (destructuring-bind (data-source-name user password)
       connection-spec
-    (let ((envhp (uffi:allocate-foreign-object (* :void)))
-          (errhp (uffi:allocate-foreign-object (* :void)))
-          (svchp (uffi:allocate-foreign-object (* :void)))
-          (srvhp (uffi:allocate-foreign-object (* :void))))
+    (let ((envhp (uffi:allocate-foreign-object :pointer-void))
+          (errhp (uffi:allocate-foreign-object :pointer-void))
+          (svchp (uffi:allocate-foreign-object :pointer-void))
+          (srvhp (uffi:allocate-foreign-object :pointer-void)))
       ;; Requests to allocate environments and handles should never
       ;; fail in normal operation, and they're done too early to
       ;; handle errors very gracefully (since they're part of the
@@ -706,7 +695,9 @@ the length of that format.")
       (setf (uffi:deref-pointer envhp void-pointer) +null-void-pointer+)
       #+oci-8-1-5
       (progn
-        (oci-env-create envhp +oci-default+ nil nil nil nil 0 nil)
+        (oci-env-create envhp +oci-default+  +null-void-pointer+
+			+null-void-pointer+  +null-void-pointer+ 
+			+null-void-pointer+ 0 +null-void-pointer-pointer+)
 	(oci-handle-alloc envhp
 			  (c-& errhp void-pointer) +oci-htype-error+ 0 
 			  +null-void-pointer-pointer+))
@@ -736,7 +727,7 @@ the length of that format.")
         ;;#+nil
 	)
       (let (db server-version)
-	(uffi:with-foreign-object (buf (:array :unsigned-char #.+errbuf-len+))
+	(uffi:with-foreign-object (buf '(:array :unsigned-char #.+errbuf-len+))
 	  (oci-server-version (uffi:deref-pointer svchp void-pointer)
 			      (uffi:deref-pointer errhp void-pointer)
 			      buf +errbuf-len+ +oci-htype-svcctx+)

@@ -83,10 +83,6 @@
     (symbol
      nil)))
 
-(defmethod read-sql-value (val (type (eql 'string)) database)
-  (declare (ignore database))
-  val)
-
 (defmethod read-sql-value
   (val (type (eql 'integer)) (database oracle-database))
   val)

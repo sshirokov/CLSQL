@@ -16,66 +16,21 @@
 
 (in-package #:clsql-oracle)
 
-(defvar *oci-initialized* nil)
-
-(defvar *oci-env* nil)
-
 
 ;;
 ;; Opaque pointer types
 ;;
 
-(uffi:def-foreign-type oci-env (* :void))
+(uffi:def-foreign-type void-pointer :pointer-void)
+(uffi:def-foreign-type oci-env :pointer-void)
+(uffi:def-foreign-type oci-server :pointer-void)
+(uffi:def-foreign-type oci-error :pointer-void)
+(uffi:def-foreign-type oci-svc-ctx :pointer-void)
+(uffi:def-foreign-type oci-stmt :pointer-void)
 
-(uffi:def-foreign-type oci-server (* :void))
-
-(uffi:def-foreign-type oci-error (* :void))
-
-(uffi:def-foreign-type oci-svc-ctx (* :void))
-
-(uffi:def-foreign-type oci-stmt (* :void))
-
-
-(defvar *oci-handle-types*
-  '(:error				; error report handle (OCIError)
-    :service-context			; service context handle (OCISvcCtx)
-    :statement				; statement (application request) handle (OCIStmt)
-    :describe				; select list description handle (OCIDescribe)
-    :server				; server context handle (OCIServer)
-    :session				; user session handle (OCISession)
-    :transaction			; transaction context handle (OCITrans)
-    :complex-object			; complex object retrieval handle (OCIComplexObject)
-    :security))				; security handle (OCISecurity)
-
-(defstruct oci-handle
-  (type :unknown)
-  (pointer (uffi:allocate-foreign-object '(* :void))))
 
 (defvar +null-void-pointer+ (uffi:make-null-pointer :void))
-(defvar +null-void-pointer-pointer+ (uffi:make-null-pointer (* :void)))
-
-(uffi:def-function "OCIInitialize"
-    ((a :int)
-     (b (* :void))
-     (c (* :void))
-     (d (* :void))
-     (e (* :void)))
-  :returning :int)
-
-(uffi:def-function "OCIEnvInit"
-    ((a (* :void))
-     (b :int)
-     (c :int)
-     (d (* :void)))
-  :returning :int)
-
-(uffi:def-function "OCIHandleAlloc" 
-    ((a :unsigned-int)
-     (b (* :void))
-     (c :int)
-     (d :int)
-     (e (* :void)))
-  :returning :int)
+(defvar +null-void-pointer-pointer+ (uffi:make-null-pointer ':pointer-void))
 
 ;;; Check an OCI return code for erroricity and signal a reasonably
 ;;; informative condition if so.
@@ -89,7 +44,7 @@
 ;;; unless NULLS-OK is set.
 
 (defmacro def-oci-routine ((c-oci-symbol lisp-oci-fn) c-return &rest c-parms)
-  (let ((ll (mapcar (lambda (x) (gensym)) c-parms)))
+  (let ((ll (mapcar (lambda (x) (declare (ignore x)) (gensym)) c-parms)))
     `(let ((%lisp-oci-fn (uffi:def-function
 			     (,c-oci-symbol ,(intern (concatenate 'string "%" (symbol-name lisp-oci-fn))))
 			     ,c-parms
@@ -134,43 +89,43 @@
 (def-oci-routine ("OCIInitialize" oci-initialize)
     :int
   (mode :unsigned-long)			; ub4
-  (ctxp (* :void))			; dvoid *
-  (malocfp (* :void))			; dvoid *(*)
-  (ralocfp (* :void))			; dvoid *(*)
-  (mfreefp (* (* :void))))		; void *(*)
+  (ctxp :pointer-void)			; dvoid *
+  (malocfp :pointer-void)			; dvoid *(*)
+  (ralocfp :pointer-void)			; dvoid *(*)
+  (mfreefp (* :pointer-void)))		; void *(*)
 
 
 (def-oci-routine ("OCIEnvInit" oci-env-init)
     :int
-  (envpp (* :void))                         ; OCIEnv **
+  (envpp :pointer-void)                         ; OCIEnv **
   (mode :unsigned-long)                  ; ub4
   (xtramem-sz :unsigned-long)            ; size_t
-  (usermempp (* (* :void))))                    ; dvoid **
+  (usermempp (* :pointer-void)))                    ; dvoid **
   
 #+oci-8-1-5
 (def-oci-routine ("OCIEnvCreate" oci-env-create)
     :int
-  (p0 (* :void))
+  (p0 :pointer-void)
   (p1 :unsigned-int)
-  (p2 (* :void))
-  (p3 (* :void))
-  (p4 (* :void))
-  (p5 (* :void))
+  (p2 :pointer-void)
+  (p3 :pointer-void)
+  (p4 :pointer-void)
+  (p5 :pointer-void)
   (p6 :unsigned-long)
-  (p7 (* :void)))
+  (p7 :pointer-void))
 
 (def-oci-routine ("OCIHandleAlloc" oci-handle-alloc)
     :int
-  (parenth      (* :void))		; const dvoid *
-  (hndlpp       (* (* :void)))		; dvoid **
+  (parenth      :pointer-void)		; const dvoid *
+  (hndlpp       (* :pointer-void))		; dvoid **
   (type         :unsigned-long)		; ub4
   (xtramem_sz   :unsigned-long)		; size_t
-  (usrmempp     (* (* :void))))		; dvoid **
+  (usrmempp     (* :pointer-void)))		; dvoid **
 
 (def-oci-routine ("OCIServerAttach" oci-server-attach)
     :int
-  (srvhp        (* :void))                  ; oci-server
-  (errhp        (* :void))                  ; oci-error
+  (srvhp        :pointer-void)                  ; oci-server
+  (errhp        :pointer-void)                  ; oci-error
   (dblink       :cstring)               ; :in
   (dblink-len   :unsigned-long)          ; int
   (mode         :unsigned-long))         ; int
@@ -178,14 +133,14 @@
 
 (def-oci-routine ("OCIHandleFree" oci-handle-free)
     :int
-  (p0 (* :void)) ;; handle
+  (p0 :pointer-void) ;; handle
   (p1 :unsigned-long)) ;;type
 
 (def-oci-routine ("OCILogon" oci-logon)
     :int
-  (envhp        (* :void))		; env
-  (errhp        (* :void))		; err
-  (svchpp       (* (* :void)))		; svc
+  (envhp        :pointer-void)		; env
+  (errhp        :pointer-void)		; err
+  (svchpp       (* :pointer-void))		; svc
   (username     :cstring)		; username
   (uname-len    :unsigned-long)		;
   (passwd       :cstring)		; passwd
@@ -195,11 +150,11 @@
 
 (def-oci-routine ("OCILogoff" oci-logoff)
     :int
-  (p0	(* :void))        ; svc
-  (p1	(* :void)))       ; err
+  (p0	:pointer-void)        ; svc
+  (p1	:pointer-void))       ; err
 
 (uffi:def-function ("OCIErrorGet" oci-error-get)
-    ((handlp  (* :void))
+    ((handlp  :pointer-void)
      (recordno  :unsigned-long)
      (sqlstate   :cstring)
      (errcodep   (* :long))
@@ -210,8 +165,8 @@
 
 (def-oci-routine ("OCIStmtPrepare" oci-stmt-prepare)
     :int
-  (stmtp      (* :void))
-  (errhp      (* :void))
+  (stmtp      :pointer-void)
+  (errhp      :pointer-void)
   (stmt      :cstring)
   (stmt_len      :unsigned-long)
   (language      :unsigned-long)
@@ -219,59 +174,59 @@
 
 (def-oci-routine ("OCIStmtExecute" oci-stmt-execute)
     :int
-  (svchp      (* :void))
-  (stmtp1      (* :void))
-  (errhp      (* :void))
+  (svchp      :pointer-void)
+  (stmtp1      :pointer-void)
+  (errhp      :pointer-void)
   (iters      :unsigned-long)
   (rowoff      :unsigned-long)
-  (snap_in      (* :void))
-  (snap_out      (* :void))
+  (snap_in      :pointer-void)
+  (snap_out      :pointer-void)
   (mode     :unsigned-long))
 
 (def-raw-oci-routine ("OCIParamGet" oci-param-get)
     :int
-  (hndlp      (* :void))
+  (hndlp      :pointer-void)
   (htype      :unsigned-long)
-  (errhp      (* :void))
-  (parmdpp      (* (* :void)))
+  (errhp      :pointer-void)
+  (parmdpp      (* :pointer-void))
   (pos      :unsigned-long))
 
 (def-oci-routine ("OCIAttrGet" oci-attr-get)
     :int
-  (trgthndlp      (* :void))
+  (trgthndlp      :pointer-void)
   (trghndltyp      :unsigned-int)
-  (attributep      (* :void))
+  (attributep      :pointer-void)
   (sizep      (* :unsigned-int))
   (attrtype      :unsigned-int)
-  (errhp      (* :void)))
+  (errhp      :pointer-void))
 
 (def-oci-routine ("OCIAttrSet" oci-attr-set)
     :int
-  (trgthndlp (* :void))
+  (trgthndlp :pointer-void)
   (trgthndltyp :int :in)
-  (attributep (* :void))
+  (attributep :pointer-void)
   (size :int)
   (attrtype :int)
   (errhp oci-error))
 
 (def-oci-routine ("OCIDefineByPos" oci-define-by-pos)
     :int
-  (stmtp      (* :void))
-  (defnpp     (* (* :void)))
-  (errhp      (* :void))
+  (stmtp      :pointer-void)
+  (defnpp     (* :pointer-void))
+  (errhp      :pointer-void)
   (position      :unsigned-long)
-  (valuep      (* :void))
+  (valuep      :pointer-void)
   (value_sz      :long)
   (dty      :unsigned-short)         
-  (indp      (* :void))
+  (indp      :pointer-void)
   (rlenp      (* :unsigned-short))          
   (rcodep      (* :unsigned-short))          
   (mode     :unsigned-long))
 
 (def-oci-routine ("OCIStmtFetch" oci-stmt-fetch)
     :int
-  (stmthp       (* :void))
-  (errhp        (* :void))
+  (stmthp       :pointer-void)
+  (errhp        :pointer-void)
   (p2           :unsigned-long)
   (p3           :unsigned-short)
   (p4           :unsigned-long))
@@ -279,39 +234,91 @@
 
 (def-oci-routine ("OCITransStart" oci-trans-start)
   :int
-  (svchp       (* :void))
-  (errhp        (* :void))
+  (svchp       :pointer-void)
+  (errhp        :pointer-void)
   (p2           :unsigned-short)
   (p3           :unsigned-short))
 
 (def-oci-routine ("OCITransCommit" oci-trans-commit)
   :int
-  (svchp       (* :void))
-  (errhp        (* :void))
+  (svchp       :pointer-void)
+  (errhp        :pointer-void)
   (p2           :unsigned-short))
 
 (def-oci-routine ("OCITransRollback" oci-trans-rollback)
     :int
-  (svchp       (* :void))
-  (errhp        (* :void))
+  (svchp       :pointer-void)
+  (errhp        :pointer-void)
   (p2           :unsigned-short))
 
 
 (def-oci-routine ("OCIServerVersion" oci-server-version)
     :int
-    (handlp    (* :void))
-    (errhp     (* :void))
+    (handlp    :pointer-void)
+    (errhp     :pointer-void)
     (bufp      (* :unsigned-char))
     (bufsz     :int)
     (hndltype  :short))
 
-		
-;;; Functions
+
+#+nil
+(progn		
+;;; Low-level functions which don't use return checking
+;;;
+;;; KMR: These are currently unused by the backend
+
+(uffi:def-function "OCIInitialize"
+    ((mode :unsigned-long)			; ub4
+     (ctxp :pointer-void)			; dvoid *
+     (malocfp :pointer-void)			; dvoid *(*)
+     (ralocfp :pointer-void)			; dvoid *(*)
+     (mfreefp (* :pointer-void)))
+  :returning :int)
+
+(uffi:def-function "OCIEnvInit"
+    ((envpp :pointer-void)                         ; OCIEnv **
+     (mode :unsigned-long)                  ; ub4
+     (xtramem-sz :unsigned-long)            ; size_t
+     (usermempp (* :pointer-void)))
+  :returning :int)
+
+(def-oci-routine ("OCIHandleAlloc" oci-handle-alloc)
+    :int
+)
+
+(uffi:def-function "OCIHandleAlloc" 
+    ((parenth      :pointer-void)		; const dvoid *
+     (hndlpp       (* :pointer-void))		; dvoid **
+     (type         :unsigned-long)		; ub4
+     (xtramem_sz   :unsigned-long)		; size_t
+     (usrmempp     (* :pointer-void)))
+  :returning :int)
+
+(defstruct oci-handle
+  (type :unknown)
+  (pointer (uffi:allocate-foreign-object :pointer-void)))
+
+(defvar *oci-initialized* nil)
+(defvar *oci-env* nil)
+
+(defvar *oci-handle-types*
+  '(:error				; error report handle (OCIError)
+    :service-context			; service context handle (OCISvcCtx)
+    :statement				; statement (application request) handle (OCIStmt)
+    :describe				; select list description handle (OCIDescribe)
+    :server				; server context handle (OCIServer)
+    :session				; user session handle (OCISession)
+    :transaction			; transaction context handle (OCITrans)
+    :complex-object			; complex object retrieval handle (OCIComplexObject)
+    :security))				; security handle (OCISecurity)
+
+
 
 (defun oci-init (&key (mode +oci-default+))
-  (let ((x (OCIInitialize mode +null-void-pointer+ +null-void-pointer+ +null-void-pointer+ +null-void-pointer+)))
+  (let ((x (OCIInitialize mode +null-void-pointer+ +null-void-pointer+
+			  +null-void-pointer+ +null-void-pointer-pointer+)))
     (if (= x 0)
-	(let ((env (uffi:make-pointer 0 oci-env)))
+	(let ((env (uffi:allocate-foreign-object :pointer-void)))
 	  (setq *oci-initialized* mode)
 	  (let ((x (OCIEnvInit env +oci-default+ 0 +null-void-pointer+)))
 	    (format t ";; OEI: returned ~d~%" x)
@@ -326,13 +333,13 @@
       (oci-init))
   (case type
     (:error
-     (let ((ptr (uffi:make-null-pointer (* :void))))
+     (let ((ptr (uffi:allocate-foreign-object :pointer-void)))
        (let ((x (OCIHandleAlloc
-		 (uffi:pointer-address (uffi:deref-pointer *oci-env* oci-env))
+		 (uffi:deref-pointer *oci-env* void-pointer)
 		 ptr
 		 +oci-default+
 		 0
-		 +null-void-pointer+)))
+		 +null-void-pointer-pointer+)))
 	 (oci-check-return x)
 	 ptr)))
     (:service-context
@@ -358,3 +365,4 @@
   (let ((envhp (oci-get-handle :type :env)))
     (oci-env-init envhp 0 0 +null-void-pointer+)
     envhp))
+)
