@@ -28,14 +28,11 @@
   :long-description "cl-sql-sqlite package provides a database driver to SQLite database library."
 
 
-  :depends-on (clsql #-clisp clsql-uffi)
+  :depends-on (clsql clsql-uffi)
   :components
   ((:module :db-sqlite
 	    :components
 	    ((:file "sqlite-package")
 	     (:file "sqlite-loader" :depends-on ("sqlite-package"))
-	     (:file #+clisp "sqlite-api-clisp"
-		    #-clisp "sqlite-api-uffi"
-		    :depends-on ("sqlite-loader"))
-	     (:file "sqlite-sql" :depends-on (#+clisp "sqlite-api-clisp"
-						      #-clisp "sqlite-api-uffi"))))))
+	     (:file  "sqlite-api" :depends-on ("sqlite-loader"))
+	     (:file "sqlite-sql" :depends-on ("sqlite-api"))))))

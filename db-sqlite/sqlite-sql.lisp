@@ -76,14 +76,11 @@
 
 (defstruct sqlite-result-set
   (vm (sqlite:make-null-vm)
-      #-clisp :type
-      #-clisp sqlite:sqlite-vm-pointer)
+      :type sqlite:sqlite-vm-pointer)
   (first-row (sqlite:make-null-row)
-	     #-clisp :type
-	     #-clisp sqlite:sqlite-row-pointer-type)
+	     :type sqlite:sqlite-row-pointer-type)
   (col-names (sqlite:make-null-row)
-	     #-clisp :type
-	     #-clisp sqlite:sqlite-row-pointer-type)
+	     :type sqlite:sqlite-row-pointer-type)
   (result-types nil)
   (n-col 0 :type fixnum))
 
@@ -182,7 +179,7 @@
 		  (multiple-value-bind (n new-row col-names)
 		      (sqlite:sqlite-step (sqlite-result-set-vm result-set))
 		    (declare (ignore n col-names)
-			     #-clisp (type sqlite:sqlite-row-pointer-type new-row))
+			     (type sqlite:sqlite-row-pointer-type new-row))
 		    (if (sqlite:null-row-p new-row)
 			(return-from database-store-next-row nil)
 			(setf row new-row)))
@@ -198,29 +195,11 @@
 	  (loop for i = 0 then (1+ i)
 		for rest on list
 		do (setf (car rest)
-			 #-clisp
 			 (clsql-uffi:convert-raw-field
 			  (uffi:deref-array
 			   (uffi:deref-pointer row 'sqlite:sqlite-row-pointer) '(:array (* :unsigned-char)) i)
 			  result-types
-			  i)
-			 #+clisp
-			 (let ((type (if result-types
-					 (nth i result-types)
-					 :string))
-			       (val (sqlite:sqlite-aref row i)))
-			   (case type
-			     (:string
-			      val)
-			     (:integer
-			      (when val (parse-integer val)))
-			     (:number
-			      (read-from-string val))
-			     (:double
-			      (when val
-				(coerce
-				 (read-from-string val)
-				 'double-float)))))))
+			  i)))
 	  (sqlite:sqlite-free-row row)
 	  t))))
 
