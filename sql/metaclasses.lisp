@@ -62,11 +62,11 @@
 
 #+lispworks
 (dolist (slot-option +extra-slot-options+)
-  (process-slot-option standard-db-class slot-option))
+  (eval `(process-slot-option standard-db-class ,slot-option)))
 
 #+lispworks
 (dolist (class-option +extra-class-options+)
-  (process-class-option standard-db-class class-option))
+  (eval `(process-class-option standard-db-class ,class-option)))
 
 (defmethod validate-superclass ((class standard-db-class)
 				(superclass standard-class))

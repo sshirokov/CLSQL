@@ -1,3 +1,10 @@
+9 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* sql/test-fdml.lisp: Renumber SELECT tests to avoid overwriting
+	a previous test
+	* sql/test-init.lisp: Check test-database-underlying-type for
+	ODBC/MySQL tests
+	* sql/objects.lisp: Fix (setf slot-value-using-class) for Lispworks
+	
 8 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* sql/operations.lisp: complete remaining operations for the sql 
 	syntax: SUBSTR, SOME, ORDER-BY, GROUP-BY, NULL, DISTINCT, EXCEPT, 

@@ -540,10 +540,10 @@
 	   (push (cons test "fancy math not supported") skip-tests))
 	  ((and (eql *test-database-type* :sqlite)
 		(clsql-base::in test :fddl/view/4 :fdml/select/10
-				:fdml/select/20))
+				:fdml/select/21))
 	   (push (cons test "not supported by sqlite") skip-tests))
-	  ((and (eql *test-database-type* :mysql)
-		(clsql-base::in test :fdml/select/21 :fdml/query/5 
+	  ((and (eql *test-database-underlying-type* :mysql)
+		(clsql-base::in test :fdml/select/22 :fdml/query/5 
 				:fdml/query/7 :fdml/query/8))
 	   (push (cons test "not supported by mysql") skip-tests))
 	  (t

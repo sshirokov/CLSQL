@@ -47,8 +47,9 @@
 (defmethod (setf slot-value-using-class) (new-value (class standard-db-class)
 					  instance slot-def)
   (declare (ignore new-value))
-  (let ((slot-name (%svuc-slot-name slot-def))
-        (slot-kind (view-class-slot-db-kind slot-def)))
+  (let* ((slot-name (%svuc-slot-name slot-def))
+	 (slot-object (%svuc-slot-object slot-def class))
+	 (slot-kind (view-class-slot-db-kind slot-object)))
     (call-next-method)
     (when (and *db-auto-sync* 
 	       (not *db-initializing*)

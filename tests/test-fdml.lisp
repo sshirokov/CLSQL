@@ -350,25 +350,25 @@
                            :field-names nil :result-types nil :flatp t)
  ("1" "2" "3" "4"))
 
-(deftest :fdml/select/20 
+(deftest :fdml/select/21 
   (clsql:select [substr [first-name] 1 4] :from [employee] 
                 :flatp t :order-by [emplid] :field-names nil)
  ("Vlad" "Jose" "Leon" "Niki" "Leon" "Yuri" "Kons" "Mikh" "Bori" "Vlad"))
 
-(deftest :fdml/select/21 
+(deftest :fdml/select/22 
   (clsql:select [\|\| [first-name] " " [last-name]] :from [employee]
                 :flatp t :order-by [emplid] :field-names nil)
  ("Vladamir Lenin" "Josef Stalin" "Leon Trotsky" "Nikita Kruschev"
  "Leonid Brezhnev" "Yuri Andropov" "Konstantin Chernenko" "Mikhail Gorbachev"
  "Boris Yeltsin" "Vladamir Putin"))
 
-(deftest :fdml/select/22
+(deftest :fdml/select/23
  (clsql:select [emplid] :from [employee] :where [in [emplid] '(1 2 3 4)]
                         :flatp t :order-by [emplid] :field-names nil
                         :result-types nil)
  ("1" "2" "3" "4"))
 
-(deftest :fdml/select/23
+(deftest :fdml/select/24
  (clsql:select [distinct [first-name]] :from [employee] :flatp t
                :order-by [first-name] :field-names nil :result-types nil)
  ("Boris" "Josef" "Konstantin" "Leon" "Leonid" "Mikhail" "Nikita" "Vladamir"
