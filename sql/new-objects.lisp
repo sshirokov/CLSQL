@@ -434,6 +434,12 @@ associated with that database."))
  (setf (symbol-function (intern (symbol-name '#:store-instance)))
    (symbol-function 'update-records-from-instance))
 
+(defgeneric delete-instance-records (instance)
+  (:documentation
+   "Deletes the records represented by INSTANCE from the database
+associated with it. If instance has no associated database, an error
+is signalled."))
+
 (defmethod delete-instance-records ((object standard-db-object))
   (let ((vt (sql-expression :table (view-table (class-of object))))
         (qualifier (key-qualifier-for-instance object :database *default-database*)))

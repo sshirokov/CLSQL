@@ -44,11 +44,14 @@
   (declare (ignore new-value instance slot))
   (call-next-method))
 
-(defmethod initialize-instance :around ((class standard-db-object)
-                                        &rest all-keys &key &allow-other-keys)
+(defmethod initialize-instance :around ((object standard-db-object)
+					&rest all-keys &key &allow-other-keys)
   (declare (ignore all-keys))
-  (let ((*db-deserializing* t))
-    (call-next-method)))
+  (let ((*db-initializing* t))
+    (call-next-method)
+    (unless *db-deserializing*
+      #+nil (created-object object)
+      (update-records-from-instance object))))
 
 (defun sequence-from-class (view-class-name)
   (sql-escape
@@ -342,10 +345,11 @@ are derived from the View Class definition."))
                                      obj :database database)
                              :database (view-database obj)))
             ((and vct sd (not (view-database obj)))
-             (install-instance obj :database database))
+             (warn "Ignoring (install-instance obj :database database))")
+	     t)
             (t
              (error "Unable to update record.")))))
-  (values))
+  t)
 
 (defgeneric update-record-from-slots (object slots &key database)
   (:documentation 
@@ -422,91 +426,6 @@ associated with that database."))
             (setf (slot-value obj 'view-database) database)))
       (values))))
 
-(defmethod install-instance ((obj standard-db-object)
-                             &key (database *default-database*))
-  (labels ((slot-storedp (slot)
-	     (and (member (view-class-slot-db-kind slot) '(:base :key))
-		  (slot-boundp obj (slot-definition-name slot))))
-	   (slot-value-list (slot)
-	     (let ((value (slot-value obj (slot-definition-name slot))))
-	       (check-slot-type slot value)
-	       (list (sql-expression :attribute (view-class-slot-column slot))
-		     (db-value-from-slot slot value database)))))
-    (let* ((view-class (class-of obj))
-	   (view-class-table (view-table view-class))
-	   (slots (remove-if-not #'slot-storedp (ordered-class-slots view-class)))
-	   (record-values (mapcar #'slot-value-list slots)))
-      (unless record-values
-        (error "No settable slots."))
-      (unless
-          (let ((obj-db (slot-value obj 'view-database)))
-            (when obj-db 
-              (equal obj-db database))))
-        (insert-records :into (sql-expression :table view-class-table)
-                        :av-pairs record-values
-                        :database database)
-        (setf (slot-value obj 'view-database) database))
-    (values)))
-
-(defmethod handle-cascade-delete-rule ((instance standard-db-object)
-				       (slot
-                                        view-class-effective-slot-definition))
-  (let ((val (slot-value instance (slot-definition-name slot))))
-    (typecase val
-      (list
-       (if (gethash :target-slot (view-class-slot-db-info slot))
-           ;; For relations with target-slot, we delete just the join instance
-           (mapcar #'(lambda (obj)
-                       (delete-instance-records obj))
-                   (fault-join-slot-raw (class-of instance) instance slot))
-           (dolist (obj val)
-             (delete-instance-records obj))))
-      (standard-db-object
-       (delete-instance-records val)))))
-
-(defmethod nullify-join-foreign-keys ((instance standard-db-object) slot)
-    (let* ((dbi (view-class-slot-db-info slot))
-	   (fkeys (gethash :foreign-keys dbi)))
-      (mapcar #'(lambda (fk)
-		  (if (view-class-slot-nulls-ok slot)
-		      (setf (slot-value instance fk) nil)
-		      (warn "Nullify delete rule cannot set slot not allowing nulls to nil")))
-	      (if (listp fkeys) fkeys (list fkeys)))))
-
-(defmethod handle-nullify-delete-rule ((instance standard-db-object)
-				       (slot
-                                        view-class-effective-slot-definition))
-    (let ((dbi (view-class-slot-db-info slot)))
-      (if (gethash :set dbi)
-	  (if (gethash :target-slot (view-class-slot-db-info slot))
-	      ;;For relations with target-slot, we delete just the join instance
-	      (mapcar #'(lambda (obj)
-			  (nullify-join-foreign-keys obj slot))
-		      (fault-join-slot-raw (class-of instance) instance slot))
-	      (dolist (obj (slot-value instance (slot-definition-name slot)))
-		(nullify-join-foreign-keys obj slot)))
-	  (nullify-join-foreign-keys
-           (slot-value instance (slot-definition-name slot)) slot))))
-
-(defmethod propogate-deletes ((instance standard-db-object))
-  (let* ((view-class (class-of instance))
-	 (joins (remove-if #'(lambda (sd)
-			       (not (equal (view-class-slot-db-kind sd) :join)))
-			   (ordered-class-slots view-class))))
-    (dolist (slot joins)
-      (let ((delete-rule (gethash :delete-rule (view-class-slot-db-info slot))))
-	(cond
-	  ((eql delete-rule :cascade)
-	   (handle-cascade-delete-rule instance slot))
-	  ((eql delete-rule :deny)
-	   (when (slot-value instance (slot-definition-name slot))
-             (error
-              "Unable to delete slot ~A, because it has a deny delete rule."
-              slot)))
-	  ((eql delete-rule :nullify)
-	   (handle-nullify-delete-rule instance slot))
-	  (t t))))))
-
 (defgeneric delete-instance-records (instance)
   (:documentation
    "Deletes the records represented by INSTANCE from the database
@@ -518,11 +437,9 @@ is signalled."))
 	(vd (or (view-database instance) *default-database*)))
     (when vd
       (let ((qualifier (key-qualifier-for-instance instance :database vd)))
-        (with-transaction (:database vd)
-          (propogate-deletes instance)
-          (delete-records :from vt :where qualifier :database vd)
-          (setf (slot-value instance 'view-database) nil)))))
-  (values))
+	(delete-records :from vt :where qualifier :database vd)
+	(setf (slot-value instance 'view-database) nil))))
+  #+ignore (odcl::deleted-object object))
 
 (defgeneric update-instance-from-records (instance &key database)
   (:documentation
@@ -568,17 +485,19 @@ database that INSTANCE is associated with, or the value of
 will be converted into."))
 
 (defmethod database-null-value ((type t))
-    (cond
-     ((subtypep type 'string) "")
-     ((subtypep type 'integer) 0)
-     ((subtypep type 'float) (float 0.0))
-     ((subtypep type 'list) nil)
-     ((subtypep type 'boolean) nil)
-     ((subtypep type 'symbol) nil)
-     ((subtypep type 'keyword) nil)
-     ((subtypep type 'wall-time) nil)
-     (t
-      (error "Unable to handle null for type ~A" type))))
+  (cond
+    ((subtypep type 'string) nil)
+    ((subtypep type 'integer) nil)
+    ((subtypep type 'list) nil)
+    ((subtypep type 'boolean) nil)
+    ((eql type t) nil)
+    ((subtypep type 'symbol) nil)
+    ((subtypep type 'keyword) nil)
+    ((subtypep type 'wall-time) nil)
+    ((subtypep type 'duration) nil)
+    ((subtypep type 'money) nil)
+    (t
+     (error "Unable to handle null for type ~A" type))))
 
 (defgeneric update-slot-with-null (instance slotname slotdef)
   (:documentation "Called to update a slot when its column has a NULL
@@ -667,6 +586,10 @@ DATABASE-NULL-VALUE on the type of the slot."))
 
 (defmethod database-get-type-specifier ((type (eql 'duration)) args database)
   (declare (ignore database args))
+  "VARCHAR")
+
+(defmethod database-get-type-specifier ((type (eql 'money)) args database)
+  (declare (ignore database args))
   "INT8")
 
 (deftype raw-string (&optional len)
@@ -702,7 +625,9 @@ DATABASE-NULL-VALUE on the type of the slot."))
 (defmethod database-output-sql-as-type ((type (eql 'list)) val database)
   (declare (ignore database))
   (progv '(*print-circle* *print-array*) '(t t)
-    (prin1-to-string val)))
+    (let ((escaped (prin1-to-string val)))
+      (clsql-base-sys::substitute-char-string
+       escaped #\Null " "))))
 
 (defmethod database-output-sql-as-type ((type (eql 'symbol)) val database)
   (declare (ignore database))
@@ -875,10 +800,14 @@ DATABASE-NULL-VALUE on the type of the slot."))
                  where group-by having order-by order-by-descending offset limit
                  (database *default-database*))
   "tweeze me apart someone pleeze"
-  (declare (ignore all set-operation from group-by having offset limit)
+  (declare (ignore all set-operation group-by having
+                   offset limit)
            (optimize (debug 3) (speed 1)))
+  ;; (cmsg "Args = ~s" args)
+  (remf args :from)
   (let* ((*db-deserializing* t)
-         (*default-database* (or database (error 'clsql-nodb-error))))
+         (*default-database* (or database
+                                 (error 'clsql-no-database-error nil))))
     (flet ((table-sql-expr (table)
              (sql-expression :table (view-table table)))
            (ref-equal (ref1 ref2)
@@ -892,59 +821,40 @@ DATABASE-NULL-VALUE on the type of the slot."))
              (sels (mapcar #'generate-selection-list sclasses))
              (fullsels (apply #'append sels))
              (sel-tables (collect-table-refs where))
-             (tables
-              (remove-duplicates
-               (append (mapcar #'table-sql-expr sclasses) sel-tables)
-               :test #'tables-equal))
+             (tables (remove-duplicates (append (mapcar #'table-sql-expr sclasses) sel-tables)
+                                        :test #'tables-equal))
              (res nil))
         (dolist (ob (listify order-by))
           (when (and ob (not (member ob (mapcar #'cdr fullsels)
                                      :test #'ref-equal)))
-            (setq fullsels
-                  (append fullsels (mapcar #'(lambda (att) (cons nil att))
-                                           (listify ob))))))
+            (setq fullsels (append fullsels (mapcar #'(lambda (att) (cons nil att))
+                                                    (listify ob))))))
         (dolist (ob (listify order-by-descending))
           (when (and ob (not (member ob (mapcar #'cdr fullsels)
                                      :test #'ref-equal)))
-            (setq fullsels
-                  (append fullsels (mapcar #'(lambda (att) (cons nil att))
-                                           (listify ob))))))
+            (setq fullsels (append fullsels (mapcar #'(lambda (att) (cons nil att))
+                                                    (listify ob))))))
         (dolist (ob (listify distinct))
-          (when (and (typep ob 'sql-ident)
-                     (not (member ob (mapcar #'cdr fullsels)
-                                  :test #'ref-equal)))
-            (setq fullsels
-                  (append fullsels (mapcar #'(lambda (att) (cons nil att))
-                                           (listify ob))))))
-        ;;(format t "~%fullsels is : ~A" fullsels)
+          (when (and (typep ob 'sql-ident) (not (member ob (mapcar #'cdr fullsels)
+                                                        :test #'ref-equal)))
+            (setq fullsels (append fullsels (mapcar #'(lambda (att) (cons nil att))
+                                                    (listify ob))))))
+        ;; (cmsg  "Tables = ~s" tables)
+        ;; (cmsg  "From = ~s" from)
         (setq res (apply #'select (append (mapcar #'cdr fullsels)
-                                          (cons :from (list tables)) args)))
-        (flet ((build-instance (vals)
-                 (flet ((%build-instance (vclass selects)
+                                          (cons :from (list (append (when from (listify from)) (listify tables)))) args)))
+        (flet ((build-object (vals)
+                 (flet ((%build-object (vclass selects)
                           (let ((class-name (class-name vclass))
-                                (db-vals (butlast vals
-                                                  (- (list-length vals)
-                                                     (list-length selects))))
-                                cache-key)
-                            (setf vals (nthcdr (list-length selects) vals))
-                            (loop for select in selects
-                                  for value in db-vals
-                                  do
-                                  (when (eql (slot-value (car select) 'db-kind)
-                                             :key)
-                                    (push
-                                     (key-value-from-db (car select) value
-                                                        *default-database*)
-                                     cache-key)))
-                            (push class-name cache-key)
-                            (%make-fresh-object class-name
-                                                (mapcar #'car selects)
-                                                db-vals))))
-                   (let ((instances (mapcar #'%build-instance sclasses sels)))
+                                (db-vals    (butlast vals (- (list-length vals)
+                                                             (list-length selects)))))
+                            ;; (setf vals (nthcdr (list-length selects) vals))
+                            (%make-fresh-object class-name (mapcar #'car selects) db-vals))))
+                   (let ((objects (mapcar #'%build-object sclasses sels)))
                      (if (= (length sclasses) 1)
-                         (car instances)
-                         instances)))))
-          (remove-if #'null (mapcar #'build-instance res)))))))
+                         (car objects)
+                         objects)))))
+          (mapcar #'build-object res))))))
 
 (defun %make-fresh-object (class-name slots values)
   (let* ((*db-initializing* t)
