@@ -1780,7 +1780,7 @@
       </refnamediv>
       <refsect1>
 	<title>Syntax</title>
-	<synopsis><function>query</function> <replaceable>query-expression</replaceable> &amp;key <replaceable>database</replaceable> => <returnvalue>result</returnvalue></synopsis>
+	<synopsis><function>query</function> <replaceable>query-expression</replaceable> &amp;key <replaceable>database</replaceable> <replaceable>types</replaceable> => <returnvalue>result</returnvalue></synopsis>
       </refsect1>
       <refsect1>
 	<title>Arguments and Values</title>
@@ -1889,7 +1889,7 @@
       </refnamediv>
       <refsect1>
 	<title>Syntax</title>
-	<synopsis><function>map-query</function> <replaceable>output-type-spec</replaceable> <replaceable>function</replaceable> <replaceable>query-expression</replaceable> &amp;key <replaceable>database</replaceable> => <returnvalue>result</returnvalue></synopsis>
+	<synopsis><function>map-query</function> <replaceable>output-type-spec</replaceable> <replaceable>function</replaceable> <replaceable>query-expression</replaceable> &amp;key <replaceable>database</replaceable> <replaceable>types</replaceable> => <returnvalue>result</returnvalue></synopsis>
       </refsect1>
       <refsect1>
 	<title>Arguments and Values</title>
@@ -2049,7 +2049,7 @@
       </refnamediv>
       <refsect1>
 	<title>Syntax</title>
-	<synopsis><function>do-query</function> ((&amp;rest <replaceable>args</replaceable>) <replaceable>query-expression</replaceable> &amp;key <replaceable>database</replaceable>) &amp;body <replaceable>body</replaceable> => <returnvalue>nil</returnvalue></synopsis>
+	<synopsis><function>do-query</function> ((&amp;rest <replaceable>args</replaceable>) <replaceable>query-expression</replaceable> &amp;key <replaceable>database</replaceable> <replaceable>types</replaceable>) &amp;body <replaceable>body</replaceable> => <returnvalue>nil</returnvalue></synopsis>
       </refsect1>
       <refsect1>
 	<title>Arguments and Values</title>
