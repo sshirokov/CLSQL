@@ -99,9 +99,9 @@ will be run.
    *** Error if existing DB
 
 ** Data Definition
-  *** Create Tables/Sequences/Indexes -- Should cover creation of
+  *** Create Tables/Views/Sequences/Indexes -- Should cover creation of
       tables with all supported types of fields.
-  *** Delete Tables/Sequences/Indexes
+  *** Delete Tables/Views/Sequences/Indexes
   *** Inspection of Tables and attributes, including types
 
 ** Data Manipulation
@@ -122,8 +122,3 @@ will be run.
   *** Object creation/manipulation/deletion
   *** Inter-object Relations
 
-** Editing Contexts
-  *** Object Create/Modification/Deletion in a context -- partly covered already
-  *** Interaction of multiple contexts
-  *** Schema manipulation within a context
-  *** Rollback and error handling within a context
