@@ -7,7 +7,7 @@
 ;;;; Authors:      Kevin M. Rosenberg based on code by Pierre R. Mai 
 ;;;; Date Started: Feb 2002
 ;;;;
-;;;; $Id: sql.lisp,v 1.5 2003/05/06 02:27:08 kevin Exp $
+;;;; $Id: sql.lisp,v 1.6 2003/07/23 19:33:38 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -254,3 +254,75 @@ specified in output-type-spec and returned like in MAP."
 (defun delete-large-object (object-id &key (database *default-database*))
   "Deletes the large object in the database"
   (database-delete-large-object object-id database))
+
+
+;;; Row processing macro
+
+
+
+(defun lisp->sql-name (field)
+  (typecase field
+    (string field)
+    (symbol (string-upcase (symbol-name field)))
+    (cons (cadr field))
+    (t (format nil "~A" field))))
+
+(defun field-names (field-forms)
+  "Return a list of field name strings from a fields form"
+  (loop for field-form in field-forms
+	collect
+	(lisp->sql-name
+	 (if (cadr field-form)
+	     (cadr field-form)
+	     (car field-form)))))
+
+(defun from-names (from)
+  "Return a list of field name strings from a fields form"
+  (loop for table in (if (atom from) (list from) from)
+	collect (lisp->sql-name table)))
+
+
+(defun where-strings (where)
+  (loop for w in (if (atom (car where)) (list where) where)
+	collect
+	(if (consp w)
+	    (format nil "~A ~A ~A" (second w) (first w) (third w))
+	    (format nil "~A" w))))
+
+(defun order-by-strings (order-by)
+  (loop for o in order-by
+	collect
+	(if (atom o)
+	    (lisp->sql-name o)
+	    (format nil "~A ~A" (lisp->sql-name (car o))
+		    (lisp->sql-name (cadr o))))))
+
+(defun query-string (fields from where distinct order-by limit)
+  (concatenate
+   'string
+   (format nil "select ~A~{~A~^,~} from ~{~A~^ and ~}" 
+	   (if distinct "distinct " "") (field-names fields)
+	   (from-names from))
+   (if where (format nil " where ~{~A~^ ~}"
+		     (where-strings where)) "")
+   (if order-by (format nil " order by ~{~A~^, ~}"
+			(order-by-strings order-by)))
+   (if limit (format nil " limit ~D" limit) "")))
+
+(defmacro for-each-row (((&rest fields) &key from order-by where distinct limit) &body body)
+  (let ((d (gensym "DISTINCT-"))
+	(bind-fields (loop for f in fields collect (car f)))
+	(w (gensym "WHERE-"))
+	(o (gensym "ORDER-BY-"))
+	(frm (gensym "FROM-"))
+	(l (gensym "LIMIT-"))
+	(q (gensym "QUERY-")))
+    `(let ((,frm ,from)
+	   (,w ,where)
+	   (,d ,distinct)
+	   (,l ,limit)
+	   (,o ,order-by))
+      (let ((,q (query-string ',fields ,frm ,w ,d ,o ,l)))
+	(loop for tuple in (query ,q)
+	      collect (destructuring-bind ,bind-fields tuple
+		   ,@body))))))

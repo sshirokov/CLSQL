@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: package.lisp,v 1.4 2003/05/07 02:45:08 kevin Exp $
+;;;; $Id: package.lisp,v 1.5 2003/07/23 19:33:38 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -86,6 +86,7 @@
      #:execute-command
      #:map-query
      #:do-query
+     #:for-each-row
      
      ;; functional.cl
      #:insert-records
