@@ -1,10 +1,12 @@
-#!/bin/bash -e
+#!/bin/sh 
+set -e
 
 pkg=%%
 
 case "$1" in
     configure)
-	/usr/sbin/register-common-lisp-source ${pkg}
+	common-lisp-only-compatible $pkg allegro cmucl lispworks
+	register-common-lisp-source $pkg
 	;;
     abort-upgrade|abort-remove|abort-deconfigure)
 	;;
