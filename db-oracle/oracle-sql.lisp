@@ -204,7 +204,7 @@ the length of that format.")
 (uffi:def-type string-array (:array :unsigned-char))
 
 (defun deref-oci-string (arrayptr string-index size)
-  (declare (type string-array arrayptr))
+;;  (declare (type string-array arrayptr))
   (declare (type (mod #.+n-buf-rows+) string-index))
   (declare (type (and unsigned-byte fixnum) size))
   (let* ((raw (uffi:convert-from-foreign-string 
@@ -414,7 +414,7 @@ the length of that format.")
 		    (value
 		     (let* ((arb (foreign-resource-buffer (cd-indicators cd)))
 			    (indicator (uffi:deref-array arb '(:array :short) irow)))
-		       (declare (type short-array arb))
+		       ;; b(declare (type short-array arb))
 		       (unless (= indicator -1)
 			 (ecase (cd-oci-data-type cd)
 			   (#.SQLT-STR  
