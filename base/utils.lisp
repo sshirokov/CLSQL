@@ -178,14 +178,14 @@ returns (VALUES string-output error-output exit-status)"
     
     #+lispworks
     ;; BUG: Lispworks combines output and error streams
-    (let ((output (make-output-string-stream)))
+    (let ((output (make-string-output-stream)))
       (unwind-protect
 	  (let ((status 
 		 (system:call-system-showing-output
 		  command
 		  :shell-type "/bin/sh"
 		  :output-stream output)))
-	    (values (get-output-string output) nil status))
+	    (values (get-output-stream-string output) nil status))
 	(close output)))
     
     #+clisp		
