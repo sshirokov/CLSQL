@@ -23,7 +23,7 @@
 
   :depends-on (clsql #-clisp clsql-mysql 
 		     #-clisp clsql-postgresql
-		     #-clisp clsql-postgresql-socket
+		     #-(or clisp openmcl) clsql-postgresql-socket
 		     ptester
 		     #+(and allegro (not allegro-cl-trial)) clsql-aodbc
 		     clsql-sqlite)
