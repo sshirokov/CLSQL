@@ -18,7 +18,7 @@
 (defpackage #:clsql-system (:use #:asdf #:cl))
 (in-package #:clsql-system)
 
-(defsystem #:clsql
+(defsystem clsql
     :name "CLSQL"
     :author "Kevin Rosenberg <kevin@rosenberg.net>"
     :maintainer "Kevin M. Rosenberg <kmr@debian.org>"
@@ -31,7 +31,7 @@ oriented interface."
     :components
     ((:module sql
 	      :components
-	      ((:module :base
+	      ((:module base
 			:pathname ""
 			:components
 			((:file "cmucl-compat")
@@ -43,42 +43,42 @@ oriented interface."
 			 (:file "time" :depends-on ("package" "conditions"))
 			 (:file "utils" :depends-on ("package" "db-interface"))
                          (:file "generics" :depends-on ("package"))))
-               (:module :database 
+               (:module database 
                         :pathname "" 
                         :components 
                         ((:file "initialize")
 			 (:file "database" :depends-on ("initialize"))
 			 (:file "recording" :depends-on ("database"))
 			 (:file "pool"))
-                        :depends-on (:base))
-	       (:module :syntax
+                        :depends-on (base))
+	       (:module syntax
 			:pathname ""
 			:components ((:file "expressions")
 				     (:file "operations" 
                                             :depends-on ("expressions"))
 				     (:file "syntax" :depends-on ("operations")))
-			:depends-on (:database))
-	       (:module :functional
+			:depends-on (database))
+	       (:module functional
 			:pathname ""
 			:components ((:file "fdml")
                                      (:file "transaction" :depends-on ("fdml"))
                                      (:file "loop-extension" 
                                             :depends-on ("fdml"))
 				     (:file "fddl" :depends-on ("fdml")))
-			:depends-on (:syntax))
-	       (:module :object
+			:depends-on (syntax))
+	       (:module object
 			:pathname ""
-		       :components ((:file "metaclasses")
-                                    (:file "ooddl" :depends-on ("metaclasses"))
-				    (:file "oodml" :depends-on ("ooddl")))
-		       :depends-on (:functional))
-	       (:module :generic
+			:components ((:file "metaclasses")
+				     (:file "ooddl" :depends-on ("metaclasses"))
+				     (:file "oodml" :depends-on ("ooddl")))
+			:depends-on (functional))
+	       (:module generic
 			:pathname ""
-		       :components ((:file "generic-postgresql")
-				    (:file "generic-odbc")
-				    (:file "sequences"))
-		       :depends-on (:functional))))))
-     
+			:components ((:file "generic-postgresql")
+				     (:file "generic-odbc")
+				     (:file "sequences"))
+			:depends-on (functional))))))
+
 
 (defmethod perform ((o test-op) (c (eql (find-system 'clsql))))
   (operate 'load-op 'clsql-tests)
