@@ -1,17 +1,18 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
-;;;; ======================================================================
-;;;; File:    usql.asd
-;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>
-;;;; Created: 30/03/2004
-;;;; Updated: <04/04/2004 11:58:21 marcusp>
-;;;; ======================================================================
+;;;; *************************************************************************
+;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Description ==========================================================
-;;;; ======================================================================
+;;;; Name:     clsql-classic.asd
+;;;; Purpose:  System definition for CLSQL-CLASSIC
+;;;; Authors:  Marcus Pearce and Kevin M. Rosenberg
+;;;; Created:  March 2004
 ;;;;
-;;;; ASDF system definition for CLSQL-USQL. 
+;;;; $Id: clsql-classic.asd 8847 2004-04-07 14:38:14Z kevin $
 ;;;;
-;;;; ======================================================================
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
 
 (asdf:defsystem #:clsql-usql
     :name "CLSQL-USQL"
@@ -26,7 +27,7 @@ the low-level database interfaces provided by CLSQL and includes both
 a functional and an object oriented interface."
     :depends-on (clsql-base)
     :components
-    ((:module usql
+    ((:module sql
 	      :components
 	      ((:module :package
 			:pathname ""
