@@ -135,20 +135,16 @@
     </para>
 
 <programlisting>
-CREATE TABLE EMPLOYEE (
-       emplid		NOT NULL	number(38),
-       first_name	NOT NULL	varchar2(30),
-       last_name	NOT NULL	varchar2(30),
-       emall				varchar2(100),
-       companyid	NOT NULL        number(38),
-       managerid			number(38)
-)
+CREATE TABLE EMPLOYEE ( emplid     NOT NULL number(38),
+                        first_name NOT NULL varchar2(30),
+                        last_name  NOT NULL varchar2(30),
+                        email               varchar2(100),
+                        companyid  NOT NULL number(38),
+                        managerid           number(38))
 
-CREATE TABLE COMPANY (
-       companyid	NOT NULL	number(38),
-       name	        NOT NULL	varchar2(100),
-       presidentid	NOT NULL	number(38)
-)
+CREATE TABLE COMPANY ( companyid   NOT NULL number(38),
+                       name        NOT NULL varchar2(100),
+                       presidentid NOT NULL number(38))
 </programlisting>
 
 <para>
@@ -189,7 +185,7 @@ mapped into a database).  They would be defined as follows:
 
 (clsql:def-view-class company ()
   ((companyid
-    :db-type :key
+    :db-kind :key
     :db-constraints :not-null
     :type integer
     :initarg :companyid)
@@ -303,7 +299,7 @@ mapped into a database).  They would be defined as follows:
 <para>
 In an &sql; only application, the <symbol>EMPLOYEE</symbol> and
 <symbol>COMPANY</symbol> tables can be queried to determine things
-like, "Who is Vladamir's manager?", What company does Josef work
+like, "Who is Vladamir's manager?", "What company does Josef work
 for?", and "What employees work for Widgets Inc.".  This is done by
 joining tables with an &sql; query.
 </para>
