@@ -1,16 +1,17 @@
-7 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+8 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* tests/test-init.lisp: Add non-index fields for testing 
 	join class employee-addresss
 	* test/test-oodml.lisp: Add tests for retrieval immediate
-	
+	* sql/metaclasses.lisp: Handle differences in direct-slot-definition 
+	values which are now listifed by openmcl 14.2.
+	* sql/objects.lisp: more framework for supporing immediate retrieval 
+
 7 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* docs/intro.xml: Upload location of a README file
 	* sql/metaclass.lisp: Work-around openmcl's CHANGE-CLASS
 	changing the type-specifier. Use a lisp type of (OR NULL FOO)
 	for a specified-type of FOO unless :db-constraints :not-null.
 	No need to specialize finalize-inheritance for openmcl.
-	Handle differences in direct-slot-definition values which
-	are now listify by openmcl 14.2.
 	* tests/test-*.lisp: Rename fields so that joins occur on
 	fields with different names. This ensures that join code is
 	selecting the proper name.

@@ -234,11 +234,17 @@ superclass of the newly-defined View Class."
 	sels
         (error "No slots of type :base in view-class ~A" (class-name vclass)))))
 
+(defun generate-immediate-joins-list (vclass)
+  "Returns list of pairs of join slots and their class for a class."
+  (let ((sels nil))
+    (dolist (slotdef (ordered-class-slots vclass))
+      (when (and (eq :join (view-class-slot-db-kind slotdef))
+		 (eq :immediate (gethash :retrieval (view-class-slot-db-info slotdef))))
+	(push slotdef sels)))
+    (cons vclass (list sels))))
 
-;;
 ;; Called by 'get-slot-values-from-view'
 ;;
-
 
 (defvar *update-context* nil)
 
@@ -854,6 +860,10 @@ superclass of the newly-defined View Class."
                 (apply #'sql-and jc)
                 jc))))))
 
+;; FIXME: add retrieval immediate for efficiency
+;; For example, for (select 'employee-address) in test suite =>
+;; select addr.*,ea_join.* FROM addr,ea_join WHERE ea_join.aaddressid=addr.addressid\g
+
 (defun find-all (view-classes 
 		 &rest args
 		 &key all set-operation distinct from where group-by having 
@@ -897,6 +907,7 @@ superclass of the newly-defined View Class."
 		   objects))))
     (let* ((*db-deserializing* t)
 	   (sclasses (mapcar #'find-class view-classes))
+	   (immediate-joins (mapcar #'generate-immediate-joins-list sclasses))
 	   (sels (mapcar #'generate-selection-list sclasses))
 	   (fullsels (apply #'append sels))
 	   (sel-tables (collect-table-refs where))
