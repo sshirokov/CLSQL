@@ -16,7 +16,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package :mysql)
+(in-package #:mysql)
 
 ;;;; Modified by Kevin Rosenberg 
 ;;;;  - probe potential directories to find library
