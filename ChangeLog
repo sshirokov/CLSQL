@@ -1,8 +1,13 @@
 10 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.5.1 released:
-	tests/*.lisp: Rework so tests are run
+	* tests/*.lisp: Rework so tests are run
 	on multiple backends automatically based
-	on the contents of ~/.clsql-tests.config
+	on the contents of ~/.clsql-tests.config.
+	Reuse helper functions from classic-tests.
+	* base/database.lisp: Support connection-spec
+	as string for CONNECT
+	* classic-tests/tests.lisp: Automatically
+	load database backends as needed. 
 	
 09 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
         * Version 2.5.0 released:

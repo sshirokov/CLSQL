@@ -17,6 +17,6 @@
 (in-package #:cl-user)
 
 (defpackage #:clsql-tests
-  (:use #:clsql #:common-lisp #:rtest)
+  (:use #:clsql #:common-lisp #:rtest #:clsql-classic-tests)
   (:export #:run-tests #:test-initialise-database #:test-connect-to-database)
   (:documentation "Regression tests for CLSQL."))

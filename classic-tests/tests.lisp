@@ -18,7 +18,23 @@
 
 ;;; This test suite looks for a configuration file named ".clsql-test.config"
 ;;; located in the users home directory.
-;;;
+;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
+;;;; *************************************************************************
+;;;; FILE IDENTIFICATION
+;;;;
+;;;; File:    tests.lisp
+;;;; Author: Kevin Rosenberg
+;;;; $Id$
+;;;;
+;;;; This file is part of CLSQL.
+;;;;
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
+
+;;; You need a file named "~/.clsql-tests.config"
+
 ;;; This file contains a single a-list that specifies the connection
 ;;; specs for each database type to be tested. For example, to test all
 ;;; platforms, a sample "test.config" may look like:
@@ -36,14 +52,17 @@
 		 :name ".clsql-test"
 		 :type "config"))
 
+(defvar +all-db-types+
+  #-clisp '(:postgresql :postgresql-socket :sqlite :aodbc :mysql)
+  #+clisp '(:sqlite))
 
 (defclass conn-specs ()
-  ((aodbc-spec :accessor aodbc-spec)
-   (mysql-spec :accessor mysql-spec)
-   (pgsql-spec :accessor pgsql-spec)
-   (pgsql-socket-spec :accessor pgsql-socket-spec)
-   (sqlite-spec :accessor sqlite-spec))
-  (:documentation "Test fixture for CLSQL testing"))
+  ((aodbc-spec :accessor aodbc-spec :initform nil)
+   (mysql-spec :accessor mysql-spec :initform nil)
+   (pgsql-spec :accessor postgresql-spec :initform nil)
+   (pgsql-socket-spec :accessor postgresql-socket-spec :initform nil)
+   (sqlite-spec :accessor sqlite-spec :initform nil))
+  (:documentation "Connection specs for CLSQL testing"))
 
 
 (defun read-specs (&optional (path *config-pathname*))
@@ -53,29 +72,14 @@
 	      (specs (make-instance 'conn-specs)))
 	  (setf (aodbc-spec specs) (cadr (assoc :aodbc config)))
 	  (setf (mysql-spec specs) (cadr (assoc :mysql config)))
-	  (setf (pgsql-spec specs) (cadr (assoc :postgresql config)))
-	  (setf (pgsql-socket-spec specs) 
+	  (setf (postgresql-spec specs) (cadr (assoc :postgresql config)))
+	  (setf (postgresql-socket-spec specs) 
 		(cadr (assoc :postgresql-socket config)))
 	  (setf (sqlite-spec specs) (cadr (assoc :sqlite config)))
 	  specs))
       (progn
-	(warn "CLSQL tester config file ~S not found" path)
+	(warn "CLSQL test config file ~S not found" path)
 	nil)))
-
-(defmethod mysql-table-test ((test conn-specs))
-  (test-table (mysql-spec test) :mysql))
-
-(defmethod aodbc-table-test ((test conn-specs))
-  (test-table (aodbc-spec test) :aodbc))
-
-(defmethod pgsql-table-test ((test conn-specs))
-  (test-table (pgsql-spec test) :postgresql))
-
-(defmethod pgsql-socket-table-test ((test conn-specs))
-  (test-table (pgsql-socket-spec test) :postgresql-socket))
-
-(defmethod sqlite-table-test ((test conn-specs))
-  (test-table (sqlite-spec test) :sqlite))
 
 (defmethod test-table (spec type)
   (when spec
@@ -253,17 +257,29 @@
 (defun drop-test-table (db)
   (clsql:execute-command "DROP TABLE test_clsql" :database db))
 
+(defun db-type-spec (db-type specs)
+  (let ((accessor (intern (concatenate 'string (symbol-name db-type)
+				       (symbol-name '#:-spec))
+			  (find-package '#:clsql-classic-tests))))
+    (funcall accessor specs)))
+
+(defun db-type-ensure-system (db-type)
+  (unless (find-package (symbol-name db-type))
+    (asdf:operate 'asdf:load-op
+		  (intern (concatenate 'string
+				       (symbol-name '#:clsql-)
+				       (symbol-name db-type))))))
+
 (defun run-tests ()
   (let ((specs (read-specs)))
     (unless specs
       (warn "Not running test because test configuration file is missing")
       (return-from run-tests :skipped))
+    (mysql-low-level specs)
     (with-tests (:name "CLSQL")
-      (mysql-low-level specs)
-      (mysql-table-test specs)
-      (pgsql-table-test specs)
-      (pgsql-socket-table-test specs)
-      (aodbc-table-test specs)
-      (sqlite-table-test specs)
-      ))
+      (dolist (db-type +all-db-types+)
+	(let ((spec (db-type-spec db-type specs)))
+	  (when spec
+	    (db-type-ensure-system db-type)
+	    (test-table spec db-type))))))
   t)

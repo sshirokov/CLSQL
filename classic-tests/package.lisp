@@ -13,6 +13,20 @@
 (in-package #:cl-user)
 
 (defpackage #:clsql-classic-tests
-  (:use #:asdf #:cl #:clsql #:ptester))
+  (:use #:asdf #:cl #:clsql #:ptester)
+  (:export
+   #:*config-pathname*
+   #:+all-db-types+
+   #:conn-specs
+   #:aodbc-spec
+   #:mysql-spec
+   #:postgresql-spec
+   #:postgresql-socket-spec
+   #:sqlite-spec
+   #:read-specs
+   #:db-type-spec
+   #:db-type-ensure-system
+   ))
+
 
 

@@ -21,12 +21,7 @@
   :licence "Lessor Lisp General Public License"
   :description "Testing suite for CLSQL"
 
-  :depends-on (clsql #-clisp clsql-mysql 
-		     #-clisp clsql-postgresql
-		     #-clisp clsql-postgresql-socket
-		     ptester
-		     #+(and allegro (not allegro-cl-trial)) clsql-aodbc
-		     clsql-sqlite)
+  :depends-on (clsql ptester #-clisp clsql-mysql)
   :components
   ((:module :classic-tests
 	    :components

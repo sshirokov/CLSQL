@@ -28,11 +28,6 @@
 
 (in-package #:clsql-tests)
 
-(defvar *config-pathname*
-  (make-pathname :defaults (user-homedir-pathname)
-		 :name ".clsql-test"
-		 :type "config"))
-
 (defvar *rt-connection*)
 (defvar *rt-fddl*)
 (defvar *rt-fdml*)
@@ -311,51 +306,21 @@
   (clsql:update-records-from-instance employee10)
   (clsql:update-records-from-instance company1))
 
-(defclass conn-specs ()
-  ((aodbc-spec :accessor aodbc :initform nil)
-   (mysql-spec :accessor mysql :initform nil)
-   (pgsql-spec :accessor postgresql :initform nil)
-   (pgsql-socket-spec :accessor postgresql-socket :initform nil)
-   (sqlite-spec :accessor sqlite :initform nil))
-  (:documentation "Connection specifications for CLSQL testing"))
-
 (defun run-tests ()
   (let ((specs (read-specs)))
     (unless specs
       (warn "Not running tests because test configuration file is missing")
       (return-from run-tests :skipped))
-    (dolist (accessor '(postgresql postgresql-socket sqlite aodbc mysql))
-      (unless (find-package (symbol-name accessor))
-	(asdf:operate 'asdf:load-op
-		      (intern (concatenate 'string
-					   (symbol-name '#:clsql-)
-					   (symbol-name accessor)))))
-      (rt:rem-all-tests)
-      (dolist (test (append *rt-connection* *rt-fddl* *rt-fdml*
-			    *rt-ooddl* *rt-oodml* *rt-syntax*))
-	(eval test))
-
-      (let ((spec (funcall accessor specs))
-	    (backend (intern (symbol-name accessor) (find-package :keyword))))
+    (dolist (db-type +all-db-types+)
+      (let ((spec (db-type-spec db-type specs)))
 	(when spec
-	  (format t "~&Running CLSQL tests with ~A backend.~%" backend)
-	  (test-connect-to-database backend spec)
+	  (db-type-ensure-system db-type)
+	  (rt:rem-all-tests)
+	  (dolist (test (append *rt-connection* *rt-fddl* *rt-fdml*
+				*rt-ooddl* *rt-oodml* *rt-syntax*))
+	    (eval test))
+	  (format t "~&Running CLSQL tests with ~A backend.~%" db-type)
+	  (test-connect-to-database db-type spec)
 	  (test-initialise-database)
 	  (rtest:do-tests))))))
-
-(defun read-specs (&optional (path *config-pathname*))
-  (if (probe-file path)
-      (with-open-file (stream path :direction :input)
-	(let ((config (read stream))
-	      (specs (make-instance 'conn-specs)))
-	  (setf (aodbc specs) (cadr (assoc :aodbc config)))
-	  (setf (mysql specs) (cadr (assoc :mysql config)))
-	  (setf (postgresql specs) (cadr (assoc :postgresql config)))
-	  (setf (postgresql-socket specs) 
-		(cadr (assoc :postgresql-socket config)))
-	  (setf (sqlite specs) (cadr (assoc :sqlite config)))
-	  specs))
-      (progn
-	(warn "CLSQL tester config file ~S not found" path)
-	nil)))
 

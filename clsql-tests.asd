@@ -16,8 +16,8 @@
 ;;;; ======================================================================
 
 (in-package #:cl-user)
-(defpackage #:clsql-classic-tests-system (:use #:asdf #:cl))
-(in-package #:clsql-classic-tests-system)
+(defpackage #:clsql-tests-system (:use #:asdf #:cl))
+(in-package #:clsql-tests-system)
 
 (defsystem clsql-tests
     :name "CLSQL Tests"
@@ -26,7 +26,7 @@
     :version ""
     :licence ""
     :description "A regression test suite for CLSQL."
-    :depends-on (clsql rt)
+    :depends-on (clsql clsql-classic-tests rt)
     :components 
     ((:module tests
 	      :serial t

@@ -21,12 +21,6 @@ COMMONSQL SPEC
 
  >> Initialisation and connection 
 
-    CONNECT 
-     o should accept string as connection spec 
-
-    DISCONNECT
-     o should accept string as connection spec 
-
     INITIALIZE-DATABASE-TYPE
      o should initialise appropriate backend 
 
