@@ -33,11 +33,9 @@ that expression and a list of field names selected in sql-exp."))
                   (result-types nil) (flatp nil))
   (record-sql-action query-expression :query database)
   (let* ((res (database-query query-expression database result-types))
-         (res (if (and flatp (= (length
-                                 (slot-value query-expression 'selections))
-                                1))
+         (res (if flatp
                   (mapcar #'car res)
-                  res)))
+		res)))
     (record-sql-action res :result database)
     res))
 

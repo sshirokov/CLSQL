@@ -190,8 +190,8 @@ if the database connection has been lost."
 			      
     (when (is-database-open db)
       (if force
-	  (ignore-errors (disconnect db))
-	  (disconnect db :error nil)))
+	  (ignore-errors (disconnect :database db))
+	  (disconnect :database db :error nil)))
     
     (connect (connection-spec db))))
 
