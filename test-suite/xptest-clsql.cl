@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: xptest-clsql.cl,v 1.2 2002/03/27 09:11:30 kevin Exp $
+;;;; $Id: xptest-clsql.cl,v 1.3 2002/03/27 09:21:46 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -56,25 +56,45 @@
 	(unwind-protect
 	     (progn
 	       (create-test-table db)
-	       (pprint (query "select * from test_clsql" 
-				    :database db
-				    :types :auto))
-	       (pprint (map-query 'vector #'list "select * from test_clsql" 
-					:database db
-					:types :auto))	
+	       (query "select * from test_clsql" 
+		      :database db
+		      :types :auto)
+	       (map-query 'vector #'list "select * from test_clsql" 
+			  :database db
+			  :types :auto)
 	       (drop-test-table db)
 	       )
 	  (disconnect :database db))))))
+
+(defmethod mysql-low-level ((test clsql-fixture))
+  (let ((spec (mysql-spec test)))
+    (when spec
+      (let ((db (clsql-mysql::database-connect spec :mysql)))
+	(clsql-mysql::database-execute-command "DROP TABLE IF EXISTS test_clsql" db)
+	(clsql-mysql::database-execute-command 
+	 "CREATE TABLE test_clsql (i integer, sqrt double, sqrt_str CHAR(20))" db)
+	(dotimes (i 10)
+	  (clsql-mysql::database-execute-command
+	   (format nil "INSERT INTO test_clsql VALUES (~d,~d,'~a')"
+		   i (sqrt i) (format nil "~d" (sqrt i)))
+	   db))
+	(let ((res (clsql-mysql::database-query-result-set "select * from test_clsql" db :full-set t :types nil)))
+	  (unless (= 10 (mysql:mysql-num-rows (clsql-mysql::mysql-result-set-res-ptr res)))
+	    (failure "Error calling mysql-num-rows"))
+	  (clsql-mysql::database-dump-result-set res db))
+	(clsql-mysql::database-execute-command "DROP TABLE test_clsql" db)
+	(clsql-mysql::database-disconnect db)))))
 
 (defparameter clsql-test-suite 
     (make-test-suite
      "CLSQL Test Suite"
      "Basic test suite for database operations."
+     ("MySQL Low Level Interface Test" 'clsql-fixture
+		   :test-thunk 'mysql-low-level
+		   :description "A test of MySQL low-level interface")
      ("MySQL Test" 'clsql-fixture
 		   :test-thunk 'mysql-test
 		   :description "A test of MySQL")))
-
-(report-result (run-test clsql-test-suite) :verbose t)
 
 
 ;;;; Testing functions
@@ -96,3 +116,7 @@
 
 (defun drop-test-table (db)
   (clsql:execute-command "DROP TABLE test_clsql"))
+
+(report-result (run-test clsql-test-suite) :verbose t)
+
+
