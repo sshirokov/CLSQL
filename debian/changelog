@@ -1,6 +1,6 @@
 cl-sql (0.9.3-2) unstable; urgency=low
 
-  * Add call to common-lisp-source-compatible
+  * Add call to common-lisp-only-compatible
 
  -- Kevin M. Rosenberg <kmr@debian.org>  Sun, 22 Sep 2002 21:01:20 -0600
 
