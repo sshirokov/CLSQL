@@ -451,6 +451,7 @@ A type can be
   :int
   :double
   :null
+  (:blob n)
   (:string n)
 "
   (unless (db-type-has-prepared-stmt? (database-type database))

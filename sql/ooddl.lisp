@@ -20,11 +20,6 @@
     :db-kind :virtual))
   (:metaclass standard-db-class)
   (:documentation "Superclass for all CLSQL View Classes."))
-#+clisp
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (make-instance 'standard-db-object) ;; clisp requires a made object before can use in this file
-  #+nil  (finalize-inheritance (find-class 'standard-db-object)) ;; this is not sufficient
-  )
 
 (defparameter *default-string-length* 255
   "The length of a string which does not have a user-specified length.")

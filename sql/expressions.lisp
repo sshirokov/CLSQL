@@ -67,7 +67,8 @@
 (defmethod print-object ((self %sql-expression) stream)
   (print-unreadable-object
    (self stream :type t)
-   (write-string (sql-output self) stream)))
+   (write-string (sql-output self) stream))
+  self)
 
 ;; For straight up strings
 
@@ -91,7 +92,8 @@
 (defmethod print-object ((ident sql) stream)
   (format stream "#<~S \"~A\">"
           (type-of ident)
-          (sql-output ident nil)))
+          (sql-output ident nil))
+  ident)
 
 ;; For SQL Identifiers of generic type
 

@@ -127,11 +127,11 @@ allocate_bind (unsigned int n)
 
 DLLEXPORT
 void
-bind_param (MYSQL_BIND* bind, unsigned int n, unsigned long length, unsigned short is_null, 
+bind_param (MYSQL_BIND bind[], unsigned int n, unsigned long length, unsigned short is_null, 
 	   void* buffer, unsigned short buffer_type, unsigned long buffer_length)
 {
-  bind[n].length = length;
-  bind[n].is_null = is_null;
+  *bind[n].length = length;
+  *bind[n].is_null = is_null;
   bind[n].buffer = buffer;
   bind[n].buffer_type = buffer_type;
   bind[n].buffer_length = buffer_length;
