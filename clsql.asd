@@ -65,6 +65,11 @@ oriented interface."
 			:pathname ""
 		       :components ((:file "metaclasses")
 				    (:file "objects" :depends-on ("metaclasses")))
+		       :depends-on (:functional))
+	       (:module :generic
+			:pathname ""
+		       :components ((:file "generic-postgresql")
+				    (:file "generic-odbc"))
 		       :depends-on (:functional))))))
      
 

@@ -15,14 +15,19 @@
 
 (in-package #:clsql-mysql)
 
-(defmethod database-get-type-specifier ((type (eql 'wall-time)) args (database mysql-database))
-  (declare (ignore args))
+(defmethod database-get-type-specifier ((type (eql 'wall-time)) args database
+					(db-type (eql :mysql)))
+  (declare (ignore args database))
   "DATETIME")
 
-(defmethod database-output-sql-as-type ((type (eql 'boolean)) val (database mysql-database))
+(defmethod database-output-sql-as-type ((type (eql 'boolean)) val database
+					(db-type (eql :mysql)))
+  (declare (ignore database))
   (if val 1 0))
 
-(defmethod read-sql-value (val (type (eql 'boolean)) (database mysql-database))
+(defmethod read-sql-value (val (type (eql 'boolean)) database
+			   (db-type (eql :mysql)))
+  (declare (ignore database)) 
   (etypecase val
     (string (if (string= "0" val) nil t))
     (integer (if (zerop val) nil t))))

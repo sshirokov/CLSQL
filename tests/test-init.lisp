@@ -574,11 +574,11 @@
       (values (nreverse test-forms) (nreverse skip-tests))))
 
 
-(defun rapid-load (type)
+(defun rapid-load (type &optional (position 0))
   "Rapid load for interactive testing."
   (when *default-database*
       (disconnect :database *default-database*))
-  (test-connect-to-database type (car (db-type-spec type (read-specs))))
+  (test-connect-to-database type (nth position (db-type-spec type (read-specs))))
   (test-initialise-database)
   *default-database*)
 

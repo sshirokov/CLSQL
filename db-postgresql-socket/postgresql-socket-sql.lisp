@@ -143,7 +143,7 @@ doesn't depend on UFFI."
 					       (eql :postgresql-socket)))
   t)
 
-(defclass postgresql-socket-database (database)
+(defclass postgresql-socket-database (generic-postgresql-database)
   ((connection :accessor database-connection :initarg :connection
 	       :type postgresql-connection)))
 
@@ -323,148 +323,6 @@ doesn't depend on UFFI."
 	    (setf (postgresql-socket-result-set-done result-set) t)
 	    (wait-for-query-results (database-connection database)))))))
 
-;;; Object listing
-
-(defun owner-clause (owner)
-  (cond 
-   ((stringp owner)
-    (format
-     nil
-     " AND (relowner=(SELECT usesysid FROM pg_user WHERE (usename='~A')))" 
-     owner))
-   ((null owner)
-    (format nil " AND (NOT (relowner=1))"))
-   (t "")))
-
-(defun database-list-objects-of-type (database type owner)
-  (mapcar #'car
-	  (database-query
-	   (format nil
-		   "SELECT relname FROM pg_class WHERE (relkind = '~A')~A"
-		   type
-		   (owner-clause owner))
-	   database nil nil)))
-
-(defmethod database-list-tables ((database postgresql-socket-database)
-                                 &key (owner nil))
-  (database-list-objects-of-type database "r" owner))
-  
-(defmethod database-list-views ((database postgresql-socket-database)
-                                &key (owner nil))
-  (database-list-objects-of-type database "v" owner))
-  
-(defmethod database-list-indexes ((database postgresql-socket-database)
-                                  &key (owner nil))
-  (database-list-objects-of-type database "i" owner))
-
-(defmethod database-list-table-indexes (table
-					(database postgresql-socket-database)
-					&key (owner nil))
-  (let ((indexrelids
-	 (database-query
-	  (format 
-	   nil
-	   "select indexrelid from pg_index where indrelid=(select relfilenode from pg_class where relname='~A'~A)"
-	   (string-downcase table)
-	   (owner-clause owner))
-	  database :auto nil))
-	(result nil))
-    (dolist (indexrelid indexrelids (nreverse result))
-      (push 
-       (caar (database-query
-	      (format nil "select relname from pg_class where relfilenode='~A'"
-		      (car indexrelid))
-	      database nil nil))
-       result))))
-
-(defmethod database-list-attributes ((table string)
-				     (database postgresql-socket-database)
-                                     &key (owner nil))
-  (let* ((owner-clause
-          (cond ((stringp owner)
-                 (format nil " AND (relowner=(SELECT usesysid FROM pg_user WHERE usename='~A'))" owner))
-                ((null owner) " AND (not (relowner=1))")
-                (t "")))
-         (result
-	  (mapcar #'car
-		  (database-query
-		   (format nil "SELECT attname FROM pg_class,pg_attribute WHERE pg_class.oid=attrelid AND relname='~A'~A"
-                           (string-downcase table)
-                           owner-clause)
-                   database nil nil))))
-    (if result
-        (remove-if #'(lambda (it) (member it '("cmin"
-                                               "cmax"
-                                               "xmax"
-                                               "xmin"
-                                               "oid"
-                                               "ctid"
-                                               ;; kmr -- added tableoid
-                                               "tableoid") :test #'equal)) 
-                   result))))
-
-(defmethod database-attribute-type (attribute (table string)
-				    (database postgresql-socket-database)
-                                    &key (owner nil))
-  (let ((row (car (database-query
-		   (format nil "SELECT pg_type.typname,pg_attribute.attlen,pg_attribute.atttypmod,pg_attribute.attnotnull FROM pg_type,pg_class,pg_attribute WHERE pg_class.oid=pg_attribute.attrelid AND pg_class.relname='~A' AND pg_attribute.attname='~A' AND pg_attribute.atttypid=pg_type.oid~A"
-			   (string-downcase table)
-			   (string-downcase attribute)
-			   (owner-clause owner))
-		   database nil nil))))
-    (when row
-      (values
-       (ensure-keyword (first row))
-       (if (string= "-1" (second row))
-	   (- (parse-integer (third row) :junk-allowed t) 4)
-	 (parse-integer (second row)))
-       nil
-       (if (string-equal "f" (fourth row))
-	   1
-	 0)))))
-
-(defmethod database-create-sequence (sequence-name
-				     (database postgresql-socket-database))
-  (database-execute-command
-   (concatenate 'string "CREATE SEQUENCE " (sql-escape sequence-name))
-   database))
-
-(defmethod database-drop-sequence (sequence-name
-				   (database postgresql-socket-database))
-  (database-execute-command
-   (concatenate 'string "DROP SEQUENCE " (sql-escape sequence-name)) database))
-
-(defmethod database-list-sequences ((database postgresql-socket-database)
-                                    &key (owner nil))
-  (database-list-objects-of-type database "S" owner))
-
-(defmethod database-set-sequence-position (name (position integer)
-                                          (database postgresql-socket-database))
-  (values
-   (parse-integer
-    (caar
-     (database-query
-      (format nil "SELECT SETVAL ('~A', ~A)" name position)
-      database nil nil)))))
-
-(defmethod database-sequence-next (sequence-name 
-				   (database postgresql-socket-database))
-  (values
-   (parse-integer
-    (caar
-     (database-query
-      (concatenate 'string "SELECT NEXTVAL ('" (sql-escape sequence-name) "')")
-      database nil nil)))))
-
-(defmethod database-sequence-last (sequence-name (database postgresql-socket-database))
-  (values
-   (parse-integer
-    (caar
-     (database-query
-      (concatenate 'string "SELECT LAST_VALUE ('" sequence-name "')")
-      database nil nil)))))
-  
-
 (defmethod database-create (connection-spec (type (eql :postgresql-socket)))
   (destructuring-bind (host name user password) connection-spec
     (let ((database (database-connect (list host "template1" user password)
@@ -487,32 +345,6 @@ doesn't depend on UFFI."
 	      :key #'car :test #'string-equal)
     t))
 
-(defmethod database-list (connection-spec (type (eql :postgresql-socket)))
-  (destructuring-bind (host name user password) connection-spec
-    (declare (ignore name))
-    (let ((database (database-connect (list host "template1" user password)
-				      type)))
-      (unwind-protect
-	   (progn
-	     (setf (slot-value database 'clsql-sys::state) :open)
-	     (mapcar #'car (database-query "select datname from pg_database" 
-					   database :auto nil)))
-	(progn
-	  (database-disconnect database)
-	  (setf (slot-value database 'clsql-sys::state) :closed))))))
-
-(defmethod database-describe-table ((database postgresql-socket-database) 
-				    table)
-  (database-query
-   (format nil "select a.attname, t.typname
-                               from pg_class c, pg_attribute a, pg_type t
-                               where c.relname = '~a'
-                                   and a.attnum > 0
-                                   and a.attrelid = c.oid
-                                   and a.atttypid = t.oid"
-           (sql-escape (string-downcase table)))
-   database :auto nil))
-
 
 ;; Database capabilities
 
@@ -524,6 +356,9 @@ doesn't depend on UFFI."
 
 (defmethod db-type-default-case ((db-type (eql :postgresql-socket)))
   :lower)
+
+(defmethod db-underlying-type ((database postgresql-socket-database))
+  :postgresql)
 
 (when (clsql-sys:database-type-library-loaded :postgresql-socket)
   (clsql-sys:initialize-database-type :database-type :postgresql-socket))

@@ -768,7 +768,8 @@ uninclusive, and the args from that keyword to the end."
                (write-char #\Space *sql-stream*)
                (write-string
                 (if (stringp db-type) db-type ; override definition
-                    (database-get-type-specifier (car type) (cdr type) database))
+		  (database-get-type-specifier (car type) (cdr type) database
+					       (database-underlying-type database)))
                 *sql-stream*)
                (let ((constraints (database-constraint-statement  
                                    (if (and db-type (symbolp db-type))

@@ -25,7 +25,7 @@
 
 ;; ODBC interface
 
-(defclass odbc-database (database)
+(defclass odbc-database (generic-odbc-database)
   ((odbc-conn :accessor database-odbc-conn :initarg :odbc-conn)
    (odbc-db-type :accessor database-odbc-db-type)))
 

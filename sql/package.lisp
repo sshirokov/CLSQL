@@ -114,7 +114,6 @@
      #:database-query-result-set
      #:database-dump-result-set
      #:database-store-next-row
-     #:database-get-type-specifier
      #:database-list-tables
      #:database-table-exists-p
      #:database-list-views
@@ -145,6 +144,9 @@
      #:db-type-default-case
      #:db-type-use-column-on-drop-index? 
      #:database-underlying-type
+     #:database-get-type-specifier
+     #:read-sql-value
+     #:database-output-sql-as-type
 
      ;; Large objects 
      #:database-create-large-object
@@ -169,8 +171,7 @@
      #:database-type
      #:database-state
      #:attribute-cache
-     
-
+   
      ;; utils.lisp
      #:without-interrupts
      #:make-process-lock
@@ -195,6 +196,10 @@
      #:float-to-sql-string
      #:sql-escape-quotes
      #:in
+
+     ;; Generic backends
+     #:generic-postgresql-database
+     #:generic-odbc-database
      
      .
      ;; Shared exports for re-export by CLSQL package. 
@@ -295,10 +300,6 @@
 	 #:bigint
 	 ;;OODML
 	 #:*db-auto-sync*                    ; objects    xx              
-	 #:read-sql-value                    ; objects    x
-	 #:database-output-sql-as-type       ; objects    x
-	 #:database-get-type-specifier       ; objects    x
-	 #:database-output-sql               ; sql/class  xx
 	 
 	 ;; conditions
 	 #:clsql-condition

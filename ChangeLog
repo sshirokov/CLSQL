@@ -1,5 +1,8 @@
 22 May 2004 Kevin Rosenberg
 	* Version 2.10.21 released
+	* sql/*.lisp: Add db-type parameter to generic functions READ-SQL-VALUE,
+	DATABASE-GET-TYPE-SPECIFIER, and OUTPUT-SQL-VALUE-AS-TYPE. Update methods to use these.
+	* sql/generic-postgresql.lisp, sql/generic-odbc.lisp: New files
 	* sql/classes.lisp: honor case of string tables when outputting queries 
 	* sql/objects.lisp: Add database type to default database-get-type-specifier method
 	* sql/sql.lisp:  Add database type to default database-abort-transaction method

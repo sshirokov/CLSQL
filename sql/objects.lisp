@@ -291,8 +291,10 @@ strings."
     (cond ((and value (null slot-reader))
            (setf (slot-value instance slot-name)
                  (read-sql-value value (delistify slot-type)
-                                 (view-database instance))))
-          ((null value)
+                                 (view-database instance)
+				 (database-underlying-type
+				  (view-database instance)))))
+	  ((null value)
            (update-slot-with-null instance slot-name slotdef))
           ((typep slot-reader 'string)
            (setf (slot-value instance slot-name)
@@ -308,7 +310,8 @@ strings."
   (let ((slot-reader (view-class-slot-db-reader slotdef))
         (slot-type (specified-type slotdef)))
     (cond ((and value (null slot-reader))
-           (read-sql-value value (delistify slot-type) database))
+           (read-sql-value value (delistify slot-type) database
+			   (database-underlying-type database)))
           ((null value)
            nil)
           ((typep slot-reader 'string)
@@ -325,11 +328,11 @@ strings."
       (string (format nil dbwriter val))
       (function (apply dbwriter (list val)))
       (t
-       (typecase dbtype
-	 (cons
-	  (database-output-sql-as-type (car dbtype) val database))
-	 (t
-	  (database-output-sql-as-type dbtype val database)))))))
+       (database-output-sql-as-type
+	(typecase dbtype
+	  (cons (car dbtype))
+	  (t dbtype))
+	val database (database-underlying-type database))))))
 
 (defun check-slot-type (slotdef val)
   (let* ((slot-type (specified-type slotdef))
@@ -499,16 +502,12 @@ strings."
 	    (error "No view-table for class ~A"  classname))
 	  (sql-expression :table (view-table class))))
 
-(defmethod database-get-type-specifier (type args (database database))
-  (declare (ignore type args))
-  (if (in (database-underlying-type database)
-			  :postgresql :postgresql-socket)
-          "VARCHAR"
-          "VARCHAR(255)"))
+(defmethod database-get-type-specifier (type args database db-type)
+  (declare (ignore type args database db-type))
+  "VARCHAR(255)")
 
-(defmethod database-get-type-specifier ((type (eql 'integer)) args database)
-  (declare (ignore database))
-  ;;"INT8")
+(defmethod database-get-type-specifier ((type (eql 'integer)) args database db-type)
+  (declare (ignore database db-type))
   (if args
       (format nil "INT(~A)" (car args))
       "INT"))
@@ -517,98 +516,89 @@ strings."
   "An integer larger than a 32-bit integer, this width may vary by SQL implementation."
   'integer)
 
-(defmethod database-get-type-specifier ((type (eql 'bigint)) args database)
-  (declare (ignore args database))
+(defmethod database-get-type-specifier ((type (eql 'bigint)) args database db-type)
+  (declare (ignore args database db-type))
   "BIGINT")
               
 (defmethod database-get-type-specifier ((type (eql 'simple-base-string)) args
-                                        database)
+                                        database db-type)
+  (declare (ignore database db-type))
   (if args
       (format nil "VARCHAR(~A)" (car args))
-    (if (in (database-underlying-type database) 
-			    :postgresql :postgresql-socket)
-	"VARCHAR"
-      "VARCHAR(255)")))
+      "VARCHAR(255)"))
 
 (defmethod database-get-type-specifier ((type (eql 'simple-string)) args
-                                        database)
+                                        database db-type)
+  (declare (ignore database db-type))
   (if args
       (format nil "VARCHAR(~A)" (car args))
-    (if (in (database-underlying-type database) 
-			    :postgresql :postgresql-socket)
-	"VARCHAR"
-      "VARCHAR(255)")))
+      "VARCHAR(255)"))
 
-(defmethod database-get-type-specifier ((type (eql 'string)) args database)
+(defmethod database-get-type-specifier ((type (eql 'string)) args database db-type)
+  (declare (ignore database db-type))
   (if args
       (format nil "VARCHAR(~A)" (car args))
-    (if (in (database-underlying-type database) 
-			    :postgresql :postgresql-socket)
-	"VARCHAR"
-      "VARCHAR(255)")))
+      "VARCHAR(255)"))
 
 (deftype universal-time () 
   "A positive integer as returned by GET-UNIVERSAL-TIME."
   '(integer 1 *))
 
-(defmethod database-get-type-specifier ((type (eql 'universal-time)) args database)
-  (declare (ignore args database))
+(defmethod database-get-type-specifier ((type (eql 'universal-time)) args database db-type)
+  (declare (ignore args database db-type))
   "BIGINT")
 
-(defmethod database-get-type-specifier ((type (eql 'wall-time)) args database)
-  (declare (ignore args))
-  (case (database-underlying-type database)
-    ((:postgresql :postgresql-socket)
-     "TIMESTAMP WITHOUT TIME ZONE")
-    (t "TIMESTAMP")))
+(defmethod database-get-type-specifier ((type (eql 'wall-time)) args database db-type)
+  (declare (ignore args database db-type))
+  "TIMESTAMP")
 
-(defmethod database-get-type-specifier ((type (eql 'duration)) args database)
-  (declare (ignore database args))
+(defmethod database-get-type-specifier ((type (eql 'duration)) args database db-type)
+  (declare (ignore database args db-type))
   "VARCHAR")
 
-(defmethod database-get-type-specifier ((type (eql 'money)) args database)
-  (declare (ignore database args))
+(defmethod database-get-type-specifier ((type (eql 'money)) args database db-type)
+  (declare (ignore database args db-type))
   "INT8")
 
 (deftype raw-string (&optional len)
   "A string which is not trimmed when retrieved from the database"
   `(string ,len))
 
-(defmethod database-get-type-specifier ((type (eql 'raw-string)) args database)
-  (declare (ignore database))
+(defmethod database-get-type-specifier ((type (eql 'raw-string)) args database db-type)
+  (declare (ignore database db-type))
   (if args
       (format nil "VARCHAR(~A)" (car args))
       "VARCHAR"))
 
-(defmethod database-get-type-specifier ((type (eql 'float)) args database)
-  (declare (ignore database))
+(defmethod database-get-type-specifier ((type (eql 'float)) args database db-type)
+  (declare (ignore database db-type))
   (if args
       (format nil "FLOAT(~A)" (car args))
       "FLOAT"))
 
-(defmethod database-get-type-specifier ((type (eql 'long-float)) args database)
-  (declare (ignore database))
+(defmethod database-get-type-specifier ((type (eql 'long-float)) args database db-type)
+  (declare (ignore database db-type))
   (if args
       (format nil "FLOAT(~A)" (car args))
       "FLOAT"))
 
-(defmethod database-get-type-specifier ((type (eql 'boolean)) args database)
-  (declare (ignore args database))
+(defmethod database-get-type-specifier ((type (eql 'boolean)) args database db-type)
+  (declare (ignore args database db-type))
   "BOOL")
 
-(defmethod database-output-sql-as-type (type val database)
-  (declare (ignore type database))
+(defmethod database-output-sql-as-type (type val database db-type)
+  (declare (ignore type database db-type))
   val)
 
-(defmethod database-output-sql-as-type ((type (eql 'list)) val database)
-  (declare (ignore database))
+(defmethod database-output-sql-as-type ((type (eql 'list)) val database db-type)
+  (declare (ignore database db-type))
   (progv '(*print-circle* *print-array*) '(t t)
     (let ((escaped (prin1-to-string val)))
       (substitute-char-string
        escaped #\Null " "))))
 
-(defmethod database-output-sql-as-type ((type (eql 'symbol)) val database)
-  (declare (ignore database))
+(defmethod database-output-sql-as-type ((type (eql 'symbol)) val database db-type)
+  (declare (ignore database db-type))
   (if (keywordp val)
       (symbol-name val)
       (if val
@@ -618,91 +608,91 @@ strings."
                        (symbol-name val))
           "")))
 
-(defmethod database-output-sql-as-type ((type (eql 'keyword)) val database)
-  (declare (ignore database))
+(defmethod database-output-sql-as-type ((type (eql 'keyword)) val database db-type)
+  (declare (ignore database db-type))
   (if val
       (symbol-name val)
       ""))
 
-(defmethod database-output-sql-as-type ((type (eql 'vector)) val database)
-  (declare (ignore database))
+(defmethod database-output-sql-as-type ((type (eql 'vector)) val database db-type)
+  (declare (ignore database db-type))
   (progv '(*print-circle* *print-array*) '(t t)
     (prin1-to-string val)))
 
-(defmethod database-output-sql-as-type ((type (eql 'array)) val database)
-  (declare (ignore database))
+(defmethod database-output-sql-as-type ((type (eql 'array)) val database db-type)
+  (declare (ignore database db-type))
   (progv '(*print-circle* *print-array*) '(t t)
     (prin1-to-string val)))
 
-(defmethod database-output-sql-as-type ((type (eql 'boolean)) val database)
-  (declare (ignore database))
+(defmethod database-output-sql-as-type ((type (eql 'boolean)) val database db-type)
+  (declare (ignore database db-type))
   (if val "t" "f"))
 
-(defmethod database-output-sql-as-type ((type (eql 'string)) val database)
-  (declare (ignore database))
+(defmethod database-output-sql-as-type ((type (eql 'string)) val database db-type)
+  (declare (ignore database db-type))
   val)
 
 (defmethod database-output-sql-as-type ((type (eql 'simple-string))
-					val database)
-  (declare (ignore database))
+					val database db-type)
+  (declare (ignore database db-type))
   val)
 
 (defmethod database-output-sql-as-type ((type (eql 'simple-base-string))
-					val database)
-  (declare (ignore database))
+					val database db-type)
+  (declare (ignore database db-type))
   val)
 
-(defmethod read-sql-value (val type database)
-  (declare (ignore type database))
+(defmethod read-sql-value (val type database db-type)
+  (declare (ignore type database db-type))
   (read-from-string val))
 
-(defmethod read-sql-value (val (type (eql 'string)) database)
-  (declare (ignore database))
+(defmethod read-sql-value (val (type (eql 'string)) database db-type)
+  (declare (ignore database db-type))
   val)
 
-(defmethod read-sql-value (val (type (eql 'simple-string)) database)
-  (declare (ignore database))
+(defmethod read-sql-value (val (type (eql 'simple-string)) database db-type)
+  (declare (ignore database db-type))
   val)
 
-(defmethod read-sql-value (val (type (eql 'simple-base-string)) database)
-  (declare (ignore database))
+(defmethod read-sql-value (val (type (eql 'simple-base-string)) database db-type)
+  (declare (ignore database db-type))
   val)
 
-(defmethod read-sql-value (val (type (eql 'raw-string)) database)
-  (declare (ignore database))
+(defmethod read-sql-value (val (type (eql 'raw-string)) database db-type)
+  (declare (ignore database db-type))
   val)
 
-(defmethod read-sql-value (val (type (eql 'keyword)) database)
-  (declare (ignore database))
+(defmethod read-sql-value (val (type (eql 'keyword)) database db-type)
+  (declare (ignore database db-type))
   (when (< 0 (length val))
     (intern (symbol-name-default-case val) 
 	    (find-package '#:keyword))))
 
-(defmethod read-sql-value (val (type (eql 'symbol)) database)
-  (declare (ignore database))
+(defmethod read-sql-value (val (type (eql 'symbol)) database db-type)
+  (declare (ignore database db-type))
   (when (< 0 (length val))
     (unless (string= val (symbol-name-default-case "NIL"))
       (intern (symbol-name-default-case val)
               (symbol-package *update-context*)))))
 
-(defmethod read-sql-value (val (type (eql 'integer)) database)
-  (declare (ignore database))
+(defmethod read-sql-value (val (type (eql 'integer)) database db-type)
+  (declare (ignore database db-type))
   (etypecase val
     (string
      (unless (string-equal "NIL" val)
        (parse-integer val)))
     (number val)))
 
-(defmethod read-sql-value (val (type (eql 'bigint)) database)
-  (declare (ignore database))
+(defmethod read-sql-value (val (type (eql 'bigint)) database db-type)
+  (declare (ignore database db-type))
   (etypecase val
     (string
      (unless (string-equal "NIL" val)
        (parse-integer val)))
     (number val)))
 
-(defmethod read-sql-value (val (type (eql 'float)) database)
-  (declare (ignore database))
+(defmethod read-sql-value (val (type (eql 'float)) database db-type)
+  (declare (ignore database db-type))
   ;; writing 1.0 writes 1, so we we *really* want a float, must do (float ...)
   (etypecase val
     (string
@@ -710,30 +700,25 @@ strings."
     (float
      val)))
 
-(defmethod read-sql-value (val (type (eql 'boolean)) database)
-  (case (database-underlying-type database)
-    (:postgresql
-     (if (eq :odbc (database-type database))
-	 (if (string= "0" val) nil t)
-       (equal "t" val)))
-    (t
-     (equal "t" val))))
+(defmethod read-sql-value (val (type (eql 'boolean)) database db-type)
+  (declare (ignore database db-type))
+  (equal "t" val))
 
-(defmethod read-sql-value (val (type (eql 'univeral-time)) database)
-  (declare (ignore database))
+(defmethod read-sql-value (val (type (eql 'univeral-time)) database db-type)
+  (declare (ignore database db-type))
   (unless (eq 'NULL val)
     (etypecase val
       (string
        (parse-integer val))
       (number val))))
 
-(defmethod read-sql-value (val (type (eql 'wall-time)) database)
-  (declare (ignore database))
+(defmethod read-sql-value (val (type (eql 'wall-time)) database db-type)
+  (declare (ignore database db-type))
   (unless (eq 'NULL val)
     (parse-timestring val)))
 
-(defmethod read-sql-value (val (type (eql 'duration)) database)
-  (declare (ignore database))
+(defmethod read-sql-value (val (type (eql 'duration)) database db-type)
+  (declare (ignore database db-type))
   (unless (or (eq 'NULL val)
               (equal "NIL" val))
     (parse-timestring val)))

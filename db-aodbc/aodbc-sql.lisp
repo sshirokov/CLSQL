@@ -33,7 +33,7 @@
 
 ;; AODBC interface
 
-(defclass aodbc-database (database)
+(defclass aodbc-database (generic-odbc-database)
   ((aodbc-conn :accessor database-aodbc-conn :initarg :aodbc-conn)
    (aodbc-db-type :accessor database-aodbc-db-type :initform :unknown)))
 

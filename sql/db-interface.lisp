@@ -172,11 +172,11 @@ if unable to destory."))
   (:method ((database t))
 	   (signal-no-database-error database)))
 
-(defgeneric database-get-type-specifier (type args database)
+(defgeneric database-get-type-specifier (type args database db-underlying-type)
   (:documentation "Return the type SQL type specifier as a string, for
 the given lisp type and parameters.")
-  (:method (type args (database t))
-	   (declare (ignore type args))
+  (:method (type args database db-underlying-type)
+	   (declare (ignore type args db-type))
 	   (signal-no-database-error database)))
 
 (defgeneric database-list-tables (database &key owner)
