@@ -436,22 +436,30 @@ uninclusive, and the args from that keyword to the end."
         select-args)))
 
 (defun make-query (&rest args)
-  (multiple-value-bind (selections arglist)
-      (query-get-selections args)
-    (destructuring-bind (&key all flatp set-operation distinct from where
-                              group-by having order-by order-by-descending
-                              offset limit &allow-other-keys)
-        arglist
-      (if (null selections)
-          (error "No target columns supplied to select statement."))
-      (if (null from)
-          (error "No source tables supplied to select statement."))
-      (make-instance 'sql-query :selections selections
-                     :all all :flatp flatp :set-operation set-operation
-                     :distinct distinct :from from :where where
-                     :limit limit :offset offset
-                     :group-by group-by :having having :order-by order-by
-                     :order-by-descending order-by-descending))))
+  (flet ((select-objects (target-args)
+           (and target-args
+                (every #'(lambda (arg)
+                           (and (symbolp arg)
+                                (find-class arg nil)))
+                       target-args))))
+    (multiple-value-bind (selections arglist)
+	(query-get-selections args)
+      (if (select-objects selections) 
+	  (apply #'select args)
+	  (destructuring-bind (&key all flatp set-operation distinct from where
+				    group-by having order-by order-by-descending
+				    offset limit &allow-other-keys)
+	      arglist
+	    (if (null selections)
+		(error "No target columns supplied to select statement."))
+	    (if (null from)
+		(error "No source tables supplied to select statement."))
+	    (make-instance 'sql-query :selections selections
+			   :all all :flatp flatp :set-operation set-operation
+			   :distinct distinct :from from :where where
+			   :limit limit :offset offset
+			   :group-by group-by :having having :order-by order-by
+			   :order-by-descending order-by-descending))))))
 
 (defvar *in-subselect* nil)
 

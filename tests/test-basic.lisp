@@ -45,9 +45,7 @@
 	    (destructuring-bind (int float bigint str) row
 	      (push (list (integerp int)
 			  (typep float 'double-float)
-			  (if (member *test-database-type* '(:odbc :aodbc))  
-			      t
-			    (integerp bigint))
+			  (integerp bigint)
 			  (stringp str))
 		    results))))
       ((t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t)))

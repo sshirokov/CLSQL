@@ -79,6 +79,7 @@
 			       impl-version
 			       machine-type)
 	      form
+	    (declare (ignoreable utime impl-version))
 	    (if failed-tests
 		(format output "~&~A: ~D of ~D tests failed (~A, ~A).~&"
 			(db-title db-type underlying-db-type)

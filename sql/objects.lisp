@@ -825,7 +825,7 @@ superclass of the newly-defined View Class."
 
 (defmethod instance-refreshed ((instance standard-db-object)))
 
-(defun select (&rest select-all-args)
+(defmethod select (&rest select-all-args)
   "Selects data from database given the constraints specified. Returns
 a list of lists of record values as specified by select-all-args. By
 default, the records are each represented as lists of attribute
@@ -846,9 +846,10 @@ tuples."
           (let ((expr (apply #'make-query select-all-args)))
             (destructuring-bind (&key (flatp nil)
 				      (result-types :auto)
+				      (field-names t) 
 				      (database *default-database*)
                                       &allow-other-keys)
                 qualifier-args
 	      (query expr :flatp flatp :result-types result-types 
-		     :database database)))))))
+		     :field-names field-names :database database)))))))
 

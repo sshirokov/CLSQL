@@ -235,16 +235,35 @@
   "lenin@soviet.org" "lenin-nospam@soviet.org" "lenin@soviet.org")
 
 
-;(deftest :oodml/iteration/1
-;    (clsql:do-query ((e) [select 'clsql-tests::employee :where [married]
-;                                :order-by [emplid]])
-;      (slot-value e last-name))
-;  ("Lenin" "Stalin" "Trotsky"))
+(deftest :oodml/do-query/1
+     (let ((result '()))
+       (clsql:do-query ((e) [select 'employee :order-by [emplid]])
+         (push (slot-value e 'last-name) result))
+       result)
+   ("Putin" "Yeltsin" "Gorbachev" "Chernenko" "Andropov" "Brezhnev" "Kruschev"
+ "Trotsky" "Stalin" "Lenin"))
 
-;(deftest :oodml/iteration/2
-;    (clsql:map-query 'list #'last-name [select 'employee :where [married]
-;                                              :order-by [emplid]])
-;  ("Lenin" "Stalin" "Trotsky"))
+(deftest :oodml/do-query/2
+     (let ((result '()))
+       (clsql:do-query ((e c) [select 'employee 'company 
+			          :where [= [slot-value 'employee 'last-name] 
+			          "Lenin"]])
+         (push (list (slot-value e 'last-name) (slot-value c 'name))
+	       result))
+       result)
+ (("Lenin" "Widgets Inc.")))
+
+(deftest :oodml/map-query/1
+     (clsql:map-query 'list #'last-name [select 'employee :order-by [emplid]])
+ ("Lenin" "Stalin" "Trotsky" "Kruschev" "Brezhnev" "Andropov" "Chernenko"
+  "Gorbachev" "Yeltsin" "Putin"))
+
+(deftest :oodml/map-query/2 
+     (clsql:map-query 'list #'(lambda (e c) (list (slot-value e 'last-name)
+						  (slot-value c 'name)))
+      [select 'employee 'company :where [= [slot-value 'employee 'last-name] 
+                                           "Lenin"]])
+ (("Lenin" "Widgets Inc.")))
 
 ;(deftest :oodml/iteration/3
 ;    (loop for (e) being the tuples in 

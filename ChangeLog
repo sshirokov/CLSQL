@@ -1,3 +1,20 @@
+2 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
+	* sql/generics.lisp: add generic function for SELECT. 
+	* sql/objects.lisp: make SELECT a method specialisation. 
+	* sql/classes.lisp: MAKE-QUERY now calls SELECT if the selections 
+	referred to are View Classes. 
+	* base/basic-sql.lisp: in DO-QUERY and MAP-QUERY, if the 
+	query-expression arg evaluates to a list, then we have an object 
+	query. 
+	* tests/test-oodml.lisp: add tests for DO-QUERY and MAP-QUERY with 
+	object queries. 
+	* TODO: remove items done and add a todo for SELECT. 
+	* sql/objects.lisp: SELECT takes a :field-names arg to pass on to 
+	QUERY. 
+	* sql/sql.lisp: add :field-names arg to QUERY. 
+	* tests/test-fdml.lisp: minor rework to use :field-names arg to 
+	SELECT. 
+
 2 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk)
 	* sql/objects.lisp: fix bug in FIND-ALL when SELECT called with 2 
 	or more View Classes. 

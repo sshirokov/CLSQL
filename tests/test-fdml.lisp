@@ -189,83 +189,90 @@
  t)
 
 (deftest :fdml/select/2
-    (values (clsql:select [first-name] :from [employee] :flatp t :distinct t
-			  :result-types nil 
-			  :order-by [first-name]))
+ (clsql:select [first-name] :from [employee] :flatp t :distinct t
+                            :field-names nil 
+                            :result-types nil 
+                            :order-by [first-name])
  ("Boris" "Josef" "Konstantin" "Leon" "Leonid" "Mikhail" "Nikita" "Vladamir"
   "Yuri"))
 
 (deftest :fdml/select/3
-    (values (clsql:select [first-name] [count [*]] :from [employee]
+    (clsql:select [first-name] [count [*]] :from [employee]
 			  :result-types nil 
 			  :group-by [first-name]
-			  :order-by [first-name]))
+			  :order-by [first-name]
+			  :field-names nil)
  (("Boris" "1") ("Josef" "1") ("Konstantin" "1") ("Leon" "1") ("Leonid" "1")
   ("Mikhail" "1") ("Nikita" "1") ("Vladamir" "2") ("Yuri" "1")))
 
 (deftest :fdml/select/4
-    (values (clsql:select [last-name] :from [employee] 
+    (clsql:select [last-name] :from [employee] 
 			  :where [like [email] "%org"]
 			  :order-by [last-name]
+			  :field-names nil 
 			  :result-types nil 
-			  :flatp t))
+			  :flatp t)
  ("Andropov" "Brezhnev" "Chernenko" "Gorbachev" "Kruschev" "Lenin" "Putin"
   "Stalin" "Trotsky" "Yeltsin"))
 
 (deftest :fdml/select/5
-    (values (clsql:select [email] :from [employee] :flatp t :result-types nil 
+    (clsql:select [email] :from [employee] :flatp t :result-types nil 
 			  :where [in [employee emplid]
-			  [select [managerid] :from [employee]]]))
- ("lenin@soviet.org"))
+			  [select [managerid] :from [employee]]]
+			  :field-names nil)
+  ("lenin@soviet.org"))
 
 (deftest :fdml/select/6
     (if (db-type-has-fancy-math? *test-database-underlying-type*)
         (mapcar #'(lambda (s) (parse-integer s :junk-allowed t))
 		(clsql:select [function "trunc" [height]] :from [employee]
 			      :result-types nil 
+			      :field-names nil
 			      :flatp t))
 	(mapcar #'(lambda (s) (truncate (parse-integer s :junk-allowed t)))
 		(clsql:select [height] :from [employee] :flatp t 
-			      :result-types nil)))
+			      :field-names nil :result-types nil)))
  (1 1 1 1 1 1 1 1 1 1))
 
 (deftest :fdml/select/7
-    (values 
-     (clsql:select [max [emplid]] :from [employee] :flatp t :result-types nil))
- ("10"))
+    (clsql:select [max [emplid]] :from [employee] :flatp t 
+		  :field-names nil :result-types nil)
+  ("10"))
 
 (deftest :fdml/select/8
-    (values 
-     (clsql:select [min [emplid]] :from [employee] :flatp t :result-types nil))
- ("1"))
+    (clsql:select [min [emplid]] :from [employee] :flatp t 
+		  :field-names nil :result-types nil)
+  ("1"))
 
 (deftest :fdml/select/9
     (subseq 
      (car 
-      (clsql:select [avg [emplid]] :from [employee] :flatp t :result-types nil)) 
+      (clsql:select [avg [emplid]] :from [employee] :flatp t 
+		    :field-names nil :result-types nil)) 
      0 3)
- "5.5")
+  "5.5")
 
 (deftest :fdml/select/10
-    (values (clsql:select [last-name] :from [employee]
-			  :where [not [in [emplid]
-			  [select [managerid] :from [company]]]]
-			  :result-types nil 
-			  :flatp t
-			  :order-by [last-name]))
+    (clsql:select [last-name] :from [employee]
+		  :where [not [in [emplid]
+		  [select [managerid] :from [company]]]]
+		  :result-types nil 
+		  :field-names nil 
+		  :flatp t
+		  :order-by [last-name])
  ("Andropov" "Brezhnev" "Chernenko" "Gorbachev" "Kruschev" "Putin" "Stalin"
   "Trotsky" "Yeltsin"))
 
 (deftest :fdml/select/11
-    (values (clsql:select [last-name] :from [employee] :where [married] :flatp t
-			  :order-by [emplid] :result-types nil))
- ("Lenin" "Stalin" "Trotsky"))
+    (clsql:select [last-name] :from [employee] :where [married] :flatp t
+		  :field-names nil :order-by [emplid] :result-types nil)
+  ("Lenin" "Stalin" "Trotsky"))
 
 (deftest :fdml/select/12
     (let ((v 1))
-      (values (clsql:select [last-name] :from [employee] :where [= [emplid] v]
-			    :result-types nil)))
- (("Lenin")))
+      (clsql:select [last-name] :from [employee] :where [= [emplid] v]
+		    :field-names nil :result-types nil))
+  (("Lenin")))
 
 (deftest :fdml/select/13
      (multiple-value-bind (results field-names) 
@@ -278,7 +285,7 @@
 (deftest :fdml/select/14
      (floatp (car (clsql:select [height] :from [employee] :where [= [emplid] 1] 
 				:flatp t)))
- t)
+  t)
 
 ;(deftest :fdml/select/11
 ;    (clsql:select [emplid] :from [employee]

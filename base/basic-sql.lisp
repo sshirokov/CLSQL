@@ -63,47 +63,64 @@ pair."))
 (defmacro do-query (((&rest args) query-expression
 		     &key (database '*default-database*) (result-types nil))
 		    &body body)
-  "Repeatedly executes BODY within a binding of ARGS on the attributes
-of each record resulting from QUERY. The return value is determined by
-the result of executing BODY. The default value of DATABASE is
-*DEFAULT-DATABASE*."
+  "Repeatedly executes BODY within a binding of ARGS on the
+attributes of each record resulting from QUERY-EXPRESSION. The
+return value is determined by the result of executing BODY. The
+default value of DATABASE is *DEFAULT-DATABASE*."
   (let ((result-set (gensym))
 	(columns (gensym))
 	(row (gensym))
 	(db (gensym)))
-    `(let ((,db ,database))
-      (multiple-value-bind (,result-set ,columns)
-          (database-query-result-set ,query-expression ,db
-                                     :full-set nil :result-types ,result-types)
-        (when ,result-set
-          (unwind-protect
-               (do ((,row (make-list ,columns)))
-                   ((not (database-store-next-row ,result-set ,db ,row))
-                    nil)
-                 (destructuring-bind ,args ,row
-                   ,@body))
-            (database-dump-result-set ,result-set ,db)))))))
+    `(if (listp ,query-expression)
+	 ;; Object query 
+         (dolist (,row ,query-expression)
+           (destructuring-bind ,args 
+               ,row
+             ,@body))
+	 ;; Functional query 
+	 (let ((,db ,database))
+	   (multiple-value-bind (,result-set ,columns)
+	       (database-query-result-set ,query-expression ,db
+					  :full-set nil 
+					  :result-types ,result-types)
+	     (when ,result-set
+	       (unwind-protect
+		    (do ((,row (make-list ,columns)))
+			((not (database-store-next-row ,result-set ,db ,row))
+			 nil)
+		      (destructuring-bind ,args ,row
+			,@body))
+		 (database-dump-result-set ,result-set ,db))))))))
 
 (defun map-query (output-type-spec function query-expression
 		  &key (database *default-database*)
 		  (result-types nil))
-  "Map the function over all tuples that are returned by the query in
-query-expression.  The results of the function are collected as
-specified in output-type-spec and returned like in MAP."
-  (macrolet ((type-specifier-atom (type)
-	       `(if (atom ,type) ,type (car ,type))))
-    (case (type-specifier-atom output-type-spec)
-      ((nil) 
-       (map-query-for-effect function query-expression database result-types))
-      (list 
-       (map-query-to-list function query-expression database result-types))
-      ((simple-vector simple-string vector string array simple-array
-	bit-vector simple-bit-vector base-string
-	simple-base-string)
-       (map-query-to-simple output-type-spec function query-expression database result-types))
-      (t
-       (funcall #'map-query (cmucl-compat:result-type-or-lose output-type-spec t)
-              function query-expression :database database :result-types result-types)))))
+  "Map the function over all tuples that are returned by the
+query in QUERY-EXPRESSION. The results of the function are
+collected as specified in OUTPUT-TYPE-SPEC and returned like in
+MAP."
+  (if (listp query-expression)
+      ;; Object query 
+      (map output-type-spec #'(lambda (x) (apply function x)) query-expression)
+      ;; Functional query 
+      (macrolet ((type-specifier-atom (type)
+		   `(if (atom ,type) ,type (car ,type))))
+	(case (type-specifier-atom output-type-spec)
+	  ((nil) 
+	   (map-query-for-effect function query-expression database 
+				 result-types))
+	  (list 
+	   (map-query-to-list function query-expression database result-types))
+	  ((simple-vector simple-string vector string array simple-array
+			  bit-vector simple-bit-vector base-string
+			  simple-base-string)
+	   (map-query-to-simple output-type-spec function query-expression 
+				database result-types))
+	  (t
+	   (funcall #'map-query 
+		    (cmucl-compat:result-type-or-lose output-type-spec t)
+		    function query-expression :database database 
+		    :result-types result-types))))))
 
 (defun map-query-for-effect (function query-expression database result-types)
   (multiple-value-bind (result-set columns)

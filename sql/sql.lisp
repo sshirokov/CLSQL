@@ -29,9 +29,9 @@
 
 
 (defmethod query ((expr %sql-expression) &key (database *default-database*)
-                  (result-types nil) (flatp nil))
+                  (result-types nil) (flatp nil) (field-names t))
   (query (sql-output expr database) :database database :flatp flatp
-         :result-types result-types))
+         :result-types result-types :field-names field-names))
 
 (defun truncate-database (&key (database *default-database*))
   (unless (typep database 'database)
