@@ -38,6 +38,7 @@
 	  #+clsql-sbcl-mop #:sb-mop
 	  #+clsql-cmucl-mop #:mop
 	  #+allegro #:mop
+	  #+clisp #:clos
 	  #+lispworks #:clos
 	  #+scl #:clos
 	  #+openmcl #:openmcl-mop)
@@ -45,6 +46,9 @@
     #+allegro
     (:shadowing-import-from 
      #:excl)
+    #+clisp
+    (:shadowing-import-from 
+     #:clos)
     #+lispworks
     (:shadowing-import-from 
      #:clos)

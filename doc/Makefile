@@ -21,11 +21,13 @@ DOCFILE_EXT_DEFAULT:=xml
 
 # Standard docfile processing
 
-DEBIAN=$(shell expr "`cat /etc/issue`" : '.*Debian.*')
-SUSE=$(shell expr "`cat /etc/issue`" : '.*SuSE.*')
-SUSE91=$(shell expr "`cat /etc/issue`" : '.*SuSE Linux 9.1.*')
-REDHAT=$(shell expr "`cat /etc/issue`" : '.*Red Hat.*')
-MANDRAKE=$(shell expr "`cat /etc/issue`" : '.*Mandrake.*')
+DEBIAN=$(shell expr "`cat /etc/issue 2> /dev/null`" : '.*Debian.*')
+SUSE=$(shell expr "`cat /etc/issue 2> /dev/null`" : '.*SuSE.*')
+SUSE91=$(shell expr "`cat /etc/issue 2> /dev/null`" : '.*SuSE Linux 9.1.*')
+REDHAT=$(shell expr "`cat /etc/issue 2> /dev/null`" : '.*Red Hat.*')
+MANDRAKE=$(shell expr "`cat /etc/issue 2> /dev/null`" : '.*Mandrake.*')
+DARWIN=$(shell expr "`uname -a`" : '.*Darwin.*')
+
 
 ifneq (${DEBIAN},0)
 OS:=debian
@@ -41,12 +43,15 @@ else
       else   
         ifneq (${MANDRAKE},0)
           OS=mandrake
+	else   
+          ifneq (${DARWIN},0)
+            OS=darwin
+	  endif 
         endif
       endif
     endif
   endif
 endif
-
 
 ifndef DOCFILE_BASE
 DOCFILE_BASE=${DOCFILE_BASE_DEFAULT}
