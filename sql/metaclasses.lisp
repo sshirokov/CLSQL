@@ -54,92 +54,17 @@
     :initform nil))
   (:documentation "VIEW-CLASS metaclass."))
 
-#+lispworks
-(defmacro push-on-end (value location)
-  `(setf ,location (nconc ,location (list ,value))))
+;;; Lispworks 4.2 and before requires special processing of extra slot and class options
 
-;; As Heiko Kirscke (author of PLOB!) would say:  !@##^@%! Lispworks!
-#+lispworks
 (defconstant +extra-slot-options+ '(:column :db-kind :db-reader :nulls-ok
 				    :db-writer :db-type :db-info))
-
-#+lispworks 
-(define-setf-expander assoc (key alist &environment env)
-  (multiple-value-bind (temps vals stores store-form access-form)
-      (get-setf-expansion alist env)
-    (let ((new-value (gensym "NEW-VALUE-"))
-          (keyed (gensym "KEYED-"))
-          (accessed (gensym "ACCESSED-"))
-          (store-new-value (car stores)))
-      (values (cons keyed temps)
-              (cons key vals)
-              `(,new-value)
-              `(let* ((,accessed ,access-form)
-                      (,store-new-value (assoc ,keyed ,accessed)))
-		(if ,store-new-value
-		    (rplacd ,store-new-value ,new-value)
-		    (progn
-		      (setq ,store-new-value
-                            (acons ,keyed ,new-value ,accessed))
-		      ,store-form))
-		,new-value)
-              `(assoc ,new-value ,access-form)))))
-
-#+lispworks 
-(defmethod clos::canonicalize-defclass-slot :around
-  ((prototype standard-db-class) slot)
- "\\lw\\ signals an error on unknown slot options; so this method
-removes any extra allowed options before calling the default method
-and returns the canonicalized extra options concatenated to the result
-of the default method.  The extra allowed options are the value of the
-\\fcite{+extra-slot-options+}."
-  (let ((extra-slot-options ())
-        (rest-options ())
-        (result ()))
-    (do ((olist (cdr slot) (cddr olist)))
-        ((null olist))
-      (let ((option (car olist)))
-        (cond
-         ((find option +extra-slot-options+)
-          ;;(push (cons option (cadr olist)) extra-slot-options))
-          (setf (assoc option extra-slot-options) (cadr olist)))
-         (t
-          (push (cadr olist) rest-options)
-          (push (car olist) rest-options)))))
-    (setf result (call-next-method prototype (cons (car slot) rest-options)))
-    (dolist (option extra-slot-options)
-      (push-on-end (car option) result)
-      (push-on-end `(quote ,(cdr option)) result))
-    result))
-
-#+lispworks
 (defconstant +extra-class-options+ '(:base-table))
 
-#+lispworks 
-(defmethod clos::canonicalize-class-options :around
-    ((prototype standard-db-class) class-options)
-  "\\lw\\ signals an error on unknown class options; so this method
-removes any extra allowed options before calling the default method
-and returns the canonicalized extra options concatenated to the result
-of the default method.  The extra allowed options are the value of the
-\\fcite{+extra-class-options+}."
-  (let ((extra-class-options nil)
-	(rest-options ())
-	(result ()))
-    (dolist (o class-options)
-      (let ((option (car o)))
-        (cond
-         ((find option +extra-class-options+)
-          ;;(push (cons option (cadr o)) extra-class-options))
-          (setf (assoc option extra-class-options) (cadr o)))
-         (t
-	  (push o rest-options)))))
-    (setf result (call-next-method prototype rest-options))
-    (dolist (option extra-class-options)
-      (push-on-end (car option) result)
-      (push-on-end `(quote ,(cdr option)) result))
-    result))
+(dolist (slot-option +extra-slot-options+)
+  (process-slot-option standard-db-class slot-option))
 
+(dolist (class-option +extra-class-options+)
+  (process-class-option standard-db-class class-option))
 
 (defmethod validate-superclass ((class standard-db-class)
 				(superclass standard-class))
