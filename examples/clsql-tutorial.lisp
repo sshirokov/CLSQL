@@ -4,8 +4,8 @@
 
 ;; You must set these variables to appropriate values. 
 (defvar *tutorial-database-type* nil 
-  "Possible values are :postgresql,:postgresql-socket :mysql or :sqlite")
-(defvar *tutorial-database-name* ""
+  "Possible values are :postgresql,:postgresql-socket :mysql, :oracle, :odbc or :sqlite")
+(defvar *tutorial-database-name* "clsqltut"
   "The name of the database we will work in.")
 (defvar *tutorial-database-user* "" 
   "The name of the database user we will work as.")
@@ -83,11 +83,21 @@
 
 ;; Connect to the database (see the CLSQL documentation for vendor
 ;; specific connection specs).
-(clsql:connect `(,*tutorial-database-server* 
-	       ,*tutorial-database-name*
-	       ,*tutorial-database-user* 
-	       ,*tutorial-database-password*)
-	     :database-type *tutorial-database-type*)
+(case *tutorial-database-type*
+  ((:mysql :postgresql)
+   (clsql:connect `(,*tutorial-database-server* 
+		    ,*tutorial-database-name*
+		    ,*tutorial-database-user* 
+		    ,*tutorial-database-password*)
+		  :database-type *tutorial-database-type*))
+  ((:odbc :oracle)
+   (clsql:connect `(,*tutorial-database-name* 
+		    ,*tutorial-database-user* 
+		    ,*tutorial-database-password*)
+		  :database-type *tutorial-database-type*))
+  (:sqlite
+   (clsql:connect `(,*tutorial-database-name*)
+		  :database-type *tutorial-database-type*)))
 
 ;; Record the sql going out, helps us learn what is going
 ;; on behind the scenes
