@@ -1,3 +1,10 @@
+cl-sql (3.1.3-1) unstable; urgency=low
+
+  * New upstream
+  * Add cl-sql-sqlite3 binary package
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Tue, 21 Dec 2004 00:31:28 -0700
+
 cl-sql (3.1.2-1) unstable; urgency=low
 
   * New upstream
