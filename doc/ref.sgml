@@ -1820,7 +1820,7 @@
 		</para>
 		<para>
 		  A value of <symbol>:auto</symbol> causes &clsql;
-		  to automatically convert the SQL field into a
+		  to automatically convert SQL fields into a
 		  numeric format where applicable. The default value of
 		  &nil; causes all fields to be returned as strings
 		  regardless of the SQL type. Otherwise a list is expected

@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.3 2002/03/23 14:59:27 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.4 2002/03/26 20:51:41 kevin Exp $
 #
 # This file, part of UFFI, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -79,10 +79,10 @@ ${TEXFILE}: ${DOCFILES}
 pdf: ${PDFFILE}
 
 ${PDFFILE}: ${TEXFILE}
-	@pdfjadetex '\pdfcompresslevel=9' '\input ${TEXFILE}'
-	@pdfjadetex '\pdfcompresslevel=9' '\input ${TEXFILE}'
-	@pdfjadetex '\pdfcompresslevel=9' '\input ${TEXFILE}'
-	@pdfjadetex '\pdfcompresslevel=9' '\input ${TEXFILE}'
+	@pdfjadetex -interaction=batchmode '\pdfcompresslevel=9' '\input ${TEXFILE}' > /dev/null
+	@pdfjadetex -interaction=batchmode '\pdfcompresslevel=9' '\input ${TEXFILE}' > /dev/null
+	@pdfjadetex -interaction=batchmode '\pdfcompresslevel=9' '\input ${TEXFILE}' > /dev/null
+	@pdfjadetex -interaction=batchmode '\pdfcompresslevel=9' '\input ${TEXFILE}' > /dev/null
 
 dvi: ${DVIFILE}
 
