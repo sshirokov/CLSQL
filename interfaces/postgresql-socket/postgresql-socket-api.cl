@@ -9,7 +9,7 @@
 ;;;;                
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-api.cl,v 1.12 2002/03/27 12:09:39 kevin Exp $
+;;;; $Id: postgresql-socket-api.cl,v 1.13 2002/04/06 23:23:47 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -219,19 +219,18 @@ socket interface"
 
 ;;; Support for encrypted password transmission
 
-(defconstant +crypt-library+ "/usr/lib/libcrypt.so"
-  "Name of the shared library to load in order to access the crypt
-function named by `*crypt-function-name*'.")
-
 (defvar *crypt-library-loaded* nil)
 
 (defun crypt-password (password salt)
   "Encrypt a password for transmission to a PostgreSQL server."
   (unless *crypt-library-loaded*
-    (uffi:load-foreign-library +crypt-library+ :supporting-libaries '("c"))
-    (eval (uffi:def-function "crypt" 
-	      ((key :cstring)
-	       (salt :cstring))
+    (uffi:load-foreign-library 
+     (find-foreign-library "libcrypt"
+			   '("/usr/lib/" "/usr/local/lib/" "/lib/"))
+     :supporting-libaries '("c"))
+    (eval '(uffi:def-function "crypt" 
+	    ((key :cstring)
+	     (salt :cstring))
 	    :returning :cstring))
     (setq *crypt-library-loaded* t))
    (uffi:with-cstring (password-cstring password)

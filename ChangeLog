@@ -6,7 +6,9 @@
 	Updated find-forieign-library support.
 	* interfaces/postgresql-socket/postgresql-socket-package.cl:
 	Fixed require form for Lispworks (Thanks Marc Battyani!)
-	
+	* interfaces/postgresql-socket/postgresql-socket-api.cl:
+	Fixed eval of def-function for crypt library.
+		
 31 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* Added interface to support USQL high-level rouines
 	
