@@ -11,6 +11,7 @@ TESTS TO ADD
 
 COMMONSQL INCOMPATIBILITY
 
+   o Condition names/accessors
    o userenv (Oracle specific but deprecated in Oracle 9) 
 
 VARIANCES FROM COMMONSQL
