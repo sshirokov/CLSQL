@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: mysql-usql.cl,v 1.1 2002/04/01 05:27:55 kevin Exp $
+;;;; $Id: mysql-usql.cl,v 1.2 2002/04/03 04:54:17 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and by onShore Development Inc.
@@ -86,7 +86,7 @@
    (concatenate 'string "UPDATE " (%sequence-name-to-table sequence-name)
 		" SET id=LAST_INSERT_ID(id+1)")
    database)
-  (mysql:mysql-insert-id (mysql::database-mysql-ptr database)))
+  (mysql:mysql-insert-id (clsql-mysql::database-mysql-ptr database)))
 
 #+ignore
 (defmethod database-output-sql ((expr clsql-sys::sql-typecast-exp) 

@@ -7,7 +7,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.4 2002/04/03 04:06:05 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.5 2002/04/03 04:54:17 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -21,7 +21,7 @@
 CC=gcc
 SHARED_CC_OPT=-fPIC -DPIC
 
-#SHARED_LD_OPT=-r # For FreeBSD and Solaris (CMUCL)
+#SHARED_LD_OPT=-r -Bdynamic -whole-archive # For FreeBSD and Solaris (CMUCL)
 SHARED_LD_OPT=-Bshareable -Bdynamic  # For Linux (ALL) and FreeBSD (ACL)
 
 # Use these for Sun's C compiler and Solaris (ACL)
