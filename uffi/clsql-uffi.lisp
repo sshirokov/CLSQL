@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi.lisp,v 1.7 2003/05/15 07:39:42 kevin Exp $
+;;;; $Id: clsql-uffi.lisp,v 1.8 2003/05/15 07:45:17 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -120,8 +120,10 @@
 		  low32
 		  (make-64-bit-integer high32 low32)))))
 	 (t
+	  ;; Choose optimized routine
+	  #-(or cmu sbcl)
 	  (native-to-string char-ptr)
-	  #+ignore
+	  #+(or cmu sbcl)
 	  (uffi:convert-from-foreign-string char-ptr)))))))
   
 
