@@ -1,3 +1,9 @@
+1 Aug 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* sql/expressions.lisp: conditionalise escaping of backslash in 
+	generated SQL strings on backend. 
+	* tests/test-fdml.lisp: test for escaping of backslash. 
+	* sql/oodml.lisp: minor tidying in FIND-ALL. 
+
 26 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* NEWS: Initial 3.0 announcement draft
 	* README: Expand acknowledgements of incorporated projects
@@ -6,7 +12,7 @@
 23 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* sql/oodml.lisp: add DATABASE-OUTPUT-SQL-AS-TYPE method specialisation
 	to print floats with the exponent markers removed. 
-	* sql/test-oodml.lisp: add tests for updating records with floats. 
+	* tests/test-oodml.lisp: add tests for updating records with floats. 
 
 22 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* db-oracle/oracle-sql.lisp: enable :OWNER :ALL in DATABASE-LIST-* for 

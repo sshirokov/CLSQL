@@ -485,6 +485,13 @@
    "What's up doc?" "What's up doc?" "What's up doc?" "What's up doc?"
    "What's up doc?" "What's up doc?"))
 
+;; test proper treatment of backslash (depending on backend) 
+(deftest :fdml/select/36
+    (clsql:select "foo\\bar\\baz" :from [employee] :flatp t :field-names nil)
+ ("foo\\bar\\baz" "foo\\bar\\baz" "foo\\bar\\baz" "foo\\bar\\baz" 
+  "foo\\bar\\baz"  "foo\\bar\\baz" "foo\\bar\\baz" "foo\\bar\\baz" 
+  "foo\\bar\\baz" "foo\\bar\\baz"))
+
 (deftest :fdml/do-query/1
     (let ((result '()))
     (clsql:do-query ((name) [select [last-name] :from [employee]

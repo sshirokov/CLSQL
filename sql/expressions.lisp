@@ -850,7 +850,11 @@ uninclusive, and the args from that keyword to the end."
                         (setf (aref buf j) #\')
                         (incf j)
                         (setf (aref buf j) #\'))
-                       ((char= char #\\)
+                       ((and (char= char #\\)
+                             ;; MTP: only escape backslash with pgsql/mysql 
+                             (member (database-underlying-type database) 
+                                     '(:postgresql :mysql)
+                                     :test #'eq))
                         (setf (aref buf j) #\\)
                         (incf j)
                         (setf (aref buf j) #\\))
