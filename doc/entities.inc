@@ -6,6 +6,7 @@
 <!ENTITY clsql "<application><emphasis>CLSQL</emphasis></application>">
 <!ENTITY maisql "<application><emphasis>MaiSQL</emphasis></application>">
 <!ENTITY sql "<application>SQL</application>">
+<!ENTITY usql "<application>UncommonSQL</application>">
 <!ENTITY mysql "<application>MySQL</application>">
 <!ENTITY postgresql "<application>PostgreSQL</application>">
 <!ENTITY sqlite "<application>SQLite</application>">
