@@ -412,7 +412,7 @@
 		 (format nil "database-create failed: ~A" output))
 	  t))))
 
-(defmethod database-destory (connection-spec (type (eql :mysql)))
+(defmethod database-destroy (connection-spec (type (eql :mysql)))
   (destructuring-bind (host name user password) connection-spec
     (multiple-value-bind (output status)
 	(clsql-base-sys:command-output "mysqladmin drop -u~A -p~A -h~A ~A"
