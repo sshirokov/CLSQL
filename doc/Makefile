@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.16 2002/09/18 07:44:08 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.17 2002/10/14 07:16:04 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -79,6 +79,7 @@ ${TEXFILE}: ${DOCFILES}
 pdf: ${PDFFILE}
 
 ${PDFFILE}: ${DOCFILES}
+	@jade -t tex -c ${CATALOG} -d ${DSSSL_PRINT} ${DOCFILE} > /dev/null
 	@pdfjadetex -interaction=batchmode '\pdfcompresslevel=9' '\input ${TEXFILE}' > /dev/null
 	@pdfjadetex -interaction=batchmode '\pdfcompresslevel=9' '\input ${TEXFILE}' > /dev/null
 	@pdfjadetex -interaction=batchmode '\pdfcompresslevel=9' '\input ${TEXFILE}' > /dev/null

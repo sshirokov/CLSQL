@@ -14,6 +14,8 @@
 <!ENTITY postgresql "<application>PostgreSQL</application>">
 <!ENTITY aodbc "<application>AODBC</application>">
 <!ENTITY cmucl "<application>CMUCL</application>">
+<!ENTITY sbcl "<application>SBCL</application>">
+<!ENTITY openmcl "<application>OpenMCL</application>">
 <!ENTITY lw "<application>Lispworks</application>">
 <!ENTITY acl "<application>AllegroCL</application>">
 <!ENTITY cl "<application>ANSI Common Lisp</application>">
