@@ -1,5 +1,6 @@
-cl-sql (0.8.1-2) unstable; urgency=low
+cl-sql (0.8.2-1) unstable; urgency=low
 
+  * New upstream version
   * Update depends for cl-sql-aodbc to be acl-pro-instaler, not acl-installer
   * Upload e-mail adress
   
