@@ -1,3 +1,11 @@
+1 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* doc/ref-transaction.xml: document transaction handling. 
+	* sql/transaction.lisp: ensure that COMMIT, ROLLBACK and 
+	START-TRANSACTION return NIL as per the CommonSQL spec. Modify 
+	ADD-TRANSACTION-{ROLLBACK|COMMIT}-HOOK such that a database is 
+	passed as a keyword argument defaulting to *DEFAULT-DATABASE*.
+	Added docstrings. 
+
 30 Jun 2004 Marcus Pearce <m.t.pearce@city.ac.uk>
 	* doc/ref-fdml.xml: document the FDML. 
 	* doc/ref-fddl.xml: move documentation for TRUNCATE-DATABASE here. 

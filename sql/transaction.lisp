@@ -22,11 +22,19 @@
    (status :initform nil :accessor transaction-status
 	   :documentation "nil or :committed")))
 
-(defun add-transaction-commit-hook (database commit-hook)
+(defun add-transaction-commit-hook (commit-hook &key 
+                                    (database *default-database*))
+  "Adds COMMIT-HOOK, which should a designator for a function
+with no required arguments, to the list of hooks run when COMMIT
+is called on DATABASE which defaults to *DEFAULT-DATABASE*."
   (when (transaction database)
     (push commit-hook (commit-hooks (transaction database)))))
 
-(defun add-transaction-rollback-hook (database rollback-hook)
+(defun add-transaction-rollback-hook (rollback-hook 
+                                      &key (database *default-database*))
+  "Adds ROLLBACK-HOOK, which should a designator for a function
+with no required arguments, to the list of hooks run when ROLLBACK
+is called on DATABASE which defaults to *DEFAULT-DATABASE*."
   (when (transaction database)
     (push rollback-hook (rollback-hooks (transaction database)))))
 
@@ -95,20 +103,23 @@ back and otherwise the transaction is committed."
   "If DATABASE, which defaults to *DEFAULT-DATABASE*, is
 currently within the scope of a transaction, commits changes made
 since the transaction began."
-  (database-commit-transaction database))
+  (database-commit-transaction database)
+  nil) 
 
 (defun rollback (&key (database *default-database*))
   "If DATABASE, which defaults to *DEFAULT-DATABASE*, is
 currently within the scope of a transaction, rolls back changes
 made since the transaction began."
-  (database-abort-transaction database))
+  (database-abort-transaction database)
+  nil) 
 
 (defun start-transaction (&key (database *default-database*))
   "Starts a transaction block on DATABASE which defaults to
 *DEFAULT-DATABASE* and which continues until ROLLBACK or COMMIT
 are called."
   (unless (in-transaction-p :database database)
-    (database-start-transaction database)))
+    (database-start-transaction database))
+  nil)
 
 (defun in-transaction-p (&key (database *default-database*))
   "A predicate to test whether DATABASE, which defaults to
@@ -117,7 +128,12 @@ transaction."
   (and database (transaction database) (= (transaction-level database) 1)))
 
 (defun set-autocommit (value &key (database *default-database*))
-  "Sets autocommit on or off. Returns old value of of autocommit flag."
+  "Turns autocommit off for DATABASE if VALUE is NIL, and
+otherwise turns it on. Returns the old value of autocommit flag.
+For RDBMS (such as Oracle) which don't automatically commit
+changes, turning autocommit on has the effect of explicitly
+committing changes made whenever SQL statements are executed.
+Autocommit is turned on by default."
   (let ((old-value (database-autocommit database)))
     (setf (database-autocommit database) value)
     (database-autocommit database)

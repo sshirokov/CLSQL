@@ -358,12 +358,10 @@
     </refsect1>
     <refsect1>
       <title>See Also</title>
-      <para>
-        <simplelist>
-          <member><link linkend="update-records"><function>update-records</function></link></member>
-          <member><link linkend="delete-records"><function>delete-records</function></link></member>
-        </simplelist>
-      </para>
+      <simplelist>
+        <member><link linkend="update-records"><function>update-records</function></link></member>
+        <member><link linkend="delete-records"><function>delete-records</function></link></member>
+      </simplelist>
     </refsect1>
     <refsect1>
       <title>Notes</title>
