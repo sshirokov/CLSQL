@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: package.cl,v 1.9 2002/04/27 21:48:08 kevin Exp $
+;;;; $Id: package.cl,v 1.10 2002/04/28 00:50:17 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -51,6 +51,9 @@
      #:database-sequence-next
     
      #:sql-escape
+
+     ;; Support for pooled connections
+     #:database-type
      
      ;; Large objects (Marc B)
      #:database-create-large-object

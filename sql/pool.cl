@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Apr 2002
 ;;;;
-;;;; $Id: pool.cl,v 1.1 2002/04/27 20:58:11 kevin Exp $
+;;;; $Id: pool.cl,v 1.2 2002/04/28 00:50:17 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -28,10 +28,10 @@
 (defun find-or-create-conn-vector (connection-spec database-type)
   "Find connection vector in hash table, creates a new conn-vector if not found"
   (let* ((key (list connection-spec database-type))
-	 (conn-vector (gethash *db-pool* key)))
+	 (conn-vector (gethash key *db-pool*)))
     (unless conn-vector
       (setq conn-vector (make-conn-vector))
-      (setf (gethash *db-pool* key) conn-vector))
+      (setf (gethash key *db-pool*) conn-vector))
     conn-vector))
 
 (defun acquire-from-pool (connection-spec database-type)
