@@ -1,4 +1,13 @@
 10 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.6.3
+	* test/test-init.lisp: Signal correctly
+	if any errors occurred in any test suite
+	* base/loop-extensions.lisp: Fix error
+	introduced for Lispworks
+	* base/pool.lisp: Fix locking for CMUCL
+	* base/objects.lisp: Remove schema-version cruft
+	
+10 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.6.2: New CLSQL API functions:
 	DESCRIBE-TABLE AND TRUNCATE-DATABASE
 	Currently, this are only supported on :postgresql

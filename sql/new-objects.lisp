@@ -28,7 +28,7 @@
 (defmethod slot-value-using-class ((class standard-db-class) instance slot-def)
   (declare (optimize (speed 3)))
   (unless *db-deserializing*
-    (let ((slot-name (slot-defition-name-name slot-def))
+    (let ((slot-name (slot-definition-name slot-def))
           (slot-kind (view-class-slot-db-kind slot-def)))
       (when (and (eql slot-kind :join)
                  (not (slot-boundp instance slot-name)))
@@ -425,7 +425,7 @@ are derived from the View Class definition."))
     (let* ((att (view-class-slot-column sd))
            (val (db-value-from-slot sd (slot-value obj slot) database)))
       (cond ((and vct sd stored?)
-             (update-records :table (sql-expression :table vct)
+             (update-records (sql-expression :table vct)
                              :attributes (list (sql-expression :attribute att))
                              :values (list val)
                              :where (key-qualifier-for-instance obj :database database)
@@ -460,7 +460,7 @@ names are derived from the view class definition."))
                                    (db-value-from-slot s val database))))
                        sds)))
     (cond ((and avps stored?)
-           (update-records :table (sql-expression :table vct)
+           (update-records (sql-expression :table vct)
                            :av-pairs avps
                            :where (key-qualifier-for-instance
                                    obj :database database)
@@ -501,7 +501,7 @@ associated with that database."))
       (unless record-values
         (error "No settable slots."))
       (if (slot-value obj 'stored)
-          (update-records :table (sql-expression :table view-class-table)
+          (update-records (sql-expression :table view-class-table)
                           :av-pairs record-values
                           :where (key-qualifier-for-instance
                                   obj :database database)

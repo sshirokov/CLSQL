@@ -283,8 +283,11 @@
   (clsql:update-records-from-instance employee10)
   (clsql:update-records-from-instance company1))
 
+(defvar *error-count* 0)
+
 (defun run-tests ()
-  (let ((specs (read-specs)))
+  (let ((specs (read-specs))
+	(*error-count* 0))
     (unless specs
       (warn "Not running tests because test configuration file is missing")
       (return-from run-tests :skipped))
@@ -292,7 +295,8 @@
     (dolist (db-type +all-db-types+)
       (let ((spec (db-type-spec db-type specs)))
 	(when spec
-	  (do-tests-for-backend spec db-type))))))
+	  (do-tests-for-backend spec db-type))))
+    (zerop *error-count*)))
 
 (defun load-necessary-systems (specs)
   (dolist (db-type +all-db-types+)
@@ -306,25 +310,23 @@
 ***     Running CLSQL tests with ~A backend.
 *******************************************************************
 " db-type)
+  (regression-test:rem-all-tests)
   
   ;; Tests of clsql-base
   (ignore-errors (destroy-database spec :database-type db-type))
   (ignore-errors (create-database spec :database-type db-type))
   (with-tests (:name "CLSQL")
     (test-basic spec db-type))
-  
-  (regression-test:rem-all-tests)
+  (incf *error-count* *test-errors*)
+
+  (ignore-errors (destroy-database spec :database-type db-type))
+  (ignore-errors (create-database spec :database-type db-type))
   (dolist (test (append *rt-connection* *rt-fddl* *rt-fdml*
 			*rt-ooddl* *rt-oodml* *rt-syntax*))
     (eval test))
-  
-  (ignore-errors (destroy-database spec :database-type db-type))
-  (ignore-errors (create-database spec :database-type db-type))
   (test-connect-to-database db-type spec)
-  
-  (assert *default-database*)
   (test-initialise-database)
+  (let ((remaining (rtest:do-tests)))
+    (when (consp remaining)
+      (incf *error-count* (length remaining)))))
 
-  (assert *default-database*)
-  (rtest:do-tests)
-  (disconnect))
