@@ -95,7 +95,7 @@
     <sect2>
       <title>&md5;</title>
       <para>&clsql;'s postgresql-socket interface uses Pierre Mai's 
-	<ulink url="ftp://clsql.b9.com/">md5</ulink>
+	<ulink url="ftp://files.b9.com/md5/">md5</ulink>
 	module.
       </para>       
     </sect2>
