@@ -140,16 +140,46 @@
 	       (parse-double (second (nth i rows)))))
 	     results)))
       ((t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t)))
+    
+    (deftest :BASIC/MAP/3
+	    (let ((results '())
+	      (rows (map-query 'list #'list "select * from TYPE_TABLE" 
+			       :result-types :auto)))
+	      (dotimes (i (length rows) results)
+		(push
+		 (list
+		  (listp (nth i rows))
+		  (length (nth i rows))
+		  (eql (- i 5)
+		       (first (nth i rows)))
+		  (double-float-equal
+		   (transform-float-1 (first (nth i rows)))
+		   (second (nth i rows))))
+		 results)))
+      ((t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t)))
 
     (deftest :BASIC/DO/1
 	(let ((results '()))
-	  (do-query ((int float bigint str) "select * from TYPE_TABLE")
+	  (do-query ((int float bigint str) "select * from TYPE_TABLE" :result-types nil)
 	    (push (list (double-float-equal 
 			 (transform-float-1 (parse-integer int))
 			 (parse-double float))
 			(double-float-equal
 			 (parse-double str)
 			 (parse-double float)))
+		  results))
+	  results)
+      ((t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t)))
+    
+    (deftest :BASIC/DO/2
+	(let ((results '()))
+	  (do-query ((int float bigint str) "select * from TYPE_TABLE" :result-types :auto)
+	    (push (list (double-float-equal 
+			 (transform-float-1 int)
+			 float)
+			(double-float-equal
+			 (parse-double str)
+			 float))
 		  results))
 	  results)
       ((t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t)))

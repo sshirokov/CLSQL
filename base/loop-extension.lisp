@@ -51,8 +51,9 @@
       (setq from-phrase '(clsql-base:*default-database*)))
     (cond
       ;; Object query resulting in a list of returned object instances
-      ((consp in-phrase)
-       (error "object query not yet supported"))
+      #+ignore
+      ((consp (car in-phrase))
+       (ansi-loop::loop-error "object query not yet supported"))
       
       ((consp variable)
        (let ((query-var (ansi-loop::loop-gentemp 'loop-record-))
@@ -148,7 +149,8 @@
 
     (cond
       ;; Object query resulting in a list of returned object instances
-      ((consp in-phrase)
+      #+ignore
+      ((consp (car in-phrase))
        (error "Object query not yet supported."))
       
       ((consp iter-var)

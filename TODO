@@ -12,7 +12,6 @@ TESTS TO ADD
 * Large object testing
 * Test bigint type
 * :db-constraint tests
-* Test result-types for MAP-QUERY and DO-QUERY
 
 COMMONSQL SPEC
 
