@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-api.cl,v 1.4 2002/03/27 08:09:25 kevin Exp $
+;;;; $Id: postgresql-api.cl,v 1.5 2002/03/29 09:37:24 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -196,3 +196,9 @@
   ((res pgsql-result))
   :module "postgresql"
   :returning :void)
+
+(declaim (inline PQisBusy))
+(uffi:def-function ("PQisBusy" PQisBusy)
+  ((conn pgsql-conn))
+  :module "postgresql"
+  :returning :int)

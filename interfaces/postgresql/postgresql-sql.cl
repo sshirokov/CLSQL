@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-sql.cl,v 1.11 2002/03/27 12:09:39 kevin Exp $
+;;;; $Id: postgresql-sql.cl,v 1.12 2002/03/29 09:37:24 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -52,14 +52,16 @@
       (nreverse new-types)))
 
 (defun canonicalize-types (types num-fields res-ptr)
-  (let ((auto-list (make-type-list-for-auto num-fields res-ptr)))
-    (cond
-      ((listp types)
-       (canonicalize-type-list types auto-list))
-      ((eq types :auto)
-       auto-list)
-      (t
-       nil))))
+  (if (null types)
+      nil
+      (let ((auto-list (make-type-list-for-auto num-fields res-ptr)))
+	(cond
+	  ((listp types)
+	   (canonicalize-type-list types auto-list))
+	  ((eq types :auto)
+	   auto-list)
+	  (t
+	   nil)))))
 
 (defun tidy-error-message (message)
   (unless (stringp message)

@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-sql.cl,v 1.9 2002/03/29 08:28:14 kevin Exp $
+;;;; $Id: postgresql-socket-sql.cl,v 1.10 2002/03/29 09:37:24 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -67,14 +67,16 @@
        t))))
 
 (defun canonicalize-types (types cursor)
-  (let ((auto-list (make-type-list-for-auto cursor)))
-    (cond
-      ((listp types)
-       (canonicalize-type-list types auto-list))
-      ((eq types :auto)
-       auto-list)
-      (t
-       nil))))
+  (if (null types)
+      nil
+      (let ((auto-list (make-type-list-for-auto cursor)))
+	(cond
+	  ((listp types)
+	   (canonicalize-type-list types auto-list))
+	  ((eq types :auto)
+	   auto-list)
+	  (t
+	   nil)))))
 
 (defun canonicalize-type-list (types auto-list)
   "Ensure a field type list meets expectations.

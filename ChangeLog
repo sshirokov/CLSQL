@@ -2,6 +2,11 @@
 	* Separated db-interface and conditions from sql/sql.cl
 
 	* Improved foreign library loading testing
+
+	* interfaces/postgresql/postgresql-api.cl
+	Added PQisBusy function
+
+	* Optimizes :types processing if value is nil
 	
 27 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* interfaces/postgresql-socket/postgresql-socket-api.cl:
