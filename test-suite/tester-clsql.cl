@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: tester-clsql.cl,v 1.3 2002/04/08 03:50:00 kevin Exp $
+;;;; $Id: tester-clsql.cl,v 1.4 2002/04/10 04:57:28 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -15,6 +15,17 @@
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
+
+;;; This test suite looks for a configuration file named "test.config"
+;;; This file contains a single a-list that specifies the connection
+;;; specs for each database type to be tested. For example, to test all
+;;; platforms, a sample "test.config" may look like:
+;;;
+;;; ((:mysql ("localhost" "a-mysql-db" "user1" "secret"))
+;;;  (:aodbc ("my-dsn" "a-user" "pass"))
+;;;  (:paostgresql ("localhost" "another-db" "user2" "dont-tell"))
+;;;  (:postgresql-socket ("pg-server" "a-db-name" "user" "secret-password")))
+
 
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :cl-user)

@@ -73,16 +73,6 @@ other systems.</para>
     </sect2>
 
     <sect2>
-      <title>XPTest (optional)</title>
-      <para>The test suite for &clsql; uses the onShore Development's
-XPTest package. onShore has graciously put the package in the public
-domain. You can download the package from onShore's web <ulink
-url="http://alpha.onshored.com/lisp-software/"><citetitle>site</citetitle></ulink>.
-This package is not required except if you wish to run the &clsql;
-test suite.</para>
-    </sect2>
-
-    <sect2>
       <title>Supported Common Lisp Implementation</title>
       <para>
 The implementations that support &clsql; is governed by the supported
@@ -185,6 +175,18 @@ the main <symbol>:clsql</symbol> system and at least one interface system.
 (mk:load-system :clsql-postgresql-socket) ; Socket PGSQL interface
 (mk:load-system :clsql-aodbc)       ; Allegro ODBC interface
         </programlisting>
+      </para>
+    </sect2>
+
+    <sect2>
+      <title>Run test suite</title>
+      <para>
+	After loading &clsql;, you can execute the test program in
+the directory <filename>./test-suite</filename>. The test file,
+<filename>tester-clsql</filename>
+has instructions for creating a <filename>test.config</filename>.
+After creating that file, simple load the test file with Lisp
+and the tests should automatically execute.
       </para>
     </sect2>
 
