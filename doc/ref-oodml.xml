@@ -17,27 +17,37 @@
   <refentry id="db-auto-sync">
     <refnamediv>
       <refname>*DB-AUTO-SYNC*</refname>
-      <refpurpose><!-- purpose --></refpurpose>
+      <refpurpose>Enables SQL storage during Lisp object creation.</refpurpose>
       <refclass>Variable</refclass>
     </refnamediv>
     <refsect1>
       <title>Value Type</title>
       <para>
-        <!-- value type --> 
+	Boolean
       </para> 
     </refsect1>
     <refsect1>
       <title>Initial Value</title>
-      <para><symbol>nil</symbol></para>
+      <para>&nil;</para>
     </refsect1>
     <refsect1>
       <title>Description</title>
-      <!-- description --> 
+      When this variable is &t; an instance is stored in the SQL database when the instance is created
+      by <function>make-instance</function>. When this variable is &nil;, which is the default value, &clsql;
+      behaves like &commonsql;: instances of view classes are stored to the SQL database only when
+      <link linkend="update-record-from-slots"><function>update-record-from-slots</function></link>
+      is called.
     </refsect1>
     <refsect1>
       <title>Examples</title>
       <screen>
-        <!-- examples --> 
+	(let ((instance (make-instance 'foo)))
+	  (update-record-from-slots instance))
+
+	;; is equivalent to
+
+	(let ((*db-auto-sync* t))
+	  (make-instance 'foo))
       </screen>
     </refsect1>
     <refsect1>
@@ -46,7 +56,9 @@
     </refsect1>
     <refsect1>
       <title>See Also</title>
-      <para>None.</para>
+      <simplelist>
+        <member><link linkend="update-record-from-slots"><function>update-record-from-slots</function></link></member>
+      </simplelist>
     </refsect1>
     <refsect1>
       <title>Notes</title>
@@ -57,27 +69,31 @@
   <refentry id="default-update-objects-max-len">
     <refnamediv>
       <refname>*DEFAULT-UPDATE-OBJECTS-MAX-LEN*</refname>
-      <refpurpose><!-- purpose --></refpurpose>
+      <refpurpose>The default maximum number of objects each query to perform a join</refpurpose>
       <refclass>Variable</refclass>
     </refnamediv>
     <refsect1>
       <title>Value Type</title>
       <para>
-        <!-- value type --> 
+	(or null integer)
       </para> 
     </refsect1>
     <refsect1>
       <title>Initial Value</title>
-      <para><symbol>nil</symbol></para>
+      <para>&nil;</para>
     </refsect1>
     <refsect1>
       <title>Description</title>
-      <!-- description --> 
+      <para>
+	This special variable provides the default value for the
+	<parameter>max-len</parameter> argument of the function <link
+	linkend="update-object-joins"><function>update-object-joins</function></link>.
+      </para>
     </refsect1>
     <refsect1>
       <title>Examples</title>
       <screen>
-        <!-- examples --> 
+	(setq *default-update-objects-max-len* 100)
       </screen>
     </refsect1>
     <refsect1>
@@ -97,13 +113,13 @@
   <refentry id="delete-instance-records">
     <refnamediv>
       <refname>DELETE-INSTANCE-RECORDS</refname>
-      <refpurpose><!-- purpose --></refpurpose>
+      <refpurpose>Delete SQL records represented by a view class object</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
     <refsect1>
       <title>Syntax</title>
       <synopsis>
-      <function> (DELETE-INSTANCE-RECORDS OBJECT) [generic]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+      <function>(delete-instance-records object)</function> => <returnvalue><!-- result --></returnvalue></synopsis>
     </refsect1>
     <refsect1>
       <title>Arguments and Values</title>
@@ -122,41 +138,50 @@
     <refsect1>
       <title>Examples</title>
       <screen>
-        <!-- examples -->
+	* (def-view-class tab () ((a :type integer :db-kind :key) (b :type string)))
+        #&lt;clsql-sys::db-standard-class tab> 
+	* (defvar obj (let ((*db-auto-sync* t))
+	                (make-instance 'tab :a 5 :b "the string")))
+	* (start-sql-recording :type :both)
+        * (delete-instance-records obj) 		
+	    
+        
       </screen>
     </refsect1>
     <refsect1>
       <title>Side Effects</title>
       <para>
-        <!-- side effects --> 
+	Deletes data from the SQL database.
       </para>
     </refsect1>
     <refsect1>
       <title>Affected by</title>
       <para>
-        <simplelist>
-          <!-- affected by --> 
-        </simplelist>
+	Permissions granted by the SQL database to the user in the database connection.
       </para>
     </refsect1>
     <refsect1>
       <title>Exceptional Situations</title>
       <para>
-        <!-- execeptional situations -->
+	An exception may be signaled if the database connection user does not have
+	sufficient privileges to modify the database.
       </para>
     </refsect1>
     <refsect1>
       <title>See Also</title>
       <para>
-        <simplelist>
-          <!-- see also --> 
-        </simplelist>
+	<simplelist>
+	  <member><link linkend="update-records"><function>update-records</function></link></member>
+	  <member><link linkend="update-records-from-instance"><function>update-records-from-instance</function></link></member>
+	</simplelist>
       </para>
     </refsect1>
     <refsect1>
       <title>Notes</title>
       <para>
-        <!-- notes --> 
+	Instances are referenced in the database by values stored in the key slots. If
+	<function>delete-records-from-instance</function> is called with an instance of a class that does
+	not contain any keys, then all records in that table will be deleted. 
       </para>
     </refsect1>
   </refentry> 
@@ -170,7 +195,7 @@
     <refsect1>
       <title>Syntax</title>
       <synopsis>
-      <function> (INSTANCE-REFRESHED OBJECT) [generic]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+      <function>(instance-refreshed object)</function> => <returnvalue><!-- result --></returnvalue></synopsis>
     </refsect1>
     <refsect1>
       <title>Arguments and Values</title>

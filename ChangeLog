@@ -1,4 +1,5 @@
 7 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* doc/ref-ooddl.xml, doc-ref-oodml.xml: documentation additions
 	* sql/ooddl.lisp: Added SMALLINT type
 	* sql/generic-postgresql.lisp: Added INT2 as SMALLINT type
 	* db-mysql/mysql-objects.lisp: Added SMALLINT type

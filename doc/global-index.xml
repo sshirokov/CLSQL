@@ -19,7 +19,7 @@
     <member><link hovertext="variable *DEFAULT-DATABASE* is of type T" linkend="default-database">*DEFAULT-DATABASE*</link></member>
     <member><link hovertext="variable *DEFAULT-DATABASE-TYPE* is of type T" linkend="default-database-type">*DEFAULT-DATABASE-TYPE*</link></member>
     <member><link hovertext="variable *DEFAULT-UPDATE-OBJECTS-MAX-LEN* is of type T" linkend="default-update-objects-max-len">*DEFAULT-UPDATE-OBJECTS-MAX-LEN*</link></member>
-    <member><link hovertext="variable *DEFAULT-STRING-LENGTH* is of type T [parameter]" linkend="default-varchar-length">*DEFAULT-STRING-LENGTH*</link></member>
+    <member><link hovertext="variable *DEFAULT-STRING-LENGTH* is of type T [parameter]" linkend="default-string-length">*DEFAULT-STRING-LENGTH*</link></member>
     <member><link hovertext="variable *INITIALIZED-DATABASE-TYPES* is of type T" linkend="initialized-database-types">*INITIALIZED-DATABASE-TYPES*</link></member>
 
     <!-- OTHER SYMBOLS IN ALPHABETICAL ORDER --> 
