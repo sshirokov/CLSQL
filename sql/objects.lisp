@@ -664,6 +664,10 @@ superclass of the newly-defined View Class."
      (etypecase val
        (string (if (string= "0" val) nil t))
        (integer (if (zerop val) nil t))))
+    (:postgresql
+     (if (database-type :odbc)
+	 (if (string= "0" val) nil t)
+	 (equal "t" val)))
     (t
      (equal "t" val))))
 
