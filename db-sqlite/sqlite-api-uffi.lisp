@@ -102,7 +102,7 @@
 ;;;
 ;;; Lisp types used in declarations.
 ;;;;
-(def-type sqlite-db sqlite-db)
+(def-type sqlite-db-type sqlite-db)
 (def-type sqlite-row string-pointer)
 (def-type sqlite-row-pointer-type (* string-pointer))
 (def-type sqlite-vm-pointer (* sqlite-vm))
@@ -215,7 +215,7 @@
 
 (defun sqlite-open (db-name &optional (mode 0))
   (with-cstring (db-name-native db-name) 
-    (let ((db (%open db-name-native mode nil)))
+    (let ((db (%open db-name-native mode 0)))
       (if (null-pointer-p db)
 	  (signal-sqlite-error SQLITE-ERROR
 			       (format nil "unable to open ~A" db-name))
@@ -225,7 +225,7 @@
   (with-cstring (sql-native sql)
     (let ((vm (allocate-foreign-object 'sqlite-vm)))
       (with-foreign-object (sql-tail '(* :char))
-	(let ((result (%compile db sql-native sql-tail vm nil)))
+	(let ((result (%compile db sql-native sql-tail vm 0)))
 	  (if (= result SQLITE-OK)
 	      vm
 	      (progn
@@ -256,7 +256,7 @@
 
 (defun sqlite-finalize (vm)
   (declare (type sqlite-vm-pointer vm))
-  (let ((result (%finalize (deref-pointer vm 'sqlite-vm) nil)))
+  (let ((result (%finalize (deref-pointer vm 'sqlite-vm) 0)))
     (if (= result SQLITE-OK)
 	(progn
 	  (free-foreign-object vm)
@@ -264,13 +264,13 @@
 	(signal-sqlite-error result))))
 
 (defun sqlite-get-table (db sql)
-  (declare (type sqlite-db db))
+  (declare (type sqlite-db-type db))
   (with-cstring (sql-native sql)
     (let ((rows (allocate-foreign-object '(* (* :char)))))
       (declare (type sqlite-row-pointer-type rows))
       (with-foreign-object (rows-n :int)
 	(with-foreign-object (cols-n :int)
-	  (let ((result (%get-table db sql-native rows rows-n cols-n nil)))
+	  (let ((result (%get-table db sql-native rows rows-n cols-n 0)))
 	    (if (= result SQLITE-OK)
 		(let ((cn (deref-pointer cols-n :int))
 		      (rn (deref-pointer rows-n :int)))
@@ -303,7 +303,8 @@
 (declaim (inline sqlite-aref))
 (defun sqlite-aref (a n)
   (declare (type sqlite-row-pointer-type a))
-  (convert-from-foreign-string (deref-array  (deref-pointer a 'sqlite-row-pointer) '(:array :char) n)))
+  (convert-from-foreign-string
+   (deref-array (deref-pointer a 'sqlite-row-pointer) '(:array (* :char)) n)))
 
 (declaim (inline sqlite-free-row))
 (defun sqlite-free-row (row)

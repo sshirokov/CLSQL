@@ -1,7 +1,7 @@
 08 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.4.0 released: All tests for clsql-classic now finish
 	correctly on Allegro, Lispworks, CMUCL, SBCL, OpenMCL for
-	mysql and postgresql backends. postgresql-socket backend
+	mysql, postgresql, and sqlite backends. postgresql-socket backend
 	passes all tests for Allegro, Lispworks, CMUCL, and SBCL.
 	* db-mysql/mysql-sql.lisp: Fix array dereferencing
 	* classic-tests/tests.lisp: Fix package name of
