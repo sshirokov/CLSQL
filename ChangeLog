@@ -1,3 +1,8 @@
+05 Jan 2005 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.1.5
+	* sql/metaclass.lisp: Make t the default value of :set
+	[noted by Cyrus Harmon]
+
 28 Dec 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.1.4
 	* uffi/clsql-uffi.lisp: Add support for unsigned integers

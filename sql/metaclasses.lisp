@@ -309,7 +309,7 @@ column definition in the database.")
 (defun parse-db-info (db-info-list)
   (destructuring-bind
 	(&key join-class home-key key-join foreign-key (delete-rule nil)
-	      (target-slot nil) (retrieval :deferred) (set nil))
+	      (target-slot nil) (retrieval :deferred) (set t))
       db-info-list
     (let ((ih (make-hash-table :size 6)))
       (if join-class
