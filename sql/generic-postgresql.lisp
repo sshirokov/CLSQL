@@ -1,7 +1,7 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id$
+;;;; $Id: $
 ;;;;
 ;;;; Generic postgresql layer, used by db-postgresql and db-postgresql-socket
 ;;;;
@@ -226,4 +226,13 @@
                                    and a.atttypid = t.oid"
            (sql-escape (string-downcase table)))
    database :auto nil))
+
+
+;; Capabilities
+
+(defmethod db-type-has-fancy-math? ((db-type (eql :postgresql)))
+  t)
+
+(defmethod db-type-default-case ((db-type (eql :postgresql)))
+  :lower)
 

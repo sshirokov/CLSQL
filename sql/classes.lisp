@@ -100,8 +100,7 @@
            (call-next-method)))))
 
 (defmethod output-sql ((expr sql-ident) database)
-  (with-slots (name)
-      expr
+  (with-slots (name) expr
     (write-string
      (convert-to-db-default-case 
       (etypecase name
