@@ -1,3 +1,9 @@
+cl-sql (1.2.1-1) unstable; urgency=low
+
+  * New upstream version
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Wed, 30 Oct 2002 12:08:03 -0700
+
 cl-sql (1.2.0-3) unstable; urgency=low
 
   * Move cl-sql-base package architecture from any to all.

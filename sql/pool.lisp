@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg, Marc Battyani
 ;;;; Date Started:  Apr 2002
 ;;;;
-;;;; $Id: pool.lisp,v 1.3 2002/10/21 14:11:09 kevin Exp $
+;;;; $Id: pool.lisp,v 1.4 2002/10/30 19:08:08 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -49,7 +49,7 @@
    (all-connections :accessor all-connections
 		    :initform (make-array 5 :fill-pointer 0 :adjustable t))
    (lock :accessor conn-pool-lock
-	 :initform (make-lock "Connection pool"))))
+	 :initform (make-process-lock "Connection pool"))))
 
 (defun acquire-from-conn-pool (pool)
   (or (with-process-lock ((conn-pool-lock pool) "Acquire from pool")
