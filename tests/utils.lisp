@@ -1,4 +1,4 @@
-;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
+;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
@@ -79,7 +79,7 @@
 			       impl-version
 			       machine-type)
 	      form
-	    (declare (ignoreable utime impl-version))
+	    (declare (ignorable utime impl-version))
 	    (if failed-tests
 		(format output "~&~A: ~D of ~D tests failed (~A, ~A).~&"
 			(db-title db-type underlying-db-type)
