@@ -53,7 +53,7 @@
     (test-table-row (list int float bigint str) nil type))
   (do-query ((int float bigint str) "select * from test_clsql" :result-types :auto)
     (test-table-row (list int float bigint str) :auto type))
-  #+ignore (drop-test-table db))
+  (drop-test-table db))
 
 
 (defun %test-basic-untyped (db type)
