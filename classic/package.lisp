@@ -21,8 +21,7 @@
 (in-package #:cl-user)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defpackage #:clsql-classic-sys
-    (:nicknames #:clsql-classic)
+  (defpackage #:clsql-classic
     (:use #:cl #:clsql-base)
     (:import-from 
      #:clsql-base

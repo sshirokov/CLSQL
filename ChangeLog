@@ -12,6 +12,8 @@
 	* classic/sql.lisp: Move large object support into base, leaving
 	classic without any functionality that is provided in the clsql
 	system.
+	* classic/package.lisp: Rename clsql-classic-sys package to
+	it's former nickname of clsql-classic
 	
 1 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.5: SQLite backend now passes all result-types tests

@@ -16,8 +16,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:clsql-classic-sys)
-
+(in-package #:clsql-classic)
 
 ;;; This file implements the more advanced functions of the
 ;;; functional SQL interface, which are just nicer layers above the
