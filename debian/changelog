@@ -1,3 +1,9 @@
+cl-sql (1.0.1-1) unstable; urgency=low
+
+  * Add defgeneric for generic functions
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Mon, 14 Oct 2002 09:18:39 -0600
+
 cl-sql (1.0.0-1) unstable; urgency=low
 
   * Add SBCL support

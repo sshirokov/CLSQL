@@ -7,7 +7,7 @@
 ;;;; Programmers:   Marc Battyani
 ;;;; Date Started:  Apr 2002
 ;;;;
-;;;; $Id: transactions.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: transactions.lisp,v 1.2 2002/10/14 15:25:15 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -26,6 +26,7 @@
    (rollback-hooks :initform () :accessor rollback-hooks)
    (status :initform nil :accessor status))) ;can be nil :rolled-back or :commited
 
+(defgeneric database-start-transaction (database))
 (defmethod database-start-transaction ((database closed-database))
   (error 'clsql-closed-database-error database))
 
@@ -39,6 +40,7 @@
 	    (status transaction) nil)
       (execute-command "BEGIN" :database database))))
 
+(defgeneric database-end-transaction (database))
 (defmethod database-end-transaction ((database closed-database))
   (error 'clsql-closed-database-error database))
 

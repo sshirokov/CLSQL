@@ -8,7 +8,7 @@
 ;;;;                 Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: sql.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: sql.lisp,v 1.2 2002/10/14 15:25:15 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -121,6 +121,7 @@ if the database is from a pool it will be released to this pool."
 
 ;;; Basic operations on databases
 
+(defgeneric query (expression &key database types))
 (defmethod query (query-expression &key (database *default-database*)  
 		  types)
   "Execute the SQL query expression query-expression on the given database.
@@ -128,7 +129,7 @@ Returns a list of lists of values of the result of that expression."
   (database-query query-expression database types))
 
 
-
+(defgeneric execute-command (expression &key database))
 (defmethod execute-command (sql-expression &key (database *default-database*))
   "Execute the SQL command expression sql-expression on the given database.
 Returns true on success or nil on failure."
