@@ -1,3 +1,10 @@
+19 Apr 2002 Marc Battyani (marc.battyani@fractalconcept.com)
+	* interface/postgresql/postgresql-api.cl:
+	* interface/postgresql/postgresql-sql.cl:
+	* sql/sql.cl:
+	* sql/db-interface.cl:
+	Added large objects support for postgresql.
+
 07 Apr 2002 Kevin Rosenberg (kevin@rosenberg.net)
 	* src/postgresql-socket/postgresql-socket-api.cl:
 	Fixed find-foreign-function call, eliminated crypt warning
