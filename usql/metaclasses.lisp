@@ -494,7 +494,9 @@ all NULL values retrieved are converted by DATABASE-NULL-VALUE")
                    (view-class-slot-db-info sd)))))
       ;; all other slots
       (t
-       (change-class slotd 'view-class-effective-slot-definition)
+       (change-class slotd 'view-class-effective-slot-definition
+		     #+allegro :name 
+		     #+allegro (slot-definition-name sd))
        (setf (slot-value slotd 'column)
              (column-name-from-arg
               (sql-escape (slot-definition-name sd))))
