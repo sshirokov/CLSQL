@@ -1,9 +1,15 @@
+cl-sql (0.7.5-1) unstable; urgency=low
+
+  * Fix Build-Depends in control file (closes: 154217)
+  * Rework debhelper rules file to use dh_install rather than install
+  * Minor change in upstream.
+
+ -- Kevin M. Rosenberg <kevin@rosenberg.net>  Thu, 25 Jul 2002 09:15:44 -0600
+
 cl-sql (0.7.4-1) unstable; urgency=low
 
   * Rework upstream source to put html documentation in html.tar.gz
-
   * Move .so files into /usr/lib/cl-sql directory
-  
   * Move documentation into the clsql-base package, change doc-base section
   to programming.
 
