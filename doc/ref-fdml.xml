@@ -96,10 +96,126 @@
     <refnamediv>
       <refname>CACHE-TABLE-QUERIES</refname>
       <refpurpose>Control the caching of table attribute types.</refpurpose>
+      <refclass>Function</refclass>
     </refnamediv>
     <refsect1>
       <title>Syntax</title>
+      <synopsis>
+      <function>cache-table-queries</function> <replaceable>table</replaceable> &amp;key <replaceable>action</replaceable> <replaceable>database</replaceable> => <returnvalue></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <variablelist>
+        <varlistentry>
+          <term><parameter>table</parameter></term>
+          <listitem>
+            <para>
+              A string representing a database table, &t; or
+              <symbol>:default</symbol>.
+            </para> 
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term><parameter>action</parameter></term>
+          <listitem>
+            <para>
+              &t;, &nil; or <symbol>:flush</symbol>. 
+            </para> 
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term><parameter>database</parameter></term>
+          <listitem>
+            <para>A 
+            <glossterm linkend="gloss-database-object">database
+            object</glossterm>. This will default to the value
+            of <symbol>*default-database*</symbol>.</para>
+          </listitem>
+      </varlistentry>
+      </variablelist>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Controls the caching of attribute type information on the
+      table specified by <parameter>table</parameter> in
+      <parameter>database</parameter> which defaults to
+      <symbol>*default-database*</symbol>. <parameter>action</parameter>
+      specifies the caching behaviour to adopt. If its value is &t;
+      then attribute type information is cached whereas if its value
+      is &nil; then attribute type information is not cached. If
+      <parameter>action</parameter> is <symbol>:flush</symbol> then
+      all existing type information in the cache for
+      <parameter>table</parameter> is removed, but caching is still
+      enabled. <parameter>table</parameter> may be a string
+      representing a table for which the caching action is to be taken
+      while the caching action is applied to all tables if
+      <parameter>table</parameter> is &t;. Alternatively, when
+      <parameter>table</parameter> is <symbol>:default</symbol>, the
+      default caching action specified by
+      <symbol>*cache-table-queries-default*</symbol> is applied to all
+      tables for which a caching action has not been explicitly set.
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+(setf *cache-table-queries-default* t)
+=> T
+(create-table [foo]
+              '(([id] integer)
+                ([height] float)
+                ([name] (string 24))
+                ([comments] varchar)))
+=> 
+(cache-table-queries "foo")
+=> 
+(list-attribute-types "foo")
+=> (("id" :INT4 4 NIL 1) ("height" :FLOAT8 8 NIL 1) ("name" :BPCHAR 24 NIL 1)
+    ("comments" :VARCHAR 255 NIL 1))
+(drop-table "foo")
+=> 
+(create-table [foo]
+              '(([id] integer)
+                ([height] float)
+                ([name] (string 36))
+                ([comments] (string 100))))
+=> 
+(cache-table-queries "foo" :action :flush)
+=> 
+(list-attribute-types "foo")
+=> (("id" :INT4 4 NIL 1) ("height" :FLOAT8 8 NIL 1) ("name" :BPCHAR 36 NIL 1)
+    ("comments" :BPCHAR 100 NIL 1))
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+       <para>
+        The internal attribute cache for
+        <parameter>database</parameter> is modified.
+       </para>
+     </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <simplelist>
+        <member><link linkend="cache-table-queries-default"><symbol>*cache-table-queries-default*</symbol></link></member>
+      </simplelist>
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
       <para>
+        None. 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <simplelist>
+        <member><link linkend="cache-table-queries-default"><symbol>*cache-table-queries-default*</symbol></link></member>
+      </simplelist>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para>
+        None. 
       </para>
     </refsect1>
   </refentry>
