@@ -84,6 +84,11 @@
        (slot-value a 'postal-code)))
   nil "" "no city" 0)
 
+(deftest :oodml/select/10 
+    (mapcar #'(lambda (e) (slot-value e 'married)) 
+              (clsql:select 'employee :flatp t :order-by [emplid]))
+  (T T T NIL NIL NIL NIL NIL NIL NIL))
+
 ;; tests update-records-from-instance 
 (deftest :oodml/update-records/1
     (values
