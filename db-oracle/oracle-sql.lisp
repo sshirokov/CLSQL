@@ -33,7 +33,7 @@ likely that we'll have to worry about the CMUCL limit."))
 
 
 (defmacro deref-vp (foreign-object)
-  `(uffi:deref-pointer ,foreign-object void-pointer))
+  `(uffi:deref-pointer ,foreign-object :pointer-void))
 
 ;; constants - from OCI?
 
@@ -128,7 +128,7 @@ the length of that format.")
 		   (uffi:ensure-char-storable (code-char 0)))
 
              (setf (uffi:deref-pointer errcode :long) 0)
-             (oci-error-get (uffi:deref-pointer errhp void-pointer) 1
+             (oci-error-get (deref-vp errhp) 1
 			    (uffi:make-null-pointer :unsigned-char)
 			    errcode errbuf +errbuf-len+ +oci-htype-error+)
              (let ((subcode (uffi:deref-pointer errcode :long)))
@@ -191,10 +191,10 @@ the length of that format.")
 ;; In order to map the "same string" property above onto Lisp equality,
 ;; we drop trailing spaces in all cases:
 
-(uffi:def-type string-pointer (* :unsigned-char))
+(uffi:def-type string-array (:array :unsigned-char))
 
 (defun deref-oci-string (arrayptr string-index size)
-  (declare (type string-pointer arrayptr))
+  (declare (type string-array arrayptr))
   (declare (type (mod #.+n-buf-rows+) string-index))
   (declare (type (and unsigned-byte fixnum) size))
   (let* ((raw (uffi:convert-from-foreign-string 
@@ -226,7 +226,7 @@ the length of that format.")
   (flet (;; a character from OCI-DATE, interpreted as an unsigned byte
 	 (ub (i)
 	   (declare (type (mod #.+oci-date-bytes+) i))
-	   (mod (uffi:deref-array oci-date string-pointer i) 256)))
+	   (mod (uffi:deref-array oci-date string-array i) 256)))
     (let* ((century (* (- (ub 0) 100) 100))
 	   (year    (+ century (- (ub 1) 100)))
 	   (month   (ub 2))
@@ -386,9 +386,9 @@ the length of that format.")
 			   (#.SQLT-STR  
 			    (deref-oci-string b irow (cd-sizeof cd)))
 			   (#.SQLT-FLT  
-			    (uffi:deref-array bd '(:array :double) irow))
+			    (uffi:deref-array b '(:array :double) irow))
 			   (#.SQLT-INT  
-			    (uffi:deref-array bi '(:array :int) irow))
+			    (uffi:deref-array b '(:array :int) irow))
 			   (#.SQLT-DATE 
 			    (deref-oci-string b irow (cd-sizeof cd))))))))
 	       (when (and (eq :string (cd-result-type cd))
@@ -450,7 +450,7 @@ the length of that format.")
 (defun sql-stmt-exec (sql-stmt-string db result-types field-names)
   (with-slots (envhp svchp errhp)
     db
-    (let ((stmthp (uffi:allocate-foreign-object void-pointer)))
+    (let ((stmthp (uffi:allocate-foreign-object :pointer-void)))
       (uffi:with-foreign-object (stmttype :unsigned-short)
         
         (oci-handle-alloc (deref-vp envhp)
@@ -589,7 +589,7 @@ the length of that format.")
 	  (oci-attr-get (deref-vp parmdp)
 			+oci-dtype-param+ 
 			dtype-foreign
-			(uffi:make-null-pointer :int)
+			(uffi:make-null-pointer :unsigned-int)
 			+oci-attr-data-type+
 			(deref-vp errhp))
 	  (let ((dtype (uffi:deref-pointer dtype-foreign :unsigned-short)))
@@ -602,13 +602,13 @@ the length of that format.")
 	       (oci-attr-get (deref-vp parmdp)
 			     +oci-dtype-param+
 			     precision
-			     (uffi:make-null-pointer :int)
+			     (uffi:make-null-pointer :unsigned-int)
 			     +oci-attr-precision+
 			     (deref-vp errhp))
 	       (oci-attr-get (deref-vp parmdp)
 			     +oci-dtype-param+
 			     scale
-			     (uffi:make-null-pointer :int)
+			     (uffi:make-null-pointer :unsigned-int)
 			     +oci-attr-scale+
 			     (deref-vp errhp))
 	       (let ((*scale (uffi:deref-pointer scale :byte))
@@ -631,14 +631,14 @@ the length of that format.")
 	       (oci-attr-get (deref-vp parmdp)
 			     +oci-dtype-param+ 
 			     colsize
-			     (uffi:make-null-pointer :int) ;;  (uffi:pointer-address colsizesize) 
+			     (uffi:make-null-pointer :unsigned-int) ;;  (uffi:pointer-address colsizesize) 
 			     +oci-attr-data-size+
 			     (deref-vp errhp))
 	       (let ((colsize-including-null (1+ (uffi:deref-pointer colsize :unsigned-long))))
 		 (setf buffer (acquire-foreign-resource
 			       :unsigned-char (* +n-buf-rows+ colsize-including-null)))
 		 (setf sizeof colsize-including-null))))
-	    (let ((retcodes (acquire-foreign-resource :short +n-buf-rows+))
+	    (let ((retcodes (acquire-foreign-resource :unsigned-short +n-buf-rows+))
 		  (indicators (acquire-foreign-resource :short +n-buf-rows+))
 		  (colname-string ""))
 	      (when field-names
@@ -669,12 +669,15 @@ the length of that format.")
 				 defnp
 				 (deref-vp errhp)
 				 (1+ icolumn) ; OCI 1-based indexing again
-				 (foreign-resource-buffer buffer)
+				 (uffi:with-cast-pointer (vp (foreign-resource-buffer buffer) :void)
+				   vp)
 				 sizeof
 				 dtype
-				 (foreign-resource-buffer indicators)
+				 (uffi:with-cast-pointer (vp (foreign-resource-buffer indicators) :void)
+				   vp)
 				 (uffi:make-null-pointer :unsigned-short)
-				 (foreign-resource-buffer retcodes)
+				 (uffi:with-cast-pointer (vp (foreign-resource-buffer retcodes) :unsigned-short)
+				   vp)
 				 +oci-default+))))))))
   
 ;; Release the resources associated with a QUERY-CURSOR.

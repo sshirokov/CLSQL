@@ -1,4 +1,8 @@
 20 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* sql/oracle-sql.lisp: Now compiles and runs on SBCL.
+	Requires UFFI 1.5.0 or higher
+	
+20 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.19
 	* sql/conditions.lisp: Fix cerror
 	
