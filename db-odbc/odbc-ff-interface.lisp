@@ -21,7 +21,7 @@
 (def-foreign-type sql-handle :pointer-void)
 (def-foreign-type sql-handle-ptr '(* sql-handle))
 (def-foreign-type string-ptr '(* :unsigned-char))
-(def-type long-ptr-type '(* :long))
+(def-type long-ptr-type '(* :int))
 
 
 (def-function "SQLAllocEnv"
@@ -87,7 +87,7 @@
 (def-function "SQLPrepare"
     ((hstmt sql-handle)         ; HSTMT       hstmt
      (*szSqlStr :cstring)     ; UCHAR  FAR *szSqlStr
-     (cbSqlStr :long)           ; SDWORD      cbSqlStr
+     (cbSqlStr :int)           ; SDWORD      cbSqlStr
      )
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
@@ -101,7 +101,7 @@
 (def-function "SQLExecDirect"
     ((hstmt sql-handle)         ; HSTMT       hstmt
      (*szSqlStr :cstring)     ; UCHAR  FAR *szSqlStr
-     (cbSqlStr :long)           ; SDWORD      cbSqlStr
+     (cbSqlStr :int)           ; SDWORD      cbSqlStr
      )
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
@@ -123,7 +123,7 @@
      (hdbc sql-handle)          ; HDBC        hdbc
      (hstmt sql-handle)         ; HSTMT       hstmt
      (*szSqlState string-ptr)   ; UCHAR  FAR *szSqlState
-     (*pfNativeError (* :long))      ; SDWORD FAR *pfNativeError
+     (*pfNativeError (* :int))      ; SDWORD FAR *pfNativeError
      (*szErrorMsg string-ptr)   ; UCHAR  FAR *szErrorMsg
      (cbErrorMsgMax :short)     ; SWORD       cbErrorMsgMax
      (*pcbErrorMsg (* :short))        ; SWORD  FAR *pcbErrorMsg
@@ -140,7 +140,7 @@
 
 (def-function "SQLRowCount"
     ((hstmt sql-handle)         ; HSTMT       hstmt
-     (*pcrow (* :long))              ; SDWORD FAR *pcrow
+     (*pcrow (* :int))              ; SDWORD FAR *pcrow
      )
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
@@ -152,7 +152,7 @@
      (cbColNameMax :short)      ; SWORD       cbColNameMax
      (*pcbColName (* :short))         ; SWORD  FAR *pcbColName
      (*pfSqlType (* :short))          ; SWORD  FAR *pfSqlType
-     (*pcbColDef (* :unsigned-long))          ; UDWORD FAR *pcbColDef
+     (*pcbColDef (* :unsigned-int))          ; UDWORD FAR *pcbColDef
      (*pibScale (* :short))           ; SWORD  FAR *pibScale
      (*pfNullable (* :short))         ; SWORD  FAR *pfNullable
      )
@@ -166,7 +166,7 @@
      (rgbDesc string-ptr)             ; PTR         rgbDesc
      (cbDescMax :short)         ; SWORD       cbDescMax
      (*pcbDesc (* :short))            ; SWORD  FAR *pcbDesc
-     (*pfDesc (* :long))             ; SDWORD FAR *pfDesc
+     (*pfDesc (* :int))             ; SDWORD FAR *pfDesc
      )
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
@@ -190,8 +190,8 @@
      (icol :short)              ; UWORD       icol
      (fCType :short)            ; SWORD       fCType
      (rgbValue :pointer-void)            ; PTR         rgbValue
-     (cbValueMax :long)         ; SDWORD      cbValueMax
-     (*pcbValue (* :long))           ; SDWORD FAR *pcbValue
+     (cbValueMax :int)         ; SDWORD      cbValueMax
+     (*pcbValue (* :int))           ; SDWORD FAR *pcbValue
      )
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
@@ -215,7 +215,7 @@
     ((hstmt sql-handle)         ; HSTMT       hstmt
      (ipar :short)              ; UWORD       ipar
      (*pfSqlType (* :short))          ; SWORD  FAR *pfSqlType
-     (*pcbColDef (* :unsigned-long))          ; UDWORD FAR *pcbColDef
+     (*pcbColDef (* :unsigned-int))          ; UDWORD FAR *pcbColDef
      (*pibScale (* :short))           ; SWORD  FAR *pibScale
      (*pfNullable (* :short))         ; SWORD  FAR *pfNullable
      )
@@ -229,10 +229,10 @@
      (fParamType :short)        ; SWORD       fParamType
      (fCType :short)            ; SWORD       fCType
      (fSqlType :short)          ; SWORD       fSqlType
-     (cbColDef :long)           ; UDWORD      cbColDef
+     (cbColDef :int)           ; UDWORD      cbColDef
      (ibScale :short)           ; SWORD       ibScale
      (rgbValue :pointer-void)            ; PTR         rgbValue
-     (cbValueMax :long)         ; SDWORD      cbValueMax
+     (cbValueMax :int)         ; SDWORD      cbValueMax
      (*pcbValue :pointer-void)           ; SDWORD FAR *pcbValue
      )
   :module "odbc"
@@ -244,7 +244,7 @@
      (icol :short)              ; UWORD       icol
      (fCType :short)            ; SWORD       fCType
      (rgbValue :pointer-void)            ; PTR         rgbValue
-     (cbValueMax :long)         ; SDWORD      cbValueMax
+     (cbValueMax :int)         ; SDWORD      cbValueMax
      (*pcbValue :pointer-void)           ; SDWORD FAR *pcbValue
      )
   :module "odbc"
@@ -260,7 +260,7 @@
 (def-function "SQLPutData"
     ((hstmt sql-handle)         ; HSTMT       hstmt
      (rgbValue :pointer-void)            ; PTR         rgbValue
-     (cbValue :long)            ; SDWORD      cbValue
+     (cbValue :int)            ; SDWORD      cbValue
      )
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
@@ -276,7 +276,7 @@
 (def-function "SQLSetConnectOption"
     ((hdbc sql-handle)          ; HDBC        hdbc
      (fOption :short)           ; UWORD       fOption
-     (vParam :long)             ; UDWORD      vParam
+     (vParam :int)             ; UDWORD      vParam
      )
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
@@ -294,7 +294,7 @@
 (def-function "SQLExtendedFetch"
     ((hstmt sql-handle)         ; HSTMT       hstmt
      (fFetchType :short)        ; UWORD       fFetchType
-     (irow :long)               ; SDWORD      irow
+     (irow :int)               ; SDWORD      irow
      (*pcrow :pointer-void)              ; UDWORD FAR *pcrow
      (*rgfRowStatus :pointer-void)       ; UWORD  FAR *rgfRowStatus
      )
@@ -344,7 +344,7 @@
   (hour     :short)
   (minute   :short)
   (second   :short)
-  (fraction :long))
+  (fraction :int))
 
 ;;; Added by KMR
 
