@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.3 2002/03/27 08:16:24 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.4 2002/03/27 09:03:47 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -36,7 +36,7 @@ VERSION=$(shell cat VERSION)
 DISTDIR=$(PACKAGE)-$(VERSION)
 DIST_TARBALL=$(DISTDIR).tar.gz
 DIST_ZIP=$(DISTDIR).zip
-SOURCE_FILES=interfaces sql cmucl-compat doc Makefile VERSION \
+SOURCE_FILES=interfaces sql cmucl-compat doc test-suite Makefile VERSION \
 	COPYING.CLSQL COPYING.MaiSQL README INSTALL ChangeLog NEWS TODO \
 	set-logical.cl test-clsql.cl \
 	clsql.system clsql-aodbc.system clsql-mysql.system \

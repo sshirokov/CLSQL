@@ -15,6 +15,9 @@
 	* test-clsql.cl: Updated to test postgresql-socket's
 	read-double-from-socket function.
 	
+	* test-suite/xptest-clsql.cl
+	Start testing using XPTest package
+
 25 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 
 	* interfaces/mysql/mysql-api.cl: Added mysql-fetch-fields,
