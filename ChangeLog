@@ -1,7 +1,8 @@
 26 Dec 2004 Kevin Rosenberg <kevin@rosenberg.net>
         * doc/ref-fdml.lisp: Fix variable tag name to varname
 	[noted by Eduardo Munoz]
-	
+        * db-mysql/mysql-loader.lisp: Handle library paths for 64-bit systems
+ 	
 06 Dec 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.1.2
 	* sql/ooddl.lisp: Accept patch from Klaus Harbo for

@@ -20,7 +20,7 @@
 
 (defparameter *clsql-mysql-library-path* 
   (uffi:find-foreign-library
-   '(#+64bit "mysql64" "mysql")
+   '(#+(or 64bit x86-64) "mysql64" "mysql")
    `(,clsql-mysql-system::*library-file-dir*
      "/usr/lib/clsql/"
      "/sw/lib/clsql/")
@@ -32,7 +32,10 @@
 (defparameter *mysql-library-candidate-directories*
     `(,(pathname-directory *load-pathname*)
       "/opt/mysql/lib/mysql/" "/usr/local/lib/"
-      #+64bit "/usr/lib64/" #+64bit "/usr/local/lib64/mysql/"
+      #+(or 64bit x86-64) "/usr/lib64/" #+(or 64bit x86-64) "/usr/local/lib64/mysql/"
+      #+(or 64bit x86-64) "/usr/local/lib64/"
+      #+(or 64bit x86-64) "/usr/local/lib64/mysql/"
+
       "/usr/lib/" "/usr/local/lib/mysql/" "/usr/lib/mysql/" "/mysql/lib/opt/" "/sw/lib/mysql/" "/opt/local/lib/mysql/"))
 
 (defvar *mysql-library-candidate-drive-letters* '("C" "D" "E"))
