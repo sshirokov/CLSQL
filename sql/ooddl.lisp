@@ -72,28 +72,32 @@
 ;;
 
 (defun create-view-from-class (view-class-name
-                               &key (database *default-database*))
+                               &key (database *default-database*)
+			       (transactions t))
   "Creates a table as defined by the View Class VIEW-CLASS-NAME
 in DATABASE which defaults to *DEFAULT-DATABASE*."
   (let ((tclass (find-class view-class-name)))
     (if tclass
         (let ((*default-database* database))
-          (%install-class tclass database))
+          (%install-class tclass database :transactions transactions))
         (error "Class ~s not found." view-class-name)))
   (values))
 
-(defmethod %install-class ((self standard-db-class) database &aux schemadef)
-  (dolist (slotdef (ordered-class-slots self))
-    (let ((res (database-generate-column-definition (class-name self)
-                                                    slotdef database)))
-      (when res 
-        (push res schemadef))))
-  (unless schemadef
-    (error "Class ~s has no :base slots" self))
-  (create-table (sql-expression :table (view-table self)) (nreverse schemadef)
-                :database database
-                :constraints (database-pkey-constraint self database))
-  (push self (database-view-classes database))
+(defmethod %install-class ((self standard-db-class) database
+			   &key (transactions t))
+  (let ((schemadef '()))
+    (dolist (slotdef (ordered-class-slots self))
+      (let ((res (database-generate-column-definition (class-name self)
+						      slotdef database)))
+	(when res 
+	  (push res schemadef))))
+    (unless schemadef
+      (error "Class ~s has no :base slots" self))
+    (create-table (sql-expression :table (view-table self)) (nreverse schemadef)
+		  :database database
+		  :transactions transactions
+		  :constraints (database-pkey-constraint self database))
+    (push self (database-view-classes database)))
   t)
 
 (defmethod database-pkey-constraint ((class standard-db-class) database)

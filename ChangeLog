@@ -1,3 +1,9 @@
+23 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/oodml.lisp: Add keyword :transactions to def-view-from-class
+	to allow specifying transactionless table creation
+	* doc/ref-oodml.lisp: Add new keyword to signature of 
+	DEF-VIEW-FROM-CLASS	
+	
 18 Jun 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* Version 2.11.11
 	* sql/expressions.lisp: when removing duplicate table identifiers 

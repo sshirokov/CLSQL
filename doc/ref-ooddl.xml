@@ -97,7 +97,7 @@
     <refsect1>
       <title>Syntax</title>
       <synopsis>
-      <function> (CREATE-VIEW-FROM-CLASS VIEW-CLASS-NAME &amp;KEY (DATABASE *DEFAULT-DATABASE*)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
+      <function> (CREATE-VIEW-FROM-CLASS VIEW-CLASS-NAME &amp;KEY (DATABASE *DEFAULT-DATABASE*) (TRANSACTIONS T)) [function]</function> => <returnvalue><!-- result --></returnvalue></synopsis>
     </refsect1>
     <refsect1>
       <title>Arguments and Values</title>
