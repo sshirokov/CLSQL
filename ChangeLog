@@ -1,7 +1,12 @@
 28 Sep 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.0.6 released
 	* BUGS: New file. Document suspected SIGPIPE
 	interaction between SBCL and libpq used in
 	postgresql backend.
+	* doc/ref-fdml.lisp: Document the :caching and :refresh
+	keywords of the SELECT function.
+	* doc/ref-ooddml.lisp: Document the new *default-caching*
+	variable.
 	* sql/package.lisp: Export *default-caching*
 	* sql/oodml.lisp: Use *default-caching* to 
 	control default caching behavior.

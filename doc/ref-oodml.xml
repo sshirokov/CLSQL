@@ -124,6 +124,57 @@
     </refsect1>
   </refentry>
 
+  <refentry id="default-caching">
+    <refnamediv>
+      <refname>*DEFAULT-CACHING*</refname>
+      <refpurpose>Controls the default caching behavior.</refpurpose>
+      <refclass>Variable</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Value Type</title>
+      <para>
+	Boolean
+      </para> 
+    </refsect1>
+    <refsect1>
+      <title>Initial Value</title>
+      <para>&t;</para>
+    </refsect1>
+    <refsect1>
+      <title>Description</title> 
+      <para>
+	This variable stores the default value of the
+	<variable>CACHING</variable> keyword for the <link
+	linkend="select"><function>select</function></link>.
+      </para> 
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+	(let ((*default-caching* nil)))
+	  (select 'foo))
+
+	;; is equivalent to
+
+	(select 'foo :caching nil)
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Affected By</title>
+      <para>None.</para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <simplelist>
+        <member><link linkend="select"><function>select</function></link></member>
+      </simplelist>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title> <para>This is a CLSQL extension to the
+      &commonsql; API. &commonsql; has caching on at all times.</para>
+    </refsect1>
+  </refentry>
+
   <refentry id="default-update-objects-max-len">
     <refnamediv>
       <refname>*DEFAULT-UPDATE-OBJECTS-MAX-LEN*</refname>
