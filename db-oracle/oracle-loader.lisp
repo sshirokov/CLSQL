@@ -16,112 +16,35 @@
 
 (in-package #:clsql-oracle)
 
-;; Load the foreign library
+(defparameter *clsql-oracle-library-path* 
+  (uffi:find-foreign-library
+   "oracle"
+   `(,(make-pathname :directory (pathname-directory *load-truename*))
+     "/usr/lib/clsql/"
+     "/sw/lib/clsql/"
+     "/home/kevin/debian/src/clsql/db-oracle/")
+   :drive-letters '("C")))
 
-(eval-when (:load-toplevel :compile-toplevel)
-  (defvar *oracle-home*
-    nil
-    "The root of the Oracle installation, usually $ORACLE_HOME is set to this.")
-  (unless *oracle-home*
-    (setf *oracle-home*
-          (cdr (assoc ':ORACLE_HOME ext:*environment-list* :test #'eq)))))
+(defvar *oracle-library-candidate-drive-letters* '("C" "D" "E"))
 
-(defparameter *oracle-libs*
-  '(#-oracle-9i "rdbms/lib/ssdbaed.o"
-    "rdbms/lib/defopt.o"
-    #-oracle-9i "rdbms/lib/homts.o"
-    "lib/nautab.o"
-    "lib/naeet.o"
-    "lib/naect.o"
-    "lib/naedhs.o"
-    #-oracle-9i"lib/libnsslb8.a"
-    #+oracle-9i "lib/homts.o"
-    )
-  "Oracle client libraries, relative to ORACLE_HOME.")
+(defvar *oracle-supporting-libraries* '("c")
+  "Used only by CMU. List of library flags needed to be passed to ld to
+load the Oracle client library succesfully.  If this differs at your site,
+set to the right path before compiling or loading the system.")
 
-(defun make-oracle-load-path ()
-  (mapcar (lambda (x)
-	    (concatenate 'string *oracle-home* "/" x))
-	  *oracle-libs*))
+(defvar *oracle-library-loaded* nil
+  "T if foreign library was able to be loaded successfully")
 
-
-; ;(defparameter *oracle-so-libraries*
-; ;;  `(,(concatenate 'string "-L" *oracle-home* "/lib/")
-;     '(
-;       "-lclntsh"
-;       "-lnetv2"
-;       "-lnttcp"
-;       "-lnetwork"
-;       "-lncr"
-;       "-lclient"
-;       "-lvsn"
-;       "-lcommon"
-;       "-lgeneric"
-;       "-lmm"
-;       "-lnlsrtl3"
-;       "-lcore4"
-;       "-lnlsrtl3"
-;       "-lepc"
-;       "-ldl"
-;       "-lm")
-;   "List of library flags needed to be passed to ld to load the
-; Oracle client library succesfully.  If this differs at your site,
-; set *oracle-so-libraries* to the right path before compiling or
-; loading the system.")
+(defmethod clsql-sys:database-type-library-loaded ((database-type (eql :oracle)))
+  *oracle-library-loaded*)
+				      
+(defmethod clsql-sys:database-type-load-foreign ((database-type (eql :oracle)))
+  (uffi:load-foreign-library *clsql-oracle-library-path* 
+			     :module "clsql-oracle" 
+			     :supporting-libraries *oracle-supporting-libraries*)
+  (setq *oracle-library-loaded* t))
 
 
-#-oracle-9i
-(defun oracle-libraries ()
-  `(,(concatenate 'string
-		 "-L" *oracle-home* "/lib")
-    "-lagtsh"
-;;    "-locijdbc8"
-    "-lclntsh"
-    "-lclient8"
-    "-lvsn8"
-    "-lcommon8"
-    "-lskgxp8"
-    "-lmm"
-    "-lnls8"
-    "-lcore8"
-    "-lgeneric8"
-    "-ltrace8"
-    "-ldl"
-    "-lm"))
-
-;;  "List of library flags needed to be passed to ld to load the
-;;Oracle client library succesfully.  If this differs at your site,
-;;set *oracle-so-libraries* to the right path before compiling or
-;;loading the system.")
-
-#+oracle-9i
-(defun oracle-libraries ()
-  `(,(concatenate 'string
-		 "-L" *oracle-home* "/lib")
-    "-lagent9"
-    "-lagtsh"
-;;    "-locijdbc8"
-    "-lclntsh"
-    "-lclntst9"
-    "-lclient9"
-    "-lvsn9"
-    "-lcommon9"
-    "-lskgxp9"
-    "-lmm"
-    "-lnls9"
-    "-lcore9"
-    "-lgeneric9"
-    "-ltrace9"
-    "-ldl"
-    #+redhat-linux "-L/usr/lib/gcc-lib/i386-redhat-linux/2.96"
-    "-lgcc"
-    "-lm"))
-
-(defmethod database-type-load-foreign ((database-type (eql :oracle)))
-  (progv '(sys::*dso-linker*)
-      '("/usr/bin/ld")
-    (ext:load-foreign (make-oracle-load-path)
-		    :libraries (oracle-libraries))))
+(clsql-sys:database-type-load-foreign :oracle)
 
 
-(database-type-load-foreign :oracle)
