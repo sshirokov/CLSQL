@@ -323,7 +323,7 @@ the length of that format.")
 ;; STREAM which has no more data, and QC is not a STREAM, we signal
 ;; DBI-ERROR instead.
 
-(uffi:def-type short-pointer '(* :short))
+(uffi:def-type short-array '(:array :short))
 (uffi:def-type int-pointer '(* :int))
 (uffi:def-type double-pointer '(* :double))
 
@@ -380,17 +380,15 @@ the length of that format.")
 		    (value
 		     (let* ((arb (foreign-resource-buffer (cd-indicators cd)))
 			    (indicator (uffi:deref-array arb '(:array :short) irow)))
-		       (declare (type short-pointer arb))
+		       (declare (type short-array arb))
 		       (unless (= indicator -1)
 			 (ecase (cd-oci-data-type cd)
 			   (#.SQLT-STR  
 			    (deref-oci-string b irow (cd-sizeof cd)))
 			   (#.SQLT-FLT  
-			    (uffi:with-cast-pointer (bd b :double)
-			      (uffi:deref-array bd '(:array :double) irow)))
+			    (uffi:deref-array bd '(:array :double) irow))
 			   (#.SQLT-INT  
-			    (uffi:with-cast-pointer (bi b :int)
-			      (uffi:deref-array bi '(:array :int) irow)))
+			    (uffi:deref-array bi '(:array :int) irow))
 			   (#.SQLT-DATE 
 			    (deref-oci-string b irow (cd-sizeof cd))))))))
 	       (when (and (eq :string (cd-result-type cd))
@@ -758,7 +756,8 @@ the length of that format.")
 	(uffi:with-foreign-object (buf '(:array :unsigned-char #.+errbuf-len+))
 	  (oci-server-version (deref-vp svchp)
 			      (deref-vp errhp)
-			      buf +errbuf-len+ +oci-htype-svcctx+)
+			      (uffi:char-array-to-pointer buf)
+			      +errbuf-len+ +oci-htype-svcctx+)
 	  (setf server-version (uffi:convert-from-foreign-string buf)))
 	(setq db (make-instance 'oracle-database
 				:name (database-name-from-spec connection-spec

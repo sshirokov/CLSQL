@@ -360,4 +360,3 @@
   (let ((envhp (oci-get-handle :type :env)))
     (oci-env-init envhp 0 0 +null-void-pointer+)
     envhp))
-)
