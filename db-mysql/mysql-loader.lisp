@@ -40,8 +40,9 @@
       "/usr/lib/"
       "/sw/lib/"
       "/usr/local/lib/"
-      "/home/kevin/debian/src/clsql/db-mysql/"
-      "/mysql/lib/opt/")
+       "/home/kevin/debian/src/clsql/db-mysql/"
+       "/mysql/lib/dll32/"
+       "/mysql/lib/opt/")
    :drive-letters '("C")))
   
 (defvar *mysql-library-candidate-names*
