@@ -3,44 +3,44 @@
 ;;;; File:    test-ooddl.lisp
 ;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>
 ;;;; Created: 30/03/2004
-;;;; Updated: <04/04/2004 11:52:11 marcusp>
+;;;; Updated: $Id: $
 ;;;; ======================================================================
 ;;;;
 ;;;; Description ==========================================================
 ;;;; ======================================================================
 ;;;;
-;;;; Tests for the CLSQL-USQL Object Oriented Data Definition Language
+;;;; Tests for the CLSQL Object Oriented Data Definition Language
 ;;;; (OODDL).
 ;;;;
 ;;;; ======================================================================
 
 
-(in-package :clsql-usql-tests)
+(in-package #:clsql-tests)
 
-#.(usql:locally-enable-sql-reader-syntax)
+#.(clsql:locally-enable-sql-reader-syntax)
 
 ;; Ensure slots inherited from standard-classes are :virtual
 (deftest :ooddl/metaclass/1
     (values 
-     (usql-sys::view-class-slot-db-kind
-      (usql-sys::slotdef-for-slot-with-class 'extraterrestrial
+     (clsql-sys::view-class-slot-db-kind
+      (clsql-sys::slotdef-for-slot-with-class 'extraterrestrial
                                              (find-class 'person)))
-     (usql-sys::view-class-slot-db-kind
-      (usql-sys::slotdef-for-slot-with-class 'hobby (find-class 'person))))
+     (clsql-sys::view-class-slot-db-kind
+      (clsql-sys::slotdef-for-slot-with-class 'hobby (find-class 'person))))
   :virtual :virtual)
 
 ;; Ensure all slots in view-class are view-class-effective-slot-definition
 (deftest :ooddl/metaclass/2
     (values
      (every #'(lambda (slotd)
-                (typep slotd 'usql-sys::view-class-effective-slot-definition))
-            (usql-sys::class-slots (find-class 'person)))
+                (typep slotd 'clsql-sys::view-class-effective-slot-definition))
+            (clsql-sys::class-slots (find-class 'person)))
      (every #'(lambda (slotd)
-                (typep slotd 'usql-sys::view-class-effective-slot-definition))
-            (usql-sys::class-slots (find-class 'employee)))
+                (typep slotd 'clsql-sys::view-class-effective-slot-definition))
+            (clsql-sys::class-slots (find-class 'employee)))
      (every #'(lambda (slotd)
-                (typep slotd 'usql-sys::view-class-effective-slot-definition))
-            (usql-sys::class-slots (find-class 'company))))
+                (typep slotd 'clsql-sys::view-class-effective-slot-definition))
+            (clsql-sys::class-slots (find-class 'company))))
   t t t)
 
 (deftest :ooddl/join/1
@@ -60,10 +60,10 @@
 (deftest :ooddl/time/1
     (let* ((now (clsql-base:get-time)))
       (when (member *test-database-type* '(:postgresql :postgresql-socket))
-        (usql:execute-command "set datestyle to 'iso'"))
-      (usql:update-records [employee] :av-pairs `((birthday ,now))
+        (clsql:execute-command "set datestyle to 'iso'"))
+      (clsql:update-records [employee] :av-pairs `((birthday ,now))
                            :where [= [emplid] 1])
-      (let ((dbobj (car (usql:select 'employee :where [= [birthday] now]))))
+      (let ((dbobj (car (clsql:select 'employee :where [= [birthday] now]))))
         (values
          (slot-value dbobj 'last-name)
          (clsql-base:time= (slot-value dbobj 'birthday) now))))
@@ -73,15 +73,15 @@
     (let* ((now (clsql-base:get-time))
            (fail-index -1))
       (when (member *test-database-type* '(:postgresql :postgresql-socket))
-        (usql:execute-command "set datestyle to 'iso'"))
+        (clsql:execute-command "set datestyle to 'iso'"))
       (dotimes (x 40)
-        (usql:update-records [employee] :av-pairs `((birthday ,now))
+        (clsql:update-records [employee] :av-pairs `((birthday ,now))
                              :where [= [emplid] 1])
-        (let ((dbobj (car (usql:select 'employee :where [= [birthday] now]))))
+        (let ((dbobj (car (clsql:select 'employee :where [= [birthday] now]))))
           (unless (clsql-base:time= (slot-value dbobj 'birthday) now)
             (setf fail-index x))
           (setf now (clsql-base:roll now :day (* 10 x)))))
       fail-index)
   -1)
 
-#.(usql:restore-sql-reader-syntax-state)
+#.(clsql:restore-sql-reader-syntax-state)

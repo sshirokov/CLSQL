@@ -12,8 +12,8 @@
 ;;;; This file was extracted from the KMRCL utilities
 ;;;; *************************************************************************
 
-;;; This file imports MOP symbols into the USQL-MOP package and then
-;;; re-exports into CLSQL-USQL-SYS them to hide differences in
+;;; This file imports MOP symbols into the CLSQL-MOP package and then
+;;; re-exports into CLSQL-SYS them to hide differences in
 ;;; MOP implementations.
 
 (in-package #:clsql-sys)

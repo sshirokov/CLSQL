@@ -7,7 +7,7 @@
 ;;;; Description ==========================================================
 ;;;; ======================================================================
 ;;;;
-;;;; CLSQL-USQL square bracket symbolic query syntax. Functions for
+;;;; CLSQL square bracket symbolic query syntax. Functions for
 ;;;; enabling and disabling the syntax and for building SQL
 ;;;; expressions using the syntax.
 ;;;;

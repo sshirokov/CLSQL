@@ -5,7 +5,7 @@
 ;;;; Description ==========================================================
 ;;;; ======================================================================
 ;;;;
-;;;; The CLSQL-USQL Object Oriented Data Definitional Language (OODDL)
+;;;; The CLSQL Object Oriented Data Definitional Language (OODDL)
 ;;;; and Object Oriented Data Manipulation Language (OODML).
 ;;;;
 ;;;; ======================================================================
@@ -18,7 +18,7 @@
     :initarg :view-database
     :db-kind :virtual))
   (:metaclass standard-db-class)
-  (:documentation "Superclass for all CLSQL-USQL View Classes."))
+  (:documentation "Superclass for all CLSQL View Classes."))
 
 (defmethod view-database ((self standard-db-object))
   (slot-value self 'view-database))
@@ -100,8 +100,8 @@
 #.(locally-enable-sql-reader-syntax)
 
 (defun ensure-schema-version-table (database)
-  (unless (table-exists-p "usql_object_v" :database database)
-    (create-table [usql_object_v] '(([name] (string 32))
+  (unless (table-exists-p "clsql_object_v" :database database)
+    (create-table [clsql_object_v] '(([name] (string 32))
                                     ([vers] integer)
                                     ([def] (string 32)))
                   :database database)))
@@ -115,10 +115,10 @@
                                                       slotdef database)))
         (when res (setf schemadef (cons res schemadef)))))
     (when schemadef
-      (delete-records :from [usql_object_v]
+      (delete-records :from [clsql_object_v]
                       :where [= [name] (sql-escape (class-name tclass))]
                       :database database)
-      (insert-records :into [usql_object_v]
+      (insert-records :into [clsql_object_v]
                       :av-pairs `(([name] ,(sql-escape (class-name tclass)))
                                   ([vers] ,(car (object-version tclass)))
                                   ([def] ,(prin1-to-string
@@ -169,7 +169,7 @@ which defines that view. The argument DATABASE has a default value of
     (if tclass
         (let ((*default-database* database))
           (%uninstall-class tclass)
-          (delete-records :from [usql_object_v]
+          (delete-records :from [clsql_object_v]
                           :where [= [name] (sql-escape view-class-name)]))
         (error "Class ~s not found." view-class-name)))
   (values))
@@ -296,9 +296,9 @@ superclass of the newly-defined View Class."
 (defun slot-type (slotdef)
   (let ((slot-type (slot-definition-type slotdef)))
     (if (listp slot-type)
-        (cons (find-symbol (symbol-name (car slot-type)) :usql-sys)
+        (cons (find-symbol (symbol-name (car slot-type)) :clsql-sys)
               (cdr slot-type))
-        (find-symbol (symbol-name slot-type) :usql-sys))))
+        (find-symbol (symbol-name slot-type) :clsql-sys))))
 
 (defmethod update-slot-from-db ((instance standard-db-object) slotdef value)
   (declare (optimize (speed 3) #+cmu (extensions:inhibit-warnings 3)))

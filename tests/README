@@ -19,7 +19,7 @@ and set the following variables to appropriate values:
 And then call:
 
 (asdf:oos 'asdf:load-op 'clsql-tests)
-(clsql-tests:test-usql BACKEND)
+(clsql-tests:run-tests BACKEND)
 
 where BACKEND is the CLSQL database interface to use (currently one of
 :postgresql, :postgresql-socket, :sqlite or :mysql).
@@ -34,7 +34,7 @@ the system to support the following:
 Refactoring and redesign efforts are normally restricted to a single
 subsystem, or perhaps to interdependent subsystems.  In such cases, a
 set of regression tests which excercise the existing interface of the
-rest of USQL to the changing subsystems should be in place and passing
+rest of CLSQL to the changing subsystems should be in place and passing
 before the coding starts.
 
 ** Ensuring portability and Supporting new ports.
@@ -48,9 +48,9 @@ informal coordination between the mintainers of the various ports.
 
 ** Adding new RDBMS backends
 
-The entire USQL DBMS interface needs to be excercised by the test
+The entire CLSQL DBMS interface needs to be excercised by the test
 suite, such that a new RDBMS backend that passes all the tests can be
-reasonably assured of working with the USQL layers above that.  These
+reasonably assured of working with the CLSQL layers above that.  These
 tests should also serve as impromptu documentation for the details of
 that interface and what it expects frothe RDBMS driver layers.
 
@@ -68,7 +68,7 @@ spend finding the bug prior to fixing it.
 
 ** Multiple RDBMS Issues
 
-USQL supports several RDBMS backends, and it should be possible to run
+CLSQL supports several RDBMS backends, and it should be possible to run
 every test against all of them.  However, there are some features
 which we want tests for but which are not implemented on several of
 the backends.  

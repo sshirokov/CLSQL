@@ -6,7 +6,7 @@
 ;;;; Description ==========================================================
 ;;;; ======================================================================
 ;;;;
-;;;; CLSQL-USQL metaclass for standard-db-objects created in the OODDL. 
+;;;; CLSQL metaclass for standard-db-objects created in the OODDL. 
 ;;;;
 ;;;; ======================================================================
 

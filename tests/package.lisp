@@ -3,21 +3,20 @@
 ;;;; File:    package.lisp
 ;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>
 ;;;; Created: 30/03/2004
-;;;; Updated: <04/04/2004 12:00:14 marcusp>
+;;;; Updated: $Id: $
 ;;;; ======================================================================
 ;;;;
 ;;;; Description ==========================================================
 ;;;; ======================================================================
 ;;;;
-;;;; Package definition for CLSQL-USQL test suite.
+;;;; Package definition for CLSQL test suite.
 ;;;;
 ;;;; ======================================================================
 
 
 (in-package #:cl-user)
 
-(defpackage #:clsql-usql-tests
-  (:nicknames #:usql-tests)
-  (:use #:clsql-usql #:common-lisp #:rtest)
-  (:export #:test-usql #:test-initialise-database #:test-connect-to-database)
-  (:documentation "Regression tests for CLSQL-USQL."))
+(defpackage #:clsql-tests
+  (:use #:clsql #:common-lisp #:rtest)
+  (:export #:run-tests #:test-initialise-database #:test-connect-to-database)
+  (:documentation "Regression tests for CLSQL."))

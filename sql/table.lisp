@@ -7,7 +7,7 @@
 ;;;; Description ==========================================================
 ;;;; ======================================================================
 ;;;;
-;;;; The CLSQL-USQL Functional Data Definition Language (FDDL)
+;;;; The CLSQL Functional Data Definition Language (FDDL)
 ;;;; including functions for schema manipulation. Currently supported
 ;;;; SQL objects include tables, views, indexes, attributes and
 ;;;; sequences.

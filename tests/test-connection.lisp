@@ -3,22 +3,22 @@
 ;;;; File:    test-connection.lisp
 ;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>
 ;;;; Created: 30/03/2004
-;;;; Updated: <04/04/2004 11:53:49 marcusp>
+;;;; Updated: $Id: $
 ;;;; ======================================================================
 ;;;;
 ;;;; Description ==========================================================
 ;;;; ======================================================================
 ;;;;
-;;;; Tests for CLSQL-USQL database connections. 
+;;;; Tests for CLSQL database connections. 
 ;;;;
 ;;;; ======================================================================
 
-(in-package :clsql-usql-tests)
+(in-package #:clsql-tests)
 
 
 (deftest :connection/1
-    (let ((database (usql:find-database
-                     (usql:database-name usql:*default-database*)
-                     :db-type (usql:database-type usql:*default-database*))))
-      (eql (usql:database-type database) *test-database-type*))
+    (let ((database (clsql:find-database
+                     (clsql:database-name clsql:*default-database*)
+                     :db-type (clsql:database-type clsql:*default-database*))))
+      (eql (clsql:database-type database) *test-database-type*))
   t)

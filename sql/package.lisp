@@ -9,7 +9,7 @@
 ;;;; Description ==========================================================
 ;;;; ======================================================================
 ;;;;
-;;;; Package definitions for CLSQL-USQL. 
+;;;; Package definitions for CLSQL. 
 ;;;;
 ;;;; ======================================================================
 
@@ -252,7 +252,7 @@
    :database-attribute-type
 
    .
-   ;; Shared exports for re-export by USQL. 
+   ;; Shared exports for re-export by CLSQL. 
    ;; I = Implemented, D = Documented
    ;;  name                                 file       ID
    ;;====================================================
@@ -388,7 +388,7 @@
        . 
        #1#
        ))
-  (:documentation "This is the INTERNAL SQL-Interface package of USQL."))
+  (:documentation "This is the INTERNAL SQL-Interface package of CLSQL."))
 
 
 ;; see http://thread.gmane.org/gmane.lisp.lispworks.general/681
@@ -400,7 +400,7 @@
   (:use #:common-lisp)
   (:import-from :clsql-sys . #2#)
   (:export . #2#)
-  (:documentation "This is the SQL-Interface package of USQL."))
+  (:documentation "This is the SQL-Interface package of CLSQL."))
 
   ;; This is from USQL's pcl-patch  
   #+(or clsql-sbcl-pcl clsql-cmucl-pcl)

@@ -7,7 +7,7 @@
 ;;;; Description ==========================================================
 ;;;; ======================================================================
 ;;;;
-;;;; The CLSQL-USQL Functional Data Manipulation Language (FDML). 
+;;;; The CLSQL Functional Data Manipulation Language (FDML). 
 ;;;;
 ;;;; ======================================================================
 

@@ -3,17 +3,17 @@
 ;;;; File:    test-init.lisp
 ;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>
 ;;;; Created: 30/03/2004
-;;;; Updated: <04/04/2004 12:14:38 marcusp>
+;;;; Updated: $Id: $
 ;;;; ======================================================================
 ;;;;
 ;;;; Description ==========================================================
 ;;;; ======================================================================
 ;;;;
-;;;; Initialisation utilities for running regression tests on CLSQL-USQL. 
+;;;; Initialisation utilities for running regression tests on CLSQL. 
 ;;;;
 ;;;; ======================================================================
 
-(in-package #:clsql-usql-tests)
+(in-package #:clsql-tests)
 
 (defvar *test-database-type* nil)
 (defvar *test-database-server* "")
@@ -239,7 +239,7 @@
 (defun test-connect-to-database (database-type)
   (setf *test-database-type* database-type)
   ;; Connect to the database
-  (usql:connect (test-database-connection-spec)
+  (clsql:connect (test-database-connection-spec)
                 :database-type database-type
                 :make-default t
                 :if-exists :old))
@@ -253,61 +253,61 @@
 (defun test-initialise-database ()
     ;; Delete the instance records
   (with-ignore-errors 
-    (usql:delete-instance-records company1)
-    (usql:delete-instance-records employee1)
-    (usql:delete-instance-records employee2)
-    (usql:delete-instance-records employee3)
-    (usql:delete-instance-records employee4)
-    (usql:delete-instance-records employee5)
-    (usql:delete-instance-records employee6)
-    (usql:delete-instance-records employee7)
-    (usql:delete-instance-records employee8)
-    (usql:delete-instance-records employee9)
-    (usql:delete-instance-records employee10)
+    (clsql:delete-instance-records company1)
+    (clsql:delete-instance-records employee1)
+    (clsql:delete-instance-records employee2)
+    (clsql:delete-instance-records employee3)
+    (clsql:delete-instance-records employee4)
+    (clsql:delete-instance-records employee5)
+    (clsql:delete-instance-records employee6)
+    (clsql:delete-instance-records employee7)
+    (clsql:delete-instance-records employee8)
+    (clsql:delete-instance-records employee9)
+    (clsql:delete-instance-records employee10)
     ;; Drop the required tables if they exist 
-    (usql:drop-view-from-class 'employee)
-    (usql:drop-view-from-class 'company))
+    (clsql:drop-view-from-class 'employee)
+    (clsql:drop-view-from-class 'company))
   ;; Create the tables for our view classes
-  (usql:create-view-from-class 'employee)
-  (usql:create-view-from-class 'company)
+  (clsql:create-view-from-class 'employee)
+  (clsql:create-view-from-class 'company)
   ;; Lenin manages everyone
-  (usql:add-to-relation employee2 'manager employee1)
-  (usql:add-to-relation employee3 'manager employee1)
-  (usql:add-to-relation employee4 'manager employee1)
-  (usql:add-to-relation employee5 'manager employee1)
-  (usql:add-to-relation employee6 'manager employee1)
-  (usql:add-to-relation employee7 'manager employee1)
-  (usql:add-to-relation employee8 'manager employee1)
-  (usql:add-to-relation employee9 'manager employee1)
-  (usql:add-to-relation employee10 'manager employee1)
+  (clsql:add-to-relation employee2 'manager employee1)
+  (clsql:add-to-relation employee3 'manager employee1)
+  (clsql:add-to-relation employee4 'manager employee1)
+  (clsql:add-to-relation employee5 'manager employee1)
+  (clsql:add-to-relation employee6 'manager employee1)
+  (clsql:add-to-relation employee7 'manager employee1)
+  (clsql:add-to-relation employee8 'manager employee1)
+  (clsql:add-to-relation employee9 'manager employee1)
+  (clsql:add-to-relation employee10 'manager employee1)
   ;; Everyone works for Widgets Inc.
-  (usql:add-to-relation company1 'employees employee1)
-  (usql:add-to-relation company1 'employees employee2)
-  (usql:add-to-relation company1 'employees employee3)
-  (usql:add-to-relation company1 'employees employee4)
-  (usql:add-to-relation company1 'employees employee5)
-  (usql:add-to-relation company1 'employees employee6)
-  (usql:add-to-relation company1 'employees employee7)
-  (usql:add-to-relation company1 'employees employee8)
-  (usql:add-to-relation company1 'employees employee9)
-  (usql:add-to-relation company1 'employees employee10)
+  (clsql:add-to-relation company1 'employees employee1)
+  (clsql:add-to-relation company1 'employees employee2)
+  (clsql:add-to-relation company1 'employees employee3)
+  (clsql:add-to-relation company1 'employees employee4)
+  (clsql:add-to-relation company1 'employees employee5)
+  (clsql:add-to-relation company1 'employees employee6)
+  (clsql:add-to-relation company1 'employees employee7)
+  (clsql:add-to-relation company1 'employees employee8)
+  (clsql:add-to-relation company1 'employees employee9)
+  (clsql:add-to-relation company1 'employees employee10)
   ;; Lenin is president of Widgets Inc.
-  (usql:add-to-relation company1 'president employee1)
+  (clsql:add-to-relation company1 'president employee1)
   ;; store these instances 
-  (usql:update-records-from-instance employee1)
-  (usql:update-records-from-instance employee2)
-  (usql:update-records-from-instance employee3)
-  (usql:update-records-from-instance employee4)
-  (usql:update-records-from-instance employee5)
-  (usql:update-records-from-instance employee6)
-  (usql:update-records-from-instance employee7)
-  (usql:update-records-from-instance employee8)
-  (usql:update-records-from-instance employee9)
-  (usql:update-records-from-instance employee10)
-  (usql:update-records-from-instance company1))
+  (clsql:update-records-from-instance employee1)
+  (clsql:update-records-from-instance employee2)
+  (clsql:update-records-from-instance employee3)
+  (clsql:update-records-from-instance employee4)
+  (clsql:update-records-from-instance employee5)
+  (clsql:update-records-from-instance employee6)
+  (clsql:update-records-from-instance employee7)
+  (clsql:update-records-from-instance employee8)
+  (clsql:update-records-from-instance employee9)
+  (clsql:update-records-from-instance employee10)
+  (clsql:update-records-from-instance company1))
 
-(defun test-usql (backend)
-  (format t "~&Running CLSQL-USQL tests with ~A backend.~%" backend)
+(defun run-tests (backend)
+  (format t "~&Running CLSQL tests with ~A backend.~%" backend)
   (test-connect-to-database backend)
   (test-initialise-database)
   (rtest:do-tests))
