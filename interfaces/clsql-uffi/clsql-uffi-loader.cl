@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi-loader.cl,v 1.8 2002/05/14 16:10:55 kevin Exp $
+;;;; $Id: clsql-uffi-loader.cl,v 1.9 2002/05/14 16:27:42 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -23,8 +23,8 @@
   (uffi:find-foreign-library
    "clsql-uffi"
    `(,(translate-logical-pathname 
-       "CL-LIBRARY:clsql;interfaces;clsql-mysql;")
-     "/usr/share/common-lisp/source/clsql/interfaces/clsql-mysql/")))
+       "CL-LIBRARY:clsql;interfaces;clsql-uffi;")
+     "/usr/share/common-lisp/source/clsql/interfaces/clsql-uffi/")))
 
 (defvar *clsql-uffi-supporting-libraries* '("c")
   "Used only by CMU. List of library flags needed to be passed to ld to

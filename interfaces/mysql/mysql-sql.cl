@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.cl,v 1.19 2002/04/27 20:58:11 kevin Exp $
+;;;; $Id: mysql-sql.cl,v 1.20 2002/05/14 16:29:53 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -256,3 +256,7 @@
       list)))
 
 
+(when (clsql-sys:database-type-library-loaded :mysql)
+  (clsql-sys:initialize-database-type :database-type :mysql)
+  (setq clsql:*default-database-type* :mysql)
+  (pushnew :mysql cl:*features*))
