@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi-loader.lisp,v 1.4 2003/05/17 06:03:03 kevin Exp $
+;;;; $Id: clsql-uffi-loader.lisp,v 1.5 2003/07/08 20:15:13 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -16,8 +16,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :clsql-uffi)
+(in-package #:clsql-uffi)
 
 (defvar *clsql-uffi-library-filename* 
   (uffi:find-foreign-library

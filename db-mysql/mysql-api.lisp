@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-api.lisp,v 1.4 2003/06/24 01:12:57 kevin Exp $
+;;;; $Id: mysql-api.lisp,v 1.5 2003/07/08 20:15:13 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -105,8 +105,12 @@
      (:blob 252)
      (:var-string 253)
      (:string 254)))
-  
-#-(or win32 mswindows)
+
+#-(or mysql-client-v3 mysql-client-v4)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (pushnew :mysql-client-v3 cl:*features*))
+
+#+mysql-client-v3
 (uffi:def-struct mysql-field
     (name (* :char))
   (table (* :char))
@@ -117,8 +121,8 @@
   (flags :unsigned-int)
   (decimals :unsigned-int))
 
-;; structure changed in mysql 4.0.12, win32
-#+(or win32 mswindows)
+;; structure changed in mysql 4 client
+#+mysql-client-v4
 (uffi:def-struct mysql-field
     (name (* :char))
   (table (* :char))
