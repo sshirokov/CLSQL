@@ -1,3 +1,13 @@
+3 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* doc/appendix.xml: add notes about idiosyncrasies/unsupported 
+	features and so on the documentation for each backend. 
+	* doc/TODO: remove items done. 
+	* doc/ref-transaction.xml: add note in introduction about 
+	autocommit mode as a difference from CommonSQL. 
+	* doc/ref-syntax.xml: add notes about SQL syntax state functions 
+	being macros in CLSQL. Add note about SQL operators which are 
+	CLSQL extensions. 
+
 2 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* Version 2.11.12 released
 	* doc/ref-recording.xml: document SQL I/O recording. 

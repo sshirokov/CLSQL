@@ -102,6 +102,9 @@
 	  </variablelist>
 	</sect3>
       </sect2>
+      <sect2><title>Notes</title>
+      <para>None.</para>
+      </sect2>
     </sect1>
 
     <sect1 id="postgresql-socket">
@@ -203,6 +206,9 @@
 	  </variablelist>
 	</sect3>
       </sect2>
+      <sect2><title>Notes</title>
+      <para>None.</para>
+      </sect2>
     </sect1>
 
   <sect1 id="mysql">
@@ -274,8 +280,85 @@
 	  </variablelist>
 	</sect3>
       </sect2>
+      <sect2><title>Notes</title>
+      <sect3><title>FDDL</title> 
+      <itemizedlist mark='opencircle'>
+        <listitem>
+          <para>
+            <link
+            linkend="drop-index"><function>drop-index</function></link>
+            requires a table to be specified with the
+            <symbol>:on</symbol> keyword parameter.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            <glossterm linkend="gloss-view">views</glossterm> are not
+            supported by &mysql;. 
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            The <symbol>:transactions</symbol> keyword argument to
+            <link
+            linkend="create-table"><function>create-table</function></link>
+            controls whether or not the created table is an InnoDB
+            table which supports transactions.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            The <symbol>:owner</symbol> keyword argument to the FDDL functions 
+            for listing and testing for database objects is ignored. 
+          </para>
+        </listitem>        
+      </itemizedlist>
+      </sect3>
+      <sect3><title>FDML</title>
+      <itemizedlist mark='opencircle'>
+        <listitem>
+          <para>
+            Prior to version 4.1, &mysql; does not support nested
+            subqueries in calls to <link
+            linkend="select"><function>select</function></link>.
+          </para>
+        </listitem>
+      </itemizedlist>
+      </sect3>
+      <sect3><title>Symbolic SQL Syntax</title>
+      <itemizedlist mark='opencircle'>
+        <listitem>
+          <para>
+            &mysql; does not support the <function>||</function>
+            concatenation operator. Use <function>concat</function>
+            instead.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            &mysql; does not support the <function>substr</function>
+            operator. Use <function>substring</function> instead.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            &mysql; does not support the
+            <function>intersect</function> and
+            <function>except</function> set operations.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            &mysql; (version 4.0 and later) does not support string
+            table aliases unless the server is started with
+            ANSI_QUOTES enabled.
+          </para>
+        </listitem>
+      </itemizedlist>
+      </sect3>
+      </sect2>
     </sect1>
-
+    
     <sect1 id="odbc">
       <title>&odbc;</title>
       <sect2>
@@ -337,6 +420,18 @@
 	  </variablelist>
 	</sect3>
       </sect2>
+      <sect2><title>Notes</title>
+      <sect3><title>FDDL</title> 
+      <itemizedlist mark='opencircle'>
+        <listitem>
+          <para>
+            The <symbol>:owner</symbol> keyword argument to the FDDL functions 
+            for listing and testing for database objects is ignored. 
+          </para>
+        </listitem>        
+      </itemizedlist>
+      </sect3>
+      </sect2>
     </sect1>
 
     <sect1 id="aodbc">
@@ -393,6 +488,11 @@
 	  </variablelist>
 	</sect3>
       </sect2>
+      <sect2><title>Notes</title>
+      <para>
+        None. 
+      </para>
+      </sect2>
     </sect1>
 
     <sect1 id="sqlite">
@@ -432,6 +532,55 @@
 	  </variablelist>
 	</sect3>
       </sect2>
+      <sect2><title>Notes</title>
+      <sect3><title>Connection</title> 
+      <itemizedlist mark='opencircle'>
+        <listitem>
+          <para>
+            Passing <parameter>filename</parameter> a value of
+            <filename>:memory:</filename> will create a database in
+            physical memory instead of using a file on disk.
+          </para>
+        </listitem>        
+        <listitem>
+          <para>
+            Some operations will be many times faster if database
+            integrity checking is disabled by setting the SYNCHRONOUS
+            flag to OFF (see the SQLITE manual for details).
+          </para>
+        </listitem>
+      </itemizedlist>
+      </sect3>
+      <sect3><title>FDDL</title> 
+      <itemizedlist mark='opencircle'>
+        <listitem>
+          <para>
+            The <symbol>:owner</symbol> keyword argument to the FDDL functions 
+            for listing and testing for database objects is ignored. 
+          </para>
+        </listitem>        
+        <listitem>
+          <para>
+            The <symbol>:column-list</symbol> keyword argument to
+            <link
+            linkend="create-view"><function>create-view</function></link>
+            is not supported by &sqlite;. 
+          </para>
+        </listitem>
+      </itemizedlist>
+      </sect3>
+      <sect3><title>Symbolic SQL Syntax</title>
+      <itemizedlist mark='opencircle'>
+        <listitem>
+          <para>
+            &sqlite; does not support the <function>all</function>,
+            <function>some</function>, <function>any</function> and
+            <function>exists</function> subquery operations. 
+          </para>
+        </listitem>
+      </itemizedlist>
+      </sect3>
+      </sect2>
     </sect1>
 
   <sect1 id="oracle">
@@ -470,7 +619,7 @@
 	    <varlistentry>
 	      <term><parameter>global-name</parameter></term>
 	      <listitem>
-		<para>String representing the global name of the Orace database.
+		<para>String representing the global name of the Oracle database.
 		  This is looked up through the tnsnames.ora file.</para>
 	      </listitem>
 	    </varlistentry>
@@ -491,6 +640,44 @@
 	  </variablelist>
 	</sect3>
       </sect2>
+      <sect2><title>Notes</title>
+      <sect3><title>Symbolic SQL Syntax</title>
+      <itemizedlist mark='opencircle'>
+        <listitem>
+          <para>
+            The <function>userenv</function> operator is &oracle; specific. 
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            &oracle; does not support the <function>except</function>
+            operator. Use <function>minus</function> instead.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            &oracle; does not support the <function>all</function>,
+            <function>some</function>, <function>any</function>
+            subquery operations.
+          </para>
+        </listitem>
+      </itemizedlist>
+      </sect3>
+      <sect3><title>Transactions</title>
+      <itemizedlist mark='opencircle'>
+        <listitem>
+          <para>
+            By default, &clsql; starts in transaction AUTOCOMMIT mode
+            (see <link
+            linkend="set-autocommit"><function>set-autocommit</function></link>).
+            To begin a transaction in autocommit mode, <link
+            linkend="start-transaction"><function>start-transaction</function></link>
+            has to be called explicitly.
+          </para>
+        </listitem>
+      </itemizedlist>
+      </sect3>
+      </sect2> 
     </sect1>
 
   </appendix>

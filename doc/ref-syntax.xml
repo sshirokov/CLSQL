@@ -84,6 +84,11 @@
       <para>
         The symbolic SQL syntax is disabled by default. 
       </para>
+      <para> 
+        &clsql; differs from &commonsql; in that
+        <function>enable-sql-reader-syntax</function> is defined as a
+        macro rather than a function.
+      </para>
     </refsect1>
   </refentry>
 
@@ -152,6 +157,11 @@
       <title>Notes</title>
       <para>
         The symbolic SQL syntax is disabled by default. 
+      </para>
+      <para> 
+        &clsql; differs from &commonsql; in that
+        <function>disable-sql-reader-syntax</function> is defined as a
+        macro rather than a function.
       </para>
     </refsect1>
   </refentry>
@@ -224,6 +234,11 @@
       <title>Notes</title>
       <para>
         The symbolic SQL syntax is disabled by default. 
+      </para>
+      <para> 
+        &clsql; differs from &commonsql; in that
+        <function>locally-enable-sql-reader-syntax</function> is
+        defined as a macro rather than a function.
       </para>
     </refsect1>
   </refentry>
@@ -301,6 +316,11 @@
       <title>Notes</title>
       <para>
         The symbolic SQL syntax is disabled by default. 
+      </para>
+      <para> 
+        &clsql; differs from &commonsql; in that
+        <function>locally-disable-sql-reader-syntax</function> is
+        defined as a macro rather than a function.
       </para>
     </refsect1>
   </refentry>
@@ -380,6 +400,11 @@
       <title>Notes</title>
       <para>
         The symbolic SQL syntax is disabled by default. 
+      </para>
+      <para> 
+        &clsql; differs from &commonsql; in that
+        <function>restore-sql-reader-syntax-state</function> is
+        defined as a macro rather than a function.
       </para>
     </refsect1>
   </refentry>
@@ -816,8 +841,9 @@
     </refsect1>
     <refsect1>
       <title>Notes</title>
-      <para>&clsql;'s symbolic SQL syntax currently has support for
-      the following SQL operators:
+      <para>
+        &clsql;'s symbolic SQL syntax currently has support for the
+        following &commonsql; compatible SQL operators:
       </para> 
       <simplelist> 
         <!-- CommonSQL Compatible --> 
@@ -894,8 +920,15 @@
         <member><function>slot-value
         </function></member>, 
         <member><function>userenv 
-        <!-- CLSQL Extensions --> 
         </function></member>, 
+      </simplelist> 
+      <para>
+        as well as the pseudo-operator <function>function</function>. 
+      </para>
+      <para> The following operators are provided as &clsql; extensions to 
+      the &commonsql; API. 
+      <simplelist> 
+        <!-- CLSQL Extensions --> 
         <member><function>concat
         </function></member>, 
         <member><function>substring 
@@ -920,13 +953,15 @@
         </function></member>, 
         <member><function>coalesce 
         </function></member>, 
-        <member><function>view-class
+        <member><function>view-class.
         </function></member> 
-      </simplelist> 
-      <para>as well as the pseudo-operator
-      <function>function</function>. Note that some of these operators
-      are not supported by all of the RDBMS supported by
-      &clsql;.</para>
+      </simplelist>
+      </para>
+      <para> 
+        Note that some of these operators are not supported by all of
+        the RDBMS supported by &clsql; (see the <link
+        linkend="appendix">Appendix</link> for details).
+      </para>
     </refsect1>
   </refentry>
 

@@ -3,9 +3,7 @@ DOCUMENTATION TO DO LIST
 1. Variances from CommonSQL (Ideally, this will be extremely minimal) 
 
  - The SQL syntax state functions are macros in CLSQL. 
-
- - CLSQL starts with in transaction AUTOCOMMIT mode. To begin a transaction,
-   START-TRANSACTION has to be called.
+ - CLSQL starts with in transaction AUTOCOMMIT mode. 
 
 
 2. Underdocumented CommonSQL features:
@@ -19,10 +17,7 @@ DOCUMENTATION TO DO LIST
  - New types such as wall-time, boolean, and bigint
 
  - SQL operators: group-by, limit, not-null, ==, is, having, the, uplike,
-   sql-view-class, coalesce, except (just from a quick scan of 
-   operations.lisp)
-
- - FDML: FOR-EACH-ROW, prepared statements and large object support. 
+   view-class, coalesce, except, exists, substring, concat 
 
  - OODML: *db-auto-sync*
 
@@ -43,23 +38,7 @@ DOCUMENTATION TO DO LIST
    features, notable extensions etc.). 
 
  - MYSQL 
-
-   drop-index:   requires a table to be specified with the :on parameter
-   views:        mysql does not support views  
-   queries:      nested subqueries are not supported
-   syntax:       doesn't support the sql concatenation operator (||). 
-                 doesn't support INTERSECT/EXCEPT set operations. 
-   create-table: the transactions keyword arg controls whether the created 
-                 table is an InnoDB table (supporting transactions) or not. 
-   FDDL:         list-*/*-exists-p: :OWNER keyword argument ignored. 
-
  - SQLITE 
-
-   connection:   specifying ":memory:" gives you an SQLite database in RAM.
-   create-view:  column-list parameter not supported 
-   syntax:       doesn't support the sql SUBSTRING operator. 
-   FDDL:         list-*/*-exists-p: :OWNER keyword argument ignored. 
-
  - ODBC 
+-  ORACLE 
 
-   FDDL:         list-*/*-exists-p: :OWNER keyword argument ignored. 

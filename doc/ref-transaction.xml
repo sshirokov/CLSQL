@@ -16,6 +16,14 @@
       transaction blocks, committing or rolling back changes made and
       controlling autocommit behaviour.
     </para>
+    <note> 
+      In contrast to &commonsql;, &clsql;, by default, starts in
+      transaction AUTOCOMMIT mode (see <link
+      linkend="set-autocommit"><function>set-autocommit</function></link>).
+      To begin a transaction in autocommit mode, <link
+      linkend="start-transaction"><function>start-transaction</function></link>
+      has to be called explicitly.
+    </note> 
   </partintro>
 
   <refentry id="start-transaction">
