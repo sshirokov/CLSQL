@@ -36,6 +36,13 @@ likely that we'll have to worry about the CMUCL limit."))
 
 ;; constants - from OCI?
 
+(defvar +unsigned-char-null-pointer+
+  (uffi:make-null-pointer :unsigned-char))
+(defvar +unsigned-short-null-pointer+
+  (uffi:make-null-pointer :unsigned-short))
+(defvar +unsigned-int-null-pointer+
+  (uffi:make-null-pointer :unsigned-int))
+
 (defconstant +var-not-in-list+       1007)
 (defconstant +no-data-found+         1403)
 (defconstant +null-value-returned+   1405)
@@ -414,7 +421,7 @@ the length of that format.")
 		    (value
 		     (let* ((arb (foreign-resource-buffer (cd-indicators cd)))
 			    (indicator (uffi:deref-array arb '(:array :short) irow)))
-		       ;; b(declare (type short-array arb))
+		       ;;(declare (type short-array arb))
 		       (unless (= indicator -1)
 			 (ecase (cd-oci-data-type cd)
 			   (#.SQLT-STR  
@@ -454,7 +461,7 @@ the length of that format.")
              (oci-attr-get (deref-vp (qc-stmthp qc))
 			   +oci-htype-stmt+
                            rowcount 
-			   (uffi:make-null-pointer :unsigned-long)
+			   +unsigned-int-null-pointer+
 			   +oci-attr-row-count+ 
                            (deref-vp errhp))
              (setf (qc-n-from-oci qc)
@@ -498,7 +505,7 @@ the length of that format.")
         (oci-attr-get (deref-vp stmthp) 
 		      +oci-htype-stmt+ 
                       stmttype
-		      (uffi:make-null-pointer :unsigned-int)
+		      +unsigned-int-null-pointer+
 		      +oci-attr-stmt-type+ 
                       (deref-vp errhp)
 		      :database db)
@@ -623,7 +630,7 @@ the length of that format.")
 	  (oci-attr-get (deref-vp parmdp)
 			+oci-dtype-param+ 
 			dtype-foreign
-			(uffi:make-null-pointer :unsigned-int)
+			+unsigned-int-null-pointer+
 			+oci-attr-data-type+
 			(deref-vp errhp))
 	  (let ((dtype (uffi:deref-pointer dtype-foreign :unsigned-short)))
@@ -636,13 +643,13 @@ the length of that format.")
 	       (oci-attr-get (deref-vp parmdp)
 			     +oci-dtype-param+
 			     precision
-			     (uffi:make-null-pointer :unsigned-int)
+			     +unsigned-int-null-pointer+
 			     +oci-attr-precision+
 			     (deref-vp errhp))
 	       (oci-attr-get (deref-vp parmdp)
 			     +oci-dtype-param+
 			     scale
-			     (uffi:make-null-pointer :unsigned-int)
+			     +unsigned-int-null-pointer+
 			     +oci-attr-scale+
 			     (deref-vp errhp))
 	       (let ((*scale (uffi:deref-pointer scale :byte))
@@ -665,7 +672,7 @@ the length of that format.")
 	       (oci-attr-get (deref-vp parmdp)
 			     +oci-dtype-param+ 
 			     colsize
-			     (uffi:make-null-pointer :unsigned-int) ;;  (uffi:pointer-address colsizesize) 
+			     +unsigned-int-null-pointer+
 			     +oci-attr-data-size+
 			     (deref-vp errhp))
 	       (let ((colsize-including-null (1+ (uffi:deref-pointer colsize :unsigned-long))))
@@ -707,7 +714,7 @@ the length of that format.")
 				 sizeof
 				 dtype
 				 (foreign-resource-buffer indicators)
-				 (uffi:make-null-pointer :unsigned-short)
+				 +unsigned-short-null-pointer+
 				 (foreign-resource-buffer retcodes)
 				 +oci-default+))))))))
   
