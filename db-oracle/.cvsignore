@@ -1,3 +1,2 @@
-*.err
-*.x86f
-*.sparcf
+configure-stamp
+build-stamp

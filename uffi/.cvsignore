@@ -2,3 +2,11 @@ clsql-uffi.so
 clsql-uffi.dll
 clsql-uffi.lib
 .bin
+*.fasl
+*.pfsl
+*.dfsl
+*.cfsl
+*.fasla16
+*.fasla8
+*.faslm16
+*.faslm8

@@ -1,4 +1,2 @@
-.bin
-clsql-mysql.o
-clsql-mysql.so
-
+configure-stamp
+build-stamp
