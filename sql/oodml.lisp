@@ -87,14 +87,11 @@
 ;; Called by 'get-slot-values-from-view'
 ;;
 
-(defvar *update-context* nil)
-
 (defmethod update-slot-from-db ((instance standard-db-object) slotdef value)
   (declare (optimize (speed 3) #+cmu (extensions:inhibit-warnings 3)))
   (let* ((slot-reader (view-class-slot-db-reader slotdef))
 	 (slot-name   (slot-definition-name slotdef))
-	 (slot-type   (specified-type slotdef))
-	 (*update-context* (cons (type-of instance) slot-name)))
+	 (slot-type   (specified-type slotdef)))
     (cond ((and value (null slot-reader))
            (setf (slot-value instance slot-name)
                  (read-sql-value value (delistify slot-type)
@@ -418,14 +415,12 @@
 
 (defmethod database-output-sql-as-type ((type (eql 'symbol)) val database db-type)
   (declare (ignore database db-type))
-  (if (keywordp val)
-      (symbol-name val)
-      (if val
-          (concatenate 'string
-                       (package-name (symbol-package val))
-                       "::"
-                       (symbol-name val))
-          "")))
+  (if val
+    (concatenate 'string
+                 (package-name (symbol-package val))
+                 "::"
+                 (symbol-name val))
+    ""))
 
 (defmethod database-output-sql-as-type ((type (eql 'keyword)) val database db-type)
   (declare (ignore database db-type))
@@ -484,8 +479,7 @@
   (declare (ignore database db-type))
   (when (< 0 (length val))
     (unless (string= val (symbol-name-default-case "NIL"))
-      (intern (symbol-name-default-case val)
-              (symbol-package *update-context*)))))
+      (read-from-string val))))
 
 (defmethod read-sql-value (val (type (eql 'integer)) database db-type)
   (declare (ignore database db-type))

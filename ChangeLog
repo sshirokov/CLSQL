@@ -1,3 +1,9 @@
+8 Jun 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 2.11.6 released
+	* sql/oodml.lisp: Commit patch from Edi Weitz
+	to fix symbol writing/reading
+	* TODO: Add need for symbol slot test
+	
 7 Jun 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* sql/package.lisp: remove duplicate export of 
 	*CACHE-TABLE-QUERIES-DEFAULT*. 

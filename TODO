@@ -9,6 +9,7 @@ TESTS TO ADD
 * owner phrases for postgresql and oracle backends
 * Number and Char field types
 * Add test case for return type of (setf slot-value-using-class)
+* symbol slot
  
 VARIANCES FROM COMMONSQL
 
