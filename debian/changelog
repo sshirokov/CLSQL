@@ -1,3 +1,10 @@
+cl-sql (1.2.0-2) unstable; urgency=low
+
+  * Split rules file into build-arch and build-indep (closes: 166800)
+  Thanks Bdale
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Mon, 28 Oct 2002 12:42:17 -0700
+
 cl-sql (1.2.0-1) unstable; urgency=low
 
   * sql/pool.lisp: Add full support for multiprocessing locks for ACL, LW,
