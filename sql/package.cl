@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: package.cl,v 1.5 2002/04/01 05:27:55 kevin Exp $
+;;;; $Id: package.cl,v 1.6 2002/04/07 15:23:10 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -101,10 +101,12 @@
 	 #:execute-command
 	 #:map-query
 	 #:do-query
+
+	 ;; functional.cl
+
 	 #:insert-records
 	 #:delete-records
 	 #:update-records
-	 #:select
 	 #:with-database
 	 
 	 ;; utils.cl
