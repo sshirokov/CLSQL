@@ -1,3 +1,8 @@
+26 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* NEWS: Initial 3.0 announcement draft
+	* README: Expand acknowledgements of incorporated projects
+	* CONTRIBUTORS: Further document Marcus Pearce contributions
+	
 23 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* sql/oodml.lisp: add DATABASE-OUTPUT-SQL-AS-TYPE method specialisation
 	to print floats with the exponent markers removed. 

@@ -1,4 +1,21 @@
-Three new API functions added: create-database, destroy-database,
-and probe-database.
- 
-CLSQL now supports the CommonSQL-API.
+CLSQL 3.0 has been released. The 3.0 release of CLSQL is a major
+rewrite compared to version 2.0. New features include:
+
+ - Full CommonSQL backward compatibility with native documentation while
+   retaining and adding many improvements beyond the CommonSQL 
+   standard.
+ - Extensive (232 tests) regression suite
+ - Addition of ODBC and Oracle backends
+
+I wish to acknowledge Marcus Pearce's significant contribution to this
+release. He has performed the initial port of Uncommonsql to CLSQL as
+well as the initial regression suite and most of the new
+documentation. He has contributed to many of the redesign decisions
+and new code for CLSQL.
+
+CLSQL's home is http://clsql.b9.com
+
+
+
+
+
