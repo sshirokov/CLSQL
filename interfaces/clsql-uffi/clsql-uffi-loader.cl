@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-uffi-loader.cl,v 1.9 2002/05/14 16:27:42 kevin Exp $
+;;;; $Id: clsql-uffi-loader.cl,v 1.10 2002/05/14 16:51:06 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -40,8 +40,7 @@ set to the right path before compiling or loading the system.")
 				 :supporting-libraries 
 				 *clsql-uffi-supporting-libraries*)
       (setq *uffi-library-loaded* t)
-    (warn "Unable to load helper library ~A (~S)" *clsql-uffi-library-filename*
-	  (logical-pathname-translations "CL-LIBRARY"))))
+    (warn "Unable to load helper library ~A" *clsql-uffi-library-filename*)))
 
 (load-uffi-foreign-library)
 

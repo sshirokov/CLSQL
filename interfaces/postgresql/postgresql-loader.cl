@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-loader.cl,v 1.8 2002/05/14 16:29:53 kevin Exp $
+;;;; $Id: postgresql-loader.cl,v 1.9 2002/05/14 16:51:06 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -34,19 +34,19 @@ set to the right path before compiling or loading the system.")
 				      
 (defmethod clsql-sys:database-type-load-foreign ((database-type
 						  (eql :postgresql)))
-  (when
-      (uffi:load-foreign-library 
-       (uffi:find-foreign-library "libpq"
-				  '("/opt/postgresql/lib/" "/usr/local/lib/" 
-				    "/usr/lib/" "/postgresql/lib/"
-				    "/usr/local/pgsql/lib/" "/usr/lib/pgsql/"
-				    "/opt/pgsql/lib/pgsql")
-				  :drive-letters '("C" "D" "E"))
-       
-       :module "postgresql"
-       :supporting-libraries 
-       *postgresql-supporting-libraries*)
-    (setq *postgresql-library-loaded* t)))
+  (let ((libpath (uffi:find-foreign-library 
+		  "libpq"
+		  '("/opt/postgresql/lib/" "/usr/local/lib/" 
+		    "/usr/lib/" "/postgresql/lib/"
+		    "/usr/local/pgsql/lib/" "/usr/lib/pgsql/"
+		    "/opt/pgsql/lib/pgsql")
+		  :drive-letters '("C" "D" "E"))))
+    (if	(uffi:load-foreign-library libpath
+				   :module "postgresql"
+				   :supporting-libraries 
+				   *postgresql-supporting-libraries*)
+	(setq *postgresql-library-loaded* t)
+      (warn "Can't load PostgreSQL client library ~A" libpath))))
 
 (clsql-sys:database-type-load-foreign :postgresql)
 
