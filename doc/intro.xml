@@ -23,7 +23,8 @@
     <title>History</title>
     <para>
       &clsql; is written by Kevin M. Rosenberg and based substantially
-      on Pierre R. Mai's excellent &maisql; package. The main changes
+      on Pierre R. Mai's excellent &maisql; package. Recently, the UncommonSQL
+      package has been ported and integrated with &clsql;. The main changes
       from &maisql; are:
       <itemizedlist>
 	<listitem>
@@ -50,6 +51,9 @@
 	</listitem>
 	<listitem>
 	  <para>transaction support.</para>
+	</listitem>
+	<listitem>
+	  <para>UncommonSQL support.</para>
 	</listitem>
       </itemizedlist>
     </para>
