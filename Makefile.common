@@ -13,4 +13,10 @@ ifneq ($(SUBDIRS)$(DOCSUBDIRS),)
 		$(MAKE) -C $$i $@; done
 endif
 
+distclean: clean
+ifneq ($(SUBDIRS)$(DOCSUBDIRS),)
+	@set -e; for i in $(SUBDIRS) $(DOCSUBDIRS); do \
+		$(MAKE) -C $$i $@; done
+endif
+
 .SUFFIXES:            # No default suffixes
