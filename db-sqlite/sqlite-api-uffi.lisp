@@ -4,7 +4,7 @@
 ;;;;
 ;;;; Name:          sqlite-api-uffi.lisp
 ;;;; Purpose:       Low-level SQLite interface using UFFI
-;;;; Programmers:   Aurelio Bignoli
+;;;; Programmers:   Aurelio Bignoli and Kevin Rosenberg
 ;;;; Date Started:  Nov 2003
 ;;;;
 ;;;; $Id: sqlite-api-uffi.lisp,v 1.5 2004/03/09 20:57:19 aurelio Exp $
@@ -15,12 +15,20 @@
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
-(declaim (optimize (debug 0) (speed 3) (safety 0) (compilation-speed 0)))
 
-(in-package :cl-user)
 
-(defpackage :sqlite
-  (:use :common-lisp :uffi)
+;;; NOTE: Upon reviewing the code, I found this is not UFFI compatible.
+;;; it appears to work on CMUCL, but does not work correctly on Lispworks
+;;; and Allegro. Mostly, the processing of return strings is still incorrect
+;;; UFFI code.
+;;; To fix this will require reading the SQLite API and reworking the
+;;; code below.
+;;; - Kevin Rosenberg
+
+(in-package #:cl-user)
+
+(defpackage #:sqlite
+  (:use #:common-lisp #:uffi)
     (:export
            ;;; Conditions
            #:sqlite-error
@@ -55,7 +63,7 @@
 	   #:sqlite-row-pointer
 	   #:sqlite-vm-pointer))
 
-(in-package :sqlite)
+(in-package #:sqlite)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
@@ -102,11 +110,11 @@
 ;;;
 ;;; Lisp types used in declarations.
 ;;;;
-(def-type sqlite-db-pointer '(* sqlite-db))
-(def-type sqlite-int-pointer '(* :int))
-(def-type sqlite-row 'string-array-pointer)
-(def-type sqlite-row-pointer '(* string-array-pointer))
-(def-type sqlite-vm-pointer '(* sqlite-vm))
+(def-type sqlite-db-pointer (* sqlite-db))
+(def-type sqlite-int-pointer (* :int))
+(def-type sqlite-row string-array-pointer)
+(def-type sqlite-row-pointer (* string-array-pointer))
+(def-type sqlite-vm-pointer (* sqlite-vm))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;
@@ -131,7 +139,7 @@
     ("sqlite_open" %open)
     ((dbname :cstring)
      (mode :int)
-     (error-message '(* errmsg)))
+     (error-message (* errmsg)))
   :returning sqlite-db)
 
 (declaim (inline sqlite-close))
@@ -148,25 +156,25 @@
     ("sqlite_compile" %compile)
     ((db sqlite-db)
      (sql :cstring)
-     (sql-tail '(* :cstring))
-     (vm '(* sqlite-vm))
-     (error-message '(* errmsg)))
+     (sql-tail (* (* :char)))
+     (vm (* sqlite-vm))
+     (error-message (* errmsg)))
   :returning :int)
 
 (declaim (inline %step))
 (def-sqlite-function
     ("sqlite_step" %step)
     ((vm sqlite-vm)
-     (cols-n '(* :int))
-     (cols '(* (* :cstring)))
-     (col-names '(* (* :cstring))))
+     (cols-n (* :int))
+     (cols (* (* :char)))
+     (col-names (* (* :char))))
   :returning :int)
 
 (declaim (inline %finalize))
 (def-sqlite-function
     ("sqlite_finalize" %finalize)
     ((vm sqlite-vm)
-     (error-message '(* errmsg)))
+     (error-message (* errmsg)))
   :returning :int)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -176,7 +184,7 @@
 (declaim (inline sqlite-last-insert-rowid))
 (def-sqlite-function
     "sqlite_last_insert_rowid"
-    ((db 'sqlite-db))
+    ((db sqlite-db))
   :returning :int)
 
 (declaim (inline %get-table))
@@ -184,10 +192,10 @@
     ("sqlite_get_table" %get-table)
     ((db sqlite-db)
      (sql :cstring)
-     (result '(* (* :cstring)))
-     (rows-n '(* :int))
-     (cols-n '(* :int))
-     (error-message '(* errmsg)))
+     (result (* (* :char)))
+     (rows-n (* :int))
+     (cols-n (* :int))
+     (error-message (* errmsg)))
   :returning :int)
 
 (declaim (inline %free-table))
@@ -214,18 +222,19 @@
 (defparameter sqlite-version (sqlite-libversion))
 (defparameter sqlite-encoding (sqlite-libencoding))
 
+(def-type sqlite-db-pointer-type sqlite-db-pointer)
+(def-type sqlite-vm-pointer-type sqlite-vm-pointer)
+
 (defun sqlite-open (db-name &optional (mode 0))
   (let ((db (%open db-name mode nil)))
-    (declare (type sqlite-db-pointer db))
     (if (null-pointer-p db)
 	(signal-sqlite-error SQLITE-ERROR
 			     (format nil "unable to open ~A" db-name))
 	db)))
 
 (defun sqlite-compile (db sql)
-  (declare (type sqlite-db-pointer db))
   (let ((vm (allocate-foreign-object 'sqlite-vm)))
-    (with-foreign-object (sql-tail :cstring)
+    (with-foreign-object (sql-tail '(* :char))
       (let ((result (%compile db sql sql-tail vm nil)))
 	(if (= result SQLITE-OK)
 	    vm
@@ -234,10 +243,10 @@
 	      (signal-sqlite-error result)))))))
 
 (defun sqlite-step (vm)
-  (declare (type sqlite-vm-pointer vm))
+  (declare (type sqlite-vm-pointer-type vm))
   (with-foreign-object (cols-n :int)
-    (let ((cols (allocate-foreign-object '(* :cstring)))
-	  (col-names (allocate-foreign-object '(* :cstring))))
+    (let ((cols (allocate-foreign-object '(* :char)))
+	  (col-names (allocate-foreign-object '(* :char))))
       (declare (type sqlite-row-pointer cols col-names))
       (let ((result (%step (deref-pointer vm 'sqlite-vm)
 			   cols-n cols col-names)))
@@ -266,7 +275,7 @@
 
 (defun sqlite-get-table (db sql)
   (declare (type sqlite-db-pointer db))
-  (let ((rows (allocate-foreign-object '(* :cstring))))
+  (let ((rows (allocate-foreign-object '(* :char))))
     (with-foreign-object (rows-n :int)
       (with-foreign-object (cols-n :int)
         (declare (type sqlite-row-pointer rows))
@@ -303,7 +312,7 @@
 (declaim (inline sqlite-aref))
 (defun sqlite-aref (a n)
   (declare (type sqlite-row-pointer a))
-  (deref-array  (deref-pointer a 'sqlite-row-pointer) '(:array :cstring) n))
+  (deref-array  (deref-pointer a 'sqlite-row-pointer) '(:array :char) n))
 
 (declaim (inline sqlite-free-row))
 (defun sqlite-free-row (row)
