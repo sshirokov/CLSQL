@@ -1,6 +1,8 @@
 27 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 2.11.3
 	* sql/ooddl.lisp: Commit patch from Edi Weitz fixing return
 	type (setf slot-value-using-class)
+	* TODO: add not that need a test case for the above fix
 	* db-sqlite: Remove clisp support since clisp can not run CLSQL
 	with its MOP usage
 	* db-oracle/oracle-sql.lisp: By default, use OCIEnvCreate as 
