@@ -1,6 +1,6 @@
 27 Aug 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* db-mysql/Makefile, db-mysql/mysql-loader.lisp: accept patch
-	from Jon Buffington for file locations on FreeBSD.
+	from Jon Buffington for file locations on Darwin.
 	
 17 Aug 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/db-interface.lisp: Improve messages when functions
