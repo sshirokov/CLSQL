@@ -15,6 +15,9 @@
 
 (in-package #:clsql-oracle)
 
+(defvar *oracle-server-version* nil
+  "Version string of Oracle server.")
+
 (defmethod database-initialize-database-type
     ((database-type (eql :oracle)))
   t)
@@ -255,19 +258,17 @@ the length of that format.")))
 ;  (sql:query "select '',OWNER,TABLE_NAME,TABLE_TYPE,'' from all_catalog"))
   
 
-(defmethod list-all-user-database-tables ((db oracle-database))
-  (unless db
-    (setf db clsql:*default-database*))
+(defmethod database-list-tables ((db oracle-database) &key owner)
   (values (database-query "select TABLE_NAME from all_catalog
-	        where owner <> 'PUBLIC' and owner <> 'SYSTEM' and owner <> 'SYS'"
+	        where owner not in ('PUBLIC','SYSTEM','SYS','WMSYS','EXFSYS','CTXSYS','WKSYS','WK_TEST','MDSYS','DMSYS','OLAPSYS','ORDSYS','XDB')"
 			  db nil nil)))
 
 
-(defmethod database-list-tables ((database oracle-database)
+(defmethod database-list-views ((database oracle-database)
                                  &key (system-tables nil) owner)
   (if system-tables
       (database-query "select table_name from all_catalog" database nil nil)
-    (database-query "select table_name from all_catalog where owner <> 'PUBLIC' and owner <> 'SYSTEM' and owner <> 'SYS'"
+    (database-query "select table_name from all_catalog where owner != 'PUBLIC' and owner != 'SYSTEM' and owner != 'SYS'"
 		    database nil nil)))
 
 ;; Return a list of all columns in TABLE.
@@ -310,7 +311,7 @@ the length of that format.")))
     (mapcar #'car
 	    (database-query
 	     (format nil
-		     "select user_tab_columns,column_name from user_tab_columns where user_tab_columns.table_name=~A"
+		     "select user_tab_columns,column_name from user_tab_columns where user_tab_columns.table_name='~A'"
 		     relname)
 	     database nil nil))))
 
@@ -564,7 +565,7 @@ the length of that format.")))
     database
     (unless (eq types :auto)
       (error "unsupported TYPES value"))
-    (uffi:with-foreign-objects ((dtype :unsigned-short)
+    (uffi:with-foreign-objects ((dtype-foreign :unsigned-short)
 			   (parmdp (* :void))
 			   (precision :byte)
 			   (scale :byte)
@@ -588,65 +589,66 @@ the length of that format.")))
 	  ;; handle in Lisp.
 	  (oci-attr-get (uffi:deref-pointer parmdp void-pointer)
 			+oci-dtype-param+ 
-			dtype
+			dtype-foreign
 			(uffi:make-null-pointer :int) +oci-attr-data-type+
 			(uffi:deref-pointer errhp void-pointer))
-	  (case dtype
-	    (#.SQLT-DATE
-	     (setf buffer (acquire-foreign-resource :char (* 32 +n-buf-rows+)))
-	     (setf sizeof 32 dtype #.SQLT-STR))
-	    (2 ;; number
-	     ;;(oci-attr-get parmdp +oci-dtype-param+
-	     ;;(addr precision) nil +oci-attr-precision+
-	     ;;(uffi:deref-pointer errhp))
-	     (oci-attr-get (uffi:deref-pointer parmdp void-pointer)
-			   +oci-dtype-param+
-			   scale
-			   (uffi:make-null-pointer :int) +oci-attr-scale+
-			   (uffi:deref-pointer errhp void-pointer))
-	     (cond
-	      ((zerop scale)
-	       (setf buffer (acquire-foreign-resource :init +n-buf-rows+)
-		     sizeof 4			;; sizeof(int)
-		     dtype #.SQLT-INT))
-	      (t
-	       (setf buffer (acquire-foreign-resource :double +n-buf-rows+)
-		     sizeof 8                   ;; sizeof(double)
-		     dtype #.SQLT-FLT))))          
-	    (t  ; Default to SQL-STR
-	     (setf (uffi:deref-pointer colsize :unsigned-long) 0
-		   dtype #.SQLT-STR)
-	     (oci-attr-get (uffi:deref-pointer parmdp void-pointer)
-			   +oci-dtype-param+ 
-			   colsize
-			   (uffi:make-null-pointer :int) ;;  (uffi:pointer-address colsizesize) 
-			   +oci-attr-data-size+
-			   (uffi:deref-pointer errhp void-pointer))
-	     (let ((colsize-including-null (1+ (uffi:deref-pointer colsize :unsigned-long))))
-	       (setf buffer (acquire-foreign-resource
-			     :char (* +n-buf-rows+ colsize-including-null)))
-	       (setf sizeof colsize-including-null))))
-	  (let ((retcodes (acquire-foreign-resource :short +n-buf-rows+))
-		(indicators (acquire-foreign-resource :short +n-buf-rows+)))
-	    (push (make-cd :name "col" ;(subseq colname 0 colnamelen)
-			   :sizeof sizeof
-			   :buffer buffer
-			   :oci-data-type dtype
-			   :retcodes retcodes
-			   :indicators indicators)
-		  cds-as-reversed-list)
-	    (oci-define-by-pos (uffi:deref-pointer stmthp void-pointer)
-			       defnp
-			       (uffi:deref-pointer errhp void-pointer)
-			       (1+ icolumn) ; OCI 1-based indexing again
-			       (foreign-resource-buffer buffer)
-			       sizeof
-			       dtype
-			       (foreign-resource-buffer indicators)
-			       (uffi:make-null-pointer :unsigned-short)
-			       (foreign-resource-buffer retcodes)
-			       +oci-default+)))))))
-
+	  (let ((dtype (uffi:deref-pointer dtype-foreign :unsigned-short)))
+	    (case dtype
+	      (#.SQLT-DATE
+	       (setf buffer (acquire-foreign-resource :char (* 32 +n-buf-rows+)))
+	       (setf sizeof 32 dtype #.SQLT-STR))
+	      (2 ;; number
+	       ;;(oci-attr-get parmdp +oci-dtype-param+
+	       ;;(addr precision) nil +oci-attr-precision+
+	       ;;(uffi:deref-pointer errhp))
+	       (oci-attr-get (uffi:deref-pointer parmdp void-pointer)
+			     +oci-dtype-param+
+			     scale
+			     (uffi:make-null-pointer :int) +oci-attr-scale+
+			     (uffi:deref-pointer errhp void-pointer))
+	       (cond
+		((zerop scale)
+		 (setf buffer (acquire-foreign-resource :init +n-buf-rows+)
+		       sizeof 4			;; sizeof(int)
+		       dtype #.SQLT-INT))
+		(t
+		 (setf buffer (acquire-foreign-resource :double +n-buf-rows+)
+		       sizeof 8                   ;; sizeof(double)
+		       dtype #.SQLT-FLT))))          
+	      (t			; Default to SQL-STR
+	       (setf (uffi:deref-pointer colsize :unsigned-long) 0
+		     dtype #.SQLT-STR)
+	       (oci-attr-get (uffi:deref-pointer parmdp void-pointer)
+			     +oci-dtype-param+ 
+			     colsize
+			     (uffi:make-null-pointer :int) ;;  (uffi:pointer-address colsizesize) 
+			     +oci-attr-data-size+
+			     (uffi:deref-pointer errhp void-pointer))
+	       (let ((colsize-including-null (1+ (uffi:deref-pointer colsize :unsigned-long))))
+		 (setf buffer (acquire-foreign-resource
+			       :char (* +n-buf-rows+ colsize-including-null)))
+		 (setf sizeof colsize-including-null))))
+	    (let ((retcodes (acquire-foreign-resource :short +n-buf-rows+))
+		  (indicators (acquire-foreign-resource :short +n-buf-rows+)))
+	      (push (make-cd :name "col" ;(subseq colname 0 colnamelen)
+			     :sizeof sizeof
+			     :buffer buffer
+			     :oci-data-type dtype
+			     :retcodes retcodes
+			     :indicators indicators)
+		    cds-as-reversed-list)
+	      (oci-define-by-pos (uffi:deref-pointer stmthp void-pointer)
+				 defnp
+				 (uffi:deref-pointer errhp void-pointer)
+				 (1+ icolumn) ; OCI 1-based indexing again
+				 (foreign-resource-buffer buffer)
+				 sizeof
+				 dtype
+				 (foreign-resource-buffer indicators)
+				 (uffi:make-null-pointer :unsigned-short)
+				 (foreign-resource-buffer retcodes)
+				 +oci-default+))))))))
+  
 ;; Release the resources associated with a QUERY-CURSOR.
 
 (defun close-query (qc)
@@ -735,6 +737,14 @@ the length of that format.")))
 		   (uffi:convert-to-cstring data-source-name) (length data-source-name)
 		   :database db)
 	;; :date-format-length (1+ (length date-format)))))
+	(uffi:with-foreign-object (buf (:array :unsigned-char 512))
+	  (oci-server-version (uffi:deref-pointer svchp void-pointer)
+			      (uffi:deref-pointer errhp void-pointer)
+			      buf
+			      512
+			      +oci-htype-svcctx+)
+	  (setf *oracle-server-version* (uffi:convert-from-foreign-string buf)))
+	
 	(setf (slot-value db 'clsql-sys::state) :open)
         (database-execute-command
 	 (format nil "alter session set NLS_DATE_FORMAT='~A'" (date-format db)) db)
@@ -910,3 +920,7 @@ the length of that format.")))
       buf)))
 
 
+;; Specifications
+
+(defmethod db-type-has-bigint? ((type (eql :oracle)))
+  nil)

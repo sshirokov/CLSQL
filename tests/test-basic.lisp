@@ -18,48 +18,24 @@
 
 (in-package #:clsql-tests)
 
-(defun test-basic-initialize ()
-  (ignore-errors
-   (clsql:execute-command "DROP TABLE TYPE_TABLE"))
-  (clsql:execute-command 
-   "CREATE TABLE TYPE_TABLE (t_int integer, t_float double precision, t_bigint BIGINT, t_str VARCHAR(30))")
-  (dotimes (i 11)
-    (let* ((test-int (- i 5))
-	   (test-flt (transform-float-1 test-int)))
-      (clsql:execute-command
-       (format nil "INSERT INTO TYPE_TABLE VALUES (~a,~a,~a,'~a')"
-	       test-int
-	       (clsql-sys:number-to-sql-string test-flt)
-	       (transform-bigint-1 test-int)
-	       (clsql-sys:number-to-sql-string test-flt)
-	       )))))
-
-(defun test-basic-forms ()
-  (append
-   (test-basic-forms-untyped)
-   '(
-     (deftest :BASIC/TYPE/1
+(setq *rt-basic*
+  '(
+    (deftest :BASIC/TYPE/1
 	(let ((results '()))
 	  (dolist (row (query "select * from TYPE_TABLE" :result-types :auto)
-		    results)
-	    (destructuring-bind (int float bigint str) row
+		   results)
+	    (destructuring-bind (int float str) row
 	      (push (list (integerp int)
 			  (typep float 'double-float)
-			  (if (and (eq :odbc *test-database-type*)
-				   (eq :postgresql *test-database-underlying-type*))
-			      ;; ODBC/Postgresql may return returns bigints as strings or integer
-			      ;; depending upon the platform
-			      t
-			    (integerp bigint))
 			  (stringp str))
 		    results))))
-      ((t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t)))
+      ((t t t) (t t t) (t t t) (t t t) (t t t) (t t t) (t t t) (t t t) (t t t) (t t t) (t t t)))
 
      (deftest :BASIC/TYPE/2
 	 (let ((results '()))
 	   (dolist (row (query "select * from TYPE_TABLE" :result-types :auto)
 		     results)
-	     (destructuring-bind (int float bigint str) row
+	     (destructuring-bind (int float str) row
 	       (setq results
 		     (cons (list (double-float-equal 
 				  (transform-float-1 int)
@@ -70,34 +46,30 @@
 			   results))))
 	   results)
        ((t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t)))
-     )))
 
-(defun test-basic-forms-untyped ()
-  '((deftest :BASIC/SELECT/1
+  (deftest :BASIC/SELECT/1
 	(let ((rows (query "select * from TYPE_TABLE" :result-types :auto)))
 	  (values 
 	   (length rows)
 	   (length (car rows))))
-      11 4)
+      11 3)
     
     (deftest :BASIC/SELECT/2
 	(let ((results '()))
 	  (dolist (row (query "select * from TYPE_TABLE" :result-types nil)
 		    results)
-	    (destructuring-bind (int float bigint str) row
+	    (destructuring-bind (int float str) row
 	      (push (list (stringp int)
 			  (stringp float)
-			  (stringp bigint)
 			  (stringp str))
 		    results))))
-      ((t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t) (t t t t)))
+      ((t t t) (t t t) (t t t) (t t t) (t t t) (t t t) (t t t) (t t t) (t t t) (t t t) (t t t)))
     
     (deftest :BASIC/SELECT/3
 	(let ((results '()))
 	  (dolist (row (query "select * from TYPE_TABLE" :result-types nil)
 		    results)
-	    (destructuring-bind (int float bigint str) row
-	      (declare (ignore bigint))
+	    (destructuring-bind (int float str) row
 	      (push (list (double-float-equal 
 			   (transform-float-1 (parse-integer int))
 			   (parse-double float))
@@ -124,7 +96,7 @@
 	       (transform-float-1 (parse-integer (first (aref rows i))))
 	       (parse-double (second (aref rows i)))))
 	     results)))
-      ((t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t)))
+      ((t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t)))
     
     (deftest :BASIC/MAP/2
 	(let ((results '())
@@ -142,7 +114,7 @@
 	       (transform-float-1 (parse-integer (first (nth i rows))))
 	       (parse-double (second (nth i rows)))))
 	     results)))
-      ((t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t)))
+      ((t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t)))
     
     (deftest :BASIC/MAP/3
 	    (let ((results '())
@@ -159,12 +131,11 @@
 		   (transform-float-1 (first (nth i rows)))
 		   (second (nth i rows))))
 		 results)))
-      ((t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t) (t 4 t t)))
+      ((t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t) (t 3 t t)))
 
     (deftest :BASIC/DO/1
 	(let ((results '()))
-	  (do-query ((int float bigint str) "select * from TYPE_TABLE" :result-types nil)
-	    (declare (ignore bigint))
+	  (do-query ((int float str) "select * from TYPE_TABLE" :result-types nil)
 	    (let ((int-number (parse-integer int)))
 	      (setq results
 		    (cons (list (double-float-equal (transform-float-1
@@ -178,8 +149,7 @@
 
     (deftest :BASIC/DO/2
 	(let ((results '()))
-	  (do-query ((int float bigint str) "select * from TYPE_TABLE" :result-types :auto)
-	    (declare (ignore bigint))
+	  (do-query ((int float str) "select * from TYPE_TABLE" :result-types :auto)
 	    (setq results
 		  (cons
 		   (list (double-float-equal 
@@ -191,8 +161,52 @@
 		   results)))
 	  results)
       ((t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t)))
+
+
+    (deftest :BASIC/BIGINT/1
+	(let ((results '()))
+	  (dolist (row (query "select * from TYPE_BIGINT" :result-types :auto)
+		   results)
+	    (destructuring-bind (int bigint) row
+	      (push (list (integerp int)
+			  (if (and (eq :odbc *test-database-type*)
+				   (eq :postgresql *test-database-underlying-type*))
+			      ;; ODBC/Postgresql may return returns bigints as strings or integer
+			      ;; depending upon the platform
+			      t
+			    (integerp bigint)))
+		    results))))
+      ((t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t) (t t)))
+
     ))
 
+
+(defun test-basic-initialize ()
+  (ignore-errors
+   (clsql:execute-command "DROP TABLE TYPE_TABLE")
+   (clsql:execute-command "DROP TABLE TYPE_BIGINT"))
+
+  (clsql:execute-command 
+   "CREATE TABLE TYPE_TABLE (t_int integer, t_float double precision, t_str VARCHAR(30))")
+
+  (if (clsql-sys:db-type-has-bigint? *test-database-type*)
+    (clsql:execute-command "CREATE TABLE TYPE_BIGINT (t_int integer, t_bigint BIGINT)")
+    (clsql:execute-command "CREATE TABLE TYPE_BIGINT (t_int integer)"))
+
+  (dotimes (i 11)
+    (let* ((test-int (- i 5))
+	   (test-flt (transform-float-1 test-int)))
+      (clsql:execute-command
+       (format nil "INSERT INTO TYPE_TABLE VALUES (~a,~a,'~a')"
+	       test-int
+	       (clsql-sys:number-to-sql-string test-flt)
+	       (clsql-sys:number-to-sql-string test-flt)
+	       ))
+      (clsql:execute-command
+       (format nil "INSERT INTO TYPE_BIGINT VALUES (~a,~a)"
+	       test-int
+	       (transform-bigint-1 test-int)
+	       )))))
 
 ;;;; Testing functions
 

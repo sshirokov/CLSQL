@@ -1,5 +1,5 @@
 if [ -z "$ORACLE_HOME" ]; then 
-  ORACLE_HOME=/opt/10g/product/10.1.0/db_1
+  ORACLE_HOME=/10g/app/product/10.1.0/db_1
 fi
 
 EMPTY_LIBS=-lclntst10

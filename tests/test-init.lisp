@@ -19,6 +19,7 @@
 (defvar *report-stream* *standard-output* "Stream to send text report.")
 (defvar *sexp-report-stream* nil "Stream to send sexp report.")
 (defvar *rt-connection*)
+(defvar *rt-basic*)
 (defvar *rt-fddl*)
 (defvar *rt-fdml*)
 (defvar *rt-ooddl*)
@@ -219,7 +220,6 @@
 
 (defun test-initialise-database ()
   (test-basic-initialize)
-  
   (let ((*backend-warning-behavior*
 	 (if (member *test-database-type* '(:postgresql :postgresql-socket))
 	     :ignore
@@ -526,11 +526,9 @@
 
 
 (defun compute-tests-for-backend (db-type db-underlying-type)
-  (declare (ignorable db-type))
   (let ((test-forms '())
 	(skip-tests '()))
-    (dolist (test-form (append (test-basic-forms)
-			       *rt-connection* *rt-fddl* *rt-fdml*
+    (dolist (test-form (append *rt-connection* *rt-basic* *rt-fddl* *rt-fdml*
 			       *rt-ooddl* *rt-oodml* *rt-syntax*))
       (let ((test (second test-form)))
 	(cond
@@ -556,9 +554,12 @@
 				:fdml/select/21 :fdml/select/32 
                                 :fdml/select/33))
 	   (push (cons test "not supported by sqlite") skip-tests))
+	  ((and (not (clsql-sys:db-type-has-bigint? db-type))
+		(clsql-sys:in test :basic/bigint/1))
+	   (push (cons test "bigint not supported") skip-tests))
 	  ((and (eql *test-database-underlying-type* :mysql)
 		(clsql-sys:in test :fdml/select/26))
-	   (push (cons test "string table aliases not supported") skip-tests))
+	   (push (cons test "string table aliases not supported on all mysql versions") skip-tests))
 	  ((and (eql *test-database-underlying-type* :mysql)
 		(clsql-sys:in test :fdml/select/22 :fdml/query/5 
 				:fdml/query/7 :fdml/query/8))
@@ -585,4 +586,4 @@
   (rapid-load :mysql))
 
 (defun rlo ()
-  (rapid-load :odbc))
+  (rapid-load :oracle))

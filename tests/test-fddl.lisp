@@ -28,7 +28,7 @@
            (sort (mapcar #'string-downcase
                          (clsql:list-tables :owner *test-database-user*))
                  #'string<))
-  "addr" "company" "ea_join" "employee" "type_table")
+  "addr" "company" "ea_join" "employee" "type_bigint" "type_table")
 
 ;; create a table, test for its existence, drop it and test again 
 (deftest :fddl/table/2

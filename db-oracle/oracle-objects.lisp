@@ -2,7 +2,7 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          oracle-objects.lisp
+;;;; Name: oracle-objects.lisp
 ;;;;
 ;;;; $Id$
 ;;;;
@@ -69,6 +69,11 @@
 	      (or (first args) 38) (or (second args) 38))
     "NUMBER"))
 
+(defmethod database-get-type-specifier
+    ((type (eql 'boolean)) args (database oracle-database))
+  (declare (ignore args))
+  "CHAR(1)")
+
 (defmethod read-sql-value (val type (database oracle-database))
   ;;(format t "value is \"~A\" of type ~A~%" val (type-of val))
   (declare (ignore type))
@@ -89,16 +94,17 @@
 (defmethod read-sql-value (val (type (eql 'float)) (database oracle-database))
   val)
 
-;;; LOCAL-TIME stuff that needs to go into hooks
-#+local-time
-(defmethod clsql::database-get-type-specifier
-  ((type (eql 'local-time::local-time)) args (database oracle-database))
+(defmethod read-sql-value (val (type (eql 'boolean)) (database oracle-database))
+  (when (char-equal #\t (schar val 0))
+    t))
+
+(defmethod database-get-type-specifier
+  ((type (eql 'wall-time)) args (database oracle-database))
   (declare (ignore args))
   "DATE")
 
-#+local-time
-(defmethod clsql::database-get-type-specifier
-  ((type (eql 'local-time::duration))
+(defmethod database-get-type-specifier
+  ((type (eql 'duration))
    args
    (database oracle-database))
   (declare (ignore args))

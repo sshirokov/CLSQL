@@ -297,7 +297,15 @@
   (p2           :unsigned-short))
 
 
+(def-oci-routine ("OCIServerVersion" oci-server-version)
+    :int
+    (handlp    (* :void))
+    (errhp     (* :void))
+    (bufp      (* :unsigned-char))
+    (bufsz     :int)
+    (hndltype  :short))
 
+		
 ;;; Functions
 
 (defun oci-init (&key (mode +oci-default+))

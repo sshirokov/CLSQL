@@ -1,4 +1,9 @@
 16 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* db-oracle/oracle-api: Add OCIServerVersion
+	* db-oracle/oracle-sql: Query and store server version on connect
+	* sql/db-interface.lisp: Add new db-type-has-bigint? generic
+	function to handle OCI's lack of bigint support
+	* test/test-basic.lisp: Separate bigint testing
 	* test/test-utils.lisp: Add oracle to specs and list of backends
 	* doc/TODO: New file
 	* test/test-fdml.lisp: Added FDML/SELECT/34 to test

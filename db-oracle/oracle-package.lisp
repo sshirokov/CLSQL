@@ -19,6 +19,7 @@
 (defpackage #:clsql-oracle
   (:use #:common-lisp #:clsql-sys)
   (:export #:oracle-database
+	   #:*oracle-server-version*
 	   #:*oracle-so-load-path*
 	   #:*oracle-so-libraries*)
   (:documentation "This is the CLSQL interface to Oracle."))

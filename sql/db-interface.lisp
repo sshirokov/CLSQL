@@ -218,6 +218,13 @@ of TYPE_NAME (keyword) PRECISION SCALE NULLABLE."))
 	   t)
   (:documentation "T [default] if database-type supports views."))
 
+(defgeneric db-type-has-bigint? (db-type)
+  (:method (db-type)
+	   (declare (ignore db-type))
+	   ;; SQL92 has bigint
+	   t)
+  (:documentation "T [default] if database-type supports bigint."))
+
 (defgeneric db-type-default-case (db-type)
   (:method (db-type)
 	   (declare (ignore db-type))
