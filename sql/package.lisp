@@ -213,10 +213,7 @@
      
      #:*loaded-database-types*
      #:reload-database-types
-     #:*initialized-database-types*
-     #:initialize-database-type
      #:*connect-if-exists*
-     #:*default-database*
      #:connected-databases
      #:database
      #:find-database
@@ -464,6 +461,8 @@
      ;; database.lisp -- Connection
      #:*default-database-type*	          ; clsql-base xx
      #:*default-database*	          ; classes    xx
+     #:*initialized-database-types*
+     #:initialize-database-type
      #:connect			          ; database   xx
      #:*connect-if-exists*	          ; database   xx
      #:connected-databases	          ; database   xx
