@@ -384,7 +384,7 @@
 	  ("Lenin" "Stalin" "Trotsky"))
 
 
-      (deftest oodml/cache/1
+      (deftest :oodml/cache/1
 	  (progn
 	    (setf (clsql-sys:record-caches *default-database*) nil)
 	    (let ((employees (select 'employee)))
@@ -392,17 +392,17 @@
 		     employees (select 'employee))))
 	t)
 
-	(deftest oodml/cache/2
+	(deftest :oodml/cache/2
 	    (let ((employees (select 'employee)))
 	      (equal employees (select 'employee :flatp t)))
 	  nil)
 	
-	(deftest oodml/refresh/1
+	(deftest :oodml/refresh/1
 	    (let ((addresses (select 'address)))
 	      (equal addresses (select 'address :refresh t)))
 	  t)
 
-	(deftest oodml/refresh/2
+	(deftest :oodml/refresh/2
 	    (let* ((addresses (select 'address :order-by [addressid] :flatp t))
 		   (city (slot-value (car addresses) 'city)))
 	      (clsql:update-records [addr] 
@@ -419,14 +419,14 @@
 			new-city)))
 	  t "Leningrad" "A new city")
 	
-	(deftest oodml/refresh/3
+	(deftest :oodml/refresh/3
 	    (let* ((addresses (select 'address :order-by [addressid] :flatp t)))
 	      (values
 	       (equal addresses (select 'address :refresh t :flatp t))
 	       (equal addresses (select 'address :flatp t))))
 	  nil nil)
 	
-	(deftest oodml/refresh/4
+	(deftest :oodml/refresh/4
 	    (let* ((addresses (select 'address :order-by [addressid] :flatp t))
 		   (*db-auto-sync* t))
 	      (make-instance 'address :addressid 1000 :city "A new address city")
@@ -440,7 +440,7 @@
 	  2 3 t t)
 		
 	      
-	(deftest oodml/uoj/1
+	(deftest :oodml/uoj/1
 	    (progn
 	      (let* ((dea-list (select 'deferred-employee-address :caching nil :order-by [ea_join aaddressid]
 				       :flatp t))
