@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: aodbc-sql.cl,v 1.1 2002/03/23 14:04:52 kevin Exp $
+;;;; $Id: aodbc-sql.cl,v 1.2 2002/03/24 04:01:26 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -19,6 +19,11 @@
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :clsql-aodbc)
 
+
+(defmethod database-type-library-loaded ((database-type (eql :aodbc)))
+  "T if foreign library was able to be loaded successfully. "
+  (when (find-package :dbi) ;; finds Allegro's DBI (AODBC) package
+    t))
 
 (defmethod database-initialize-database-type ((database-type (eql :aodbc)))
   t)

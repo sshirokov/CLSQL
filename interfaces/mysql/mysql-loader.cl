@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-loader.cl,v 1.1 2002/03/23 14:04:52 kevin Exp $
+;;;; $Id: mysql-loader.cl,v 1.2 2002/03/24 04:01:26 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -51,17 +51,24 @@
 load the MySQL client library succesfully.  If this differs at your site,
 set to the right path before compiling or loading the system.")
 
+(defvar *mysql-library-loaded* nil
+  "T if foreign library was able to be loaded successfully")
 
-
+(defmethod database-type-library-loaded ((database-type (eql :mysql)))
+  *mysql-library-loaded*)
+				      
 (defmethod database-type-load-foreign ((database-type (eql :mysql)))
-  (uffi:load-foreign-library *mysql-library-filename* 
-			     :module "mysql" 
-                             :supporting-libraries 
-			     *mysql-supporting-libraries*)
-  (uffi:load-foreign-library *clsql-mysql-library-filename* 
-			     :module "clsql-mysql" 
-                             :supporting-libraries 
-			     (append *mysql-supporting-libraries*)))
+  (when
+      (and
+       (uffi:load-foreign-library *mysql-library-filename* 
+				  :module "mysql" 
+				  :supporting-libraries 
+				  *mysql-supporting-libraries*)
+       (uffi:load-foreign-library *clsql-mysql-library-filename* 
+				  :module "clsql-mysql" 
+				  :supporting-libraries 
+				  (append *mysql-supporting-libraries*)))
+    (setq *mysql-library-loaded* t)))
 
 
 (database-type-load-foreign :mysql)

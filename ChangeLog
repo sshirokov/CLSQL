@@ -1,4 +1,13 @@
 23 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
-	* Initial Release
 	
+	* doc/ref.sgml: Updated MAP-QUERY example to use
+	*read-default-float-format* (John Foderaro)
+	
+	* Extensive work to foreign library loaders and .system files to
+	check for successful loading of foreign libraries.
+
+	* Modified test-clsql.cl to allow more modularity and
+	automated testing in future release.
+
+		
 	

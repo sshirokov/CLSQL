@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql-postgresql.system,v 1.2 2002/03/23 17:10:47 kevin Exp $
+;;;; $Id: clsql-postgresql.system,v 1.3 2002/03/24 04:01:26 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -28,4 +28,9 @@
 		 (:file "postgresql-loader" :depends-on ("postgresql-package"))
 		 (:file "postgresql-api" :depends-on ("postgresql-loader"))
 		 (:file "postgresql-sql" :depends-on ("postgresql-api")))
-    :depends-on (:uffi :clsql))
+    :depends-on (:uffi :clsql)
+    :finally-do
+    (when (clsql-sys:database-type-library-loaded :postgresql)
+      (clsql-sys:initialize-database-type :database-type :postgresql)
+      (pushnew :postgresql cl:*features*)))
+

@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: test-clsql.cl,v 1.1 2002/03/23 14:04:49 kevin Exp $
+;;;; $Id: test-clsql.cl,v 1.2 2002/03/24 04:01:26 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -19,6 +19,7 @@
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
 (in-package :cl-user)
 
+
 (defun get-spec-and-type ()
   (format t "~&Test CLSQL")
   (format t "~&==========~%")
@@ -28,16 +29,16 @@
   (let ((type-string (read-line)))
     (if (zerop (length type-string))
 	(values nil nil)
-	(let* ((type (read-from-string type-string))
-	       (spec (get-spec type
-			       (ecase type
-				 ((:mysql :postgresql :postgresql-socket)
-				  '("host" "database" "user" "password"))
-				 (:aodbc
-				  '("dsn" "user" "password"))))))
-	  (when (eq type :mysql)
-	    (test-clsql-mysql spec))
-	  (values spec type)))))
+	(get-spec-for-type (read-from-string type-string)))))
+
+(defun get-spec-for-type (type)
+  (let ((spec (get-spec type
+			(ecase type
+			  ((:mysql :postgresql :postgresql-socket)
+			   '("host" "database" "user" "password"))
+			  (:aodbc
+			   '("dsn" "user" "password"))))))
+    (values spec type)))))
 
 
 (defun get-spec (type spec-format)
@@ -51,6 +52,8 @@
     (nreverse spec)))
 
 (defun test-clsql (spec type)
+  (when (eq type :mysql)
+    (test-clsql-mysql spec))
   (let ((db (clsql:connect spec :database-type type :if-exists :new)))
     (unwind-protect
 	(progn
@@ -85,7 +88,7 @@
     (clsql-mysql::database-execute-command "DROP TABLE test_clsql" db)
     (clsql-mysql::database-disconnect db)))
 
-
+#-non-interactive-test
 (do ((done nil))
     (done)
   (multiple-value-bind (spec type) (get-spec-and-type)

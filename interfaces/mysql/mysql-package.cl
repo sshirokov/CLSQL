@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-package.cl,v 1.1 2002/03/23 14:04:52 kevin Exp $
+;;;; $Id: mysql-package.cl,v 1.2 2002/03/24 04:01:26 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -20,8 +20,10 @@
 (in-package :cl-user)
 
 (defpackage :mysql
-    (:use :common-lisp)
+    (:use :common-lisp :clsql-sys)
     (:export 
+     #:database-library-loaded
+     
      #:mysql-socket
      #:mysql-book
      #:mysql-byte

@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: package.cl,v 1.1 2002/03/23 14:04:54 kevin Exp $
+;;;; $Id: package.cl,v 1.2 2002/03/24 04:01:26 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -32,6 +32,7 @@
      ;; "Private" exports for use by interface packages
      #:check-connection-spec
      #:database-type-load-foreign
+     #:database-type-library-loaded ;; KMR - Tests if foreign library okay
      #:database-initialize-database-type
      #:database-connect
      #:database-disconnect
