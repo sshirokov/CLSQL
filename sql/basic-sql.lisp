@@ -16,7 +16,7 @@
 
 ;;; Query
 
-(defgeneric query (query-expression &key database result-types flatp)
+(defgeneric query (query-expression &key database result-types flatp field-names)
   (:documentation
    "Execute the SQL query expression QUERY-EXPRESSION on the given
 DATABASE which defaults to *default-database*. RESULT-TYPES is a list

@@ -497,6 +497,7 @@ which does type checking before storing a value in a slot."
 	;; all other slots
 	(t
 	 (let ((type-predicate #+openmcl (slot-value esd 'ccl::type-predicate)))
+	   #-openmcl (declare (ignore type-predicate))
 	   (change-class esd 'view-class-effective-slot-definition
 			 #+allegro :name 
 			 #+allegro (slot-definition-name dsd))

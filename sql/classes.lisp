@@ -628,6 +628,7 @@ uninclusive, and the args from that keyword to the end."
   t)
 
 (defmethod output-sql ((query sql-object-query) database)
+  (declare (ignore database))
   (with-slots (objects)
       query
     (when objects

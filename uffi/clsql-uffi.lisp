@@ -28,7 +28,7 @@
        (length-auto-list (length auto-list)))
       ((= i length-auto-list)
        (nreverse new-types))
-    (declaim (fixnum length-types length-auto-list i))
+    (declare (fixnum length-types length-auto-list i))
     (if (>= i length-types)
 	(push t new-types) ;; types is shorted than num-fields
 	(push

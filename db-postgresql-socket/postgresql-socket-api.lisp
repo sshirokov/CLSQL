@@ -214,7 +214,7 @@ socket interface"
 ;;; Support for encrypted password transmission
 
 #-scl
-(eval-when (compile eval load)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *crypt-library-loaded* nil)
 
   (unless *crypt-library-loaded*

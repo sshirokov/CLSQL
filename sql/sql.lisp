@@ -33,8 +33,8 @@
          :result-types result-types :field-names field-names))
 
 (defmethod query ((expr sql-object-query) &key (database *default-database*)
-					       (result-types :auto) (flatp nil))
-  (declare (ignore result-types))
+		  (result-types :auto) (flatp nil) (field-names t))
+  (declare (ignore result-types field-names))
   (apply #'select (append (slot-value expr 'objects)
 			  (slot-value expr 'exp) 
 			  (when (slot-value expr 'refresh) 

@@ -1,5 +1,7 @@
 12 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* sql/sql.lisp: Add FOR-EACH-ROW macro from clsql-classic/sql.lisp
+	* db-sqlite/sqlite-uffi-api.lisp: Fix row-pointer type
+	* *: Fix minor style warnings
 	* clsql-classic: Remove system and subdirectory
 	* clsql-base: Remove system and subdirectory and
 	fold into clsql system

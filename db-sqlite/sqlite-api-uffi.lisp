@@ -2,10 +2,10 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          sqlite-api-uffi.lisp
-;;;; Purpose:       Low-level SQLite interface using UFFI
-;;;; Programmers:   Aurelio Bignoli and Kevin Rosenberg
-;;;; Date Started:  Nov 2003
+;;;; Name:     sqlite-api-uffi.lisp
+;;;; Purpose:  Low-level SQLite interface using UFFI
+;;;; Authors:  Aurelio Bignoli and Kevin Rosenberg
+;;;; Created:  Nov 2003
 ;;;;
 ;;;; $Id$
 ;;;;
@@ -98,7 +98,7 @@
 (def-foreign-type sqlite-db :pointer-void)
 (def-foreign-type sqlite-vm :pointer-void)
 (def-foreign-type string-pointer (* (* :unsigned-char)))
-(def-foreign-type sqlite-row-pointer (* string-pointer))
+(def-foreign-type sqlite-row-pointer (* (* :unsigned-char)))
 
 (defvar +null-errmsg-pointer+ (make-null-pointer 'errmsg))
 (defvar +null-string-pointer-pointer+ (make-null-pointer 'string-pointer))
