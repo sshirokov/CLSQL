@@ -3,6 +3,9 @@
 	Implemented direct socket reading for field type :double
 
 	* Added usage information for :types to documentation
+
+	* interfaces/mysql/mysql-sql.cl
+	Fixed type specifiers in ato* calls
 	
 25 Mar 2002 Kevin Rosenberg (kevin@rosenberg.net)
 

@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.cl,v 1.10 2002/03/25 23:48:46 kevin Exp $
+;;;; $Id: mysql-sql.cl,v 1.11 2002/03/27 00:25:03 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -85,15 +85,15 @@
     nil)))
 
 (uffi:def-function "atoi"
-    ((str :cstring))
+    ((str (* :unsigned-char)))
   :returning :int)
 
 (uffi:def-function "atol"
-    ((str :cstring))
+    ((str (* :unsigned-char)))
   :returning :long)
 
 (uffi:def-function "atof"
-    ((str :cstring))
+    ((str (* :unsigned-char)))
   :returning :double)
 
 (defun convert-raw-field (char-ptr types index)
