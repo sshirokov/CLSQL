@@ -23,10 +23,38 @@
   "stream which accumulates SQL output")
 
 (defun sql-output (sql-expr &optional database)
+  "Top-level call for generating SQL strings. Returns an SQL
+  string appropriate for DATABASE which corresponds to the
+  supplied lisp expression SQL-EXPR."
   (progv '(*sql-stream*)
       `(,(make-string-output-stream))
     (output-sql sql-expr database)
     (get-output-stream-string *sql-stream*)))
+
+(defmethod output-sql (expr database)
+  (write-string (database-output-sql expr database) *sql-stream*)
+  (values))
+
+(defvar *output-hash* (make-hash-table :test #'equal)
+  "For caching generated SQL strings.")
+
+(defmethod output-sql :around ((sql t) database)
+  (let* ((hash-key (output-sql-hash-key sql database))
+         (hash-value (when hash-key (gethash hash-key *output-hash*))))
+    (cond ((and hash-key hash-value)
+           (write-string hash-value *sql-stream*))
+          (hash-key
+           (let ((*sql-stream* (make-string-output-stream)))
+             (call-next-method)
+             (setf hash-value (get-output-stream-string *sql-stream*))
+             (setf (gethash hash-key *output-hash*) hash-value))
+           (write-string hash-value *sql-stream*))
+          (t
+           (call-next-method)))))
+
+(defmethod output-sql-hash-key (expr database)
+  (declare (ignore expr database))
+  nil)
 
 
 (defclass %sql-expression ()
@@ -66,10 +94,11 @@
           (sql-output ident nil)))
 
 ;; For SQL Identifiers of generic type
+
 (defclass sql-ident (%sql-expression)
   ((name
     :initarg :name
-    :initform "NULL"))
+    :initform +null-string+))
   (:documentation "An SQL identifer."))
 
 (defmethod make-load-form ((sql sql-ident) &optional environment)
@@ -77,27 +106,6 @@
   (with-slots (name)
     sql
     `(make-instance 'sql-ident :name ',name)))
-
-(defvar *output-hash* (make-hash-table :test #'equal))
-
-(defmethod output-sql-hash-key (expr database)
-  (declare (ignore expr database))
-  nil)
-
-#+ignore
-(defmethod output-sql :around ((sql t) database)
-  (let* ((hash-key (output-sql-hash-key sql database))
-         (hash-value (when hash-key (gethash hash-key *output-hash*))))
-    (cond ((and hash-key hash-value)
-           (write-string hash-value *sql-stream*))
-          (hash-key
-           (let ((*sql-stream* (make-string-output-stream)))
-             (call-next-method)
-             (setf hash-value (get-output-stream-string *sql-stream*))
-             (setf (gethash hash-key *output-hash*) hash-value))
-           (write-string hash-value *sql-stream*))
-          (t
-           (call-next-method)))))
 
 (defmethod output-sql ((expr sql-ident) database)
   (with-slots (name) expr
@@ -115,10 +123,10 @@
 (defclass sql-ident-attribute (sql-ident)
   ((qualifier
     :initarg :qualifier
-    :initform "NULL")
+    :initform +null-string+)
    (type
     :initarg :type
-    :initform "NULL"))
+    :initform +null-string+))
   (:documentation "An SQL Attribute identifier."))
 
 (defmethod collect-table-refs (sql)
@@ -169,12 +177,13 @@
     t))
 
 (defmethod output-sql-hash-key ((expr sql-ident-attribute) database)
-  (declare (ignore database))
   (with-slots (qualifier name type)
-    expr
-    (list 'sql-ident-attribute qualifier name type)))
+      expr
+    (list (and database (database-underlying-type database))
+          'sql-ident-attribute qualifier name type)))
 
 ;; For SQL Identifiers for tables
+
 (defclass sql-ident-table (sql-ident)
   ((alias
     :initarg :table-alias :initform nil))
@@ -197,21 +206,11 @@
           (format *sql-stream* "~s" alias))))
   t)
 
-#|
-(defmethod database-output-sql ((self duration) database)
-  (declare (ignore database))
-  (format nil "'~a'" (duration-timestring self)))
-
-(defmethod database-output-sql ((self money) database)
-  (database-output-sql (slot-value self 'odcl::units) database))
-|#
-
-
 (defmethod output-sql-hash-key ((expr sql-ident-table) database)
-  (declare (ignore database))
   (with-slots (name alias)
-    expr
-    (list 'sql-ident-table name alias)))
+      expr
+    (list (and database (database-underlying-type database))
+          'sql-ident-table name alias)))
 
 (defclass sql-relational-exp (%sql-expression)
   ((operator
@@ -257,9 +256,6 @@
 (defclass sql-upcase-like (sql-relational-exp)
   ()
   (:documentation "An SQL 'like' that upcases its arguments."))
-  
-;; Write SQL for relational operators (like 'AND' and 'OR').
-;; should do arity checking of subexpressions
   
 (defmethod output-sql ((expr sql-upcase-like) database)
   (flet ((write-term (term)
@@ -338,13 +334,9 @@
   (:documentation "An SQL typecast expression."))
 
 (defmethod output-sql ((expr sql-typecast-exp) database)
-  (database-output-sql expr database))
-
-(defmethod database-output-sql ((expr sql-typecast-exp) database)
   (with-slots (components)
     expr
     (output-sql components database)))
-
 
 (defmethod collect-table-refs ((sql sql-typecast-exp))
   (when (slot-value sql 'components)
@@ -832,8 +824,100 @@ uninclusive, and the args from that keyword to the end."
 
 
 ;;
-;; Column constraint types
+;; DATABASE-OUTPUT-SQL 
+;; 
+
+(defmethod database-output-sql ((str string) database)
+  (declare (ignore database)
+           (optimize (speed 3) (safety 1) #+cmu (extensions:inhibit-warnings 3))
+           (type (simple-array * (*)) str))
+  (let ((len (length str)))
+    (declare (type fixnum len))
+    (cond ((zerop len)
+           +empty-string+)
+          ((and (null (position #\' str))
+                (null (position #\\ str)))
+           (concatenate 'string "'" str "'"))
+          (t
+           (let ((buf (make-string (+ (* len 2) 2) :initial-element #\')))
+             (do* ((i 0 (incf i))
+                   (j 1 (incf j)))
+                  ((= i len) (subseq buf 0 (1+ j)))
+               (declare (type fixnum i j))
+               (let ((char (aref str i)))
+		 (declare (character char))
+                 (cond ((char= char #\')
+                        (setf (aref buf j) #\')
+                        (incf j)
+                        (setf (aref buf j) #\'))
+                       ((char= char #\\)
+                        (setf (aref buf j) #\\)
+                        (incf j)
+                        (setf (aref buf j) #\\))
+                       (t
+                        (setf (aref buf j) char))))))))))
+
+(let ((keyword-package (symbol-package :foo)))
+  (defmethod database-output-sql ((sym symbol) database)
+    (convert-to-db-default-case
+     (if (equal (symbol-package sym) keyword-package)
+	 (concatenate 'string "'" (string sym) "'")
+	 (symbol-name sym))
+     database)))
+
+(defmethod database-output-sql ((tee (eql t)) database)
+  (declare (ignore database))
+  "'Y'")
+
+(defmethod database-output-sql ((num number) database)
+  (declare (ignore database))
+  (princ-to-string num))
+
+(defmethod database-output-sql ((arg list) database)
+  (if (null arg) 
+      +null-string+ 
+      (format nil "(~{~A~^,~})" (mapcar #'(lambda (val)
+                                            (sql-output val database))
+                                        arg))))
+
+(defmethod database-output-sql ((arg vector) database)
+  (format nil "~{~A~^,~}" (map 'list #'(lambda (val)
+					 (sql-output val database))
+			       arg)))
+
+(defmethod output-sql-hash-key ((arg vector) database)
+  (list 'vector (map 'list (lambda (arg)
+                             (or (output-sql-hash-key arg database)
+                                 (return-from output-sql-hash-key nil)))
+                     arg)))
+
+(defmethod database-output-sql ((self wall-time) database)
+  (declare (ignore database))
+  (db-timestring self))
+
+(defmethod database-output-sql ((self duration) database)
+  (declare (ignore database))
+  (format nil "'~a'" (duration-timestring self)))
+
+#+ignore 
+(defmethod database-output-sql ((self money) database)
+  (database-output-sql (slot-value self 'odcl::units) database))
+
+(defmethod database-output-sql (thing database)
+  (if (or (null thing)
+	  (eq 'null thing))
+      +null-string+
+    (error 'sql-user-error
+           :message
+	   (format nil
+		   "No type conversion to SQL for ~A is defined for DB ~A."
+		   (type-of thing) (type-of database)))))
+
+
 ;;
+;; Column constraint types and conversion to SQL 
+;;
+
 (defparameter *constraint-types*
   (list 
    (cons (symbol-name-default-case "NOT-NULL") "NOT NULL") 
@@ -846,10 +930,6 @@ uninclusive, and the args from that keyword to the end."
    (cons (symbol-name-default-case "ZEROFILL") "ZEROFILL") 
    (cons (symbol-name-default-case "AUTO-INCREMENT") "AUTO_INCREMENT")
    (cons (symbol-name-default-case "UNIQUE") "UNIQUE")))
-
-;;
-;; Convert type spec to sql syntax
-;;
 
 (defmethod database-constraint-statement (constraint-list database)
   (declare (ignore database))

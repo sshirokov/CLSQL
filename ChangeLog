@@ -1,3 +1,15 @@
+16 Jul 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* sql/expressions.lisp: reactivate caching of generated SQL strings. 
+	Move methods for DATABASE-OUTPUT-SQL, OUTPUT-SQL and SQL-HASH-KEY 
+	here from sql/fdml.lisp. Rationalise behaviour of SQL-OUTPUT, 
+	OUTPUT-SQL and DATABASE-OUTPUT-SQL. 
+	* sql/fdml.lisp: remove disabled method ADD-STORAGE-CLASS. Move 
+	methods for DATABASE-OUTPUT-SQL, OUTPUT-SQL and SQL-HASH-KEY to 
+	sql/expressions.lisp. 
+	* sql/ooddl.lisp: replace call to DATABASE-OUTPUT-SQL in 
+	DATABASE-PKEY-CONSTRAINT with call to SQL-OUTPUT. 
+	* sql/generics.lisp: add docstrings. 
+
 15 Jul 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.11.16
 	* db-oracle/oracle-sql.lisp: Remove OpenMCL specific

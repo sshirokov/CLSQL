@@ -125,19 +125,7 @@ value.  If nulls are allowed for the column, the slot's value will be
 nil, otherwise its value will be set to the result of calling
 DATABASE-NULL-VALUE on the type of the slot."))
 
-(defgeneric output-sql (expr database)
-  )
-
-(defgeneric output-sql-hash-key (arg database)
-  )
-
-(defgeneric collect-table-refs (sql)
-  )
-(defgeneric database-output-sql (arg database)
-  )
 (defgeneric database-pkey-constraint  (class database)
-  )
-(defgeneric database-constraint-statement  (constraints database)
   )
 (defgeneric %install-class  (class database &key transactions)
   )
@@ -154,3 +142,30 @@ DATABASE-NULL-VALUE on the type of the slot."))
 (defgeneric read-sql-value  (val type database db-type)
   )
 
+
+;; Generation of SQL strings from lisp expressions 
+
+(defgeneric output-sql (expr database)
+  (:documentation "Writes an SQL string appropriate for DATABASE
+  and corresponding to the lisp expression EXPR to
+  *SQL-STREAM*. The function SQL-OUTPUT is a top-level call for
+  generating SQL strings which initialises *SQL-STREAM*, calls
+  OUTPUT-SQL and reads the generated SQL string from
+  *SQL-STREAM*."))
+
+(defgeneric database-output-sql (expr database)
+  (:documentation "Returns an SQL string appropriate for DATABASE
+  and corresponding to the lisp expression
+  EXPR. DATABASE-OUTPUT-SQL is called by OUTPUT-SQL when no more
+  specific method exists for EXPR."))
+
+(defgeneric output-sql-hash-key (expr database)
+  (:documentation "Returns a list (or other object suitable for
+use as the key of an EQUAL hash table) which uniquely identifies
+the arguments EXPR and DATABASE."))
+
+(defgeneric collect-table-refs (sql)
+  )
+
+(defgeneric database-constraint-statement  (constraints database)
+  )

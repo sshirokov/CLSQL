@@ -108,8 +108,8 @@ in DATABASE which defaults to *DEFAULT-DATABASE*."
     (when keylist 
       (convert-to-db-default-case
        (format nil "CONSTRAINT ~APK PRIMARY KEY~A"
-	       (database-output-sql (view-table class) database)
-	       (database-output-sql keylist database))
+	       (sql-output (view-table class) database)
+	       (sql-output keylist database))
        database))))
 
 (defmethod database-generate-column-definition (class slotdef database)
