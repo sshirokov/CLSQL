@@ -7,7 +7,7 @@
 ;;;; Author:  Kevin M. Rosenberg
 ;;;; Created: May 2004
 ;;;;
-;;;; $Id: test-basic.lisp 9450 2004-05-23 10:51:02Z kevin $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2004 by Kevin M. Rosenberg
 ;;;;
