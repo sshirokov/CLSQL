@@ -1,3 +1,7 @@
+03 Jun 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* examples/clsql-tutorial.lisp: Remove obsolete :nulls-ok attribute,
+	Reported by Bill Clementson.
+	
 31 May 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
 	* db-odbc/odbc-sql.lisp: DB-TYPE replaced with DATABASE-TYPE in 
 	DATABASE-CONNECT. 
