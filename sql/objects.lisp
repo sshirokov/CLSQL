@@ -97,7 +97,7 @@ the view. The argument DATABASE has a default value of
   (when (member (view-class-slot-db-kind slotdef) '(:base :key))
     (let ((cdef
            (list (sql-expression :attribute (view-class-slot-column slotdef))
-                 (slot-type slotdef))))
+                 (specified-type slotdef))))
       (setf cdef (append cdef (list (view-class-slot-db-type slotdef))))
       (let ((const (view-class-slot-db-constraints slotdef)))
         (when const 
@@ -232,16 +232,13 @@ superclass of the newly-defined View Class."
       (car list)
       list))
 
-(defun slot-type (slotdef)
-  (specified-type slotdef))
-
 (defvar *update-context* nil)
 
 (defmethod update-slot-from-db ((instance standard-db-object) slotdef value)
   (declare (optimize (speed 3) #+cmu (extensions:inhibit-warnings 3)))
   (let* ((slot-reader (view-class-slot-db-reader slotdef))
 	 (slot-name   (slot-definition-name slotdef))
-	 (slot-type   (slot-type slotdef))
+	 (slot-type   (specified-type slotdef))
 	 (*update-context* (cons (type-of instance) slot-name)))
     (cond ((and value (null slot-reader))
            (setf (slot-value instance slot-name)
@@ -261,7 +258,7 @@ superclass of the newly-defined View Class."
 (defmethod key-value-from-db (slotdef value database) 
   (declare (optimize (speed 3) #+cmu (extensions:inhibit-warnings 3)))
   (let ((slot-reader (view-class-slot-db-reader slotdef))
-        (slot-type (slot-type slotdef)))
+        (slot-type (specified-type slotdef)))
     (cond ((and value (null slot-reader))
            (read-sql-value value (delistify slot-type) database))
           ((null value)
@@ -275,7 +272,7 @@ superclass of the newly-defined View Class."
 
 (defun db-value-from-slot (slotdef val database)
   (let ((dbwriter (view-class-slot-db-writer slotdef))
-	(dbtype (slot-type slotdef)))
+	(dbtype (specified-type slotdef)))
     (typecase dbwriter
       (string (format nil dbwriter val))
       (function (apply dbwriter (list val)))
@@ -287,7 +284,7 @@ superclass of the newly-defined View Class."
 	  (database-output-sql-as-type dbtype val database)))))))
 
 (defun check-slot-type (slotdef val)
-  (let* ((slot-type (slot-type slotdef))
+  (let* ((slot-type (specified-type slotdef))
          (basetype (if (listp slot-type) (car slot-type) slot-type)))
     (when (and slot-type val)
       (unless (typep val basetype)

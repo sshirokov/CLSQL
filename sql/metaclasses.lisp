@@ -56,7 +56,7 @@
 
 ;;; Lispworks 4.2 and before requires special processing of extra slot and class options
 
-(defvar +extra-slot-options+ '(:column :db-kind :db-reader :void-value :db-constraints
+(defvar +extra-slot-options+ '(:column :db-kind :db-type :db-reader :void-value :db-constraints
 			       :db-writer :db-info))
 (defvar +extra-class-options+ '(:base-table))
 
@@ -401,6 +401,8 @@ which does type checking before storing a value in a slot."
        (t
 	#+openmcl (setf (slot-value slotd 'ccl::type-predicate) 'ccl:true)
 	specified-type)))
+    ((eq (ensure-keyword specified-type) :bigint)
+     'integer)
     #+openmcl
     ((null specified-type)
      ;; setting this here is not enough since openmcl later sets the
@@ -422,76 +424,81 @@ which does type checking before storing a value in a slot."
 					      #+kmr-normal-cesd slot-name
 					      direct-slots)
   #+kmr-normal-cesd (declare (ignore slot-name))
-
-  (let ((slotd (call-next-method))
-	(sd (car direct-slots)))
-    
-    (typecase sd
-      (view-class-slot-definition-mixin
-       ;; Use the specified :column argument if it is supplied, otherwise
-       ;; the column slot is filled in with the slot-name,  but transformed
-       ;; to be sql safe, - to _ and such.
-       (setf (slot-value slotd 'column)
-             (column-name-from-arg
-              (if (slot-boundp sd 'column)
-                  (view-class-slot-column sd)
-                  (column-name-from-arg
-                   (sql-escape (slot-definition-name sd))))))
-       
-       (setf (slot-value slotd 'db-type)
-             (when (slot-boundp sd 'db-type)
-               (view-class-slot-db-type sd)))
-       
-       (setf (slot-value slotd 'void-value)
-             (view-class-slot-void-value sd))
-       
-       ;; :db-kind slot value defaults to :base (store slot value in
-       ;; database)
-       
-       (setf (slot-value slotd 'db-kind)
-             (if (slot-boundp sd 'db-kind)
-                 (view-class-slot-db-kind sd)
-                 :base))
-       
-       (setf (slot-value slotd 'db-writer)
-             (when (slot-boundp sd 'db-writer)
-               (view-class-slot-db-writer sd)))
-       (setf (slot-value slotd 'db-constraints)
-             (when (slot-boundp sd 'db-constraints)
-               (view-class-slot-db-constraints sd)))
-               
-       ;; I wonder if this slot option and the previous could be merged,
-       ;; so that :base and :key remain keyword options, but :db-kind
-       ;; :join becomes :db-kind (:join <db info .... >)?
-       
-       (setf (slot-value slotd 'db-info)
-             (when (slot-boundp sd 'db-info)
-               (if (listp (view-class-slot-db-info sd))
-                   (parse-db-info (view-class-slot-db-info sd))
-                   (view-class-slot-db-info sd))))
-
-       ;; KMR: store the user-specified type and then compute
-       ;; real Lisp type and store it
-       (setf (specified-type slotd)
-	     (slot-definition-type slotd))
-       (setf (slot-value slotd 'type)
-	     (compute-lisp-type-from-slot-specification 
-	      slotd (slot-definition-type slotd)))
-       )
-      ;; all other slots
-      (t
-       (change-class slotd 'view-class-effective-slot-definition
-		     #+allegro :name 
-		     #+allegro (slot-definition-name sd))
-       (setf (slot-value slotd 'column)
-             (column-name-from-arg
-              (sql-escape (slot-definition-name sd))))
-
-       (setf (slot-value slotd 'db-info) nil)
-       (setf (slot-value slotd 'db-kind)
-             :virtual)))
-    slotd))
-
+  
+  ;; KMR: store the user-specified type and then compute
+  ;; real Lisp type and store it
+  (let ((dsd (car direct-slots)))
+    (when (and (typep dsd 'view-class-slot-definition-mixin)
+	       (null (specified-type dsd)))
+      (setf (specified-type dsd)
+	(slot-definition-type dsd))
+      (setf (slot-value dsd 'type)
+	(compute-lisp-type-from-slot-specification 
+	 dsd (slot-definition-type dsd))))
+      
+    (let ((esd (call-next-method)))
+      (typecase dsd
+	(view-class-slot-definition-mixin
+	 ;; Use the specified :column argument if it is supplied, otherwise
+	 ;; the column slot is filled in with the slot-name,  but transformed
+	 ;; to be sql safe, - to _ and such.
+	 (setf (slot-value esd 'column)
+	   (column-name-from-arg
+	    (if (slot-boundp dsd 'column)
+		(view-class-slot-column dsd)
+	      (column-name-from-arg
+	       (sql-escape (slot-definition-name dsd))))))
+	 
+	 (setf (slot-value esd 'db-type)
+	   (when (slot-boundp dsd 'db-type)
+	     (view-class-slot-db-type dsd)))
+	 
+	 (setf (slot-value esd 'void-value)
+	   (view-class-slot-void-value dsd))
+	 
+	 ;; :db-kind slot value defaults to :base (store slot value in
+	 ;; database)
+	 
+	 (setf (slot-value esd 'db-kind)
+	   (if (slot-boundp dsd 'db-kind)
+	       (view-class-slot-db-kind dsd)
+	     :base))
+	 
+	 (setf (slot-value esd 'db-writer)
+	   (when (slot-boundp dsd 'db-writer)
+	     (view-class-slot-db-writer dsd)))
+	 (setf (slot-value esd 'db-constraints)
+	   (when (slot-boundp dsd 'db-constraints)
+	     (view-class-slot-db-constraints dsd)))
+	 
+	 ;; I wonder if this slot option and the previous could be merged,
+	 ;; so that :base and :key remain keyword options, but :db-kind
+	 ;; :join becomes :db-kind (:join <db info .... >)?
+	 
+	 (setf (slot-value esd 'db-info)
+	   (when (slot-boundp dsd 'db-info)
+	     (if (listp (view-class-slot-db-info dsd))
+		 (parse-db-info (view-class-slot-db-info dsd))
+	       (view-class-slot-db-info dsd))))
+	 
+	 (setf (specified-type esd) (specified-type dsd))
+	 
+	 )
+	;; all other slots
+	(t
+	 (change-class esd 'view-class-effective-slot-definition
+		       #+allegro :name 
+		       #+allegro (slot-definition-name dsd))
+	 
+	 (setf (slot-value esd 'column)
+	   (column-name-from-arg
+	    (sql-escape (slot-definition-name dsd))))
+	 
+	 (setf (slot-value esd 'db-info) nil)
+	 (setf (slot-value esd 'db-kind)
+	   :virtual)))
+      esd)))
+  
 (defun slotdefs-for-slots-with-class (slots class)
   (let ((result nil))
     (dolist (s slots)
