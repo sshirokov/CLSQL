@@ -4,7 +4,8 @@
 
 ;; You must set these variables to appropriate values. 
 (defvar *tutorial-database-type* nil 
-  "Possible values are :postgresql,:postgresql-socket :mysql, :oracle, :odbc or :sqlite")
+  "Possible values are :postgresql,:postgresql-socket :mysql,
+:oracle, :odbc, :aodbc or :sqlite")
 (defvar *tutorial-database-name* "clsqltut"
   "The name of the database we will work in.")
 (defvar *tutorial-database-user* "" 
@@ -90,7 +91,7 @@
 		    ,*tutorial-database-user* 
 		    ,*tutorial-database-password*)
 		  :database-type *tutorial-database-type*))
-  ((:odbc :oracle)
+  ((:odbc :aodbc :oracle)
    (clsql:connect `(,*tutorial-database-name* 
 		    ,*tutorial-database-user* 
 		    ,*tutorial-database-password*)
