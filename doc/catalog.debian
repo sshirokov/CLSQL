@@ -1,4 +1,3 @@
 CATALOG /etc/sgml/docbook.cat  
 CATALOG /etc/sgml/docbook-dsssl.cat  
-CATALOG /etc/sgml/openjade.cat  
 DOCUMENT clsql.sgml

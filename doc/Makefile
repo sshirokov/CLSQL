@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.8 2002/04/27 20:58:11 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.9 2002/05/02 20:54:48 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -55,19 +55,19 @@ dist: html pdf
 CHECK=nsgmls -s -C ${CATALOG} || exit 1
 
 check:
-	$(CHECK)
+	@$(CHECK)
 
 html: html/book1.htm
 
 html/book1.htm: ${DOCFILES} 
-	$(CHECK)
-	( rm -rf html ; mkdir html; cd html ; jade -t sgml -c ../${CATALOG} -d ${DSSSL_HTML} ../${DOCFILE}; cd ..)
+	@$(CHECK)
+	@( rm -rf html ; mkdir html; cd html ; jade -t sgml -c ../${CATALOG} -d ${DSSSL_HTML} ../${DOCFILE} > /dev/null; cd ..)
 
 tex: ${TEXFILE}
 
 ${TEXFILE}: ${DOCFILES}
 	$(CHECK)
-	@jade -t tex -c ${CATALOG} -d ${DSSSL_PRINT} ${DOCFILE}
+	@jade -t tex -c ${CATALOG} -d ${DSSSL_PRINT} ${DOCFILE} > /dev/null
 
 pdf: ${PDFFILE}
 
@@ -80,15 +80,15 @@ ${PDFFILE}: ${TEXFILE}
 dvi: ${DVIFILE}
 
 ${DVIFILE}: ${TEXFILE}
-	jadetex ${TEXFILE}
-	jadetex ${TEXFILE}
-	jadetex ${TEXFILE}
-	jadetex ${TEXFILE}
+	jadetex ${TEXFILE} > /dev/null
+	jadetex ${TEXFILE} > /dev/null
+	jadetex ${TEXFILE} > /dev/null
+	jadetex ${TEXFILE} > /dev/null
 
 ps: ${PSFILE}
 
 ${PSFILE}: ${DVIFILE}
-	dvips -o ${PSFILE} ${DVIFILE}
+	@dvips -o ${PSFILE} ${DVIFILE} > /dev/null
 
 clean:
 	@rm -rf html
