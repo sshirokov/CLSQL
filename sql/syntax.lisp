@@ -89,7 +89,7 @@ reader syntax is disabled."
   (declare (ignore char))
   (let ((sqllist (read-delimited-list #\] stream t)))
     (cond ((string= (write-to-string (car sqllist)) "||")
-           (cons (sql-operator 'concat) (cdr sqllist)))
+           (cons (sql-operator 'concat-op) (cdr sqllist)))
           ((and (= (length sqllist) 1) (eql (car sqllist) '*))
            (apply #'generate-sql-reference sqllist))
           ((sql-operator (car sqllist))

@@ -66,7 +66,7 @@
 
 (defsql sql-minus (:symbol "minus") (&rest rest)
   (make-instance 'sql-set-exp 
-		 :operator 'except :sub-expressions rest))
+		 :operator 'minus :sub-expressions rest))
 
 (defsql sql-limit (:symbol "limit") (&rest rest)
   (make-instance 'sql-query-modifier-exp 
@@ -139,15 +139,25 @@
   (make-instance 'sql-relational-exp
                  :operator 'in :sub-expressions rest))
 
-(defsql sql-concat (:symbol "concat") (&rest rest)
+(defsql sql-concat-op (:symbol "concat-op") (&rest rest)
   (make-instance 'sql-relational-exp
 		 :operator '\|\| :sub-expressions rest))
+
+(defsql sql-concat (:symbol "concat") (&rest rest)
+  (make-instance 'sql-function-exp
+		 :name 'concat :args rest))
 
 (defsql sql-substr (:symbol "substr") (&rest rest)
   (if (= (length rest) 3)
       (make-instance 'sql-function-exp 
-		     :name 'substring :args rest)
+		     :name 'substr :args rest)
       (error 'sql-user-error :message "SUBSTR must have 3 arguments.")))
+
+(defsql sql-substring (:symbol "substring") (&rest rest)
+  (if (= (length rest) 3)
+      (make-instance 'sql-function-exp 
+		     :name 'substring :args rest)
+      (error 'sql-user-error :message "SUBSTRING must have 3 arguments.")))
 
 (defsql sql-is (:symbol "is") (&rest rest)
   (make-instance 'sql-relational-exp
@@ -224,8 +234,10 @@
 		 :name 'coalesce :args rest))
 
 (defsql sql-nvl (:symbol "nvl") (&rest rest)
-  (make-instance 'sql-function-exp
-		 :name 'coalesce :args rest))
+  (if (= (length rest) 2)      
+      (make-instance 'sql-function-exp
+                     :name 'coalesce :args rest)
+      (error 'sql-user-error :message "NVL accepts exactly 2 arguments.")))
 
 (defsql sql-userenv (:symbol "userenv") (&rest rest)
   (make-instance 'sql-function-exp

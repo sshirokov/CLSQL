@@ -206,12 +206,20 @@
 
 (deftest :syntax/substr/1 
     (clsql:sql [substr [hello] 1 4])
+ "SUBSTR(HELLO,1,4)")
+
+(deftest :syntax/substring/1 
+    (clsql:sql [substring [hello] 1 4])
  "SUBSTRING(HELLO,1,4)")
 
 
 (deftest :syntax/concat/1 
     (clsql:sql [|| [foo] [bar] [baz]])
  "(FOO || BAR || BAZ)")
+
+(deftest :syntax/concat/2
+    (clsql:sql [concat [foo] [bar]])
+ "CONCAT(FOO,BAR)")
 
 
 (deftest :syntax/pattern/1 
@@ -249,6 +257,11 @@
     (clsql:sql [nvl [foo] "not specified"])
  "COALESCE(FOO,'not specified')")
 
+(deftest :syntax/nvl/1 
+    (clsql:sql [nvl [foo] "not specified"])
+ "COALESCE(FOO,'not specified')")
+
+
 
 (deftest :syntax/sets/1 
     (clsql:sql [union [select [foo] :from [bar]] [select [baz] :from [bar]]])
@@ -264,7 +277,7 @@
 
 (deftest :syntax/sets/4
     (clsql:sql [minus [select [foo] :from [bar]] [select [baz] :from [bar]]])
- "SELECT FOO FROM BAR EXCEPT SELECT BAZ FROM BAR")
+ "SELECT FOO FROM BAR MINUS SELECT BAZ FROM BAR")
 
 
 (deftest :syntax/function/1

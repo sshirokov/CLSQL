@@ -50,7 +50,7 @@
 	  (store-type-of-connected-database db)
 	  ;; Ensure this database type is initialized so can check capabilities of
 	  ;; underlying database
-	  (initialize-database-type :database-type db-type)
+	  (initialize-database-type :database-type database-type)
 	  db)
       (error () 	;; Init or Connect failed
 	(error 'sql-connection-error

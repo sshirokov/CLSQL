@@ -261,9 +261,6 @@
          #:sql-stream			
          #:start-sql-recording		
          #:stop-sql-recording		
-         ;; CLSQL Extensions 
-         #:record-sql-command
-         #:record-sql-result
 
 	 ;; FDDL (fddl.lisp) 
 	 #:create-table                   
@@ -318,20 +315,13 @@
          #:commit                        
          #:rollback			 
          ;; CLSQL Extensions 
-         #:commit-transaction
-         #:rollback-transaction
          #:add-transaction-commit-hook
          #:add-transaction-rollback-hook
          #:start-transaction             
          #:in-transaction-p              
-         #:database-start-transaction
-         #:database-abort-transaction
-         #:database-commit-transaction
-         #:transaction-level
-         #:transaction
 	 #:set-autocommit
 
-	 ;;  OODDL (ooddl.lisp) 
+	 ;; OODDL (ooddl.lisp) 
 	 #:standard-db-object               
 	 #:def-view-class                   
 	 #:create-view-from-class           
@@ -389,8 +379,8 @@
 	 #:sql-and
 	 #:sql-or
 	 #:sql-in
-	 #:sql-concat
          #:sql-substr 
+         #:sql-concat-op 
 	 #:sql-=
 	 #:sql-<
          #:sql->
@@ -407,7 +397,10 @@
          #:sql-distinct 
          #:sql-nvl 
          #:sql-slot-value
+         #:sql-userenv 
          ;; CLSQL Extensions 
+	 #:sql-concat
+         #:sql-substring 
          #:sql-limit 
 	 #:sql-group-by
 	 #:sql-having

@@ -368,7 +368,7 @@
  ("1" "2" "3" "4"))
 
 (deftest :fdml/select/21 
-  (clsql:select [substr [first-name] 1 4] :from [employee] 
+  (clsql:select [substring [first-name] 1 4] :from [employee] 
                 :flatp t :order-by [emplid] :field-names nil)
  ("Vlad" "Jose" "Leon" "Niki" "Leon" "Yuri" "Kons" "Mikh" "Bori" "Vlad"))
 

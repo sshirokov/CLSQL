@@ -186,11 +186,6 @@
     sql
     `(make-instance 'sql-ident-table :name ',name :table-alias ',alias)))
 
-(defun generate-sql (expr database)
-  (let ((*sql-stream* (make-string-output-stream)))
-    (output-sql expr database)
-    (get-output-stream-string *sql-stream*)))
-
 (defmethod output-sql ((expr sql-ident-table) database)
   (with-slots (name alias)
     expr
@@ -840,16 +835,6 @@ uninclusive, and the args from that keyword to the end."
 ;;
 ;; Convert type spec to sql syntax
 ;;
-
-(defmethod database-constraint-description (constraint database)
-  (declare (ignore database))
-  (let ((output (assoc (symbol-name constraint) *constraint-types*
-                       :test #'equal)))
-    (if (null output)
-        (error 'sql-user-error
-               :message (format nil "unsupported column constraint '~A'"
-				constraint))
-        (cdr output))))
 
 (defmethod database-constraint-statement (constraint-list database)
   (declare (ignore database))

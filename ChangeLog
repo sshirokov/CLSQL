@@ -1,3 +1,29 @@
+31 May 2004 Marcus Pearce <m.t.pearce@city.ac.uk> 
+	* db-odbc/odbc-sql.lisp: DB-TYPE replaced with DATABASE-TYPE in 
+	DATABASE-CONNECT. 
+	* sql/operations.lisp: substr now generates SUBSTR for use on 
+	Oracle; added a new operator SUBSTRING for use elsewhere. minus 
+	now generates MINUS for use on Oracle. Nvl signals an error if 
+	not called with exactly 2 arguments. Add concat function for use 
+	instead of the || operator on MySQL and Oracle. 
+	* sql/syntax.lisp: changed internal symbol for the || operator to 
+	CONCAT-OP. 
+	* sql/expressions.lisp: removed redundant and unused functions 
+	GENERATE-SQL (cf. SQL-OUTPUT) and DATABASE-CONSTRAINT-DESCRIPTION
+	(cf. MAKE-CONSTRAINTS-DESCRIPTION). 
+	* sql/generics.lisp: removed generic function for 
+	DATABASE-CONSTRAINT-DESCRIPTION (see above). 
+	* tests/test-syntax.lisp: modified/added tests according to changes
+	in sql/operations.lisp. 
+	* tests/test-fdml.lisp: changed SUBSTR to SUBSTRING in test 
+	:fdml/select/21.  
+	* sql/package.lisp: added the operators SQL-SUBSTRING, SQL-CONCAT-OP 
+	and SQL-USERENV to the shared exports list. Removed 
+	ROLLBACK-TRANSACTION, COMMIT-TRANSACTION, DATABASE-START-TRANSACTION, 
+	DATABASE-ABORT-TRANSACTION, DATABASE-COMMIT-TRANSACTION, 
+	TRANSACTION-LEVEL, TRANSACTION,  RECORD-SQL-COMMAND and 
+	RECORD-SQL-RESULT from shared exports list. 
+	
 30 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* db-postgresql/postgresl-sql.lisp: Avoid computing
 	result-types lisp when nil result-types. Return only
