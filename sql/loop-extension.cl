@@ -8,7 +8,7 @@
 ;;;;
 ;;;; Copyright (c) 1999-2001 Pierre R. Mai
 ;;;;
-;;;; $Id: loop-extension.cl,v 1.1 2002/03/23 14:04:49 kevin Exp $
+;;;; $Id: loop-extension.cl,v 1.1 2002/05/15 17:10:28 kevin Exp $
 ;;;;
 ;;;; The functions in this file were orignally distributed in the
 ;;;; MaiSQL package in the file sql/sql.cl

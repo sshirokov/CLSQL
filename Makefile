@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.18 2002/05/13 03:24:41 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.19 2002/05/15 17:10:28 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -15,7 +15,7 @@
 
 PKG:=clsql
 DEBPKG=cl-sql
-SUBDIRS:=interfaces sql cmucl-compat
+SUBDIRS:=interfaces sql base
 DOCSUBDIRS:=doc
 
 include Makefile.common

@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: postgresql-usql.cl,v 1.3 2002/05/15 17:03:43 kevin Exp $
+;;;; $Id: postgresql-usql.cl,v 1.4 2002/05/15 17:10:28 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and by onShore Development Inc.
@@ -39,7 +39,7 @@
 	  (mapcar #'car
 		  (database-query
 		   (format nil
-			   "SELECT attname FROM pg_class,pg_attribute WHERE pg_class.oid=attrelid AND relname='~A'" relname)
+			   "SELECT attname FROM pg_class,pg_attribute WHERE pg_class.oid=attrelid AND relname='~A'" table)
 		   database nil))))
     (if result
 	(reverse

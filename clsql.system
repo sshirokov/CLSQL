@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql.system,v 1.12 2002/05/13 05:24:57 kevin Exp $
+;;;; $Id: clsql.system,v 1.13 2002/05/15 17:10:28 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -27,24 +27,18 @@
 
 ;;; System definitions
 
-(mk:defsystem :cmucl-compat
-    :source-pathname "CL-LIBRARY:clsql;cmucl-compat;"
-    :source-extension "cl"
-    :binary-pathname "CL-LIBRARY:clsql;cmucl-compat;bin;"
-    :components ((:file "cmucl-compat")
-		 (:file "loop-extension")))
-
 (mk:defsystem :clsql
     :source-pathname "CL-LIBRARY:clsql;sql;"
     :source-extension "cl"
     :binary-pathname "CL-LIBRARY:clsql;sql;bin;"
     :components ((:file "pool")
+		 (:file "loop-extension")
 		 (:file "sql" :depends-on ("pool"))
 		 (:file "transactions" :depends-on ("sql"))
 		 (:file "utils")
 		 (:file "functional" :depends-on ("sql"))
 		 (:file "usql" :depends-on ("sql")))
-    :depends-on (:clsql-base :cmucl-compat)
+    :depends-on (:clsql-base)
     :finally-do
     (pushnew :clsql cl:*features*)
     )

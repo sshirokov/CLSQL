@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: cmucl-compat.cl,v 1.1 2002/03/23 14:04:49 kevin Exp $
+;;;; $Id: cmucl-compat.cl,v 1.1 2002/05/15 17:10:28 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
