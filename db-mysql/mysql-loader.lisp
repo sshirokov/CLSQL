@@ -33,7 +33,7 @@
     `(,(pathname-directory *load-pathname*)
       "/opt/mysql/lib/mysql/" "/usr/local/lib/"
       #+64bit "/usr/lib64/"
-      "/usr/lib/" "/usr/local/lib/mysql/" "/usr/lib/mysql/" "/mysql/lib/opt/" "/sw/lib/mysql/"))
+      "/usr/lib/" "/usr/local/lib/mysql/" "/usr/lib/mysql/" "/mysql/lib/opt/" "/sw/lib/mysql/" "/opt/local/lib/mysql/"))
 
 (defvar *mysql-library-candidate-drive-letters* '("C" "D" "E"))
 

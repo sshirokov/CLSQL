@@ -1,7 +1,13 @@
+27 Aug 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* db-mysql/Makefile, db-mysql/mysql-loader.lisp: accept patch
+	from Jon Buffington for file locations on FreeBSD.
+	
 17 Aug 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/db-interface.lisp: Improve messages when functions
 	are passed a database object, but the method is not specialized
 	for that database type.
+	* sql/metaclasses.lisp: Fix inline declaration (reported by
+ 	Cyrus Harmon)
 	
 14 Aug 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* TODO: Add bug report about SQL generation with a table
