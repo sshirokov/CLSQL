@@ -11,37 +11,11 @@ TESTS TO ADD
 
 COMMONSQL INCOMPATIBILITY
 
-<<<<<<< .mine
-  o Complete sql expressions (see operations.lisp)
-
-      nvl (Oracle specific) 
-      userenv (Oracle specific) 
-      minus (Oracle specific: does the same as EXCEPT) 
-      || 
-
-=======
->>>>>>> .r9364
    o variables (e.g., table identifiers) should be instantiated at runtime 
-
-<<<<<<< .mine
-=======
- >> The functional sql interface 
-  
-    SELECT 
-      o keyword arg :refresh should function as advertised 
-
- >> Symbolic SQL syntax 
-
-      o userenv (Oracle specific but deprecated in Oracle 9) 
+   o userenv (Oracle specific but deprecated in Oracle 9) 
 
 VARIANCES FROM COMMONSQL
 
-UPDATE-OBJECT-JOINS:
- Rather than simply reading the values for each
- object, to meet CommonSQL spec need to generate a single
- query to read values for all objects, up to max-len count.
-
->>>>>>> .r9364
 COMMIT,ROLLBACK,START-TRANSACTION: 
  When COMMIT or ROLLBACK are called outside of WITH-TRANSACTION, an sql 
  transaction must be explicitly started first with START-TRANSACTION. 
