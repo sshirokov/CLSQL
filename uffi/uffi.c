@@ -39,7 +39,7 @@ const unsigned int bitmask_32bits = 0xFFFFFFFF;
 
 DLLEXPORT
 unsigned int
-atol64 (const unsigned char* str, int* pHigh32)
+atol64 (const unsigned char* str, unsigned int* pHigh32)
 {
 #ifdef WIN32
   __int64 result = 0;

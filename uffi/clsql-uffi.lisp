@@ -75,7 +75,7 @@
 
 (uffi:def-function "atol64"
     ((str (* :unsigned-char))
-     (high32 (* :int)))
+     (high32 (* :unsigned-int)))
   :module "clsql-uffi"
   :returning :unsigned-int)
 
@@ -113,9 +113,9 @@
 	 ((:int32 :int)
 	  (atoi char-ptr))
 	 (:int64
-	  (uffi:with-foreign-object (high32-ptr :int)
+	  (uffi:with-foreign-object (high32-ptr :unsigned-int)
 	    (let ((low32 (atol64 char-ptr high32-ptr))
-		  (high32 (uffi:deref-pointer high32-ptr :int)))
+		  (high32 (uffi:deref-pointer high32-ptr :unsigned-int)))
 	      (if (zerop high32)
 		  low32
 		(make-64-bit-integer high32 low32)))))
