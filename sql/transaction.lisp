@@ -63,10 +63,10 @@
 
 
 (defmacro with-transaction ((&key (database '*default-database*)) &rest body)
-  "Executes BODY within a transaction for DATABASE (which defaults to
-*DEFAULT-DATABASE*). The transaction is committed if the body finishes
-successfully (without aborting or throwing), otherwise the database is
-rolled back."
+  "Starts a transaction in the database specified by DATABASE,
+which is *DEFAULT-DATABASE* by default, and executes BODY within
+that transaction. If BODY aborts or throws, DATABASE is rolled
+back and otherwise the transaction is committed."
   (let ((db (gensym "db-")))
     `(let ((,db ,database))
       (unwind-protect
@@ -79,23 +79,26 @@ rolled back."
             (database-abort-transaction ,db))))))
 
 (defun commit (&key (database *default-database*))
-  "Commits changes made to DATABASE which defaults to *DEFAULT-DATABASE*."
+  "If DATABASE, which defaults to *DEFAULT-DATABASE*, is
+currently within the scope of a transaction, commits changes made
+since the transaction began."
   (database-commit-transaction database))
 
 (defun rollback (&key (database *default-database*))
-  "Rolls back changes made in DATABASE, which defaults to
-*DEFAULT-DATABASE* since the last commit, that is changes made since
-the last commit are not recorded."
+  "If DATABASE, which defaults to *DEFAULT-DATABASE*, is
+currently within the scope of a transaction, rolls back changes
+made since the transaction began."
   (database-abort-transaction database))
 
 (defun start-transaction (&key (database *default-database*))
   "Starts a transaction block on DATABASE which defaults to
-*default-database* and which continues until ROLLBACK or COMMIT are
-called."
+*DEFAULT-DATABASE* and which continues until ROLLBACK or COMMIT
+are called."
   (unless (in-transaction-p :database database)
     (database-start-transaction database)))
 
 (defun in-transaction-p (&key (database *default-database*))
-  "A predicate to test whether we are currently within the scope of a
-transaction in DATABASE."
+  "A predicate to test whether DATABASE, which defaults to
+*DEFAULT-DATABASE*, is currently within the scope of a
+transaction."
   (and database (transaction database) (= (transaction-level database) 1)))

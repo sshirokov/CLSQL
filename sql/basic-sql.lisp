@@ -18,22 +18,27 @@
 
 (defgeneric query (query-expression &key database result-types flatp field-names)
   (:documentation
-   "Execute the SQL query expression QUERY-EXPRESSION on the given
-DATABASE which defaults to *default-database*. RESULT-TYPES is a list
-of symbols such as :string and :integer, one for each field in the
-query, which are used to specify the types to return. The FLATP
-argument, which has a default value of nil, specifies if full
-bracketed results should be returned for each matched entry. If FLATP
-is nil, the results are returned as a list of lists. If FLATP is t,
-the results are returned as elements of a list, only if there is only
-one result per row. Returns a list of lists of values of the result of
-that expression and a list of field names selected in sql-exp."))
+   "Executes the SQL query expression QUERY-EXPRESSION, which may
+be an SQL expression or a string, on the supplied DATABASE which
+defaults to *DEFAULT-DATABASE*. RESULT-TYPES is a list of symbols
+which specifies the lisp type for each field returned by
+QUERY-EXPRESSION. If RESULT-TYPES is nil all results are returned
+as strings whereas the default value of :auto means that the lisp
+types are automatically computed for each field. FIELD-NAMES is t
+by default which means that the second value returned is a list
+of strings representing the columns selected by
+QUERY-EXPRESSION. If FIELD-NAMES is nil, the list of column names
+is not returned as a second value. FLATP has a default value of
+nil which means that the results are returned as a list of
+lists. If FLATP is t and only one result is returned for each
+record selected by QUERY-EXPRESSION, the results are returned as
+elements of a list."))
 
 (defmethod query ((query-expression string) &key (database *default-database*)
                   (result-types :auto) (flatp nil) (field-names t))
   (record-sql-command query-expression database)
-  (multiple-value-bind (rows names) (database-query query-expression database result-types
-                                                    field-names)
+  (multiple-value-bind (rows names) 
+      (database-query query-expression database result-types field-names)
     (let ((result (if (and flatp (= 1 (length (car rows))))
                       (mapcar #'car rows)
                     rows)))
@@ -46,12 +51,10 @@ that expression and a list of field names selected in sql-exp."))
 
 (defgeneric execute-command (expression &key database)
   (:documentation
-   "Executes the SQL command specified by EXPRESSION for the database
-specified by DATABASE, which has a default value of
-*DEFAULT-DATABASE*. The argument EXPRESSION may be any SQL statement
-other than a query. To run a stored procedure, pass an appropriate
-string. The call to the procedure needs to be wrapped in a BEGIN END
-pair."))
+   "Executes the SQL command EXPRESSION, which may be an SQL
+expression or a string representing any SQL statement apart from
+a query, on the supplied DATABASE which defaults to
+*DEFAULT-DATABASE*."))
 
 (defmethod execute-command ((sql-expression string)
                             &key (database *default-database*))

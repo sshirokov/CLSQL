@@ -62,16 +62,20 @@
 
 (defun print-query (query-exp &key titles (formats t) (sizes t) (stream t)
 			      (database *default-database*))
-  "The PRINT-QUERY function takes a symbolic SQL query expression and
-formatting information and prints onto STREAM a table containing the
-results of the query. A list of strings to use as column headings is
-given by TITLES, which has a default value of NIL. The FORMATS
-argument is a list of format strings used to print each attribute, and
-has a default value of T, which means that ~A or ~VA are used if sizes
-are provided or computed. The field sizes are given by SIZES. It has a
-default value of T, which specifies that minimum sizes are
-computed. The output stream is given by STREAM, which has a default
-value of T. This specifies that *STANDARD-OUTPUT* is used."
+  "Prints a tabular report of the results returned by the SQL
+query QUERY-EXP, which may be a symbolic SQL expression or a
+string, in DATABASE which defaults to *DEFAULT-DATABASE*. The
+report is printed onto STREAM which has a default value of t
+which means that *STANDARD-OUTPUT* is used. The TITLE argument,
+which defaults to nil, allows the specification of a list of
+strings to use as column titles in the tabular output. SIZES
+accepts a list of column sizes, one for each column selected by
+QUERY-EXP, to use in formatting the tabular report. The default
+value of t means that minimum sizes are computed. FORMATS is a
+list of format strings to be used for printing each column
+selected by QUERY-EXP. The default value of FORMATS is t meaning
+that ~A is used to format all columns or ~VA if column sizes are
+used."
   (flet ((compute-sizes (data)
            (mapcar #'(lambda (x) 
                        (apply #'max (mapcar #'(lambda (y) 
@@ -103,14 +107,21 @@ value of T. This specifies that *STANDARD-OUTPUT* is used."
 			    (av-pairs nil)
 			    (query nil)
 			    (database *default-database*))
-  "Inserts a set of values into a table. The records created contain
-values for attributes (or av-pairs). The argument VALUES is a list of
-values. If ATTRIBUTES is supplied then VALUES must be a corresponding
-list of values for each of the listed attribute names. If AV-PAIRS is
-non-nil, then both ATTRIBUTES and VALUES must be nil. If QUERY is
-non-nil, then neither VALUES nor AV-PAIRS should be. QUERY should be a
-query expression, and the attribute names in it must also exist in the
-table INTO. The default value of DATABASE is *DEFAULT-DATABASE*."
+  "Inserts records into the table specified by INTO in DATABASE
+which defaults to *DEFAULT-DATABASE*. There are five ways of
+specifying the values inserted into each row. In the first VALUES
+contains a list of values to insert and ATTRIBUTES, AV-PAIRS and
+QUERY are nil. This can be used when values are supplied for all
+attributes in INTO. In the second, ATTRIBUTES is a list of column
+names, VALUES is a corresponding list of values and AV-PAIRS and
+QUERY are nil. In the third, ATTRIBUTES, VALUES and QUERY are nil
+and AV-PAIRS is an alist of (attribute value) pairs. In the
+fourth, VALUES, AV-PAIRS and ATTRIBUTES are nil and QUERY is a
+symbolic SQL query expression in which the selected columns also
+exist in INTO. In the fifth method, VALUES and AV-PAIRS are nil
+and ATTRIBUTES is a list of column names and QUERY is a symbolic
+SQL query expression which returns values for the specified
+columns."
   (let ((stmt (make-sql-insert :into into :attrs attributes
 			       :vals values :av-pairs av-pairs
 			       :subquery query)))
@@ -147,10 +158,9 @@ table INTO. The default value of DATABASE is *DEFAULT-DATABASE*."
 (defun delete-records (&key (from nil)
                             (where nil)
                             (database *default-database*))
-  "Deletes rows from a database table specified by FROM in which the
-WHERE condition is true. The argument DATABASE specifies a database
-from which the records are to be removed, and defaults to
-*default-database*."
+  "Deletes records satisfying the SQL expression WHERE from the
+table specified by FROM in DATABASE specifies a database which
+defaults to *DEFAULT-DATABASE*."
   (let ((stmt (make-instance 'sql-delete :from from :where where)))
     (execute-command stmt :database database)))
 
@@ -159,9 +169,17 @@ from which the records are to be removed, and defaults to
 			    (av-pairs nil)
 			    (where nil)
 			    (database *default-database*))
-  "Changes the values of existing fields in TABLE with columns
-specified by ATTRIBUTES and VALUES (or AV-PAIRS) where the WHERE
-condition is true."
+  "Updates the attribute values of existing records satsifying
+the SQL expression WHERE in the table specified by TABLE in
+DATABASE which defaults to *DEFAULT-DATABASE*. There are three
+ways of specifying the values to update for each row. In the
+first, VALUES contains a list of values to use in the update and
+ATTRIBUTES, AV-PAIRS and QUERY are nil. This can be used when
+values are supplied for all attributes in TABLE. In the second,
+ATTRIBUTES is a list of column names, VALUES is a corresponding
+list of values and AV-PAIRS and QUERY are nil. In the third,
+ATTRIBUTES, VALUES and QUERY are nil and AV-PAIRS is an alist
+of (attribute value) pairs."
   (when av-pairs
     (setf attributes (mapcar #'car av-pairs)
           values (mapcar #'cadr av-pairs)))
@@ -297,9 +315,14 @@ condition is true."
 		     &key (database '*default-database*) (result-types :auto))
 		    &body body)
   "Repeatedly executes BODY within a binding of ARGS on the
-attributes of each record resulting from QUERY-EXPRESSION. The
-return value is determined by the result of executing BODY. The
-default value of DATABASE is *DEFAULT-DATABASE*."
+fields of each row selected by the SQL query QUERY-EXPRESSION,
+which may be a string or a symbolic SQL expression, in DATABASE
+which defaults to *DEFAULT-DATABASE*. The values returned by the
+execution of BODY are returned. RESULT-TYPES is a list of symbols
+which specifies the lisp type for each field returned by
+QUERY-EXPRESSION. If RESULT-TYPES is nil all results are returned
+as strings whereas the default value of :auto means that the lisp
+types are automatically computed for each field."
   (let ((result-set (gensym "RESULT-SET-"))
 	(qe (gensym "QUERY-EXPRESSION-"))
 	(columns (gensym "COLUMNS-"))
@@ -331,10 +354,16 @@ default value of DATABASE is *DEFAULT-DATABASE*."
 (defun map-query (output-type-spec function query-expression
 		  &key (database *default-database*)
 		  (result-types :auto))
-  "Map the function over all tuples that are returned by the
-query in QUERY-EXPRESSION. The results of the function are
-collected as specified in OUTPUT-TYPE-SPEC and returned like in
-MAP."
+  "Map the function FUNCTION over the attribute values of each
+row selected by the SQL query QUERY-EXPRESSION, which may be a
+string or a symbolic SQL expression, in DATABASE which defaults
+to *DEFAULT-DATABASE*. The results of the function are collected
+as specified in OUTPUT-TYPE-SPEC and returned like in
+MAP. RESULT-TYPES is a list of symbols which specifies the lisp
+type for each field returned by QUERY-EXPRESSION. If RESULT-TYPES
+is nil all results are returned as strings whereas the default
+value of :auto means that the lisp types are automatically
+computed for each field."
   (typecase query-expression
     (sql-object-query
      (map output-type-spec #'(lambda (x) (apply function x))

@@ -20,13 +20,15 @@
 ;;; Database handling
 
 (defvar *connect-if-exists* :error
-  "Default value for the if-exists parameter of connect calls.")
+  "Default value for the if-exists keyword argument in calls to
+CONNECT. Meaningful values are :new, :warn-new, :error, :warn-old
+and :old.")
 
 (defvar *connected-databases* nil
   "List of active database objects.")
 
 (defun connected-databases ()
-  "Return the list of active database objects."
+  "Returns the list of active database objects."
   *connected-databases*)
 
 (defvar *default-database* nil
@@ -36,16 +38,16 @@
   (eql (database-state database) :open))
 
 (defun find-database (database &key (errorp t) (db-type nil))
-  "The function FIND-DATABASE, given a string DATABASE, searches
-amongst the connected databases for one matching the name DATABASE. If
-there is exactly one such database, it is returned and the second
-return value count is 1. If more than one databases match and ERRORP
-is nil, then the most recently connected of the matching databases is
-returned and count is the number of matches. If no matching database
-is found and ERRORP is nil, then nil is returned. If none, or more
-than one, matching databases are found and ERRORP is true, then an
-error is signalled. If the argument database is a database, it is
-simply returned."
+  "Returns the connected databases of type DB-TYPE whose names
+match the string DATABASE. If DATABASE is a database object, it
+is returned. If DB-TYPE is nil all databases matching the string
+DATABASE are considered.  If no matching databases are found and
+ERRORP is nil then nil is returned. If ERRORP is nil and one or
+more matching databases are found, then the most recently
+connected database is returned as a first value and the number of
+matching databases is returned as a second value. If no, or more
+than one, matching databases are found and ERRORP is true, an
+error is signalled."
   (etypecase database
     (database
      (values database 1))
@@ -73,17 +75,21 @@ simply returned."
 		(make-default t)
                 (pool nil)
 		(database-type *default-database-type*))
-  "Connects to a database of the given database-type, using the
-type-specific connection-spec.  The value of if-exists determines what
-happens if a connection to that database is already established.  A
-value of :new means create a new connection.  A value of :warn-new
-means warn the user and create a new connect.  A value of :warn-old
-means warn the user and use the old connection.  A value of :error
-means fail, notifying the user.  A value of :old means return the old
-connection.  If make-default is true, then *default-database* is set
-to the new connection, otherwise *default-database is not changed. If
-pool is t the connection will be taken from the general pool, if pool
-is a conn-pool object the connection will be taken from this pool."
+  "Connects to a database of the supplied DATABASE-TYPE which
+defaults to *DEFAULT-DATABASE-TYPE*, using the type-specific
+connection specification CONNECTION-SPEC. The value of IF-EXISTS,
+which defaults to *CONNECT-IF-EXISTS*, determines what happens if
+a connection to the database specified by CONNECTION-SPEC is
+already established.  A value of :new means create a new
+connection.  A value of :warn-new means warn the user and create
+a new connect.  A value of :warn-old means warn the user and use
+the old connection.  A value of :error means fail, notifying the
+user.  A value of :old means return the old connection.
+MAKE-DEFAULT is t by default which means that *DEFAULT-DATABASE*
+is set to the new connection, otherwise *DEFAULT-DATABASE* is not
+changed. If POOL is t the connection will be taken from the
+general pool, if POOL is a CONN-POOL object the connection will
+be taken from this pool."
 
   (unless database-type
     (error 'sql-database-error :message "Must specify a database-type."))
@@ -149,14 +155,14 @@ is a conn-pool object the connection will be taken from this pool."
 
 (defun disconnect (&key (database *default-database*) (error nil))
 
-  "Closes the connection to DATABASE and resets *default-database* if
-that database was disconnected. If database is a database object, then
-it is used directly. Otherwise, the list of connected databases is
-searched to find one with DATABASE as its connection
-specifications. If no such database is found, then if ERROR and
-DATABASE are both non-nil an error is signaled, otherwise DISCONNECT
-returns nil. If the database is from a pool it will be released to
-this pool."
+  "Closes the connection to DATABASE and resets
+*DEFAULT-DATABASE* if that database was disconnected. If DATABASE
+is a database instance, this object is closed. If DATABASE is a
+string, then a connected database whose name matches DATABASE is
+sought in the list of connected databases. If no matching
+database is found and ERROR and DATABASE are both non-nil an
+error is signaled, otherwise nil is returned. If the database is
+from a pool it will be released to this pool."
   (let ((database (find-database database :errorp (and database error))))
     (when database
       (if (conn-pool database)
@@ -194,18 +200,18 @@ is called by database backends."
 	      (quote ,template))))))
 
 (defun reconnect (&key (database *default-database*) (error nil) (force t))
-  "Reconnects DATABASE to its underlying RDBMS. If successful, returns
-t and the variable *default-database* is set to the newly reconnected
-database. The default value for DATABASE is *default-database*. If
-DATABASE is a database object, then it is used directly. Otherwise,
-the list of connected databases is searched to find one with database
-as its connection specifications (see CONNECT). If no such database is
-found, then if ERROR and DATABASE are both non-nil an error is
-signaled, otherwise RECONNECT returns nil. FORCE controls whether an
-error should be signaled if the existing database connection cannot be
-closed. When non-nil (this is the default value) the connection is
-closed without error checking. When FORCE is nil, an error is signaled
-if the database connection has been lost."
+  "Reconnects DATABASE which defaults to *DEFAULT-DATABASE* to
+the underlying database management system. On success, t is
+returned and the variable *DEFAULT-DATABASE* is set to the newly
+reconnected database. If DATABASE is a database instance, this
+object is closed. If DATABASE is a string, then a connected
+database whose name matches DATABASE is sought in the list of
+connected databases. If no matching database is found and ERROR
+and DATABASE are both non-nil an error is signaled, otherwise nil
+is returned. When the current database connection cannot be
+closed, if FORCE is non-nil, as it is by default, the connection
+is closed and errors are suppressed. If force is nil and the
+database connection cannot be closed, an error is signalled."
   (let ((db (etypecase database
 	      (database database)
 	      ((or string list)
@@ -227,10 +233,10 @@ if the database connection has been lost."
 
   
 (defun status (&optional full)
-  "The function STATUS prints status information to the standard
-output, for the connected databases and initialized database types. If
-full is T, detailed status information is printed. The default value
-of full is NIL."
+  "Prints information about the currently connected databases to
+*STANDARD-OUTPUT*. The argument FULL is nil by default and a
+value of t means that more detailed information about each
+database is printed."
   (flet ((get-data ()
            (let ((data '()))
              (dolist (db (connected-databases) data)

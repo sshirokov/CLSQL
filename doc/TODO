@@ -13,7 +13,8 @@ DOCUMENTATION TO DO LIST
 
 2. CLSQL extensions to CommonSQL
 
- - RESULT-TYPES, FIELD-NAMES keywords for SELECT and QUERY
+ - RESULT-TYPES, FIELD-NAMES keywords for SELECT, QUERY, DO-QUERY and 
+   MAP-QUERY. 
 
  - New types such as wall-time, boolean, and bigint
 
@@ -24,6 +25,9 @@ DOCUMENTATION TO DO LIST
  - FDDL: list-views, view-exists-p, list-indexes, list-table-indexes,
    index-exists-p, create-sequence, drop-sequence, list-sequences,
    sequence-exists-p, sequence-next, sequence-last, set-sequence-position
+
+ - FDML: TRUNCATE-DATABASE, DESCRIBE-TABLE, FOR-EACH-ROW and large object 
+   support. 
 
  - OODML: *db-auto-sync*
 
@@ -42,12 +46,21 @@ DOCUMENTATION TO DO LIST
  - CREATE-TABLE: keyword args :TRANSACTIONS (for MySQL) and :CONSTRAINTS 
                  description arg accepts optional DB-TYPE string. 
 
+ - transactions: START-TRANSACTION and IN-TRANSACTION-P. 
+
+ - FIND-DATABASE: :db-type keyword arg. 
+
+ - CONNECT: :make-default and :pool keyword args. 
+
+
 4. Documenting lower level, non-CommonSQL functions (some of this is already 
    done). 
 
  - connection pools
  - database-query-result-set 
-
+ - with-default-database, with-database, create-database, probe-database, 
+   destroy-database, list-databases. 
+ 
 
 5. Notes on any peculiarities of each of the backends (e.g., unsupported 
    features, notable extensions etc.). 

@@ -1,3 +1,13 @@
+21 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
+	* sql/basic-sql.lisp: reworked docstrings. 
+	* sql/transactions.lisp: reworked docstrings. 
+	* sql/sql.lisp: reworked docstrings. 
+	* sql/initialize.lisp: reworked docstrings. INITIALIZE-DATABASE-TYPE 
+	sets *DEFAULT-DATABASE-TYPE* for CommonSQL compatibility. 
+	* sql/database.lisp: reworked docstrings. 
+	* doc/TODO: added notes about START-TRANSACTION and IN-TRANSACTION-P 
+	and FDML extensions and database extensions. 
+
 20 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* db-oracle/oracle-sql: Use clsql-specific error conditions. Use owner keyword.
 	* db-oracle/make9.sh: add makefile for building with Oracle 9 client

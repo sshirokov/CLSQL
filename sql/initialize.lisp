@@ -34,15 +34,19 @@
   (mapc #'database-type-load-foreign *loaded-database-types*))
 
 (defvar *default-database-type* nil
-  "Specifies the default type of database.")
+  "Designates the default database type which is initialised by
+  the function INITIALISE-DATABASE-TYPE.")
 
 (defvar *initialized-database-types* nil
-  "Contains a list of database types which have been initialized by calls
-to initialize-database-type.")
+  "A list of database types which have currently been initialised
+by calling INITIALIZE-DATABASE-TYPE.")
 
 (defun initialize-database-type (&key (database-type *default-database-type*))
-  "Initialize the given database-type, if it is not already
-initialized, as indicated by `*initialized-database-types*'."
+  "Initializes the supplied DATABASE-TYPE, if it is not already
+initialized, as indicated by *INITIALIZED-DATABASE-TYPES* and
+returns DATABASE-TYPE. *DEFAULT-DATABASE-TYPE* is set to
+DATABASE-TYPE and, if DATABASE-TYPE has not been initialised, it
+is added to *INITIALIZED-DATABASE-TYPES*. "
   (when (member database-type *initialized-database-types*)
     (return-from initialize-database-type database-type))
   
@@ -54,5 +58,6 @@ initialized, as indicated by `*initialized-database-types*'."
   
   (when (database-initialize-database-type database-type)
     (push database-type *initialized-database-types*)
+    (setf *default-database-type* database-type)
     database-type))
 
