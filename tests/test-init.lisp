@@ -552,3 +552,10 @@
       (disconnect :database *default-database*))
   (test-connect-to-database :postgresql (car (postgresql-spec (read-specs))))
   (test-initialise-database))
+
+(defun rlm ()
+  "Rapid load for interactive testing."
+  (when *default-database*
+      (disconnect :database *default-database*))
+  (test-connect-to-database :mysql (car (mysql-spec (read-specs))))
+  (test-initialise-database))

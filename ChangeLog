@@ -9,6 +9,8 @@
 	changing the type-specifier. Use a lisp type of (OR NULL FOO)
 	for a specified-type of FOO unless :db-constraints :not-null.
 	No need to specialize finalize-inheritance for openmcl.
+	Handle differences in direct-slot-definition values which
+	are now listify by openmcl 14.2.
 	* tests/test-*.lisp: Rename fields so that joins occur on
 	fields with different names. This ensures that join code is
 	selecting the proper name.

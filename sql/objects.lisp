@@ -239,11 +239,6 @@ superclass of the newly-defined View Class."
 ;; Called by 'get-slot-values-from-view'
 ;;
 
-(declaim (inline delistify))
-(defun delistify (list)
-  (if (listp list)
-      (car list)
-      list))
 
 (defvar *update-context* nil)
 

@@ -239,7 +239,9 @@ the slot name.")
     :accessor view-class-slot-db-kind
     :initarg :db-kind
     :initform :base
-    :type keyword
+    ;; openmcl 0.14.2 stores the value as list in the DSD
+    ;; :type (or list keyword)
+    #-openmcl :type #-openmcl keyword
     :documentation
     "The kind of DB mapping which is performed for this slot.  :base
 indicates the slot maps to an ordinary column of the DB view.  :key
@@ -355,9 +357,10 @@ column definition in the database.")
   (find-class 'view-class-effective-slot-definition))
 
 #+openmcl
-(defun compute-class-precedence-list (class)
-  ;; safe to call this in openmcl
-  (class-precedence-list class))
+(when (not (symbol-function 'compute-class-precedence-list))
+  (eval
+   (defun compute-class-precedence-list (class)
+     (class-precedence-list class))))
 
 #-(or sbcl cmu)
 (defmethod compute-slots ((class standard-db-class))
@@ -403,6 +406,20 @@ which does type checking before storing a value in a slot."
 ;; what kind of database value (if any) is stored there, generates and
 ;; verifies the column name.
 
+(declaim (inline delistify))
+(defun delistify (list)
+  "Some MOPs, like openmcl 0.14.2, cons attribute values in a list."
+  (if (listp list)
+      (car list)
+      list))
+
+(declaim (inline delistify))
+(defun delistify-dsd (list)
+  "Some MOPs, like openmcl 0.14.2, cons attribute values in a list."
+  (if (and (listp list) (null (cdr list)))
+      (car list)
+      list))
+
 (defmethod compute-effective-slot-definition ((class standard-db-class)
 					      #+kmr-normal-cesd slot-name
 					      direct-slots)
@@ -428,49 +445,58 @@ which does type checking before storing a value in a slot."
 	 (setf (slot-value esd 'column)
 	   (column-name-from-arg
 	    (if (slot-boundp dsd 'column)
-		(view-class-slot-column dsd)
+		(delistify-dsd (view-class-slot-column dsd))
 	      (column-name-from-arg
 	       (sql-escape (slot-definition-name dsd))))))
 	 
 	 (setf (slot-value esd 'db-type)
 	   (when (slot-boundp dsd 'db-type)
-	     (view-class-slot-db-type dsd)))
+	     (delistify-dsd
+	      (view-class-slot-db-type dsd))))
 	 
 	 (setf (slot-value esd 'void-value)
-	   (view-class-slot-void-value dsd))
+	       (delistify-dsd
+		(view-class-slot-void-value dsd)))
 	 
 	 ;; :db-kind slot value defaults to :base (store slot value in
 	 ;; database)
 	 
 	 (setf (slot-value esd 'db-kind)
 	   (if (slot-boundp dsd 'db-kind)
-	       (view-class-slot-db-kind dsd)
+	       (delistify-dsd (view-class-slot-db-kind dsd))
 	     :base))
 	 
 	 (setf (slot-value esd 'db-writer)
 	   (when (slot-boundp dsd 'db-writer)
-	     (view-class-slot-db-writer dsd)))
+	     (delistify-dsd (view-class-slot-db-writer dsd))))
 	 (setf (slot-value esd 'db-constraints)
 	   (when (slot-boundp dsd 'db-constraints)
-	     (view-class-slot-db-constraints dsd)))
+	     (delistify-dsd (view-class-slot-db-constraints dsd))))
 	 
 	 ;; I wonder if this slot option and the previous could be merged,
 	 ;; so that :base and :key remain keyword options, but :db-kind
 	 ;; :join becomes :db-kind (:join <db info .... >)?
-	 
+
 	 (setf (slot-value esd 'db-info)
-	   (when (slot-boundp dsd 'db-info)
-	     (if (listp (view-class-slot-db-info dsd))
-		 (parse-db-info (view-class-slot-db-info dsd))
-	       (view-class-slot-db-info dsd))))
+	       (when (slot-boundp dsd 'db-info)
+		 (let ((dsd-info (view-class-slot-db-info dsd)))
+		   (cond
+		     ((atom dsd-info)
+		      dsd-info)
+		     ((and (listp dsd-info) (> (length dsd-info) 1)
+			   (atom (car dsd-info)))
+		      (parse-db-info dsd-info))
+		     ((and (listp dsd-info) (= 1 (length dsd-info))
+			   (listp (car dsd-info)))
+		      (parse-db-info (car dsd-info)))))))
 	 
-	 (setf (specified-type esd) (specified-type dsd))
+	 (setf (specified-type esd)
+	       (delistify-dsd (specified-type dsd)))
 	 
 	 )
 	;; all other slots
 	(t
 	 (let ((type-predicate #+openmcl (slot-value esd 'ccl::type-predicate)))
-	   
 	   (change-class esd 'view-class-effective-slot-definition
 			 #+allegro :name 
 			 #+allegro (slot-definition-name dsd))
