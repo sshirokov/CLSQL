@@ -19,58 +19,6 @@
 (defpackage #:clsql-oracle-system (:use #:asdf #:cl))
 (in-package #:clsql-oracle-system)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  #+common-lisp-controller (require 'uffi)
-  #-common-lisp-controller (asdf:operate 'asdf:load-op 'uffi))
-
-(defvar *library-file-dir* (append (pathname-directory *load-truename*)
-				   (list "db-oracle")))
-
-(defclass clsql-oracle-source-file (c-source-file)
-  ())
-
-(defmethod output-files ((o compile-op) (c clsql-oracle-source-file))
-  (let* ((library-file-type
-	  (funcall (intern (symbol-name'#:default-foreign-library-type)
-			   (symbol-name '#:uffi))))
-         (found (some #'(lambda (dir)
-			    (probe-file (make-pathname :directory dir
-						       :name (component-name c)
-						       :type library-file-type)))
-			'((:absolute "usr" "lib" "clsql"))))) 
-    (list (if found
-	      found
-	      (make-pathname :name (component-name c)
-			     :type library-file-type
-			     :directory *library-file-dir*)))))
-
-(defmethod perform ((o load-op) (c clsql-oracle-source-file))
-  t)
-
-(defmethod operation-done-p ((o load-op) (c clsql-oracle-source-file))
-  (and (symbol-function (intern (symbol-name '#:oracle-get-client-info)
-				(find-package '#:oracle)))
-       t)) 
-
-(defmethod perform ((o compile-op) (c clsql-oracle-source-file))
-  (unless (operation-done-p o c)
-    #-(or win32 mswindows)
-    (unless (zerop (run-shell-command
-		    #-freebsd "cd ~A; make"
-		    #+freebsd "cd ~A; gmake"
-		    (namestring (make-pathname :name nil
-					       :type nil
-					       :directory *library-file-dir*))))
-      (error 'operation-error :component c :operation o))))
-
-(defmethod operation-done-p ((o compile-op) (c clsql-oracle-source-file))
-  (or (and (probe-file #p"/usr/lib/clsql/oracle.so") t)
-      (let ((lib (make-pathname :defaults (component-pathname c)
-				:type (uffi:default-foreign-library-type))))
-	(and (probe-file lib)
-	     (> (file-write-date lib) (file-write-date (component-pathname c)))))))
-
-
 ;;; System definition
 
 (defsystem clsql-oracle

@@ -17,26 +17,21 @@
 (in-package #:clsql-oracle)
 
 (defparameter *oracle-lib-path*
-    (let ((oracle-home (getenv "ORACLE_HOME")))
-      (when oracle-home
-	(make-pathname :directory 
-		       (append 
-			(pathname-directory
-			 (parse-namestring (concatenate 'string oracle-home "/")))
+  (let ((oracle-home (getenv "ORACLE_HOME")))
+    (when oracle-home
+      (make-pathname :directory 
+		     (append 
+		      (pathname-directory
+		       (parse-namestring (concatenate 'string oracle-home "/")))
 			(list "lib"))))))
 
-(defparameter *clsql-oracle-library-path* 
+(defparameter *oracle-client-library-path* 
     (uffi:find-foreign-library
-     '("libclntsh" "oracle") 
+     "libclntsh"
      `(,@(when *load-truename* (list (make-pathname :directory (pathname-directory *load-truename*))))
        ,@(when *oracle-lib-path* (list *oracle-lib-path*))
-       "/9i/lib/"
-       "/usr/lib/clsql/"
-       "/sw/lib/clsql/"
-       "/home/kevin/debian/src/clsql/db-oracle/")
+       "/usr/lib/oracle/10.1.0.2/client/lib/")
      :drive-letters '("C")))
-
-(defvar *oracle-library-candidate-drive-letters* '("C" "D" "E"))
 
 (defvar *oracle-supporting-libraries* '("c")
   "Used only by CMU. List of library flags needed to be passed to ld to
@@ -49,17 +44,15 @@ set to the right path before compiling or loading the system.")
 (defmethod clsql-sys:database-type-library-loaded ((database-type (eql :oracle)))
   *oracle-library-loaded*)
 
-(setf *oracle-lib-path* #p"/usr/lib/oracle/10.1.0.2/client/lib/")
-
 (defmethod clsql-sys:database-type-load-foreign ((database-type (eql :oracle)))
-  #+ignore
-  (uffi:load-foreign-library
-   (make-pathname :defaults *oracle-lib-path* :name "libclntsh" :type "so"))
-  (uffi:load-foreign-library *clsql-oracle-library-path* 
-			     :module "clsql-oracle" 
-			     :supporting-libraries *oracle-supporting-libraries*)
-  (setq *oracle-library-loaded* t))
-
+  (if (pathnamep *oracle-client-library-path*) 
+      (progn
+	(uffi:load-foreign-library *oracle-client-library-path*
+				   :module "clsql-oracle"
+				   :supporting-libraries 
+				   *oracle-supporting-libraries*)
+	(setq *oracle-library-loaded* t))
+      (warn "Unable to load oracle client library.")))
 
 (clsql-sys:database-type-load-foreign :oracle)
 

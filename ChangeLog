@@ -1,4 +1,9 @@
 25 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 2.11.1 released: Much simpler Oracle client library loading.
+	Now uses ORACLE_HOME environmental variable as well as tests default
+	path for Oracle Instant Client. 
+	
+25 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.11.0 released: Full Oracle support. All tests pass
         * db-oracle/oracle-sql.lisp: Add declaration so that SBCL runs efficiently.
 	* tests/test-init.lisp: capitalize odbc backend name in banner

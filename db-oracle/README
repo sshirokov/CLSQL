@@ -1,6 +1,5 @@
 This is the header of the cadabra source file.
 
-
 ;;;; a CMUCL/OCI implementation of a subset of the DBI interface
 ;;;;
 ;;;; The original version of this code was copyright (c) 1999-2000 Cadabra Inc.
@@ -23,52 +22,3 @@ This is the header of the cadabra source file.
 ;;;;     from the Oracle header files. Thus, changes in the header files
 ;;;;     may require manual maintenance of the code. (This version was written
 ;;;;     for Oracle 8.1.5.)
-;;;;   * various KLUDGEs noted in the code
-
-;;;; log:
-;;;;   6. * moved test suite to separate file
-;;;;      * removed trailing spaces from all strings returned from database
-;;;;      * fixed error in LIST-ALL-DATABASE-TABLES interface: DB should be
-;;;;        a &KEY argument, not an &OPTIONAL argument
-;;;;   7. * merged Winton's code to allow the SQL function to ask OCI
-;;;;        whether an operation returns a table, and not to worry about
-;;;;        the TYPE keyword argument if no table is returned
-;;;;      * reduced +N-BUF-ROWS+ from 1000 to reduce probability of
-;;;;        hitting CMUCL 18b 8Mb-of-C-data limit
-;;;;      * changed NOT-USED argument of FETCH-ROW to EOF-ERRORP, to
-;;;;        conform to Allegro interface
-;;;;      * found apparent bug in OCI (wrong size of value returned for the
-;;;;        +oci-attr-data-size+ attribute); added workaround
-;;;;      * found and documented the unnecessariness of "workaround" for
-;;;;        "WITH-ALIEN not working" (which was actually a conceptual error 
-;;;;        on WHN's part, expecting WITH-ALIEN to work the same way as
-;;;;        MAKE-ALIEN, not expecting one less level of indirection)
-;;;;      * cleaned up NULLS-OK-USE-THIS-ERRHP weirdness and inflexibility,
-;;;;        splitting the one argument into separate NULLS-OK and ERRHP
-;;;;        arguments
-;;;;      * added :ERRHP optional arguments to various OERR expressions,
-;;;;        so that now failures are more likely to generate informative
-;;;;        error messages instead of just "OCI Error (and no ERRHP 
-;;;;        available to find subcode)"
-;;;;   8. * added code to deallocate C resources
-;;;;   9. * Added in an extra field for DATE-FORMAT and DATE-FORMAT-LENGTH 
-;;;;        Munged the code for datatype and colsize. Winton Davies.
-;;;;  10. * cleaned up remnants of old date-is-fixed-length-field design
-;;;;        assumption, getting rid of +OCi-date-bytes+
-;;;;      * reduced consing in FETCH-ROW and associated functions
-;;;;      * replaced WARN with IWARN for implementor-only warnings
-;;;;  11. * fixed bad (THE (ALIEN (* FLOAT)) B) declaration for
-;;;;        SQLT_FLT buffers (should be (ALIEN (* DOUBLE)) instead;
-;;;;        and for some reason fell through the cracks of CMUCL's
-;;;;        "declarations are assertions" principle)
-;;;;      * deleted various FIXME notes a la "does this code ever get
-;;;;        exercised?" and "are these really all the cases we need?"
-;;;;      * changed the IWARN call to a KLUDGE comment, deleted IWARN
-;;;;      * tidied up comments
-;;;;      * changed page breaks from lots-of-semicolons Cadabra style 
-;;;;        to ^L CMUCL style
-;;;;      * declared DBI-ERROR to be INLINE
-;;;;      * fixed definition of +oci-htype-env+
-;;;;      * reviewed and corrected C resource deallocation code
-;;;;  12. * Made load-foreign depend on ORACLE-HOME for more portability.
-

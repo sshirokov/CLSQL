@@ -17,15 +17,5 @@ SUBDIRS=
 
 include ../Makefile.common
 
-base=oracle
-shared_lib=$(base).so
-
-.PHONY: all
-all: $(shared_lib)
-
-$(shared_lib): Makefile make.sh
-	CFLAGS="" LDFLAGS="" BASE=$(base) OBJECT=$(object) SOURCE=$(source) SHARED_LIB=$(shared_lib) sh make.sh
-
 .PHONY: distclean
 distclean: clean
-	rm -f $(base).so
