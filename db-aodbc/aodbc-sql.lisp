@@ -30,9 +30,6 @@
 (when (find-package :dbi)
   (clsql-sys:database-type-load-foreign :aodbc)) 
 
-(defmethod database-initialize-database-type ((database-type (eql :aodbc)))
-  t)
-
 
 ;; AODBC interface
 
@@ -261,8 +258,7 @@
 	   (car (database-query 
 		 (concatenate 'string "SELECT last_value,is_called FROM " 
 			      table-name)
-		 database
-		 :auto))))
+		 database :auto nil))))
      (cond
        ((char-equal (schar (second tuple) 0) #\f)
 	(database-execute-command
@@ -281,8 +277,7 @@
    (caar (database-query 
 	  (concatenate 'string "SELECT last_value FROM " 
 		       (%sequence-name-to-table sequence-name))
-	  database
-	  :auto))))
+	  database :auto nil))))
 
 (defmethod database-create (connection-spec (type (eql :aodbc)))
   (warn "Not implemented."))
