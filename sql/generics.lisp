@@ -7,7 +7,7 @@
 ;;;; Author:   Kevin M. Rosenberg based on
 ;;;; Created:  Apr 2004
 ;;;;
-;;;; $Id: db-interface.lisp 9123 2004-04-21 20:34:42Z kevin $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
 ;;;;

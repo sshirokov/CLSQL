@@ -7,7 +7,7 @@
 ;;;; Author:  Kevin M. Rosenberg
 ;;;; Create:  April 2004
 ;;;;
-;;;; $Id: odbc-sql.lisp 8983 2004-04-12 21:16:48Z kevin $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;

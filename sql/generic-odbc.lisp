@@ -1,7 +1,7 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id: $
+;;;; $Id$
 ;;;;
 ;;;; Generic ODBC layer, used by db-odbc and db-aodbc backends
 ;;;;

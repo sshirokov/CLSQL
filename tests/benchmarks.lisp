@@ -3,7 +3,7 @@
 ;;;; File:    benchmarks.lisp
 ;;;; Authors: Kevin Rosenberg
 ;;;; Created: 03/05/2004
-;;;; Updated: $Id: test-init.lisp 9212 2004-05-03 18:44:03Z kevin $
+;;;; Updated: $Id$
 ;;;;
 ;;;; Benchmark suite
 ;;;;

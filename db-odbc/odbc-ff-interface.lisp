@@ -6,7 +6,7 @@
 ;;;; Purpose:  Function definitions for UFFI interface to ODBC
 ;;;; Author:   Kevin M. Rosenberg
 ;;;;
-;;;; $Id: odbc-package.lisp 7061 2003-09-07 06:34:45Z kevin $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2004 by Kevin M. Rosenberg
 ;;;; and Copyright (C) Paul Meurer 1999 - 2001. All rights reserved.

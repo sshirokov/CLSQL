@@ -224,15 +224,18 @@
 
 ;;; Object listing
 
-(defmethod database-list-tables ((database sqlite-database) &key owner)
+(defmethod database-list-tables-and-sequences ((database sqlite-database) &key owner)
   (declare (ignore owner))
   ;; Query is copied from .table command of sqlite comamnd line utility.
+  (mapcar #'car (database-query
+		 "SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name"
+		 database nil nil)))
+
+(defmethod database-list-tables ((database sqlite-database) &key owner)
   (remove-if #'(lambda (s)
                  (and (>= (length s) 11)
                       (string-equal (subseq s 0 11) "_CLSQL_SEQ_")))
-             (mapcar #'car (database-query
-                            "SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name"
-                            database nil nil))))
+	     (database-list-tables-and-sequences database :owner owner)))
 
 (defmethod database-list-views ((database sqlite-database)
                                 &key (owner nil))
@@ -292,81 +295,6 @@
 		  nil
 		  (if (string-equal (fourth field-info) "0")
 		      1 0)))))
-
-(defun %sequence-name-to-table-name (sequence-name)
-  (concatenate 'string "_CLSQL_SEQ_" (sql-escape sequence-name)))
-
-(defun %table-name-to-sequence-name (table-name)
-  (and (>= (length table-name) 11)
-       (string= (subseq table-name 0 11) "_CLSQL_SEQ_")
-       (subseq table-name 11)))
-
-
-(defmethod database-create-sequence (sequence-name
-				     (database sqlite-database))
-  (let ((table-name (%sequence-name-to-table-name sequence-name)))
-    (database-execute-command
-     (concatenate 'string "CREATE TABLE " table-name
-		  " (last_value integer PRIMARY KEY, increment_by integer, min_value integer, is_called char(1))")
-     database)
-    (database-execute-command 
-     (concatenate 'string "INSERT INTO " table-name
-		  " VALUES (1,1,1,'f')")
-     database)))
-
-(defmethod database-drop-sequence (sequence-name
-				   (database sqlite-database))
-  (database-execute-command
-   (concatenate 'string "DROP TABLE " (%sequence-name-to-table-name sequence-name)) 
-   database))
-
-(defmethod database-list-sequences ((database sqlite-database)
-                                    &key (owner nil))
-  (declare (ignore owner))
-  (mapcan #'(lambda (s)
-              (let ((sn (%table-name-to-sequence-name (car s))))
-                (and sn (list sn))))
-          (database-query
-           "SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name"
-           database nil nil)))
-
-(defmethod database-sequence-next (sequence-name (database sqlite-database))
-  (without-interrupts
-   (let* ((table-name (%sequence-name-to-table-name sequence-name))
-	  (tuple
-	   (car (database-query 
-		 (concatenate 'string "SELECT last_value,is_called FROM " 
-			      table-name)
-		 database :auto nil))))
-     (cond
-       ((char-equal (schar (second tuple) 0) #\f)
-	(database-execute-command
-	 (format nil "UPDATE ~A SET is_called='t'" table-name)
-	 database)
-	(car tuple))
-       (t
-	(let ((new-pos (1+ (car tuple))))
-	 (database-execute-command
-	  (format nil "UPDATE ~A SET last_value=~D" table-name new-pos)
-	  database)
-	 new-pos))))))
-	     
-(defmethod database-sequence-last (sequence-name (database sqlite-database))
-  (without-interrupts
-   (caar (database-query 
-	  (concatenate 'string "SELECT last_value FROM " 
-		       (%sequence-name-to-table-name sequence-name))
-	    database :auto nil))))
-
-(defmethod database-set-sequence-position (sequence-name
-                                           (position integer)
-                                           (database sqlite-database))
-  (database-execute-command
-   (format nil "UPDATE ~A SET last_value=~A,is_called='t'" 
-	   (%sequence-name-to-table-name sequence-name)
-           position)
-   database)
-  position)
 
 (defmethod database-create (connection-spec (type (eql :sqlite)))
   (declare (ignore connection-spec))

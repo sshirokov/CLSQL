@@ -174,16 +174,21 @@ if unable to destory."))
 
 (defgeneric database-get-type-specifier (type args database db-underlying-type)
   (:documentation "Return the type SQL type specifier as a string, for
-the given lisp type and parameters.")
-  (:method (type args database db-underlying-type)
-	   (declare (ignore type args db-type))
-	   (signal-no-database-error database)))
+the given lisp type and parameters."))
 
 (defgeneric database-list-tables (database &key owner)
   (:documentation "List all tables in the given database")
   (:method ((database t) &key owner)
 	   (declare (ignore owner))
 	   (signal-no-database-error database)))
+
+(defgeneric database-list-tables-and-sequences (database &key owner)
+  (:documentation "List all tables in the given database, may include seqeneces")
+  (:method ((database t) &key owner)
+	   (declare (ignore owner))
+	   (signal-no-database-error database))
+  (:method ((database database) &key owner)
+	   (database-list-tables database :owner owner)))
  
 (defgeneric database-list-views (database &key owner)
   (:documentation "List all views in the DATABASE.")

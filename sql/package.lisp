@@ -115,6 +115,7 @@
      #:database-dump-result-set
      #:database-store-next-row
      #:database-list-tables
+     #:database-list-tables-and-sequences
      #:database-table-exists-p
      #:database-list-views
      #:database-view-exists-p

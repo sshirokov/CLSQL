@@ -7,7 +7,7 @@
 ;;;; Author:   Kevin M. Rosenberg
 ;;;; Created:  April 2004
 ;;;;
-;;;; $Id: clsql-odbc.asd 8850 2004-04-07 16:07:46Z kevin $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 200d42 by Kevin M. Rosenberg
 ;;;;

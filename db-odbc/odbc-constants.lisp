@@ -6,7 +6,7 @@
 ;;;; Purpose:  Constants for UFFI interface to ODBC
 ;;;; Authors:  Kevin M. Rosenberg and Paul Meurer
 ;;;;
-;;;; $Id: odbc-package.lisp 7061 2003-09-07 06:34:45Z kevin $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2004 by Kevin M. Rosenberg
 ;;;; and Copyright (C) Paul Meurer 1999 - 2001. All rights reserved.

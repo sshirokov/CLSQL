@@ -7,7 +7,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  April 2004
 ;;;;
-;;;; $Id: odbc-loader.lisp 8270 2003-11-25 06:37:14Z kevin $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2004 by Kevin M. Rosenberg
 ;;;;

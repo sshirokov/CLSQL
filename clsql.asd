@@ -69,7 +69,8 @@ oriented interface."
 	       (:module :generic
 			:pathname ""
 		       :components ((:file "generic-postgresql")
-				    (:file "generic-odbc"))
+				    (:file "generic-odbc")
+				    (:file "sequences"))
 		       :depends-on (:functional))))))
      
 

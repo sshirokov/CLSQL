@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: odbc-sql.lisp 8983 2004-04-12 21:16:48Z kevin $
+;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -77,90 +77,6 @@
     (setf (database-odbc-db-type db) type)))
   
 
-
-
-;;; Sequence functions
-
-(defun %sequence-name-to-table (sequence-name)
-  (concatenate 'string "_CLSQL_SEQ_" (sql-escape sequence-name)))
-
-(defun %table-name-to-sequence-name (table-name)
-  (and (>= (length table-name) 11)
-       (string-equal (subseq table-name 0 11) "_CLSQL_SEQ_")
-       (subseq table-name 11)))
-
-(defmethod database-create-sequence (sequence-name
-				     (database odbc-database))
-  (let ((table-name (%sequence-name-to-table sequence-name)))
-    (database-execute-command
-     (concatenate 'string "CREATE TABLE " table-name
-		  " (last_value int NOT NULL PRIMARY KEY, increment_by int, min_value int, is_called char(1))")
-     database)
-    (database-execute-command 
-     (concatenate 'string "INSERT INTO " table-name
-		  " VALUES (1,1,1,'f')")
-     database)))
-
-(defmethod database-drop-sequence (sequence-name
-				   (database odbc-database))
-  (database-execute-command
-   (concatenate 'string "DROP TABLE " (%sequence-name-to-table sequence-name)) 
-   database))
-
-(defmethod database-list-sequences ((database odbc-database)
-                                    &key (owner nil))
-  (declare (ignore owner))
-  ;; FIXME: Underlying database backend stuff should come from that backend
-  
-  (case (database-odbc-db-type database)
-    (:mysql
-     (mapcan #'(lambda (s)
-		 (let ((sn (%table-name-to-sequence-name (car s))))
-		   (and sn (list sn))))
-	     (database-query "SHOW TABLES" database nil nil)))
-    ((:postgresql :postgresql-socket)
-     (mapcar #'(lambda (s) (%table-name-to-sequence-name (car s)))
-	    (database-query "SELECT RELNAME FROM pg_class WHERE RELNAME LIKE '%clsql_seq%'" 
-			    database nil nil)))))
-
-
-(defmethod database-set-sequence-position (sequence-name
-                                           (position integer)
-                                           (database odbc-database))
-  (database-execute-command
-   (format nil "UPDATE ~A SET last_value=~A,is_called='t'" 
-	   (%sequence-name-to-table sequence-name)
-           position)
-   database)
-  position)
-
-(defmethod database-sequence-next (sequence-name (database odbc-database))
-  (without-interrupts
-   (let* ((table-name (%sequence-name-to-table sequence-name))
-	  (tuple
-	   (car (database-query 
-		 (concatenate 'string "SELECT last_value,is_called FROM " 
-			      table-name)
-		 database :auto nil))))
-     (cond
-       ((char-equal (schar (second tuple) 0) #\f)
-	(database-execute-command
-	 (format nil "UPDATE ~A SET is_called='t'" table-name)
-	 database)
-	(car tuple))
-       (t
-	(let ((new-pos (1+ (car tuple))))
-	 (database-execute-command
-	  (format nil "UPDATE ~A SET last_value=~D" table-name new-pos)
-	  database)
-	 new-pos))))))
-	     
-(defmethod database-sequence-last (sequence-name (database odbc-database))
-  (without-interrupts
-   (caar (database-query 
-	  (concatenate 'string "SELECT last_value FROM " 
-		       (%sequence-name-to-table sequence-name))
-	  database :auto nil))))
 
 (defmethod database-create (connection-spec (type (eql :odbc)))
   (declare (ignore connection-spec))

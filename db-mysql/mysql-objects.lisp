@@ -6,7 +6,7 @@
 ;;;; Purpose:  CLSQL Object layer for MySQL
 ;;;; Created:  May 2004
 ;;;;
-;;;; $Id: mysql-sql.lisp 9403 2004-05-19 23:46:45Z kevin $
+;;;; $Id$
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
