@@ -19,6 +19,41 @@
 (defpackage #:clsql-mysql-system (:use #:asdf #:cl))
 (in-package #:clsql-mysql-system)
 
+(defvar *asd-file-dir* (pathname-directory *load-truename*))
+
+(defclass clsql-mysql-source-file (c-source-file)
+  ())
+
+(defmethod output-files ((o compile-op) (c clsql-mysql-source-file))
+  (let ((searched (or
+		   (probe-file #p"/usr/lib/clsql/uffi.so")
+		   (probe-file (make-pathname
+				:directory *asd-file-dir*
+				:name "uffi"
+				:type "so")))))
+    (if searched
+	(list searched)
+	(list (merge-pathnames
+	       (make-pathname :name (component-name c)
+			      :type "so"
+			      :directory '(:relative "tests"))
+	       (make-pathname :directory *asd-file-dir*))))))
+
+(defmethod perform ((o load-op) (c clsql-mysql-source-file))
+  nil) ;;; library will be loaded by a loader file
+
+(defmethod perform ((o compile-op) (c clsql-mysql-source-file))
+  (unless (zerop (run-shell-command
+		  "cd ~A; make"
+		  (namestring (merge-pathnames
+			       (make-pathname
+				:name nil
+				:type nil
+				:directory '(:relative "uffi"))
+			       (make-pathname
+				:directory *asd-file-dir*)))))
+    (error 'operation-error :component c :operation o)))
+
 ;;; System definition
 
 #+(or allegro lispworks cmu sbcl openmcl mcl scl)
@@ -33,8 +68,9 @@
   :components
   ((:module :db-mysql
 	    :components
-	    ((:file "mysql-package")
-	     (:file "mysql-loader" :depends-on ("mysql-package"))
+	    ((:clsql-mysql-source-file "mysql")
+	     (:file "mysql-package")
+	     (:file "mysql-loader" :depends-on ("mysql-package" "mysql"))
 	     (:file "mysql-api" :depends-on ("mysql-loader"))
 	     (:file "mysql-sql" :depends-on ("mysql-api"))
 	     (:file "mysql-usql" :depends-on ("mysql-sql")))))

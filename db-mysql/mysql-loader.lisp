@@ -27,7 +27,7 @@
 
 (defparameter *clsql-mysql-library-path* 
   (uffi:find-foreign-library
-   "clsql-mysql"
+   "mysql"
    `(,(make-pathname :directory (pathname-directory *load-truename*))
      "/usr/lib/clsql/"
      "/sw/lib/clsql/"

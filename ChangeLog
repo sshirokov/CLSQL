@@ -1,3 +1,7 @@
+11 Nov 2003 Kevin Rosenberg (kevin@rosenberg.net)
+	* Converted documentation to XML format
+	* Made package installable with asdf-install
+
 23 Jul 2003 Kevin Rosenberg (kevin@rosenberg.net)
 	* Add for-each-row macro
 

@@ -20,6 +20,40 @@
 (defpackage #:clsql-uffi-system (:use #:asdf #:cl))
 (in-package #:clsql-uffi-system)
 
+(defvar *asd-file-dir* (pathname-directory *load-truename*))
+
+(defclass clsql-uffi-source-file (c-source-file)
+  ())
+
+(defmethod output-files ((o compile-op) (c clsql-uffi-source-file))
+  (let ((searched (or
+		   (probe-file #p"/usr/lib/clsql/uffi.so")
+		   (probe-file (make-pathname
+				:directory *asd-file-dir*
+				:name "uffi"
+				:type "so")))))
+    (if searched
+	(list searched)
+	(list (merge-pathnames
+	       (make-pathname :name (component-name c)
+			      :type "so"
+			      :directory '(:relative "tests"))
+	       (make-pathname :directory *asd-file-dir*))))))
+
+(defmethod perform ((o load-op) (c clsql-uffi-source-file))
+  nil) ;;; library will be loaded by a loader file
+
+(defmethod perform ((o compile-op) (c clsql-uffi-source-file))
+  (unless (zerop (run-shell-command
+		  "cd ~A; make"
+		  (namestring (merge-pathnames
+			       (make-pathname
+				:name nil
+				:type nil
+				:directory '(:relative "uffi"))
+			       (make-pathname
+				:directory *asd-file-dir*)))))
+    (error 'operation-error :component c :operation o)))
 
 #+(or allegro lispworks cmu sbcl openmcl mcl scl)
 (defsystem clsql-uffi
@@ -33,7 +67,8 @@
   :components
   ((:module :uffi
 	    :components
-	    ((:file "clsql-uffi-package")
-	     (:file "clsql-uffi-loader" :depends-on ("clsql-uffi-package"))
+	    ((:clsql-uffi-source-file "uffi")
+	     (:file "clsql-uffi-package")
+	     (:file "clsql-uffi-loader" :depends-on ("clsql-uffi-package" "uffi"))
 	     (:file "clsql-uffi" :depends-on ("clsql-uffi-loader")))))
   :depends-on (:uffi :clsql-base))

@@ -1,9 +1,7 @@
-# -*- Mode: Makefile -*-
-###########################################################################
 # FILE IDENTIFICATION
-# 
+#
 #  Name:         Makefile
-#  Purpose:      Makefile for the CLSQL UFFI helper package
+#  Purpose:      Makefile for CLSQL UFFI interface
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
@@ -14,42 +12,23 @@
 # CLSQL users are granted the rights to distribute and use this software
 # as governed by the terms of the Lisp Lesser GNU Public License
 # (http://opensource.franz.com/preamble.html), also known as the LLGPL.
-###########################################################################
 
+SUBDIRS=
 
-# These variables are correct for GCC
-CC=gcc
-SHARED_CC_OPT=-fPIC -DPIC
-SHARED_LD_OPT=-shared  # For Linux (ALL) and FreeBSD (ACL)
-LD=gcc
+include ../Makefile.common
 
-# Use these for Sun's C compiler and Solaris (ACL)
-#CC=cc
-#SHARED_CC_OPT=-KPIC
-#SHARED_LD_OPT=-G
-#LD=ld
-
-# Nothing to configure beyond this point
-
-base=clsql-uffi
+base=uffi
 source=$(base).c
 object=$(base).o
 shared_lib=$(base).so
 
-.PHONY: all clean distclean
-
+.PHONY: all
 all: $(shared_lib)
 
 $(shared_lib): $(source) Makefile
-	$(CC) ${SHARED_CC_OPT} -c $(source) -o $(object)
-	$(LD) ${SHARED_LD_OPT} $(object) -o $(shared_lib)
-	@rm $(object)
+	BASE=$(base) OBJECT=$(object) SOURCE=$(source) SHARED_LIB=$(shared_lib) sh make.sh
+	rm $(object)
 
-clean:
-	@rm -f $(object) $(shared_lib) *~
-
+.PHONY: distclean
 distclean: clean
-
-mac: $(source) Makefile
-	cc -dynamic -c $(source) -o $(object)
-	ld -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress -o $(base).dylib $(object)
+	rm -f $(base).dylib $(base).dylib $(base).so $(base).o

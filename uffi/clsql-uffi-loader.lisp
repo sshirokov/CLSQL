@@ -20,7 +20,7 @@
 
 (defvar *clsql-uffi-library-filename* 
   (uffi:find-foreign-library
-   "clsql-uffi"
+   "uffi"
    `(,(make-pathname :directory (pathname-directory *load-truename*))
      "/usr/lib/clsql/"
      "/opt/lisp/clsql/uffi/"
@@ -37,7 +37,7 @@ set to the right path before compiling or loading the system.")
 
 (defun load-uffi-foreign-library ()
   (unless (probe-file *clsql-uffi-library-filename*)
-    (error "Unable to find clsql-uffi.so"))
+    (error "Unable to find uffi.so"))
   
   (if (uffi:load-foreign-library *clsql-uffi-library-filename* 
 				 :module "clsql-uffi" 
@@ -47,6 +47,4 @@ set to the right path before compiling or loading the system.")
     (error "Unable to load helper library ~A" *clsql-uffi-library-filename*)))
 
 (load-uffi-foreign-library)
-
-
 
