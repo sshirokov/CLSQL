@@ -262,7 +262,7 @@ of the default method.  The extra allowed options are the value of the
                    (slot-value slot 'db-kind)
                    (and (slot-boundp slot 'column)
                         (slot-value slot 'column))))))
-    (let ((all-slots (mapcar #'frob-slot (class-slots class))))
+    (let ((all-slots (mapcar #'frob-slot (ordered-class-slots class))))
       (setq all-slots (remove-if #'not-db-col all-slots))
       (setq all-slots (stable-sort all-slots #'string< :key #'car))
       ;;(mapcar #'dink-type all-slots)
@@ -281,14 +281,23 @@ of the default method.  The extra allowed options are the value of the
     (setf (key-slots class) (remove-if-not (lambda (slot)
 					     (eql (slot-value slot 'db-kind)
 						  :key))
-					   (class-slots class)))))
+					   (ordered-class-slots class)))))
 
 #+(or allegro openmcl)
 (defmethod finalize-inheritance :after ((class standard-db-class))
+  ;; KMRL for slots without a type set, openmcl sets type-predicate to ccl:false
+  ;; for standard-db-class
+  #+openmcl
+  (mapcar 
+   #'(lambda (s)
+       (if (eq 'ccl:false (slot-value s 'ccl::type-predicate))
+	   (setf (slot-value s 'ccl::type-predicate) 'ccl:true)))
+   (class-slots class))
+
   (setf (key-slots class) (remove-if-not (lambda (slot)
 					   (eql (slot-value slot 'db-kind)
 						:key))
-					 (class-slots class))))
+					 (ordered-class-slots class))))
 
 ;; return the deepest view-class ancestor for a given view class
 
@@ -375,7 +384,11 @@ all NULL values retrieved are converted by DATABASE-NULL-VALUE")
    (db-info
     :accessor view-class-slot-db-info
     :initarg :db-info
-    :documentation "Description of the join.")))
+    :documentation "Description of the join.")
+   (specified-type
+    :accessor specified-type
+    :initform nil
+    :documentation "KMR: Internal slot storing the :type specified by user.")))
 
 (defparameter *db-info-lambda-list*
   '(&key join-class
@@ -436,6 +449,62 @@ all NULL values retrieved are converted by DATABASE-NULL-VALUE")
   (declare (ignore initargs))
   (find-class 'view-class-effective-slot-definition))
 
+#+openmcl
+(defun compute-class-precedence-list (class)
+  ;; safe to call this in openmcl
+  (class-precedence-list class))
+
+#-(or sbcl cmu)
+(defmethod compute-slots ((class standard-db-class))
+  "Need to sort order of class slots so they are the same across
+implementations."
+  (let ((slots (call-next-method))
+	desired-sequence
+	output-slots)
+
+    (dolist (c (compute-class-precedence-list class))
+      (dolist (s (class-direct-slots c))
+	(let ((name (slot-definition-name s)))
+	  (unless (find name desired-sequence)
+	    (setq desired-sequence (append desired-sequence (list name)))))))
+    ;; desired-sequence is reversed at this time
+    (dolist (desired desired-sequence)
+      (let ((slot (find desired slots :key #'slot-definition-name)))
+	(assert slot)
+	(push slot output-slots)))
+
+    (nreverse output-slots)))
+
+(defun compute-lisp-type-from-slot-specification (slotd specified-type)
+  "Computes the Lisp type for a user-specified type. Needed for OpenMCL
+which does type checking before storing a value in a slot."
+  #-openmcl (declare (ignore slotd))
+  ;; This function is called after the base compute-effective-slots is called.
+  ;; OpenMCL sets the type-predicate based on the initial value of the slots type.
+  ;; so we have to override the type-predicates here
+  (cond
+    ((consp specified-type)
+     (cond
+       ((and (symbolp (car specified-type))
+	     (string-equal (symbol-name (car specified-type)) "string"))
+	#+openmcl (setf (slot-value slotd 'ccl::type-predicate) 'stringp)
+	'string)
+       (t
+	#+openmcl (setf (slot-value slotd 'ccl::type-predicate) 'ccl:true)
+	specified-type)))
+    #+openmcl
+    ((null specified-type)
+     ;; setting this here is not enough since openmcl later sets the
+     ;; type-predicate to ccl:false. So, have to check slots again
+     ;; in finalize-inheritance 
+     #+openmcl (setf (slot-value slotd 'ccl::type-predicate) 'ccl:true)
+     t)
+    (t
+     ;; This can be improved for OpenMCL to set a more specific type
+     ;; predicate based on the value specified-type 
+     #+openmcl (setf (slot-value slotd 'ccl::type-predicate) 'ccl:true)
+     specified-type)))
+
 ;; Compute the slot definition for slots in a view-class.  Figures out
 ;; what kind of database value (if any) is stored there, generates and
 ;; verifies the column name.
@@ -444,6 +513,7 @@ all NULL values retrieved are converted by DATABASE-NULL-VALUE")
 					      #+kmr-normal-cesd slot-name
 					      direct-slots)
   #+kmr-normal-cesd (declare (ignore slot-name))
+
   (let ((slotd (call-next-method))
 	(sd (car direct-slots)))
     
@@ -463,7 +533,6 @@ all NULL values retrieved are converted by DATABASE-NULL-VALUE")
              (when (slot-boundp sd 'db-type)
                (view-class-slot-db-type sd)))
        
-
        (setf (slot-value slotd 'nulls-ok)
              (view-class-slot-nulls-ok sd))
        
@@ -482,7 +551,6 @@ all NULL values retrieved are converted by DATABASE-NULL-VALUE")
              (when (slot-boundp sd 'db-constraints)
                (view-class-slot-db-constraints sd)))
                
-       
        ;; I wonder if this slot option and the previous could be merged,
        ;; so that :base and :key remain keyword options, but :db-kind
        ;; :join becomes :db-kind (:join <db info .... >)?
@@ -491,7 +559,16 @@ all NULL values retrieved are converted by DATABASE-NULL-VALUE")
              (when (slot-boundp sd 'db-info)
                (if (listp (view-class-slot-db-info sd))
                    (parse-db-info (view-class-slot-db-info sd))
-                   (view-class-slot-db-info sd)))))
+                   (view-class-slot-db-info sd))))
+
+       ;; KMR: store the user-specified type and then compute
+       ;; real Lisp type and store it
+       (setf (specified-type slotd)
+	     (slot-definition-type slotd))
+       (setf (slot-value slotd 'type)
+	     (compute-lisp-type-from-slot-specification 
+	      slotd (slot-definition-type slotd)))
+       )
       ;; all other slots
       (t
        (change-class slotd 'view-class-effective-slot-definition
@@ -515,7 +592,7 @@ all NULL values retrieved are converted by DATABASE-NULL-VALUE")
 
 (defun slotdef-for-slot-with-class (slot class)
   (find-if #'(lambda (d) (eql slot (slot-definition-name d)))
-	   (class-slots class)))
+	   (ordered-class-slots class)))
 
 #+ignore
 (eval-when (:compile-toplevel :load-toplevel :execute)

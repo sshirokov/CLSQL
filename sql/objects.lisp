@@ -113,7 +113,7 @@
                                       &key (database *default-database*))
   (let ((schemadef nil)
         (tclass (find-class view-class-name)))
-    (dolist (slotdef (class-slots tclass))
+    (dolist (slotdef (ordered-class-slots tclass))
       (let ((res (database-generate-column-definition view-class-name
                                                       slotdef database)))
         (when res (setf schemadef (cons res schemadef)))))
@@ -145,7 +145,7 @@ the view. The argument DATABASE has a default value of
   (values))
 
 (defmethod %install-class ((self standard-db-class) database &aux schemadef)
-  (dolist (slotdef (class-slots self))
+  (dolist (slotdef (ordered-class-slots self))
     (let ((res (database-generate-column-definition (class-name self)
                                                     slotdef database)))
       (when res 
@@ -262,7 +262,7 @@ superclass of the newly-defined View Class."
 
 (defun generate-selection-list (vclass)
   (let ((sels nil))
-    (dolist (slotdef (class-slots vclass))
+    (dolist (slotdef (ordered-class-slots vclass))
       (let ((res (generate-attribute-reference vclass slotdef)))
 	(when res
           (push (cons slotdef res) sels))))
@@ -297,7 +297,7 @@ superclass of the newly-defined View Class."
       list))
 
 (defun slot-type (slotdef)
-  (let ((slot-type (slot-definition-type slotdef)))
+  (let ((slot-type (specified-type slotdef)))
     (if (listp slot-type)
         (cons (find-symbol (symbol-name (car slot-type)) :clsql-sys)
               (cdr slot-type))
@@ -529,7 +529,7 @@ associated with that database."))
 		     (db-value-from-slot slot value database)))))
     (let* ((view-class (class-of obj))
 	   (view-class-table (view-table view-class))
-	   (slots (remove-if-not #'slot-storedp (class-slots view-class)))
+	   (slots (remove-if-not #'slot-storedp (ordered-class-slots view-class)))
 	   (record-values (mapcar #'slot-value-list slots)))
       (unless record-values
         (error "No settable slots."))
@@ -558,7 +558,7 @@ associated with that database."))
 		     (db-value-from-slot slot value database)))))
     (let* ((view-class (class-of obj))
 	   (view-class-table (view-table view-class))
-	   (slots (remove-if-not #'slot-storedp (class-slots view-class)))
+	   (slots (remove-if-not #'slot-storedp (ordered-class-slots view-class)))
 	   (record-values (mapcar #'slot-value-list slots)))
       (unless record-values
         (error "No settable slots."))
@@ -619,7 +619,7 @@ associated with that database."))
   (let* ((view-class (class-of instance))
 	 (joins (remove-if #'(lambda (sd)
 			       (not (equal (view-class-slot-db-kind sd) :join)))
-			   (class-slots view-class))))
+			   (ordered-class-slots view-class))))
     (dolist (slot joins)
       (let ((delete-rule (gethash :delete-rule (view-class-slot-db-info slot))))
 	(cond

@@ -1,3 +1,16 @@
+09 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.4.1 released: CLSQL-TESt suite passes
+	all tests for postgresql and CMUCL, SBCL, OpenMCL.
+	Allegro and Lispworks pass all tests except for
+	FDML/LOOP/1 since the loop extension have not yet
+	been ported to those implementions.
+	* sql/metaclasses.lisp: Added new slot to standard-db-class
+	to hold user-specified type. OpenMCL adjustments to compensate
+	for its type-predicate function. Since AllegroCL, Lispworks,
+	and OpenMCL have different slot orders, added compute-slots
+	and ordered-class-slots functions so their slot order matches
+	SBCL/CMUCL.
+
 08 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.4.0 released: All tests for clsql-classic now finish
 	correctly on Allegro, Lispworks, CMUCL, SBCL, OpenMCL for

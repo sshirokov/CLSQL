@@ -118,7 +118,10 @@
 	 #:transaction
 	 #:transaction-level
 	 #:conn-pool
-
+	 #:command-recording-stream
+	 #:result-recording-stream
+	 #:view-classes
+	 
 	 ;; utils.lisp
 	 #:number-to-sql-string
 	 #:float-to-sql-string

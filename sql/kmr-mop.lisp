@@ -46,3 +46,6 @@
   (declare (ignore metaclass slot-name))
   )
 
+(defun ordered-class-slots (class)
+  #+(or cmu sbcl) (class-slots class)
+  #-(or cmu sbcl) (reverse (class-slots class)))

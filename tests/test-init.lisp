@@ -251,7 +251,7 @@
 	forms)))
 
 (defun test-initialise-database ()
-    ;; Delete the instance records
+  ;; Delete the instance records
   (with-ignore-errors 
     (clsql:delete-instance-records company1)
     (clsql:delete-instance-records employee1)

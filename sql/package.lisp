@@ -65,7 +65,8 @@
     #:class-prototype #:generic-function-method-class #:intern-eql-specializer
     #:make-method-lambda #:generic-function-lambda-list
     #:class-precedence-list #:slot-definition-type
-    #:class-direct-superclasses)
+    #:class-direct-superclasses
+    #:compute-class-precedence-list)
    #+clsql-cmucl-mop 
    (:shadowing-import-from 
     #:pcl
@@ -86,7 +87,8 @@
     #:class-prototype #:generic-function-method-class #:intern-eql-specializer
     #:make-method-lambda #:generic-function-lambda-list
     #:class-precedence-list #:slot-definition-type
-    #:class-direct-superclasses)
+    #:class-direct-superclasses
+    #:compute-class-precedence-list)
    #+scl
    (:shadowing-import-from 
     #:clos
