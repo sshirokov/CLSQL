@@ -124,6 +124,11 @@
 	      (uffi:convert-from-foreign-usb8 char-ptr length)
 	    (error "Can't return blob since length is not specified.")))
 	 (t
+	  ;; sb-unicode still broken with converting with length, assume
+	  ;; that string is null terminated
+	  #+sb-unicode
+	  (uffi:convert-from-foreign-string char-ptr :locale :none)
+	  #-sb-unicode
           (if length
 	      (uffi:convert-from-foreign-string char-ptr :locale :none
                                                 :null-terminated-p nil
