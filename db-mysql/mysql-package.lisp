@@ -126,10 +126,12 @@
      #:mysql-info-string
      #:mysql-data-seek
      
+     #:mysql-time
      #:mysql-bind
      #:mysql-stmt-param-count
      #:mysql-stmt-prepare
      #:mysql-stmt-execute
+     #:mysql-stmt-store-result
      #:mysql-stmt-init
      #:mysql-stmt-close-result
      #:mysql-stmt-free-result

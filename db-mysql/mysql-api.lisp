@@ -155,6 +155,17 @@
   (charsetnr :unsigned-int)
   (type mysql-field-types))
 
+(uffi:def-struct mysql-time
+    (year :unsigned-int)
+  (month :unsigned-int)
+  (day :unsigned-int)
+  (hour :unsigned-int)
+  (minute :unsigned-int)
+  (second :unsigned-int)
+  (second-part :unsigned-long)
+  (neg mysql-bool)
+  (time-type :int))
+
 ;;; MYSQL-ROWS
 
 (uffi:def-array-pointer mysql-row (* :unsigned-char))
@@ -594,6 +605,12 @@
 
 #+mysql-client-v4.1
 (uffi:def-function "mysql_stmt_execute"
+    ((stmt mysql-stmt-ptr))
+  :module "clsql-mysql"
+  :returning :int)
+
+#+mysql-client-v4.1
+(uffi:def-function "mysql_stmt_store_result"
     ((stmt mysql-stmt-ptr))
   :module "clsql-mysql"
   :returning :int)

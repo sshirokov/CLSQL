@@ -448,8 +448,10 @@
    (result-set :initarg :result-set :reader result-set)
    (num-fields :initarg :num-fields :reader num-fields)
    (field-names :initarg :field-names :accessor stmt-field-names)
+   (length-ptr :initarg :length-ptr :reader length-ptr)
+   (is-null-ptr :initarg :is-null-ptr :reader is-null-ptr)
    (result-types :initarg :result-types :reader result-types)))
-
+  
 (defun clsql-type->mysql-type (type)
   (cond
     ((in type :null) mysql-field-types#null)
@@ -459,10 +461,11 @@
     ((in type :float :double :number) mysql-field-types#double)
     ((and (consp type) (in (car type) :char :varchar)) mysql-field-types#var-string)
     (t
-     (error 'sql-user-error 
-	    :message 
-	    (format nil "Unknown clsql type ~A." type)))))
+       (error 'sql-user-error 
+	      :message 
+	      (format nil "Unknown clsql type ~A." type)))))
 
+#+mysql-client-v4.1
 (defmethod database-prepare (sql-stmt types (database mysql-database) result-types field-names)
   (let* ((mysql-ptr (database-mysql-ptr database))
 	 (stmt (mysql-stmt-init mysql-ptr)))
@@ -487,17 +490,77 @@
       (when (uffi:null-pointer-p rs)
 	(error 'sql-database-error
 	       :message "NULL result metadata"))
-      (make-instance 'mysql-stmt
-	:database database
-	:stmt stmt
-	:num-fields (mysql-num-fields rs)
-	:input-bind (uffi:allocate-foreign-object mysql-bind (length types))
-	:output-bind (uffi:allocate-foreign-object mysql-bind (mysql-num-fields rs))
-	:result-set rs
-	:result-types result-types
-	:types (mapcar 'clsql-type->mysql-type types)
-	:field-names field-names))))
+      
+      (let* ((field-vec (mysql-fetch-fields rs))
+	     (num-fields (mysql-num-fields rs))
+	     (output-bind (uffi:allocate-foreign-object mysql-bind num-fields))
+	     (length-ptr (uffi:allocate-foreign-object :unsigned-long num-fields))
+	     (is-null-ptr (uffi:allocate-foreign-object :byte num-fields)))
 
+	(dotimes (i num-fields)
+	  (declare (fixnum i))
+	  (let* ((field (uffi:deref-array field-vec '(:array mysql-field) i))
+		 (type (uffi:get-slot-value field 'mysql-field 'type))
+		 (binding (uffi:deref-array output-bind '(:array mysql-bind) i)))
+	    (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-type) type)
+	    (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-length) 0)
+	    (setf (uffi:get-slot-value binding 'mysql-bind 'is-null) 
+		  (uffi:pointer-address (uffi:deref-array is-null-ptr '(:array :byte) i)))
+	    (setf (uffi:get-slot-value binding 'mysql-bind 'length) 
+		  (uffi:pointer-address (uffi:deref-array length-ptr '(:array :unsigned-long) i)))
+
+	    (case type
+	      ((#.mysql-field-types#var-string #.mysql-field-types#string
+	       #.mysql-field-types#tiny-blob #.mysql-field-types#blob
+	       #.mysql-field-types#medium-blob #.mysql-field-types#long-blob)
+	       (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-length) 1024)
+	       (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
+		     (uffi:allocate-foreign-object :unsigned-char 1024)))
+	      (#.mysql-field-types#tiny
+	       (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
+		     (uffi:allocate-foreign-object :byte)))
+	      (#.mysql-field-types#short
+	       (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
+		     (uffi:allocate-foreign-object :short)))
+	      (#.mysql-field-types#long
+	       (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
+		     (uffi:allocate-foreign-object :int)))
+	      #+64bit
+	      (#.mysql-field-types#longlong
+	       (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
+		     (uffi:allocate-foreign-object :long)))
+	      (#.mysql-field-types#float
+	       (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
+		     (uffi:allocate-foreign-object :float)))
+	      (#.mysql-field-types#double
+	       (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
+		     (uffi:allocate-foreign-object :double)))
+	      ((#.mysql-field-types#time #.mysql-field-types#date
+  	        #.mysql-field-types#datetime #.mysql-field-types#timestamp)
+	       (uffi:allocate-foreign-object 'mysql-time))
+	      (t
+	       (error "mysql type ~D not supported." type)))))
+
+	(unless (zerop (mysql-stmt-bind-result stmt output-bind))
+	  (error 'sql-database-error
+		 :error-id (mysql-stmt-errno stmt)
+		 :message  (uffi:convert-from-cstring
+			    (mysql-stmt-error stmt))))
+
+	(make-instance 'mysql-stmt
+		       :database database
+		       :stmt stmt
+		       :num-fields num-fields
+		       :input-bind (uffi:allocate-foreign-object mysql-bind (length types))
+		       :output-bind output-bind
+		       :result-set rs
+		       :result-types result-types
+		       :length-ptr length-ptr
+		       :is-null-ptr is-null-ptr
+		       :types (mapcar 'clsql-type->mysql-type types)
+		       :field-names field-names)))))
+
+#+mysql-client-v4.1
 (defmethod database-bind-parameter ((stmt mysql-stmt) position value)
   ;; FIXME: will need to allocate bind structure. This should probably be
   ;; done in C since the API is not mature and may change
@@ -517,6 +580,7 @@
 	   (setf (uffi:get-slot-value binding 'mysql-bind 'buffer) ptr)))
 	)))))
 
+#+mysql-client-v4.1
 (defmethod database-run-prepared ((stmt mysql-stmt))
   (unless (zerop (mysql-stmt-bind-param (stmt stmt) (input-bind stmt)))
     (error 'sql-database-error
@@ -528,27 +592,66 @@
 	   :error-id (mysql-stmt-errno (stmt stmt))
 	   :message  (uffi:convert-from-cstring
 		      (mysql-stmt-error (stmt stmt)))))
-  (let ((field-vec (mysql-fetch-fields (result-set stmt))))
-    (dotimes (i (num-fields (result-set stmt)))
-      (declare (fixnum i))
-      (let* ((field (uffi:deref-array field-vec '(:array mysql-field) i))
-	     (type (uffi:get-slot-value field 'mysql-field 'type))
-	     (binding (uffi:deref-array (output-bind stmt) '(:array mysql-bind) i)))
-	(setf (uffi:get-slot-value binding 'mysql-bind 'buffer-type) type)
-	 (case type
-	   (#.mysql-field-types#var-string
-	    (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-length) 1024)
-	    (setf (uffi:get-slot-value binding 'mysql-bind 'buffer)
-		  (uffi:allocate-foreign-object :unsigned-char 1024)))
-	   (t
-	    (setf (uffi:get-slot-value binding 'mysql-bind 'buffer-length) 0))))))
-  (unless (zerop (mysql-stmt-bind-result (stmt stmt) (output-bind stmt)))
+  (unless (zerop (mysql-stmt-store-result (stmt stmt)))
     (error 'sql-database-error
 	   :error-id (mysql-stmt-errno (stmt stmt))
 	   :message  (uffi:convert-from-cstring
-		      (mysql-stmt-error (stmt stmt))))))
+		      (mysql-stmt-error (stmt stmt)))))
+  (database-fetch-prepared-rows stmt))
 
+#+mysql-client-v4.1
+(defun database-fetch-prepared-rows (stmt)
+  (do ((rc (mysql-stmt-fetch (stmt stmt)) (mysql-stmt-fetch (stmt stmt)))
+       (rows '()))
+      ((not (zerop rc)) (nreverse rows))
+    (push
+     (loop for i from 0 below (num-fields stmt)
+	   collect
+	   (let ((is-null 
+		  (not (zerop (uffi:ensure-char-integer
+			       (uffi:deref-array (is-null-ptr stmt) '(:array :byte) i))))))
+	     (unless is-null
+	       (let* ((bind (uffi:deref-array (output-bind stmt) '(:array mysql-bind) i))
+		      (type (uffi:get-slot-value bind 'mysql-bind 'buffer-type))
+		      (buffer (uffi:get-slot-value bind 'mysql-bind 'buffer)))
+		 (case type
+		   ((#.mysql-field-types#var-string #.mysql-field-types#string
+		     #.mysql-field-types#tiny-blob #.mysql-field-types#blob
+		     #.mysql-field-types#medium-blob #.mysql-field-types#long-blob)
+		    (uffi:convert-from-foreign-string buffer))
+		    (#.mysql-field-types#tiny
+		     (uffi:ensure-char-integer
+		      (uffi:deref-pointer buffer :byte)))
+		    (#.mysql-field-types#short
+		     (uffi:deref-pointer buffer :short))
+		    (#.mysql-field-types#long
+		     (uffi:deref-pointer buffer :int))
+		    #+64bit
+		    (#.mysql-field-types#longlong
+		     (uffi:deref-pointer buffer :long))
+		    (#.mysql-field-types#float
+		     (uffi:deref-pointer buffer :float))
+		    (#.mysql-field-types#double
+		     (uffi:deref-pointer buffer :double))
+		   ((#.mysql-field-types#time #.mysql-field-types#date
+					      #.mysql-field-types#datetime #.mysql-field-types#timestamp)
+		    (let ((year (uffi:get-slot-value buffer 'mysql-time 'mysql::year))
+			  (month (uffi:get-slot-value buffer 'mysql-time 'mysql::month))
+			  (day (uffi:get-slot-value buffer 'mysql-time 'mysql::day))
+			  (hour (uffi:get-slot-value buffer 'mysql-time 'mysql::hour))
+			  (minute (uffi:get-slot-value buffer 'mysql-time 'mysql::minute))
+			  (second (uffi:get-slot-value buffer 'mysql-time 'mysql::second)))
+		      (db-timestring
+		       (make-time :year year :month month :day day :hour hour
+				  :minute minute :second second))))
+		   (t
+		    (list type)))))))
+     rows)))
+		  
+	      
 
+  
+#+mysql-client-v4.1
 (defmethod database-free-prepared ((stmt mysql-stmt))
   (with-slots (stmt) stmt
     (mysql-stmt-close stmt))
