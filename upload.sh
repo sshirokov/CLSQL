@@ -47,7 +47,7 @@ if [ "${opt_upstream}" == "1" ]; then
 fi
 
 echo "Uploading to Debian site"
-DEBIAN_DIR=ftp.med-info.com:/home/ftp/pub/UploadQueue
+DEBIAN_DIR=ftp.med-info.com:/home/ftp/pub/debian/UploadQueue
 
 if [ "${opt_upstream}" == "1" ]; then
   echo "...Uploading original upstream archive"
