@@ -2,12 +2,12 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          clsql-aodbc.system
-;;;; Purpose:       Defsystem-3/4 definition file for CLSQL AODBC backend
+;;;; Name:          aodbc-package.cl
+;;;; Purpose:       Package definition for CLSQL AODBC backend
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql-aodbc.system,v 1.9 2002/08/01 03:06:26 kevin Exp $
+;;;; $Id: aodbc-package.cl,v 1.1 2002/08/01 03:06:26 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -17,13 +17,15 @@
 ;;;; *************************************************************************
 
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :make)
+(in-package :cl-user)
 
-(defsystem :clsql-aodbc
-    :source-pathname "cl-library:clsql-aodbc;"
-    :source-extension "cl"
-    :components ((:file "aodbc-package")
-		 (:file "aodbc-sql" :depends-on ("aodbc-package")))
-    :depends-on (:clsql-base))
+#+allegro 
+(eval-when (:compile-toplevel :load-toplevel :execute) 
+  (require :aodbc-v2))
+#-allegro (warn "This system requires Allegro's AODBC library to operate")
 
-    
+(defpackage :clsql-aodbc
+    (:nicknames :aodbc)
+    (:use :common-lisp :clsql-base-sys)
+    (:export #:aodbc-database)
+    (:documentation "This is the CLSQL interface to Allegro's AODBC"))

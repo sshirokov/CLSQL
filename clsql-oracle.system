@@ -1,14 +1,14 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; This is copyrighted software.  See interfaces/oracle/* files for terms.
 ;;;; 
-;;;; $Id: clsql-oracle.system,v 1.2 2002/07/26 05:19:00 kevin Exp $
+;;;; $Id: clsql-oracle.system,v 1.3 2002/08/01 03:06:26 kevin Exp $
 
 (in-package :make)
 
 ;;; System definition
 
 (defsystem :clsql-oracle
-    :source-pathname "cl-library:clsql;interfaces;oracle"
+    :source-pathname "cl-library:clsql-oracle"
     :source-extension "cl"
     :components
     ((:file "oracle-package")

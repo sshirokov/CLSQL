@@ -2,12 +2,12 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          clsql-aodbc.system
-;;;; Purpose:       Defsystem-3/4 definition file for CLSQL AODBC backend
-;;;; Programmer:    Kevin M. Rosenberg
-;;;; Date Started:  Feb 2002
+;;;; Name:          clsql-uffi-package.cl
+;;;; Purpose:       Package definitions for common UFFI interface routines
+;;;; Programmers:   Kevin M. Rosenberg
+;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: clsql-aodbc.system,v 1.9 2002/08/01 03:06:26 kevin Exp $
+;;;; $Id: clsql-uffi-package.cl,v 1.1 2002/08/01 03:06:27 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -17,13 +17,17 @@
 ;;;; *************************************************************************
 
 (declaim (optimize (debug 3) (speed 3) (safety 1) (compilation-speed 0)))
-(in-package :make)
+(in-package :cl-user)
 
-(defsystem :clsql-aodbc
-    :source-pathname "cl-library:clsql-aodbc;"
-    :source-extension "cl"
-    :components ((:file "aodbc-package")
-		 (:file "aodbc-sql" :depends-on ("aodbc-package")))
-    :depends-on (:clsql-base))
+(defpackage :clsql-uffi
+  (:export
+   #:canonicalize-type-list
+   #:convert-raw-field
+   #:atoi
+   #:atol
+   #:atof
+   #:atol64
+   #:make-64-bit-integer
+   #:split-64-bit-integer)
+  (:documentation "Common functions for interfaces using UFFI"))
 
-    

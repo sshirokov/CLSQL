@@ -5,7 +5,7 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id: Makefile,v 1.20 2002/06/20 13:34:55 kevin Exp $
+#  CVS Id:   $Id: Makefile,v 1.21 2002/08/01 03:08:19 kevin Exp $
 #
 # This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 #
@@ -13,9 +13,10 @@
 # as governed by the terms of the Lisp Lesser GNU Public License
 # (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 
-PKG:=clsql
-DEBPKG=cl-sql
-SUBDIRS:=interfaces sql base
+PKG	:= clsql
+DEBPKG	:= cl-sql
+SUBDIRS	:= clsql clsql-uffi clsql-base clsql-mysql clsql-aodbc \
+	   clsql-postgresql clsql-postgresql-socket 
 DOCSUBDIRS:=doc
 
 include Makefile.common
