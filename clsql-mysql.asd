@@ -51,6 +51,7 @@
   nil) 
 
 (defmethod perform ((o compile-op) (c clsql-mysql-source-file))
+  #-(or win32 mswindows)
   (unless (zerop (run-shell-command
 		  "cd ~A; make"
 		  (namestring (make-pathname :name nil
