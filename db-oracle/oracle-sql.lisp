@@ -397,11 +397,7 @@ the length of that format.")
 			   (#.SQLT-INT  
 			    (ecase (cd-sizeof cd)
 			      (4
-			       (uffi:deref-array b '(:array :int) irow))
-			      (8
-			       (deref-oci-int64 b irow))
-			      (16
-			       (deref-oci-int128 b irow))))
+			       (uffi:deref-array b '(:array :int) irow))))
 			   (#.SQLT-DATE 
 			    (deref-oci-string b irow (cd-sizeof cd))))))))
 	       (when (and (eq :string (cd-result-type cd))

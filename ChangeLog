@@ -8,6 +8,10 @@
 	* doc/appendix.xml: Add Oracle backend information
 	* db-oracle/oracle-objects.lisp: Add database-get-type-specifier for
 	universal-time. Convert BIGINT CLSQL type to CHAR SQL type
+	* db-mysql/mysql-sql.lisp: Fix condition name to sql-connection-error
+	* doc/ref-clsql.xml: Renamed from ref_clsql.xml. Change the documentation
+	for map-query to reflect changed in arguments to be CommonSQL compatible.
+	Updated old clsql conditions to new CommonSQL compatible conditions.
 	
 25 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/oodml.lisp: (string n) now produces a CHAR field. Add new VARCHAR

@@ -117,7 +117,7 @@
 		      db-native 0 socket-native 0))
 		    (progn
 		      (setq error-occurred t)
-		      (error 'sql-connect-error
+		      (error 'sql-connection-error
 			     :database-type database-type
 			     :connection-spec connection-spec
 			     :error-id (mysql-errno mysql-ptr)
