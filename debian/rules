@@ -8,6 +8,8 @@ export DH_VERBOSE=1
 # This is the debhelper compatibility version to use.
 export DH_COMPAT=4
 
+plain-pkg	:= clsql
+
 pkg		:= cl-sql
 pkg-base	:= cl-sql-base
 pkg-mysql	:= cl-sql-mysql
@@ -46,7 +48,7 @@ clc-source	:= $(clc-base)/source
 clc-systems	:= $(clc-base)/systems
 doc-dir		:= $(prefix)/usr/share/doc/cl-sql
 
-clc-clsql	:= $(clc-source)/$(pkg)-$(UPSTREAM_VER)
+clc-clsql	:= $(clc-source)/$(plain_pkg)-$(UPSTREAM_VER)
 
 lispdir		:= $(prefix)/$(clc-clsql)
 lispdir-sql	:= $(prefix)/$(clc-clsql)/sql
