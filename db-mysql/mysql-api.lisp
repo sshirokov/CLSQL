@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-api.lisp,v 1.1 2002/09/30 10:19:23 kevin Exp $
+;;;; $Id: mysql-api.lisp,v 1.2 2003/05/17 07:27:15 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -108,6 +108,7 @@
      (:var-string 253)
      (:string 254)))
   
+#-(or win32 mswindows)
 (uffi:def-struct mysql-field
     (name (* :char))
   (table (* :char))
@@ -117,6 +118,20 @@
   (max-length :unsigned-int)
   (flags :unsigned-int)
   (decimals :unsigned-int))
+
+;; structure changed in mysql 4.0.12, win32
+#+(or win32 mswindows)
+(uffi:def-struct mysql-field
+    (name (* :char))
+  (table (* :char))
+  (org_table (* :char))
+  (db (* :char))
+  (def (* :char))
+  (length :unsigned-int)
+  (max-length :unsigned-int)
+  (flags :unsigned-int)
+  (decimals :unsigned-int)
+  (type mysql-field-types))
 
 ;;; MYSQL-ROWS
 
