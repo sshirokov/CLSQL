@@ -10,3 +10,4 @@ libz.dylib
 *.fasla8
 *.faslm16
 *.faslm8
+*.fsl

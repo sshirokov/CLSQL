@@ -11,3 +11,4 @@ clsql-uffi.dylib
 *.fasla8
 *.faslm16
 *.faslm8
+*.fsl
