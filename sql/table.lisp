@@ -22,12 +22,11 @@
 
 (defun database-identifier (name database)
   (sql-escape (etypecase name
-                (string
-                 (convert-to-db-default-case name database))
-                (sql-ident
-                 (sql-output name database))
-                (symbol
-                 (sql-output name database)))))
+		;; honor case of strings
+                (string name
+			#+nil (convert-to-db-default-case name database))
+                (sql-ident (sql-output name database))
+                (symbol (sql-output name database)))))
 
 
 ;; Tables 
@@ -45,7 +44,7 @@ databases, if TRANSACTIONS is t an InnoDB table is created which
 supports transactions."
   (let* ((table-name (etypecase name 
                        (symbol (sql-expression :attribute name))
-                       (string (sql-expression :attribute (make-symbol name)))
+                       (string (sql-expression :attribute name))
                        (sql-ident name)))
          (stmt (make-instance 'sql-create-table
                               :name table-name

@@ -1,16 +1,16 @@
 22 May 2004 Kevin Rosenberg
-	* TODO: Added 2 variances from CommonSQL
+	* Version 2.10.19 released: Oracle backend now fails 6 out of 200 tests
+	* TODO: Added 2 variances from CommonSQL. Add tests for owner phrases
+	and string identifiers with non-default case
 	* sql/table.lisp: Don't convert string table name to a symbol.
 	* sql/classes.lisp: Honor case of string identifiers
-	* Oracle backend now fails 6 out of 200 tests
-	* sql/sql.lisp: Ensure recyclebin is purged for oracle in 
+	* sql/sql.lisp: Ensure recyclebin is purged for Oracle in 
 	TRUNCATE-DATABASE
 	* db-oracle/oracle-sql.lisp: Add sequence functions, fix use of
 	of owner phrases. Obtain server and client versions.
 	* db-oracle/oracle-objects.lisp: Fix type specifiers
 	* tests/test-fddl.lisp: Allow :varchar2 and :number as data types
 	* tests/test-init.lisp: Properly get username from Oracle connection-spec
-	* TODO: Add that tests are needed for owner phrases
 	
 22 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
 	* sql/generics.lisp: reworked docstrings. Remove generics for 

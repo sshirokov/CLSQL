@@ -15,8 +15,7 @@
 
 (in-package #:clsql-oracle)
 
-(defmethod database-initialize-database-type
-    ((database-type (eql :oracle)))
+(defmethod database-initialize-database-type ((database-type (eql :oracle)))
   t)
 
 ;;;; arbitrary parameters, tunable for performance or other reasons
@@ -792,16 +791,26 @@ the length of that format.")
 	)
       ;; Actually, oci-server-version returns the client version, not the server versions
       ;; will use "SELECT VERSION FROM V$INSTANCE" to get actual server version.
-      (let (db client-version)
+      (let (db server-version client-version)
+	(declare (ignorable server-version))
 	(uffi:with-foreign-object (buf '(:array :unsigned-char #.+errbuf-len+))
 	  (oci-server-version (deref-vp svchp)
 			      (deref-vp errhp)
 			      (uffi:char-array-to-pointer buf)
 			      +errbuf-len+ +oci-htype-svcctx+)
-	  (setf client-version (uffi:convert-from-foreign-string buf)))
+	  (setf client-version (uffi:convert-from-foreign-string buf))
+	  ;; This returns the client version, not the server version, so diable it
+	  #+ignore
+	  (oci-server-version (deref-vp srvhp)
+			      (deref-vp errhp)
+			      (uffi:char-array-to-pointer buf)
+			      +errbuf-len+ +oci-htype-server+)
+	  #+ignore
+	  (setf server-version (uffi:convert-from-foreign-string buf)))
 	(setq db (make-instance 'oracle-database
 				:name (database-name-from-spec connection-spec
 							       database-type)
+				:connection-spec connection-spec
 				:envhp envhp
 				:errhp errhp
 				:database-type :oracle
@@ -809,8 +818,11 @@ the length of that format.")
 				:dsn data-source-name
 				:user user
 				:client-version client-version
+				:server-version server-version
 				:major-client-version (major-client-version-from-string
-						       client-version)))
+						       client-version)
+				:major-server-version (major-client-version-from-string
+						       server-version)))
 	(oci-logon (deref-vp envhp)
 		   (deref-vp errhp) 
 		   svchp
@@ -822,9 +834,9 @@ the length of that format.")
 	(setf (slot-value db 'clsql-sys::state) :open)
         (database-execute-command
 	 (format nil "ALTER SESSION SET NLS_DATE_FORMAT='~A'" (date-format db)) db)
-	(let ((server-version (caar (database-query "SELECT VERSION FROM V$INSTANCE" db nil nil))))
+	(let ((server-version (caar (database-query "SELECT BANNER FROM V$VERSION WHERE BANNER LIKE '%Oracle%'" db nil nil))))
 	  (setf (slot-value db 'server-version) server-version
-		(slot-value db 'major-server-version) (major-server-version-from-string 
+		(slot-value db 'major-server-version) (major-client-version-from-string
 						       server-version)))
         db))))
 

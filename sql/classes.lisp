@@ -141,11 +141,16 @@
       :type ',type)))
 
 (defmethod output-sql ((expr sql-ident-attribute) database)
-  (with-slots (qualifier name type)
-      expr
+  (with-slots (qualifier name type) expr
     (if (and (not qualifier) (not type))
-	(write-string (sql-escape (convert-to-db-default-case 
-				   (symbol-name name) database)) *sql-stream*)
+	(etypecase name
+	  ;; Honor care of name
+	  (string
+	   (write-string name *sql-stream*))
+	  (symbol
+	   (write-string (sql-escape (convert-to-db-default-case 
+				      (symbol-name name) database)) *sql-stream*)))
+      
 	;;; KMR: The TYPE field is used by CommonSQL for type conversion -- it
       ;;; should not be output in SQL statements
       #+ignore

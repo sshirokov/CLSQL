@@ -2,7 +2,7 @@ cl-sql (2.10.19-1) unstable; urgency=low
 
   * New upstream
 
- -- Kevin M. Rosenberg <kmr@debian.org>  Thu, 20 May 2004 04:54:53 -0600
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sat, 22 May 2004 21:29:10 -0600
 
 cl-sql (2.10.18-1) unstable; urgency=low
 
