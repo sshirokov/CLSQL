@@ -111,7 +111,7 @@ install: build
 	set -e ;\
 	for p in $(all-pkgs); do \
                 echo "processing maintainer scripts for $$p" ;\
-		l=`echo $$p | sed -e "s/^cl-//;"` ;\
+		l=`echo $$p | sed -e "s/^cl-/cl/;"` ;\
 		sed -e "s/%%/$$l/;" debian/prerm.template > debian/$$p.prerm ;\
 		sed -e "s/%%/$$l/;" debian/postinst.template > debian/$$p.postinst ;\
 	done
