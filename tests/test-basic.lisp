@@ -104,6 +104,7 @@
 	(let ((results '())
 	      (rows (map-query 'vector #'list "select * from TYPE_TABLE" 
 			       :result-types nil)))
+	  (declare (array rows))
 	  (dotimes (i (length rows) results)
 	    (push
 	     (list
