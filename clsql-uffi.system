@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: clsql-uffi.system,v 1.2 2002/04/01 05:27:55 kevin Exp $
+;;;; $Id: clsql-uffi.system,v 1.3 2002/05/13 13:18:36 marc.battyani Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -23,9 +23,9 @@
 ;;; System definition
 
 (mk:defsystem :clsql-uffi
-    :source-pathname "CLSQL:interfaces;clsql-uffi;"
+    :source-pathname "CL-LIBRARY:clsql;interfaces;clsql-uffi;"
     :source-extension "cl"
-    :binary-pathname "CLSQL:interfaces;clsql-uffi;bin;"
+    :binary-pathname "CL-LIBRARY:clsql;interfaces;clsql-uffi;bin;"
     :components ((:file "clsql-uffi-package")
 		 (:file "clsql-uffi-loader" :depends-on ("clsql-uffi-package"))
 		 (:file "clsql-uffi" :depends-on ("clsql-uffi-loader")))
