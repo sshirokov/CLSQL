@@ -7,7 +7,6 @@ TESTS TO ADD
 * Test bigint type
 * :db-constraint tests
 * test *db-auto-sync* 
-* test :retrieval :deferred joins
 
 COMMONSQL SPEC
 
