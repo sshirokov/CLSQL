@@ -10,9 +10,10 @@ pkg-mysql	:= cl-sql-mysql
 pkg-pg		:= cl-sql-postgresql
 pkg-pg-socket	:= cl-sql-postgresql-socket
 pkg-aodbc	:= cl-sql-aodbc
+pkg-odbc	:= cl-sql-odbc
 pkg-sqlite	:= cl-sql-sqlite
 pkg-tests	:= cl-sql-tests
-all-pkgs	:= $(pkg) $(pkg-base) $(pkg-uffi) $(pkg-mysql) $(pkg-pg) $(pkg-pg-socket) $(pkg-aodbc) $(pkg-sqlite) $(pkg-tests)
+all-pkgs	:= $(pkg) $(pkg-base) $(pkg-uffi) $(pkg-mysql) $(pkg-pg) $(pkg-pg-socket) $(pkg-aodbc) $(pkg-odbc) $(pkg-sqlite) $(pkg-tests)
 
 
 UPSTREAM_VER	:= $(shell sed -n -e "s/${pkg} (\(.*\)-[0-9A-Za-z\.]).*/\1/p" < debian/changelog |head -1)
@@ -28,6 +29,7 @@ srcs-mysql-so	:=  $(wildcard db-mysql/*.so)
 srcs-pg		:= $(wildcard db-postgresql/*.lisp)
 srcs-pg-socket	:= $(wildcard db-postgresql-socket/*.lisp)
 srcs-aodbc	:= $(wildcard db-aodbc/*.lisp)
+srcs-odbc	:= $(wildcard db-odbc/*.lisp)
 srcs-sqlite	:= $(wildcard db-sqlite/*.lisp)
 srcs-tests	:= $(wildcard tests/*.lisp)
 
@@ -56,6 +58,8 @@ clc-pg-socket 	:= $(clc-source)/clsql-postgresql-socket
 lispdir-pg-socket := $(clc-pg-socket)/db-postgresql-socket
 clc-aodbc	:= $(clc-source)/clsql-aodbc
 lispdir-aodbc	:= $(clc-aodbc)/db-aodbc
+clc-odbc	:= $(clc-source)/clsql-odbc
+lispdir-odbc	:= $(clc-odbc)/db-odbc
 clc-sqlite	:= $(clc-source)/clsql-sqlite
 lispdir-sqlite	:= $(clc-sqlite)/db-sqlite
 clc-tests	:= $(clc-source)/clsql-tests
@@ -111,6 +115,7 @@ install: build
 	dh_installdirs -p $(pkg-pg-socket) $(lispdir-pg-socket)
 	dh_installdirs -p $(pkg-mysql) $(lispdir-mysql) $(sodir-mysql)
 	dh_installdirs -p $(pkg-aodbc) $(lispdir-aodbc)
+	dh_installdirs -p $(pkg-odbc) $(lispdir-odbc)
 	dh_installdirs -p $(pkg-sqlite) $(lispdir-sqlite)
 	dh_installdirs -p $(pkg-tests) $(lispdir-tests)
 
@@ -141,6 +146,8 @@ install: build
 	dh_install -p $(pkg-pg-socket) clsql-postgresql-socket.asd $(clc-pg-socket)
 	dh_install -p $(pkg-aodbc) $(srcs-aodbc) $(lispdir-aodbc)
 	dh_install -p $(pkg-aodbc) clsql-aodbc.asd $(clc-aodbc)
+	dh_install -p $(pkg-odbc) $(srcs-odbc) $(lispdir-odbc)
+	dh_install -p $(pkg-odbc) clsql-odbc.asd $(clc-odbc)
 	dh_install -p $(pkg-sqlite) $(srcs-sqlite) $(lispdir-sqlite)
 	dh_install -p $(pkg-sqlite) clsql-sqlite.asd $(clc-sqlite)
 
@@ -156,6 +163,7 @@ install: build
 	dh_link -p $(pkg-pg) $(clc-pg)/clsql-postgresql.asd $(clc-systems)/clsql-postgresql.asd
 	dh_link -p $(pkg-pg-socket) $(clc-pg-socket)/clsql-postgresql-socket.asd $(clc-systems)/clsql-postgresql-socket.asd
 	dh_link -p $(pkg-aodbc) $(clc-aodbc)/clsql-aodbc.asd $(clc-systems)/clsql-aodbc.asd
+	dh_link -p $(pkg-odbc) $(clc-odbc)/clsql-odbc.asd $(clc-systems)/clsql-odbc.asd
 	dh_link -p $(pkg-sqlite) $(clc-sqlite)/clsql-sqlite.asd $(clc-systems)/clsql-sqlite.asd
 	dh_link -p $(pkg-tests) $(clc-tests)/clsql-tests.asd $(clc-systems)/clsql-tests.asd
 

@@ -35,7 +35,7 @@ Description: Common UFFI functions for CLSQL database backends
 
 Package: cl-sql-mysql
 Architecture: any
-Depends: cl-sql-base (>= ${Source-Version}), libmysqlclient, cl-sql-uffi (>= ${Source-Version})
+Depends: cl-sql-base (>= ${Source-Version}), libmysqlclient12, cl-sql-uffi (>= ${Source-Version})
 Provides: cl-sql-backend
 Description: CLSQL database backend, MySQL
  This package enables you to use the CLSQL data access package
@@ -50,6 +50,16 @@ Suggests: acl-pro-installer
 Description: CLSQL database backend, AODBC
  This package enables you to use the CLSQL data access package
  with AllegroCL's AODBC databases.
+ CLSQL is a Common Lisp interface to SQL databases.
+
+Package: cl-sql-odbc
+Architecture: all
+Depends: cl-sql-base (>= ${Source-Version}),unixodbc-dev
+Provides: cl-sql-backend
+Suggests: acl-pro-installer
+Description: CLSQL database backend, ODBC
+ This package enables you to use the CLSQL data access package
+ with ODBC databases.
  CLSQL is a Common Lisp interface to SQL databases.
 
 Package: cl-sql-postgresql
