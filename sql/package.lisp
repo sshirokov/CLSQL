@@ -330,6 +330,8 @@
          ;; CLSQL Extensions 
 	 #:view-table        
 	 #:bigint
+	 #:varchar
+	 #:*default-varchar-length*
 
 	 ;; OODML (oodml.lisp) 
 	 #:instance-refreshed               

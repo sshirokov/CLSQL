@@ -55,15 +55,15 @@
     :initarg :groupid)
    (first-name
     :accessor first-name
-    :type (string 30)
+    :type (varchar 30)
     :initarg :first-name)
    (last-name
     :accessor last-name
-    :type (string 30)
+    :type (varchar 30)
     :initarg :last-name)
    (email
     :accessor employee-email
-    :type (string 100)
+    :type (varchar 100)
     :initarg :email)
    (ecompanyid
     :type integer
@@ -107,7 +107,7 @@
     :type integer
     :initarg :groupid)
    (name
-    :type (string 100)
+    :type (varchar 100)
     :initarg :name)
    (presidentid
     :type integer
@@ -137,13 +137,13 @@
     :type integer
     :initarg :street-number)
    (street-name
-    :type (string 30)
+    :type (varchar 30)
     :void-value ""
     :initarg :street-name)
    (city
     :column "city_field"
     :void-value "no city"
-    :type (string 30)
+    :type (varchar 30)
     :initarg :city)
    (postal-code
     :column zip

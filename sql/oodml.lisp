@@ -309,9 +309,12 @@
 	    (error "No view-table for class ~A"  classname))
 	  (sql-expression :table (view-table class))))
 
+
+(defparameter *default-varchar-length* 255)
+
 (defmethod database-get-type-specifier (type args database db-type)
   (declare (ignore type args database db-type))
-  "VARCHAR(255)")
+  (format nil "VARCHAR(~D)" *default-varchar-length*))
 
 (defmethod database-get-type-specifier ((type (eql 'integer)) args database db-type)
   (declare (ignore database db-type))
@@ -326,26 +329,23 @@
 (defmethod database-get-type-specifier ((type (eql 'bigint)) args database db-type)
   (declare (ignore args database db-type))
   "BIGINT")
-              
-(defmethod database-get-type-specifier ((type (eql 'simple-base-string)) args
-                                        database db-type)
-  (declare (ignore database db-type))
-  (if args
-      (format nil "VARCHAR(~A)" (car args))
-      "VARCHAR(255)"))
 
-(defmethod database-get-type-specifier ((type (eql 'simple-string)) args
+(deftype varchar () 
+  "A variable length string for the SQL varchar type."
+  'string)
+
+(defmethod database-get-type-specifier ((type (eql 'varchar)) args
                                         database db-type)
   (declare (ignore database db-type))
   (if args
       (format nil "VARCHAR(~A)" (car args))
-      "VARCHAR(255)"))
+      (format nil "VARCHAR(~D)" *default-varchar-length*)))
 
 (defmethod database-get-type-specifier ((type (eql 'string)) args database db-type)
   (declare (ignore database db-type))
   (if args
-      (format nil "VARCHAR(~A)" (car args))
-      "VARCHAR(255)"))
+      (format nil "CHAR(~A)" (car args))
+      (format nil "VARCHAR(~D)" *default-varchar-length*)))
 
 (deftype universal-time () 
   "A positive integer as returned by GET-UNIVERSAL-TIME."
@@ -402,7 +402,7 @@
   (declare (ignore database db-type))
   (if args
       (format nil "CHAR(~D)" (first args))
-    "CHAR"))
+      "CHAR(1)"))
 
 
 (defmethod database-output-sql-as-type (type val database db-type)
@@ -451,15 +451,12 @@
   (declare (ignore database db-type))
   val)
 
-(defmethod database-output-sql-as-type ((type (eql 'simple-string))
+(defmethod database-output-sql-as-type ((type (eql 'char))
 					val database db-type)
   (declare (ignore database db-type))
-  val)
-
-(defmethod database-output-sql-as-type ((type (eql 'simple-base-string))
-					val database db-type)
-  (declare (ignore database db-type))
-  val)
+  (etypecase val
+    (character (write-to-string val))
+    (string val)))
 
 (defmethod read-sql-value (val type database db-type)
   (declare (ignore type database db-type))
@@ -469,14 +466,14 @@
   (declare (ignore database db-type))
   val)
 
-(defmethod read-sql-value (val (type (eql 'simple-string)) database db-type)
+(defmethod read-sql-value (val (type (eql 'varchar)) database db-type)
   (declare (ignore database db-type))
   val)
 
-(defmethod read-sql-value (val (type (eql 'simple-base-string)) database db-type)
+(defmethod read-sql-value (val (type (eql 'char)) database db-type)
   (declare (ignore database db-type))
-  val)
-
+  (schar val 0))
+              
 (defmethod read-sql-value (val (type (eql 'keyword)) database db-type)
   (declare (ignore database db-type))
   (when (< 0 (length val))

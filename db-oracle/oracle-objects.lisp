@@ -15,11 +15,9 @@
 
 (in-package #:clsql-oracle)
 
-(defparameter *oracle-default-varchar2-length* "512")
-
 (defmethod database-get-type-specifier (type args database (db-type (eql :oracle)))
   (declare (ignore type args database))
-  (concatenate 'string "VARCHAR2(" *oracle-default-varchar2-length* ")"))
+    (format nil "VARCHAR2(~D)" *default-varchar-length*))
 
 (defmethod database-get-type-specifier ((type (eql 'integer)) args 
 					database (db-type (eql :oracle)))
@@ -37,40 +35,26 @@
 	      (or (first args) 38) (or (second args) 0))
     "NUMBER(38,0)"))
 
-(defmethod database-get-type-specifier ((type (eql 'simple-base-string)) args
-					database (db-type (eql :oracle)))
-  (declare (ignore database)) 
-  (if args
-      (format nil "VARCHAR2(~A)" (car args))
-    (concatenate 'string "VARCHAR2(" *oracle-default-varchar2-length* ")")))
-
-(defmethod database-get-type-specifier ((type (eql 'simple-string)) args
-					database (db-type (eql :oracle)))
-  (declare (ignore database)) 
-  (if args
-      (format nil "VARCHAR2(~A)" (car args))
-    (concatenate 'string "VARCHAR2(" *oracle-default-varchar2-length* ")")))
-
 (defmethod database-get-type-specifier ((type (eql 'string)) args
 					database (db-type (eql :oracle)))
   (declare (ignore database)) 
   (if args
-      (format nil "VARCHAR2(~A)" (car args))
-    (concatenate 'string "VARCHAR2(" *oracle-default-varchar2-length* ")")))
+      (format nil "CHAR(~A)" (car args))
+    (format nil "VARCHAR2(~D)" *default-varchar-length*)))
 
-(defmethod database-get-type-specifier ((type (eql 'raw-string)) args
+(defmethod database-get-type-specifier ((type (eql 'varchar)) args
 					database (db-type (eql :oracle)))
   (declare (ignore database)) 
   (if args
       (format nil "VARCHAR2(~A)" (car args))
-    (concatenate 'string "VARCHAR2(" *oracle-default-varchar2-length* ")")))
+    (format nil "VARCHAR2(~D)" *default-varchar-length*)))
 
 (defmethod database-get-type-specifier ((type (eql 'float)) args
 					database (db-type (eql :oracle)))
   (declare (ignore database)) 
   (if args
       (format nil "NUMBER(~A,~A)" (or (first args) 38) (or (second args) 38))
-    "double precision"))
+    "DOUBLE PRECISION"))
 
 (defmethod database-get-type-specifier ((type (eql 'long-float)) args
 					database (db-type (eql :oracle)))
@@ -78,7 +62,7 @@
   (if args
       (format nil "NUMBER(~A,~A)"
 	      (or (first args) 38) (or (second args) 38))
-    "double precision"))
+    "DOUBLE PRECISION"))
 
 (defmethod database-get-type-specifier ((type (eql 'boolean)) args
 					database (db-type (eql :oracle)))

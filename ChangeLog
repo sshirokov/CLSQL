@@ -1,4 +1,15 @@
 25 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/oodml.lisp: (string n) now produces a CHAR field. Add new VARCHAR
+	type. Added *default-varchar-length* rather than previous hard-coded
+	varchar length. Remove 'simple-string and 'simple-base-string since they
+	are subtypes of 'string.
+	* db-oracle/oracle-sql.lisp: Use *default-varchar-length* rather than
+	local hard-coded value.
+	* sql/metaclasses.lisp: Convert specified type VARCHAR and (VARCHAR n) to Lisp
+	type string. Convert specified-type (CHAR n) to string. Convert specified-type
+	CHAR to lisp type character.
+	
+25 May 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 2.11.1 released: Much simpler Oracle client library loading.
 	Now uses ORACLE_HOME environmental variable as well as tests default
 	path for Oracle Instant Client. 
