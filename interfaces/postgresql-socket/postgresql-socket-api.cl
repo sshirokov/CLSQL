@@ -9,7 +9,7 @@
 ;;;;                
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-api.cl,v 1.13 2002/04/06 23:23:47 kevin Exp $
+;;;; $Id: postgresql-socket-api.cl,v 1.14 2002/04/07 15:10:01 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -225,7 +225,7 @@ socket interface"
   "Encrypt a password for transmission to a PostgreSQL server."
   (unless *crypt-library-loaded*
     (uffi:load-foreign-library 
-     (find-foreign-library "libcrypt"
+     (uffi:find-foreign-library "libcrypt"
 			   '("/usr/lib/" "/usr/local/lib/" "/lib/"))
      :supporting-libaries '("c"))
     (eval '(uffi:def-function "crypt" 
@@ -235,7 +235,8 @@ socket interface"
     (setq *crypt-library-loaded* t))
    (uffi:with-cstring (password-cstring password)
      (uffi:with-cstring (salt-cstring salt)
-       (uffi:convert-from-cstring (crypt password-cstring salt-cstring)))))
+       (uffi:convert-from-cstring 
+	(funcall (fdefinition 'crypt) password-cstring salt-cstring)))))
 ;;; Condition hierarchy
 
 (define-condition postgresql-condition (condition)
