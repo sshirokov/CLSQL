@@ -82,7 +82,7 @@ Description: CLSQL database backend, SQLite
 
 Package: cl-sql-tests
 Architecture: all
-Depends: cl-sql, cl-sql-postgresql, cl-sql-postgresql-socket, cl-sql-mysql, cl-sql-sqlite, cl-sql-odbc, rt
+Depends: cl-sql, cl-sql-postgresql, cl-sql-postgresql-socket, cl-sql-mysql, cl-sql-sqlite, cl-sql-odbc, cl-rt
 Suggests: acl-installer, libmyodbc, unixodbc,cl-sql-aodbc 
 Description: Testing suite for CLSQL
  This package contains a test suite for CLSQL. It requires manual

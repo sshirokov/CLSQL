@@ -57,23 +57,25 @@
 	     (#.+oci-error+
 	      (handle-oci-error :database database :nulls-ok nulls-ok))
 	     (#.+oci-no-data+
-	      (error "OCI No Data Found"))
+	      (error 'sql-database-error :message "OCI No Data Found"))
 	     (#.+oci-success-with-info+
-	      (error "internal error: unexpected +oci-SUCCESS-WITH-INFO"))
+	      (error 'sql-database-error :message "internal error: unexpected +oci-success-with-info"))
 	     (#.+oci-no-data+
-	      (error "OCI No Data"))
+	      (error 'sql-database-error :message "OCI No Data"))
 	     (#.+oci-invalid-handle+
-	      (error "OCI Invalid Handle"))
+	      (error 'sql-database-error :message "OCI Invalid Handle"))
 	     (#.+oci-need-data+
-	      (error "OCI Need Data"))
+	      (error 'sql-database-error :message "OCI Need Data"))
 	     (#.+oci-still-executing+
-	      (error "OCI Still Executing"))
+	      (error 'sql-temporary-error :message "OCI Still Executing"))
 	     (#.+oci-continue+
-	      (error "OCI Continue"))
+	      (error 'sql-database-error :message "OCI Continue"))
 	     (1804
-	      (error "Check ORACLE_HOME and NLS settings."))
+	      (error 'sql-database-error :message "Check ORACLE_HOME and NLS settings."))
 	     (t
-	      (error "OCI unknown error, code=~A" result))))))))
+	      (error 'sql-database-error
+		     :message
+		     (format nil "OCI unknown error, code=~A" result)))))))))
   
 
 (defmacro def-raw-oci-routine
@@ -321,7 +323,7 @@
 
 (defun oci-check-return (value)
   (when (= value +oci-invalid-handle+)
-    (error "Invalid Handle")))
+    (error 'sql-database-error :message "Invalid Handle")))
 
 (defun oci-get-handle (&key type)
   (if (null *oci-initialized*)
@@ -354,7 +356,9 @@
     (:security
      "OCISecurity")
     (t
-     (error "'~s' is not a valid OCI handle type" type))))
+     (error 'sql-database-error
+	    :message
+	    (format nil "'~s' is not a valid OCI handle type" type)))))
 
 (defun oci-environment ()
   (let ((envhp (oci-get-handle :type :env)))

@@ -159,9 +159,8 @@ the length of that format.")
 (defun osucc (code)
   (declare (type fixnum code))
   (unless (= code +oci-success+)
-    (error 'dbi-error
-	   :format-control "unexpected OCI failure, code=~S"
-	   :format-arguments (list code))))
+    (error 'sql-database-error
+	   :message (format nil "unexpected OCI failure, code=~S" code))))
 
 
 ;;; Enabling this can be handy for low-level debugging.
@@ -236,10 +235,17 @@ the length of that format.")
 	   (second  (1- (ub 6))))
       (encode-universal-time second minute hour day month year))))
 
+(defun owner-phrase (owner)
+  (if owner
+      (format nil " WHERE OWNER='~A'" owner)
+    ""))
+
 (defmethod database-list-tables ((database oracle-database) &key owner)
   (mapcar #'car 
-	  (database-query "select table_name from user_tables"
-			  database nil nil))
+	  (database-query 
+	   (concatenate 'string "select table_name from user_tables"
+			(owner-phrase owner))
+	   database nil nil))
   #+nil
   (values (database-query "select TABLE_NAME from all_catalog
 	        where owner not in ('PUBLIC','SYSTEM','SYS','WMSYS','EXFSYS','CTXSYS','WKSYS','WK_TEST','MDSYS','DMSYS','OLAPSYS','ORDSYS','XDB')"
@@ -248,15 +254,20 @@ the length of that format.")
 
 (defmethod database-list-views ((database oracle-database)
                                  &key owner)
-  ;; (database-query "select table_name from all_catalog" database nil nil)
   (mapcar #'car
-	  (database-query "select view_name from user_views" database nil nil)))
+	  (database-query
+	   (concatenate 'string "select view_name from user_views"
+			(owner-phrase owner))
+	   database nil nil)))
 
 
 (defmethod database-list-indexes ((database oracle-database)
                                   &key (owner nil))
   (mapcar #'car
-	  (database-query "select index_name from user_indexes" database nil nil)))
+	  (database-query 
+	   (concatenate 'string "select index_name from user_indexes"
+			(owner-phrase owner))
+	   database nil nil)))
 
 (defmethod list-all-table-columns (table (db oracle-database))
   (declare (string table))
@@ -288,8 +299,11 @@ the length of that format.")
   (mapcar #'car
 	  (database-query
 	   (format nil
-		   "select column_name from user_tab_columns where table_name='~A'"
-		   table)
+		   "select column_name from user_tab_columns where table_name='~A'~A"
+		   table
+		   (if owner
+		       (format nil " AND OWNER='~A'" owner)
+		     ""))
 	   database nil nil)))
 
 (defmethod database-attribute-type (attribute (table string)
@@ -298,8 +312,11 @@ the length of that format.")
   (let ((rows
 	 (database-query
 	  (format nil
-		  "select data_type,data_length,data_precision,data_scale,nullable from user_tab_columns where table_name='~A' and column_name='~A'"
-		  table attribute)
+		  "select data_type,data_length,data_precision,data_scale,nullable from user_tab_columns where table_name='~A' and column_name='~A'~A"
+		  table attribute
+		  (if owner
+		      (format nil " AND OWNER='~A'" owner)
+		    ""))		  
 	  database :auto nil)))
     (destructuring-bind (type length precision scale nullable) (car rows)
       (values (ensure-keyword type) length precision scale 
@@ -331,7 +348,7 @@ the length of that format.")
 (defstruct (oracle-result-set (:print-function print-query-cursor)
                               (:conc-name qc-)
                               (:constructor %make-query-cursor))
-  (db (error "missing DB")              ; db conn. this table is associated with
+  (db (error "missing DB")   ; db conn. this table is associated with
     :type oracle-database
     :read-only t)
   (stmthp (error "missing STMTHP")      ; the statement handle used to create
@@ -363,7 +380,7 @@ the length of that format.")
   ;;(declare (optimize (speed 3)))
   (cond ((zerop (qc-n-from-oci qc))
 	 (if eof-errorp
-	     (error 'clsql-error :message
+	     (error 'sql-database-error :message
 		    (format nil "no more rows available in ~S" qc))
 	   eof-value))
 	((>= (qc-n-to-dbi qc)
@@ -862,8 +879,10 @@ the length of that format.")
 		 ) :database database)))
 
 (defmethod database-list-sequences ((database oracle-database) &key owner)
-  (mapcar #'car (database-query "select sequence_name from user_sequences" 
-				database nil nil)))
+  (mapcar #'car (database-query 
+		 (concatenate 'string "select sequence_name from user_sequences" 
+			      (owner-phrase owner))
+		 database nil nil)))
 
 (defmethod database-execute-command (sql-expression (database oracle-database))
   (database-query sql-expression database nil nil)
