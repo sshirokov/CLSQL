@@ -176,9 +176,9 @@ error should be signaled if the existing database connection cannot be
 closed. When non-nil (this is the default value) the connection is
 closed without error checking. When FORCE is nil, an error is signaled
 if the database connection has been lost."
-  ;; TODO: just a placeholder
+  ;; TODO: Support all backends. Perhaps integrate with pools
+  ;; Handle error and force keywords
   (declare (ignore database error force)))
-
 
   
 (defun status (&optional full)

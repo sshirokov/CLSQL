@@ -1,5 +1,19 @@
 12 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.6.5
+	* sql/sql.lisp: Fix TRUNCATE command, bug reported
+	by Marcus Pearce
+	* sql/sql.lisp: Remove EXPLAIN function. Postgresql/Oracle
+	specific and easy for an application to directly support.
+	Idea from Marcus Pearce.
+	* base/basic-sql.lisp: Remove DESCRIBE-TABLE top-level 
+	API as duplicates LIST-ATTRIBUTE-TYPES [Marcus Pearce].
+	Keep low-level interface for future optimization
+	supporting LIST-ATTRIBUTE-TYPES command.
+	* Makefile: Add to db-sqlite and test directories.
+	Include them in top-level Makefile
+	
+12 Apr 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* Version 2.6.5
 	* sql/relations.lisp: Add missing file
 	* utils/time.lisp: Fixes/extensions [Marcus Pearce]
 	* test/test-time.lips: New file [Marcus Pearce]

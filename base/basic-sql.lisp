@@ -59,10 +59,6 @@ pair."))
     (record-sql-action res :result database))
   (values))
 
-
-(defmethod describe-table ((table string) &key (database *default-database*))
-  (database-describe-table database table))
-
 (defmacro do-query (((&rest args) query-expression
 		     &key (database '*default-database*) (result-types nil))
 		    &body body)

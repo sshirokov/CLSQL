@@ -15,8 +15,8 @@
 
 PKG	:= clsql
 DEBPKG	:= cl-sql
-SUBDIRS	:= sql uffi base db-mysql db-aodbc \
-	   db-postgresql db-postgresql-socket 
+SUBDIRS	:= sql tests uffi base db-mysql db-aodbc \
+	   db-postgresql db-postgresql-socket db-sqlite
 DOCSUBDIRS:=doc
 
 include Makefile.common

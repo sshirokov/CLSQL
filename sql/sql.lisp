@@ -27,11 +27,6 @@
   (execute-command (sql-output expr database) :database database)
   (values))
 
-(defmethod explain ((expr %sql-expression) &key (database *default-database*))
-  (let ((expression (sql-output expr database)))
-    (format *standard-output* "explain: ~S~%" expression)
-    (execute-command (concatenate 'string "explain " expression))))
-
 
 (defmethod query ((expr %sql-expression) &key (database *default-database*)
                   (result-types nil) (flatp nil))
@@ -44,11 +39,11 @@
   (unless (is-database-open database)
     (database-reconnect database))
   (dolist (table (list-tables database))
-    (drop-table table database))
+    (drop-table table :database database))
   (dolist (index (list-indexes database))
-    (drop-index index database))
+    (drop-index index :database database))
   (dolist (seq (list-sequences database))
-    (drop-sequence seq database)))
+    (drop-sequence seq :database database)))
 
 (defun print-query (query-exp &key titles (formats t) (sizes t) (stream t)
 			      (database *default-database*))
