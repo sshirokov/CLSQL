@@ -126,7 +126,7 @@
     :int
   (srvhp        :pointer-void)                  ; oci-server
   (errhp        :pointer-void)                  ; oci-error
-  (dblink       :cstring)               ; :in
+  (dblink       :cstring)        ; :in
   (dblink-len   :unsigned-long)          ; int
   (mode         :unsigned-long))         ; int
 
