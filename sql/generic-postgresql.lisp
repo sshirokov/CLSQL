@@ -27,25 +27,11 @@
   (declare (ignore type args database))
   "VARCHAR")
 
-(defmethod database-get-type-specifier ((type (eql 'simple-base-string)) args database
-					(db-type (eql :postgresql)))
-  (declare (ignore database))
-  (if args
-      (format nil "VARCHAR(~A)" (car args))
-      "VARCHAR"))
-
-(defmethod database-get-type-specifier ((type (eql 'simple-string)) args database
-					(db-type (eql :postgresql)))
-  (declare (ignore database))
-  (if args
-      (format nil "VARCHAR(~A)" (car args))
-      "VARCHAR"))
-
 (defmethod database-get-type-specifier ((type (eql 'string)) args database
 					(db-type (eql :postgresql)))
   (declare (ignore database))
   (if args
-      (format nil "VARCHAR(~A)" (car args))
+      (format nil "CHAR(~A)" (car args))
       "VARCHAR"))
 
 (defmethod database-get-type-specifier ((type (eql 'wall-time)) args database
