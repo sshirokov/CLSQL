@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-uffi.asd,v 1.2 2002/08/18 04:39:59 kevin Exp $
+;;;; $Id: clsql-uffi.asd,v 1.3 2002/08/23 19:39:56 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -23,10 +23,10 @@
 ;;; System definition
 
 (defsystem clsql-uffi
-    :default-component-class clsql-cl-source-file
-    :pathname "cl-library:clsql-uffi;"
-    :components ((:file "clsql-uffi-package")
-		 (:file "clsql-uffi-loader" :depends-on ("clsql-uffi-package"))
-		 (:file "clsql-uffi" :depends-on ("clsql-uffi-loader")))
-    :depends-on (:uffi))
+  :default-component-class clsql-cl-source-file
+  :pathname #.(format nil "~A:clsql-uffi;" +clsql-logical-host+)
+  :components ((:file "clsql-uffi-package")
+	       (:file "clsql-uffi-loader" :depends-on ("clsql-uffi-package"))
+	       (:file "clsql-uffi" :depends-on ("clsql-uffi-loader")))
+  :depends-on (:uffi))
 

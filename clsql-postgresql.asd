@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id: clsql-postgresql.asd,v 1.1 2002/08/18 02:57:50 kevin Exp $
+;;;; $Id: clsql-postgresql.asd,v 1.2 2002/08/23 19:39:56 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
@@ -20,12 +20,12 @@
 (in-package :asdf)
 
 (defsystem clsql-postgresql
-    :default-component-class clsql-cl-source-file
-    :pathname "cl-library:clsql-postgresql;"
-    :components ((:file "postgresql-package")
-		 (:file "postgresql-loader" :depends-on ("postgresql-package"))
-		 (:file "postgresql-api" :depends-on ("postgresql-loader"))
-		 (:file "postgresql-sql" :depends-on ("postgresql-api"))
-		 (:file "postgresql-usql" :depends-on ("postgresql-sql")))
-    :depends-on (:uffi :clsql-base :clsql-uffi))
+  :default-component-class clsql-cl-source-file
+  :pathname #.(format nil "~A:clsql-postgresql;" +clsql-logical-host+)
+  :components ((:file "postgresql-package")
+	       (:file "postgresql-loader" :depends-on ("postgresql-package"))
+	       (:file "postgresql-api" :depends-on ("postgresql-loader"))
+	       (:file "postgresql-sql" :depends-on ("postgresql-api"))
+	       (:file "postgresql-usql" :depends-on ("postgresql-sql")))
+  :depends-on (:uffi :clsql-base :clsql-uffi))
 
