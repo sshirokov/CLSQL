@@ -1,3 +1,9 @@
+18 May 2004 Marcus Pearce (m.t.pearce@city.ac.uk) 
+	* TODO: moved notes about backends to doc/TODO. 
+	* doc/TODO: added notes about backends and select extensions. 
+	* sql/base-classes.lisp: remove obsolete schema slot in database 
+	class. 
+	
 16 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* db-oracle/oracle-api: Add OCIServerVersion
 	* db-oracle/oracle-sql: Query and store server version on connect

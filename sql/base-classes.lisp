@@ -33,7 +33,6 @@
    (result-recording-stream :accessor result-recording-stream :initform nil)
    (record-caches :accessor record-caches :initform nil)
    (view-classes :accessor database-view-classes :initform nil)
-   (schema :accessor database-schema :initform nil)
    (transaction-level :initform 0 :accessor transaction-level)
    (transaction :initform nil :accessor transaction)
    (conn-pool :initform nil :initarg :conn-pool :accessor conn-pool)

@@ -30,17 +30,3 @@ POSSIBLE EXTENSIONS
 * add support for prepared statements
 * port Oracle backend to UFFI
 
-
-NOTES ABOUT THE BACKENDS
-
-MYSQL 
-
-drop-index:   requires a table to be specified with the :from keyword parameter
-views:        mysql does not support views  
-queries:      nested subqueries are not supported
-syntax:       doesn't support the sql concatenation operator (||). 
-
-SQLITE 
-
-create-view:  column-list parameter not supported 
-syntax:       doesn't support the sql SUBSTRING operator. 
