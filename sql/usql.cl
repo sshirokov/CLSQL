@@ -8,7 +8,7 @@
 ;;;; Programmers:   Kevin M. Rosenberg and onShore Development Inc
 ;;;; Date Started:  Mar 2002
 ;;;;
-;;;; $Id: usql.cl,v 1.4 2002/04/06 22:27:41 kevin Exp $
+;;;; $Id: usql.cl,v 1.5 2002/04/06 22:41:37 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and onShore Development Inc
@@ -119,9 +119,6 @@ specifies the database to operation on, defaulting to
 
 (defvar *sql-stream* nil
   "stream which accumulates SQL output")
-
-(defclass %sql-expression ()
-  ())
 
 (defmethod output-sql ((expr %sql-expression) &optional
                        (database *default-database*))
