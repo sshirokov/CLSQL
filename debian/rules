@@ -28,7 +28,7 @@ srcs		:= sql/pool.cl sql/sql.cl sql/transactions.cl sql/utils.cl sql/functional.
 srcs-cmucl-compat := $(wildcard cmucl-compat/*.cl)
 srcs-base	:= sql/package.cl sql/db-interface.cl sql/classes.cl sql/conditions.cl
 srcs-base-uffi	:= $(wildcard interfaces/clsql-uffi/*.cl) $(wildcard interfaces/clsql-uffi/*.so)
-srcs-mysql	:= $(wildcard interfaces/mysql/*.cl) $(wildcards interfaces/mysql/*.so)
+srcs-mysql	:= $(wildcard interfaces/mysql/*.cl) $(wildcard interfaces/mysql/*.so)
 srcs-pg		:= $(wildcard interfaces/postgresql/*.cl)
 srcs-pg-socket	:= $(wildcard interfaces/postgresql-socket/*.cl)
 srcs-aodbc	:= $(wildcard interfaces/aodbc/*.cl)
@@ -106,6 +106,15 @@ install: build
 	gzip doc/cl-sql.pdf
 	$(INSTALL) $(INSTALLFLAGS) doc/cl-sql.pdf.gz $(doc-dir)
 	rm -f doc/cl-sql.pdf.gz
+
+#	From UncommonSQL Debian package: build prerm postinst from templates
+	set -e ;\
+	for p in $(all-pkgs); do \
+                echo "processing maintainer scripts for $$p" ;\
+		l=`echo $$p | sed -e "s/^cl-//;"` ;\
+		sed -e "s/%%/$$l/;" debian/prerm.template > debian/$$p.prerm ;\
+		sed -e "s/%%/$$l/;" debian/postinst.template > debian/$$p.postinst ;\
+	done
 
 
 # Build architecture-independent files here.
