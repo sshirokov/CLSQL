@@ -16,13 +16,15 @@
       transaction blocks, committing or rolling back changes made and
       controlling autocommit behaviour.
     </para>
-    <note> 
+    <note>
+      <para>
       In contrast to &commonsql;, &clsql;, by default, starts in
       transaction AUTOCOMMIT mode (see <link
       linkend="set-autocommit"><function>set-autocommit</function></link>).
       To begin a transaction in autocommit mode, <link
       linkend="start-transaction"><function>start-transaction</function></link>
       has to be called explicitly.
+      </para>
     </note> 
   </partintro>
 
@@ -753,8 +755,9 @@
             object</glossterm>. This will default to the value
             of <symbol>*default-database*</symbol>.</para>
           </listitem>
-<varlistentry>
-          <term><parameter>body</parameter></term>
+	</varlistentry>
+	<varlistentry>
+	  <term><parameter>body</parameter></term>
           <listitem>
             <para>
               A body of Lisp code. 
@@ -766,7 +769,6 @@
           <listitem>
             <para>The result of executing <parameter>body</parameter>.</para>
           </listitem>
-        </varlistentry>
         </varlistentry>
       </variablelist>
     </refsect1>

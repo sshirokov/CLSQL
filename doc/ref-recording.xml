@@ -612,16 +612,16 @@
             </para>
           </listitem>
         </varlistentry>              
-        <varlistentry>
-          <term><parameter>type</parameter></term>
-          <varlistentry>
-          <term><parameter>stream</parameter></term>
-          <listitem>
-            <para>
-              A stream or &t;. 
-            </para>
-          </listitem>
-        </varlistentry> 
+	<varlistentry>
+	  <term><parameter>stream</parameter></term>
+	  <listitem>
+	    <para>
+	      A stream or &t;. 
+	    </para>
+	  </listitem>
+	</varlistentry> 
+	<varlistentry>
+	  <term><parameter>type</parameter></term>
         <listitem>
           <para>
             One of the following keyword symbols:

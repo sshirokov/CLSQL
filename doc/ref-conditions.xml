@@ -28,7 +28,7 @@
       <refentrytitle>*BACKEND-WARNING-BEHAVIOR*</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Variable</emphasis> <emphasis role="bold">*BACKEND-WARNING-BEHAVIOR*</emphasis></refname>
+      <refname>*BACKEND-WARNING-BEHAVIOR*</refname>
       <refpurpose>Controls behaviour on warnings from underlying RDBMS.</refpurpose>
       <refclass>Variable</refclass>
     </refnamediv>
@@ -44,11 +44,14 @@
       <para><symbol>:warn</symbol></para>
     </refsect1>
     <refsect1>
-      <title>Description</title> Action to perform on warning messages
-      from backend. Default is to <symbol>:warn</symbol>. May also be
-      set to <symbol>:error</symbol> to signal an error or
-      <symbol>:ignore</symbol> or &nil; to silently ignore the
-      warning.
+      <title>Description</title>
+      <para>
+	Action to perform on warning messages
+	from backend. Default is to <symbol>:warn</symbol>. May also be
+	set to <symbol>:error</symbol> to signal an error or
+	<symbol>:ignore</symbol> or &nil; to silently ignore the
+	warning.
+      </para>
     </refsect1>
     <refsect1>
       <title>Examples</title>
@@ -76,7 +79,7 @@
       <refentrytitle>SQL-CONDITION</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Condition Type</emphasis> <emphasis role="bold"><emphasis>Condition Type</emphasis> <emphasis role="bold">SQL-CONDITION</emphasis></emphasis></refname>
+      <refname>SQL-CONDITION</refname>
       <refpurpose>the super-type of all
       &clsql;-specific
       conditions</refpurpose>
@@ -113,7 +116,7 @@
       <refentrytitle>SQL-ERROR</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Condition Type</emphasis> <emphasis role="bold">SQL-ERROR</emphasis></refname>
+      <refname>SQL-ERROR</refname>
       <refpurpose>the super-type of all
       &clsql;-specific
       errors</refpurpose>
@@ -154,7 +157,7 @@
       <refentrytitle>SQL-WARNING</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Condition Type</emphasis> <emphasis role="bold">SQL-WARNING</emphasis></refname>
+      <refname>SQL-WARNING</refname>
       <refpurpose>the super-type of all
       &clsql;-specific
       warnings</refpurpose>
@@ -192,7 +195,7 @@
       <refentrytitle>SQL-DATABASE-WARNING</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Condition Type</emphasis> <emphasis role="bold">SQL-DATABASE-WARNING</emphasis></refname>
+      <refname>SQL-DATABASE-WARNING</refname>
       <refpurpose>Used to warn while accessing a 
       &clsql; database.</refpurpose>
       <refclass>Condition Type</refclass>
@@ -245,7 +248,7 @@
       <refentrytitle>SQL-USER-ERROR</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Condition Type</emphasis> <emphasis role="bold">SQL-USER-ERROR</emphasis></refname>
+      <refname>SQL-USER-ERROR</refname>
       <refpurpose>condition representing errors because of invalid
       parameters from the library user.</refpurpose>
       <refclass>Condition Type</refclass>
@@ -301,7 +304,7 @@
       <refentrytitle>SQL-DATABASE-ERROR</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Condition Type</emphasis> <emphasis role="bold">SQL-DATABASE-ERROR</emphasis></refname>
+      <refname>SQL-DATABASE-ERROR</refname>
       <refpurpose>condition representing errors during query or
       command execution</refpurpose>
       <refclass>Condition Type</refclass>
@@ -380,7 +383,7 @@
       <refentrytitle>SQL-CONNECTION-ERROR</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Condition Type</emphasis> <emphasis role="bold">SQL-CONNECTION-ERROR</emphasis></refname>
+      <refname>SQL-CONNECTION-ERROR</refname>
       <refpurpose>condition representing errors during
       connection</refpurpose>
       <refclass>Condition Type</refclass>
@@ -471,7 +474,7 @@
       <refentrytitle>SQL-DATABASE-DATA-ERROR</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Condition Type</emphasis> <emphasis role="bold">SQL-DATABASE-DATA-ERROR</emphasis></refname>
+      <refname>SQL-DATABASE-DATA-ERROR</refname>
       <refpurpose>Used to signal an error with the SQL data passed
       to a database.</refpurpose>
       <refclass>Condition Type</refclass>
@@ -555,7 +558,7 @@
       <refentrytitle>SQL-TEMPORARY-ERROR</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Condition Type</emphasis> <emphasis role="bold">SQL-TEMPORARY-ERROR</emphasis></refname>
+      <refname>SQL-TEMPORARY-ERROR</refname>
       <refpurpose>Used to signal a temporary error in the database
       backend.</refpurpose>
       <refclass>Condition Type</refclass>
@@ -635,7 +638,7 @@
       <refentrytitle>SQL-TIMEOUT-ERROR</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Condition Type</emphasis> <emphasis role="bold">SQL-TIMEOUT-ERROR</emphasis></refname>
+      <refname>SQL-TIMEOUT-ERROR</refname>
       <refpurpose>condition representing errors when a connection
       times out.</refpurpose>
       <refclass>Condition Type</refclass>
@@ -722,7 +725,7 @@
       <refentrytitle>SQL-FATAL-ERROR</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Condition Type</emphasis> <emphasis role="bold">SQL-FATAL-ERROR</emphasis></refname>
+      <refname>SQL-FATAL-ERROR</refname>
       <refpurpose>condition representing a fatal error in a database
       connection</refpurpose>
       <refclass>Condition Type</refclass>

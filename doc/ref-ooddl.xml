@@ -24,8 +24,9 @@
       and SQL tables can be deleted with <link
       linkend="drop-view-from-class"><function>drop-view-from-class</function></link>.
     </para>
-    <note>The above functions refer to the Lisp <emphasis>view</emphasis> of the SQL
-    table. This Lisp view should not be confused with SQL <function>VIEW</function> statement.
+    <note>
+      <para>The above functions refer to the Lisp <emphasis>view</emphasis> of the SQL
+    table. This Lisp view should not be confused with SQL <function>VIEW</function> statement.</para>
     </note>
   </partintro>
 
@@ -50,16 +51,16 @@
       of all &clsql; View Classes.</para>
     </refsect1>
     <refsect1>
-      <title class="contenttitle">Class details</title>
+      <title>Class details</title>
       <programlisting>(defclass STANDARD-DB-OBJECT ()(...))</programlisting>
     </refsect1>
     <refsect1>
-      <title class="contenttitle">Slots</title>
+      <title>Slots</title>
       <para>
 	<simplelist> 
-	  <property>slot VIEW-DATABASE is of type (OR NULL DATABASE)
+	  <member>slot VIEW-DATABASE is of type (OR NULL DATABASE)
 	  which stores the associated database for the
-	  instance.</property>
+	  instance.</member>
 	</simplelist> 
       </para>
     </refsect1>
@@ -881,7 +882,7 @@
       <title>Affected by</title>
       <para>
 	<simplelist>
-	  Which view classes have been defined in the Lisp session.
+	  <member>Which view classes have been defined in the Lisp session.</member>
 	</simplelist>
       </para>
     </refsect1>

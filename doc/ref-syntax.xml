@@ -847,80 +847,73 @@
       </para> 
       <simplelist> 
         <!-- CommonSQL Compatible --> 
-        <member><function>any
-        </function></member>, 
-        <member><function>some 
-        </function></member>, 
-        <member><function>all
-        </function></member>, 
-        <member><function>not
-        </function></member>, 
-        <member><function>union
-        </function></member>, 
-        <member><function>intersect
-        </function></member>, 
-        <member><function>minus
-        </function></member>, 
+        <member><function>any</function></member> 
+        <member><function>some</function></member> 
+        <member><function>all</function></member> 
+        <member><function>not</function></member> 
+        <member><function>union</function></member> 
+        <member><function>intersect</function></member> 
+        <member><function>minus</function></member>
         <member><function>except 
-        </function></member>, 
+        </function></member> 
         <member><function>order-by 
-        </function></member>, 
+        </function></member> 
         <member><function>null
-        </function></member>, 
+        </function></member> 
         <member><function>*
-        </function></member>, 
+        </function></member> 
         <member><function>+
-        </function></member>, 
+        </function></member> 
         <member><function>/
-        </function></member>, 
+        </function></member> 
         <member><function>-
-        </function></member>, 
+        </function></member> 
         <member><function>like
-        </function></member>, 
+        </function></member> 
         <member><function>and
-        </function></member>, 
+        </function></member> 
         <member><function>or
-        </function></member>, 
+        </function></member> 
         <member><function>in
-        </function></member>, 
+        </function></member> 
         <member><function>substr 
-        </function></member>, 
+        </function></member> 
         <member><function>|| 
-        </function></member>, 
+        </function></member> 
         <member><function>=
-        </function></member>, 
+        </function></member> 
         <member><function>&lt;
-        </function></member>, 
+        </function></member> 
         <member><function>>
-        </function></member>, 
+        </function></member> 
         <member><function>>=
-        </function></member>, 
+        </function></member> 
         <member><function>&lt;=
-        </function></member>, 
+        </function></member> 
         <member><function>&lt;>
-        </function></member>, 
+        </function></member> 
         <member><function>count
-        </function></member>, 
+        </function></member> 
         <member><function>max
-        </function></member>, 
+        </function></member> 
         <member><function>min
-        </function></member>, 
+        </function></member> 
         <member><function>avg
-        </function></member>, 
+        </function></member> 
         <member><function>sum
-        </function></member>, 
+        </function></member> 
         <member><function>function 
-        </function></member>, 
+        </function></member> 
         <member><function>between 
-        </function></member>, 
+        </function></member> 
         <member><function>distinct 
-        </function></member>, 
+        </function></member> 
         <member><function>nvl 
-        </function></member>, 
+        </function></member> 
         <member><function>slot-value
-        </function></member>, 
+        </function></member> 
         <member><function>userenv 
-        </function></member>, 
+        </function></member> 
       </simplelist> 
       <para>
         as well as the pseudo-operator <function>function</function>. 
@@ -930,30 +923,30 @@
       <simplelist> 
         <!-- CLSQL Extensions --> 
         <member><function>concat
-        </function></member>, 
+        </function></member> 
         <member><function>substring 
-        </function></member>, 
+        </function></member> 
         <member><function>limit 
-        </function></member>, 
+        </function></member> 
         <member><function>group-by
-        </function></member>, 
+        </function></member> 
         <member><function>having
-        </function></member>, 
+        </function></member> 
         <member><function>not-null
-        </function></member>, 
+        </function></member> 
         <member><function>exists
-        </function></member>, 
+        </function></member> 
         <member><function>uplike
-        </function></member>, 
+        </function></member> 
         <member><function>is
-        </function></member>, 
+        </function></member> 
         <member><function>==
-        </function></member>, 
+        </function></member> 
         <member><function>the 
-        </function></member>, 
+        </function></member> 
         <member><function>coalesce 
-        </function></member>, 
-        <member><function>view-class.
+        </function></member> 
+        <member><function>view-class
         </function></member> 
       </simplelist>
       </para>

@@ -371,8 +371,7 @@
     </refnamediv>
     <refsect1>
       <title>Syntax</title>
-	<title>Syntax</title>
-	<synopsis><function>connect</function> <replaceable>connection-spec</replaceable> &amp;key <replaceable>if-exists</replaceable> <replaceable>database-type</replaceable> <replaceable>pool</replaceable> <replaceable>make-default</replaceable> => <returnvalue>database</returnvalue></synopsis>
+      <synopsis><function>connect</function> <replaceable>connection-spec</replaceable> &amp;key <replaceable>if-exists</replaceable> <replaceable>database-type</replaceable> <replaceable>pool</replaceable> <replaceable>make-default</replaceable> => <returnvalue>database</returnvalue></synopsis>
     </refsect1>
     <refsect1>
       <title>Arguments and Values</title>

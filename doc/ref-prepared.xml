@@ -20,7 +20,7 @@
       <refentrytitle>PREPARE-SQL</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">PREPARE-SQL</emphasis></refname>
+      <refname>>PREPARE-SQL</refname>
       <refpurpose>Create a prepared statement.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -97,7 +97,7 @@
       <refentrytitle>RUN-PREPARED-SQL</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">RUN-PREPARED-SQL</emphasis></refname>
+      <refname>RUN-PREPARED-SQL</refname>
       <refpurpose>Execute a prepared statement.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -165,7 +165,7 @@
       <refentrytitle>FREE-PREPARED-SQL</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">FREE-PREPARED-SQL</emphasis></refname>
+      <refname>FREE-PREPARED-SQL</refname>
       <refpurpose>Delete a prepared statement object.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>
@@ -233,7 +233,7 @@
       <refentrytitle>BIND-PARAMETER</refentrytitle>
     </refmeta>
     <refnamediv>
-      <refname><emphasis>Function</emphasis> <emphasis role="bold">BIND-PARAMETER</emphasis></refname>
+      <refname>BIND-PARAMETER</refname>
       <refpurpose>Bind a parameter in a prepared statement.</refpurpose>
       <refclass>Function</refclass>
     </refnamediv>

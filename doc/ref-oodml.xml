@@ -122,7 +122,7 @@
       <para>
 	This special variable provides the default value for the
 	<parameter>max-len</parameter> argument of the function <link
-	linkend="update-object-joins"><function>update-object-joins</function></link>.
+	linkend="update-objects-joins"><function>update-object-joins</function></link>.
       </para>
     </refsect1>
     <refsect1>
@@ -138,7 +138,7 @@
     <refsect1>
       <title>See Also</title>
       <simplelist>
-	<member><link linkend="update-object-joins"><function>update-object-joins</function></link></member>
+	<member><link linkend="update-objects-joins"><function>update-object-joins</function></link></member>
       </simplelist>
     </refsect1>
     <refsect1>
@@ -335,7 +335,7 @@
       appropriate table of <parameter>database</parameter> which
       defaults to the database associated with
       <parameter>object</parameter> or, if <parameter>object</parameter> is not associated
-      with a database, <variable>*default-database*</variable>.  Join slots are updated but
+      with a database, <varname>*default-database*</varname>.  Join slots are updated but
       instances of the class on which the join is made are not
       updated.
       </para>
@@ -356,7 +356,7 @@
       <title>Affected by</title>
       <para>
         <simplelist>
-	  Data in SQL database.
+	  <member>Data in SQL database.</member>
         </simplelist>
       </para>
     </refsect1>
@@ -369,9 +369,6 @@
     <refsect1>
       <title>See Also</title>
       <para>
-        <simplelist>
-          <!-- see also --> 
-        </simplelist>
       </para>
     </refsect1>
     <refsect1>
@@ -471,11 +468,9 @@
       <title>Affected by</title>
       <para>
         <simplelist>
-      <simplelist>
-	<member><link
-	linkend="default-update-objects-max-len"><variable>*default-update-objects-max-len*</variable></link></member>
-      </simplelist>
-        </simplelist>
+	  <member><link
+	  linkend="default-update-objects-max-len"><varname>*default-update-objects-max-len*</varname></link></member>
+	</simplelist>
       </para>
     </refsect1>
     <refsect1>
@@ -488,7 +483,8 @@
       <title>See Also</title>
       <para>
         <simplelist>
-          <!-- see also --> 
+	  <member><link
+	  linkend="default-update-objects-max-len"><varname>*default-update-objects-max-len*</varname></link></member>
         </simplelist>
       </para>
     </refsect1>
@@ -831,7 +827,7 @@
       defaults to the database associated with
       <parameter>object</parameter> or, if
       <parameter>object</parameter> is not associated with a database,
-      <variable>*default-database*</variable>.  Join slots are updated
+      <varname>*default-database*</varname>.  Join slots are updated
       but instances of the class on which the join is made are not
       updated.
       </para>
@@ -865,9 +861,6 @@
     <refsect1>
       <title>See Also</title>
       <para>
-        <simplelist>
-          <!-- see also --> 
-        </simplelist>
       </para>
     </refsect1>
     <refsect1>
