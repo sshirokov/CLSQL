@@ -1,3 +1,11 @@
+01 Sep 2004 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.0.1 Release
+	* tests/test-init.lisp: Add second join class to employee-address
+	to test a class with two join slots.
+	* sql/oodml.lisp: Fix find-all function for a class with multiple
+	join slots
+	* TODO: Remove need to test/fix multiple join classes
+	
 27 Aug 2004 Kevin Rosenberg <kevin@rosenberg.net>
 	* db-mysql/Makefile, db-mysql/mysql-loader.lisp: accept patch
 	from Jon Buffington for file locations on Darwin.

@@ -812,10 +812,29 @@ maximum of MAX-LEN instances updated in each query."
 		    (join-vals (subseq vals (list-length selects)))
 		    (joins (mapcar #'(lambda (c) (when c (make-instance c :view-database database)))
 				   jclasses)))
-	       ;;(format t "db-vals: ~S, join-values: ~S~%" db-vals join-vals)
+	       
+	       ;;(format t "joins: ~S~%db-vals: ~S~%join-values: ~S~%selects: ~S~%immediate-selects: ~S~%" 
+	       ;;joins db-vals join-vals selects immediate-selects)
+	       
 	       ;; use refresh keyword here 
 	       (setf obj (get-slot-values-from-view obj (mapcar #'car selects) db-vals))
-	       (mapc #'(lambda (jc) (get-slot-values-from-view jc (mapcar #'car immediate-selects) join-vals))
+	       (mapc #'(lambda (jo)
+			 ;; find all immediate-select slots and join-vals for this object
+			 (let* ((slots (class-slots (class-of jo)))
+				(pos-list (remove-if #'null
+						     (mapcar
+						      #'(lambda (s)
+							  (position s immediate-selects
+								    :key #'car
+								    :test #'eq))
+						      slots))))
+			   (get-slot-values-from-view jo
+						      (mapcar #'car 
+							      (mapcar #'(lambda (pos)
+									  (nth pos immediate-selects))
+								      pos-list))
+						      (mapcar #'(lambda (pos) (nth pos join-vals))
+							      pos-list))))
 		     joins)
 	       (mapc
 		#'(lambda (jc) 
@@ -882,17 +901,22 @@ maximum of MAX-LEN instances updated in each query."
 	   (fullsels (apply #'append (mapcar #'append sels immediate-join-sels)))
 	   (sel-tables (collect-table-refs where))
 	   (tables (remove-if #'null
-			      (remove-duplicates (append (mapcar #'table-sql-expr sclasses)
-							 (mapcar #'(lambda (jcs)
-								     (mapcan #'(lambda (jc)
-										 (when jc (table-sql-expr jc)))
-									     jcs))
-								 immediate-join-classes)
-							 sel-tables)
-						 :test #'tables-equal)))
+			      (remove-duplicates
+			       (append (mapcar #'table-sql-expr sclasses)
+				       (mapcan #'(lambda (jc-list)
+						   (mapcar
+						    #'(lambda (jc) (when jc (table-sql-expr jc)))
+						    jc-list))
+					       immediate-join-classes)
+				       sel-tables)
+			       :test #'tables-equal)))
 	   (order-by-slots (mapcar #'(lambda (ob) (if (atom ob) ob (car ob)))
-				   (listify order-by))))
-				 
+				   (listify order-by)))
+	   (join-where nil))
+	   
+
+      ;;(format t "sclasses: ~W~%ijc: ~W~%tables: ~W~%" sclasses immediate-join-classes tables)
+      
       (dolist (ob order-by-slots)
 	(when (and ob (not (member ob (mapcar #'cdr fullsels)
 				   :test #'ref-equal)))
@@ -911,25 +935,34 @@ maximum of MAX-LEN instances updated in each query."
 		    (mapcar
 		     #'(lambda (jclass jslot)
 			 (let ((dbi (view-class-slot-db-info jslot)))
-			   (setq where
-				 (append
-				  (list (sql-operation '==
-						      (sql-expression
-						       :attribute (gethash :foreign-key dbi)
-						       :table (view-table jclass))
-						      (sql-expression
-						       :attribute (gethash :home-key dbi)
-						       :table (view-table vclass))))
-				  (when where (listify where))))))
+			   (setq join-where
+			     (append
+			      (list (sql-operation '==
+						   (sql-expression
+						    :attribute (gethash :foreign-key dbi)
+						    :table (view-table jclass))
+						   (sql-expression
+						    :attribute (gethash :home-key dbi)
+						    :table (view-table vclass))))
+			      (when join-where (listify join-where))))))
 		     jclasses jslots)))
 	      sclasses immediate-join-classes immediate-join-slots)
+      (when where 
+	(setq where (listify where)))
+      (cond
+       ((and where join-where)
+	(setq where (list (apply #'sql-and where join-where))))
+       ((and (null where) (> (length join-where) 1))
+	(setq where (list (apply #'sql-and join-where)))))
+      
       (let* ((rows (apply #'select 
 			  (append (mapcar #'cdr fullsels)
 				  (cons :from 
 					(list (append (when from (listify from)) 
 						      (listify tables)))) 
 				  (list :result-types result-types)
-				  (when where (list :where where))
+				  (when where
+				    (list :where where))
 				  args)))
 	     (instances-to-add (- (length rows) (length instances)))
 	     (perhaps-extended-instances

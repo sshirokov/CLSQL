@@ -164,6 +164,11 @@
 	    :db-info (:join-class address
 				  :home-key aaddressid
 				  :foreign-key addressid
+				  :retrieval :immediate))
+   (employee :db-kind :join
+	     :db-info (:join-class employee
+				  :home-key aemplid
+				  :foreign-key emplid
 				  :retrieval :immediate)))
   (:base-table "ea_join"))
 
