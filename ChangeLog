@@ -1,4 +1,6 @@
 11 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
+	* db-odbc/odbc-api.lisp: work around return-type bug [spr28889] in
+	Allegro 7.0beta AMD64
 	* db-odbc/*.lisp: Add a layer of indirection to foreign-type
 	of ODBC longs since this type can vary on 64-bit platforms depending
 	upon the compilation options of unixODBC.

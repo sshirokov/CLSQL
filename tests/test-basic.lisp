@@ -47,8 +47,9 @@
 			  (typep float 'double-float)
 			  (if (and (eq :odbc *test-database-type*)
 				   (eq :postgresql *test-database-underlying-type*))
-			      ;; ODBC/Postgresql returns bigints as strings
-			      (stringp bigint)
+			      ;; ODBC/Postgresql may return returns bigints as strings or integer
+			      ;; depending upon the platform
+			      t
 			    (integerp bigint))
 			  (stringp str))
 		    results))))

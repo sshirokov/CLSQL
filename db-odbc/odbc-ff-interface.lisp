@@ -152,7 +152,7 @@
      (cbColNameMax :short)      ; SWORD       cbColNameMax
      (*pcbColName (* :short))         ; SWORD  FAR *pcbColName
      (*pfSqlType (* :short))          ; SWORD  FAR *pfSqlType
-     (*pcbColDef (* :unsigned-int))          ; UDWORD FAR *pcbColDef
+     (*pcbColDef (* #.$ODBC-ULONG-TYPE))          ; UDWORD FAR *pcbColDef
      (*pibScale (* :short))           ; SWORD  FAR *pibScale
      (*pfNullable (* :short))         ; SWORD  FAR *pfNullable
      )

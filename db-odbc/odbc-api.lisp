@@ -128,7 +128,20 @@ as possible second argument) to the desired representation of date/time/timestam
 	     'clsql-base:clsql-odbc-error
 	     :odbc-message error-message
 	     :sql-state sql-state)))
+	 (#.$SQL_NO_DATA_FOUND
+	  (progn ,result-code ,@body))
+	 ;; work-around for Allegro 7.0beta AMD64 which
+	 ;; has for negative numbers
 	 (otherwise
+	  (multiple-value-bind (error-message sql-state)
+	      (handle-error (or ,henv +null-handle-ptr+)
+			    (or ,hdbc +null-handle-ptr+)
+			    (or ,hstmt +null-handle-ptr+))
+            (error
+	     'clsql-base:clsql-odbc-error
+	     :odbc-message error-message
+	     :sql-state sql-state))
+	  #+ignore
           (progn ,result-code ,@body))))))
 
 (defun %new-environment-handle ()
