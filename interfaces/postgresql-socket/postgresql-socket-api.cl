@@ -9,7 +9,7 @@
 ;;;;                
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: postgresql-socket-api.cl,v 1.3 2002/03/25 23:22:07 kevin Exp $
+;;;; $Id: postgresql-socket-api.cl,v 1.4 2002/03/25 23:30:49 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -620,6 +620,12 @@ connection, if it is still open."
 	     (error 'postgresql-fatal-error :connection connection
 		    :message "Received garbled message from backend")))))))
 
+(defun map-into-indexed (result-seq func seq)
+  (dotimes (i (length seq))
+    (declare (fixnum i))
+    (setf (elt result-seq i)
+	  (funcall func (elt seq i) i)))
+  result-seq)
 
 (defun copy-cursor-row (cursor sequence field-types)
   (let* ((connection (postgresql-cursor-connection cursor))
@@ -640,12 +646,12 @@ connection, if it is still open."
 		       (setf (elt sequence i) nil)
 		       (let ((value (read-field socket (nth i field-types))))
 			 (setf (elt sequence i) value)))))
-	       (map-into
+	       (map-into-indexed
 		sequence
-		#'(lambda (null-bit)
+		#'(lambda (null-bit i)
 		    (if (zerop null-bit)
 			nil
-			(read-field socket t)))
+			(read-field socket (nth i field-types))))
 		(read-null-bit-vector socket (length sequence)))))
 	    (#.+binary-row-message+
 	     (error "NYI"))
