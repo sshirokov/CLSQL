@@ -5,11 +5,13 @@
 	* db-postgresql-socket/postgresql-socket-sql.lisp:
 	Honor value of *backend-warning-behavior*
 	* tests/test-fdml.lisp: Remove test of raw boolean value
-	since different backends handle this differently.
-	* tests/test-oodml.lisp: Add test for boolean slot value
+	since different backends handle this differently. Add
+	test for :column attribute.
+	* tests/test-oodml.lisp: Add tests for boolean slot value
+	and for :void-value attribute
 	* tests/test-init.lisp: Use *backend-warning-behavior*
 	to suppress warnings from postgresql about implicitly
-	creating primary key in tables.
+	creating primary key in tables. Add new address table.
 	
 3 May 2004 Kevin Rosenberg (kevin@rosenberg.net)
 	* Version 2.10.7

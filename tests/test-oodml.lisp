@@ -66,6 +66,24 @@
     (slot-value (caar (clsql:select 'employee :where [= 4 [emplid]])) 'married)
   nil)
 
+(deftest :oodml/select/8
+    (let ((a (caar (clsql:select 'address :where [= 1 [emplid]]))))
+      (values
+       (slot-value a 'street-number)
+       (slot-value a 'street-name)
+       (slot-value a 'city)
+       (slot-value a 'postal-code)))
+  10 "Park Place" "Leningrad" 123)
+
+(deftest :oodml/select/9
+    (let ((a (caar (clsql:select 'address :where [= 2 [emplid]]))))
+      (values
+       (slot-value a 'street-number)
+       (slot-value a 'street-name)
+       (slot-value a 'city)
+       (slot-value a 'postal-code)))
+  nil "" "no city" 0)
+
 ;; tests update-records-from-instance 
 (deftest :oodml/update-records/1
     (values

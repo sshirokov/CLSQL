@@ -117,6 +117,29 @@
   (:base-table company))
 
 
+(def-view-class address ()
+  ((emplid
+    :db-kind :key
+    :db-constraints :not-null
+    :type integer
+    :initarg :emplid)
+   (street-number
+    :type integer
+    :initarg :street-number)
+   (street-name
+    :type (string 30)
+    :void-value ""
+    :initarg :street-name)
+   (city
+    :column "city_field"
+    :void-value "no city"
+    :type (string 30)
+    :initarg :city)
+   (postal-code
+    :column "zip"
+    :type integer
+    :void-value 0
+    :initarg :postal-code)))
 
 (defun test-connect-to-database (db-type spec)
   (when (db-backend-has-create/destroy-db? db-type)
@@ -152,6 +175,8 @@
 (defparameter employee8 nil)
 (defparameter employee9 nil)
 (defparameter employee10 nil)
+(defparameter address1 nil)
+(defparameter address2 nil)
 
 (defun test-initialise-database ()
   (test-basic-initialize)
@@ -161,7 +186,8 @@
 	     :ignore
 	   :warn)))
     (clsql:create-view-from-class 'employee)
-    (clsql:create-view-from-class 'company))
+    (clsql:create-view-from-class 'company)
+    (clsql:create-view-from-class 'address))
 
   (setf company1 (make-instance 'company
 		   :companyid 1
@@ -258,7 +284,17 @@
 		     :birthday (clsql-base:get-time)
 		     :first-name "Vladamir"
 		     :last-name "Putin"
-		     :email "putin@soviet.org"))
+		     :email "putin@soviet.org")
+
+	address1 (make-instance 'address
+				:emplid 1
+				:street-number 10
+				:street-name "Park Place"
+				:city "Leningrad"
+				:postal-code 123)
+
+	address2 (make-instance 'address
+				:emplid 2))
   
   ;; sleep to ensure birthdays are no longer at current time
   (sleep 2) 
@@ -297,7 +333,9 @@
   (clsql:update-records-from-instance employee8)
   (clsql:update-records-from-instance employee9)
   (clsql:update-records-from-instance employee10)
-  (clsql:update-records-from-instance company1))
+  (clsql:update-records-from-instance company1)
+  (clsql:update-records-from-instance address1)
+  (clsql:update-records-from-instance address2))
 
 (defvar *error-count* 0)
 (defvar *error-list* nil)

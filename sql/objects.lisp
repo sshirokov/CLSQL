@@ -397,7 +397,7 @@ superclass of the newly-defined View Class."
 	(let ((qualifier (key-qualifier-for-instance instance :database vd)))
 	  (delete-records :from vt :where qualifier :database vd)
 	  (setf (slot-value instance 'view-database) nil))
-	(error 'clsql-no-database-error nil))))
+	(error 'clsql-base::clsql-no-database-error :database nil))))
 
 (defmethod update-instance-from-records ((instance standard-db-object)
                                          &key (database *default-database*))
@@ -795,7 +795,7 @@ superclass of the newly-defined View Class."
 		   objects))))
     (let* ((*db-deserializing* t)
 	   (*default-database* (or database
-				   (error 'clsql-no-database-error nil)))
+				   (error 'clsql-base::clsql-no-database-error :database nil)))
 	   (sclasses (mapcar #'find-class view-classes))
 	   (sels (mapcar #'generate-selection-list sclasses))
 	   (fullsels (apply #'append sels))

@@ -98,7 +98,7 @@ and signal an clsql-invalid-spec-error if they don't match."
 
 (define-condition clsql-sql-error (clsql-error)
   ((database :initarg :database :reader clsql-sql-error-database)
-   (message :initarg :message :initarg nil :reader clsql-sql-error-message)
+   (message :initarg :message :initform nil :reader clsql-sql-error-message)
    (expression :initarg :expression :initarg nil :reader clsql-sql-error-expression)
    (errno :initarg :errno :initarg nil :reader clsql-sql-error-errno)
    (error :initarg :error :initarg nil :reader clsql-sql-error-error))
