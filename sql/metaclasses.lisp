@@ -78,7 +78,7 @@
 	((typep arg 'sql-ident)
 	 (slot-value arg 'name))
 	((stringp arg)
-	 (intern (symbol-name-default-case arg)))))
+	 (intern arg))))
 
 (defun column-name-from-arg (arg)
   (cond ((symbolp arg)
