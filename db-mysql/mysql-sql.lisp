@@ -8,7 +8,7 @@
 ;;;;                Original code by Pierre R. Mai 
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id: mysql-sql.lisp,v 1.3 2002/10/14 07:10:19 kevin Exp $
+;;;; $Id: mysql-sql.lisp,v 1.4 2003/04/16 21:50:01 kevin Exp $
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
@@ -149,20 +149,20 @@
        (if (zerop (mysql-query mysql-ptr query-native))
 	   (let ((res-ptr (mysql-use-result mysql-ptr)))
 	     (if res-ptr
-		 (let ((num-fields (mysql-num-fields res-ptr)))
-		   (setq types (canonicalize-types 
-				      types num-fields
-				      res-ptr))
-		   (unwind-protect
-		       (loop for row = (mysql-fetch-row res-ptr)
+		 (unwind-protect
+		      (let ((num-fields (mysql-num-fields res-ptr)))
+			(setq types (canonicalize-types 
+				     types num-fields
+				     res-ptr))
+			(loop for row = (mysql-fetch-row res-ptr)
 			      until (uffi:null-pointer-p row)
 			      collect
 			      (loop for i from 0 below num-fields
 				    collect
 				    (convert-raw-field
 				     (uffi:deref-array row '(:array (* :unsigned-char)) i)
-				     types i)))
-		     (mysql-free-result res-ptr)))
+				     types i))))
+		   (mysql-free-result res-ptr))
 	       (error 'clsql-sql-error
 		      :database database
 		      :expression query-expression

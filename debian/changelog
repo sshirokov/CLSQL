@@ -1,3 +1,9 @@
+cl-sql (1.4.4-1) unstable; urgency=low
+
+  * Move unwind-protect mysql backend
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Wed, 16 Apr 2003 15:49:46 -0600
+
 cl-sql (1.4.3-1) unstable; urgency=low
 
   * Rebuild against new libmysql package
