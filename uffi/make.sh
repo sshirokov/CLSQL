@@ -3,7 +3,7 @@
 case "`uname`" in
     Linux) os_linux=1 ;;
     Darwin) os_darwin=1 ;;
-    SunOs) os_sunos=1 ;;
+    SunOS) os_sunos=1 ;;
     AIX) os_aix=1 ;;
     *) echo "Unable to identify uname " `uname`
        exit 1 ;;	
