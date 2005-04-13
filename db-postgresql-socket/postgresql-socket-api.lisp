@@ -107,10 +107,13 @@ socket interface"
 (defun send-socket-value-string (socket value)
   (declare (type stream socket)
 	   (type string value))
+  #-sb-unicode
   (loop for char across value
-	for code = (char-code char)
-	do (write-byte code socket)
-	finally (write-byte 0 socket))
+        for code = (char-code char)
+        do (write-byte code socket)
+        finally (write-byte 0 socket))
+  #+sb-unicode
+  (write-sequence (sb-ext:string-to-octets value :null-terminate t) socket)
   nil)
 
 (defun send-socket-value-limstring (socket value limit)
@@ -151,10 +154,20 @@ socket interface"
 
 (defun read-socket-value-string (socket)
   (declare (type stream socket))
+  #-sb-unicode
   (with-output-to-string (out)
     (loop for code = (read-byte socket)
-	  until (zerop code)
-	  do (write-char (code-char code) out))))
+          until (zerop code)
+          do (write-char (code-char code) out)))
+  #+sb-unicode
+  (let ((bytes (make-array 64
+                           :element-type '(unsigned-byte 8)
+                           :adjustable t
+                           :fill-pointer 0)))
+    (loop for code = (read-byte socket)
+          until (zerop code)
+          do (vector-push-extend code bytes))
+    (sb-ext:octets-to-string bytes)))
 
 
 (defmacro define-message-sender (name (&rest args) &rest clauses)
@@ -200,15 +213,20 @@ socket interface"
   (int32 key))
 
 
-(defun read-socket-sequence (string stream)
+(defun read-socket-sequence (stream length)
   "KMR -- Added to support reading from binary stream into a string"
-  (declare (string string)
-	   (stream stream)
+  (declare (stream stream)
 	   (optimize (speed 3) (safety 0)))
-  (dotimes (i (length string))
-    (declare (fixnum i))
-    (setf (char string i) (code-char (read-byte stream))))
-  string)
+  #-sb-unicode
+  (let ((result (make-string length)))
+    (dotimes (i (length string) result)
+      (declare (fixnum i))
+      (setf (char string i) (code-char (read-byte stream)))))
+  #+sb-unicode
+  (let ((bytes (make-array length :element-type '(unsigned-byte 8))))
+    (declare (type (simple-array (unsigned-byte 8) (*)) bytes))
+    (read-sequence bytes stream)
+    (sb-ext:octets-to-string bytes)))
 
 
 ;;; Support for encrypted password transmission
@@ -324,7 +342,7 @@ socket interface"
      (let ((sock (make-instance 'sb-bsd-sockets:inet-socket
 				:type :stream
 				:protocol :tcp)))
-       (sb-bsd-sockets:socket-connect 
+       (sb-bsd-sockets:socket-connect
 	sock 
 	(sb-bsd-sockets:host-ent-address
 	 (sb-bsd-sockets:get-host-by-name host)) 
@@ -461,16 +479,14 @@ connection, if it is still open."
 		      (postgresql-connection-password connection))
                       (force-output socket))
 		    (4
-		     (let ((salt (make-string 2)))
-		       (read-socket-sequence salt socket)
+		     (let ((salt (read-socket-sequence socket 2)))
 		       (send-encrypted-password-message
 			socket
 			(crypt-password
 			 (postgresql-connection-password connection) salt)))
                      (force-output socket))
 		    (5
-		     (let ((salt (make-string 4)))
-		       (read-socket-sequence salt socket)
+		     (let ((salt (read-socket-sequence socket 4)))
 		       (let* ((pwd2 (encrypt-md5 (postgresql-connection-password connection)
 						 (postgresql-connection-user connection)))
 			      (pwd (encrypt-md5 pwd2 salt)))
@@ -637,9 +653,7 @@ connection, if it is still open."
       (:double
        (read-double-from-socket socket length))
       (t
-       (let ((result (make-string length)))
-	 (read-socket-sequence result socket)
-	 result)))))
+       (read-socket-sequence socket length)))))
 
 (uffi:def-constant +char-code-zero+ (char-code #\0))
 (uffi:def-constant +char-code-minus+ (char-code #\-))
