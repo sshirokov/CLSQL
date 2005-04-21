@@ -88,18 +88,19 @@ reader syntax is disabled."
 (defun sql-reader-open (stream char)
   (declare (ignore char))
   (let ((sqllist (read-delimited-list #\] stream t)))
-    (handler-case
-	(cond ((string= (write-to-string (car sqllist)) "||")
-	       (cons (sql-operator 'concat-op) (cdr sqllist)))
-	      ((and (= (length sqllist) 1) (eql (car sqllist) '*))
-	       (apply #'generate-sql-reference sqllist))
-	      ((sql-operator (car sqllist))
-	       (cons (sql-operator (car sqllist)) (cdr sqllist)))
-	      (t (apply #'generate-sql-reference sqllist)))
-      (sql-user-error (c)
-	(error 'sql-user-error
-	       :message (format nil "Error ~A occured while attempting to parse '~A' at file position ~A"
-				(sql-user-error-message c) sqllist (file-position stream)))))))
+    (unless *read-suppress*
+      (handler-case
+	  (cond ((string= (write-to-string (car sqllist)) "||")
+		 (cons (sql-operator 'concat-op) (cdr sqllist)))
+		((and (= (length sqllist) 1) (eql (car sqllist) '*))
+		 (apply #'generate-sql-reference sqllist))
+		((sql-operator (car sqllist))
+		 (cons (sql-operator (car sqllist)) (cdr sqllist)))
+		(t (apply #'generate-sql-reference sqllist)))
+	(sql-user-error (c)
+	  (error 'sql-user-error
+		 :message (format nil "Error ~A occured while attempting to parse '~A' at file position ~A"
+				  (sql-user-error-message c) sqllist (file-position stream))))))))
 
 (defun disable-sql-close-syntax ()
   "Internal function that disables the close syntax when leaving
