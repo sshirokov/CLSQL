@@ -39,7 +39,8 @@ set to the right path before compiling or loading the system.")
 		    #+(or 64bit x86-64) "/usr/lib64/"
 		    "/usr/lib/" "/postgresql/lib/"
 		    "/usr/local/pgsql/lib/" "/usr/lib/pgsql/"
-		    "/opt/pgsql/lib/pgsql" "/sw/lib/pgsql/" "/sw/lib/")
+		    "/opt/pgsql/lib/pgsql" "/sw/lib/pgsql/" "/sw/lib/"
+		    "/windows/system32/")
 		  :drive-letters '("C" "D" "E")
 		  #+(or macosx darwin ccl-5.0) :types
 		  #+(or macosx darwin ccl-5.0) '("so" "dylib")

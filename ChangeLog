@@ -1,3 +1,9 @@
+26 Apr 2005 Kevin Rosenberg <kevin@rosenberg.net>
+	* db-postgresql/postgresql-loader.lisp: Add library path for Windows
+	
+25 Apr 2005 Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/csql.lisp: Update URL for "SQL for Web Dummies" [Sean Champ]
+	
 24 Apr 2005 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.1.11
 	* sql/syntax: Commit patch from Alan Shields to supress reader
