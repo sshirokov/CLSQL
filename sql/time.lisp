@@ -62,7 +62,8 @@
                       (:constructor %make-wall-time)
                       (:print-function %print-wall-time))
   (mjd 0 :type fixnum)
-  (second 0 :type fixnum))
+  (second 0 :type fixnum)
+  (usec 0 :type fixnum))
 
 (defun %print-wall-time (time stream depth)
   (declare (ignore depth))
@@ -75,7 +76,8 @@
   (day 0 :type fixnum)
   (hour 0 :type fixnum)
   (second 0 :type fixnum)
-  (minute 0 :type fixnum))
+  (minute 0 :type fixnum)
+  (usec 0 :type fixnum))
 
 (defun %print-duration (duration stream depth)
   (declare (ignore depth))
@@ -96,14 +98,14 @@
 ;; Constructors
 
 (defun make-time (&key (year 0) (month 1) (day 1) (hour 0) (minute 0)
-                       (second 0) (offset 0))
+                       (second 0) (usec 0) (offset 0))
   (let ((mjd (gregorian-to-mjd month day year))
         (sec (+ (* hour 60 60)
                 (* minute 60)
                 second (- offset))))
     (multiple-value-bind (day-add raw-sec)
         (floor sec (* 60 60 24))
-      (%make-wall-time :mjd (+ mjd day-add) :second raw-sec))))
+      (%make-wall-time :mjd (+ mjd day-add) :second raw-sec :usec usec))))
 
 (defun copy-time (time)
   (%make-wall-time :mjd (time-mjd time)
@@ -121,17 +123,20 @@
   (utime->time (get-universal-time)))
 
 (defun make-duration (&key (year 0) (month 0) (day 0) (hour 0) (minute 0)
-                           (second 0))
-  (multiple-value-bind (minute-add second-60)
-      (floor second 60)
-    (multiple-value-bind (hour-add minute-60)
-        (floor (+ minute minute-add) 60)
-      (multiple-value-bind (day-add hour-24)
-          (floor (+ hour hour-add) 24)
-        (%make-duration :year year :month month :day (+ day day-add)
-                        :hour hour-24
-                        :minute minute-60
-                        :second second-60)))))
+                      (second 0) (usec 0))
+  (multiple-value-bind (second-add usec-1000000)
+      (floor usec 1000000)
+    (multiple-value-bind (minute-add second-60)
+        (floor (+ second second-add) 60)
+      (multiple-value-bind (hour-add minute-60)
+          (floor (+ minute minute-add) 60)
+        (multiple-value-bind (day-add hour-24)
+            (floor (+ hour hour-add) 24)
+          (%make-duration :year year :month month :day (+ day day-add)
+                          :hour hour-24
+                          :minute minute-60
+                          :second second-60
+                          :usec usec-1000000))))))
 
 
 ;; ------------------------------------------------------------
@@ -154,26 +159,32 @@
   (mod (+ 3 (time-mjd time)) 7))
 
 (defun decode-time (time)
-  "returns the decoded time as multiple values: second, minute, hour, day,
-month, year, integer day-of-week"
+  "returns the decoded time as multiple values: usec, second, minute, hour,
+  day, month, year, integer day-of-week"
   (multiple-value-bind (year month day)
       (time-ymd time)
     (multiple-value-bind (hour minute second)
         (time-hms time)
-      (values second minute hour day month year (mod (+ (time-mjd time) 3) 7)))))
+      (values (time-usec time) second minute hour day month year (mod (+ (time-mjd time) 3) 7)))))
 
 ;; duration specific
 (defun duration-reduce (duration precision &optional round)
   (ecase precision
+    (:usec
+     (+ (duration-usec duration)
+        (* (duration-reduce duration :second) 1000000)))
     (:second
-     (+ (duration-second duration)
-	(* (duration-reduce duration :minute) 60)))
+     (+ (if round
+            (floor (duration-usec duration) 500000)
+            0)
+        (duration-second duration)
+        (* (duration-reduce duration :minute) 60)))
     (:minute
      (+ (if round
-	    (floor (duration-second duration) 30)
-	    0)
-	(duration-minute duration)
-	(* (duration-reduce duration :hour) 60)))
+            (floor (duration-second duration) 30)
+            0)
+        (duration-minute duration)
+        (* (duration-reduce duration :hour) 60)))
     (:hour
      (+ (if round
 	    (floor (duration-minute duration) 30)
@@ -191,16 +202,16 @@ month, year, integer day-of-week"
 ;; Arithemetic and comparators
 
 (defun duration= (duration-a duration-b)
-  (= (duration-reduce duration-a :second)
-     (duration-reduce duration-b :second)))
+  (= (duration-reduce duration-a :usec)
+     (duration-reduce duration-b :usec)))
 
 (defun duration< (duration-a duration-b)
-  (< (duration-reduce duration-a :second)
-     (duration-reduce duration-b :second)))
+  (< (duration-reduce duration-a :usec)
+     (duration-reduce duration-b :usec)))
 
 (defun duration<= (duration-a duration-b)
-  (<= (duration-reduce duration-a :second)
-     (duration-reduce duration-b :second)))
+  (<= (duration-reduce duration-a :usec)
+      (duration-reduce duration-b :usec)))
 							      
 (defun duration>= (x y)
   (duration<= y x))
@@ -213,26 +224,35 @@ month, year, integer day-of-week"
         (mjd-y (time-mjd y)))
     (if (/= mjd-x mjd-y)
         (< mjd-x mjd-y)
-        (< (time-second x) (time-second y)))))
+        (if (/= (time-second x) (time-second y))
+            (< (time-second x) (time-second y))
+            (< (time-usec x) (time-usec y))))))
   
 (defun %time>= (x y)
   (if (/= (time-mjd x) (time-mjd y))
       (>= (time-mjd x) (time-mjd y))
-      (>= (time-second x) (time-second y))))
+      (if (/= (time-second x) (time-second y))
+          (>= (time-second x) (time-second y))
+          (>= (time-usec x) (time-usec y)))))
 
 (defun %time<= (x y)
   (if (/= (time-mjd x) (time-mjd y))
       (<= (time-mjd x) (time-mjd y))
-      (<= (time-second x) (time-second y))))
+      (if (/= (time-second x) (time-second y))
+          (<= (time-second x) (time-second y))
+          (<= (time-usec x) (time-usec y)))))
 
 (defun %time> (x y)
   (if (/= (time-mjd x) (time-mjd y))
       (> (time-mjd x) (time-mjd y))
-      (> (time-second x) (time-second y))))
+      (if (/= (time-second x) (time-second y))
+          (> (time-second x) (time-second y))
+          (> (time-usec x) (time-usec y)))))
 
 (defun %time= (x y)
   (and (= (time-mjd x) (time-mjd y))
-       (= (time-second x) (time-second y))))
+       (= (time-second x) (time-second y))
+       (= (time-usec x) (time-usec y))))
 
 (defun time= (number &rest more-numbers)
   "Returns T if all of its arguments are numerically equal, NIL otherwise."
@@ -305,10 +325,16 @@ month, year, integer day-of-week"
   (let ((mjd-a (time-mjd time-a))
         (mjd-b (time-mjd time-b))
         (sec-a (time-second time-a))
-        (sec-b (time-second time-b)))
+        (sec-b (time-second time-b))
+        (usec-a (time-usec time-a))
+        (usec-b (time-usec time-b)))
     (if (= mjd-a mjd-b)
         (if (= sec-a sec-b)
-            :equal
+            (if (= usec-a usec-b)
+                :equal
+                (if (< usec-a usec-b)
+                    :less-than
+                    :greater-than))
             (if (< sec-a sec-b)
                 :less-than
                 :greater-than))
@@ -325,7 +351,7 @@ month, year, integer day-of-week"
 (defun db-timestring (time)
   "return the string to store the given time in the database"
   (declare (optimize (speed 3)))
-  (let ((output (copy-seq "'XXXX-XX-XX XX:XX:XX'")))
+  (let ((output (copy-seq "'XXXX-XX-XX XX:XX:XX.")))
     (flet ((inscribe-base-10 (output offset size decimal)
              (declare (type fixnum offset size decimal)
                       (type (simple-vector 10) +decimal-printer+))
@@ -337,7 +363,7 @@ month, year, integer day-of-week"
                  (setf (aref output (+ (- size x 1) offset))
                        (aref +decimal-printer+ this))
                  (setf decimal next)))))
-      (multiple-value-bind (second minute hour day month year)
+      (multiple-value-bind (usec second minute hour day month year)
           (decode-time time)
         (inscribe-base-10 output 1 4 year)
         (inscribe-base-10 output 6 2 month)
@@ -345,12 +371,12 @@ month, year, integer day-of-week"
         (inscribe-base-10 output 12 2 hour)
         (inscribe-base-10 output 15 2 minute)
         (inscribe-base-10 output 18 2 second)
-        output))))
+        (format nil "~a~d'" output usec)))))
 
 (defun iso-timestring (time)
   "return the string to store the given time in the database"
   (declare (optimize (speed 3)))
-  (let ((output (copy-seq "XXXX-XX-XX XX:XX:XX")))
+  (let ((output (copy-seq "XXXX-XX-XX XX:XX:XX,")))
     (flet ((inscribe-base-10 (output offset size decimal)
              (declare (type fixnum offset size decimal)
                       (type (simple-vector 10) +decimal-printer+))
@@ -362,7 +388,7 @@ month, year, integer day-of-week"
                  (setf (aref output (+ (- size x 1) offset))
                        (aref +decimal-printer+ this))
                  (setf decimal next)))))
-      (multiple-value-bind (second minute hour day month year)
+      (multiple-value-bind (usec second minute hour day month year)
           (decode-time time)
         (inscribe-base-10 output 0 4 year)
         (inscribe-base-10 output 5 2 month)
@@ -370,7 +396,7 @@ month, year, integer day-of-week"
         (inscribe-base-10 output 11 2 hour)
         (inscribe-base-10 output 14 2 minute)
         (inscribe-base-10 output 17 2 second)
-        output))))
+        (format nil "~a,~d" output usec)))))
 
 
 ;; ------------------------------------------------------------
@@ -598,16 +624,18 @@ begins at time.  If no changes are made, returns nil."
         (day    (duration-day time))
         (hour   (duration-hour time))
         (minute (duration-minute time))
-        (second (duration-second time)))
+        (second (duration-second time))
+        (usec   (duration-usec time)))
     (dolist (duration durations)
       (incf year    (duration-year duration))
       (incf month   (duration-month duration))
       (incf day     (duration-day duration))
       (incf hour    (duration-hour duration))
       (incf minute  (duration-minute duration))
-      (incf second  (duration-second duration)))
+      (incf second  (duration-second duration))
+      (incf usec    (duration-usec duration)))
     (make-duration :year year :month month :day day :hour hour :minute minute
-                   :second second)))
+                   :second second :usec usec)))
 
 (defun duration- (duration &rest durations)
     "Subtract each DURATION from TIME, returning a new duration value."
@@ -616,16 +644,18 @@ begins at time.  If no changes are made, returns nil."
         (day    (duration-day duration))
         (hour   (duration-hour duration))
         (minute (duration-minute duration))
-        (second (duration-second duration)))
+        (second (duration-second duration))
+        (usec   (duration-usec duration)))
     (dolist (duration durations)
       (decf year    (duration-year duration))
       (decf month   (duration-month duration))
       (decf day     (duration-day duration))
       (decf hour    (duration-hour duration))
       (decf minute  (duration-minute duration))
-      (decf second  (duration-second duration)))
+      (decf second  (duration-second duration))
+      (decf usec    (duration-usec duration)))
     (make-duration :year year :month month :day day :hour hour :minute minute
-                   :second second)))
+                   :second second :usec usec)))
 
 ;; Date + Duration
 
@@ -640,6 +670,7 @@ begins at time.  If no changes are made, returns nil."
             :hour (duration-hour duration)
             :minute (duration-minute duration)
             :second (duration-second duration)
+            :usec (duration-usec duration)
             :destructive t))
     new-time))
 
@@ -654,6 +685,7 @@ begins at time.  If no changes are made, returns nil."
             :hour (- (duration-hour duration))
             :minute (- (duration-minute duration))
             :second (- (duration-second duration))
+            :usec (- (duration-usec duration))
             :destructive t))
     new-time))
 
@@ -685,7 +717,7 @@ TIME2."
   "produces on stream the timestring corresponding to the wall-time
 with the given options"
   (let ((*print-circle* nil))
-    (multiple-value-bind (second minute hour day month year dow)
+    (multiple-value-bind (usec second minute hour day month year dow)
 	(decode-time time)
       (case format
 	(:pretty
@@ -705,10 +737,10 @@ with the given options"
 	       (write-string string stream)
              string)))
 	(t
-	 (format stream "~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D"
+	 (format stream "~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D.~6,'0D"
 		 year date-separator month date-separator day
 		 internal-separator hour time-separator minute time-separator
-		 second))))))
+		 second usec))))))
   
 (defun pretty-time (hour minute)
   (cond
@@ -894,27 +926,36 @@ with the given options"
   (%make-wall-time :mjd (time-mjd self)))
 
 (defun roll (date &key (year 0) (month 0) (day 0) (second 0) (hour 0)
-                  (minute 0) (destructive nil))
+             (minute 0) (usec 0) (destructive nil))
   (unless (= 0 year month)
     (multiple-value-bind (year-orig month-orig day-orig)
         (time-ymd date)
       (setf date (make-time :year (+ year year-orig)
                             :month (+ month month-orig)
                             :day day-orig
-                            :second (time-second date)))))
+                            :second (time-second date)
+                            :usec usec))))
   (let ((mjd (time-mjd date))
-        (sec (time-second date)))
-    (multiple-value-bind (mjd-new sec-new)
-        (floor (+ sec second
-                  (* 60 minute)
-                  (* 60 60 hour)) (* 60 60 24))
-      (if destructive
-          (progn
-            (setf (time-mjd date) (+ mjd mjd-new day)
-                  (time-second date) sec-new)
-            date)
-          (%make-wall-time :mjd (+ mjd mjd-new day)
-                           :second sec-new)))))
+        (sec (time-second date))
+        (usec (time-usec date)))
+    (multiple-value-bind (usec-new sec)
+        (floor (+ usec
+                  (* 1000000
+                     (+ sec second
+                        (* 60 minute)
+                        (* 60 60 hour))))
+               1000000)
+      (multiple-value-bind (mjd-new sec-new)
+          (floor sec (* 60 60 24))
+        (if destructive
+            (progn
+              (setf (time-mjd date) (+ mjd mjd-new day)
+                    (time-second date) sec-new
+                    (time-usec date) usec-new)
+              date)
+            (%make-wall-time :mjd (+ mjd mjd-new day)
+                             :second sec-new
+                             :usec usec-new))))))
 
 (defun roll-to (date size position)
   (ecase size
@@ -1073,7 +1114,7 @@ formatted date string."
 
 (defun parse-iso-8601-time (string)
   "return the wall-time corresponding to the given ISO 8601 datestring"
-  (multiple-value-bind (year month day hour minute second offset)
+  (multiple-value-bind (year month day hour minute second usec offset)
       (syntax-parse-iso-8601 string)
     (make-time :year year
                :month month
@@ -1081,36 +1122,54 @@ formatted date string."
                :hour hour
                :minute minute
                :second second
+               :usec usec
                :offset offset)))
 
 
 (defun syntax-parse-iso-8601 (string)
   ;; use strlen to determine if fractional seconds are present in timestamp
   (let ((strlen (length string))
-	year month day hour minute second gmt-sec-offset)
+        year month day hour minute second usec gmt-sec-offset)
     (handler-case
         (progn
-	  (setf year           (parse-integer string :start 0 :end 4)
+          (setf year           (parse-integer string :start 0 :end 4)
                 month          (parse-integer string :start 5 :end 7)
                 day            (parse-integer string :start 8 :end 10)
                 hour           (if (<= 13 strlen)
                                    (parse-integer string :start 11 :end 13)
-				   0)
+                                   0)
                 minute         (if (<= 16 strlen)
                                    (parse-integer string :start 14 :end 16)
-				   0)
+                                   0)
                 second         (if (<= 19 strlen)
                                    (parse-integer string :start 17 :end 19)
-				   0)
-                gmt-sec-offset (if (<= 20 strlen)
-                                   (let ((skip-to (or (position #\+ string :start 19)
-                                                      (position #\- string :start 19))))
-                                     (if skip-to
-                                         (* 60 60
-                                            (parse-integer string :start skip-to
-							   :end (+ skip-to 3)))
-					 0))
-				   0))
+                                   0))
+          (cond
+            ((or (char= #\, (char string 19))
+                 (char= #\. (char string 19)))
+             (multiple-value-bind (parsed-usec usec-end)
+                 (parse-integer string :start 20 :junk-allowed t)
+               (setf usec          parsed-usec
+                     gmt-sec-offset (if (<= (+ 3 usec-end)  strlen)
+                                        (let ((skip-to (or (position #\+ string :start 19)
+                                                           (position #\- string :start 19))))
+                                          (if skip-to
+                                              (* 60 60
+                                                 (parse-integer string :start skip-to
+                                                                :end (+ skip-to 3)))
+                                              0))
+                                        0))))
+            (t
+             (setf usec           0
+                   gmt-sec-offset (if (<= 22  strlen)
+                                      (let ((skip-to (or (position #\+ string :start 19)
+                                                         (position #\- string :start 19))))
+                                        (if skip-to
+                                            (* 60 60
+                                               (parse-integer string :start skip-to
+                                                              :end (+ skip-to 3)))
+                                            0))
+                                      0))))
           (unless (< 0 year)
             (error 'iso-8601-syntax-error
                    :bad-component '(year . 0)))
@@ -1120,7 +1179,7 @@ formatted date string."
           (unless (< 0 day)
             (error 'iso-8601-syntax-error
                    :bad-component '(month . 0)))
-          (values year month day hour minute second gmt-sec-offset))
+          (values year month day hour minute second usec gmt-sec-offset))
       (simple-error ()
         (error 'iso-8601-syntax-error
                :bad-component
