@@ -219,9 +219,9 @@ socket interface"
 	   (optimize (speed 3) (safety 0)))
   #-sb-unicode
   (let ((result (make-string length)))
-    (dotimes (i (length string) result)
+    (dotimes (i length result)
       (declare (fixnum i))
-      (setf (char string i) (code-char (read-byte stream)))))
+      (setf (char result i) (code-char (read-byte stream)))))
   #+sb-unicode
   (let ((bytes (make-array length :element-type '(unsigned-byte 8))))
     (declare (type (simple-array (unsigned-byte 8) (*)) bytes))
