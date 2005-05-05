@@ -6,6 +6,7 @@ TESTS TO ADD
 * Number and Char field types
 * symbol slot
 * generalized-boolean slot
+* tests for db-reader and db-writer
 
 OPTIMIZATIONS
  
