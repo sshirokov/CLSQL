@@ -103,7 +103,7 @@
           ((typep slot-reader 'string)
            (setf (slot-value instance slot-name)
                  (format nil slot-reader value)))
-          ((typep slot-reader 'function)
+          ((typep slot-reader '(or symbol function))
            (setf (slot-value instance slot-name)
                  (apply slot-reader (list value))))
           (t
@@ -130,7 +130,7 @@
 	(dbtype (specified-type slotdef)))
     (typecase dbwriter
       (string (format nil dbwriter val))
-      (function (apply dbwriter (list val)))
+      ((or symbol function) (apply dbwriter (list val)))
       (t
        (database-output-sql-as-type
 	(typecase dbtype
