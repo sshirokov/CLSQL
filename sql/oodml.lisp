@@ -120,7 +120,7 @@
            nil)
           ((typep slot-reader 'string)
            (format nil slot-reader value))
-          ((typep slot-reader 'function)
+          ((typep slot-reader '(or symbol function))
            (apply slot-reader (list value)))
           (t
            (error "Slot reader is of an unusual type.")))))
