@@ -1,3 +1,8 @@
+05 May 2005 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.1.12
+	* sql/time.lisp: Fix error in submitted patch which caused error
+	in timestrings with 19 or less characters.
+	
 27 Apr 2005 Kevin Rosenberg <kevin@rosenberg.net>
 	* db-postgresql-socket/postgresql-api.lisp: Commit patch from Tim Howe
 	to fix read-socket-sequence on non-sb-unicode sbcl.

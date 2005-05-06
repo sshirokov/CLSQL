@@ -1129,7 +1129,7 @@ formatted date string."
 (defun syntax-parse-iso-8601 (string)
   ;; use strlen to determine if fractional seconds are present in timestamp
   (let ((strlen (length string))
-        year month day hour minute second usec gmt-sec-offset)
+        year month day hour minute second gmt-sec-offset)
     (handler-case
         (progn
           (setf year           (parse-integer string :start 0 :end 4)
@@ -1145,8 +1145,9 @@ formatted date string."
                                    (parse-integer string :start 17 :end 19)
                                    0))
           (cond
-            ((or (char= #\, (char string 19))
-                 (char= #\. (char string 19)))
+            ((and (> strlen 19)
+		  (or (char= #\, (char string 19))
+		      (char= #\. (char string 19))))
              (multiple-value-bind (parsed-usec usec-end)
                  (parse-integer string :start 20 :junk-allowed t)
                (setf usec          parsed-usec
@@ -1185,6 +1186,7 @@ formatted date string."
                :bad-component
                (car (find-if (lambda (pair) (null (cdr pair)))
                              `((year . ,year) (month . ,month)
-                               (day . ,day) (hour ,hour)
-                               (minute ,minute) (second ,second)
-                               (timezone ,gmt-sec-offset)))))))))
+                               (day . ,day) (hour . ,hour)
+                               (minute . ,minute) (second . ,second)
+			       (usec . ,usec)
+                               (timezone . ,gmt-sec-offset)))))))))
