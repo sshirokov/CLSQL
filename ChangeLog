@@ -1,3 +1,9 @@
+11 May 2005 Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/expressions.lisp: Avoid using simple-string declaration when
+	a non-simple string may be encountered.	[issue noted by 
+	will@cesmail.net] Add a simple-string declaration for a local
+	string generated.
+	
 06 May 2005 Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/oodml.lisp: Change db-writer and db-reader processing to accept
 	a symbol as well as function to serve as a function designator

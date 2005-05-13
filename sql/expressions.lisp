@@ -831,8 +831,7 @@ uninclusive, and the args from that keyword to the end."
 
 (defmethod database-output-sql ((str string) database)
   (declare (optimize (speed 3) (safety 1)
-		     #+cmu (extensions:inhibit-warnings 3))
-           (simple-string str))
+		     #+cmu (extensions:inhibit-warnings 3)))
   (let ((len (length str)))
     (declare (type fixnum len))
     (cond ((zerop len)
@@ -842,7 +841,8 @@ uninclusive, and the args from that keyword to the end."
            (concatenate 'string "'" str "'"))
           (t
            (let ((buf (make-string (+ (* len 2) 2) :initial-element #\')))
-             (do* ((i 0 (incf i))
+	     (declare (simple-string buf))
+	     (do* ((i 0 (incf i))
                    (j 1 (incf j)))
                   ((= i len) (subseq buf 0 (1+ j)))
                (declare (type fixnum i j))
