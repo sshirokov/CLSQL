@@ -130,7 +130,7 @@
 	(dbtype (specified-type slotdef)))
     (typecase dbwriter
       (string (format nil dbwriter val))
-      ((or symbol function) (apply dbwriter (list val)))
+      ((and (or symbol function) (not null)) (apply dbwriter (list val)))
       (t
        (database-output-sql-as-type
 	(typecase dbtype

@@ -1,3 +1,7 @@
+17 May 2005 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.1.14
+	* sql/oodml.lisp: Properly handle when db-writer is NIL
+
 11 May 2005 Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/expressions.lisp: Avoid using simple-string declaration when
 	a non-simple string may be encountered.	[issue noted by 
