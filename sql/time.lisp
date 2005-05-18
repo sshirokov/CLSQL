@@ -945,6 +945,7 @@ with the given options"
                         (* 60 minute)
                         (* 60 60 hour))))
                1000000)
+      (declare (ignore sec-new))
       (multiple-value-bind (mjd-new sec-new)
           (floor sec (* 60 60 24))
         (if destructive
