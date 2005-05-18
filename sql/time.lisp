@@ -1129,7 +1129,7 @@ formatted date string."
 (defun syntax-parse-iso-8601 (string)
   ;; use strlen to determine if fractional seconds are present in timestamp
   (let ((strlen (length string))
-        year month day hour minute second gmt-sec-offset)
+        year month day hour minute second usec gmt-sec-offset)
     (handler-case
         (progn
           (setf year           (parse-integer string :start 0 :end 4)
