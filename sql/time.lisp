@@ -938,7 +938,7 @@ with the given options"
   (let ((mjd (time-mjd date))
         (sec (time-second date))
         (usec (time-usec date)))
-    (multiple-value-bind (usec-new sec)
+    (multiple-value-bind (sec-new usec-new)
         (floor (+ usec
                   (* 1000000
                      (+ sec second
