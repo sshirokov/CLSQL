@@ -20,6 +20,12 @@
 
 (in-package #:clsql-mysql)
 
+;; if we have :sb-unicode, UFFI will treat :cstring as a UTF-8 string
+(defun expression-length (query-expression)
+  (length #+sb-unicode (sb-ext:string-to-octets query-expression
+						:external-format :utf8)
+	  #-sb-unicode query-expression))
+
 ;;; Field conversion functions
 
 (defun result-field-names (num-fields res-ptr)
@@ -169,7 +175,7 @@
   (let ((mysql-ptr (database-mysql-ptr database)))
     (uffi:with-cstring (query-native query-expression)
       (if (zerop (mysql-real-query mysql-ptr query-native 
-                                   (length query-expression)))
+                                   (expression-length query-expression)))
 	  (let ((res-ptr (mysql-use-result mysql-ptr)))
 	    (if res-ptr
 		(unwind-protect
@@ -215,7 +221,7 @@
     (let ((mysql-ptr (database-mysql-ptr database)))
       (declare (type mysql-mysql-ptr-def mysql-ptr))
       (if (zerop (mysql-real-query mysql-ptr sql-native 
-                                   (length sql-expression)))
+                                   (expression-length sql-expression)))
 	  t
 	(error 'sql-database-data-error
 	       :database database
@@ -238,7 +244,7 @@
     (let ((mysql-ptr (database-mysql-ptr database)))
      (declare (type mysql-mysql-ptr-def mysql-ptr))
       (if (zerop (mysql-real-query mysql-ptr query-native
-                                   (length query-expression)))
+                                   (expression-length query-expression)))
 	  (let ((res-ptr (if full-set
 			     (mysql-store-result mysql-ptr)
 			   (mysql-use-result mysql-ptr))))
@@ -507,7 +513,7 @@
 	     :message (mysql-error-string mysql-ptr)))
 
     (uffi:with-cstring (native-query sql-stmt)
-      (unless (zerop (mysql-stmt-prepare stmt native-query (length sql-stmt)))
+      (unless (zerop (mysql-stmt-prepare stmt native-query (expression-length sql-stmt)))
 	(mysql-stmt-close stmt)
 	(error 'sql-database-error
 	       :error-id (mysql-errno mysql-ptr)

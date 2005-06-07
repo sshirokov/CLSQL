@@ -1,3 +1,7 @@
+07 Jun 2005 Kevin Rosenberg <kevin@rosenberg.net>
+	* db-mysql/mysql-api.lisp: Commit patch from Espen Wiborn
+	to support UTF-8 on sbcl unicode.
+	
 18 May 2005 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.1.15
 	* sql/time.lisp: Fix bug in roll that caused failure in test suite
