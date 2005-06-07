@@ -1,3 +1,11 @@
+cl-sql (3.1.16-1) unstable; urgency=low
+
+  * New upstream
+  * Change build dependency from postgresql-dev to libpq-dev for new
+  Etch versions of postgresql
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Tue,  7 Jun 2005 13:36:48 -0600
+
 cl-sql (3.1.15-1) unstable; urgency=low
 
   * New upstream
