@@ -26,7 +26,7 @@ shared_lib=$(base).so
 all: $(shared_lib)
 
 $(shared_lib): $(source) Makefile
-	BASE=$(base) OBJECT=$(object) SOURCE=$(source) SHARED_LIB=$(shared_lib) sh make.sh
+	BASE=$(base) OBJECT=$(object) SOURCE=$(source) SHARED_LIB=$(shared_lib) LDFLAGS="-lc" sh make.sh
 	rm $(object)
 
 .PHONY: distclean
