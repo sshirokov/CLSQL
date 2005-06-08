@@ -67,7 +67,7 @@
   (or (and (probe-file #p"/usr/lib/clsql/clsql_mysql.so") t)
       (let ((lib (make-pathname :defaults (component-pathname c)
 				:type (uffi:default-foreign-library-type))))
-	(and (probe-file lib)
+	(and (probe-file lib) (probe-file (component-pathname c))
 	     (> (file-write-date lib) (file-write-date (component-pathname c)))))))
 
 ;;; System definition
