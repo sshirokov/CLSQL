@@ -18,19 +18,8 @@
 
 (in-package #:odbc)
 
-(defparameter *odbc-library-path* 
-  (uffi:find-foreign-library
-   '("odbc32" "libodbc" "libiodbc")
-   `(,(make-pathname :directory (pathname-directory *load-truename*))
-     #+64bit "/usr/lib64/"
-     "/usr/lib/"
-     "/sw/lib/"
-     "/usr/local/lib/"
-     "/home/kevin/debian/src/clsql/db-odbc/"
-     "/windows/system32/"
-     "/winnt/system32/"
-     "/odbc/lib/opt/")
-   :drive-letters '("C")))
+(defparameter *odbc-library-filenames* 
+  '("odbc32" "libodbc" "libiodbc"))
   
 (defvar *odbc-supporting-libraries* '("c")
   "Used only by CMU. List of library flags needed to be passed to ld to
@@ -44,8 +33,8 @@ set to the right path before compiling or loading the system.")
   *odbc-library-loaded*)
 				      
 (defmethod clsql-sys:database-type-load-foreign ((database-type (eql :odbc)))
-  (uffi:load-foreign-library *odbc-library-path*
-			     :module "odbc") 
+  (clsql-uffi:find-and-load-foreign-library *odbc-library-filenames*
+                                            :module "odbc")
   (setq *odbc-library-loaded* t))
 
 (clsql-sys:database-type-load-foreign :odbc)

@@ -33,24 +33,10 @@ set to the right path before compiling or loading the system.")
 				      
 (defmethod clsql-sys:database-type-load-foreign ((database-type
 						  (eql :postgresql)))
-  (let ((libpath (uffi:find-foreign-library 
-		  "libpq"
-		  '("/opt/postgresql/lib/" "/usr/local/lib/" 
-		    #+(or 64bit x86-64) "/usr/lib64/"
-		    "/usr/lib/" "/postgresql/lib/"
-		    "/usr/local/pgsql/lib/" "/usr/lib/pgsql/"
-		    "/opt/pgsql/lib/pgsql" "/sw/lib/pgsql/" "/sw/lib/"
-		    "/windows/system32/")
-		  :drive-letters '("C" "D" "E")
-		  #+(or macosx darwin ccl-5.0) :types
-		  #+(or macosx darwin ccl-5.0) '("so" "dylib")
-		  )))
-    (if	(uffi:load-foreign-library libpath
-				   :module "postgresql"
-				   :supporting-libraries 
-				   *postgresql-supporting-libraries*)
-	(setq *postgresql-library-loaded* t)
-      (warn "Can't load PostgreSQL client library ~A" libpath))))
+  (clsql-uffi:find-and-load-foreign-library "libpq"
+                                            :module "postgresql"
+                                            :supporting-libraries *postgresql-supporting-libraries*)
+  (setq *postgresql-library-loaded* t))
 
 (clsql-sys:database-type-load-foreign :postgresql)
 

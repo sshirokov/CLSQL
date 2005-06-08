@@ -31,17 +31,10 @@ set to the right path before compiling or loading the system.")
   *sqlite-library-loaded*)
 
 (defmethod database-type-load-foreign ((database-type (eql :sqlite)))
-  (let ((libpath (uffi:find-foreign-library
-		  '("libsqlite" "sqlite")
-		  '(#+64bit "/usr/lib64/"
-		    "/usr/lib/" "/usr/local/lib/" "/bin/")
-		  :drive-letters '("C" "D" "E"))))
-    (if (uffi:load-foreign-library libpath
-				   :module "sqlite"
-				   :supporting-libraries 
-				   *sqlite-supporting-libraries*)
-	(setq *sqlite-library-loaded* t)
-	(warn "Can't load SQLite library ~A" libpath))))
+  (clsql-uffi:find-and-load-foreign-library '("libsqlite" "sqlite")
+                                            :module "sqlite"
+                                            :supporting-libraries *sqlite-supporting-libraries*)
+  (setq *sqlite-library-loaded* t))
 
 (clsql-sys:database-type-load-foreign :sqlite)
 

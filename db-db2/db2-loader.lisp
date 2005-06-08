@@ -23,16 +23,13 @@
 		     (append 
 		      (pathname-directory
 		       (parse-namestring (concatenate 'string db2-home "/")))
-			(list "lib"))))))
+                      (list "lib"))))))
 
-(defparameter *db2-client-library-path* 
-    (uffi:find-foreign-library
-     "libdb2"
-     `(,@(when *load-truename* (list (make-pathname :directory (pathname-directory *load-truename*))))
-       ,@(when *db2-lib-path* (list *db2-lib-path*))
-       #+64bit "/opt/IBM/db2/V8.1/lib64/"
-       "/opt/IBM/db2/V8.1/lib/")
-     :drive-letters '("C")))
+(defparameter *db2-library-filenames*
+  (if *db2-lib-path*
+    (list (merge-pathnames "libdb2" *db2-lib-path*)
+          "libdb2")
+    "libdb2"))
 
 (defvar *db2-supporting-libraries* '("c")
   "Used only by CMU. List of library flags needed to be passed to ld to
@@ -46,14 +43,11 @@ set to the right path before compiling or loading the system.")
   *db2-library-loaded*)
 
 (defmethod clsql-sys:database-type-load-foreign ((database-type (eql :db2)))
-  (if (pathnamep *db2-client-library-path*) 
-      (progn
-	(uffi:load-foreign-library *db2-client-library-path*
-				   :module "clsql-db2"
-				   :supporting-libraries 
-				   *db2-supporting-libraries*)
-	(setq *db2-library-loaded* t))
-      (warn "Unable to load db2 client library.")))
+  (clsql-uffi:find-and-load-foreign-library *db2-library-filenames*
+                                            :module "clsql-db2"
+                                            :supporting-libraries 
+                                            *db2-supporting-libraries*)
+  (setq *db2-library-loaded* t))
 
 (clsql-sys:database-type-load-foreign :db2)
 

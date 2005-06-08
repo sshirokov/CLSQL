@@ -22,24 +22,14 @@
       (parse-namestring (concatenate 'string oracle-home "/"))))
   "Pathname of ORACLE_HOME as set in user environment.")
 
-(defparameter *oracle-client-library-path* 
-    (uffi:find-foreign-library
-     '("libclntsh" "oci")
-     `(,@(when *load-truename*
-	   (list (make-pathname
-		  :directory (pathname-directory *load-truename*))))
-	 ,@(when *oracle-home*
-	     (list
-	      (make-pathname :defaults *oracle-home*
-			     :directory 
-			     (append (pathname-directory *oracle-home*)
-				     (list "lib")))
-	      (make-pathname :defaults *oracle-home*
-			     :directory 
-			     (append (pathname-directory *oracle-home*)
-				     (list "bin")))))
-	 "/usr/lib/oracle/10.1.0.2/client/lib/")
-     :drive-letters '("C")))
+(defparameter *oracle-client-library-filenames*
+  (list* "libclntsh" "oci"
+         (when *oracle-home*
+           (loop for dir-name in '("lib" "bin")
+                 nconc (loop for lib-name in '("libclntsh" "oci")
+                             collect (make-pathname :defaults lib-name
+                                                    :directory (append (pathname-directory *oracle-home*)
+                                                                       (list dir-name))))))))
 
 (defvar *oracle-supporting-libraries* '("c")
   "Used only by CMU. List of library flags needed to be passed to ld to
@@ -53,14 +43,10 @@ set to the right path before compiling or loading the system.")
   *oracle-library-loaded*)
 
 (defmethod clsql-sys:database-type-load-foreign ((database-type (eql :oracle)))
-  (if (pathnamep *oracle-client-library-path*) 
-      (progn
-	(uffi:load-foreign-library *oracle-client-library-path*
-				   :module "clsql-oracle"
-				   :supporting-libraries 
-				   *oracle-supporting-libraries*)
-	(setq *oracle-library-loaded* t))
-      (warn "Unable to load oracle client library.")))
+  (clsql-uffi:find-and-load-foreign-library *oracle-client-library-filenames*
+                                            :module "clsql-oracle"
+                                            :supporting-libraries *oracle-supporting-libraries*)
+  (setq *oracle-library-loaded* t))
 
 (clsql-sys:database-type-load-foreign :oracle)
 

@@ -21,6 +21,7 @@
 (defpackage #:clsql-uffi
   (:use #:cl #:uffi)
   (:export
+   #:find-and-load-foreign-library
    #:canonicalize-type-list
    #:convert-raw-field
    #:atoi

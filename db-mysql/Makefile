@@ -17,10 +17,11 @@ SUBDIRS=
 
 include ../Makefile.common
 
-base=uffi_mysql
+base=clsql_mysql
 source=$(base).c
 object=$(base).o
-shared_lib=uffi_mysql.so
+shared_lib=$(base).so
+
 
 .PHONY: all
 all: $(shared_lib)

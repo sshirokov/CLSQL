@@ -18,12 +18,29 @@
 
 (in-package #:clsql-uffi)
 
-(defvar *clsql-uffi-library-filename* 
-  (uffi:find-foreign-library
-   '(#+(or 64bit x86-64) "uffi64" "uffi")
-   `(,clsql-uffi-system::*library-file-dir*
-     "/usr/lib/clsql/")
-   :drive-letters '("C")))
+(defun find-and-load-foreign-library (filenames &key module supporting-libraries (errorp t))
+  (setq filenames (if (listp filenames) filenames (list filenames)))
+  (or (loop for type in (uffi:foreign-library-types)
+            for suffix = (make-pathname :type type)
+            thereis (loop for filename in filenames
+                          thereis (handler-case
+                                    (uffi:load-foreign-library (merge-pathnames filename suffix)
+                                                               :module module
+                                                               :supporting-libraries supporting-libraries)
+                                    (error (c)
+                                      (warn "~A" c)
+                                      nil))))
+      (when errorp
+        (error "Couldn't load foreign librar~@P ~{~S~^, ~}."
+               (length filenames) filenames))))
+
+(defvar *clsql-uffi-library-filenames*
+    (list #+(or 64bit x86-64) (make-pathname :name "uffi64"
+                                             :directory clsql-uffi-system::*library-file-dir*)
+          #+(or 64bit x86-64) "uffi64"
+          (make-pathname :name "uffi"
+                         :directory clsql-uffi-system::*library-file-dir*)
+          "uffi"))
 
 (defvar *clsql-uffi-supporting-libraries* '("c")
   "Used only by CMU. List of library flags needed to be passed to ld to
@@ -34,15 +51,11 @@ set to the right path before compiling or loading the system.")
   "T if foreign library was able to be loaded successfully")
 
 (defun load-uffi-foreign-library ()
-  (unless (probe-file *clsql-uffi-library-filename*)
-    (error "Unable to find uffi.so"))
-  
-  (if (uffi:load-foreign-library *clsql-uffi-library-filename* 
-				 :module "clsql-uffi" 
-				 :supporting-libraries 
-				 *clsql-uffi-supporting-libraries*)
-      (setq *uffi-library-loaded* t)
-    (error "Unable to load helper library ~A" *clsql-uffi-library-filename*)))
+  (find-and-load-foreign-library *clsql-uffi-library-filenames*
+                                 :module "clsql-uffi" 
+                                 :supporting-libraries 
+                                 *clsql-uffi-supporting-libraries*)
+  (setq *uffi-library-loaded* t))
 
 (load-uffi-foreign-library)
 

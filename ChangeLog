@@ -1,3 +1,13 @@
+09 Jun 2005 Kevin Rosenberg <kevin@rosenberg.net>
+	* clsql-mysql.asd: Renamed uffi/mysql interface library from
+	mysql to uffi_mysql
+	* db-mysql/uffi_mysql.c: Renamed from mysql.c
+	* db-mysql/Makefile, db-mysql/mysql-loader.lisp: Rename shared library
+	* db-*/*-loader.lisp: Commit big patch from Edi Weitz to remove
+	absolute pathnames when searching for foreign libraries.
+	* uffi/clsql-uffi-loader: New file from Edi Weitz for support
+	foreign library loading.
+	
 07 Jun 2005 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.1.16
 	* db-mysql/mysql-api.lisp: Commit patch from Espen Wiborn
