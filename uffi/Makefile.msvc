@@ -17,7 +17,7 @@
 ###########################################################################
 
 
-BASE=uffi
+BASE=clsql_uffi
 
 # Nothing to configure beyond here
 

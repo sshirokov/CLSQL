@@ -17,7 +17,7 @@ SUBDIRS=
 
 include ../Makefile.common
 
-base=uffi
+base=clsql_uffi
 source=$(base).c
 object=$(base).o
 shared_lib=$(base).so

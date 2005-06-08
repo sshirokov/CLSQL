@@ -35,12 +35,12 @@
                (length filenames) filenames))))
 
 (defvar *clsql-uffi-library-filenames*
-    (list #+(or 64bit x86-64) (make-pathname :name "uffi64"
+    (list #+(or 64bit x86-64) (make-pathname :name "clsql_uffi64"
                                              :directory clsql-uffi-system::*library-file-dir*)
-          #+(or 64bit x86-64) "uffi64"
-          (make-pathname :name "uffi"
+          #+(or 64bit x86-64) "clsql_uffi64"
+          (make-pathname :name "clsql_uffi"
                          :directory clsql-uffi-system::*library-file-dir*)
-          "uffi"))
+          "clsql_uffi"))
 
 (defvar *clsql-uffi-supporting-libraries* '("c")
   "Used only by CMU. List of library flags needed to be passed to ld to
