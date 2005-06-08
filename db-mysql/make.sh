@@ -12,7 +12,7 @@ esac
     
 if [ "$os_linux" -o "$os_freebsd" ]; then
     gcc $CFLAGS -fPIC -c $SOURCE -o $OBJECT
-    gcc -shared $OBJECT $LDFLAGS -o $SHARED_LIB
+    ld -shared -soname=$BASE  $OBJECT $LDFLAGS -o $SHARED_LIB
 elif [ "$os_darwin" ]; then
     cc $CFLAGS -dynamic -c $SOURCE -o $OBJECT
     ld -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress -o $BASE.dylib $OBJECT

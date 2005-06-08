@@ -21,9 +21,9 @@ UPSTREAM_VER	:= $(shell sed -n -e "s/${pkg} (\(.*\)-[0-9A-Za-z\.]).*/\1/p" < deb
 ## Lisp sources
 srcs		:= $(wildcard sql/*.lisp) clsql.asd
 srcs-uffi	:= $(wildcard uffi/*.lisp) $(wildcard uffi/*.c)
-srcs-uffi-so	= $(wildcard uffi/*.so)
+srcs-uffi-so	= $(wildcard uffi/*.so.1)
 srcs-mysql	:= $(wildcard db-mysql/*.lisp) $(wildcard db-mysql/*.c)
-srcs-mysql-so	=  $(wildcard db-mysql/*.so)
+srcs-mysql-so	=  $(wildcard db-mysql/*.so.1)
 srcs-pg		:= $(wildcard db-postgresql/*.lisp)
 srcs-pg-socket	:= $(wildcard db-postgresql-socket/*.lisp)
 srcs-aodbc	:= $(wildcard db-aodbc/*.lisp)
@@ -77,6 +77,8 @@ build-arch-stamp:
 	dh_testdir
 	# Add here commands to compile the package.
 	$(MAKE)
+	mv uffi/clsql_uffi.so uffi/clsql_uffi.so.1
+	mv db-mysql/clsql_mysql.so db-mysql/clsql_mysql.so.1
 	touch build-arch-stamp
 
 build-indep: configure-stamp  build-indep-stamp
@@ -209,6 +211,7 @@ binary-indep: build install
 	dh_link -i
 	dh_compress -i
 	dh_fixperms -i
+	dh_makeshlibs -i
 	dh_installdeb -i
 #	dh_perl -i
 	dh_gencontrol -i
@@ -237,7 +240,7 @@ binary-arch: build install
 	dh_link -a
 	dh_compress -a
 	dh_fixperms -a
-#	dh_makeshlibs -a
+#	dh_makeslhibs -a
 	dh_installdeb -a
 #	dh_perl -a
 	dh_shlibdeps -a
