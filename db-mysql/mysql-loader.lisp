@@ -18,24 +18,16 @@
 
 (in-package #:mysql)
 
-(defparameter *clsql-mysql-library-path* 
-  (uffi:find-foreign-library
-   '(#+(or 64bit x86-64) "mysql64" "mysql")
-   `(,clsql-mysql-system::*library-file-dir*
-     "/usr/lib/clsql/"
-     "/sw/lib/clsql/")
-   :drive-letters '("C")))
+(defparameter *clsql-mysql-library-candidate-names* 
+  (list #+(or 64bit x86-64) (make-pathname :name "clsql_mysql64"
+                                           :directory (pathname-directory *load-truename*))
+        #+(or 64bit x86-64) "clsql_mysql64"
+        (make-pathname :name "clsql_mysql"
+                       :directory (pathname-directory *load-truename*))
+        "clsql_mysql"))
 
 (defvar *mysql-library-candidate-names*
-    '("libmysqlclient" "libmysql"))
-
-(defparameter *mysql-library-candidate-directories*
-    `(,(pathname-directory *load-pathname*)
-      #+(or 64bit x86-64) "/usr/lib64/" #+(or 64bit x86-64) "/usr/local/lib64/mysql/"
-      "/opt/mysql/lib/mysql/" "/usr/local/lib/"
-      "/usr/lib/" "/usr/local/lib/mysql/" "/usr/lib/mysql/" "/mysql/lib/opt/" "/sw/lib/mysql/" "/opt/local/lib/mysql/"))
-
-(defvar *mysql-library-candidate-drive-letters* '("C" "D" "E"))
+  '("libmysqlclient" "libmysql"))
 
 (defvar *mysql-supporting-libraries* '("c")
   "Used only by CMU. List of library flags needed to be passed to ld to
@@ -49,21 +41,12 @@ set to the right path before compiling or loading the system.")
   *mysql-library-loaded*)
 				      
 (defmethod clsql-sys:database-type-load-foreign ((database-type (eql :mysql)))
-  (let ((mysql-path
-	 (uffi:find-foreign-library *mysql-library-candidate-names*
-				    *mysql-library-candidate-directories*
-				    :drive-letters
-				    *mysql-library-candidate-drive-letters*)))
-    (unless (probe-file mysql-path)
-      (error "Can't find mysql client library to load"))
-    (uffi:load-foreign-library mysql-path
-			       :module "mysql" 
-			       :supporting-libraries 
-			       *mysql-supporting-libraries*)
-    (uffi:load-foreign-library *clsql-mysql-library-path* 
-			       :module "clsql-mysql" 
-			       :supporting-libraries 
-			       (append *mysql-supporting-libraries*)))
+  (clsql-uffi:find-and-load-foreign-library *mysql-library-candidate-names*
+                                            :module "mysql" 
+                                            :supporting-libraries *mysql-supporting-libraries*)
+  (clsql-uffi:find-and-load-foreign-library *clsql-mysql-library-candidate-names*
+                                            :module "clsql-mysql" 
+                                            :supporting-libraries *mysql-supporting-libraries*)
   (setq *mysql-library-loaded* t))
 
 

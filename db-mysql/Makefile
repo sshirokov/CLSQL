@@ -17,16 +17,16 @@ SUBDIRS=
 
 include ../Makefile.common
 
-base=mysql
+base=uffi_mysql
 source=$(base).c
 object=$(base).o
-shared_lib=$(base).so
+shared_lib=uffi_mysql.so
 
 .PHONY: all
 all: $(shared_lib)
 
 $(shared_lib): $(source) Makefile
-	CFLAGS="-I /usr/local/include/mysql -I /usr/include/mysql -I /sw/include/mysql -I /opt/local/include/mysql" LDFLAGS="-L/usr/local/lib64/mysql -L/usr/lib/mysql -L/sw/lib -L/opt/local/lib/mysql -lmysqlclient" BASE=$(base) OBJECT=$(object) SOURCE=$(source) SHARED_LIB=$(shared_lib) sh make.sh
+	CFLAGS="-I /usr/local/include/mysql -I /usr/include/mysql -I /sw/include/mysql -I /opt/local/include/mysql" LDFLAGS="-L/usr/local/lib64/mysql -L/usr/lib/mysql -L/sw/lib -L/opt/local/lib/mysql -lmysqlclient -lz" BASE=$(base) OBJECT=$(object) SOURCE=$(source) SHARED_LIB=$(shared_lib) sh make.sh
 	rm $(object)
 
 .PHONY: distclean

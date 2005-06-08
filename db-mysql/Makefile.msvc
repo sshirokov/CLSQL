@@ -17,7 +17,7 @@
 ###########################################################################
 
 
-BASE=mysql
+BASE=clsql_mysql
 
 # Set to the directory where you have installed mysql's library
 MYSQL_DIR=c:/mysql
