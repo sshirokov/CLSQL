@@ -21,9 +21,9 @@ UPSTREAM_VER	:= $(shell sed -n -e "s/${pkg} (\(.*\)-[0-9A-Za-z\.]).*/\1/p" < deb
 ## Lisp sources
 srcs		:= $(wildcard sql/*.lisp) clsql.asd
 srcs-uffi	:= $(wildcard uffi/*.lisp) $(wildcard uffi/*.c)
-srcs-uffi-so	= $(wildcard uffi/*.so.1)
+srcs-uffi-so	= $(wildcard uffi/*.so)
 srcs-mysql	:= $(wildcard db-mysql/*.lisp) $(wildcard db-mysql/*.c)
-srcs-mysql-so	=  $(wildcard db-mysql/*.so.1)
+srcs-mysql-so	=  $(wildcard db-mysql/*.so)
 srcs-pg		:= $(wildcard db-postgresql/*.lisp)
 srcs-pg-socket	:= $(wildcard db-postgresql-socket/*.lisp)
 srcs-aodbc	:= $(wildcard db-aodbc/*.lisp)
@@ -44,10 +44,10 @@ clc-sql		:= $(clc-source)/clsql
 lispdir-sql	:= $(clc-sql)/sql
 clc-uffi	:= $(clc-source)/clsql-uffi
 lispdir-uffi 	:= $(clc-uffi)/uffi
-sodir-uffi 	:= usr/lib
+sodir-uffi 	:= usr/lib/clsql
 clc-mysql	:= $(clc-source)/clsql-mysql
 lispdir-mysql	:= $(clc-mysql)/db-mysql
-sodir-mysql	:= usr/lib
+sodir-mysql	:= usr/lib/clsql
 clc-pg		:= $(clc-source)/clsql-postgresql
 lispdir-pg	:= $(clc-pg)/db-postgresql
 clc-pg-socket 	:= $(clc-source)/clsql-postgresql-socket
@@ -68,26 +68,18 @@ lispdir-tests	:= $(clc-tests)/tests
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
-	# Add here commands to configure the package.
 	touch configure-stamp
 
 
 build-arch: configure-stamp build-arch-stamp
 build-arch-stamp:
 	dh_testdir
-	# Add here commands to compile the package.
 	$(MAKE)
-	mv uffi/clsql_uffi.so uffi/clsql_uffi.so.1
-	mv db-mysql/clsql_mysql.so db-mysql/clsql_mysql.so.1
 	touch build-arch-stamp
 
 build-indep: configure-stamp  build-indep-stamp
 build-indep-stamp:
 	dh_testdir
-	# Add here command to compile/build the arch indep package.
-	# It's ok not to do anything here, if you don't need to build
-	#  anything for this package.
-	#/usr/bin/docbook-to-man debian/#PACKAGE#.sgml > #PACKAGE#.1
 	touch build-indep-stamp
 
 build: build-arch build-indep
@@ -96,7 +88,6 @@ clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-arch-stamp build-indep-stamp configure-stamp
-	# Add here commands to clean up after the build process.
 	-$(MAKE) clean
 	find . -type f -and -name \*~ -or -name .\*~ -exec rm -f {} \;
 	dh_clean
@@ -108,7 +99,6 @@ install: build
 	dh_clean -k
 	dh_installdirs
 
-	# Add here commands to install the package into debian/uffi.
 	dh_installdirs --all  $(clc-systems) $(clc-source)
 	dh_installdirs -p $(pkg) $(lispdir-sql)
 	dh_installdirs -p $(pkg-uffi) $(lispdir-uffi) $(sodir-uffi)
@@ -189,8 +179,6 @@ install: build
 	done
 
 
-# Build architecture-independent files here.
-# Pass -i to all debhelper commands in this target to reduce clutter.
 binary-indep: build install
 	dh_testdir -i
 	dh_testroot -i
@@ -211,7 +199,7 @@ binary-indep: build install
 	dh_link -i
 	dh_compress -i
 	dh_fixperms -i
-	dh_makeshlibs -i
+#	dh_makeshlibs -i
 	dh_installdeb -i
 #	dh_perl -i
 	dh_gencontrol -i
