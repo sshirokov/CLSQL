@@ -70,10 +70,10 @@
       (error 'operation-error :component c :operation o))))
 
 (defmethod operation-done-p ((o compile-op) (c clsql-uffi-source-file))
-  (or (and (probe-file #p"/usr/lib/clsql/uffi.so") t)
+  (or (and (probe-file #p"/usr/lib/clsql_uffi.so") t)
       (let ((lib (make-pathname :defaults (component-pathname c)
 				:type (uffi:default-foreign-library-type))))
-	(and (probe-file lib)
+	(and (probe-file lib) (probe-file (component-pathname c))
 	     (> (file-write-date lib) (file-write-date (component-pathname c)))))))
   
 (defsystem clsql-uffi

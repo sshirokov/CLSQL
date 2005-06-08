@@ -64,7 +64,7 @@
       (error 'operation-error :component c :operation o))))
 
 (defmethod operation-done-p ((o compile-op) (c clsql-mysql-source-file))
-  (or (and (probe-file #p"/usr/lib/clsql/clsql_mysql.so") t)
+  (or (and (probe-file #p"/usr/lib/clsql_mysql.so") t)
       (let ((lib (make-pathname :defaults (component-pathname c)
 				:type (uffi:default-foreign-library-type))))
 	(and (probe-file lib) (probe-file (component-pathname c))
