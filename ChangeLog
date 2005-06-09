@@ -1,5 +1,5 @@
 09 Jun 2005 Kevin Rosenberg <kevin@rosenberg.net>
-	* Version 3.2.0
+	* Version 3.2.0: REQUIRES UFFI VERSION 1.4.38 OR HIGHER
 	* clsql-mysql.asd: Renamed clsql/mysql interface library from
 	mysql to clsql_mysql
 	* clsql-uffi.asd: Renamed clsql/uffi interface library from
