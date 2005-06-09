@@ -1,4 +1,5 @@
 09 Jun 2005 Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.2.0
 	* clsql-mysql.asd: Renamed clsql/mysql interface library from
 	mysql to clsql_mysql
 	* clsql-uffi.asd: Renamed clsql/uffi interface library from

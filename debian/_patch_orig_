@@ -1,24 +1,30 @@
 diff -ur clsql/db-mysql/mysql-loader.lisp clsql-debian/db-mysql/mysql-loader.lisp
---- clsql/db-mysql/mysql-loader.lisp	2005-06-08 13:21:08.816849000 -0600
-+++ clsql-debian/db-mysql/mysql-loader.lisp	2005-06-08 17:33:33.547500816 -0600
-@@ -41,9 +41,11 @@
-   *mysql-library-loaded*)
+--- clsql/db-mysql/mysql-loader.lisp	2005-06-08 18:23:40.000000000 -0600
++++ clsql-debian/db-mysql/mysql-loader.lisp	2005-06-08 18:17:29.000000000 -0600
+@@ -42,12 +42,14 @@
  				      
  (defmethod clsql-sys:database-type-load-foreign ((database-type (eql :mysql)))
--  (clsql-uffi:find-and-load-foreign-library *mysql-library-candidate-names*
+   (clsql-uffi:find-and-load-foreign-library *mysql-library-candidate-names*
 -                                            :module "mysql" 
 -                                            :supporting-libraries *mysql-supporting-libraries*)
+-  (clsql-uffi:find-and-load-foreign-library *clsql-mysql-library-candidate-names*
+-                                            :module "clsql-mysql" 
+-                                            :supporting-libraries *mysql-supporting-libraries*)
+-  (setq *mysql-library-loaded* t))
++					    :module "mysql" 
++					    :supporting-libraries *mysql-supporting-libraries*)
 +  (if (probe-file #p"/usr/lib/clsql/clsql_mysql.so")
-+      (uffi:load-foriegn-library #p"/usr/lib/clsql/clsql_mysql.so")
-+      (clsql-uffi:find-and-load-foreign-library *mysql-library-candidate-names*
-+						:module "mysql" 
++      (uffi:load-foreign-library #p"/usr/lib/clsql/clsql_mysql.so")
++      (clsql-uffi:find-and-load-foreign-library *clsql-mysql-library-candidate-names*
++						:module "clsql-mysql" 
 +						:supporting-libraries *mysql-supporting-libraries*))
-   (clsql-uffi:find-and-load-foreign-library *clsql-mysql-library-candidate-names*
-                                             :module "clsql-mysql" 
-                                             :supporting-libraries *mysql-supporting-libraries*)
++      (setq *mysql-library-loaded* t))
+ 
+ 
+ (clsql-sys:database-type-load-foreign :mysql)
 diff -ur clsql/uffi/clsql-uffi-loader.lisp clsql-debian/uffi/clsql-uffi-loader.lisp
---- clsql/uffi/clsql-uffi-loader.lisp	2005-06-08 13:25:29.006295000 -0600
-+++ clsql-debian/uffi/clsql-uffi-loader.lisp	2005-06-08 17:34:29.748956896 -0600
+--- clsql/uffi/clsql-uffi-loader.lisp	2005-06-08 13:38:14.000000000 -0600
++++ clsql-debian/uffi/clsql-uffi-loader.lisp	2005-06-08 18:30:27.000000000 -0600
 @@ -51,10 +51,12 @@
    "T if foreign library was able to be loaded successfully")
  
@@ -28,7 +34,7 @@ diff -ur clsql/uffi/clsql-uffi-loader.lisp clsql-debian/uffi/clsql-uffi-loader.l
 -                                 :supporting-libraries 
 -                                 *clsql-uffi-supporting-libraries*)
 +  (if (probe-file #p"/usr/lib/clsql/clsql_uffi.so")
-+      (uffi:load-foriegn-library #p"/usr/lib/clsql/clsql_uffi.so")
++      (uffi:load-foreign-library #p"/usr/lib/clsql/clsql_uffi.so")
 +      (find-and-load-foreign-library *clsql-uffi-library-filenames*
 +				     :module "clsql-uffi" 
 +				     :supporting-libraries 
