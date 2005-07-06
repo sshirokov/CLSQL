@@ -1,3 +1,20 @@
+05 Jul 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.2.1
+	* doc/appendix.xml: Incorporate Edi Weitz's notes into documentation
+	with changes to support case-sensitive lisp implementations. Add
+	paragraph on using /etc/clsql-init.lisp site initialization file.
+	* clsql.asd: Load file /etc/clsql-init.lisp, if it
+	exists, after package is loaded to set site-specific configuration
+	
+2005-06-24  Edi Weitz  <edi@agharta.de>
+	* sql/db-interface.lisp: Added new special variable
+	*FOREIGN-LIBRARY-SEARCH-PATHS* and function PUSH-LIBRARY-PATH to
+	manipulate it.
+	* sql/package.lisp: Export these.
+	* uffi/clsql-uffi-loader.lisp: Used new variable; changed order of
+	libs.
+	* db-mysql/mysql-loader.lisp: Changed order of libs.
+
 09 Jun 2005 Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.2.0: REQUIRES UFFI VERSION 1.4.38 OR HIGHER
 	* clsql-mysql.asd: Renamed clsql/mysql interface library from

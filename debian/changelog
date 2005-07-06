@@ -1,3 +1,10 @@
+cl-sql (3.2.1-1) unstable; urgency=low
+
+  * New upstream
+  * Add /etc/clsql-init.lisp site initialization file.
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Tue,  5 Jul 2005 17:36:38 -0600
+
 cl-sql (3.2.0-1) unstable; urgency=low
 
   * New upstream

@@ -7,14 +7,53 @@
   
 <appendix id="appendix">
   <title>Database Back-ends</title>
-  
-    <sect1 id="postgresql">
-      <title>PostgreSQL</title>
-      <sect2>
-	<title>Libraries</title>
-	<para>The PostgreSQL back-end requires the PostgreSQL C 
-	  client library (<filename>libpq.so</filename>).  The
-	  location of this library is specified via 
+
+  <sect1 id="foreignlibs">
+    <title>How CLSQL finds and loads foreign  libraries</title>
+    <para>
+      For some database types CLSQL has to load external foreign
+      libaries.  These are usually searched for in the standard
+      locations the operating system uses but you can tell &clsql; to
+      look into other directories as well by using the function
+      <function>CLSQL:PUSH-LIBRARY-PATH</function> or by directly
+      manipulating the special variable
+      <varname>CLSQL:*FOREIGN-LIBRARY-SEARCH-PATHS*</varname>.  If,
+      say, the shared library libpq.so needed for PostgreSQL support
+      is located in the directory <filename>/opt/foo/</filename> on
+      your machine you'd use
+      <screen>
+	(clsql:push-library-path "/opt/foo/")
+      </screen>
+  before loading the CLSQL-POSTGRESQL module.  (Note the trailing
+  slash above!)
+
+  If you want to combine this with fully automatic loading of
+  libraries via ASDF a technique like the following works:
+
+  <screen>
+    (defmethod asdf:perform :after ((o asdf:load-op) 
+                                    (c (eql (asdf:find-system 'clsql))))
+      (funcall (find-symbol (symbol-name '#:push-library-path)
+                            (find-package 'clsql))
+               #p"/opt/foo/"))
+  </screen>
+    </para>
+
+    <para>
+      Additionally, site-specific initialization can be done using an
+initialization file. If the file <filename>/etc/clsql-init.lisp</filename> 
+exists, this file will be read after the &clsql; ASDF system is loaded.
+This file can contain forms to set site-specific paths as well as change
+&clsql; default values.
+    </para>
+  </sect1>
+  <sect1 id="postgresql">
+    <title>PostgreSQL</title>
+    <sect2>
+      <title>Libraries</title>
+      <para>The PostgreSQL back-end requires the PostgreSQL C 
+      client library (<filename>libpq.so</filename>).  The
+      location of this library is specified via 
 	  <symbol>*postgresql-so-load-path*</symbol>, which defaults
 	  to <filename>/usr/lib/libpq.so</filename>.  Additional flags 
 	  to <application>ld</application> needed for linking are

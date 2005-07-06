@@ -226,6 +226,10 @@
      ;; Shared exports for re-export by CLSQL package. 
      #1=(
 
+         ;; foreign library loading
+         #:*foreign-library-search-paths*
+         #:push-library-path
+
 	 ;; Condition system (conditions.lisp) 
 	 #:sql-user-error
 	 #:sql-database-error

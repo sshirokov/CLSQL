@@ -100,7 +100,7 @@ install: build
 	dh_installdirs
 
 	dh_installdirs --all  $(clc-systems) $(clc-source)
-	dh_installdirs -p $(pkg) $(lispdir-sql)
+	dh_installdirs -p $(pkg) $(lispdir-sql) etc
 	dh_installdirs -p $(pkg-uffi) $(lispdir-uffi) $(sodir-uffi)
 	dh_installdirs -p $(pkg-pg) $(lispdir-pg)
 	dh_installdirs -p $(pkg-pg-socket) $(lispdir-pg-socket)
@@ -115,6 +115,7 @@ install: build
 	# Main package
 	dh_install -p $(pkg) $(srcs) $(lispdir-sql)
 	dh_install -p $(pkg) clsql.asd $(clc-clsql)
+	dh_install -p $(pkg) debian/clsql-init.lisp etc
 
 	# UFFI
 	dh_install -p $(pkg-uffi) $(srcs-uffi) $(lispdir-uffi)
@@ -239,4 +240,3 @@ binary-arch: build install
 binary: binary-indep binary-arch
 
 .PHONY: build clean binary-indep binary-arch binary install configure
-

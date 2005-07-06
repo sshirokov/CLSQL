@@ -452,4 +452,11 @@ of TYPE_NAME (keyword) PRECISION SCALE NULLABLE.")
   (unless (is-database-open database)
     (signal-closed-database-error database)))
 
+(defvar *foreign-library-search-paths* nil
+  "A list of pathnames denoting directories where CLSQL will look
+for foreign libraries \(in addition to the default places).")
 
+(defun push-library-path (path)
+  "Adds the pathspec PATH \(which should denote a directory) to
+the list *FOREIGN-LIBRARY-SEARCH-PATHS*."
+  (push path *foreign-library-search-paths*))

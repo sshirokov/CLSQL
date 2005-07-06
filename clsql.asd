@@ -43,9 +43,9 @@ oriented interface."
 			 (:file "time" :depends-on ("package" "conditions"))
 			 (:file "utils" :depends-on ("package" "db-interface"))
                          (:file "generics" :depends-on ("package"))))
-               (:module database 
-                        :pathname "" 
-                        :components 
+               (:module database
+                        :pathname ""
+                        :components
                         ((:file "initialize")
 			 (:file "database" :depends-on ("initialize"))
 			 (:file "recording" :depends-on ("database"))
@@ -54,7 +54,7 @@ oriented interface."
 	       (:module syntax
 			:pathname ""
 			:components ((:file "expressions")
-				     (:file "operations" 
+				     (:file "operations"
                                             :depends-on ("expressions"))
 				     (:file "syntax" :depends-on ("operations")))
 			:depends-on (database))
@@ -62,7 +62,7 @@ oriented interface."
 			:pathname ""
 			:components ((:file "fdml")
                                      (:file "transaction" :depends-on ("fdml"))
-                                     (:file "loop-extension" 
+                                     (:file "loop-extension"
                                             :depends-on ("fdml"))
 				     (:file "fddl" :depends-on ("fdml")))
 			:depends-on (syntax))
@@ -83,3 +83,8 @@ oriented interface."
 (defmethod perform ((o test-op) (c (eql (find-system 'clsql))))
   (operate 'load-op 'clsql-tests)
   (operate 'test-op 'clsql-tests :force t))
+
+(defmethod perform :after ((o load-op) (c (eql (find-system 'clsql))))
+  (when (probe-file "/etc/clsql-init.lisp")
+    (load "/etc/clsql-init.lisp")))
+

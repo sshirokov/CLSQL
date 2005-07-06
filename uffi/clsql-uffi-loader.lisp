@@ -19,7 +19,13 @@
 (in-package #:clsql-uffi)
 
 (defun find-and-load-foreign-library (filenames &key module supporting-libraries (errorp t))
-  (setq filenames (if (listp filenames) filenames (list filenames)))
+  (setq filenames (if (listp filenames) filenames (list filenames))
+        filenames
+          (append
+           (loop for search-path in clsql:*foreign-library-search-paths*
+                 nconc (loop for filename in filenames
+                             collect (merge-pathnames filename search-path)))
+           filenames))
   (or (loop for type in (uffi:foreign-library-types)
             for suffix = (make-pathname :type type)
             thereis (loop for filename in filenames
@@ -35,12 +41,12 @@
                (length filenames) filenames))))
 
 (defvar *clsql-uffi-library-filenames*
-    (list #+(or 64bit x86-64) (make-pathname :name "clsql_uffi64"
+    (list #+(or 64bit x86-64) "clsql_uffi64"
+          #+(or 64bit x86-64) (make-pathname :name "clsql_uffi64"
                                              :directory clsql-uffi-system::*library-file-dir*)
-          #+(or 64bit x86-64) "clsql_uffi64"
+          "clsql_uffi"
           (make-pathname :name "clsql_uffi"
-                         :directory clsql-uffi-system::*library-file-dir*)
-          "clsql_uffi"))
+                         :directory clsql-uffi-system::*library-file-dir*)))
 
 (defvar *clsql-uffi-supporting-libraries* '("c")
   "Used only by CMU. List of library flags needed to be passed to ld to
@@ -52,8 +58,8 @@ set to the right path before compiling or loading the system.")
 
 (defun load-uffi-foreign-library ()
   (find-and-load-foreign-library *clsql-uffi-library-filenames*
-                                 :module "clsql-uffi" 
-                                 :supporting-libraries 
+                                 :module "clsql-uffi"
+                                 :supporting-libraries
                                  *clsql-uffi-supporting-libraries*)
   (setq *uffi-library-loaded* t))
 

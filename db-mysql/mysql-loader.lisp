@@ -19,12 +19,12 @@
 (in-package #:mysql)
 
 (defparameter *clsql-mysql-library-candidate-names* 
-  (list #+(or 64bit x86-64) (make-pathname :name "clsql_mysql64"
+  (list #+(or 64bit x86-64) "clsql_mysql64"
+        #+(or 64bit x86-64) (make-pathname :name "clsql_mysql64"
                                            :directory (pathname-directory *load-truename*))
-        #+(or 64bit x86-64) "clsql_mysql64"
+        "clsql_mysql"
         (make-pathname :name "clsql_mysql"
-                       :directory (pathname-directory *load-truename*))
-        "clsql_mysql"))
+                       :directory (pathname-directory *load-truename*))))
 
 (defvar *mysql-library-candidate-names*
   '("libmysqlclient" "libmysql"))
