@@ -1,3 +1,9 @@
+cl-sql (3.2.1-2) unstable; urgency=low
+
+  * Add /usr/lib/ to search paths. (closes:317097)
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Wed,  6 Jul 2005 06:16:51 -0600
+
 cl-sql (3.2.1-1) unstable; urgency=low
 
   * New upstream
