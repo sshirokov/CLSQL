@@ -37,8 +37,9 @@
                                       (warn "~A" c)
                                       nil))))
       (when errorp
-        (error "Couldn't load foreign librar~@P ~{~S~^, ~}."
-               (length filenames) filenames))))
+	(error "Couldn't load foreign librar~@P ~{~S~^, ~}. (searched ~S)"
+               (length filenames) filenames
+	       'clsql:*foreign-library-search-paths*))))
 
 (defvar *clsql-uffi-library-filenames*
     (list #+(or 64bit x86-64) "clsql_uffi64"
