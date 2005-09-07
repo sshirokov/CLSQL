@@ -1,3 +1,9 @@
+06 Sep 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.2.2
+	* db-oracle/oracle-sql.lisp: Add check for zero increment as
+	suggested by Edi Weitz. Add missing database-sequence-last function
+	as noted and tested by Edi Weitz.
+
 22 Aug 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* uffi/clsql-uffi-loader.lisp: Commit patch from astor@pvv.ntnu.no to
 	display search path when error occurs loading foreign library.
