@@ -129,7 +129,7 @@ the length of that format.")
   (cond
     (database
      (with-slots (errhp) database
-       (let ((errcode (uffi:allocate-foreign-string :long))
+       (let ((errcode (uffi:allocate-foreign-object :long))
 	     (errbuf (uffi:allocate-foreign-string #.+errbuf-len+)))
 	 ;; ensure errbuf empty string
 	 (setf (uffi:deref-array errbuf '(:array :unsigned-char) 0)
@@ -469,35 +469,36 @@ the length of that format.")
 
 (defun sql-stmt-exec (sql-stmt-string db result-types field-names)
   (with-slots (envhp svchp errhp) db
-    (let ((stmthp (uffi:allocate-foreign-object :pointer-void)))
+    (let ((stmthp (uffi:allocate-foreign-object :pointer-void))
+          select-p)
+      
       (uffi:with-foreign-object (stmttype :unsigned-short)
-
 	(unwind-protect
-	     (progn
-	       (oci-handle-alloc (deref-vp envhp)
-				 stmthp
-				 +oci-htype-stmt+ 0 +null-void-pointer-pointer+)
-	       (oci-stmt-prepare (deref-vp stmthp)
-				 (deref-vp errhp)
-				 (uffi:convert-to-cstring sql-stmt-string)
-				 (length sql-stmt-string)
-				 +oci-ntv-syntax+ +oci-default+ :database db)
-	       (oci-attr-get (deref-vp stmthp)
-			     +oci-htype-stmt+
-			     stmttype
-			     +unsigned-int-null-pointer+
-			     +oci-attr-stmt-type+
-			     (deref-vp errhp)
-			     :database db)
+            (progn
+              (oci-handle-alloc (deref-vp envhp)
+                                stmthp
+                                +oci-htype-stmt+ 0 +null-void-pointer-pointer+)
+              (oci-stmt-prepare (deref-vp stmthp)
+                                (deref-vp errhp)
+                                (uffi:convert-to-cstring sql-stmt-string)
+                                (length sql-stmt-string)
+                                +oci-ntv-syntax+ +oci-default+ :database db)
+              (oci-attr-get (deref-vp stmthp)
+                            +oci-htype-stmt+
+                            stmttype
+                            +unsigned-int-null-pointer+
+                            +oci-attr-stmt-type+
+                            (deref-vp errhp)
+                            :database db)
+              
+              (setq select-p (= (uffi:deref-pointer stmttype :unsigned-short) 1))
+              (let ((iters (if select-p 0 1)))
 
-	       (let* ((select-p (= (uffi:deref-pointer stmttype :unsigned-short) 1))
-		      (iters (if select-p 0 1)))
-
-		 (oci-stmt-execute (deref-vp svchp)
-				   (deref-vp stmthp)
-				   (deref-vp errhp)
-				   iters 0 +null-void-pointer+ +null-void-pointer+ +oci-default+
-				   :database db)))
+                (oci-stmt-execute (deref-vp svchp)
+                                  (deref-vp stmthp)
+                                  (deref-vp errhp)
+                                  iters 0 +null-void-pointer+ +null-void-pointer+ +oci-default+
+                                  :database db)))
 	  ;; free resources unless a query
 	  (unless select-p
 	    (oci-handle-free (deref-vp stmthp) +oci-htype-stmt+)

@@ -1,4 +1,9 @@
 08 Sep 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.2.3
+	* db-oracle/oracle-sql.lisp: Correction for v3.2.2 changes by
+	Edi Weitz
+
+08 Sep 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.2.2
 	* db-oracle/oracle-sql.lisp: Add check for zero increment as
 	suggested by Edi Weitz. Add missing database-sequence-last function
