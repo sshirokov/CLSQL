@@ -129,34 +129,36 @@ the length of that format.")
   (cond
     (database
      (with-slots (errhp) database
-       (uffi:with-foreign-object (errcode :long)
-	 (let ((errbuf (uffi:allocate-foreign-string #.+errbuf-len+)))
-	   ;; ensure errbuf empty string
-	   (setf (uffi:deref-array errbuf '(:array :unsigned-char) 0)
-		 (uffi:ensure-char-storable (code-char 0)))
-	   (setf (uffi:deref-pointer errcode :long) 0)
+       (let ((errcode (uffi:allocate-foreign-string :long))
+	     (errbuf (uffi:allocate-foreign-string #.+errbuf-len+)))
+	 ;; ensure errbuf empty string
+	 (setf (uffi:deref-array errbuf '(:array :unsigned-char) 0)
+	       (uffi:ensure-char-storable (code-char 0)))
+	 (setf (uffi:deref-pointer errcode :long) 0)
 
-	   (uffi:with-cstring (sqlstate nil)
-	     (oci-error-get (deref-vp errhp) 1
-			    sqlstate
-			    errcode
-			    (uffi:char-array-to-pointer errbuf)
-			    +errbuf-len+ +oci-htype-error+))
-	   (let ((subcode (uffi:deref-pointer errcode :long)))
-	     (unless (and nulls-ok (= subcode +null-value-returned+))
-	       (error 'sql-database-error
-		      :database database
-		      :error-id subcode
-		      :message (uffi:convert-from-foreign-string errbuf))))
-	   (uffi:free-foreign-object errbuf)))))
+	 (uffi:with-cstring (sqlstate nil)
+	   (oci-error-get (deref-vp errhp) 1
+			  sqlstate
+			  errcode
+			  (uffi:char-array-to-pointer errbuf)
+			  +errbuf-len+ +oci-htype-error+))
+	 (let ((subcode (uffi:deref-pointer errcode :long))
+	       (errstr (uffi:convert-from-foreign-string errbuf)))
+	   (uffi:free-foreign-object errcode)
+	   (uffi:free-foreign-object errbuf)
+	   (unless (and nulls-ok (= subcode +null-value-returned+))
+	     (error 'sql-database-error
+		    :database database
+		    :error-id subcode
+		    :message errstr))))))
     (nulls-ok
-	  (error 'sql-database-error
-		 :database database
-		 :message "can't handle NULLS-OK without ERRHP"))
-	 (t
-	  (error 'sql-database-error
-		 :database database
-		 :message "OCI Error (and no ERRHP available to find subcode)"))))
+     (error 'sql-database-error
+	    :database database
+	    :message "can't handle NULLS-OK without ERRHP"))
+    (t
+     (error 'sql-database-error
+	    :database database
+	    :message "OCI Error (and no ERRHP available to find subcode)"))))
 
 ;;; Require an OCI success code.
 ;;;
@@ -466,39 +468,46 @@ the length of that format.")
 ;; freeing the STMTHP when it is no longer needed.
 
 (defun sql-stmt-exec (sql-stmt-string db result-types field-names)
-  (with-slots (envhp svchp errhp)
-    db
+  (with-slots (envhp svchp errhp) db
     (let ((stmthp (uffi:allocate-foreign-object :pointer-void)))
       (uffi:with-foreign-object (stmttype :unsigned-short)
 
-        (oci-handle-alloc (deref-vp envhp)
-			  stmthp
-			  +oci-htype-stmt+ 0 +null-void-pointer-pointer+)
-        (oci-stmt-prepare (deref-vp stmthp)
-			  (deref-vp errhp)
-                          (uffi:convert-to-cstring sql-stmt-string)
-			  (length sql-stmt-string)
-                          +oci-ntv-syntax+ +oci-default+ :database db)
-        (oci-attr-get (deref-vp stmthp)
-		      +oci-htype-stmt+
-                      stmttype
-		      +unsigned-int-null-pointer+
-		      +oci-attr-stmt-type+
-                      (deref-vp errhp)
-		      :database db)
-        (let* ((select-p (= (uffi:deref-pointer stmttype :unsigned-short) 1))
-               (iters (if select-p 0 1)))
+	(unwind-protect
+	     (progn
+	       (oci-handle-alloc (deref-vp envhp)
+				 stmthp
+				 +oci-htype-stmt+ 0 +null-void-pointer-pointer+)
+	       (oci-stmt-prepare (deref-vp stmthp)
+				 (deref-vp errhp)
+				 (uffi:convert-to-cstring sql-stmt-string)
+				 (length sql-stmt-string)
+				 +oci-ntv-syntax+ +oci-default+ :database db)
+	       (oci-attr-get (deref-vp stmthp)
+			     +oci-htype-stmt+
+			     stmttype
+			     +unsigned-int-null-pointer+
+			     +oci-attr-stmt-type+
+			     (deref-vp errhp)
+			     :database db)
 
-          (oci-stmt-execute (deref-vp svchp)
-			    (deref-vp stmthp)
-			    (deref-vp errhp)
-                            iters 0 +null-void-pointer+ +null-void-pointer+ +oci-default+
-			    :database db)
-          (cond (select-p
-                 (make-query-cursor db stmthp result-types field-names))
-                (t
-                 (oci-handle-free (deref-vp stmthp) +oci-htype-stmt+)
-                 nil)))))))
+	       (let* ((select-p (= (uffi:deref-pointer stmttype :unsigned-short) 1))
+		      (iters (if select-p 0 1)))
+
+		 (oci-stmt-execute (deref-vp svchp)
+				   (deref-vp stmthp)
+				   (deref-vp errhp)
+				   iters 0 +null-void-pointer+ +null-void-pointer+ +oci-default+
+				   :database db)))
+	  ;; free resources unless a query
+	  (unless select-p
+	    (oci-handle-free (deref-vp stmthp) +oci-htype-stmt+)
+	    (uffi:free-foreign-object stmthp))))
+
+      (cond
+	(select-p
+	 (make-query-cursor db stmthp result-types field-names))
+	(t
+	 nil)))))
 
 
 ;; Return a QUERY-CURSOR representing the table returned from the OCI
@@ -714,6 +723,7 @@ the length of that format.")
 
 (defun close-query (qc)
   (oci-handle-free (deref-vp (qc-stmthp qc)) +oci-htype-stmt+)
+  (uffi:free-foreign-object (qc-stmthp qc))
   (let ((cds (qc-cds qc)))
     (dotimes (i (length cds))
       (release-cd-resources (aref cds i))))
