@@ -1,3 +1,9 @@
+cl-sql (3.2.3-3) unstable; urgency=low
+
+  * New upstream
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sat, 17 Sep 2005 15:53:47 -0600
+
 cl-sql (3.2.3-1) unstable; urgency=low
 
   * New upstream

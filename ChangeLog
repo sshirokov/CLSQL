@@ -1,4 +1,8 @@
 08 Sep 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.2.4
+	* doc/into.xml: Change download from ftp to http protocol
+
+08 Sep 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.2.3
 	* db-oracle/oracle-sql.lisp: Correction for v3.2.2 changes by
 	Edi Weitz
