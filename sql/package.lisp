@@ -451,8 +451,10 @@
          #:current-year
          #:day-duration
          #:db-timestring
+	 #:db-datestring
          #:decode-duration
          #:decode-time
+	 #:decode-date
          #:duration
          #:duration+
          #:duration<
@@ -471,7 +473,9 @@
          #:extract-roman 
          #:format-duration
          #:format-time
+	 #:format-date
          #:get-time
+	 #:get-date
          #:utime->time
          #:interval-clear
          #:interval-contained
@@ -486,11 +490,13 @@
          #:make-duration
          #:make-interval
          #:make-time
+	 #:make-date
          #:merged-time
          #:midnight
          #:month-name
          #:parse-date-time
          #:parse-timestring
+	 #:parse-datestring
          #:parse-yearstring
          #:print-date
          #:roll
@@ -516,6 +522,23 @@
          #:time=
          #:time>
          #:time>=
+	 #:date
+	 #:date+
+	 #:date-
+	 #:date-difference
+	 #:date-compare
+	 #:date-dow
+	 #:date-element
+	 #:date-max
+	 #:date-min
+	 #:date-mjd
+	 #:date-p
+	 #:date-ymd
+	 #:date<
+	 #:date<=
+	 #:date=
+	 #:date>
+	 #:date>=
          #:timezone
          #:universal-time
          #:wall-time

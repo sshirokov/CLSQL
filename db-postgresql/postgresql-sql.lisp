@@ -412,7 +412,7 @@
 
 (defmethod database-probe (connection-spec (type (eql :postgresql)))
   (when (find (second connection-spec) (database-list connection-spec type)
-	      :key #'car :test #'string-equal)
+              :test #'string-equal)
     t))
 
 

@@ -458,7 +458,7 @@
 
 (defmethod database-probe (connection-spec (type (eql :mysql)))
   (when (find (second connection-spec) (database-list connection-spec type)
-	      :key #'car :test #'string-equal)
+              :test #'string-equal)
     t))
 
 (defmethod database-list (connection-spec (type (eql :mysql)))

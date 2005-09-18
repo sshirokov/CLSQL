@@ -84,6 +84,14 @@
   (format stream "#<DURATION: ~a>"
           (format-duration nil duration :precision :second)))
 
+(defstruct (date (:constructor %make-date)
+		 (:print-function %print-date))
+  (mjd 0 :type fixnum))
+
+(defun %print-date (date stream depth)
+  (declare (ignore depth))
+  (format stream "#<DATE: ~a>" (format-date nil date)))
+
 );eval-when
 
 (defun duration-timestring (duration)
@@ -107,6 +115,11 @@
         (floor sec (* 60 60 24))
       (%make-wall-time :mjd (+ mjd day-add) :second raw-sec :usec usec))))
 
+(defun make-date (&key (year 0) (month 1) (day 1) (hour 0) (minute 0)
+                       (second 0) (usec 0) (offset 0))
+  (time->date (make-time :year year :month month :day day :hour hour
+			 :minute minute :second second :usec usec :offset offset)))
+
 (defun copy-time (time)
   (%make-wall-time :mjd (time-mjd time)
                    :second (time-second time)))
@@ -118,9 +131,21 @@
     (make-time :year year :month mon :day day :hour hour :minute minute
                :second second)))
 
+(defun date->time (date)
+  "Returns a walltime for the given date"
+  (%make-wall-time :mjd (date-mjd date)))
+
+(defun time->date (time)
+  "Returns a date for the given wall time (obvious loss in resolution)"
+  (%make-date :mjd (time-mjd time)))
+
 (defun get-time ()
   "Return a pair: (GREGORIAN DAY . TIME-OF-DAY)"
   (utime->time (get-universal-time)))
+
+(defun get-date ()
+  "Returns a date for today"
+  (time->date (get-time)))
 
 (defun make-duration (&key (year 0) (month 0) (day 0) (hour 0) (minute 0)
                       (second 0) (usec 0))
@@ -166,6 +191,18 @@
     (multiple-value-bind (hour minute second)
         (time-hms time)
       (values (time-usec time) second minute hour day month year (mod (+ (time-mjd time) 3) 7)))))
+
+(defun date-ymd (date)
+  (time-ymd (date->time date)))
+
+(defun date-dow (date)
+  (time-dow (date->time date)))
+
+(defun decode-date (date)
+  "returns the decoded date as multiple values: day month year integer day-of-week"
+  (multiple-value-bind (year month day)
+      (time-ymd (date->time date))
+    (values day month year (date-dow date))))
 
 ;; duration specific
 (defun duration-reduce (duration precision &optional round)
@@ -342,6 +379,43 @@
             :less-than
             :greater-than))))
 
+; now the same for dates
+(eval-when (:compile-toplevel :load-toplevel)
+(defun replace-string (string1 search-string replace-string &key (test #'string=))
+  "Search within string1 for search-string, replace with replace-string, non-destructively."
+  (let ((replace-string-length (length replace-string))
+	(search-string-length  (length search-string)))
+    (labels ((sub-replace-string (current-string position)
+	       (let ((found-position (search search-string current-string :test test :start2 position)))
+		 (if (null found-position)
+		     current-string
+		     (sub-replace-string (concatenate 'string
+						      (subseq current-string 0 found-position)
+						      replace-string
+						      (subseq current-string (+ found-position search-string-length)))
+					 (+ position replace-string-length))))))
+      (sub-replace-string string1 0))))
+);eval-when
+
+(defmacro wrap-time-for-date (time-func &key (result-func))
+  (let ((date-func (intern (replace-string (symbol-name time-func) "TIME" "DATE"))))
+    `(defun ,date-func (number &rest more-numbers)
+      (let ((result (apply #',time-func (mapcar #'date->time (cons number more-numbers)))))
+	,(if result-func
+	     `(funcall #',result-func result)
+	     'result)))))
+
+(wrap-time-for-date time=)
+(wrap-time-for-date time/=)
+(wrap-time-for-date time<)
+(wrap-time-for-date time>)
+(wrap-time-for-date time<=)
+(wrap-time-for-date time>=)
+(wrap-time-for-date time-max :result-func time->date)
+(wrap-time-for-date time-min :result-func time->date)
+
+(defun date-compare (date-a date-b)
+  (time-compare (date->time date-a) (date->time date-b)))
 
 ;; ------------------------------------------------------------
 ;; Formatting and output
@@ -397,6 +471,11 @@
         (inscribe-base-10 output 14 2 minute)
         (inscribe-base-10 output 17 2 second)
         (format nil "~a,~d" output usec)))))
+
+(defun db-datestring (date)
+  (db-timestring (date->time date)))
+(defun iso-datestring (date)
+  (iso-timestring (date->time date)))
 
 
 ;; ------------------------------------------------------------
@@ -674,6 +753,12 @@ begins at time.  If no changes are made, returns nil."
             :destructive t))
     new-time))
 
+(defun date+ (date &rest durations)
+  "Add each DURATION to DATE, returning a new date value.
+Note that (barring daylight saving time) 12h + 12h will result in a new day, but doing
+it as separate calculations will not, as the time is chopped to a date before being returned."
+  (time->date (apply #'time+ (cons (date->time date) durations))))
+
 (defun time- (time &rest durations)
   "Subtract each DURATION from TIME, returning a new wall-time value."
   (let ((new-time (copy-time time)))
@@ -688,6 +773,12 @@ begins at time.  If no changes are made, returns nil."
             :usec (- (duration-usec duration))
             :destructive t))
     new-time))
+
+(defun date- (date &rest durations)
+  "Subtract each DURATION to DATE, returning a new date value.
+Note that (barring daylight saving time) 12h + 12h will result in a new day, but doing
+it as separate calculations will not, as the time is chopped to a date before being returned."
+  (time->date (apply #'time- (cons (date->time date) durations))))
 
 (defun time-difference (time1 time2)
   "Returns a DURATION representing the difference between TIME1 and
@@ -709,6 +800,21 @@ TIME2."
     (if (time< time1 time2)
 	(do-diff time1 time2)
       (do-diff time2 time1))))
+
+(defun date-difference (date1 date2)
+  "Returns a DURATION representing the difference between TIME1 and
+TIME2."
+  (time-difference (date->time date1) (date->time date2)))
+
+(defun format-date (stream date &key format
+		    (date-separator "-")
+		    (internal-separator " "))
+  "produces on stream the datestring corresponding to the date
+with the given options"
+  (format-time stream (date->time date)
+	       :format format
+	       :date-separator date-separator
+	       :internal-separator internal-separator))
 
 (defun format-time (stream time &key format
                     (date-separator "-")
@@ -880,6 +986,9 @@ with the given options"
        month)
       (:year
        year))))
+
+(defun date-element (date element)
+  (time-element (date->time date) element))
 
 (defun format-duration (stream duration &key (precision :minute))
   (let ((second (duration-second duration))
@@ -1071,6 +1180,14 @@ formatted date string."
     (if (char= (aref string 0) #\P)
 	(parse-iso-8601-duration string)
       (parse-iso-8601-time string))))
+
+(defun parse-datestring (datestring &key (start 0) end junk-allowed)
+  "parse a ISO 8601 timestring and return the corresponding date.
+Will throw a hissy fit if the date string is a duration. Will ignore any precision beyond day (hour/min/sec/usec)."
+  (let ((parsed-value (parse-timestring datestring :start start :end end :junk-allowed junk-allowed)))
+    (ecase (type-of parsed-value)
+      (wall-time (%make-date :mjd (time-mjd parsed-value))))))
+
 
 (defvar *iso-8601-duration-delimiters*
   '((#\D . :days)

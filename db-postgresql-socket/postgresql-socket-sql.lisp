@@ -342,7 +342,7 @@ doesn't depend on UFFI."
 
 (defmethod database-probe (connection-spec (type (eql :postgresql-socket)))
   (when (find (second connection-spec) (database-list connection-spec type)
-	      :key #'car :test #'string-equal)
+              :test #'string-equal)
     t))
 
 

@@ -381,6 +381,10 @@
   (declare (ignore args database db-type))
   "TIMESTAMP")
 
+(defmethod database-get-type-specifier ((type (eql 'date)) args database db-type)
+  (declare (ignore args database db-type))
+  "DATE")
+
 (defmethod database-get-type-specifier ((type (eql 'duration)) args database db-type)
   (declare (ignore database args db-type))
   "VARCHAR")
@@ -583,6 +587,11 @@
   (declare (ignore database db-type))
   (unless (eq 'NULL val)
     (parse-timestring val)))
+
+(defmethod read-sql-value (val (type (eql 'date)) database db-type)
+  (declare (ignore database db-type))
+  (unless (eq 'NULL val)
+    (parse-datestring val)))
 
 (defmethod read-sql-value (val (type (eql 'duration)) database db-type)
   (declare (ignore database db-type))

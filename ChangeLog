@@ -1,3 +1,18 @@
+17 Sep 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.3.0
+	* sql/time.lisp: Apply patch from Alan Shields adding DATE type.
+	* doc/ref-ooddl.xml: Documentation of new type
+	* notes/add-type-hints.txt: New file from Alan Shields
+	* sql/fddl.lisp: Add owner keyword to drop-table as suggested
+	by Francis Leboutte
+	* db-postgresql-socket/postgresql-socket-sql.lisp: Fix database-probe
+	as noted by Francis Leboutte. Similar fix applied to db-mysql and
+	db-postgresql.
+	* sql/expressions.lisp: Allow string table names for output as
+	contributed by Francis Leboutte.
+	* examples/clsql-tutorial.lisp: Support :postgresql-socket as noted 
+	by Francis Leboutte
+	
 08 Sep 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.2.4
 	* doc/into.xml: Change download from ftp to http protocol

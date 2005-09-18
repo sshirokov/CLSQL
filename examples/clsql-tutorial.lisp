@@ -4,7 +4,7 @@
 
 ;; You must set these variables to appropriate values. 
 (defvar *tutorial-database-type* nil 
-  "Possible values are :postgresql,:postgresql-socket :mysql,
+  "Possible values are :postgresql :postgresql-socket, :mysql,
 :oracle, :odbc, :aodbc or :sqlite")
 (defvar *tutorial-database-name* "clsqltut"
   "The name of the database we will work in.")
@@ -86,7 +86,7 @@
 ;; Connect to the database (see the CLSQL documentation for vendor
 ;; specific connection specs).
 (case *tutorial-database-type*
-  ((:mysql :postgresql)
+  ((:mysql :postgresql :postgresql-socket)
    (clsql:connect `(,*tutorial-database-server* 
 		    ,*tutorial-database-name*
 		    ,*tutorial-database-user* 

@@ -129,20 +129,24 @@ in DATABASE which defaults to *DEFAULT-DATABASE*."
 ;; Drop the tables which store the given view class
 ;;
 
-(defun drop-view-from-class (view-class-name &key (database *default-database*))
+(defun drop-view-from-class (view-class-name &key (database *default-database*)
+                                             (owner nil))
   "Removes a table defined by the View Class VIEW-CLASS-NAME from
 DATABASE which defaults to *DEFAULT-DATABASE*."
   (let ((tclass (find-class view-class-name)))
     (if tclass
         (let ((*default-database* database))
-          (%uninstall-class tclass))
+          (%uninstall-class tclass :owner owner))
         (error "Class ~s not found." view-class-name)))
   (values))
 
-(defun %uninstall-class (self &key (database *default-database*))
+(defun %uninstall-class (self &key
+                              (database *default-database*)
+                              (owner nil))
   (drop-table (sql-expression :table (view-table self))
               :if-does-not-exist :ignore
-              :database database)
+              :database database
+              :owner owner)
   (setf (database-view-classes database)
         (remove self (database-view-classes database))))
 

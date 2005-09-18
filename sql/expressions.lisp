@@ -198,14 +198,20 @@
     `(make-instance 'sql-ident-table :name ',name :table-alias ',alias)))
 
 (defmethod output-sql ((expr sql-ident-table) database)
-  (with-slots (name alias)
-    expr
-    (if (null alias)
-        (write-string (sql-escape (convert-to-db-default-case (symbol-name name) database)) *sql-stream*)
-        (progn
-          (write-string (sql-escape (convert-to-db-default-case (symbol-name name) database)) *sql-stream*)
-          (write-char #\Space *sql-stream*)
-          (format *sql-stream* "~s" alias))))
+  (with-slots (name alias) expr
+     (let ((namestr (if (symbolp name)
+                        (symbol-name name)
+                      name)))
+       (if (null alias)
+           (write-string
+            (sql-escape (convert-to-db-default-case namestr database))
+            *sql-stream*)
+         (progn
+           (write-string
+            (sql-escape (convert-to-db-default-case namestr database))
+            *sql-stream*)
+           (write-char #\Space *sql-stream*)
+           (format *sql-stream* "~s" alias)))))
   t)
 
 (defmethod output-sql-hash-key ((expr sql-ident-table) database)
@@ -902,6 +908,10 @@ uninclusive, and the args from that keyword to the end."
 (defmethod database-output-sql ((self wall-time) database)
   (declare (ignore database))
   (db-timestring self))
+
+(defmethod database-output-sql ((self date) database)
+  (declare (ignore database))
+  (db-datestring self))
 
 (defmethod database-output-sql ((self duration) database)
   (declare (ignore database))

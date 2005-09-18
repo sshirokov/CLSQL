@@ -79,7 +79,8 @@ supports transactions."
     (execute-command stmt :database database)))
 
 (defun drop-table (name &key (if-does-not-exist :error)
-			     (database *default-database*))
+			     (database *default-database*)
+                             (owner nil))
   "Drops the table called NAME from DATABASE which defaults to
 *DEFAULT-DATABASE*. If the table does not exist and
 IF-DOES-NOT-EXIST is :ignore then DROP-TABLE returns nil whereas
@@ -87,7 +88,8 @@ an error is signalled if IF-DOES-NOT-EXIST is :error."
   (let ((table-name (database-identifier name database)))
     (ecase if-does-not-exist
       (:ignore
-       (unless (table-exists-p table-name :database database)
+       (unless (table-exists-p table-name :database database
+                               :owner owner)
          (return-from drop-table nil)))
       (:error
        t))

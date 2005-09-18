@@ -470,6 +470,12 @@
 		support objects of type <type>wall-time</type>.
 	      </member>
 	      <member>
+		<parameter>date</parameter> - a slot which stores the
+		date (without any time of day resolution) in a
+                column. &clsql; provides a number of time
+		manipulation functions that operate on date values.
+	      </member>
+	      <member>
 		<parameter>duration</parameter> - stores a
 		<type>duration</type> structure.  &clsql; provides
 		routines for <type>wall-time</type> and
