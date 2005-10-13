@@ -49,6 +49,16 @@
   (declare (ignore args database))
   "TIMESTAMP WITHOUT TIME ZONE")
 
+(defmethod database-get-type-specifier ((type (eql 'number)) args database
+                                        (db-type (eql :postgresql)))
+  (declare (ignore database db-type))
+  (cond
+   ((and (consp args) (= (length args) 2))
+    (format nil "NUMERIC(~D,~D)" (first args) (second args)))
+   ((and (consp args) (= (length args) 1))
+    (format nil "NUMERIC(~D)" (first args)))
+   (t
+    "NUMERIC")))
 
 ;;; Backend functions
 

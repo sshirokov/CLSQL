@@ -1,3 +1,11 @@
+11 Oct 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/metaclasses.lisp: Commit patch from Will to
+	properly set db-reader slot in effective-slot-definition
+	* sql/expressions.lisp: Commit patch from Alan Shields
+	adding make-load-form for sql-relational-exp
+	* sql/generic-postgresql.lisp: Commit patch from Aleksandar Bakic
+	adding support for new NUMBER type
+	
 17 Sep 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.3.0
 	* sql/time.lisp: Apply patch from Alan Shields adding DATE type.

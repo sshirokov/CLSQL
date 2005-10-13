@@ -479,6 +479,9 @@ which does type checking before storing a value in a slot."
 	       (delistify-dsd (view-class-slot-db-kind dsd))
 	     :base))
 	 
+	 (setf (slot-value esd 'db-reader)
+	   (when (slot-boundp dsd 'db-reader)
+	     (delistify-dsd (view-class-slot-db-reader dsd))))
 	 (setf (slot-value esd 'db-writer)
 	   (when (slot-boundp dsd 'db-writer)
 	     (delistify-dsd (view-class-slot-db-writer dsd))))
