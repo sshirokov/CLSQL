@@ -131,11 +131,6 @@
     :initform +null-string+))
   (:documentation "An SQL Attribute identifier."))
 
-(defmethod make-load-form ((self sql-relational-exp) &optional environment)
-  (make-load-form-saving-slots self
-                               :slot-names '(operator sub-expressions)
-                               :environment environment))
-
 (defmethod collect-table-refs (sql)
   (declare (ignore sql))
   nil)
@@ -233,6 +228,11 @@
     :initarg :sub-expressions
     :initform nil))
   (:documentation "An SQL relational expression."))
+
+(defmethod make-load-form ((self sql-relational-exp) &optional environment)
+  (make-load-form-saving-slots self
+                               :slot-names '(operator sub-expressions)
+                               :environment environment))
 
 (defmethod collect-table-refs ((sql sql-relational-exp))
   (let ((tabs nil))
