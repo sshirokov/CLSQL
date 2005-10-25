@@ -112,7 +112,7 @@
 (defmethod output-sql ((expr sql-ident) database)
   (with-slots (name) expr
     (write-string
-     (convert-to-db-default-case 
+     (convert-to-db-default-case
       (etypecase name
 	(string name)
 	(symbol (symbol-name name)))
@@ -157,9 +157,9 @@
 	  (string
 	   (write-string name *sql-stream*))
 	  (symbol
-	   (write-string (sql-escape (convert-to-db-default-case 
+	   (write-string (sql-escape (convert-to-db-default-case
 				      (symbol-name name) database)) *sql-stream*)))
-      
+
 	;;; KMR: The TYPE field is used by CommonSQL for type conversion -- it
       ;;; should not be output in SQL statements
       #+ignore
@@ -171,9 +171,9 @@
 		(convert-to-db-default-case (symbol-name type) database)))
       (format *sql-stream* "~@[~A.~]~A"
 	      (when qualifier
-                (typecase qualifier 
+                (typecase qualifier
                   (string (format nil "~s" qualifier))
-                  (t (convert-to-db-default-case (sql-escape qualifier) 
+                  (t (convert-to-db-default-case (sql-escape qualifier)
                                                  database))))
 	      (sql-escape (convert-to-db-default-case name database))))
     t))
@@ -269,7 +269,7 @@
 (defclass sql-upcase-like (sql-relational-exp)
   ()
   (:documentation "An SQL 'like' that upcases its arguments."))
-  
+
 (defmethod output-sql ((expr sql-upcase-like) database)
   (flet ((write-term (term)
            (write-string "upper(" *sql-stream*)
@@ -386,12 +386,12 @@
 
 
 (defclass sql-between-exp (sql-function-exp)
-  () 
+  ()
   (:documentation "An SQL between expression."))
 
 (defmethod output-sql ((expr sql-between-exp) database)
   (with-slots (name args)
-      expr 
+      expr
     (output-sql (first args) database)
     (write-string " BETWEEN " *sql-stream*)
     (output-sql (second args) database)
@@ -399,7 +399,7 @@
     (output-sql (third args) database))
   t)
 
-(defclass sql-query-modifier-exp (%sql-expression) 
+(defclass sql-query-modifier-exp (%sql-expression)
   ((modifier :initarg :modifier :initform nil)
    (components :initarg :components :initform nil))
   (:documentation "An SQL query modifier expression."))
@@ -410,8 +410,8 @@
     (output-sql modifier database)
     (write-string " " *sql-stream*)
     (output-sql (car components) database)
-    (when components 
-      (mapc #'(lambda (comp) 
+    (when components
+      (mapc #'(lambda (comp)
 		(write-string ", " *sql-stream*)
 		(output-sql comp database))
 	    (cdr components))))
@@ -545,13 +545,13 @@ uninclusive, and the args from that keyword to the end."
                        target-args))))
     (multiple-value-bind (selections arglist)
 	(query-get-selections args)
-      (if (select-objects selections) 
+      (if (select-objects selections)
 	  (destructuring-bind (&key flatp refresh &allow-other-keys) arglist
 	    (make-instance 'sql-object-query :objects selections
 			   :flatp flatp :refresh refresh
 			   :exp arglist))
 	  (destructuring-bind (&key all flatp set-operation distinct from where
-				    group-by having order-by 
+				    group-by having order-by
 				    offset limit inner-join on &allow-other-keys)
 	      arglist
 	    (if (null selections)
@@ -567,12 +567,12 @@ uninclusive, and the args from that keyword to the end."
 
 (defmethod output-sql ((query sql-query) database)
   (with-slots (distinct selections from where group-by having order-by
-                        limit offset inner-join on all set-operation) 
+                        limit offset inner-join on all set-operation)
       query
     (when *in-subselect*
       (write-string "(" *sql-stream*))
     (write-string "SELECT " *sql-stream*)
-    (when all 
+    (when all
       (write-string "ALL " *sql-stream*))
     (when (and distinct (not all))
       (write-string "DISTINCT " *sql-stream*)
@@ -583,7 +583,7 @@ uninclusive, and the args from that keyword to the end."
     (output-sql (apply #'vector selections) database)
     (when from
       (write-string " FROM " *sql-stream*)
-      (flet ((ident-table-equal (a b) 
+      (flet ((ident-table-equal (a b)
                (and (if (and (eql (type-of a) 'sql-ident-table)
                              (eql (type-of b) 'sql-ident-table))
                         (string-equal (slot-value a 'alias)
@@ -591,9 +591,9 @@ uninclusive, and the args from that keyword to the end."
                         t)
                     (string-equal (symbol-name (slot-value a 'name))
                                   (symbol-name (slot-value b 'name))))))
-        (typecase from 
-          (list (output-sql (apply #'vector 
-                                   (remove-duplicates from 
+        (typecase from
+          (list (output-sql (apply #'vector
+                                   (remove-duplicates from
                                                       :test #'ident-table-equal))
                             database))
           (string (write-string from *sql-stream*))
@@ -610,7 +610,19 @@ uninclusive, and the args from that keyword to the end."
         (output-sql where database)))
     (when group-by
       (write-string " GROUP BY " *sql-stream*)
-      (output-sql group-by database))
+      (if (listp group-by)
+          (do ((order group-by (cdr order)))
+              ((null order))
+            (let ((item (car order)))
+              (typecase item
+                (cons
+                 (output-sql (car item) database)
+                 (format *sql-stream* " ~A" (cadr item)))
+                (t
+                 (output-sql item database)))
+              (when (cdr order)
+                (write-char #\, *sql-stream*))))
+          (output-sql group-by database)))
     (when having
       (write-string " HAVING " *sql-stream*)
       (output-sql having database))
@@ -620,11 +632,11 @@ uninclusive, and the args from that keyword to the end."
           (do ((order order-by (cdr order)))
               ((null order))
             (let ((item (car order)))
-              (typecase item 
-                (cons 
+              (typecase item
+                (cons
                  (output-sql (car item) database)
                  (format *sql-stream* " ~A" (cadr item)))
-                (t 
+                (t
                  (output-sql item database)))
               (when (cdr order)
                 (write-char #\, *sql-stream*))))
@@ -637,7 +649,7 @@ uninclusive, and the args from that keyword to the end."
       (output-sql offset database))
     (when *in-subselect*
       (write-string ")" *sql-stream*))
-    (when set-operation 
+    (when set-operation
       (write-char #\Space *sql-stream*)
       (output-sql set-operation database)))
   t)
@@ -672,10 +684,10 @@ uninclusive, and the args from that keyword to the end."
   (with-slots (into attributes values query)
     ins
     (write-string "INSERT INTO " *sql-stream*)
-    (output-sql 
+    (output-sql
      (typecase into
        (string (sql-expression :attribute into))
-       (t into)) 
+       (t into))
      database)
     (when attributes
       (write-char #\Space *sql-stream*)
@@ -785,7 +797,7 @@ uninclusive, and the args from that keyword to the end."
 		  (database-get-type-specifier (car type) (cdr type) database
 					       (database-underlying-type database)))
                 *sql-stream*)
-               (let ((constraints (database-constraint-statement  
+               (let ((constraints (database-constraint-statement
                                    (if (and db-type (symbolp db-type))
                                        (cons db-type constraints)
                                        constraints)
@@ -812,7 +824,7 @@ uninclusive, and the args from that keyword to the end."
       (when (and (eq :mysql (database-underlying-type database))
 		 transactions
 		 (db-type-transaction-capable? :mysql database))
-	(write-string " Type=InnoDB" *sql-stream*)))) 
+	(write-string " Type=InnoDB" *sql-stream*))))
   t)
 
 
@@ -837,8 +849,8 @@ uninclusive, and the args from that keyword to the end."
 
 
 ;;
-;; DATABASE-OUTPUT-SQL 
-;; 
+;; DATABASE-OUTPUT-SQL
+;;
 
 (defmethod database-output-sql ((str string) database)
   (declare (optimize (speed 3) (safety 1)
@@ -864,8 +876,8 @@ uninclusive, and the args from that keyword to the end."
                         (incf j)
                         (setf (aref buf j) #\'))
                        ((and (char= char #\\)
-                             ;; MTP: only escape backslash with pgsql/mysql 
-                             (member (database-underlying-type database) 
+                             ;; MTP: only escape backslash with pgsql/mysql
+                             (member (database-underlying-type database)
                                      '(:postgresql :mysql)
                                      :test #'eq))
                         (setf (aref buf j) #\\)
@@ -876,8 +888,8 @@ uninclusive, and the args from that keyword to the end."
 
 (let ((keyword-package (symbol-package :foo)))
   (defmethod database-output-sql ((sym symbol) database)
-  (if (null sym) 
-      +null-string+ 
+  (if (null sym)
+      +null-string+
       (convert-to-db-default-case
        (if (equal (symbol-package sym) keyword-package)
            (concatenate 'string "'" (string sym) "'")
@@ -893,8 +905,8 @@ uninclusive, and the args from that keyword to the end."
   (princ-to-string num))
 
 (defmethod database-output-sql ((arg list) database)
-  (if (null arg) 
-      +null-string+ 
+  (if (null arg)
+      +null-string+
       (format nil "(~{~A~^,~})" (mapcar #'(lambda (val)
                                             (sql-output val database))
                                         arg))))
@@ -922,7 +934,7 @@ uninclusive, and the args from that keyword to the end."
   (declare (ignore database))
   (format nil "'~a'" (duration-timestring self)))
 
-#+ignore 
+#+ignore
 (defmethod database-output-sql ((self money) database)
   (database-output-sql (slot-value self 'odcl::units) database))
 
@@ -938,26 +950,26 @@ uninclusive, and the args from that keyword to the end."
 
 
 ;;
-;; Column constraint types and conversion to SQL 
+;; Column constraint types and conversion to SQL
 ;;
 
 (defparameter *constraint-types*
-  (list 
-   (cons (symbol-name-default-case "NOT-NULL") "NOT NULL") 
+  (list
+   (cons (symbol-name-default-case "NOT-NULL") "NOT NULL")
    (cons (symbol-name-default-case "PRIMARY-KEY") "PRIMARY KEY")
-   (cons (symbol-name-default-case "NOT") "NOT") 
-   (cons (symbol-name-default-case "NULL") "NULL") 
-   (cons (symbol-name-default-case "PRIMARY") "PRIMARY") 
+   (cons (symbol-name-default-case "NOT") "NOT")
+   (cons (symbol-name-default-case "NULL") "NULL")
+   (cons (symbol-name-default-case "PRIMARY") "PRIMARY")
    (cons (symbol-name-default-case "KEY") "KEY")
-   (cons (symbol-name-default-case "UNSIGNED") "UNSIGNED") 
-   (cons (symbol-name-default-case "ZEROFILL") "ZEROFILL") 
+   (cons (symbol-name-default-case "UNSIGNED") "UNSIGNED")
+   (cons (symbol-name-default-case "ZEROFILL") "ZEROFILL")
    (cons (symbol-name-default-case "AUTO-INCREMENT") "AUTO_INCREMENT")
    (cons (symbol-name-default-case "UNIQUE") "UNIQUE")))
 
 (defmethod database-constraint-statement (constraint-list database)
   (declare (ignore database))
   (make-constraints-description constraint-list))
-  
+
 (defun make-constraints-description (constraint-list)
   (if constraint-list
       (let ((string ""))

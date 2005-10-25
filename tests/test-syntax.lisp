@@ -9,7 +9,7 @@
 ;;;; Description ==========================================================
 ;;;; ======================================================================
 ;;;;
-;;;; Tests for the CLSQL Symbolic SQL syntax. 
+;;;; Tests for the CLSQL Symbolic SQL syntax.
 ;;;;
 ;;;; ======================================================================
 
@@ -19,7 +19,7 @@
 
 (setq *rt-syntax*
       '(
-	
+
 (deftest :syntax/generic/1
     (clsql:sql "foo")
   "'foo'")
@@ -40,8 +40,8 @@
     (clsql:sql ["SELECT FOO,BAR FROM BAZ"])
   "SELECT FOO,BAR FROM BAZ")
 
-(deftest :syntax/generic/6 
-    (clsql:sql "What's up Doc?") 
+(deftest :syntax/generic/6
+    (clsql:sql "What's up Doc?")
   "'What''s up Doc?'")
 
 (deftest :syntax/ident/1
@@ -95,7 +95,7 @@
   "SOME((FOO,BAR,BAZ))")
 
 
-(deftest :syntax/aggregate/1 
+(deftest :syntax/aggregate/1
     (clsql:sql [max [+ [foo] [* 1000 [bar]]]])
  "MAX((FOO + (1000 * BAR)))")
 
@@ -116,7 +116,7 @@
  "COUNT(FOO)")
 
 
-(deftest :syntax/logical/1 
+(deftest :syntax/logical/1
     (clsql:sql [and [foo] [bar]])
   "(FOO AND BAR)")
 
@@ -124,19 +124,19 @@
     (clsql:sql [or [foo] [bar]])
   "(FOO OR BAR)")
 
-(deftest :syntax/logical/3 
+(deftest :syntax/logical/3
     (clsql:sql [not [foo]])
   "(NOT (FOO))")
 
 
-(deftest :syntax/null/1 
+(deftest :syntax/null/1
     (clsql:sql [null [foo]])
   "(FOO IS NULL)")
 
 (deftest :syntax/null/2
     (clsql:sql [not [null [foo]]])
   "(NOT ((FOO IS NULL)))")
- 
+
 (deftest :syntax/null/3
     (clsql:sql [null])
   "NULL")
@@ -173,16 +173,16 @@
   "(BAZ <> BEEP)")
 
 
-(deftest :syntax/between/1 
+(deftest :syntax/between/1
     (clsql:sql [between [- [foo] 1] [* [bar] 5] [/ [baz] 9]])
   "(FOO - 1) BETWEEN (BAR * 5) AND (BAZ / 9)")
 
-(deftest :syntax/between/2 
+(deftest :syntax/between/2
     (clsql:sql [not [between [- [foo] 1] [* [bar] 5] [/ [baz] 9]]])
   "(NOT ((FOO - 1) BETWEEN (BAR * 5) AND (BAZ / 9)))")
 
 
-(deftest :syntax/arithmetic/1 
+(deftest :syntax/arithmetic/1
     (clsql:sql [+ [foo bar] [baz]])
  "(FOO.BAR + BAZ)")
 
@@ -207,16 +207,16 @@
   "(2 * 3)")
 
 
-(deftest :syntax/substr/1 
+(deftest :syntax/substr/1
     (clsql:sql [substr [hello] 1 4])
  "SUBSTR(HELLO,1,4)")
 
-(deftest :syntax/substring/1 
+(deftest :syntax/substring/1
     (clsql:sql [substring [hello] 1 4])
  "SUBSTRING(HELLO,1,4)")
 
 
-(deftest :syntax/concat/1 
+(deftest :syntax/concat/1
     (clsql:sql [|| [foo] [bar] [baz]])
  "(FOO || BAR || BAZ)")
 
@@ -225,7 +225,7 @@
  "CONCAT(FOO,BAR)")
 
 
-(deftest :syntax/pattern/1 
+(deftest :syntax/pattern/1
     (clsql:sql [like [foo] "%v"])
   "(FOO LIKE '%v')")
 
@@ -234,7 +234,7 @@
   "(NOT ((FOO LIKE '%v')))")
 
 
-(deftest :syntax/distinct/1 
+(deftest :syntax/distinct/1
     (clsql:sql [distinct [foo bar :string]])
  "DISTINCT FOO.BAR")
 
@@ -243,16 +243,24 @@
  "DISTINCT FOO, BAR")
 
 
-(deftest :syntax/order-by/1 
+(deftest :syntax/order-by/1
     (clsql:sql [order-by [foo]])
  "ORDER BY FOO")
 
-(deftest :syntax/group-by/1 
+(deftest :syntax/group-by/1
     (clsql:sql [group-by [foo]])
  "GROUP BY FOO")
 
+(deftest :syntax/group-by/2
+    (clsql:sql
+     (clsql-sys::make-query [foo] [bar] [count [foo]]
+                            :from [table]
+                            :group-by '([foo] [bar])
+                            :order-by '([foo] [bar])))
+  "SELECT FOO,BAR,COUNT(FOO) FROM TABLE GROUP BY FOO,BAR ORDER BY FOO,BAR")
 
-(deftest :syntax/coalesce/1 
+
+(deftest :syntax/coalesce/1
     (clsql:sql [coalesce [foo] [bar] "not specified"])
  "COALESCE(FOO,BAR,'not specified')")
 
@@ -260,17 +268,17 @@
     (clsql:sql [nvl [foo] "not specified"])
  "COALESCE(FOO,'not specified')")
 
-(deftest :syntax/nvl/1 
+(deftest :syntax/nvl/1
     (clsql:sql [nvl [foo] "not specified"])
  "COALESCE(FOO,'not specified')")
 
 
 
-(deftest :syntax/sets/1 
+(deftest :syntax/sets/1
     (clsql:sql [union [select [foo] :from [bar]] [select [baz] :from [bar]]])
  "SELECT FOO FROM BAR UNION SELECT BAZ FROM BAR")
 
-(deftest :syntax/sets/2 
+(deftest :syntax/sets/2
     (clsql:sql [intersect [select [foo] :from [bar]] [select [baz] :from [bar]]])
  "SELECT FOO FROM BAR INTERSECT SELECT BAZ FROM BAR")
 
@@ -296,7 +304,7 @@
     (clsql:sql [select [person_id] [surname] :from [person]])
   "SELECT PERSON_ID,SURNAME FROM PERSON")
 
-(deftest :syntax/query/2 
+(deftest :syntax/query/2
     (clsql:sql [select [foo] [bar *]
                       :from '([baz] [bar])
                       :where [or [= [foo] 3]
@@ -313,7 +321,7 @@
 (deftest :syntax/query/4
     (clsql:sql [select [count [*]] :from [emp]])
   "SELECT COUNT(*) FROM EMP")
-  
+
 
 (deftest :syntax/expression1
     (clsql:sql
@@ -321,11 +329,11 @@
       'select
       (clsql:sql-expression :table 'foo :attribute 'bar)
       (clsql:sql-expression :attribute 'baz)
-      :from (list 
+      :from (list
              (clsql:sql-expression :table 'foo)
              (clsql:sql-expression :table 'quux))
       :where
-      (clsql:sql-operation 'or 
+      (clsql:sql-operation 'or
                           (clsql:sql-operation
                            '>
                            (clsql:sql-expression :attribute 'baz)
@@ -336,7 +344,7 @@
                                                 :attribute 'bar)
                            "SU%"))))
   "SELECT FOO.BAR,BAZ FROM FOO,QUUX WHERE ((BAZ > 3) OR (FOO.BAR LIKE 'SU%'))")
-  
+
 (deftest :syntax/expression/2
     (clsql:sql
      (apply (clsql:sql-operator 'and)
