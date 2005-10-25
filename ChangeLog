@@ -1,3 +1,9 @@
+25 Oct 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.3.1
+	* sql/time.lisp: Commit patch from Alan Shields to
+	display escape string on wall-time display only when *print-escape*
+	is true.
+	
 11 Oct 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/metaclasses.lisp: Commit patch from Will to
 	properly set db-reader slot in effective-slot-definition

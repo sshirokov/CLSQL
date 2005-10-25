@@ -67,7 +67,9 @@
 
 (defun %print-wall-time (time stream depth)
   (declare (ignore depth))
-  (format stream "#<WALL-TIME: ~a>" (format-time nil time)))
+  (if *print-escape*
+      (format stream "#<WALL-TIME: ~a>" (format-time nil time))
+      (format-time stream time :format :pretty)))
 
 (defstruct (duration (:constructor %make-duration)
                      (:print-function %print-duration))
@@ -81,8 +83,10 @@
 
 (defun %print-duration (duration stream depth)
   (declare (ignore depth))
-  (format stream "#<DURATION: ~a>"
-          (format-duration nil duration :precision :second)))
+  (if *print-escape*
+      (format stream "#<DURATION: ~a>"
+	      (format-duration nil duration :precision :second))
+      (format-duration stream duration :precision :second)))
 
 (defstruct (date (:constructor %make-date)
 		 (:print-function %print-date))
@@ -90,7 +94,9 @@
 
 (defun %print-date (date stream depth)
   (declare (ignore depth))
-  (format stream "#<DATE: ~a>" (format-date nil date)))
+  (if *print-escape*
+      (format stream "#<DATE: ~a>" (format-date nil date))
+      (format-date stream date :format :pretty)))
 
 );eval-when
 
