@@ -627,21 +627,23 @@
 
 (defun fault-join-target-slot (class object slot-def)
   (let* ((dbi (view-class-slot-db-info slot-def))
-	 (ts (gethash :target-slot dbi))
-	 (jc (gethash :join-class dbi))
-	 (ts-view-table (view-table (find-class ts)))
+	 (ts (gethash :target-slot dbi)) 
+	 (jc  (gethash :join-class dbi))
 	 (jc-view-table (view-table (find-class jc)))
-	 (tdbi (view-class-slot-db-info 
-		(find ts (class-slots (find-class jc))
-		      :key #'slot-definition-name)))
+	 (tdbi (view-class-slot-db-info
+		(find ts (class-slots (find-class jc)) 
+		      :key #'slot-definition-name))) 
 	 (retrieval (gethash :retrieval tdbi))
+	 (tsc (gethash :join-class tdbi))
+	 (ts-view-table (view-table (find-class tsc)))
 	 (jq (join-qualifier class object slot-def))
 	 (key (slot-value object (gethash :home-key dbi))))
+  
     (when jq
       (ecase retrieval
 	(:immediate
 	 (let ((res
-		(find-all (list ts) 
+		(find-all (list tsc) 
 			  :inner-join (sql-expression :table jc-view-table)
 			  :on (sql-operation 
 			       '==
@@ -667,7 +669,7 @@
 	    ;; just fill in minimal slots
 	    (mapcar
 	     #'(lambda (k)
-		 (let ((instance (make-instance ts :view-database (view-database object)))
+		 (let ((instance (make-instance tsc :view-database (view-database object)))
 		       (jcc (make-instance jc :view-database (view-database object)))
 		       (fk (car k)))
 		   (setf (slot-value instance (gethash :home-key tdbi)) fk)
@@ -742,24 +744,30 @@ maximum of MAX-LEN instances updated in each query."
 	    (let* ((keys (if max-len
 			     (subseq object-keys i (min (+ i query-len) n-object-keys))
 			   object-keys))
-		   (results (find-all (list (gethash :join-class dbi))
-				      :where (make-instance 'sql-relational-exp
-					       :operator 'in
-					       :sub-expressions (list (sql-expression :attribute foreign-key)
-								      keys))
-				      :result-types :auto
-				      :flatp t)))
+		   (results (unless (gethash :target-slot dbi)
+				(find-all (list (gethash :join-class dbi))
+			      :where (make-instance 'sql-relational-exp
+						    :operator 'in
+						    :sub-expressions (list (sql-expression :attribute foreign-key)
+									   keys))
+			      :result-types :auto
+			      :flatp t)) ))
 
 	      (dolist (object objects)
 		(when (or force-p (not (slot-boundp object slotdef-name)))
-		  (let ((res (remove-if-not #'(lambda (obj)
-						(equal obj (slot-value
-							    object
-							    home-key)))
-					    results
-					    :key #'(lambda (res)
-						     (slot-value res
-								 foreign-key)))))
+		  (let ((res (if results
+				 (remove-if-not #'(lambda (obj)
+						    (equal obj (slot-value
+								object
+								home-key)))
+						results
+						:key #'(lambda (res)
+							 (slot-value res
+								     foreign-key)))
+				 
+				 (progn
+				   (when (gethash :target-slot dbi)
+				     (fault-join-target-slot class object slotdef))))))
 		    (when res
 		      (setf (slot-value object slotdef-name)
 			    (if (gethash :set dbi) res (car res)))))))))))))
