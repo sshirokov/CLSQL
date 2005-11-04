@@ -1,3 +1,11 @@
+4 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.3.4 [UFFI >= 1.5.5 needed]
+	* db-odbc/odbc-api.lisp: Apply patch from Yaroslav Kavenchuk
+	to add missing #\' character.
+	* clsql.asd: Add support for CLSQLINIT environmental variable,
+	based on patch from Yaroslav Kavenchcuk. New version of UFFI
+	required.
+	
 30 Oct 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.3.3
 	* sql/oodml.lisp: Apply patch from Drew Crampsie to fix

@@ -18,6 +18,11 @@
 (defpackage #:clsql-system (:use #:asdf #:cl))
 (in-package #:clsql-system)
 
+;; need to load uffi for below perform :after method 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (unless (find-package 'uffi)
+    (asdf:operate 'asdf:load-op 'uffi)))
+
 (defsystem clsql
     :name "CLSQL"
     :author "Kevin Rosenberg <kevin@rosenberg.net>"
@@ -85,6 +90,8 @@ oriented interface."
   (operate 'test-op 'clsql-tests :force t))
 
 (defmethod perform :after ((o load-op) (c (eql (find-system 'clsql))))
-  (when (probe-file "/etc/clsql-init.lisp")
-    (load "/etc/clsql-init.lisp")))
+  (let* ((init-var (uffi:getenv "CLSQLINIT"))
+         (init-file (or (when init-var (probe-file init-var))
+                        (probe-file "/etc/clsql-init.lisp"))))
+    (when init-file (load init-file))))
 
