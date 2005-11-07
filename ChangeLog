@@ -1,3 +1,8 @@
+7 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* src/time.lisp: Apply patch from Aleksandar Bakic for ROLL
+	function.
+	* BUGS: Added report for update-object-joins by Aleksandar Bakic
+	
 4 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.3.4 [UFFI >= 1.5.5 needed]
 	* db-odbc/odbc-api.lisp: Apply patch from Yaroslav Kavenchuk

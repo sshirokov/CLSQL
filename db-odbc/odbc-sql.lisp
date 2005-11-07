@@ -3,7 +3,7 @@
 ;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:          odbc-sql.cl
-;;;; Purpose:       Low-level interface for CLSQL ODBC backend
+;;;; Purpose:       Medium-level interface for CLSQL ODBC backend
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Feb 2002
 ;;;;
