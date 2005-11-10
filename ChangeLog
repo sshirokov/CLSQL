@@ -1,6 +1,8 @@
 11 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.4: Add MySQL 5 support
 	* db-mysql/mysql-client-info.lisp: Recognize MySQL 5
 	* db-mysql/mysql-sql.lisp: Add support for views in MySQL 5
+	* doc/mysql-macosx-notes.txt: New document from Martin Brooks
 	
 7 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* src/time.lisp: Apply patch from Aleksandar Bakic for ROLL
