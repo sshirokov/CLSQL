@@ -52,7 +52,7 @@
  	     (type (uffi:get-slot-value field 'mysql-field 'type)))
 	(push
 	 (case type
-	   ((#.mysql-field-types#tiny 
+	   ((#.mysql-field-types#tiny
 	     #.mysql-field-types#short
 	     #.mysql-field-types#int24)
 	    (if unsigned
@@ -95,7 +95,9 @@
 
 (defclass mysql-database (database)
   ((mysql-ptr :accessor database-mysql-ptr :initarg :mysql-ptr
-	      :type mysql-mysql-ptr-def)))
+	      :type mysql-mysql-ptr-def)
+   (server-info :accessor database-server-info :initarg :server-info
+	      :type string)))
 
 (defmethod database-type ((database mysql-database))
   :mysql)
@@ -105,12 +107,12 @@
 			 (host db user password &optional port))
   (destructuring-bind (host db user password &optional port) connection-spec
     (declare (ignore password))
-    (concatenate 'string 
+    (concatenate 'string
 		 (etypecase host
 		   (null "localhost")
 		   (pathname (namestring host))
 		   (string host))
-		 (if port 
+		 (if port
 		     (concatenate 'string
 				  ":"
 				  (etypecase port
@@ -138,8 +140,8 @@
 			    (socket-native socket))
 	  (let ((error-occurred nil))
 	    (unwind-protect
-		(if (uffi:null-pointer-p 
-		     (mysql-real-connect 
+		(if (uffi:null-pointer-p
+		     (mysql-real-connect
 		      mysql-ptr host-native user-native password-native
 		      db-native
 		      (etypecase port
@@ -155,11 +157,13 @@
 			     :error-id (mysql-errno mysql-ptr)
 			     :message (mysql-error-string mysql-ptr)))
 		  (make-instance 'mysql-database
-		    :name (database-name-from-spec connection-spec
-						   database-type)
-		    :database-type :mysql
-		    :connection-spec connection-spec
-		    :mysql-ptr mysql-ptr))
+				 :name (database-name-from-spec connection-spec
+								database-type)
+				 :database-type :mysql
+				 :connection-spec connection-spec
+				 :server-info (uffi:convert-from-cstring
+					       (mysql:mysql-get-server-info mysql-ptr))
+				 :mysql-ptr mysql-ptr))
 	      (when error-occurred (mysql-close mysql-ptr)))))))))
 
 
@@ -169,19 +173,19 @@
   t)
 
 
-(defmethod database-query (query-expression (database mysql-database) 
+(defmethod database-query (query-expression (database mysql-database)
 			   result-types field-names)
   (declare (optimize (speed 3) (safety 0) (debug 0) (space 0)))
   (let ((mysql-ptr (database-mysql-ptr database)))
     (uffi:with-cstring (query-native query-expression)
-      (if (zerop (mysql-real-query mysql-ptr query-native 
+      (if (zerop (mysql-real-query mysql-ptr query-native
                                    (expression-length query-expression)))
 	  (let ((res-ptr (mysql-use-result mysql-ptr)))
 	    (if res-ptr
 		(unwind-protect
 		     (let ((num-fields (mysql-num-fields res-ptr)))
 		       (declare (fixnum num-fields))
-		       (setq result-types (canonicalize-types 
+		       (setq result-types (canonicalize-types
 				    result-types num-fields
 				    res-ptr))
                        (values
@@ -194,7 +198,7 @@
                                     (pos rlist (cdr pos)))
                                    ((= i num-fields) rlist)
                                 (declare (fixnum i))
-                                (setf (car pos)  
+                                (setf (car pos)
                                       (convert-raw-field
                                        (uffi:deref-array row '(:array
                                                                (* :unsigned-char))
@@ -220,7 +224,7 @@
   (uffi:with-cstring (sql-native sql-expression)
     (let ((mysql-ptr (database-mysql-ptr database)))
       (declare (type mysql-mysql-ptr-def mysql-ptr))
-      (if (zerop (mysql-real-query mysql-ptr sql-native 
+      (if (zerop (mysql-real-query mysql-ptr sql-native
                                    (expression-length sql-expression)))
 	  t
 	(error 'sql-database-data-error
@@ -230,7 +234,7 @@
 	       :message (mysql-error-string mysql-ptr))))))
 
 
-(defstruct mysql-result-set 
+(defstruct mysql-result-set
   (res-ptr (uffi:make-null-pointer 'mysql-mysql-res) :type mysql-mysql-res-ptr-def)
   (types nil :type list)
   (num-fields 0 :type fixnum)
@@ -256,9 +260,9 @@
 				    :num-fields num-fields
 				    :full-set full-set
 				    :types
-				    (canonicalize-types 
+				    (canonicalize-types
 				     result-types num-fields
-				     res-ptr)))) 
+				     res-ptr))))
 		  (if full-set
 		      (values result-set
 			      num-fields
@@ -292,7 +296,7 @@
       (loop for i from 0 below (mysql-result-set-num-fields result-set)
 	    for rest on list
 	    do
-	    (setf (car rest) 
+	    (setf (car rest)
 		  (convert-raw-field
 		   (uffi:deref-array row '(:array (* :unsigned-char)) i)
 		   types
@@ -305,16 +309,29 @@
 
 (defmethod database-list-tables ((database mysql-database) &key (owner nil))
   (declare (ignore owner))
-  (remove-if #'(lambda (s)
-                 (and (>= (length s) 11)
-                      (string-equal (subseq s 0 11) "_CLSQL_SEQ_")))
-             (mapcar #'car (database-query "SHOW TABLES" database nil nil))))
-    
-;; MySQL 4.1 does not support views 
+  (cond
+   ((eql #\5 (char (database-server-info database) 0))
+    (loop for (name type) in (database-query "SHOW FULL TABLES" database nil nil)
+          when (and (string-equal type "base table")
+                    (not (and (>= (length name) 11)
+                              (string-equal (subseq name 0 11) "_CLSQL_SEQ_"))))
+          collect name))
+   (t
+    (remove-if #'(lambda (s)
+		   (and (>= (length s) 11)
+			(string-equal (subseq s 0 11) "_CLSQL_SEQ_")))
+	       (mapcar #'car (database-query "SHOW TABLES" database nil nil))))))
+
 (defmethod database-list-views ((database mysql-database)
                                 &key (owner nil))
   (declare (ignore owner))
-  nil)
+  (cond
+   ((eql #\5 (char (database-server-info database) 0))
+    (loop for (name type) in (database-query "SHOW FULL TABLES" database nil nil)
+          when (string-equal type "view")
+          collect name))
+     (t
+      nil))))
 
 (defmethod database-list-indexes ((database mysql-database)
                                   &key (owner nil))
@@ -328,7 +345,7 @@
 					&key (owner nil))
   (declare (ignore owner))
   (do ((results nil)
-       (rows (database-query 
+       (rows (database-query
 	      (format nil "SHOW INDEX FROM ~A" (string-upcase table))
 	      database nil nil)
 	     (cdr rows)))
@@ -336,7 +353,7 @@
     (let ((col (nth 2 (car rows))))
       (unless (find col results :test #'string-equal)
 	(push col results)))))
-  
+
 (defmethod database-list-attributes ((table string) (database mysql-database)
                                      &key (owner nil))
   (declare (ignore owner))
@@ -382,7 +399,7 @@
      (concatenate 'string "CREATE TABLE " table-name
 		  " (id int NOT NULL PRIMARY KEY AUTO_INCREMENT)")
      database)
-    (database-execute-command 
+    (database-execute-command
      (concatenate 'string "INSERT INTO " table-name
 		  " VALUES (-1)")
      database)))
@@ -390,7 +407,7 @@
 (defmethod database-drop-sequence (sequence-name
 				   (database mysql-database))
   (database-execute-command
-   (concatenate 'string "DROP TABLE " (%sequence-name-to-table sequence-name)) 
+   (concatenate 'string "DROP TABLE " (%sequence-name-to-table sequence-name))
    database))
 
 (defmethod database-list-sequences ((database mysql-database)
@@ -412,7 +429,7 @@
 
 (defmethod database-sequence-next (sequence-name (database mysql-database))
   (without-interrupts
-   (database-execute-command 
+   (database-execute-command
     (concatenate 'string "UPDATE " (%sequence-name-to-table sequence-name)
 		 " SET id=LAST_INSERT_ID(id+1)")
     database)
@@ -420,8 +437,8 @@
 
 (defmethod database-sequence-last (sequence-name (database mysql-database))
   (without-interrupts
-    (caar (database-query 
-	   (concatenate 'string "SELECT id from " 
+    (caar (database-query
+	   (concatenate 'string "SELECT id from "
 			(%sequence-name-to-table sequence-name))
 	   database :auto nil))))
 
@@ -429,14 +446,14 @@
   (destructuring-bind (host name user password &optional port) connection-spec
     (multiple-value-bind (output status)
 	(clsql-sys:command-output "mysqladmin create -u~A -p~A -h~A~@[ -P~A~] ~A"
-				       user password 
+				       user password
 				       (if host host "localhost")
 				       port name
 				       name)
       (if (or (not (eql 0 status))
 	      (and (search "failed" output) (search "error" output)))
 	  (error 'sql-database-error
-		 :message 
+		 :message
 		 (format nil "mysql database creation failed with connection-spec ~A."
 			 connection-spec))
 	t))))
@@ -445,13 +462,13 @@
   (destructuring-bind (host name user password &optional port) connection-spec
     (multiple-value-bind (output status)
 	(clsql-sys:command-output "mysqladmin drop -f -u~A -p~A -h~A~@[ -P~A~] ~A"
-				       user password 
+				       user password
 				       (if host host "localhost")
 				       port name)
       (if (or (not (eql 0 status))
 	      (and (search "failed" output) (search "error" output)))
 	  (error 'sql-database-error
-		 :message 
+		 :message
 		 (format nil "mysql database deletion failed with connection-spec ~A."
 			 connection-spec))
 	t))))
@@ -488,7 +505,7 @@
    (length-ptr :initarg :length-ptr :reader length-ptr)
    (is-null-ptr :initarg :is-null-ptr :reader is-null-ptr)
    (result-types :initarg :result-types :reader result-types)))
-  
+
 (defun clsql-type->mysql-type (type)
   (cond
     ((in type :null) mysql-field-types#null)
@@ -499,8 +516,8 @@
     ((and (consp type) (in (car type) :char :string :varchar)) mysql-field-types#var-string)
     ((or (eq type :blob) (and (consp type) (in (car type) :blob))) mysql-field-types#var-string)
     (t
-       (error 'sql-user-error 
-	      :message 
+       (error 'sql-user-error
+	      :message
 	      (format nil "Unknown clsql type ~A." type)))))
 
 #+mysql-client-v4.1
@@ -518,11 +535,11 @@
 	(error 'sql-database-error
 	       :error-id (mysql-errno mysql-ptr)
 	       :message (mysql-error-string mysql-ptr))))
-    
+
     (unless (= (mysql-stmt-param-count stmt) (length types))
       (mysql-stmt-close stmt)
       (error 'sql-database-error
-	     :message 
+	     :message
 	     (format nil "Mysql param count (~D) does not match number of types (~D)"
 		     (mysql-stmt-param-count stmt) (length types))))
 
@@ -534,18 +551,18 @@
 	#+nil
 	(error 'sql-database-error
 	       :message "mysql_stmt_result_metadata returned NULL"))
-      
+
       (let ((input-bind (uffi:allocate-foreign-object 'mysql-bind (length types)))
 	    (mysql-types (mapcar 'clsql-type->mysql-type types))
 	    field-vec num-fields is-null-ptr output-bind length-ptr)
-	
+
 	(print 'a)
 	(dotimes (i (length types))
 	  (let* ((binding (uffi:deref-array input-bind '(:array mysql-bind) i)))
-	    (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer-type) 
+	    (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer-type)
 	      (nth i mysql-types))
-	    (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer-length) 0)))	    
-	
+	    (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer-length) 0)))
+
 	(print 'b)
 	(unless (uffi:null-pointer-p rs)
 	  (setq field-vec (mysql-fetch-fields rs)
@@ -559,15 +576,15 @@
 		   (type (uffi:get-slot-value field 'mysql-field 'type))
 		   (binding (uffi:deref-array output-bind '(:array mysql-bind) i)))
 	      (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer-type) type)
-	      
+
 	      (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::buffer-length) 0)
 	      #+need-to-allocate-foreign-object-for-this
-	      (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::is-null) 
+	      (setf (uffi:get-slot-value binding 'mysql-bind 'mysql::is-null)
 		(+ i (uffi:pointer-address is-null-ptr)))
 	      #+need-to-allocate-foreign-object-for-this
-	      (setf (uffi:get-slot-value binding 'mysql-bind 'length) 
+	      (setf (uffi:get-slot-value binding 'mysql-bind 'length)
 		(+ (* i 8) (uffi:pointer-address length-ptr)))
-	      
+
 	      (case type
 		((#.mysql-field-types#var-string #.mysql-field-types#string
 		  #.mysql-field-types#tiny-blob #.mysql-field-types#blob
@@ -600,14 +617,14 @@
 		 (uffi:allocate-foreign-object 'mysql-time))
 		(t
 		 (error "mysql type ~D not supported." type)))))
-	
+
 	  (unless (zerop (mysql-stmt-bind-result stmt output-bind))
 	    (mysql-stmt-close stmt)
 	    (error 'sql-database-error
 		   :error-id (mysql-stmt-errno stmt)
 		   :message  (uffi:convert-from-cstring
 			      (mysql-stmt-error stmt)))))
-	
+
 	(make-instance 'mysql-stmt
 	  :database database
 	  :stmt stmt
@@ -674,7 +691,7 @@
     (push
      (loop for i from 0 below num-fields
 	   collect
-	   (let ((is-null 
+	   (let ((is-null
 		  (not (zerop (uffi:ensure-char-integer
 			       (uffi:deref-array (is-null-ptr stmt) '(:array :byte) i))))))
 	     (unless is-null
@@ -714,10 +731,10 @@
 		   (t
 		    (list type)))))))
      rows)))
-		  
-	      
 
-  
+
+
+
 #+mysql-client-v4.1
 (defmethod database-free-prepared ((stmt mysql-stmt))
   (with-slots (stmt) stmt
@@ -731,16 +748,16 @@
   t)
 
 (defmethod db-type-has-views? ((db-type (eql :mysql)))
-  #+mysql-client-v5.1 t
-  #-mysql-client-v5.1 nil)
+  #+mysql-client-v5 t
+  #-mysql-client-v5 nil)
 
 (defmethod db-type-has-subqueries? ((db-type (eql :mysql)))
-  #+mysql-client-v4.1 t
-  #-mysql-client-v4.1 nil)
+  #+(or mysql-client-v4.1 mysql-client-v5) t
+  #-(or mysql-client-v4.1 mysql-client-v5) nil)
 
 (defmethod db-type-has-boolean-where? ((db-type (eql :mysql)))
-  #+mysql-client-v4.1 t
-  #-mysql-client-v4.1 nil)
+  #+(or mysql-client-v4.1 mysql-client-v5) t
+  #-(or mysql-client-v4.1 mysql-client-v5) nil)
 
 (defmethod db-type-has-union? ((db-type (eql :mysql)))
   (not (eql (schar mysql::*mysql-client-info* 0) #\3)))
@@ -750,8 +767,8 @@
     (and tuple (string-equal "YES" (second tuple)))))
 
 (defmethod db-type-has-prepared-stmt? ((db-type (eql :mysql)))
-  #+mysql-client-v4.1 t
-  #-mysql-client-v4.1 nil)
+  #+(or mysql-client-v4.1 mysql-client-v5) t
+  #-(or mysql-client-v4.1 mysql-client-v5) nil)
 
 (when (clsql-sys:database-type-library-loaded :mysql)
   (clsql-sys:initialize-database-type :database-type :mysql))

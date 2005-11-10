@@ -4,8 +4,8 @@
 ;;;;
 ;;;; Name:          mysql-api.lisp
 ;;;; Purpose:       Low-level MySQL interface using UFFI
-;;;; Programmers:   Kevin M. Rosenberg based on 
-;;;;                Original code by Pierre R. Mai 
+;;;; Programmers:   Kevin M. Rosenberg based on
+;;;;                Original code by Pierre R. Mai
 ;;;; Date Started:  Feb 2002
 ;;;;
 ;;;; $Id$
@@ -27,7 +27,7 @@
 ;;;;    that are used in a few routines.
 ;;;;  - Removed all references to interiors of C-structions, this will
 ;;;;    increase robustness when MySQL's internal structures change.
- 
+
 ;;;; Type definitions
 
 ;;; Basic Types
@@ -132,7 +132,7 @@
   (decimals :unsigned-int)
   (type mysql-field-types))
 
-#+mysql-client-v4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-struct mysql-field
     (name (* :char))
   (org_name (* :char))
@@ -154,6 +154,7 @@
   (decimals :unsigned-int)
   (charsetnr :unsigned-int)
   (type mysql-field-types))
+
 
 (uffi:def-struct mysql-time
     (year :unsigned-int)
@@ -219,7 +220,7 @@
      :read-default-group))
 
 (uffi:def-enum mysql-status
-    (:ready 
+    (:ready
      :get-result
      :use-result))
 
@@ -275,13 +276,13 @@
   (handle (:struct-pointer mysql-mysql))
   (eof mysql-bool))
 
-#+mysql-client-4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-enum mysql-field-types
-    (:ready 
+    (:ready
      :get-result
      :use-result))
 
-#+mysql-client-v4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-struct mysql-bind
     (length (* :unsigned-long))
   (is-null (* mysql-bool))
@@ -305,7 +306,7 @@
 (declaim (inline mysql-init))
 (uffi:def-function "mysql_init"
   ((mysql (* mysql-mysql)))
-  :module "mysql" 
+  :module "mysql"
   :returning (* mysql-mysql))
 
 #-mysql-client-v4
@@ -559,16 +560,16 @@
   :module "clsql-mysql"
   :returning :unsigned-int)
 
-#+mysql-client-v4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-foreign-type mysql-stmt-ptr :pointer-void)
 
-#+mysql-client-v4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-function "mysql_stmt_init"
     ((res (* mysql-mysql-res)))
   :module "clsql-mysql"
   :returning mysql-stmt-ptr)
 
-#+mysql-client-v4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-function "mysql_stmt_prepare"
     ((stmt mysql-stmt-ptr)
      (query :cstring)
@@ -576,70 +577,70 @@
   :module "clsql-mysql"
   :returning :int)
 
-#+mysql-client-v4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-function "mysql_stmt_param_count"
     ((stmt mysql-stmt-ptr))
   :module "clsql-mysql"
   :returning :unsigned-int)
 
-#+mysql-client-v4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-function "mysql_stmt_bind_param"
     ((stmt mysql-stmt-ptr)
      (bind (* mysql-bind)))
   :module "clsql-mysql"
   :returning :short)
 
-#+mysql-client-v4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-function "mysql_stmt_bind_result"
     ((stmt mysql-stmt-ptr)
      (bind (* mysql-bind)))
   :module "clsql-mysql"
   :returning :short)
 
-#+mysql-client-v4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-function "mysql_stmt_result_metadata"
     ((stmt mysql-stmt-ptr))
   :module "clsql-mysql"
   :returning (* mysql-mysql-res))
 
 
-#+mysql-client-v4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-function "mysql_stmt_execute"
     ((stmt mysql-stmt-ptr))
   :module "clsql-mysql"
   :returning :int)
 
-#+mysql-client-v4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-function "mysql_stmt_store_result"
     ((stmt mysql-stmt-ptr))
   :module "clsql-mysql"
   :returning :int)
 
-#+mysql-client-v4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-function "mysql_stmt_fetch"
     ((stmt mysql-stmt-ptr))
   :module "clsql-mysql"
   :returning :int)
 
-#+mysql-client-v4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-function "mysql_stmt_free_result"
     ((stmt mysql-stmt-ptr))
   :module "clsql-mysql"
   :returning :short)
 
-#+mysql-client-v4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-function "mysql_stmt_close"
     ((stmt mysql-stmt-ptr))
   :module "clsql-mysql"
   :returning :short)
 
-#+mysql-client-v4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-function "mysql_stmt_errno"
     ((stmt mysql-stmt-ptr))
   :module "clsql-mysql"
   :returning :unsigned-int)
 
-#+mysql-client-v4.1
+#+(or mysql-client-v4.1 mysql-client-v5)
 (uffi:def-function "mysql_stmt_error"
     ((stmt mysql-stmt-ptr))
   :module "clsql-mysql"
@@ -689,11 +690,11 @@
 
 
 (declaim (inline mysql-num-fields))
-(uffi:def-function "mysql_num_fields" 
+(uffi:def-function "mysql_num_fields"
   ((res (* mysql-mysql-res)))
   :returning :unsigned-int
   :module "mysql")
-		 
+
 (declaim (inline clsql-mysql-eof))
 (uffi:def-function ("mysql_eof" clsql-mysql-eof)
   ((res (* mysql-mysql-res)))

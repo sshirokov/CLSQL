@@ -30,6 +30,7 @@
 
   (setf *mysql-client-info* (uffi:convert-from-cstring (mysql-get-client-info)))
 
+
   (when (and (stringp *mysql-client-info*)
 	     (plusp (length *mysql-client-info*)))
     (cond
@@ -40,6 +41,8 @@
        (when (and (>= (length *mysql-client-info*) 3)
 		  (string-equal "4.1" *mysql-client-info* :end2 3))
 	 (pushnew :mysql-client-v4.1 cl:*features*)))
+      ((eql (schar *mysql-client-info* 0) #\5)
+       (pushnew :mysql-client-v5 cl:*features*))
       (t
        (error "Unknown mysql client version '~A'." *mysql-client-info*)))))
 
