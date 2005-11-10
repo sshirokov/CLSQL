@@ -331,7 +331,7 @@
           when (string-equal type "view")
           collect name))
      (t
-      nil))))
+      nil)))
 
 (defmethod database-list-indexes ((database mysql-database)
                                   &key (owner nil))
