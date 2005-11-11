@@ -1,3 +1,8 @@
+12 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.4.1
+	* sql/expressions.lisp: Escape numbers to SQL strings
+	at expression level.
+	
 11 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.4: Add MySQL 5 support
 	* db-mysql/mysql-client-info.lisp: Recognize MySQL 5

@@ -21,7 +21,7 @@
 (defun number-to-sql-string (num)
   (etypecase num
     (integer
-     num)
+     (princ-to-string num))
     (rational
      (float-to-sql-string (coerce num 'double-float)))
     (number

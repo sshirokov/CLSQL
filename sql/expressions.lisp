@@ -902,7 +902,7 @@ uninclusive, and the args from that keyword to the end."
 
 (defmethod database-output-sql ((num number) database)
   (declare (ignore database))
-  (princ-to-string num))
+  (number-to-sql-string num))
 
 (defmethod database-output-sql ((arg list) database)
   (if (null arg)
