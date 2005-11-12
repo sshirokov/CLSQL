@@ -16,6 +16,15 @@
 
 (in-package #:clsql-oracle)
 
+;;
+;; OCI integer types
+;;
+
+(uffi:def-foreign-type ub2 :unsigned-short)
+(uffi:def-foreign-type sb2 :short)
+(uffi:def-foreign-type ub4 :unsigned-int)
+(uffi:def-foreign-type sb4 :int)
+(uffi:def-foreign-type size_t :unsigned-long)
 
 ;;
 ;; Opaque pointer types
@@ -88,7 +97,7 @@
 
 (def-oci-routine ("OCIInitialize" oci-initialize)
     :int
-  (mode :unsigned-long)			; ub4
+  (mode ub4)					; ub4
   (ctxp :pointer-void)			; dvoid *
   (malocfp :pointer-void)			; dvoid *(*)
   (ralocfp :pointer-void)			; dvoid *(*)
@@ -98,55 +107,55 @@
 (def-oci-routine ("OCIEnvInit" oci-env-init)
     :int
   (envpp :pointer-void)                         ; OCIEnv **
-  (mode :unsigned-long)                  ; ub4
-  (xtramem-sz :unsigned-long)            ; size_t
+  (mode ub4)                  			; ub4
+  (xtramem-sz size_t)            ; size_t
   (usermempp (* :pointer-void)))                    ; dvoid **
   
 #-oci7
 (def-oci-routine ("OCIEnvCreate" oci-env-create)
     :int
   (envhpp (* :pointer-void))
-  (mode :unsigned-int)
+  (mode ub4)
   (ctxp :pointer-void)
   (malocfp :pointer-void)
   (ralocfp :pointer-void)
   (mfreefp :pointer-void)
-  (xtramemsz :unsigned-long)
+  (xtramemsz size_t)
   (usrmempp (* :pointer-void)))
 
 (def-oci-routine ("OCIHandleAlloc" oci-handle-alloc)
     :int
-  (parenth      :pointer-void)		; const dvoid *
+  (parenth      :pointer-void)			; const dvoid *
   (hndlpp       (* :pointer-void))		; dvoid **
-  (type         :unsigned-long)		; ub4
-  (xtramem_sz   :unsigned-long)		; size_t
+  (type         ub4)				; ub4
+  (xtramem_sz   size_t)				; size_t
   (usrmempp     (* :pointer-void)))		; dvoid **
 
 (def-oci-routine ("OCIServerAttach" oci-server-attach)
     :int
   (srvhp        :pointer-void)                  ; oci-server
   (errhp        :pointer-void)                  ; oci-error
-  (dblink       :cstring)        ; :in
-  (dblink-len   :unsigned-long)          ; int
-  (mode         :unsigned-long))         ; int
+  (dblink       :cstring)        		; :in
+  (dblink-len   sb4)          			; sb4
+  (mode         ub4))         			; ub4
 
 
 (def-oci-routine ("OCIHandleFree" oci-handle-free)
     :int
   (p0 :pointer-void) ;; handle
-  (p1 :unsigned-long)) ;;type
+  (p1 ub4)) ;;type
 
 (def-oci-routine ("OCILogon" oci-logon)
     :int
   (envhp        :pointer-void)		; env
   (errhp        :pointer-void)		; err
-  (svchpp       (* :pointer-void))		; svc
+  (svchpp       (* :pointer-void))	; svc
   (username     :cstring)		; username
-  (uname-len    :unsigned-long)		;
+  (uname-len    ub4)			;
   (passwd       :cstring)		; passwd
-  (password-len :unsigned-long)		;
+  (password-len ub4)			;
   (dsn          :cstring)		; datasource
-  (dsn-len      :unsigned-long))	;
+  (dsn-len      ub4))			;
 
 (def-oci-routine ("OCILogoff" oci-logoff)
     :int
@@ -154,94 +163,94 @@
   (p1	:pointer-void))       ; err
 
 (uffi:def-function ("OCIErrorGet" oci-error-get)
-    ((handlp  :pointer-void)
-     (recordno  :unsigned-long)
-     (sqlstate   :cstring)
-     (errcodep   (* :long))
+    ((handlp    :pointer-void)
+     (recordno  ub4)
+     (sqlstate  :cstring)
+     (errcodep  (* sb4))
      (bufp      (* :unsigned-char))
-     (bufsize      :unsigned-long)
-     (type      :unsigned-long))
+     (bufsize   ub4)
+     (type      ub4))
   :returning :void)
 
 (def-oci-routine ("OCIStmtPrepare" oci-stmt-prepare)
     :int
   (stmtp      :pointer-void)
   (errhp      :pointer-void)
-  (stmt      :cstring)
-  (stmt_len      :unsigned-long)
-  (language      :unsigned-long)
-  (mode      :unsigned-long))
+  (stmt       :cstring)
+  (stmt_len   ub4)
+  (language   ub4)
+  (mode       ub4))
 
 (def-oci-routine ("OCIStmtExecute" oci-stmt-execute)
     :int
   (svchp      :pointer-void)
-  (stmtp1      :pointer-void)
+  (stmtp1     :pointer-void)
   (errhp      :pointer-void)
-  (iters      :unsigned-long)
-  (rowoff      :unsigned-long)
-  (snap_in      :pointer-void)
-  (snap_out      :pointer-void)
-  (mode     :unsigned-long))
+  (iters      ub4)
+  (rowoff     ub4)
+  (snap_in    :pointer-void)
+  (snap_out   :pointer-void)
+  (mode       ub4))
 
 (def-raw-oci-routine ("OCIParamGet" oci-param-get)
     :int
   (hndlp      :pointer-void)
-  (htype      :unsigned-long)
+  (htype      ub4)
   (errhp      :pointer-void)
-  (parmdpp      (* :pointer-void))
-  (pos      :unsigned-long))
+  (parmdpp    (* :pointer-void))
+  (pos        ub4))
 
 (def-oci-routine ("OCIAttrGet" oci-attr-get)
     :int
-  (trgthndlp      :pointer-void)
-  (trghndltyp      :unsigned-int)
-  (attributep      :pointer-void)
-  (sizep      (* :unsigned-int))
-  (attrtype      :unsigned-int)
+  (trgthndlp  :pointer-void)
+  (trghndltyp ub4)
+  (attributep :pointer-void)
+  (sizep      (* ub4))
+  (attrtype   ub4)
   (errhp      :pointer-void))
 
 (def-oci-routine ("OCIAttrSet" oci-attr-set)
     :int
-  (trgthndlp :pointer-void)
-  (trgthndltyp :int :in)
-  (attributep :pointer-void)
-  (size :int)
-  (attrtype :int)
-  (errhp oci-error))
+  (trgthndlp   :pointer-void)
+  (trgthndltyp ub4 :in)
+  (attributep  :pointer-void)
+  (size        ub4)
+  (attrtype    ub4)
+  (errhp       oci-error))
 
 (def-oci-routine ("OCIDefineByPos" oci-define-by-pos)
     :int
   (stmtp      :pointer-void)
   (defnpp     (* :pointer-void))
   (errhp      :pointer-void)
-  (position      :unsigned-long)
-  (valuep      :pointer-void)
-  (value_sz      :long)
-  (dty      :unsigned-short)         
-  (indp      (* :short))
-  (rlenp      (* :unsigned-short))          
-  (rcodep      (* :unsigned-short))          
-  (mode     :unsigned-long))
+  (position   ub4)
+  (valuep     :pointer-void)
+  (value_sz   sb4)
+  (dty        ub2)         
+  (indp       (* sb2))
+  (rlenp      (* ub2))          
+  (rcodep     (* ub2))          
+  (mode       ub4))
 
 (def-oci-routine ("OCIStmtFetch" oci-stmt-fetch)
     :int
   (stmthp       :pointer-void)
   (errhp        :pointer-void)
-  (p2           :unsigned-long)
-  (p3           :unsigned-short)
-  (p4           :unsigned-long))
+  (p2           ub4)
+  (p3           ub2)
+  (p4           ub4))
 
 
 (def-oci-routine ("OCITransStart" oci-trans-start)
   :int
-  (svchp       :pointer-void)
+  (svchp        :pointer-void)
   (errhp        :pointer-void)
   (p2           :unsigned-short)
   (p3           :unsigned-short))
 
 (def-oci-routine ("OCITransCommit" oci-trans-commit)
   :int
-  (svchp       :pointer-void)
+  (svchp        :pointer-void)
   (errhp        :pointer-void)
   (p2           :unsigned-short))
 
@@ -266,7 +275,7 @@
 ;;; for setting up global environment.
 
 (uffi:def-function "OCIInitialize"
-    ((mode :unsigned-long)			; ub4
+    ((mode ub4)					; ub4
      (ctxp :pointer-void)			; dvoid *
      (malocfp :pointer-void)			; dvoid *(*)
      (ralocfp :pointer-void)			; dvoid *(*)
@@ -274,9 +283,9 @@
   :returning :int)
 
 (uffi:def-function "OCIEnvInit"
-    ((envpp :pointer-void)                         ; OCIEnv **
-     (mode :unsigned-long)                  ; ub4
-     (xtramem-sz :unsigned-long)            ; size_t
+    ((envpp :pointer-void)			; OCIEnv **
+     (mode ub4)					; ub4
+     (xtramem-sz size_t)			; size_t
      (usermempp (* :pointer-void)))
   :returning :int)
 
@@ -284,8 +293,8 @@
 (uffi:def-function "OCIHandleAlloc" 
     ((parenth      :pointer-void)		; const dvoid *
      (hndlpp       (* :pointer-void))		; dvoid **
-     (type         :unsigned-long)		; ub4
-     (xtramem_sz   :unsigned-long)		; size_t
+     (type         ub4)				; ub4
+     (xtramem_sz   size_t)			; size_t
      (usrmempp     (* :pointer-void)))
   :returning :int)
 

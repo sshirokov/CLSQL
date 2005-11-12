@@ -67,7 +67,8 @@
 (defmethod operation-done-p ((o compile-op) (c clsql-uffi-source-file))
   (or (and (probe-file #p"/usr/lib/clsql/clsql_uffi.so") t)
       (let ((lib (make-pathname :defaults (component-pathname c)
-				:type (uffi:default-foreign-library-type))))
+				:type (funcall (intern (symbol-name '#:default-foreign-library-type)
+                                                       (find-package '#:uffi))))))
 	(and (probe-file lib) (probe-file (component-pathname c))
 	     (> (file-write-date lib) (file-write-date (component-pathname c)))))))
   
@@ -85,6 +86,6 @@
   ((:module :uffi
 	    :components
 	    ((:file "clsql-uffi-package")
-	     (:clsql-uffi-source-file "uffi" :depends-on ("clsql-uffi-package"))
-	     (:file "clsql-uffi-loader" :depends-on ("clsql-uffi-package" "uffi"))
+	     (:clsql-uffi-source-file "clsql_uffi" :depends-on ("clsql-uffi-package"))
+	     (:file "clsql-uffi-loader" :depends-on ("clsql-uffi-package" "clsql_uffi"))
 	     (:file "clsql-uffi" :depends-on ("clsql-uffi-loader"))))))

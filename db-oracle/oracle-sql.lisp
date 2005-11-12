@@ -129,12 +129,12 @@ the length of that format.")
   (cond
     (database
      (with-slots (errhp) database
-       (let ((errcode (uffi:allocate-foreign-object :long))
+       (let ((errcode (uffi:allocate-foreign-object 'sb4))
 	     (errbuf (uffi:allocate-foreign-string #.+errbuf-len+)))
 	 ;; ensure errbuf empty string
 	 (setf (uffi:deref-array errbuf '(:array :unsigned-char) 0)
 	       (uffi:ensure-char-storable (code-char 0)))
-	 (setf (uffi:deref-pointer errcode :long) 0)
+	 (setf (uffi:deref-pointer errcode 'sb4) 0)
 
 	 (uffi:with-cstring (sqlstate nil)
 	   (oci-error-get (deref-vp errhp) 1
@@ -142,7 +142,7 @@ the length of that format.")
 			  errcode
 			  (uffi:char-array-to-pointer errbuf)
 			  +errbuf-len+ +oci-htype-error+))
-	 (let ((subcode (uffi:deref-pointer errcode :long))
+	 (let ((subcode (uffi:deref-pointer errcode 'sb4))
 	       (errstr (uffi:convert-from-foreign-string errbuf)))
 	   (uffi:free-foreign-object errcode)
 	   (uffi:free-foreign-object errbuf)
@@ -436,7 +436,7 @@ the length of that format.")
                                 (values))
                (#.+oci-error+ (handle-oci-error :database (qc-db qc)
                                                 :nulls-ok t))))
-           (uffi:with-foreign-object (rowcount :long)
+           (uffi:with-foreign-object (rowcount 'ub4)
              (oci-attr-get (deref-vp (qc-stmthp qc))
 			   +oci-htype-stmt+
                            rowcount
@@ -444,12 +444,12 @@ the length of that format.")
 			   +oci-attr-row-count+
                            (deref-vp errhp))
              (setf (qc-n-from-oci qc)
-                   (- (uffi:deref-pointer rowcount :long)
+                   (- (uffi:deref-pointer rowcount 'ub4)
 		      (qc-total-n-from-oci qc)))
              (when (< (qc-n-from-oci qc) +n-buf-rows+)
                (setf (qc-oci-end-seen-p qc) t))
              (setf (qc-total-n-from-oci qc)
-                   (uffi:deref-pointer rowcount :long)))))
+                   (uffi:deref-pointer rowcount 'ub4)))))
     (values)))
 
 ;; the guts of the SQL function
@@ -597,7 +597,6 @@ the length of that format.")
 ;; the Oracle 9i OCI documentation. -- JJB 20040713
 
 (uffi:def-type byte-pointer (* :byte))
-(uffi:def-type ulong-pointer (* :unsigned-long))
 (uffi:def-type void-pointer-pointer (* :void-pointer))
 
 (defun make-query-cursor-cds (database stmthp result-types field-names)
@@ -610,9 +609,9 @@ the length of that format.")
 				(precision :short)
 				(scale :byte)
 				(colname '(* :unsigned-char))
-				(colnamelen :unsigned-long)
-				(colsize :unsigned-short)
-				(colsizesize :unsigned-long)
+				(colnamelen 'ub4)
+				(colsize 'ub2)
+				(colsizesize 'ub4)
 				(defnp ':pointer-void))
       (let ((buffer nil)
 	    (sizeof nil))
@@ -693,7 +692,7 @@ the length of that format.")
 			      (deref-vp errhp))
 		(setq colname-string (uffi:convert-from-foreign-string
 				      (uffi:deref-pointer colname '(* :unsigned-char))
-				      :length (uffi:deref-pointer colnamelen :unsigned-long))))
+				      :length (uffi:deref-pointer colnamelen 'ub4))))
 	      (push (make-cd :name colname-string
 			     :sizeof sizeof
 			     :buffer buffer

@@ -1,4 +1,10 @@
 12 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.4.2
+	* clsql-uffi.asd: Patch from James Biel improving loading
+	* db-oracle/oracle-{api,sql}.lisp: Patch from James Biel
+	to support 64-bit lisps
+	
+12 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.4.1
 	* sql/expressions.lisp: Escape numbers to SQL strings
 	at expression level.
