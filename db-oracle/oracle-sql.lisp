@@ -120,6 +120,31 @@ the length of that format.")
     :documentation
     "The major version number of the Oracle server, should be 8, 9, or 10")))
 
+;;; Handle a non-successful result from an OCI function.
+(defun handle-oci-result (result database nulls-ok)
+  (case result
+    (#.+oci-success+
+     +oci-success+)
+    (#.+oci-error+
+     (handle-oci-error :database database :nulls-ok nulls-ok))
+    (#.+oci-no-data+
+     (error 'sql-database-error :message "OCI No Data Found"))
+    (#.+oci-success-with-info+
+     (error 'sql-database-error :message "internal error: unexpected +oci-success-with-info"))
+    (#.+oci-invalid-handle+
+     (error 'sql-database-error :message "OCI Invalid Handle"))
+    (#.+oci-need-data+
+     (error 'sql-database-error :message "OCI Need Data"))
+    (#.+oci-still-executing+
+     (error 'sql-temporary-error :message "OCI Still Executing"))
+    (#.+oci-continue+
+     (error 'sql-database-error :message "OCI Continue"))
+    (1804
+     (error 'sql-database-error :message "Check ORACLE_HOME and NLS settings."))
+    (t
+     (error 'sql-database-error
+	    :message
+	    (format nil "OCI unknown error, code=~A" result)))))
 
 ;;; Handle the messy case of return code=+oci-error+, querying the
 ;;; system for subcodes and reporting them as appropriate. ERRHP and
@@ -129,8 +154,8 @@ the length of that format.")
   (cond
     (database
      (with-slots (errhp) database
-       (let ((errcode (uffi:allocate-foreign-object 'sb4))
-	     (errbuf (uffi:allocate-foreign-string #.+errbuf-len+)))
+       (uffi:with-foreign-objects ((errcode 'sb4)
+				   (errbuf '(:array :unsigned-char #.+errbuf-len+)))
 	 ;; ensure errbuf empty string
 	 (setf (uffi:deref-array errbuf '(:array :unsigned-char) 0)
 	       (uffi:ensure-char-storable (code-char 0)))
@@ -144,8 +169,6 @@ the length of that format.")
 			  +errbuf-len+ +oci-htype-error+))
 	 (let ((subcode (uffi:deref-pointer errcode 'sb4))
 	       (errstr (uffi:convert-from-foreign-string errbuf)))
-	   (uffi:free-foreign-object errcode)
-	   (uffi:free-foreign-object errbuf)
 	   (unless (and nulls-ok (= subcode +null-value-returned+))
 	     (error 'sql-database-error
 		    :database database
@@ -341,7 +364,9 @@ the length of that format.")
 ;; STREAM which has no more data, and QC is not a STREAM, we signal
 ;; DBI-ERROR instead.
 
-(uffi:def-type short-array (:array :short))
+(uffi:def-type short-array (:array :short nil))
+(uffi:def-type int-array (:array :int nil))
+(uffi:def-type double-array (:array :double nil))
 (uffi:def-type int-pointer (* :int))
 (uffi:def-type double-pointer (* :double))
 
@@ -378,7 +403,7 @@ the length of that format.")
 
 
 (defun fetch-row (qc &optional (eof-errorp t) eof-value)
-  ;;(declare (optimize (speed 3)))
+  (declare (optimize (speed 3)))
   (cond ((zerop (qc-n-from-oci qc))
 	 (if eof-errorp
 	     (error 'sql-database-error :message
@@ -398,17 +423,21 @@ the length of that format.")
 		    (value
 		     (let* ((arb (foreign-resource-buffer (cd-indicators cd)))
 			    (indicator (uffi:deref-array arb '(:array :short) irow)))
-		       ;;(declare (type short-array arb))
+		       (declare (type short-array arb))
 		       (unless (= indicator -1)
 			 (ecase (cd-oci-data-type cd)
 			   (#.SQLT-STR
 			    (deref-oci-string b irow (cd-sizeof cd)))
 			   (#.SQLT-FLT
-			    (uffi:deref-array b '(:array :double) irow))
+                            (locally
+                                (declare (type double-array b))
+                              (uffi:deref-array b '(:array :double) irow)))
 			   (#.SQLT-INT
 			    (ecase (cd-sizeof cd)
 			      (4
-			       (uffi:deref-array b '(:array :int) irow))))
+                               (locally
+                                   (declare (type int-array b))
+                                 (uffi:deref-array b '(:array :int) irow)))))
 			   (#.SQLT-DATE
 			    (deref-oci-string b irow (cd-sizeof cd))))))))
 	       (when (and (eq :string (cd-result-type cd))

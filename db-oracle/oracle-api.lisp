@@ -53,36 +53,18 @@
 ;;; unless NULLS-OK is set.
 
 (defmacro def-oci-routine ((c-oci-symbol lisp-oci-fn) c-return &rest c-parms)
-  (let ((ll (mapcar (lambda (x) (declare (ignore x)) (gensym)) c-parms)))
-    `(let ((%lisp-oci-fn (uffi:def-function
-			     (,c-oci-symbol ,(intern (concatenate 'string "%" (symbol-name lisp-oci-fn))))
-			     ,c-parms
-			     :returning ,c-return)))
-       (defun ,lisp-oci-fn (,@ll &key database nulls-ok)
-	 (let ((result (funcall %lisp-oci-fn ,@ll)))
-	   (case result
-	     (#.+oci-success+
-	      +oci-success+)
-	     (#.+oci-error+
-	      (handle-oci-error :database database :nulls-ok nulls-ok))
-	     (#.+oci-no-data+
-	      (error 'sql-database-error :message "OCI No Data Found"))
-	     (#.+oci-success-with-info+
-	      (error 'sql-database-error :message "internal error: unexpected +oci-success-with-info"))
-	     (#.+oci-invalid-handle+
-	      (error 'sql-database-error :message "OCI Invalid Handle"))
-	     (#.+oci-need-data+
-	      (error 'sql-database-error :message "OCI Need Data"))
-	     (#.+oci-still-executing+
-	      (error 'sql-temporary-error :message "OCI Still Executing"))
-	     (#.+oci-continue+
-	      (error 'sql-database-error :message "OCI Continue"))
-	     (1804
-	      (error 'sql-database-error :message "Check ORACLE_HOME and NLS settings."))
-	     (t
-	      (error 'sql-database-error
-		     :message
-		     (format nil "OCI unknown error, code=~A" result)))))))))
+  (let ((ll (mapcar (lambda (x) (declare (ignore x)) (gensym)) c-parms))
+        (c-oci-fn (intern (concatenate 'string "%" (symbol-name lisp-oci-fn)))))
+    `(progn
+      (declaim (inline ,c-oci-fn ,lisp-oci-fn))
+      (uffi:def-function (,c-oci-symbol ,c-oci-fn)
+          ,c-parms
+        :returning ,c-return)
+      (defun ,lisp-oci-fn (,@ll &key database nulls-ok)
+        (let ((result (,c-oci-fn ,@ll)))
+          (if (= result #.+oci-success+)
+              +oci-success+
+              (handle-oci-result result database nulls-ok)))))))
   
 
 (defmacro def-raw-oci-routine
@@ -162,6 +144,7 @@
   (p0	:pointer-void)        ; svc
   (p1	:pointer-void))       ; err
 
+(declaim (inline oci-error-get))
 (uffi:def-function ("OCIErrorGet" oci-error-get)
     ((handlp    :pointer-void)
      (recordno  ub4)
