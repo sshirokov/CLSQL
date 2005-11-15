@@ -154,8 +154,8 @@ the length of that format.")
   (cond
     (database
      (with-slots (errhp) database
-       (uffi:with-foreign-objects ((errcode 'sb4)
-				   (errbuf '(:array :unsigned-char #.+errbuf-len+)))
+       (let ((errcode (uffi:allocate-foreign-object 'sb4))
+             (errbuf (uffi:allocate-foreign-string #.+errbuf-len+)))
 	 ;; ensure errbuf empty string
 	 (setf (uffi:deref-array errbuf '(:array :unsigned-char) 0)
 	       (uffi:ensure-char-storable (code-char 0)))
@@ -169,6 +169,8 @@ the length of that format.")
 			  +errbuf-len+ +oci-htype-error+))
 	 (let ((subcode (uffi:deref-pointer errcode 'sb4))
 	       (errstr (uffi:convert-from-foreign-string errbuf)))
+           (uffi:free-foreign-object errcode)
+           (uffi:free-foreign-object errbuf)
 	   (unless (and nulls-ok (= subcode +null-value-returned+))
 	     (error 'sql-database-error
 		    :database database
