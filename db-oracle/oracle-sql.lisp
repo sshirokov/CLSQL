@@ -498,46 +498,47 @@ the length of that format.")
 
 (defun sql-stmt-exec (sql-stmt-string db result-types field-names)
   (with-slots (envhp svchp errhp) db
-    (let ((stmthp (uffi:allocate-foreign-object :pointer-void))
-          select-p)
+    (uffi:with-foreign-strings ((c-stmt-string sql-stmt-string))
+      (let ((stmthp (uffi:allocate-foreign-object :pointer-void))
+            select-p)
       
-      (uffi:with-foreign-object (stmttype :unsigned-short)
-	(unwind-protect
-            (progn
-              (oci-handle-alloc (deref-vp envhp)
-                                stmthp
-                                +oci-htype-stmt+ 0 +null-void-pointer-pointer+)
-              (oci-stmt-prepare (deref-vp stmthp)
-                                (deref-vp errhp)
-                                (uffi:convert-to-cstring sql-stmt-string)
-                                (length sql-stmt-string)
-                                +oci-ntv-syntax+ +oci-default+ :database db)
-              (oci-attr-get (deref-vp stmthp)
-                            +oci-htype-stmt+
-                            stmttype
-                            +unsigned-int-null-pointer+
-                            +oci-attr-stmt-type+
-                            (deref-vp errhp)
-                            :database db)
-              
-              (setq select-p (= (uffi:deref-pointer stmttype :unsigned-short) 1))
-              (let ((iters (if select-p 0 1)))
-
-                (oci-stmt-execute (deref-vp svchp)
-                                  (deref-vp stmthp)
-                                  (deref-vp errhp)
-                                  iters 0 +null-void-pointer+ +null-void-pointer+ +oci-default+
-                                  :database db)))
-	  ;; free resources unless a query
-	  (unless select-p
-	    (oci-handle-free (deref-vp stmthp) +oci-htype-stmt+)
-	    (uffi:free-foreign-object stmthp))))
-
-      (cond
-	(select-p
-	 (make-query-cursor db stmthp result-types field-names))
-	(t
-	 nil)))))
+        (uffi:with-foreign-object (stmttype :unsigned-short)
+          (unwind-protect
+               (progn
+                 (oci-handle-alloc (deref-vp envhp)
+                                   stmthp
+                                   +oci-htype-stmt+ 0 +null-void-pointer-pointer+)
+                 (oci-stmt-prepare (deref-vp stmthp)
+                                   (deref-vp errhp)
+                                   c-stmt-string
+                                   (length sql-stmt-string)
+                                   +oci-ntv-syntax+ +oci-default+ :database db)
+                 (oci-attr-get (deref-vp stmthp)
+                               +oci-htype-stmt+
+                               stmttype
+                               +unsigned-int-null-pointer+
+                               +oci-attr-stmt-type+
+                               (deref-vp errhp)
+                               :database db)
+                 
+                 (setq select-p (= (uffi:deref-pointer stmttype :unsigned-short) 1))
+                 (let ((iters (if select-p 0 1)))
+                   
+                   (oci-stmt-execute (deref-vp svchp)
+                                     (deref-vp stmthp)
+                                     (deref-vp errhp)
+                                     iters 0 +null-void-pointer+ +null-void-pointer+ +oci-default+
+                                     :database db)))
+            ;; free resources unless a query
+            (unless select-p
+              (oci-handle-free (deref-vp stmthp) +oci-htype-stmt+)
+              (uffi:free-foreign-object stmthp))))
+        
+        (cond
+          (select-p
+           (make-query-cursor db stmthp result-types field-names))
+          (t
+           nil))))))
 
 
 ;; Return a QUERY-CURSOR representing the table returned from the OCI
@@ -795,6 +796,7 @@ the length of that format.")
       (oci-env-create envhp +oci-default+ +null-void-pointer+
 		      +null-void-pointer+ +null-void-pointer+
 		      +null-void-pointer+ 0 +null-void-pointer-pointer+)
+
       #+oci7
       (progn
 	(oci-initialize +oci-object+ +null-void-pointer+ +null-void-pointer+
@@ -803,26 +805,11 @@ the length of that format.")
 					 +oci-htype-env+ 0
 					 +null-void-pointer-pointer+)) ;no testing return
         (oci-env-init envhp +oci-default+ 0 +null-void-pointer-pointer+))
+
       (oci-handle-alloc (deref-vp envhp) errhp
 			+oci-htype-error+ 0 +null-void-pointer-pointer+)
       (oci-handle-alloc (deref-vp envhp) srvhp
 			+oci-htype-server+ 0 +null-void-pointer-pointer+)
-
-      #+ignore ;; not used since CLSQL uses the OCILogon function instead
-      (uffi:with-cstring (dblink nil)
-	(oci-server-attach (deref-vp srvhp)
-			   (deref-vp errhp)
-			   dblink
-			   0 +oci-default+))
-
-      (oci-handle-alloc (deref-vp envhp) svchp
-			+oci-htype-svcctx+ 0 +null-void-pointer-pointer+)
-      (oci-attr-set (deref-vp svchp)
-		    +oci-htype-svcctx+
-		    (deref-vp srvhp) 0 +oci-attr-server+
-		    (deref-vp errhp))
-      ;; oci-handle-alloc((dvoid *)encvhp, (dvoid **)&stmthp, OCI_HTYPE_STMT, 0, 0);
-      ;;#+nil
 
       (let ((db (make-instance 'oracle-database
 		  :name (database-name-from-spec connection-spec
@@ -834,13 +821,16 @@ the length of that format.")
 		  :svchp svchp
 		  :dsn data-source-name
 		  :user user)))
-	(oci-logon (deref-vp envhp)
-		   (deref-vp errhp)
-		   svchp
-		   (uffi:convert-to-cstring user) (length user)
-		   (uffi:convert-to-cstring password) (length password)
-		   (uffi:convert-to-cstring data-source-name) (length data-source-name)
-		   :database db)
+        (uffi:with-foreign-strings ((c-user user)
+                                    (c-password password)
+                                    (c-data-source-name data-source-name))
+          (oci-logon (deref-vp envhp)
+                     (deref-vp errhp)
+                     svchp
+                     c-user (length user)
+                     c-password (length password)
+                     c-data-source-name (length data-source-name)
+                     :database db))
 	;; :date-format-length (1+ (length date-format)))))
 	(setf (slot-value db 'clsql-sys::state) :open)
         (database-execute-command

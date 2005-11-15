@@ -132,11 +132,11 @@
   (envhp        :pointer-void)		; env
   (errhp        :pointer-void)		; err
   (svchpp       (* :pointer-void))	; svc
-  (username     :cstring)		; username
+  (username     (* :unsigned-char))	; username
   (uname-len    ub4)			;
-  (passwd       :cstring)		; passwd
+  (passwd       (* :unsigned-char))	; passwd
   (password-len ub4)			;
-  (dsn          :cstring)		; datasource
+  (dsn          (* :unsigned-char))	; datasource
   (dsn-len      ub4))			;
 
 (def-oci-routine ("OCILogoff" oci-logoff)
@@ -159,7 +159,7 @@
     :int
   (stmtp      :pointer-void)
   (errhp      :pointer-void)
-  (stmt       :cstring)
+  (stmt       (* :unsigned-char))
   (stmt_len   ub4)
   (language   ub4)
   (mode       ub4))

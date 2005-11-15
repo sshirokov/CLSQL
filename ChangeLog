@@ -1,8 +1,13 @@
+14 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.4.4 [ Requires UFFI 1.5.7+] 
+	* db-oracle/oracle-{api,sql}.lisp: Patch from James Biel
+	to fix lifetime of foreign strings for Oracle calls
+
 13 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.4.3
 	* db-oracle/oracle-{api,sql}.lisp: Patch from James Biel
 	to improve performance
-		
+	
 12 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.4.2
 	* clsql-uffi.asd: Patch from James Biel improving loading
