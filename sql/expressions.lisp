@@ -597,7 +597,8 @@ uninclusive, and the args from that keyword to the end."
                                                       :test #'ident-table-equal))
                             database))
           (string (write-string from *sql-stream*))
-          (t (output-sql from database)))))
+          (t (let ((*in-subselect* t))
+               (output-sql from database))))))
     (when inner-join
       (write-string " INNER JOIN " *sql-stream*)
       (output-sql inner-join database))
