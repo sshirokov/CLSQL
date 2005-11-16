@@ -3,7 +3,7 @@
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; CLSQL metaclass for standard-db-objects created in the OODDL. 
+;;;; CLSQL metaclass for standard-db-objects created in the OODDL.
 ;;;;
 ;;;; This file is part of CLSQL.
 ;;;;
@@ -20,13 +20,13 @@
 		      'compute-effective-slot-definition)))
 	    3)
     (pushnew :kmr-normal-cesd cl:*features*))
-  
+
   (when (>= (length (generic-function-lambda-list
 		     (ensure-generic-function
 		      'direct-slot-definition-class)))
 	    3)
     (pushnew :kmr-normal-dsdc cl:*features*))
-  
+
   (when (>= (length (generic-function-lambda-list
 		     (ensure-generic-function
 		      'effective-slot-definition-class)))
@@ -131,7 +131,7 @@
 
 (defmethod reinitialize-instance :around ((class standard-db-class)
                                           &rest all-keys
-                                          &key base-table 
+                                          &key base-table
                                           direct-superclasses qualifier
                                           &allow-other-keys)
   (let ((root-class (find-class 'standard-db-object nil))
@@ -305,7 +305,7 @@ column definition in the database.")
          (target-slot nil)
 	 (retrieval :immmediate)
 	 (set nil)))
-	  
+
 (defun parse-db-info (db-info-list)
   (destructuring-bind
 	(&key join-class home-key key-join foreign-key (delete-rule nil)
@@ -436,7 +436,7 @@ which does type checking before storing a value in a slot."
 					      #+kmr-normal-cesd slot-name
 					      direct-slots)
   #+kmr-normal-cesd (declare (ignore slot-name))
-  
+
   ;; KMR: store the user-specified type and then compute
   ;; real Lisp type and store it
   (let ((dsd (car direct-slots)))
@@ -446,9 +446,9 @@ which does type checking before storing a value in a slot."
 	(slot-definition-type dsd))
       (setf #-clisp (slot-value dsd 'type)
 	    #+clisp (slot-definition-type dsd)
-	    (compute-lisp-type-from-slot-specification 
+	    (compute-lisp-type-from-slot-specification
 	     dsd (slot-definition-type dsd))))
-      
+
     (let ((esd (call-next-method)))
       (typecase dsd
 	(view-class-slot-definition-mixin
@@ -461,24 +461,24 @@ which does type checking before storing a value in a slot."
 		(delistify-dsd (view-class-slot-column dsd))
 	      (column-name-from-arg
 	       (sql-escape (slot-definition-name dsd))))))
-	 
+
 	 (setf (slot-value esd 'db-type)
 	   (when (slot-boundp dsd 'db-type)
 	     (delistify-dsd
 	      (view-class-slot-db-type dsd))))
-	 
+
 	 (setf (slot-value esd 'void-value)
 	       (delistify-dsd
 		(view-class-slot-void-value dsd)))
-	 
+
 	 ;; :db-kind slot value defaults to :base (store slot value in
 	 ;; database)
-	 
+
 	 (setf (slot-value esd 'db-kind)
 	   (if (slot-boundp dsd 'db-kind)
 	       (delistify-dsd (view-class-slot-db-kind dsd))
 	     :base))
-	 
+
 	 (setf (slot-value esd 'db-reader)
 	   (when (slot-boundp dsd 'db-reader)
 	     (delistify-dsd (view-class-slot-db-reader dsd))))
@@ -488,7 +488,7 @@ which does type checking before storing a value in a slot."
 	 (setf (slot-value esd 'db-constraints)
 	   (when (slot-boundp dsd 'db-constraints)
 	     (delistify-dsd (view-class-slot-db-constraints dsd))))
-	 
+
 	 ;; I wonder if this slot option and the previous could be merged,
 	 ;; so that :base and :key remain keyword options, but :db-kind
 	 ;; :join becomes :db-kind (:join <db info .... >)?
@@ -505,21 +505,21 @@ which does type checking before storing a value in a slot."
 		     ((and (listp dsd-info) (= 1 (length dsd-info))
 			   (listp (car dsd-info)))
 		      (parse-db-info (car dsd-info)))))))
-	 
+
 	 (setf (specified-type esd)
 	       (delistify-dsd (specified-type dsd)))
-	 
+
 	 )
 	;; all other slots
 	(t
 	 (let ((type-predicate #+openmcl (slot-value esd 'ccl::type-predicate)))
 	   #-openmcl (declare (ignore type-predicate))
-	   #-clisp (change-class esd 'view-class-effective-slot-definition
-				 #+allegro :name 
+	   #-(or clisp sbcl)  (change-class esd 'view-class-effective-slot-definition
+				 #+allegro :name
 				 #+allegro (slot-definition-name dsd))
 	   #+openmcl (setf (slot-value esd 'ccl::type-predicate)
 			   type-predicate))
-	 
+
 	 (setf (slot-value esd 'column)
 	   (column-name-from-arg
 	    (sql-escape (slot-definition-name dsd))))
@@ -529,7 +529,7 @@ which does type checking before storing a value in a slot."
 	 (setf (specified-type esd) (slot-definition-type dsd)))
 	)
       esd)))
-  
+
 (defun slotdefs-for-slots-with-class (slots class)
   (let ((result nil))
     (dolist (s slots)

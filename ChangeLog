@@ -1,3 +1,9 @@
+16 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* version 3.4.6
+	* sql/metaclasses.lisp: Avoid calling change-class on
+	effective-slot-definitions on sbcl to conform to sbcl 0.9.6.38
+	changes.
+	
 15 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.4.5
 	* sql/expressions.lisp: Patch from James Biel to add subselects
