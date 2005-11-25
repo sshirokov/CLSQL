@@ -1,3 +1,10 @@
+24 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.4.7
+	* sql/time.lisp: Commit patch from Aleksandar Bakic for
+	correct handling of decode-time usec value  
+	* clsql-mysql.asd: Commit patch from Harald Hanche-Olsen to
+	correct the name of the shared library file.
+	
 16 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* version 3.4.6
 	* sql/metaclasses.lisp: Avoid calling change-class on

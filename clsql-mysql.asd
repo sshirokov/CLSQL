@@ -85,8 +85,8 @@
   ((:module :db-mysql
 	    :components
 	    ((:file "mysql-package")
-	     (:clsql-mysql-source-file "mysql" :depends-on ("mysql-package"))
-	     (:file "mysql-loader" :depends-on ("mysql-package" "mysql"))
+	     (:clsql-mysql-source-file "clsql_mysql" :depends-on ("mysql-package"))
+	     (:file "mysql-loader" :depends-on ("mysql-package" "clsql_mysql"))
 	     (:file "mysql-client-info" :depends-on ("mysql-loader"))
 	     (:file "mysql-api" :depends-on ("mysql-client-info"))
 	     (:file "mysql-sql" :depends-on ("mysql-api"))

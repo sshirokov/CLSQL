@@ -255,7 +255,7 @@
 (defun duration<= (duration-a duration-b)
   (<= (duration-reduce duration-a :usec)
       (duration-reduce duration-b :usec)))
-							      
+
 (defun duration>= (x y)
   (duration<= y x))
 
@@ -270,7 +270,7 @@
         (if (/= (time-second x) (time-second y))
             (< (time-second x) (time-second y))
             (< (time-usec x) (time-usec y))))))
-  
+
 (defun %time>= (x y)
   (if (/= (time-mjd x) (time-mjd y))
       (>= (time-mjd x) (time-mjd y))
@@ -490,7 +490,7 @@
 (defstruct interval
   (start nil)
   (end nil)
-  (name nil) 
+  (name nil)
   (contained nil)
   (type nil)
   (data nil))
@@ -563,17 +563,17 @@
     (append sorted-list (list interval))))
 
 ;; interval lists
-		  
+
 (defun interval-match (list time)
   "Return the index of the first interval in list containing time"
   ;; this depends on ordering of intervals!
-  (let ((list (sort-interval-list list))) 
+  (let ((list (sort-interval-list list)))
     (dotimes (x (length list))
       (let ((elt (nth x list)))
 	(when (and (time<= (interval-start elt) time)
 		   (time< time (interval-end elt)))
 	  (return-from interval-match x))))))
-  
+
 (defun interval-clear (list time)
   (dotimes (x (length list))
     (let ((elt (nth x list)))
@@ -594,7 +594,7 @@
   "Attempts to modify the most deeply nested interval in list which
 begins at time.  If no changes are made, returns nil."
   ;; function required sorted interval list
-  (let ((list (sort-interval-list list))) 
+  (let ((list (sort-interval-list list)))
     (if (null list) nil
       (dotimes (x (length list))
 	(let ((elt (nth x list)))
@@ -790,7 +790,7 @@ it as separate calculations will not, as the time is chopped to a date before be
   "Returns a DURATION representing the difference between TIME1 and
 TIME2."
   (flet ((do-diff (time1 time2)
-	   
+
   (let (day-diff sec-diff)
     (setf day-diff (- (time-mjd time2)
 		      (time-mjd time1)))
@@ -853,7 +853,7 @@ with the given options"
 		 year date-separator month date-separator day
 		 internal-separator hour time-separator minute time-separator
 		 second usec))))))
-  
+
 (defun pretty-time (hour minute)
   (cond
    ((eq hour 0)
@@ -914,7 +914,7 @@ with the given options"
         (push (subseq input start x) output)
         (setf start (1+ x))))
     (nreverse (push (subseq input start) output))))
-    
+
 (defun merged-time (day time-of-day)
   (%make-wall-time :mjd (time-mjd day)
                    :second (time-second time-of-day)))
@@ -938,9 +938,9 @@ with the given options"
     (print-date time style)))
 
 (defun print-date (time &optional (style :daytime))
-  (multiple-value-bind (second minute hour day month year dow)
+  (multiple-value-bind (usec second minute hour day month year dow)
       (decode-time time)
-    (declare (ignore second))
+    (declare (ignore usec second))
     (multiple-value-bind (hours meridian)
         (time-meridian hour)
       (ecase style
@@ -973,8 +973,9 @@ with the given options"
          (format nil "~d/~d/~d" month day year))))))
 
 (defun time-element (time element)
-  (multiple-value-bind (second minute hour day month year dow)
+  (multiple-value-bind (usec second minute hour day month year dow)
       (decode-time time)
+    (declare (ignore usec))
     (ecase element
       (:seconds
        second)
@@ -1137,7 +1138,7 @@ rules"
     doy))
 
 (defun parse-yearstring (string)
-  (let ((year (or (parse-integer-insensitively string) 
+  (let ((year (or (parse-integer-insensitively string)
 		  (extract-roman string))))
     (when (and year (< 1500 year 2500))
       (make-time :year year))))
@@ -1167,7 +1168,7 @@ rules"
 
 
 ;; ------------------------------------------------------------
-;; Parsing iso-8601 timestrings 
+;; Parsing iso-8601 timestrings
 
 (define-condition iso-8601-syntax-error (sql-user-error)
   ((bad-component;; year, month whatever
@@ -1180,7 +1181,7 @@ rules"
   "parse a timestring and return the corresponding wall-time.  If the
 timestring starts with P, read a duration; otherwise read an ISO 8601
 formatted date string."
-  (declare (ignore junk-allowed))  
+  (declare (ignore junk-allowed))
   (let ((string (subseq timestring start end)))
     (if (char= (aref string 0) #\P)
 	(parse-iso-8601-duration string)
