@@ -39,6 +39,7 @@
      #:%new-db-connection-handle
      #:%new-environment-handle
      #:%sql-connect
+     #:%sql-driver-connect
      #:disable-autocommit
      #:enable-autocommit
      #:%sql-free-environment

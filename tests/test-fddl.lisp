@@ -88,9 +88,13 @@
                           '(:postgresql :postgresql-socket))
                   :ignore
                   :warn)))
-         (clsql:create-table [foo] 
-                             '(([bar] integer :not-null :unique :primary-key) 
-                               ([baz] string :not-null :unique))))
+         (case *test-database-underlying-type*
+           (:mssql (clsql:create-table [foo] 
+                                       '(([bar] integer :not-null :primary-key)
+                                         ([baz] string :not-null :unique))))
+           (t (clsql:create-table [foo] 
+                                  '(([bar] integer :not-null :unique :primary-key)
+                                    ([baz] string :not-null :unique))))))
        (clsql:table-exists-p [foo]))
      (progn
        (clsql:drop-table [foo])

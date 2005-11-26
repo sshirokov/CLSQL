@@ -58,7 +58,68 @@
 			   (db-type (eql :postgresql)))
   (if (string= "0" val) nil t))
 
-  
+(defmethod read-sql-value (val (type (eql 'boolean)) database
+			   (db-type (eql :mssql)))
+  (declare (ignore database))
+  (etypecase val
+    (string (if (string= "0" val) nil t))
+    (integer (if (zerop val) nil t))))
+
+(defmethod read-sql-value (val (type (eql 'generalized-boolean)) database
+			   (db-type (eql :mssql)))
+  (declare (ignore database))
+  (etypecase val
+    (string (if (string= "0" val) nil t))
+    (integer (if (zerop val) nil t))))
+
+;;; Type methods
+
+(defmethod database-get-type-specifier ((type (eql 'wall-time)) args database
+					(db-type (eql :mssql)))
+  (declare (ignore args database))
+  "DATETIME")
+
+(defmethod database-get-type-specifier ((type (eql 'boolean)) args database
+                                        (db-type (eql :mssql)))
+  (declare (ignore args database))
+  "BIT")
+
+(defmethod database-get-type-specifier ((type (eql 'generalized-boolean)) args database
+                                        (db-type (eql :mssql)))
+  (declare (ignore args database))
+  "BIT")
+
+;;; Generation of SQL strings from lisp expressions
+
+(defmethod database-output-sql ((tee (eql t)) (database generic-odbc-database))
+  (case (database-underlying-type database)
+    (:mssql "1")
+    (t "'Y'")))
+
+(defmethod database-output-sql-as-type ((type (eql 'boolean)) val database
+					(db-type (eql :mssql)))
+  (declare (ignore database))
+  (if val 1 0))
+
+(defmethod database-output-sql-as-type ((type (eql 'generalized-boolean)) val database
+					(db-type (eql :mssql)))
+  (declare (ignore database))
+  (if val 1 0))
+
+;;; Database backend capabilities
+
+(defmethod db-type-use-fully-qualified-column-on-drop-index? ((db-type (eql :mssql)))
+  t)
+
+(defmethod db-type-has-boolean-where? ((db-type (eql :mssql)))
+  nil)
+
+(defmethod db-type-has-intersect? ((db-type (eql :mssql)))
+  nil)
+
+(defmethod db-type-has-except? ((db-type (eql :mssql)))
+  nil)
+
 ;;; Backend methods
 
 (defmethod database-disconnect ((database generic-odbc-database))
@@ -66,8 +127,8 @@
   (setf (odbc-conn database) nil)
   t)
 
-(defmethod database-query (query-expression (database generic-odbc-database) 
-			   result-types field-names) 
+(defmethod database-query (query-expression (database generic-odbc-database)
+			   result-types field-names)
   (handler-case
       (funcall (sql-fn database)
 	       query-expression :db (odbc-conn database)
@@ -105,19 +166,19 @@
 
 
 (defmethod database-query-result-set ((query-expression string)
-				      (database generic-odbc-database) 
+				      (database generic-odbc-database)
 				      &key full-set result-types)
-  (handler-case 
+  (handler-case
       (multiple-value-bind (query column-names)
 	  (funcall (sql-fn database)
-		   query-expression 
-		   :db (odbc-conn database) 
+		   query-expression
+		   :db (odbc-conn database)
 		   :row-count nil
 		   :column-names t
 		   :query t
 		   :result-types result-types)
 	(values
-	 (make-odbc-result-set :query query :full-set full-set 
+	 (make-odbc-result-set :query query :full-set full-set
 			       :types result-types)
 	 (length column-names)
 	 nil ;; not able to return number of rows with odbc
@@ -156,7 +217,9 @@
     ;; TABLE_NAME in third column, TABLE_TYPE in fourth column
     (loop for row in rows
 	  when (and (not (string-equal "information_schema" (nth 1 row)))
-		    (string-equal "TABLE" (nth 3 row)))
+		    (string-equal "TABLE" (nth 3 row))
+                    (not (and (eq :mssql (database-underlying-type database))
+                              (string-equal "dtproperties" (nth 2 row)))))
 	  collect (nth 2 row))))
 
 
@@ -170,7 +233,9 @@
     ;; TABLE_NAME in third column, TABLE_TYPE in fourth column
     (loop for row in rows
 	  when (and (not (string-equal "information_schema" (nth 1 row)))
-		    (string-equal "VIEW" (nth 3 row)))
+		    (string-equal "VIEW" (nth 3 row))
+                    (not (and (eq :mssql (database-underlying-type database))
+                              (member (nth 2 row) '("sysconstraints" "syssegments") :test #'string-equal))))
 	  collect (nth 2 row))))
 
 

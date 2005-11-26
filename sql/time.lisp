@@ -1274,7 +1274,7 @@ Will throw a hissy fit if the date string is a duration. Will ignore any precisi
 		      (char= #\. (char string 19))))
              (multiple-value-bind (parsed-usec usec-end)
                  (parse-integer string :start 20 :junk-allowed t)
-               (setf usec          parsed-usec
+               (setf usec          (or parsed-usec 0)
                      gmt-sec-offset (if (<= (+ 3 usec-end)  strlen)
                                         (let ((skip-to (or (position #\+ string :start 19)
                                                            (position #\- string :start 19))))

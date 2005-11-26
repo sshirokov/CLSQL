@@ -198,6 +198,20 @@ as possible second argument) to the desired representation of date/time/timestam
       (SQLConnect hdbc server-ptr $SQL_NTS uid-ptr 
 		  $SQL_NTS pwd-ptr $SQL_NTS))))
 
+(defun %sql-driver-connect (hdbc connection-string completion window-handle)
+  (with-cstring (connection-ptr connection-string)
+    (let ((completed-connection-string (allocate-foreign-string $SQL_MAX_CONN_OUT)))
+      (unwind-protect
+          (with-foreign-object (completed-connection-length :short)
+                               (with-error-handling 
+                                   (:hdbc hdbc)
+                                   (SQLDriverConnect hdbc 
+                                                     window-handle 
+                                                     connection-ptr $SQL_NTS
+                                                     completed-connection-string $SQL_MAX_CONN_OUT
+                                                     completed-connection-length
+                                                     completion)))
+        (free-foreign-object completed-connection-string)))))
 
 (defun %disconnect (hdbc)
   (with-error-handling 
@@ -560,7 +574,7 @@ as possible second argument) to the desired representation of date/time/timestam
 (defun sql-to-c-type (sql-type)
   (ecase sql-type
     ((#.$SQL_CHAR #.$SQL_VARCHAR #.$SQL_LONGVARCHAR 
-      #.$SQL_NUMERIC #.$SQL_DECIMAL #.$SQL_BIGINT -8 -9) $SQL_C_CHAR)
+      #.$SQL_NUMERIC #.$SQL_DECIMAL #.$SQL_BIGINT -8 -9 -10) $SQL_C_CHAR) ;; Added -10 for MSSQL ntext type
     (#.$SQL_INTEGER $SQL_C_SLONG)
     (#.$SQL_SMALLINT $SQL_C_SSHORT)
     (#.$SQL_DOUBLE $SQL_C_DOUBLE)
@@ -848,56 +862,59 @@ as possible second argument) to the desired representation of date/time/timestam
 
 (defun read-data-in-chunks (hstmt column-nr data-ptr c-type sql-type 
                                       out-len-ptr result-type)
-  (declare (type long-ptr-type out-len-ptr))
+  (declare (type long-ptr-type out-len-ptr)
+           (ignore result-type))
   (let* ((res (%sql-get-data hstmt column-nr c-type data-ptr 
                              +max-precision+ out-len-ptr))
          (out-len (deref-pointer out-len-ptr #.$ODBC-LONG-TYPE))
-         (offset 0))
-    (case out-len
-      (#.$SQL_NULL_DATA
-       (return-from read-data-in-chunks *null*))
-      (#.$SQL_NO_TOTAL ;; don't know how long it is going to be
-       (let ((str (make-array 0 :element-type 'character :adjustable t)))
-         (loop do (if (= c-type #.$SQL_CHAR)
-                      (let ((data-length (foreign-string-length data-ptr)))
-                        (adjust-array str (+ offset data-length)
-                                      :initial-element #\?)
-                        (setf offset (%cstring-into-vector
-                                      data-ptr str 
-                                      offset 
-                                      data-length)))
-                    (error 'clsql:sql-database-error :message "wrong type. preliminary."))
-               while (and (= res $SQL_SUCCESS_WITH_INFO)
-                          (equal (sql-state +null-handle-ptr+ +null-handle-ptr+ hstmt)
-                                 "01004"))
-               do (setf res (%sql-get-data hstmt column-nr c-type data-ptr 
-                                           +max-precision+ out-len-ptr)))
-         (setf str (coerce str 'string))
-         (if (= sql-type $SQL_DECIMAL)
-             (let ((*read-base* 10))
-               (read-from-string str))
-           str)))
-      (otherwise
-       (let ((str (make-string out-len)))
-         (loop do (if (= c-type #.$SQL_CHAR)
-                      (setf offset (%cstring-into-vector ;string
-                                    data-ptr str 
-                                    offset 
-                                    (min out-len (1- +max-precision+))))
-                    (error 'clsql:sql-database-error :message "wrong type. preliminary."))
-               while 
-               (and (= res $SQL_SUCCESS_WITH_INFO)
-                    #+ingore(eq (sql-state +null-handle-ptr+ +null-handle-ptr+ hstmt)
-                                $sql-data-truncated)
-                    (equal (sql-state +null-handle-ptr+ +null-handle-ptr+ hstmt)
-                           "01004"))
-               do (setf res (%sql-get-data hstmt column-nr c-type data-ptr 
-                                           +max-precision+ out-len-ptr)
-                        out-len (deref-pointer out-len-ptr #.$ODBC-LONG-TYPE)))
-         (if (= sql-type $SQL_DECIMAL)
-             (let ((*read-base* 10))
-               (read-from-string str))
-           str))))))
+         (offset 0)
+         (result (case out-len
+                   (#.$SQL_NULL_DATA
+                    (return-from read-data-in-chunks *null*))
+                   (#.$SQL_NO_TOTAL ;; don't know how long it is going to be
+                                    (let ((str (make-array 0 :element-type 'character :adjustable t)))
+                                      (loop do (if (= c-type #.$SQL_CHAR)
+                                                   (let ((data-length (foreign-string-length data-ptr)))
+                                                     (adjust-array str (+ offset data-length)
+                                                                   :initial-element #\?)
+                                                     (setf offset (%cstring-into-vector
+                                                                   data-ptr str 
+                                                                   offset 
+                                                                   data-length)))
+                                                 (error 'clsql:sql-database-error :message "wrong type. preliminary."))
+                                            while (and (= res $SQL_SUCCESS_WITH_INFO)
+                                                       (equal (sql-state +null-handle-ptr+ +null-handle-ptr+ hstmt)
+                                                              "01004"))
+                                            do (setf res (%sql-get-data hstmt column-nr c-type data-ptr 
+                                                                        +max-precision+ out-len-ptr)))
+                                      (setf str (coerce str 'string))
+                                      (if (= sql-type $SQL_DECIMAL)
+                                          (let ((*read-base* 10))
+                                            (read-from-string str))
+                                        str)))
+                   (otherwise
+                    (let ((str (make-string out-len)))
+                      (loop do (if (= c-type #.$SQL_CHAR)
+                                   (setf offset (%cstring-into-vector ;string
+                                                 data-ptr str 
+                                                 offset 
+                                                 (min out-len (1- +max-precision+))))
+                                 (error 'clsql:sql-database-error :message "wrong type. preliminary."))
+                            while 
+                            (and (= res $SQL_SUCCESS_WITH_INFO)
+                                 #+ingore(eq (sql-state +null-handle-ptr+ +null-handle-ptr+ hstmt)
+                                             $sql-data-truncated)
+                                 (equal (sql-state +null-handle-ptr+ +null-handle-ptr+ hstmt)
+                                        "01004"))
+                            do (setf res (%sql-get-data hstmt column-nr c-type data-ptr 
+                                                        +max-precision+ out-len-ptr)
+                                     out-len (deref-pointer out-len-ptr #.$ODBC-LONG-TYPE)))
+                      (if (= sql-type $SQL_DECIMAL)
+                          (let ((*read-base* 10))
+                            (read-from-string str))
+                        str))))))
+    (setf (deref-pointer out-len-ptr #.$ODBC-LONG-TYPE) #.$SQL_NO_TOTAL) ;; reset the out length for the next row
+    result))
 
 (def-type c-timestamp-ptr-type (* (:struct sql-c-timestamp)))
 (def-type c-time-ptr-type (* (:struct sql-c-time)))

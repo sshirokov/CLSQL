@@ -296,6 +296,12 @@ of TYPE_NAME (keyword) PRECISION SCALE NULLABLE.")
 	   nil)
   (:documentation "NIL [default] if database-type does not use column name on DROP INDEX."))
 
+(defgeneric db-type-use-fully-qualified-column-on-drop-index? (db-type)
+  (:method (db-type)
+	   (declare (ignore db-type))
+	   nil)
+  (:documentation "NIL [default] if database-type does not require fully qualified column name on DROP INDEX."))
+
 (defgeneric db-type-has-views? (db-type)
   (:method (db-type)
 	   (declare (ignore db-type))
@@ -359,6 +365,17 @@ of TYPE_NAME (keyword) PRECISION SCALE NULLABLE.")
     nil)
   (:documentation "T if database backend supports prepared statements."))
 
+(defgeneric db-type-has-intersect? (db-type)
+  (:method (db-type)
+	   (declare (ignore db-type))
+	   t)
+  (:documentation "T [default] if database-type supports INTERSECT."))
+
+(defgeneric db-type-has-except? (db-type)
+  (:method (db-type)
+	   (declare (ignore db-type))
+	   t)
+  (:documentation "T [default] if database-type supports EXCEPT."))
 
 ;;; Large objects support (Marc Battyani)
 

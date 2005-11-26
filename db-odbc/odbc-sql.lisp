@@ -30,14 +30,14 @@
 
 (defmethod database-name-from-spec (connection-spec
 				    (database-type (eql :odbc)))
-  (check-connection-spec connection-spec database-type (dsn user password))
-  (destructuring-bind (dsn user password) connection-spec
-    (declare (ignore password))
+  (check-connection-spec connection-spec database-type (dsn user password &key connection-string completion window-handle))
+  (destructuring-bind (dsn user password &key connection-string completion window-handle) connection-spec
+    (declare (ignore password connection-string completion window-handle))
     (concatenate 'string dsn "/" user)))
 
 (defmethod database-connect (connection-spec (database-type (eql :odbc)))
-  (check-connection-spec connection-spec database-type (dsn user password))
-  (destructuring-bind (dsn user password) connection-spec
+  (check-connection-spec connection-spec database-type (dsn user password &key connection-string completion window-handle))
+  (destructuring-bind (dsn user password &key connection-string (completion :no-prompt) window-handle) connection-spec
     (handler-case
 	(let ((db (make-instance 'odbc-database
 				 :name (database-name-from-spec connection-spec :odbc)
@@ -46,7 +46,10 @@
 				 :odbc-conn
 				 (odbc-dbi:connect :user user
 						   :password password
-						   :data-source-name dsn))))
+						   :data-source-name dsn
+                                                   :connection-string connection-string
+                                                   :completion completion
+                                                   :window-handle window-handle))))
 	  (store-type-of-connected-database db)
 	  ;; Ensure this database type is initialized so can check capabilities of
 	  ;; underlying database
@@ -74,6 +77,9 @@
 	    (unless (find-package 'clsql-postgresql)
 	      (ignore-errors (asdf:operate 'asdf:load-op 'clsql-postgresql-socket)))
 	    :postgresql)
+           ((or (search "Microsoft SQL Server" server-name :test #'char-equal)
+                (search "Microsoft SQL Server" dbms-name :test #'char-equal))
+            :mssql)
 	   ((or (search "mysql" server-name :test #'char-equal)
 		(search "mysql" dbms-name :test #'char-equal))
 	    (unless (find-package 'clsql-mysql)
@@ -127,7 +133,7 @@
 	((null loop-rows) (nreverse results))
       (let* ((row (car loop-rows))
 	     (col (nth 5 row)))
-	(unless (find col results :test #'string-equal)
+	(unless (or (null col) (find col results :test #'string-equal))
 	  (push col results))))))
 
 ;;; Database capabilities

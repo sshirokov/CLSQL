@@ -1,3 +1,15 @@
+26 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.5.0
+	* tests/test-init.lisp, tests/test-fddl.lisp, tests/test-fdml.lisp, 
+	* db-odbc/odbc-api.lisp, db-odbc/odbc-ff-interface.lisp,
+	* db-odbc/odbc-package.lisp, db-odbc/odbc-constants.lisp
+	* db-odbc/odbc-dbi.lisp, db-odbc/odbc-sql.lisp
+	* sql/fddl.lisp, sql/generic-odbc.lisp, sql/db-interface.lisp
+	* sql/transaction.lisp, sql/package.lisp, sql/time.lisp
+	Commit patch from Dominic Robinson providing support for 
+	Microsoft SQL Server
+	* doc/csql.lisp: Fix typo in slot name
+	
 24 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.4.7
 	* sql/time.lisp: Commit patch from Aleksandar Bakic for

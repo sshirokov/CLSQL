@@ -250,7 +250,7 @@ mapped into a database).  They would be defined as follows:
 
   <listitem>
     <para>
-      <symbol>:column-</symbol> - A string which will be used as the
+      <symbol>:db-type</symbol> - A string which will be used as the
       type specifier for this slots column definition in the database.
       </para></listitem>
 

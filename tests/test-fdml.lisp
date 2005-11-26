@@ -373,8 +373,11 @@
  ("Vlad" "Jose" "Leon" "Niki" "Leon" "Yuri" "Kons" "Mikh" "Bori" "Vlad"))
 
 (deftest :fdml/select/22 
-  (clsql:select [|| [first-name] " " [last-name]] :from [employee]
-                :flatp t :order-by [emplid] :field-names nil)
+   (case *test-database-underlying-type*
+     (:mssql (clsql:select [+ [first-name] " " [last-name]] :from [employee]
+                           :flatp t :order-by [emplid] :field-names nil))
+     (t (clsql:select [|| [first-name] " " [last-name]] :from [employee]
+                      :flatp t :order-by [emplid] :field-names nil)))
  ("Vladimir Lenin" "Josef Stalin" "Leon Trotsky" "Nikita Kruschev"
  "Leonid Brezhnev" "Yuri Andropov" "Konstantin Chernenko" "Mikhail Gorbachev"
  "Boris Yeltsin" "Vladimir Putin"))

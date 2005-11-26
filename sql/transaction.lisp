@@ -49,8 +49,10 @@ is called on DATABASE which defaults to *DEFAULT-DATABASE*."
       (setf (commit-hooks transaction) nil
             (rollback-hooks transaction) nil
             (transaction-status transaction) nil)
-      (unless (eq :oracle (database-underlying-type database))
-	(execute-command "BEGIN" :database database)))))
+      (case (database-underlying-type database)
+        (:oracle nil)
+        (:mssql (execute-command "BEGIN TRANSACTION" :database database))
+        (t (execute-command "BEGIN" :database database))))))
 
 (defmethod database-commit-transaction ((database database))
   (with-slots (transaction transaction-level autocommit) database

@@ -1,3 +1,10 @@
+cl-sql (3.5.0-1) unstable; urgency=low
+
+  * New upstream (closes: 339842)
+  * Change libmyclient run-time requirement (closes: 339824)
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sat, 26 Nov 2005 08:58:22 -0700
+
 cl-sql (3.4.7-1) unstable; urgency=low
 
   * New upstream

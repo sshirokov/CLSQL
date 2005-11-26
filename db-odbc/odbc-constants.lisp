@@ -953,6 +953,8 @@
 (defconstant $SQL_DRIVER_PROMPT 2)
 (defconstant $SQL_DRIVER_COMPLETE_REQUIRED 3)
 
+(defconstant $SQL_MAX_CONN_OUT 1024)
+
 ;; Level 2 Functions
 
 ;; SQLExtendedFetch "fFetchType" values

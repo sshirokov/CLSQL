@@ -124,12 +124,21 @@ the query against." ))
 
 ;;; AODBC Compatible interface
 
-(defun connect (&key data-source-name user password (autocommit t))
+(defun connect (&key data-source-name user password connection-string completion window-handle (autocommit t))
   (let ((db (make-instance 'odbc-db)))
     (unless (henv db) ;; has class allocation!
       (setf (henv db) (%new-environment-handle)))
     (setf (hdbc db) (%new-db-connection-handle (henv db)))
-    (%sql-connect (hdbc db) data-source-name user password)
+    (if connection-string
+        (%sql-driver-connect (hdbc db) 
+                             connection-string 
+                             (ecase completion
+                               (:no-prompt odbc::$SQL_DRIVER_NOPROMPT)
+                               (:complete odbc::$SQL_DRIVER_COMPLETE)
+                               (:prompt odbc::$SQL_DRIVER_PROMPT)
+                               (:complete-required odbc::$SQL_DRIVER_COMPLETE_REQUIRED))
+                             window-handle)
+      (%sql-connect (hdbc db) data-source-name user password))
     #+ignore (setf (db-hstmt db) (%new-statement-handle (hdbc db)))
     (when (/= (get-odbc-info db odbc::$SQL_TXN_CAPABLE) odbc::$SQL_TC_NONE)
       (if autocommit
@@ -217,7 +226,7 @@ the query against." ))
 
 (defun list-all-table-columns (table &key db hstmt)
   (declare (ignore hstmt))
-  (db-describe-columns db "" "" table ""))
+  (db-describe-columns db nil nil table nil))   ;; use nil rather than "" for unspecified values
 
 (defun list-all-data-sources ()
   (let ((db (make-instance 'odbc-db)))
@@ -424,7 +433,8 @@ This makes the functions db-execute-command and db-query thread safe."
                   ;; allocate space to bind result rows to
                   (multiple-value-bind (c-type data-ptr out-len-ptr size long-p)
                                        (%allocate-bindings sql-type precision)
-                    (unless long-p ;; if long-p we fetch in chunks with %sql-get-data
+                    (if long-p ;; if long-p we fetch in chunks with %sql-get-data but must ensure that out_len_ptr is non zero
+                        (setf (uffi:deref-pointer out-len-ptr #.odbc::$ODBC-LONG-TYPE) #.odbc::$SQL_NO_TOTAL)
                       (%bind-column hstmt col-nr c-type data-ptr (1+ size) out-len-ptr))
                     (vector-push-extend name column-names) 
                     (vector-push-extend sql-type column-sql-types)

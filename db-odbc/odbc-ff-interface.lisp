@@ -61,7 +61,7 @@
 (def-function "SQLDriverConnect"
     ((hdbc sql-handle)          ; HDBC        hdbc
      (hwnd sql-handle)          ; SQLHWND     hwnd
-     (*szConnStrIn string-ptr)  ; UCHAR  FAR *szConnStrIn
+     (*szConnStrIn :cstring)    ; UCHAR  FAR *szConnStrIn
      (cbConnStrIn :short)       ; SWORD       cbConnStrIn
      (*szConnStrOut string-ptr) ; UCHAR  FAR *szConnStrOut
      (cbConnStrOutMax :short)   ; SWORD       cbConnStrOutMax

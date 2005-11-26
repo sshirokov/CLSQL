@@ -150,6 +150,9 @@
      #:db-type-has-fancy-math?
      #:db-type-default-case
      #:db-type-use-column-on-drop-index? 
+     #:db-type-use-fully-qualified-column-on-drop-index?
+     #:db-type-has-intersect?
+     #:db-type-has-except?
      #:database-underlying-type
      #:database-get-type-specifier
      #:read-sql-value

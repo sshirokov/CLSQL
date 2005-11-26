@@ -216,14 +216,14 @@ the index from."
        (unless (index-exists-p index-name :database database)
          (return-from drop-index)))
       (:error t))
-    (unless (db-type-use-column-on-drop-index? 
-	     (database-underlying-type database))
-      (setq on nil))
-    (execute-command (format nil "DROP INDEX ~A~A" index-name
-                             (if (null on) ""
-                                 (concatenate 'string " ON "
-                                              (database-identifier on database))))
-                     :database database)))
+    (let* ((db-type (database-underlying-type database))
+           (index-identifier (cond ((db-type-use-fully-qualified-column-on-drop-index? db-type)
+                                    (format nil "~A.~A" (database-identifier on database) index-name))
+                                   ((db-type-use-column-on-drop-index? db-type)
+                                    (format nil "~A ON ~A" index-name (database-identifier on database)))
+                                   (t index-name))))
+      (execute-command (format nil "DROP INDEX ~A" index-identifier)
+                       :database database))))
 
 (defun list-indexes (&key (owner nil) (database *default-database*) (on nil))
   "Returns a list of strings representing index names in DATABASE
