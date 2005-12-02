@@ -1,3 +1,11 @@
+02 Dec 2005  Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/generic-postgresql.lisp: improved decoding of table attribute
+	  parameters [from Vladimir Sekissov]
+	* sql/metaclasses.lisp: check that metaclass is standard-db-class or
+	  it's subclass to prevent adding standard-db-object to supers if
+	  somebody in the path has it already when metaclass inherited from
+	  standard-db-class. [from Vladimir Sekissov]
+	
 26 Nov 2005  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.5.0
 	* tests/test-init.lisp, tests/test-fddl.lisp, tests/test-fdml.lisp, 
@@ -2000,5 +2008,3 @@
 	  for MYSQL structure. This will make the code more robust in
 	  the event that MySQL library changes the size of the mysql-mysql
 	  structure.
-
-

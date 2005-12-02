@@ -150,15 +150,29 @@
 			   (owner-clause owner))
 		   database nil nil))))
     (when row
-      (values
-       (ensure-keyword (first row))
-       (if (string= "-1" (second row))
-	   (- (parse-integer (third row) :junk-allowed t) 4)
-	 (parse-integer (second row)))
-       nil
-       (if (string-equal "f" (fourth row))
-	   1
-	 0)))))
+      (destructuring-bind (typname attlen atttypmod attnull) row
+
+        (setf attlen (parse-integer attlen :junk-allowed t)
+              atttypmod (parse-integer atttypmod :junk-allowed t))
+              
+        (let ((coltype (ensure-keyword typname))
+              (colnull (if (string-equal "f" attnull) 1 0))
+              collen
+              colprec)
+           (setf (values collen colprec)
+                 (case coltype
+                   ((:numeric :decimal)
+                    (if (= -1 atttypmod)
+                        (values nil nil)
+                        (values (ash (- atttypmod 4) -16)
+                                (boole boole-and (- atttypmod 4) #xffff))))
+                   (otherwise
+                    (values
+                     (cond ((and (= -1 attlen) (= -1 atttypmod)) nil)
+                           ((= -1 attlen) (- atttypmod 4))
+                           (t attlen))
+                     nil))))
+           (values coltype collen colprec colnull))))))
 
 (defmethod database-create-sequence (sequence-name
 				     (database generic-postgresql-database))

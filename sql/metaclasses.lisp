@@ -107,12 +107,12 @@
                                         qualifier
 					&allow-other-keys)
   (let ((root-class (find-class 'standard-db-object nil))
-	(vmc (find-class 'standard-db-class)))
+	(vmc 'standard-db-class))
     (setf (view-class-qualifier class)
           (car qualifier))
     (if root-class
-	(if (member-if #'(lambda (super)
-			   (eq (class-of super) vmc)) direct-superclasses)
+	(if (some #'(lambda (super) (typep super vmc))
+                  direct-superclasses)
 	    (call-next-method)
             (apply #'call-next-method
                    class
@@ -135,7 +135,7 @@
                                           direct-superclasses qualifier
                                           &allow-other-keys)
   (let ((root-class (find-class 'standard-db-object nil))
-	(vmc (find-class 'standard-db-class)))
+	(vmc 'standard-db-class))
     (setf (view-table class)
           (table-name-from-arg (sql-escape (or (and base-table
                                                     (if (listp base-table)
@@ -145,8 +145,8 @@
     (setf (view-class-qualifier class)
           (car qualifier))
     (if (and root-class (not (equal class root-class)))
-	(if (member-if #'(lambda (super)
-			   (eq (class-of super) vmc)) direct-superclasses)
+	(if (some #'(lambda (super) (typep super vmc))
+                  direct-superclasses)
 	    (call-next-method)
             (apply #'call-next-method
                    class
