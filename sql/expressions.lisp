@@ -589,8 +589,8 @@ uninclusive, and the args from that keyword to the end."
                         (string-equal (slot-value a 'alias)
                                       (slot-value b 'alias))
                         t)
-                    (string-equal (symbol-name (slot-value a 'name))
-                                  (symbol-name (slot-value b 'name))))))
+                    (string-equal (sql-escape (slot-value a 'name))
+                                  (sql-escape (slot-value b 'name))))))
         (typecase from
           (list (output-sql (apply #'vector
                                    (remove-duplicates from
