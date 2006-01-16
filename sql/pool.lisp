@@ -37,7 +37,8 @@
 	     (vector-pop (free-connections pool))))
       (let ((conn (connect (connection-spec pool)
 			   :database-type (pool-database-type pool)
-			   :if-exists :new)))
+			   :if-exists :new
+                           :make-default nil)))
 	(with-process-lock ((conn-pool-lock pool) "Acquire from pool")
 	  (vector-push-extend conn (all-connections pool))
 	  (setf (conn-pool conn) pool))

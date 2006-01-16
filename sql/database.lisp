@@ -48,7 +48,7 @@ error is signalled."
     (database
      (values database 1))
     (string
-     (let* ((matches (remove-if 
+     (let* ((matches (remove-if
                       #'(lambda (db)
                           (not (and (string= (database-name db) database)
                                     (if db-type
@@ -91,18 +91,20 @@ be taken from this pool."
 
   (unless database-type
     (error 'sql-database-error :message "Must specify a database-type."))
-  
+
   (when (stringp connection-spec)
     (setq connection-spec (string-to-list-connection-spec connection-spec)))
-  
+
   (unless (member database-type *loaded-database-types*)
     (asdf:operate 'asdf:load-op (ensure-keyword
-				 (concatenate 'string 
+				 (concatenate 'string
 					      (symbol-name '#:clsql-)
 					      (symbol-name database-type)))))
 
   (if pool
-      (acquire-from-pool connection-spec database-type pool)
+      (let ((conn (acquire-from-pool connection-spec database-type pool)))
+        (when make-default (setq *default-database* conn))
+        conn)
       (let* ((db-name (database-name-from-spec connection-spec database-type))
              (old-db (unless (eq if-exists :new)
                        (find-database db-name :db-type database-type
@@ -185,13 +187,13 @@ from a pool it will be released to this pool."
 and signal an sql-user-error if they don't match. This function
 is called by database backends."
   `(handler-case
-    (destructuring-bind ,template ,connection-spec 
+    (destructuring-bind ,template ,connection-spec
       (declare (ignore ,@(remove '&optional template)))
       t)
-    (error () 
+    (error ()
      (error 'sql-user-error
       :message
-      (format nil 
+      (format nil
 	      "The connection specification ~A~%is invalid for database type ~A.~%The connection specification must conform to ~A"
 	      ,connection-spec
 	      ,database-type
@@ -221,15 +223,15 @@ database connection cannot be closed, an error is signalled."
 			      (format nil "Unable to find database with connection-spec ~A." database))
 		       (return-from reconnect nil)))
 		 db)))))
-			      
+
     (when (is-database-open db)
       (if force
 	  (ignore-errors (disconnect :database db))
 	  (disconnect :database db :error nil)))
-    
+
     (connect (connection-spec db))))
 
-  
+
 (defun status (&optional full)
   "Prints information about the currently connected databases to
 *STANDARD-OUTPUT*. The argument FULL is nil by default and a
@@ -238,19 +240,19 @@ database is printed."
   (flet ((get-data ()
            (let ((data '()))
              (dolist (db (connected-databases) data)
-	       (push 
-		(append 
-		 (list (if (equal db *default-database*) "*" "")	
+	       (push
+		(append
+		 (list (if (equal db *default-database*) "*" "")
 		       (database-name db)
 		       (string-downcase (string (database-type db)))
-		       (cond ((and (command-recording-stream db) 
-				   (result-recording-stream db)) 
+		       (cond ((and (command-recording-stream db)
+				   (result-recording-stream db))
 			      "Both")
 			     ((command-recording-stream db) "Commands")
 			     ((result-recording-stream db) "Results")
 			     (t "nil")))
-		 (when full 
-		   (list 
+		 (when full
+		   (list
 		    (if (conn-pool db) "t" "nil")
 		    (format nil "~A" (length (database-list-tables db)))
 		    (format nil "~A" (length (database-list-views db))))))
@@ -263,8 +265,8 @@ database is printed."
     (format t "~&CLSQL STATUS: ~A~%" (iso-timestring (get-time)))
     (let ((data (get-data)))
       (when data
-        (let* ((titles (if full 
-			   (list "" "DATABASE" "TYPE" "RECORDING" "POOLED" 
+        (let* ((titles (if full
+			   (list "" "DATABASE" "TYPE" "RECORDING" "POOLED"
 				 "TABLES" "VIEWS")
 			   (list "" "DATABASE" "TYPE" "RECORDING")))
                (sizes (compute-sizes (cons titles data)))

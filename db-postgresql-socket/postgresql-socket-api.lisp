@@ -334,10 +334,14 @@ socket interface"
   (etypecase host
     (pathname
      ;; Directory to unix-domain socket
-     (sb-bsd-sockets:socket-connect
-      (namestring
-       (make-pathname :name ".s.PGSQL" :type (princ-to-string port)
-		      :defaults host))))
+     (let ((sock (make-instance 'sb-bsd-sockets:local-socket
+				:type :stream)))
+       (sb-bsd-sockets:socket-connect
+        sock
+        (namestring
+         (make-pathname :name ".s.PGSQL" :type (princ-to-string port)
+                        :defaults host)))
+       sock))
     (string
      (let ((sock (make-instance 'sb-bsd-sockets:inet-socket
 				:type :stream

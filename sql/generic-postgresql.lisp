@@ -51,7 +51,7 @@
 
 (defmethod database-get-type-specifier ((type (eql 'number)) args database
                                         (db-type (eql :postgresql)))
-  (declare (ignore database db-type))
+  (declare (ignore database))
   (cond
    ((and (consp args) (= (length args) 2))
     (format nil "NUMERIC(~D,~D)" (first args) (second args)))
@@ -63,11 +63,11 @@
 ;;; Backend functions
 
 (defun owner-clause (owner)
-  (cond 
+  (cond
    ((stringp owner)
     (format
      nil
-     " AND (relowner=(SELECT usesysid FROM pg_user WHERE (usename='~A')))" 
+     " AND (relowner=(SELECT usesysid FROM pg_user WHERE (usename='~A')))"
      owner))
    ((null owner)
     (format nil " AND (NOT (relowner=1))"))
@@ -85,11 +85,11 @@
 (defmethod database-list-tables ((database generic-postgresql-database)
                                  &key (owner nil))
   (database-list-objects-of-type database "r" owner))
-  
+
 (defmethod database-list-views ((database generic-postgresql-database)
                                 &key (owner nil))
   (database-list-objects-of-type database "v" owner))
-  
+
 (defmethod database-list-indexes ((database generic-postgresql-database)
                                   &key (owner nil))
   (database-list-objects-of-type database "i" owner))
@@ -99,7 +99,7 @@
 					&key (owner nil))
   (let ((indexrelids
 	 (database-query
-	  (format 
+	  (format
 	   nil
 	   "select indexrelid from pg_index where indrelid=(select relfilenode from pg_class where relname='~A'~A)"
 	   (string-downcase table)
@@ -107,7 +107,7 @@
 	  database :auto nil))
 	(result nil))
     (dolist (indexrelid indexrelids (nreverse result))
-      (push 
+      (push
        (caar (database-query
 	      (format nil "select relname from pg_class where relfilenode='~A'"
 		      (car indexrelid))
@@ -137,7 +137,7 @@
                                                "oid"
                                                "ctid"
                                                ;; kmr -- added tableoid
-                                               "tableoid") :test #'equal)) 
+                                               "tableoid") :test #'equal))
                    result))))
 
 (defmethod database-attribute-type (attribute (table string)
@@ -154,7 +154,7 @@
 
         (setf attlen (parse-integer attlen :junk-allowed t)
               atttypmod (parse-integer atttypmod :junk-allowed t))
-              
+
         (let ((coltype (ensure-keyword typname))
               (colnull (if (string-equal "f" attnull) 1 0))
               collen
@@ -198,7 +198,7 @@
       (format nil "SELECT SETVAL ('~A', ~A)" name position)
       database nil nil)))))
 
-(defmethod database-sequence-next (sequence-name 
+(defmethod database-sequence-next (sequence-name
 				   (database generic-postgresql-database))
   (values
    (parse-integer
@@ -223,7 +223,7 @@
       (unwind-protect
 	   (progn
 	     (setf (slot-value database 'clsql-sys::state) :open)
-	     (mapcar #'car (database-query "select datname from pg_database" 
+	     (mapcar #'car (database-query "select datname from pg_database"
 					   database nil nil)))
 	(progn
 	  (database-disconnect database)
@@ -235,13 +235,13 @@
 (defmethod database-list (connection-spec (type (eql :postgresql-socket)))
   (postgresql-database-list connection-spec type))
 
-#+nil 
+#+nil
 (defmethod database-describe-table ((database generic-postgresql-database) table)
   ;; MTP: LIST-ATTRIBUTE-TYPES currently executes separate queries for
   ;; each attribute. It would be more efficient to have a single SQL
   ;; query return the type data for all attributes. This code is
   ;; retained as an example of how to do this for PostgreSQL.
-  (database-query 
+  (database-query
    (format nil "select a.attname, t.typname
                                from pg_class c, pg_attribute a, pg_type t
                                where c.relname = '~a'
@@ -273,8 +273,8 @@
     ((in type :float :double :number) "NUMERIC")
     ((and (consp type) (in (car type) :char :varchar)) "VARCHAR")
     (t
-     (error 'sql-user-error 
-	    :message 
+     (error 'sql-user-error
+	    :message
 	    (format nil "Unknown clsql type ~A." type)))))
 
 (defun prepared-sql-to-postgresql-sql (sql)
@@ -294,7 +294,7 @@
 	  (setq in-str (not in-str))
 	  (write-char c out))
 	 ((and (char= c #\?) (not in-str))
-	  (write-char #\$ out) 
+	  (write-char #\$ out)
 	  (write-string (write-to-string (incf param)) out))
 	 (t
 	  (write-char c out)))))))
@@ -315,7 +315,7 @@
 		   :bindings (make-list (length types)))))
 
 (defmethod database-bind-parameter ((stmt postgresql-stmt) position value)
-  (setf (nth (1- position) (bindings stmt)) value)) 
+  (setf (nth (1- position) (bindings stmt)) value))
 
 (defun binding-to-param (binding)
   (typecase binding

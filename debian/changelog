@@ -1,3 +1,10 @@
+cl-sql (3.5.3-1) unstable; urgency=low
+
+  * New upstream
+  * Really commit patch for GNU/kFreeBSD (closes: 345219)
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Mon, 16 Jan 2006 14:43:55 -0700
+
 cl-sql (3.5.2-2) unstable; urgency=low
 
   * Commit patch for GNU/kFreeBSD (closes: 345219)

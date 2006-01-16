@@ -1046,11 +1046,16 @@ with the given options"
   (unless (= 0 year month)
     (multiple-value-bind (year-orig month-orig day-orig)
         (time-ymd date)
-      (setf date (make-time :year (+ year year-orig)
-                            :month (+ month month-orig)
-                            :day day-orig
-                            :second (time-second date)
-                            :usec usec))))
+      (multiple-value-bind (new-year new-month)
+         (floor (+ month month-orig (* 12 (+ year year-orig))) 12)
+       (let ((new-date (make-time :year new-year
+                                  :month new-month
+                                  :day day-orig
+                                  :second (time-second date)
+                                  :usec usec)))
+         (if destructive
+             (setf (time-mjd date) (time-mjd new-date))
+             (setq date new-date))))))
   (let ((mjd (time-mjd date))
         (sec (time-second date))
         (usec (time-usec date)))
