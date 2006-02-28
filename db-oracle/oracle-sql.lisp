@@ -99,7 +99,7 @@ likely that we'll have to worry about the CMUCL limit."))
    (date-format
     :initarg :date-format
     :reader date-format
-    :initform "YYYY-MM-DD HH24:MI:SS\"+00\"")
+    :initform "YYYY-MM-DD HH24:MI:SS\".0\"")
    (date-format-length
     :type number
     :documentation
@@ -503,7 +503,7 @@ the length of that format.")
     (uffi:with-foreign-strings ((c-stmt-string sql-stmt-string))
       (let ((stmthp (uffi:allocate-foreign-object :pointer-void))
             select-p)
-      
+
         (uffi:with-foreign-object (stmttype :unsigned-short)
           (unwind-protect
                (progn
@@ -522,10 +522,10 @@ the length of that format.")
                                +oci-attr-stmt-type+
                                (deref-vp errhp)
                                :database db)
-                 
+
                  (setq select-p (= (uffi:deref-pointer stmttype :unsigned-short) 1))
                  (let ((iters (if select-p 0 1)))
-                   
+
                    (oci-stmt-execute (deref-vp svchp)
                                      (deref-vp stmthp)
                                      (deref-vp errhp)
@@ -535,7 +535,7 @@ the length of that format.")
             (unless select-p
               (oci-handle-free (deref-vp stmthp) +oci-htype-stmt+)
               (uffi:free-foreign-object stmthp))))
-        
+
         (cond
           (select-p
            (make-query-cursor db stmthp result-types field-names))

@@ -1,3 +1,14 @@
+28 Feb 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.5.4
+	* sql/metaclasses.lisp: Apply patch from Friedrich Dominicus to
+	fix accessor for new versions of SBCL
+	* db-oracle/oracle-sql.lisp: Apply patch from James Bielman
+	to improving parsing of time.
+	* db-db2/db2-constants.lisp: Change NULL_HANDLE has suggested
+	by Harold Lee.
+	* db-oracle/oracle-dbi.lisp: Add support for SQL BIT type
+	as noted by Russ Tyndall.
+	
 16 Jan 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.5.3
 	* sql/time.lisp: Commit patch from Aleksandar Bakic

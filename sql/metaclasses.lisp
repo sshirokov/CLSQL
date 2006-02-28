@@ -444,8 +444,8 @@ which does type checking before storing a value in a slot."
 	       (null (specified-type dsd)))
       (setf (specified-type dsd)
 	(slot-definition-type dsd))
-      (setf #-clisp (slot-value dsd 'type)
-	    #+clisp (slot-definition-type dsd)
+      (setf #-(or clisp sbcl) (slot-value dsd 'type)
+	    #+(or clisp sbcl) (slot-definition-type dsd)
 	    (compute-lisp-type-from-slot-specification
 	     dsd (slot-definition-type dsd))))
 
