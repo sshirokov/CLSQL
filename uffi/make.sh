@@ -2,6 +2,7 @@
 
 case "`uname`" in
     Linux) os_linux=1 ;;
+    GNU) os_linux=1 ;;
     FreeBSD) os_freebsd=1 ;;
     GNU/kFreeBSD) os_gnukfreebsd=1;;
     Darwin) os_darwin=1 ;;
