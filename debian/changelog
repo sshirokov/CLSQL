@@ -1,3 +1,9 @@
+cl-sql (3.5.6-2) unstable; urgency=low
+
+  * Update dependencies (closes: 358631)
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Thu, 23 Mar 2006 10:10:07 -0700
+
 cl-sql (3.5.6-1) unstable; urgency=low
 
   * New upstream
