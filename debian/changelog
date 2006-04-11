@@ -1,3 +1,10 @@
+cl-sql (3.5.6-3) unstable; urgency=low
+
+  * Rebuild to update library dependencies (closes: 361849)
+  * Rebuild for m68k gcc change (closes: 359273)
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Tue, 11 Apr 2006 16:53:14 -0600
+
 cl-sql (3.5.6-2) unstable; urgency=low
 
   * Update dependencies (closes: 358631)
