@@ -104,8 +104,10 @@
   (let ((second (duration-second duration))
         (minute (duration-minute duration))
         (hour (duration-hour duration))
-        (day (duration-day duration)))
-    (format nil "P~dD~dH~dM~dS" day hour minute second)))
+        (day (duration-day duration))
+	(month (duration-month duration))
+	(year (duration-year duration)))
+    (format nil "P~dY~dM~dD~dH~dM~dS" year month day hour minute second)))
 
 
 ;; ------------------------------------------------------------
@@ -878,10 +880,10 @@ with the given options"
   (third (mjd-to-gregorian (time-mjd (get-time)))))
 
 (defun current-month ()
-  (second (mjd-to-gregorian (time-mjd (get-time)))))
+  (first (mjd-to-gregorian (time-mjd (get-time)))))
 
 (defun current-day ()
-  (first (mjd-to-gregorian (time-mjd (get-time)))))
+  (second (mjd-to-gregorian (time-mjd (get-time)))))
 
 (defun parse-date-time (string)
   "parses date like 08/08/01, 8.8.2001, eg"
@@ -1002,6 +1004,8 @@ with the given options"
         (minute (duration-minute duration))
         (hour (duration-hour duration))
         (day (duration-day duration))
+	(month (duration-month duration))
+	(year (duration-year duration))
         (return (null stream))
         (stream (or stream (make-string-output-stream))))
     (ecase precision
@@ -1013,10 +1017,20 @@ with the given options"
        (setf second 0))
       (:second
        t))
-    (if (= 0 day hour minute)
+    (if (= 0 year month day hour minute)
         (format stream "0 minutes")
         (let ((sent? nil))
+	  (when (< 0 year)
+	    (format stream "~d year~p" year year)
+	    (setf sent? t))
+	  (when (< 0 month)
+	    (when sent?
+	      (write-char #\Space stream))
+	    (format stream "~d month~p" month month)
+	    (setf sent? t))
           (when (< 0 day)
+	    (when sent?
+	      (write-char #\Space stream))
             (format stream "~d day~p" day day)
             (setf sent? t))
           (when (< 0 hour)
@@ -1201,42 +1215,64 @@ Will throw a hissy fit if the date string is a duration. Will ignore any precisi
 
 
 (defvar *iso-8601-duration-delimiters*
-  '((#\D . :days)
+  '((#\Y . :years)
+    (#\D . :days)
     (#\H . :hours)
-    (#\M . :minutes)
+    (#\M . :months/minutes)
     (#\S . :seconds)))
 
 (defun iso-8601-delimiter (elt)
   (cdr (assoc elt *iso-8601-duration-delimiters*)))
 
-(defun iso-8601-duration-subseq (string start)
-  (let* ((pos (position-if #'iso-8601-delimiter string :start start))
-	 (number (when pos (parse-integer (subseq string start pos)
-                                          :junk-allowed t))))
+(defun iso-8601-duration-subseq (string end)
+  (let* ((pos (position-if #'iso-8601-delimiter string :end end :from-end t))
+	 (pos2 (when pos
+		 (position-if-not #'digit-char-p string :end pos :from-end t)))
+	 (number (when pos2
+		   (parse-integer
+		    (subseq string (1+ pos2) pos) :junk-allowed t))))
     (when number
       (values number
 	      (1+ pos)
+	      (1+ pos2)
 	      (iso-8601-delimiter (aref string pos))))))
 
 (defun parse-iso-8601-duration (string)
   "return a wall-time from a duration string"
   (block parse
-    (let ((days 0) (secs 0) (hours 0) (minutes 0) (index 1))
+    (let ((years 0)
+	  (months 0)
+	  (days 0)
+	  (secs 0)
+	  (hours 0)
+	  (minutes 0)
+	  (index (length string))
+	  (months/minutes nil))
       (loop
        (multiple-value-bind (duration next-index duration-type)
            (iso-8601-duration-subseq string index)
          (case duration-type
+	   (:years
+	    (incf years duration))
+	   (:months/minutes
+	    (if months/minutes
+		(incf months duration)
+		(progn
+		  (setq months/minutes t)
+		  (incf minutes duration))))
+           (:days
+	    (setq months/minutes t)
+            (incf days duration))
            (:hours
+	    (setq months/minutes t)
             (incf hours duration))
-           (:minutes
-            (incf minutes duration))
            (:seconds
             (incf secs duration))
-           (:days
-            (incf days duration))
            (t
-            (return-from parse (make-duration :day days :hour hours
-                                              :minute minutes :second secs))))
+            (return-from parse
+	      (make-duration
+	       :year years :month months :day days :hour hours
+	       :minute minutes :second secs))))
          (setf index next-index))))))
 
 ;; e.g. 2000-11-11 00:00:00-06

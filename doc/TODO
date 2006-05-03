@@ -12,8 +12,7 @@ DOCUMENTATION TO DO LIST
  - SQL operators: group-by, limit, not-null, ==, is, having, the, uplike,
    view-class, coalesce, except, exists, substring, concat 
 
- - SELECT: additional keyword arguments accepted include :LIMIT, :OFFSET, 
-   :INNER-JOIN and :ON. 
+ - SELECT: additional keyword arguments accepted include :INNER-JOIN and :ON. 
 
 4. Documenting lower level, non-CommonSQL functions (some of this is already 
    done). 

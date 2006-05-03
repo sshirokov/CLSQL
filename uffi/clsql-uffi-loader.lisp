@@ -19,35 +19,33 @@
 (in-package #:clsql-uffi)
 
 (defun find-and-load-foreign-library (filenames &key module supporting-libraries (errorp t))
-  (setq filenames (if (listp filenames) filenames (list filenames))
-        filenames
-          (append
-           (loop for search-path in clsql:*foreign-library-search-paths*
-                 nconc (loop for filename in filenames
-                             collect (merge-pathnames filename search-path)))
-           filenames))
-  (or (loop for type in (uffi:foreign-library-types)
-            for suffix = (make-pathname :type type)
-            thereis (loop for filename in filenames
-                          thereis (handler-case
-                                    (uffi:load-foreign-library (merge-pathnames filename suffix)
-                                                               :module module
-                                                               :supporting-libraries supporting-libraries)
-                                    (error (c)
-                                      (warn "~A" c)
-                                      nil))))
-      (when errorp
-	(error "Couldn't load foreign librar~@P ~{~S~^, ~}. (searched ~S)"
-               (length filenames) filenames
-	       'clsql:*foreign-library-search-paths*))))
+  "Attempt to load a foreign library. This will search for any of the filenames, as
+well as any of the filenames in any of the clsql:*foreign-library-search-paths*"
+  (setq filenames (if (listp filenames) filenames (list filenames)))
+
+  (flet ((try-load (testpath)
+	   (handler-case
+	       (uffi:load-foreign-library testpath
+					  :module module
+					  :supporting-libraries supporting-libraries)
+	     (error (c) (warn "~A" c) nil))))
+    (or
+     (loop for type in (uffi:foreign-library-types)
+	   thereis
+	   (loop for name in filenames
+		 for pn = (make-pathname :name name :type type)
+		 thereis (or
+			  (loop for search-path in clsql:*foreign-library-search-paths*
+				thereis (try-load (merge-pathnames pn search-path)))
+			  (try-load pn))))
+     (when errorp
+       (error "Couldn't load foreign librar~@P ~{~S~^, ~}. (searched ~S)"
+	      (length filenames) filenames
+	      'clsql:*foreign-library-search-paths*)))))
 
 (defvar *clsql-uffi-library-filenames*
-    (list #+(or 64bit x86-64) "clsql_uffi64"
-          #+(or 64bit x86-64) (make-pathname :name "clsql_uffi64"
-                                             :directory clsql-uffi-system::*library-file-dir*)
-          "clsql_uffi"
-          (make-pathname :name "clsql_uffi"
-                         :directory clsql-uffi-system::*library-file-dir*)))
+  (list #+(or 64bit x86-64) "clsql_uffi64"
+	"clsql_uffi"))
 
 (defvar *clsql-uffi-supporting-libraries* '("c")
   "Used only by CMU. List of library flags needed to be passed to ld to
@@ -58,6 +56,7 @@ set to the right path before compiling or loading the system.")
   "T if foreign library was able to be loaded successfully")
 
 (defun load-uffi-foreign-library ()
+  (clsql:push-library-path clsql-uffi-system::*clsql-uffi-library-dir*)
   (find-and-load-foreign-library *clsql-uffi-library-filenames*
                                  :module "clsql-uffi"
                                  :supporting-libraries
@@ -65,4 +64,3 @@ set to the right path before compiling or loading the system.")
   (setq *uffi-library-loaded* t))
 
 (load-uffi-foreign-library)
-

@@ -495,6 +495,23 @@
   "foo\\bar\\baz"  "foo\\bar\\baz" "foo\\bar\\baz" "foo\\bar\\baz" 
   "foo\\bar\\baz" "foo\\bar\\baz"))
 
+(deftest :fdml/select/37
+    (clsql:select [emplid] :from [employee] 
+                  :order-by [emplid]
+                  :limit 5 
+                  :field-names nil
+                  :flatp t)
+  (1 2 3 4 5))
+
+(deftest :fdml/select/38
+    (clsql:select [emplid] :from [employee] 
+                  :order-by [emplid]
+                  :limit 5 
+                  :offset 3
+                  :field-names nil
+                  :flatp t)
+  (4 5 6 7 8))
+
 (deftest :fdml/do-query/1
     (let ((result '()))
     (clsql:do-query ((name) [select [last-name] :from [employee]

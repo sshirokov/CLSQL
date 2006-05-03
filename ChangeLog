@@ -1,3 +1,12 @@
+03 May 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.5.7
+	* sql/time.lisp: Apply patch from Aleksandar Bakic to extended
+	duration parsing and unparsing to include year and month.
+	* clsql-uffi.asd, uffi/clsql-uffi-loader.lisp: Apply patch from Nathan Bird
+	improving library search on Windows platform.
+	* doc/ref-fdml.xml, /doc/TODO, tests/test-fdml.lisp, tests/test-init.lisp:
+	Apply patch from Marcus Pearce documenting and testing :limit and :offset for SELECT
+
 20 Mar 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.5.6
 	* clsql-postgresql-socket.asd, 

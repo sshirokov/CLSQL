@@ -623,10 +623,13 @@
           ((and (eq *test-database-underlying-type* :mssql)
                 (clsql-sys:in test :fdml/select/9))
            (push (cons test "mssql uses integer math for AVG") skip-tests))
+          ((and (not (member *test-database-underlying-type* 
+                             '(:postgresql :mysql :sqlite3)))
+                (clsql-sys:in test :fdml/select/37 :fdml/select/38))
+           (push (cons test "LIMIT keyword not supported in SELECT") skip-tests))
 	  (t
 	   (push test-form test-forms)))))
       (values (nreverse test-forms) (nreverse skip-tests))))
-
 
 (defun rapid-load (type &optional (position 0))
   "Rapid load for interactive testing."

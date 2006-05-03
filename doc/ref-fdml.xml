@@ -1189,6 +1189,22 @@ ID FORENAME   SURNAME   EMAIL
           </listitem>
         </varlistentry>
         <varlistentry>
+          <term><parameter>limit</parameter></term>
+          <listitem>
+            <para>
+              A non-negative integer. 
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term><parameter>offset</parameter></term>
+          <listitem>
+            <para>
+              A non-negative integer. 
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
           <term><parameter>order-by</parameter></term>
           <listitem>
             <para>
@@ -1341,8 +1357,8 @@ ID FORENAME   SURNAME   EMAIL
         specified lisp type. The keyword arguments
         <parameter>all</parameter>, <parameter>distinct</parameter>,
         <parameter>from</parameter>, <parameter>group-by</parameter>,
-        <parameter>having</parameter>,
-        <parameter>order-by</parameter>,
+        <parameter>having</parameter>, <parameter>limit</parameter>, 
+        <parameter>offset</parameter>, <parameter>order-by</parameter>,
         <parameter>set-operation</parameter> and
         <parameter>where</parameter> are used to specify, using the
         symbolic SQL syntax, the corresponding components of the SQL
@@ -1423,7 +1439,7 @@ ID FORENAME   SURNAME   EMAIL
                        :result-types :auto)
 => (10)
 
-(clsql:select [avg [height]] :from [employee] :flatp t :field-names nil)
+(select [avg [height]] :from [employee] :flatp t :field-names nil)
 => (1.58999584d0)
 
 (select [emplid] [last-name] :from [employee] :where [= [emplid] 1]) 
@@ -1442,12 +1458,20 @@ ID FORENAME   SURNAME   EMAIL
                  :flatp t)
 => (1 2 3 4)
 
-(clsql:select [emplid] :from [employee] 
-                       :where [in [emplid] '(1 2 3 4)]
-                       :flatp t 
-                       :order-by [emplid] 
-                       :field-names nil)
+(select [emplid] :from [employee] 
+        :where [in [emplid] '(1 2 3 4)]
+        :flatp t 
+        :order-by [emplid] 
+        :field-names nil)
 => (1 2 3 4)
+
+(select [emplid] :from [employee] 
+        :order-by [emplid]
+        :limit 5 
+        :offset 3
+        :field-names nil
+        :flatp t)
+=> (4 5 6 7 8)
 
 (select [first-name] [last-name] :from [employee] 
         :field-names nil 

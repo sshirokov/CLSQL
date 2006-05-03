@@ -476,4 +476,4 @@ for foreign libraries \(in addition to the default places).")
 (defun push-library-path (path)
   "Adds the pathspec PATH \(which should denote a directory) to
 the list *FOREIGN-LIBRARY-SEARCH-PATHS*."
-  (push path *foreign-library-search-paths*))
+  (pushnew path *foreign-library-search-paths* :test #'equal))

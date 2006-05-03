@@ -21,8 +21,9 @@
 (defpackage clsql-uffi-system (:use #:asdf #:cl))
 (in-package clsql-uffi-system)
 
-(defvar *library-file-dir* (append (pathname-directory *load-truename*)
-				   (list "uffi")))
+(defvar *clsql-uffi-library-dir*
+  (merge-pathnames "uffi/"
+		   (make-pathname :name nil :type nil :defaults *load-truename*)))
 
 (defclass clsql-uffi-source-file (c-source-file)
   ())
@@ -43,7 +44,7 @@
 	      found
 	      (make-pathname :name (component-name c)
 			     :type library-file-type
-			     :directory *library-file-dir*)))))
+			     :defaults *clsql-uffi-library-dir*)))))
 
 (defmethod perform ((o load-op) (c clsql-uffi-source-file))
   nil) ;;; library will be loaded by a loader file
@@ -59,9 +60,7 @@
     (unless (zerop (run-shell-command
 		    #-freebsd "cd ~A; make"
 		    #+freebsd "cd ~A; gmake"
-		    (namestring (make-pathname :name nil
-					       :type nil
-					       :directory *library-file-dir*))))
+		    (namestring *clsql-uffi-library-dir*)))
       (error 'operation-error :component c :operation o))))
 
 (defmethod operation-done-p ((o compile-op) (c clsql-uffi-source-file))
