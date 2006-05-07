@@ -1133,7 +1133,7 @@ ID FORENAME   SURNAME   EMAIL
     <refsect1>
       <title>Syntax</title>
       <synopsis>
-      <function>select</function> &amp;rest <replaceable>identifiers</replaceable> &amp;key <replaceable>all</replaceable> <replaceable>distinct</replaceable> <replaceable>from</replaceable> <replaceable>group-by</replaceable> <replaceable>having</replaceable> <replaceable>order-by</replaceable> <replaceable>set-operation</replaceable> <replaceable>where</replaceable> <replaceable>result-types</replaceable> <replaceable>field-names</replaceable> <replaceable>flatp</replaceable> <replaceable>refresh</replaceable> <replaceable>caching</replaceable> <replaceable>database</replaceable> => <returnvalue>result</returnvalue></synopsis>
+      <function>select</function> &amp;rest <replaceable>identifiers</replaceable> &amp;key <replaceable>all</replaceable> <replaceable>distinct</replaceable> <replaceable>from</replaceable> <replaceable>group-by</replaceable> <replaceable>having</replaceable> <replaceable>limit</replaceable> <replaceable>offset</replaceable> <replaceable>order-by</replaceable> <replaceable>set-operation</replaceable> <replaceable>where</replaceable> <replaceable>result-types</replaceable> <replaceable>field-names</replaceable> <replaceable>flatp</replaceable> <replaceable>refresh</replaceable> <replaceable>caching</replaceable> <replaceable>database</replaceable> => <returnvalue>result</returnvalue></synopsis>
     </refsect1>
     <refsect1>
       <title>Arguments and Values</title>
