@@ -386,31 +386,33 @@ which does type checking before storing a value in a slot."
   ;; This function is called after the base compute-effective-slots is called.
   ;; OpenMCL sets the type-predicate based on the initial value of the slots type.
   ;; so we have to override the type-predicates here
-  (cond
-    ((consp specified-type)
-     (cond
-       ((and (symbolp (car specified-type))
-	     (string-equal (symbol-name (car specified-type)) "string"))
-	'string)
-       ((and (symbolp (car specified-type))
-	     (string-equal (symbol-name (car specified-type)) "varchar"))
-	'string)
-       ((and (symbolp (car specified-type))
-	     (string-equal (symbol-name (car specified-type)) "char"))
-	'string)
-       (t
-	specified-type)))
-    ((eq (ensure-keyword specified-type) :bigint)
-     'integer)
-    ((eq (ensure-keyword specified-type) :char)
-     'character)
-    ((eq (ensure-keyword specified-type) :varchar)
-     'string)
-    ((and specified-type
-	  (not (eql :not-null (slot-value slotd 'db-constraints))))
-     `(or null ,specified-type))
-    (t
-     specified-type)))
+  (let ((type
+         (cond
+           ((consp specified-type)
+            (cond
+              ((and (symbolp (car specified-type))
+                    (string-equal (symbol-name (car specified-type)) "string"))
+               'string)
+              ((and (symbolp (car specified-type))
+                    (string-equal (symbol-name (car specified-type)) "varchar"))
+               'string)
+              ((and (symbolp (car specified-type))
+                    (string-equal (symbol-name (car specified-type)) "char"))
+               'string)
+              (t
+               specified-type)))
+           ((eq (ensure-keyword specified-type) :bigint)
+            'integer)
+           ((eq (ensure-keyword specified-type) :char)
+            'character)
+           ((eq (ensure-keyword specified-type) :varchar)
+            'string)
+           (t
+            specified-type)))
+        (constraints (slot-value slotd 'db-constraints)))
+    (if (and type (not (member :not-null (listify constraints))))
+        `(or null ,type)
+        type)))
 
 ;; Compute the slot definition for slots in a view-class.  Figures out
 ;; what kind of database value (if any) is stored there, generates and
