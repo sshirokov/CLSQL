@@ -1,6 +1,9 @@
 08 May 2006  Kevin Rosenberg <kevin@rosenberg.net>
-	* sql/metaclasses.lisp: Patch from James Bielman for
+	* Version: 3.6.0 (requires UFFI v1.5.11 or greater)
+	* db-oracle/metaclasses.lisp: Patch from James Bielman for
 	checking slot constraints.
+	* db-oracle/oracle-{api,sql}.lisp: Avoid dead pointers on loading
+	saved openmcl images (based on patch from James Bielman)
 
 06 May 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* doc/ref-fdml.xml: Documentation patch from Marcus Pearce for limit keyword

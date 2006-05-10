@@ -37,9 +37,10 @@
 (uffi:def-foreign-type oci-svc-ctx :pointer-void)
 (uffi:def-foreign-type oci-stmt :pointer-void)
 
-
-(defvar +null-void-pointer+ (uffi:make-null-pointer :void))
-(defvar +null-void-pointer-pointer+ (uffi:make-null-pointer :pointer-void))
+(uffi:def-pointer-var +null-void-pointer+
+  (uffi:make-null-pointer :void))
+(uffi:def-pointer-var +null-void-pointer-pointer+
+  (uffi:make-null-pointer :pointer-void))
 
 ;;; Check an OCI return code for erroricity and signal a reasonably
 ;;; informative condition if so.
@@ -65,7 +66,7 @@
           (if (= result #.+oci-success+)
               +oci-success+
               (handle-oci-result result database nulls-ok)))))))
-  
+
 
 (defmacro def-raw-oci-routine
   ((c-oci-symbol lisp-oci-fn) c-return &rest c-parms)
@@ -92,7 +93,7 @@
   (mode ub4)                  			; ub4
   (xtramem-sz size_t)            ; size_t
   (usermempp (* :pointer-void)))                    ; dvoid **
-  
+
 #-oci7
 (def-oci-routine ("OCIEnvCreate" oci-env-create)
     :int
@@ -209,10 +210,10 @@
   (position   ub4)
   (valuep     :pointer-void)
   (value_sz   sb4)
-  (dty        ub2)         
+  (dty        ub2)
   (indp       (* sb2))
-  (rlenp      (* ub2))          
-  (rcodep     (* ub2))          
+  (rlenp      (* ub2))
+  (rcodep     (* ub2))
   (mode       ub4))
 
 (def-oci-routine ("OCIStmtFetch" oci-stmt-fetch)
@@ -273,7 +274,7 @@
   :returning :int)
 
 
-(uffi:def-function "OCIHandleAlloc" 
+(uffi:def-function "OCIHandleAlloc"
     ((parenth      :pointer-void)		; const dvoid *
      (hndlpp       (* :pointer-void))		; dvoid **
      (type         ub4)				; ub4

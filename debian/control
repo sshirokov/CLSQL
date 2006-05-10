@@ -17,7 +17,7 @@ Description: SQL Interface for Common Lisp
 
 Package: cl-sql-uffi
 Architecture: any
-Depends: cl-uffi, cl-sql (>= ${Source-Version}), ${shlibs:Depends}
+Depends: cl-uffi (>= 1.5.11), cl-sql (>= ${Source-Version}), ${shlibs:Depends}
 Recommends: cl-sql-backend
 Description: Common UFFI functions for CLSQL database backends
  This package provides an interface to several UFFI functions used by multiple

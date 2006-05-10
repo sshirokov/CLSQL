@@ -37,11 +37,11 @@ likely that we'll have to worry about the CMUCL limit."))
 (defmacro deref-vp (foreign-object)
   `(the vp-type (uffi:deref-pointer (the vpp-type ,foreign-object) :pointer-void)))
 
-(defvar +unsigned-char-null-pointer+
+(uffi:def-pointer-var +unsigned-char-null-pointer+
   (uffi:make-null-pointer :unsigned-char))
-(defvar +unsigned-short-null-pointer+
+(uffi:def-pointer-var +unsigned-short-null-pointer+
   (uffi:make-null-pointer :unsigned-short))
-(defvar +unsigned-int-null-pointer+
+(uffi:def-pointer-var +unsigned-int-null-pointer+
   (uffi:make-null-pointer :unsigned-int))
 
 ;; constants - from OCI?
