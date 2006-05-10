@@ -1,3 +1,8 @@
+09 May 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* db-postgresql-socket/postgresql-socket-api.lisp:
+	Apply patch from Marko Kocic adding the socket creation
+	function needed for CLISP.
+
 08 May 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version: 3.6.0 (requires UFFI v1.5.11 or greater)
 	* db-oracle/metaclasses.lisp: Patch from James Bielman for

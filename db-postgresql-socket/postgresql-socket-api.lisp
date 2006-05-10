@@ -4,7 +4,7 @@
 ;;;;
 ;;;; Name:     postgresql-socket-api.lisp
 ;;;; Purpose:  Low-level PostgreSQL interface using sockets
-;;;; Authors:  Kevin M. Rosenberg based on original code by Pierre R. Mai 
+;;;; Authors:  Kevin M. Rosenberg based on original code by Pierre R. Mai
 ;;;; Created:  Feb 2002
 ;;;;
 ;;;; $Id$
@@ -236,7 +236,7 @@ socket interface"
   (defvar *crypt-library-loaded* nil)
 
   (unless *crypt-library-loaded*
-    (uffi:load-foreign-library 
+    (uffi:load-foreign-library
      (uffi:find-foreign-library "libcrypt"
 			   '(#+(or 64bit x86-64) "/usr/lib64/"
 			     "/usr/lib/" "/usr/local/lib/" "/lib/"))
@@ -254,7 +254,7 @@ socket interface"
   "Encrypt a password for transmission to a PostgreSQL server."
   (uffi:with-cstring (password-cstring password)
     (uffi:with-cstring (salt-cstring salt)
-      (uffi:convert-from-cstring 
+      (uffi:convert-from-cstring
        (crypt password-cstring salt-cstring)))))
 
 
@@ -347,9 +347,9 @@ socket interface"
 				:type :stream
 				:protocol :tcp)))
        (sb-bsd-sockets:socket-connect
-	sock 
+	sock
 	(sb-bsd-sockets:host-ent-address
-	 (sb-bsd-sockets:get-host-by-name host)) 
+	 (sb-bsd-sockets:get-host-by-name host))
 	port)
        sock))))
 
@@ -365,9 +365,9 @@ socket interface"
 #+sbcl
 (defun open-postgresql-socket-stream (host port)
   (sb-bsd-sockets:socket-make-stream
-   (open-postgresql-socket host port) :input t :output t 
+   (open-postgresql-socket host port) :input t :output t
    :element-type '(unsigned-byte 8)))
-  
+
 
 #+allegro
 (defun open-postgresql-socket-stream (host port)
@@ -410,6 +410,19 @@ socket interface"
      (comm:open-tcp-stream host port :direction :io :element-type '(unsigned-byte 8)
 			   :read-timeout *postgresql-server-socket-timeout*))
     ))
+
+
+#+clisp
+(defun open-postgresql-socket-stream (host port)
+  (etypecase host
+    (pathname
+     (error "Not supported"))
+    (string
+     (socket:socket-connect
+      port host
+      :element-type '(unsigned-byte 8)
+      :timeout *postgresql-server-socket-timeout*))))
+
 
 ;;; Interface Functions
 
@@ -455,7 +468,7 @@ troubles."
 connection, if it is still open."
   (when (postgresql-connection-open-p connection)
     (close-postgresql-connection connection))
-  (let ((socket (open-postgresql-socket-stream 
+  (let ((socket (open-postgresql-socket-stream
 		  (postgresql-connection-host connection)
 		  (postgresql-connection-port connection))))
     (unwind-protect
@@ -682,7 +695,7 @@ connection, if it is still open."
 	)		;; nothing to do
        (t
 	(setq val (- first-char +char-code-zero+))))
-      
+
       (dotimes (i length)
 	(declare (fixnum i))
 	(setq val (+
@@ -700,7 +713,7 @@ connection, if it is still open."
 	       (< ,offset 10))
 	  ,offset
 	  nil))))
-      
+
 (defun read-double-from-socket (socket length)
   (declare (fixnum length))
   (let ((before-decimal 0)
@@ -724,13 +737,13 @@ connection, if it is still open."
        (setq before-decimal (ascii-digit char))
        (unless before-decimal
 	 (error "Unexpected value"))))
-    
+
     (block loop
       (dotimes (i length)
 	(setq char (read-byte socket))
 	;;      (format t "~&len:~D, i:~D, char:~D, minusp:~A, decimalp:~A" length i char minusp decimalp)
 	(let ((weight (ascii-digit char)))
-	  (cond 
+	  (cond
 	   ((and weight (not decimalp)) ;; before decimal point
 	    (setq before-decimal (+ weight (* 10 before-decimal))))
 	   ((and weight decimalp) ;; after decimal point
@@ -743,19 +756,19 @@ connection, if it is still open."
 	    (setq exponent (read-integer-from-socket socket (- length i 1)))
 	    (setq exponent (or exponent 0))
 	    (return-from loop))
-	  (t 
+	  (t
 	   (break "Unexpected value"))
 	  )
 	)))
     (setq result (* (+ (coerce before-decimal 'double-float)
-		       (* after-decimal 
+		       (* after-decimal
 			  (expt 10 (- decimal-count))))
 		    (expt 10 exponent)))
     (if minusp
 	(- result)
 	result)))
-	
-      
+
+
 #+ignore
 (defun read-double-from-socket (socket length)
   (let ((result (make-string length)))
