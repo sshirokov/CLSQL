@@ -548,6 +548,31 @@
 	    slot value.
 	  </para>
 	</listitem>
+	<listitem>
+	  <para>
+	    <parameter>:db-reader</parameter> - If a string, then when
+	    reading values from the database, the string will be used
+	    for a format string, with the only value being the value
+	    from the database.  The resulting string will be used as
+	    the slot value.  If a function then it will take one
+	    argument, the value from the database, and return the
+	    value that should be put into the slot. If a symbol, then
+	    the symbol-function of the symbol will be used.
+          </para>
+        </listitem>
+	<listitem>
+	  <para>
+	    <parameter>:db-writer</parameter> - If a string, then when
+	    reading values from the slot for the database, the string
+	    will be used for a format string, with the only value
+	    being the value of the slot.  The resulting string will be
+	    used as the column value in the database.  If a function
+	    then it will take one argument, the value of the slot, and
+	    return the value that should be put into the database. If
+	    a symbol, then the symbol-function of the symbol will be
+	    used.
+          </para>
+        </listitem>
       </itemizedlist>
     </refsect1>
     <refsect1>

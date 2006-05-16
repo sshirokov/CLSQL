@@ -1,3 +1,11 @@
+cl-sql (3.6.1-1) unstable; urgency=low
+
+  * New upstream, add documentation for db-reader and
+  verified correct operation with symbol-function of symbol
+  (closes: 352567)
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Mon, 15 May 2006 21:07:47 -0600
+
 cl-sql (3.6.0-1) unstable; urgency=low
 
   * New upstream
