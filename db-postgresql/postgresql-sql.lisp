@@ -127,12 +127,14 @@
 	(declare (type pgsql-conn-def connection))
 	(when (not (eq (PQstatus connection) 
 		       pgsql-conn-status-type#connection-ok))
-	  (error 'sql-connection-error
-		 :database-type database-type
-		 :connection-spec connection-spec
-		 :error-id (PQstatus connection)
-		 :message (tidy-error-message 
-			   (PQerrorMessage connection))))
+          (let ((pqstatus (PQstatus connection))
+                (pqmessage (tidy-error-message (PQerrorMessage connection))))
+            (PQfinish connection)
+            (error 'sql-connection-error
+                   :database-type database-type
+                   :connection-spec connection-spec
+                   :error-id pqstatus
+                   :message  pqmessage)))
 	(make-instance 'postgresql-database
 		       :name (database-name-from-spec connection-spec
 						      database-type)

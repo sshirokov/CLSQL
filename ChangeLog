@@ -1,3 +1,14 @@
+04 Jul 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.6.2
+	* db-postgresql/postgresql-sql.lisp: Apply patch from Vladimir Sekissov
+	to close connection when failing to connect to database.
+	* sql/generic-postgresql.lisp: Apply patch from Joel Reymont
+	to avoid dropping system views.
+	* sql/oodml.lisp: Apply patch from Joel Reymont to avoid listify
+	a nil value [patch sponsored by Flektor]
+	* clsql-uffi.asd, uffi/make.sh: Patch from Richard Kreuter
+	for netbsd compilation
+	
 15 May 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* doc/ref-ooddl.xml: Add documentation for :db-reader and :db-writer
 	slots for def-view-class macro [as reported missing by Thomas Fischbacher].

@@ -109,7 +109,7 @@
           (t
            (error "Slot reader is of an unusual type.")))))
 
-(defmethod key-value-from-db (slotdef value database) 
+(defmethod key-value-from-db (slotdef value database)
   (declare (optimize (speed 3) #+cmu (extensions:inhibit-warnings 3)))
   (let ((slot-reader (view-class-slot-db-reader slotdef))
         (slot-type (specified-type slotdef)))
@@ -223,7 +223,7 @@
 		       (db-value-from-slot slot value database)))))
       (let* ((view-class (class-of obj))
 	     (view-class-table (view-table view-class))
-	     (slots (remove-if-not #'slot-storedp 
+	     (slots (remove-if-not #'slot-storedp
 				   (ordered-class-slots view-class)))
 	     (record-values (mapcar #'slot-value-list slots)))
 	(unless record-values
@@ -277,7 +277,7 @@
          (att-ref (generate-attribute-reference view-class slot-def))
          (res (select att-ref :from  view-table :where view-qual
 		      :result-types nil)))
-    (when res 
+    (when res
       (get-slot-values-from-view instance (list slot-def) (car res)))))
 
 
@@ -319,7 +319,7 @@
       (format nil "INT(~A)" (car args))
     "INT"))
 
-(deftype tinyint () 
+(deftype tinyint ()
   "An 8-bit integer, this width may vary by SQL implementation."
   'integer)
 
@@ -327,7 +327,7 @@
   (declare (ignore args database db-type))
   "INT")
 
-(deftype smallint () 
+(deftype smallint ()
   "An integer smaller than a 32-bit integer. this width may vary by SQL implementation."
   'integer)
 
@@ -335,7 +335,7 @@
   (declare (ignore args database db-type))
   "INT")
 
-(deftype mediumint () 
+(deftype mediumint ()
   "An integer smaller than a 32-bit integer, but may be larger than a smallint. This width may vary by SQL implementation."
   'integer)
 
@@ -343,7 +343,7 @@
   (declare (ignore args database db-type))
   "INT")
 
-(deftype bigint () 
+(deftype bigint ()
   "An integer larger than a 32-bit integer, this width may vary by SQL implementation."
   'integer)
 
@@ -351,7 +351,7 @@
   (declare (ignore args database db-type))
   "BIGINT")
 
-(deftype varchar (&optional size) 
+(deftype varchar (&optional size)
   "A variable length string for the SQL varchar type."
   (declare (ignore size))
   'string)
@@ -369,7 +369,7 @@
       (format nil "CHAR(~A)" (car args))
       (format nil "VARCHAR(~D)" *default-string-length*)))
 
-(deftype universal-time () 
+(deftype universal-time ()
   "A positive integer as returned by GET-UNIVERSAL-TIME."
   '(integer 1 *))
 
@@ -410,7 +410,7 @@
       (format nil "FLOAT(~A)" (car args))
       "FLOAT"))
 
-(deftype generalized-boolean () 
+(deftype generalized-boolean ()
   "A type which outputs a SQL boolean value, though any lisp type can be stored in the slot."
   t)
 
@@ -513,11 +513,11 @@
 (defmethod read-sql-value (val (type (eql 'char)) database db-type)
   (declare (ignore database db-type))
   (schar val 0))
-              
+
 (defmethod read-sql-value (val (type (eql 'keyword)) database db-type)
   (declare (ignore database db-type))
   (when (< 0 (length val))
-    (intern (symbol-name-default-case val) 
+    (intern (symbol-name-default-case val)
 	    (find-package '#:keyword))))
 
 (defmethod read-sql-value (val (type (eql 'symbol)) database db-type)
@@ -612,9 +612,9 @@
 	 (target-class (find-class target-name)))
     (when res
       (mapcar (lambda (obj)
-		(list 
+		(list
 		 (car
-		  (fault-join-slot-raw 
+		  (fault-join-slot-raw
 		   target-class
 		   obj
 		   (find target-name (class-slots (class-of obj))
@@ -627,31 +627,31 @@
 
 (defun fault-join-target-slot (class object slot-def)
   (let* ((dbi (view-class-slot-db-info slot-def))
-	 (ts (gethash :target-slot dbi)) 
+	 (ts (gethash :target-slot dbi))
 	 (jc  (gethash :join-class dbi))
 	 (jc-view-table (view-table (find-class jc)))
 	 (tdbi (view-class-slot-db-info
-		(find ts (class-slots (find-class jc)) 
-		      :key #'slot-definition-name))) 
+		(find ts (class-slots (find-class jc))
+		      :key #'slot-definition-name)))
 	 (retrieval (gethash :retrieval tdbi))
 	 (tsc (gethash :join-class tdbi))
 	 (ts-view-table (view-table (find-class tsc)))
 	 (jq (join-qualifier class object slot-def))
 	 (key (slot-value object (gethash :home-key dbi))))
-  
+
     (when jq
       (ecase retrieval
 	(:immediate
 	 (let ((res
-		(find-all (list tsc) 
+		(find-all (list tsc)
 			  :inner-join (sql-expression :table jc-view-table)
-			  :on (sql-operation 
+			  :on (sql-operation
 			       '==
-			       (sql-expression 
-				:attribute (gethash :foreign-key tdbi) 
+			       (sql-expression
+				:attribute (gethash :foreign-key tdbi)
 				:table ts-view-table)
-			       (sql-expression 
-				:attribute (gethash :home-key tdbi) 
+			       (sql-expression
+				:attribute (gethash :home-key tdbi)
 				:table jc-view-table))
 			  :where jq
 			  :result-types :auto
@@ -659,9 +659,9 @@
 	   (mapcar #'(lambda (i)
 		       (let* ((instance (car i))
 			      (jcc (make-instance jc :view-database (view-database instance))))
-			 (setf (slot-value jcc (gethash :foreign-key dbi)) 
+			 (setf (slot-value jcc (gethash :foreign-key dbi))
 			       key)
-			 (setf (slot-value jcc (gethash :home-key tdbi)) 
+			 (setf (slot-value jcc (gethash :home-key tdbi))
 			       (slot-value instance (gethash :foreign-key tdbi)))
 		      (list instance jcc)))
 		   res)))
@@ -673,9 +673,9 @@
 		       (jcc (make-instance jc :view-database (view-database object)))
 		       (fk (car k)))
 		   (setf (slot-value instance (gethash :home-key tdbi)) fk)
-		   (setf (slot-value jcc (gethash :foreign-key dbi)) 
+		   (setf (slot-value jcc (gethash :foreign-key dbi))
 			 key)
-		   (setf (slot-value jcc (gethash :home-key tdbi)) 
+		   (setf (slot-value jcc (gethash :home-key tdbi))
 			 fk)
 		   (list instance jcc)))
 	     (select (sql-expression :attribute (gethash :foreign-key tdbi) :table jc-view-table)
@@ -711,7 +711,7 @@ maximum of MAX-LEN instances updated in each query."
       (setq class-name (class-name (class-of (first objects)))))
     (let* ((class (find-class class-name))
 	   (class-slots (ordered-class-slots class))
-	   (slotdefs 
+	   (slotdefs
 	    (if (eq t slots)
 		(generate-retrieval-joins-list class :deferred)
 	      (remove-if #'null
@@ -738,7 +738,7 @@ maximum of MAX-LEN instances updated in each query."
 			       objects)))))
 	       (n-object-keys (length object-keys))
 	       (query-len (or max-len n-object-keys)))
-	  
+
 	  (do ((i 0 (+ i query-len)))
 	      ((>= i n-object-keys))
 	    (let* ((keys (if max-len
@@ -764,7 +764,7 @@ maximum of MAX-LEN instances updated in each query."
 						:key #'(lambda (res)
 							 (slot-value res
 								     foreign-key)))
-				 
+
 				 (progn
 				   (when (gethash :target-slot dbi)
 				     (fault-join-target-slot class object slotdef))))))
@@ -777,7 +777,7 @@ maximum of MAX-LEN instances updated in each query."
   (let* ((dbi (view-class-slot-db-info slot-def))
 	 (jc (gethash :join-class dbi)))
     (let ((jq (join-qualifier class object slot-def)))
-      (when jq 
+      (when jq
         (select jc :where jq :flatp t :result-types nil
 		:database (view-database object))))))
 
@@ -848,11 +848,11 @@ maximum of MAX-LEN instances updated in each query."
 		    (join-vals (subseq vals (list-length selects)))
 		    (joins (mapcar #'(lambda (c) (when c (make-instance c :view-database database)))
 				   jclasses)))
-	       
-	       ;;(format t "joins: ~S~%db-vals: ~S~%join-values: ~S~%selects: ~S~%immediate-selects: ~S~%" 
+
+	       ;;(format t "joins: ~S~%db-vals: ~S~%join-values: ~S~%selects: ~S~%immediate-selects: ~S~%"
 	       ;;joins db-vals join-vals selects immediate-selects)
-	       
-	       ;; use refresh keyword here 
+
+	       ;; use refresh keyword here
 	       (setf obj (get-slot-values-from-view obj (mapcar #'car selects) db-vals))
 	       (mapc #'(lambda (jo)
 			 ;; find all immediate-select slots and join-vals for this object
@@ -865,7 +865,7 @@ maximum of MAX-LEN instances updated in each query."
 								    :test #'eq))
 						      slots))))
 			   (get-slot-values-from-view jo
-						      (mapcar #'car 
+						      (mapcar #'car
 							      (mapcar #'(lambda (pos)
 									  (nth pos immediate-selects))
 								      pos-list))
@@ -873,9 +873,9 @@ maximum of MAX-LEN instances updated in each query."
 							      pos-list))))
 		     joins)
 	       (mapc
-		#'(lambda (jc) 
-		    (let ((slot (find (class-name (class-of jc)) (class-slots vclass) 
-				      :key #'(lambda (slot) 
+		#'(lambda (jc)
+		    (let ((slot (find (class-name (class-of jc)) (class-slots vclass)
+				      :key #'(lambda (slot)
 					       (when (and (eq :join (view-class-slot-db-kind slot))
 							  (eq (slot-definition-name slot)
 							      (gethash :join-class (view-class-slot-db-info slot))))
@@ -886,7 +886,7 @@ maximum of MAX-LEN instances updated in each query."
 	       (when refresh (instance-refreshed obj))
 	       obj)))
     (let* ((objects
-	    (mapcar #'(lambda (sclass jclass sel immediate-join instance) 
+	    (mapcar #'(lambda (sclass jclass sel immediate-join instance)
 			(prog1
 			    (build-object vals sclass jclass sel immediate-join instance)
 			  (setf vals (nthcdr (+ (list-length sel) (list-length immediate-join))
@@ -896,11 +896,11 @@ maximum of MAX-LEN instances updated in each query."
 	  (car objects)
 	objects))))
 
-(defun find-all (view-classes 
+(defun find-all (view-classes
 		 &rest args
-		 &key all set-operation distinct from where group-by having 
-		      order-by offset limit refresh flatp result-types 
-                      inner-join on 
+		 &key all set-operation distinct from where group-by having
+		      order-by offset limit refresh flatp result-types
+                      inner-join on
 		      (database *default-database*)
 		      instances)
   "Called by SELECT to generate object query results when the
@@ -924,7 +924,7 @@ maximum of MAX-LEN instances updated in each query."
     (remf args :instances)
     (let* ((*db-deserializing* t)
 	   (sclasses (mapcar #'find-class view-classes))
-	   (immediate-join-slots 
+	   (immediate-join-slots
 	    (mapcar #'(lambda (c) (generate-retrieval-joins-list c :immediate)) sclasses))
 	   (immediate-join-classes
 	    (mapcar #'(lambda (jcs)
@@ -949,21 +949,21 @@ maximum of MAX-LEN instances updated in each query."
 	   (order-by-slots (mapcar #'(lambda (ob) (if (atom ob) ob (car ob)))
 				   (listify order-by)))
 	   (join-where nil))
-	   
+
 
       ;;(format t "sclasses: ~W~%ijc: ~W~%tables: ~W~%" sclasses immediate-join-classes tables)
-      
+
       (dolist (ob order-by-slots)
 	(when (and ob (not (member ob (mapcar #'cdr fullsels)
 				   :test #'ref-equal)))
-	  (setq fullsels 
+	  (setq fullsels
 	    (append fullsels (mapcar #'(lambda (att) (cons nil att))
 				     order-by-slots)))))
       (dolist (ob (listify distinct))
-	(when (and (typep ob 'sql-ident) 
-		   (not (member ob (mapcar #'cdr fullsels) 
+	(when (and (typep ob 'sql-ident)
+		   (not (member ob (mapcar #'cdr fullsels)
 				:test #'ref-equal)))
-	  (setq fullsels 
+	  (setq fullsels
 	      (append fullsels (mapcar #'(lambda (att) (cons nil att))
 				       (listify ob))))))
       (mapcar #'(lambda (vclass jclasses jslots)
@@ -983,19 +983,19 @@ maximum of MAX-LEN instances updated in each query."
 			      (when join-where (listify join-where))))))
 		     jclasses jslots)))
 	      sclasses immediate-join-classes immediate-join-slots)
-      (when where 
-	(setq where (listify where)))
+      ;; Reported buggy on clsql-devel
+      ;; (when where (setq where (listify where)))
       (cond
        ((and where join-where)
 	(setq where (list (apply #'sql-and where join-where))))
        ((and (null where) (> (length join-where) 1))
 	(setq where (list (apply #'sql-and join-where)))))
-      
-      (let* ((rows (apply #'select 
+
+      (let* ((rows (apply #'select
 			  (append (mapcar #'cdr fullsels)
-				  (cons :from 
-					(list (append (when from (listify from)) 
-						      (listify tables)))) 
+				  (cons :from
+					(list (append (when from (listify from))
+						      (listify tables))))
 				  (list :result-types result-types)
 				  (when where
 				    (list :where where))
@@ -1008,10 +1008,10 @@ maximum of MAX-LEN instances updated in each query."
 					((= i instances-to-add) res)
 				      (push (make-list (length sclasses) :initial-element nil) res)))
 		instances))
-	     (objects (mapcar 
+	     (objects (mapcar
 		       #'(lambda (row instance)
 			   (build-objects row sclasses immediate-join-classes sels
-					  immediate-join-sels database refresh flatp 
+					  immediate-join-sels database refresh flatp
 					  (if (and flatp (atom instance))
 					      (list instance)
 					    instance)))
@@ -1024,12 +1024,12 @@ maximum of MAX-LEN instances updated in each query."
   "Controls whether SELECT caches objects by default. The CommonSQL
 specification states caching is on by default.")
 
-(defun select (&rest select-all-args) 
+(defun select (&rest select-all-args)
    "Executes a query on DATABASE, which has a default value of
 *DEFAULT-DATABASE*, specified by the SQL expressions supplied
 using the remaining arguments in SELECT-ALL-ARGS. The SELECT
 argument can be used to generate queries in both functional and
-object oriented contexts. 
+object oriented contexts.
 
 In the functional case, the required arguments specify the
 columns selected by the query and may be symbolic SQL expressions
@@ -1047,7 +1047,7 @@ types are automatically computed for each field. FIELD-NAMES is t
 by default which means that the second value returned is a list
 of strings representing the columns selected by the query. If
 FIELD-NAMES is nil, the list of column names is not returned as a
-second value. 
+second value.
 
 In the object oriented case, the required arguments to SELECT are
 symbols denoting View Classes which specify the database tables
@@ -1079,7 +1079,7 @@ as elements of a list."
          (query-get-selections select-all-args)
        (unless (or *default-database* (getf qualifier-args :database))
          (signal-no-database-error nil))
-       
+
        (cond
          ((select-objects target-args)
           (let ((caching (getf qualifier-args :caching *default-caching*))
@@ -1090,14 +1090,14 @@ as elements of a list."
             (remf qualifier-args :caching)
             (remf qualifier-args :refresh)
             (remf qualifier-args :result-types)
-            
+
             ;; Add explicity table name to order-by if not specified and only
             ;; one selected table. This is required so FIND-ALL won't duplicate
             ;; the field
             (when (and order-by (= 1 (length target-args)))
               (let ((table-name  (view-table (find-class (car target-args))))
                     (order-by-list (copy-seq (listify order-by))))
-                
+
                 (loop for i from 0 below (length order-by-list)
                       do (etypecase (nth i order-by-list)
                            (sql-ident-attribute
@@ -1107,11 +1107,11 @@ as elements of a list."
                             (unless (slot-value (car (nth i order-by-list)) 'qualifier)
                               (setf (slot-value (car (nth i order-by-list)) 'qualifier) table-name)))))
                 (setf (getf qualifier-args :order-by) order-by-list)))
-            
+
             (cond
               ((null caching)
                (apply #'find-all target-args
-                      (append qualifier-args 
+                      (append qualifier-args
                               (list :result-types result-types :refresh refresh))))
               (t
                (let ((cached (records-cache-results target-args qualifier-args database)))
@@ -1140,14 +1140,14 @@ as elements of a list."
                           (slot-value expr 'selections))))
             (destructuring-bind (&key (flatp nil)
                                       (result-types :auto)
-                                      (field-names t) 
+                                      (field-names t)
                                       (database *default-database*)
                                       &allow-other-keys)
                 qualifier-args
-              (query expr :flatp flatp 
-                     :result-types 
+              (query expr :flatp flatp
+                     :result-types
                      ;; specifying a type for an attribute overrides result-types
-                     (if (some #'(lambda (x) (not (eq t x))) specified-types) 
+                     (if (some #'(lambda (x) (not (eq t x))) specified-types)
                          specified-types
                          result-types)
                      :field-names field-names
@@ -1170,7 +1170,7 @@ as elements of a list."
 
 (defun records-cache-results (targets qualifiers database)
   (when (record-caches database)
-    (gethash (compute-records-cache-key targets qualifiers) (record-caches database)))) 
+    (gethash (compute-records-cache-key targets qualifiers) (record-caches database))))
 
 (defun (setf records-cache-results) (results targets qualifiers database)
   (unless (record-caches database)

@@ -4,6 +4,7 @@ case "`uname`" in
     Linux) os_linux=1 ;;
     GNU) os_linux=1 ;;
     FreeBSD) os_freebsd=1 ;;
+    NetBSD) os_netbsd=1 ;;
     GNU/kFreeBSD) os_gnukfreebsd=1;;
     Darwin) os_darwin=1 ;;
     SunOS) os_sunos=1 ;;
@@ -12,7 +13,7 @@ case "`uname`" in
        exit 1 ;;	
 esac
     
-if [ "$os_linux" -o "$os_freebsd" -o "$os_gnukfreebsd" ]; then
+if [ "$os_linux" -o "$os_freebsd" -o "$os_gnukfreebsd" -o "$os_netbsd" ]; then
     gcc -fPIC -DPIC -c $SOURCE -o $OBJECT
     ld -shared -soname=$BASE $LDFLAGS $OBJECT -o $SHARED_LIB
 elif [ "$os_darwin" ]; then

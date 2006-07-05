@@ -1,3 +1,9 @@
+cl-sql (3.6.2-1) unstable; urgency=low
+
+  * New upstream
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Tue,  4 Jul 2006 19:28:44 -0600
+
 cl-sql (3.6.1-1) unstable; urgency=low
 
   * New upstream, add documentation for db-reader and

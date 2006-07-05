@@ -58,8 +58,8 @@
   (unless (operation-done-p o c)
     #-(or win32 mswindows)
     (unless (zerop (run-shell-command
-		    #-freebsd "cd ~A; make"
-		    #+freebsd "cd ~A; gmake"
+		    #-(or freebsd netbsd) "cd ~A; make"
+		    #+(or freebsd netbsd) "cd ~A; gmake"
 		    (namestring *clsql-uffi-library-dir*)))
       (error 'operation-error :component c :operation o))))
 
@@ -70,7 +70,7 @@
                                                        (find-package '#:uffi))))))
 	(and (probe-file lib) (probe-file (component-pathname c))
 	     (> (file-write-date lib) (file-write-date (component-pathname c)))))))
-  
+
 (defsystem clsql-uffi
   :name "cl-sql-base"
   :author "Kevin M. Rosenberg <kmr@debian.org>"
@@ -80,7 +80,7 @@
   :long-description "cl-sql-uffi package provides common helper functions using the UFFI for the CLSQL package."
 
   :depends-on (uffi clsql)
-  
+
   :components
   ((:module :uffi
 	    :components
