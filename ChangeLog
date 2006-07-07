@@ -1,3 +1,8 @@
+07 Jul 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.6.3
+	* sql/transactions.lisp: Important typo fix from Alexey Antipov
+	for database-start-transaction
+	
 04 Jul 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.6.2
 	* db-postgresql/postgresql-sql.lisp: Apply patch from Vladimir Sekissov

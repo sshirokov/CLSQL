@@ -22,7 +22,7 @@
    (status :initform nil :accessor transaction-status
 	   :documentation "nil or :committed")))
 
-(defun add-transaction-commit-hook (commit-hook &key 
+(defun add-transaction-commit-hook (commit-hook &key
                                     (database *default-database*))
   "Adds COMMIT-HOOK, which should a designator for a function
 with no required arguments, to the list of hooks run when COMMIT
@@ -30,7 +30,7 @@ is called on DATABASE which defaults to *DEFAULT-DATABASE*."
   (when (transaction database)
     (push commit-hook (commit-hooks (transaction database)))))
 
-(defun add-transaction-rollback-hook (rollback-hook 
+(defun add-transaction-rollback-hook (rollback-hook
                                       &key (database *default-database*))
   "Adds ROLLBACK-HOOK, which should a designator for a function
 with no required arguments, to the list of hooks run when ROLLBACK
@@ -40,11 +40,11 @@ is called on DATABASE which defaults to *DEFAULT-DATABASE*."
 
 (defmethod database-start-transaction ((database database))
   (unless (transaction database)
-    (setf (transaction database) 
+    (setf (transaction database)
 	  (make-instance 'transaction :previous-autocommit
 			 (database-autocommit database))))
   (setf (database-autocommit database) nil)
-  (when (= (incf (transaction-level database) 1))
+  (when (= (incf (transaction-level database)) 1)
     (let ((transaction (transaction database)))
       (setf (commit-hooks transaction) nil
             (rollback-hooks transaction) nil
@@ -70,7 +70,7 @@ is called on DATABASE which defaults to *DEFAULT-DATABASE*."
   (with-slots (transaction transaction-level autocommit) database
     (if (plusp transaction-level)
         (when (zerop (decf transaction-level))
-          (unwind-protect 
+          (unwind-protect
                (execute-command "ROLLBACK" :database database)
 	    (setf autocommit (previous-autocommit transaction))
             (map nil #'funcall (rollback-hooks transaction))))
@@ -106,14 +106,14 @@ back and otherwise the transaction is committed."
 currently within the scope of a transaction, commits changes made
 since the transaction began."
   (database-commit-transaction database)
-  nil) 
+  nil)
 
 (defun rollback (&key (database *default-database*))
   "If DATABASE, which defaults to *DEFAULT-DATABASE*, is
 currently within the scope of a transaction, rolls back changes
 made since the transaction began."
   (database-abort-transaction database)
-  nil) 
+  nil)
 
 (defun start-transaction (&key (database *default-database*))
   "Starts a transaction block on DATABASE which defaults to
