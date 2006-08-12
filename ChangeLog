@@ -1,4 +1,11 @@
 12 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.6.5
+	* sql/generic-postgresql.lisp: Add slot for has-table-pg_roles to
+	lazily cache if pg_roles tables exist. Selectively use SQL from
+	Joel's previous patch if pg_roles table exists. Should now work
+	with both postgresql 7.4 and 8.x.
+	
+12 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.6.4
 	* clsql.asd: Add support for c:\etc\clsql-init.lisp as possible
 	local initialization file

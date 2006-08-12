@@ -15,7 +15,7 @@
 (in-package #:clsql-sys)
 
 (defclass generic-postgresql-database (database)
-  ()
+  ((has-table-pg_roles :type boolean :reader has-table-pg_roles :initform nil))
   (:documentation "Encapsulate same behavior across postgresql and postgresql-socket backends."))
 
 
@@ -73,15 +73,27 @@
     (format nil " AND (NOT (relowner=1))"))
    (t "")))
 
+(defun has-table (name database)
+  (let ((name-retrieved
+         (caar (database-query
+                (format nil "SELECT relname FROM pg_class WHERE relname='~A'"
+                        name)
+                database nil nil))))
+    (if (and (stringp name-retrieved) (plusp (length name-retrieved)))
+        t
+        nil)))
+
+(defmethod slot-unbound (class (obj generic-postgresql-database)
+                         (slot (eql 'has-table-pg_roles)))
+  ;; Lazily cache slot value
+  (setf (slot-value obj 'has-table-pg_roles) (has-table "pg_roles" obj)))
+
 (defun database-list-objects-of-type (database type owner)
   (mapcar #'car
 	  (database-query
 	   (format nil
-		   "SELECT relname FROM pg_class WHERE (relkind = '~A')~A"
-                   #+nil
-                   (if (not (eq owner :all))
-                       ;; The below query fails on versions of postgresql
-                       ;; (such as 7.4) that lack the pg_roles table
+                   (if (and (has-table-pg_roles database)
+                            (not (eq owner :all)))
                        "
  SELECT c.relname
  FROM pg_catalog.pg_class c
