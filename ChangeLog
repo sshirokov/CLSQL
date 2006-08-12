@@ -6,6 +6,8 @@
 	as name candidates.
 	* db-odbc/odbc-api.lisp: Work-around Allegro/Windows FFI bug
 	that generates incorrect integer return type
+	* sql/generic-postgresql.lisp: Revert patch from Joel Reymont since
+	it fails on versions of postgresql that lack the pg_role table
 	
 07 Jul 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.6.3

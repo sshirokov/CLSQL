@@ -77,8 +77,12 @@
   (mapcar #'car
 	  (database-query
 	   (format nil
+		   "SELECT relname FROM pg_class WHERE (relkind = '~A')~A"
+                   #+nil
                    (if (not (eq owner :all))
-                    "
+                       ;; The below query fails on versions of postgresql
+                       ;; (such as 7.4) that lack the pg_roles table
+                       "
  SELECT c.relname
  FROM pg_catalog.pg_class c
       LEFT JOIN pg_catalog.pg_roles r ON r.oid = c.relowner
@@ -87,7 +91,7 @@
        AND n.nspname NOT IN ('pg_catalog', 'pg_toast')
        AND pg_catalog.pg_table_is_visible(c.oid)
        ~A"
-                    "SELECT relname FROM pg_class WHERE (relkind =
+                       "SELECT relname FROM pg_class WHERE (relkind =
 '~A')~A")
 		   type
 		   (owner-clause owner))
