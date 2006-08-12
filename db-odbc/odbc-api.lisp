@@ -99,6 +99,17 @@ as possible second argument) to the desired representation of date/time/timestam
                                    odbc-call &body body)
   (let ((result-code (gensym "RC-")))
     `(let ((,result-code ,odbc-call))
+
+      ;; Check for allegro v7 & v8 bug with ODBC calls returning
+      ;; 32-bit unsigned ints, not 16-bit signed ints
+      #+(and allegro mswindows)
+      (when (> ,result-code #xFFFF)
+        (warn (format nil "16-bit return bug: result-code #x~X for expression ~S"
+                      ,result-code (quote ,odbc-call)))
+        (setq ,result-code (logand ,result-code #xFFFF))
+        (when (> ,result-code #x7FFF)
+          (setq ,result-code (- ,result-code #x10000))))
+
        (case ,result-code
          (#.$SQL_SUCCESS
           (progn ,result-code ,@body))
@@ -132,8 +143,7 @@ as possible second argument) to the desired representation of date/time/timestam
 	     :secondary-error-id sql-state)))
 	 (#.$SQL_NO_DATA_FOUND
 	  (progn ,result-code ,@body))
-	 ;; work-around for Allegro 7.0beta AMD64 which
-	 ;; has for negative numbers
+	 ;; work-around for Allegro 7.0beta AMD64 which returns negative numbers
 	 (otherwise
 	  (multiple-value-bind (error-message sql-state)
 	      (handle-error (or ,henv +null-handle-ptr+)

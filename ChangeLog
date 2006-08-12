@@ -1,3 +1,12 @@
+12 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.6.4
+	* clsql.asd: Add support for c:\etc\clsql-init.lisp as possible
+	local initialization file
+	* db-mysql/mysql-loader.lisp: Remove former method of using pathnames
+	as name candidates.
+	* db-odbc/odbc-api.lisp: Work-around Allegro/Windows FFI bug
+	that generates incorrect integer return type
+	
 07 Jul 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.6.3
 	* sql/transactions.lisp: Important typo fix from Alexey Antipov

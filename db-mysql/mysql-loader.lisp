@@ -18,13 +18,9 @@
 
 (in-package #:mysql)
 
-(defparameter *clsql-mysql-library-candidate-names* 
+(defparameter *clsql-mysql-library-candidate-names*
   (list #+(or 64bit x86-64) "clsql_mysql64"
-        #+(or 64bit x86-64) (make-pathname :name "clsql_mysql64"
-                                           :directory (pathname-directory *load-truename*))
-        "clsql_mysql"
-        (make-pathname :name "clsql_mysql"
-                       :directory (pathname-directory *load-truename*))))
+        "clsql_mysql"))
 
 (defvar *mysql-library-candidate-names*
   '("libmysqlclient" "libmysql"))
@@ -39,13 +35,13 @@ set to the right path before compiling or loading the system.")
 
 (defmethod clsql-sys:database-type-library-loaded ((database-type (eql :mysql)))
   *mysql-library-loaded*)
-				      
+
 (defmethod clsql-sys:database-type-load-foreign ((database-type (eql :mysql)))
   (clsql-uffi:find-and-load-foreign-library *mysql-library-candidate-names*
-                                            :module "mysql" 
+                                            :module "mysql"
                                             :supporting-libraries *mysql-supporting-libraries*)
   (clsql-uffi:find-and-load-foreign-library *clsql-mysql-library-candidate-names*
-                                            :module "clsql-mysql" 
+                                            :module "clsql-mysql"
                                             :supporting-libraries *mysql-supporting-libraries*)
   (setq *mysql-library-loaded* t))
 
