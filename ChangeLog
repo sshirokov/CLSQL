@@ -1,3 +1,8 @@
+14 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.6.6
+	* sql/generic-postgresql.lisp: Fix assumption that postgres user id
+	is always 1.
+
 12 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.6.5
 	* sql/generic-postgresql.lisp: Add slot for has-table-pg_roles to

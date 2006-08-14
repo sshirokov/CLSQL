@@ -70,7 +70,7 @@
      " AND (relowner=(SELECT usesysid FROM pg_user WHERE (usename='~A')))"
      owner))
    ((null owner)
-    (format nil " AND (NOT (relowner=1))"))
+    (format nil " AND (relowner<>(SELECT usesysid FROM pg_user WHERE usename='postgres'))"))
    (t "")))
 
 (defun has-table (name database)
@@ -86,6 +86,7 @@
 (defmethod slot-unbound (class (obj generic-postgresql-database)
                          (slot (eql 'has-table-pg_roles)))
   ;; Lazily cache slot value
+  (declare (ignore class))
   (setf (slot-value obj 'has-table-pg_roles) (has-table "pg_roles" obj)))
 
 (defun database-list-objects-of-type (database type owner)
