@@ -905,8 +905,7 @@ maximum of MAX-LEN instances updated in each query."
 		      instances)
   "Called by SELECT to generate object query results when the
   View Classes VIEW-CLASSES are passed as arguments to SELECT."
-  (declare (ignore all set-operation group-by having offset limit inner-join on)
-           (optimize (debug 3) (speed 1)))
+  (declare (ignore all set-operation group-by having offset limit inner-join on))
   (flet ((ref-equal (ref1 ref2)
            (string= (sql-output ref1 database)
                     (sql-output ref2 database)))

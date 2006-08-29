@@ -1,3 +1,7 @@
+28 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.6.7
+	* sql/oodml.lisp: Remove high debugging level declaration
+
 14 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.6.6
 	* sql/generic-postgresql.lisp: Fix assumption that postgres user id
