@@ -9,8 +9,9 @@
 	* sql/loop-extension.lisp: Define loop-record-iteration-path in CLSQL-SYS 
 	package rather than CL-USER. Add support for ansi-loop on clisp. 
 	* sql/ansi-loop.lisp: New file to support iteration on clisp. 
-	* db-mysql/mysql-api: Remove old mysql C API functions that no longer
-	exist.
+	* db-mysql/mysql-api.lisp: Remove old mysql C API functions that no
+	longer exist in the mysql client library.
+	* doc/ref-fdml.lisp: Correct default field-type.
 
 28 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.6.7
