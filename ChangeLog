@@ -12,7 +12,8 @@
 	* db-mysql/mysql-api.lisp: Remove old mysql C API functions that no
 	longer exist in the mysql client library.
 	* doc/ref-fdml.lisp: Correct default field-type.
-
+	* sql/expressions.lisp: Use database-output-as-type if value exists for boolean output
+	
 28 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.6.7
 	* sql/oodml.lisp: Remove high debugging level declaration

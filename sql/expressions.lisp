@@ -898,6 +898,16 @@ uninclusive, and the args from that keyword to the end."
        database))))
 
 (defmethod database-output-sql ((tee (eql t)) database)
+  (if database
+      (let ((val (database-output-sql-as-type 'boolean t database (database-type database))))
+        (if val
+            (typecase val
+              (string val)
+              (t (format nil "~A" val)))
+          "'Y'"))
+    "'Y'"))
+
+#+nil(defmethod database-output-sql ((tee (eql t)) database)
   (declare (ignore database))
   "'Y'")
 
