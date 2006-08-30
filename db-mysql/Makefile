@@ -54,7 +54,7 @@ else
 	ld -shared -soname=$(base)  $(object) $(LDFLAGS) -o $(shared_lib)
       else
 	gcc $(CFLAGS) -fPIC -c $(source) -o $(object)
-	ld -shared -soname=$(base) $(boject) $(LDFLAGS) -o $(shared_lib)
+	ld -shared -soname=$(base) $(object) $(LDFLAGS) -o $(shared_lib)
       endif
     endif
   endif
