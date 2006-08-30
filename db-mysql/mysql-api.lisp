@@ -309,17 +309,6 @@
   :module "mysql"
   :returning (* mysql-mysql))
 
-#-mysql-client-v4
-(declaim (inline mysql-connect))
-#-mysql-client-v4
-(uffi:def-function "mysql_connect"
-    ((mysql (* mysql-mysql))
-     (host :cstring)
-     (user :cstring)
-     (passwd :cstring))
-  :module "mysql"
-  :returning (* mysql-mysql))
-
 ;; Need to comment this out for LW 4.2.6
 ;; ? bug in LW version
 #-lispworks (declaim (inline mysql-real-connect))
@@ -363,24 +352,6 @@
     ((mysql (* mysql-mysql))
      (query :cstring)
      (length :unsigned-int))
-  :module "mysql"
-  :returning :int)
-
-#-mysql-client-v4
-(declaim (inline mysql-create-db))
-#-mysql-client-v4
-(uffi:def-function "mysql_create_db"
-  ((mysql (* mysql-mysql))
-   (db :cstring))
-  :module "mysql"
-  :returning :int)
-
-#-mysql-client-v4
-(declaim (inline mysql-drop-db))
-#-mysql-client-v4
-(uffi:def-function "mysql_drop_db"
-    ((mysql (* mysql-mysql))
-     (db :cstring))
   :module "mysql"
   :returning :int)
 
