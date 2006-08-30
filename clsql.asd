@@ -18,6 +18,12 @@
 (defpackage #:clsql-system (:use #:asdf #:cl))
 (in-package #:clsql-system)
 
+#+clisp
+(progn
+  (asdf:operate 'asdf:load-op 'cffi)
+  (asdf:operate 'asdf:load-op 'cffi-uffi-compat)
+  (asdf:defsystem uffi :depends-on (cffi-uffi-compat)))
+
 ;; need to load uffi for below perform :after method
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (unless (find-package 'uffi)

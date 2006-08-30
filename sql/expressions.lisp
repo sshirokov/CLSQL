@@ -900,11 +900,10 @@ uninclusive, and the args from that keyword to the end."
 (defmethod database-output-sql ((tee (eql t)) database)
   (if database
       (let ((val (database-output-sql-as-type 'boolean t database (database-type database))))
-        (if val
-            (typecase val
-              (string val)
-              (t (format nil "~A" val)))
-          "'Y'"))
+        (when val
+          (typecase val
+            (string (format nil "'~A'" val))
+            (integer (format nil "~A" val)))))
     "'Y'"))
 
 #+nil(defmethod database-output-sql ((tee (eql t)) database)
