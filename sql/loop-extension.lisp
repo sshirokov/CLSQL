@@ -131,9 +131,11 @@
 			  :preposition-groups '((:of :in) (:from))
 			  :inclusive-permitted nil)
 
+
 #+lispworks
-(cl-user::define-loop-method (record records tuple tuples) clsql-loop-method
-  (in of from))
+(cl-user::define-loop-method (loop::record loop::records loop::tuple loop::tuples)
+    clsql-loop-method
+  (loop::in loop::of loop::from))
 
 #+lispworks
 (defun clsql-loop-method (method-name iter-var iter-var-data-type
@@ -145,14 +147,14 @@
     (loop for (prep . rest) in prep-phrases
 	  do
 	  (cond
-	    ((or (eq prep 'in) (eq prep 'of))
+	    ((or (eq prep 'loop::in) (eq prep 'loop::of))
 	     (when in-phrase
 	       (error 'clsql:sql-user-error
 		      :message
 		      (format nil "Duplicate OF or IN iteration path: ~S."
 			      (cons prep rest))))
 	     (setq in-phrase rest))
-	    ((eq prep 'from)
+	    ((eq prep 'loop::from)
 	     (when from-phrase
 	       (error 'clsql:sql-user-error
 		      :message
@@ -222,18 +224,18 @@
 	    (,result-set-var nil)
 	    (,step-var nil))
 	  `((multiple-value-bind (%rs %cols)
-		(database-query-result-set ,query-var ,db-var :result-types :auto)
+		(clsql-sys:database-query-result-set ,query-var ,db-var :result-types :auto)
 	      (setq ,result-set-var %rs ,step-var (make-list %cols))))
 	  ()
 	  ()
-	  `((unless (database-store-next-row ,result-set-var ,db-var ,step-var)
+	  `((unless (clsql-sys:database-store-next-row ,result-set-var ,db-var ,step-var)
 	      (when ,result-set-var
-		(database-dump-result-set ,result-set-var ,db-var))
+		(clsql-sys:database-dump-result-set ,result-set-var ,db-var))
 	      t))
 	  `(,iter-var ,step-var)
-	  `((unless (database-store-next-row ,result-set-var ,db-var ,step-var)
+	  `((unless (clsql-sys:database-store-next-row ,result-set-var ,db-var ,step-var)
 	      (when ,result-set-var
-		(database-dump-result-set ,result-set-var ,db-var))
+		(clsql-sys:database-dump-result-set ,result-set-var ,db-var))
 	      t))
 	  `(,iter-var ,step-var)
 	  ()
