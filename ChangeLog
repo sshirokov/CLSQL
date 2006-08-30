@@ -1,6 +1,7 @@
 29 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
-	* Version 3.7.0: Now supports clisp on linux and windows. Requires latest
-	development versions of clisp and cffi/cffi-uffi-compat
+	* Version 3.7.0: New platforms: SBCL/Win32, CLISP/Win32, CLISP/Linux x86,
+	CLISP/Linyx x86-64, OpenMCL x86-64. CLISP support requires the latest
+	development versions of CLISP, cffi, and cffi-uffi-compat packages.
 	* Makefile.common: Add OS detection
 	* uffi/make.sh, db-mysql/make.sh: Remove files
 	* uffi/Makefile, db-mysql/Makefile: Add support for cygwin compilation.
