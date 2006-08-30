@@ -808,7 +808,7 @@
           <listitem>
             <para>A 
             <glossterm linkend="gloss-field-types">field type
-            specifier</glossterm>. The default is &nil;.
+            specifier</glossterm>. The default is <symbol>:auto</symbol>;.
             </para>
             <para>
               The purpose of this argument is cause &clsql; to
@@ -1248,7 +1248,7 @@ ID FORENAME   SURNAME   EMAIL
           <listitem>
             <para>A 
             <glossterm linkend="gloss-field-types">field type
-            specifier</glossterm>. The default is &nil;.
+            specifier</glossterm>. The default is <symbol>:auto</symbol>.
             </para>
             <para>
               The purpose of this argument is cause &clsql; to
