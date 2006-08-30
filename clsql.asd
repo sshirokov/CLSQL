@@ -67,8 +67,9 @@ oriented interface."
 			:pathname ""
 			:components ((:file "fdml")
                                      (:file "transaction" :depends-on ("fdml"))
+                                     #+clisp (:file "ansi-loop")
                                      (:file "loop-extension"
-                                            :depends-on ("fdml"))
+                                            :depends-on ("fdml" #+clisp "ansi-loop"))
 				     (:file "fddl" :depends-on ("fdml")))
 			:depends-on (syntax))
 	       (:module object

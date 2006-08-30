@@ -1,3 +1,10 @@
+UNAME=$(shell uname)
+
+OS_AIX=$(shell expr "$(UNAME)" : '.*AIX.*')
+OS_SUNOS=$(shell expr "$(UNAME)" : '.*SunOS.*')
+OS_DARWIN=$(shell expr "$(UNAME)" : '.*Darwin.*')
+OS_CYGWIN=$(shell expr "$(UNAME)" : '.*CYGWIN.*')
+
 all:
 	
 

@@ -9,7 +9,7 @@
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2006 by Kevin M. Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
@@ -65,7 +65,7 @@ Needs to be a macro to overwrite value of VEC."
 	(setf (fill-pointer ,vec) ,len)
 	,vec)
       (t
-       (error "Unable to shrink vector ~S which is type-of ~S" ,vec (type-of ,vec))) 
+       (error "Unable to shrink vector ~S which is type-of ~S" ,vec (type-of ,vec)))
        )))
 
 

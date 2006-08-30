@@ -1,3 +1,14 @@
+29 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* Makefile.common: Add OS detection
+	* uffi/make.sh, db-mysql/make.sh: Remove files
+	* uffi/Makefile, db-mysql/Makefile: Add support for cygwin compilation.
+	Refactor to remove need to make.sh shell scripts. 
+	* clsql.asd: Add support for loop extensions for clisp.
+	* sql/loop-extension.lisp: Add support for ansi-loop on clisp. 
+	Define loop-record-iteration-path in CLSQL-SYS package rather 
+	than CL-USER.
+	* sql/ansi-loop.lisp: New file to support iteration on clisp. 
+
 28 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.6.7
 	* sql/oodml.lisp: Remove high debugging level declaration

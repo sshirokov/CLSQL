@@ -5,26 +5,30 @@
 ;;;; Name:    loop-extension.lisp
 ;;;; Purpose: Extensions to the Loop macro for CLSQL
 ;;;;
-;;;; Copyright (c) 2001-2004 Kevin Rosenberg and (c) 1999-2001 Pierre R. Mai
+;;;; Copyright (c) 2001-2006 Kevin Rosenberg and (c) 1999-2001 Pierre R. Mai
 ;;;;
 ;;;; $Id$
 ;;;; *************************************************************************
 
-(in-package #:cl-user)
+(in-package #:clsql-sys)
 
 #+(or allegro sbcl)
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defpackage #:ansi-loop 
+  (defpackage #:ansi-loop
     (:import-from #+sbcl #:sb-loop #+allegro #:excl
 		  #:*loop-epilogue*
-		  #:*loop-ansi-universe* 
+		  #:*loop-ansi-universe*
 		  #:add-loop-path)))
 
 #+(or allegro sbcl)
 (defun ansi-loop::loop-gentemp (&optional (pref 'loopva-))
   (gensym (string pref)))
 
-#+(or cmu scl sbcl openmcl allegro)
+#+clisp
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (when (find-package "ANSI-LOOP") (push :clisp-aloop cl:*features*)))
+
+#+(or allegro clisp-aloop cmu openmcl sbcl scl)
 (defun loop-record-iteration-path (variable data-type prep-phrases)
   (let ((in-phrase nil)
 	(from-phrase nil))
@@ -52,10 +56,10 @@
 		    :message
 		    (format nil"Unknown preposition: ~S." prep)))))
     (unless in-phrase
-      (error 'clsql:sql-user-error 
+      (error 'clsql:sql-user-error
 	     :message "Missing OF or IN iteration path."))
     (unless from-phrase
-      (setq from-phrase '(clsql-sys:*default-database*)))
+      (setq from-phrase '(*default-database*)))
 
     (unless (consp variable)
       (setq variable (list variable)))
@@ -72,7 +76,7 @@
 			      'loop-record-result-))
 	     (step-var (ansi-loop::loop-gentemp 'loop-record-step-)))
 	 `(((,variable nil ,@(and data-type (list data-type)))
-	    (,result-var (clsql-sys:query ,(first in-phrase)))
+	    (,result-var (query ,(first in-phrase)))
 	    (,step-var nil))
 	   ()
 	   ()
@@ -93,7 +97,7 @@
 		 (setq ,result-var (rest ,result-var))
 		 nil))
 	   (,variable ,step-var))))
-      
+
       ((consp variable)
        (let ((query-var (ansi-loop::loop-gentemp 'loop-record-))
 	     (db-var (ansi-loop::loop-gentemp 'loop-record-database-))
@@ -101,7 +105,7 @@
 			      'loop-record-result-set-))
 	     (step-var (ansi-loop::loop-gentemp 'loop-record-step-)))
 	 (push `(when ,result-set-var
-		  (clsql-sys:database-dump-result-set ,result-set-var ,db-var))
+		  (database-dump-result-set ,result-set-var ,db-var))
 	       ansi-loop::*loop-epilogue*)
 	 `(((,variable nil ,@(and data-type (list data-type)))
 	    (,query-var ,(first in-phrase))
@@ -109,35 +113,31 @@
 	    (,result-set-var nil)
 	    (,step-var nil))
 	   ((multiple-value-bind (%rs %cols)
-		(clsql-sys:database-query-result-set ,query-var ,db-var :result-types :auto)
+		(database-query-result-set ,query-var ,db-var :result-types :auto)
 	      (setq ,result-set-var %rs ,step-var (make-list %cols))))
 	   ()
 	   ()
-	   (not (clsql-sys:database-store-next-row ,result-set-var ,db-var ,step-var))
+	   (not (database-store-next-row ,result-set-var ,db-var ,step-var))
 	   (,variable ,step-var)
 	   (not ,result-set-var)
 	   ()
-	   (not (clsql-sys:database-store-next-row ,result-set-var ,db-var ,step-var))
+	   (not (database-store-next-row ,result-set-var ,db-var ,step-var))
 	   (,variable ,step-var)))))))
 
-#+(or cmu scl sbcl openmcl allegro)
+#+(or allegro clisp-aloop cmu openmcl sbcl scl)
 (ansi-loop::add-loop-path '(record records tuple tuples)
 			  'loop-record-iteration-path
 			  ansi-loop::*loop-ansi-universe*
 			  :preposition-groups '((:of :in) (:from))
 			  :inclusive-permitted nil)
 
-#+lispworks 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (in-package loop))
-
 #+lispworks
-(cl-user::define-loop-method (record records tuple tuples) clsql-loop-method 
+(cl-user::define-loop-method (record records tuple tuples) clsql-loop-method
   (in of from))
 
 #+lispworks
-(defun clsql-loop-method (method-name iter-var iter-var-data-type 
-			  prep-phrases inclusive? allowed-preps 
+(defun clsql-loop-method (method-name iter-var iter-var-data-type
+			  prep-phrases inclusive? allowed-preps
 			  method-specific-data)
   (declare (ignore method-name inclusive? allowed-preps method-specific-data))
   (let ((in-phrase nil)
@@ -163,7 +163,7 @@
 	     (error 'clsql:sql-user-error
 		    :message (format nil "Unknown preposition: ~S." prep)))))
     (unless in-phrase
-      (error 'clsql:sql-user-error 
+      (error 'clsql:sql-user-error
 	     :message "Missing OF or IN iteration path."))
     (unless from-phrase
       (setq from-phrase '(clsql:*default-database*)))
@@ -207,7 +207,7 @@
 	   ()
 	   ()
 	   )))
-      
+
       ((consp iter-var)
        (let ((query-var (gensym "LOOP-RECORD-"))
 	     (db-var (gensym "LOOP-RECORD-DATABASE-"))
@@ -222,20 +222,25 @@
 	    (,result-set-var nil)
 	    (,step-var nil))
 	  `((multiple-value-bind (%rs %cols)
-		(clsql-sys:database-query-result-set ,query-var ,db-var :result-types :auto)
+		(database-query-result-set ,query-var ,db-var :result-types :auto)
 	      (setq ,result-set-var %rs ,step-var (make-list %cols))))
 	  ()
 	  ()
-	  `((unless (clsql-sys:database-store-next-row ,result-set-var ,db-var ,step-var)
+	  `((unless (database-store-next-row ,result-set-var ,db-var ,step-var)
 	      (when ,result-set-var
-		(clsql-sys:database-dump-result-set ,result-set-var ,db-var))
+		(database-dump-result-set ,result-set-var ,db-var))
 	      t))
 	  `(,iter-var ,step-var)
-	  `((unless (clsql-sys:database-store-next-row ,result-set-var ,db-var ,step-var)
+	  `((unless (database-store-next-row ,result-set-var ,db-var ,step-var)
 	      (when ,result-set-var
-		(clsql-sys:database-dump-result-set ,result-set-var ,db-var))
+		(database-dump-result-set ,result-set-var ,db-var))
 	      t))
 	  `(,iter-var ,step-var)
 	  ()
 	  ()))))))
+
+
+#+clisp-aloop
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (setq cl:*features* (delete :clisp-aloop cl:*features*)))
 

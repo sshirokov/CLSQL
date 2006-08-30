@@ -1,3 +1,4 @@
+#!/usr/bin/make
 # FILE IDENTIFICATION
 #
 #  Name:         Makefile
@@ -26,8 +27,38 @@ shared_lib=$(base).so
 .PHONY: all
 all: $(shared_lib)
 
+CFLAGS=-I /usr/local/include/mysql -I /usr/include/mysql -I /sw/include/mysql -I /opt/local/include/mysql
+LDFLAGS=-L/usr/local/lib64/mysql -L/usr/local/lib/mysql -L/usr/lib/mysql -L/sw/lib -L/opt/local/lib/mysql -L/usr/lib/gcc/i686-pc-cygwin/3.4.4 -lmysqlclient -lz -lc 
+
+ifneq ($(OS_CYGWIN),0)
+  CFLAGS=-I /cygdrive/c/Program\ Files/MySQL/MySQL\ Server\ 5.0/include
+  LDFLAGS=-L/usr/local/lib64/mysql -L/usr/local/lib/mysql -L/usr/lib/mysql -L/sw/lib -L/opt/local/lib/mysql -L/usr/lib/gcc/i686-pc-cygwin/3.4.4 -lmysqlclient -lpthread -lz -lm -lgcc -lc
+endif
+
 $(shared_lib): $(source) Makefile
-	CFLAGS="-I /usr/local/include/mysql -I /usr/include/mysql -I /sw/include/mysql -I /opt/local/include/mysql" LDFLAGS="-L/usr/local/lib64/mysql -L/usr/lib/mysql -L/sw/lib -L/opt/local/lib/mysql -lmysqlclient -lz -lc" BASE=$(base) OBJECT=$(object) SOURCE=$(source) SHARED_LIB=$(shared_lib) sh make.sh
+ifneq ($(OS_AIX),0)
+	gcc $(CFLAGS) -c -D_BSD -D_NO_PROTO -D_NONSTD_TYPES -D_MBI=void $(source)
+	make_shared $(LDFLAGS) -o $(shared_lib) $(object)
+else
+  ifneq ($(OS_SUNOS),0)
+	cc $(CFLAGS) -KPIC -c $(source) -o $(object)
+	cc -G $(object) $(LDFLAGS) -o $(shared_lib)
+  else
+    ifneq ($(OS_DARWIN),0)
+	cc $(CFLAGS) -dynamic -c $(source) -o $(object)
+	ld -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress -o $(base).dylib $(object)
+	ld -bundle /usr/lib/bundle1.o $(LDFLAGS) -flat_namespace -undefined suppress /usr/lib/libz.dylib -o z.dylib
+    else
+      ifneq ($(OS_CYGWIN),0)
+	gcc $(CFLAGS) -DWIN32 -c $(source) -o $(object)
+	ld -shared -soname=$(base)  $(object) $(LDFLAGS) -o $(shared_lib)
+      else
+	gcc $(CFLAGS) -fPIC -c $(source) -o $(object)
+	ld -shared -soname=$(base) $(boject) $(LDFLAGS) -o $(shared_lib)
+      endif
+    endif
+  endif
+endif
 	rm $(object)
 
 .PHONY: distclean
