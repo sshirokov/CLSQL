@@ -110,7 +110,7 @@
 	 `(((,variable nil ,@(and data-type (list data-type)))
 	    (,query-var ,(first in-phrase))
 	    (,db-var ,(first from-phrase))
-	    (,result-set-var nil)
+	    (,result-set-var t)
 	    (,step-var nil))
 	   ((multiple-value-bind (%rs %cols)
 		(database-query-result-set ,query-var ,db-var :result-types :auto)
