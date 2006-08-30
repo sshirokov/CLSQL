@@ -1,7 +1,7 @@
 29 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
-	* Version 3.7.0: New platforms: SBCL/Win32, CLISP/Win32, CLISP/Linux x86,
-	CLISP/Linyx x86-64, OpenMCL x86-64. CLISP support requires the latest
-	development versions of CLISP, cffi, and cffi-uffi-compat packages.
+	* Version 3.7.0: New platforms supported: SBCL/Win32, CLISP/Win32, CLISP/Cygwin,
+	CLISP/Linux x86, CLISP/Linux amd64, OpenMCL amd64. CLISP support requires the
+	latest development versions of CLISP, cffi, and cffi-uffi-compat packages.
 	* Makefile.common: Add OS detection
 	* uffi/make.sh, db-mysql/make.sh: Remove files
 	* uffi/Makefile, db-mysql/Makefile: Add support for cygwin compilation.
@@ -13,7 +13,8 @@
 	* db-mysql/mysql-api.lisp: Remove old mysql C API functions that no
 	longer exist in the mysql client library.
 	* doc/ref-fdml.lisp: Correct default field-type.
-	* sql/expressions.lisp: Use database-output-as-type if value exists for boolean output
+	* sql/expressions.lisp: Use database-output-as-type if value exists for boolean output.
+	Fixed bug with noted with MySQL 5.0.24 and boolean values.
 	
 28 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.6.7
