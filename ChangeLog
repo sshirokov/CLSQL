@@ -1,4 +1,4 @@
-29 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
+30 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.7.0: New platforms supported: SBCL/Win32, CLISP/Win32, CLISP/Cygwin,
 	CLISP/Linux x86, CLISP/Linux amd64, OpenMCL amd64. CLISP support requires the
 	latest development versions of CLISP, cffi, and cffi-uffi-compat packages.
