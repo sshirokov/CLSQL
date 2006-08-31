@@ -1,3 +1,7 @@
+31 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* db-mysql/mysql-loader: Apply patch from Marcus Pearce to push 
+	*library-file-dir* to CLSQL's library path.
+
 30 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.7.0: New platforms supported: SBCL/Win32, CLISP/Win32, CLISP/Cygwin,
 	CLISP/Linux x86, CLISP/Linux amd64, OpenMCL amd64. CLISP support requires the
