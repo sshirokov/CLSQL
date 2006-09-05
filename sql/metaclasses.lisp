@@ -294,8 +294,9 @@ column definition in the database.")
     :documentation "Description of the join.")
    (specified-type
     :accessor specified-type
+    :initarg specified-type
     :initform nil
-    :documentation "KMR: Internal slot storing the :type specified by user.")))
+    :documentation "Internal slot storing the :type specified by user.")))
 
 (defparameter *db-info-lambda-list*
   '(&key join-class
@@ -380,27 +381,22 @@ implementations."
 	(push slot output-slots)))
     output-slots))
 
-(defun compute-lisp-type-from-slot-specification (slotd specified-type)
-  "Computes the Lisp type for a user-specified type. Needed for OpenMCL
-which does type checking before storing a value in a slot."
-  ;; This function is called after the base compute-effective-slots is called.
-  ;; OpenMCL sets the type-predicate based on the initial value of the slots type.
-  ;; so we have to override the type-predicates here
+(defun compute-lisp-type-from-specified-type (specified-type db-constraints)
+  "Computes the Lisp type for a user-specified type."
   (let ((type
          (cond
            ((consp specified-type)
-            (cond
-              ((and (symbolp (car specified-type))
-                    (string-equal (symbol-name (car specified-type)) "string"))
-               'string)
-              ((and (symbolp (car specified-type))
-                    (string-equal (symbol-name (car specified-type)) "varchar"))
-               'string)
-              ((and (symbolp (car specified-type))
-                    (string-equal (symbol-name (car specified-type)) "char"))
-               'string)
-              (t
-               specified-type)))
+            (let* ((first (first specified-type))
+                   (name (etypecase first
+                           (symbol (symbol-name first))
+                           (string first))))
+              (cond
+               ((or (string-equal name "string")
+                    (string-equal name "varchar")
+                    (string-equal name "char"))
+                'string)
+               (t
+                specified-type))))
            ((eq (ensure-keyword specified-type) :bigint)
             'integer)
            ((eq (ensure-keyword specified-type) :char)
@@ -408,11 +404,10 @@ which does type checking before storing a value in a slot."
            ((eq (ensure-keyword specified-type) :varchar)
             'string)
            (t
-            specified-type)))
-        (constraints (slot-value slotd 'db-constraints)))
-    (if (and type (not (member :not-null (listify constraints))))
+            specified-type))))
+    (if (and type (not (member :not-null (listify db-constraints))))
         `(or null ,type)
-        type)))
+      type)))
 
 ;; Compute the slot definition for slots in a view-class.  Figures out
 ;; what kind of database value (if any) is stored there, generates and
@@ -432,7 +427,30 @@ which does type checking before storing a value in a slot."
       (car list)
       list))
 
-(defvar *impl-type-attrib-name* #-clisp 'type #+clisp 'clos::$type)
+(defmethod initialize-instance :around ((obj view-class-direct-slot-definition)
+                                        &rest initargs)
+  (do* ((saved-initargs initargs)
+        (parsed (list obj))
+        (name (first initargs) (first initargs))
+        (val (second initargs) (second initargs))
+        (type nil)
+        (db-constraints nil))
+      ((null initargs)
+       (setq parsed
+             (append parsed
+                     (list 'specified-type type
+                           :type (compute-lisp-type-from-specified-type
+                                  type db-constraints))))
+       (apply #'call-next-method parsed))
+    (case name
+      (:db-constraints
+       (setq db-constraints val)
+       (setq parsed (append parsed (list name val))))
+      (:type
+       (setq type val))
+      (t
+       (setq parsed (append parsed (list name val)))))
+    (setq initargs (cddr initargs))))
 
 (defmethod compute-effective-slot-definition ((class standard-db-class)
 					      #+kmr-normal-cesd slot-name
@@ -442,15 +460,6 @@ which does type checking before storing a value in a slot."
   ;; KMR: store the user-specified type and then compute
   ;; real Lisp type and store it
   (let ((dsd (car direct-slots)))
-    (when (and (typep dsd 'view-class-slot-definition-mixin)
-	       (null (specified-type dsd)))
-      (setf (specified-type dsd)
-	(slot-definition-type dsd))
-      (setf #-(or clisp sbcl) (slot-value dsd 'type)
-	    #+(or clisp sbcl) (slot-definition-type dsd)
-	    (compute-lisp-type-from-slot-specification
-	     dsd (slot-definition-type dsd))))
-
     (let ((esd (call-next-method)))
       (typecase dsd
 	(view-class-slot-definition-mixin
@@ -514,13 +523,16 @@ which does type checking before storing a value in a slot."
 	 )
 	;; all other slots
 	(t
-	 (let ((type-predicate #+openmcl (slot-value esd 'ccl::type-predicate)))
-	   #-openmcl (declare (ignore type-predicate))
-	   #-(or clisp sbcl)  (change-class esd 'view-class-effective-slot-definition
-				 #+allegro :name
-				 #+allegro (slot-definition-name dsd))
-	   #+openmcl (setf (slot-value esd 'ccl::type-predicate)
-			   type-predicate))
+         (unless (typep esd 'view-class-effective-slot-definition)
+           (warn "Non view-class-direct-slot object with non-view-class-effective-slot-definition in compute-effective-slot-definition")
+
+           (let ((type-predicate #+openmcl (slot-value esd 'ccl::type-predicate)))
+             #-openmcl (declare (ignore type-predicate))
+             #-(or clisp sbcl)  (change-class esd 'view-class-effective-slot-definition
+                                              #+allegro :name
+                                              #+allegro (slot-definition-name dsd))
+             #+openmcl (setf (slot-value esd 'ccl::type-predicate)
+                             type-predicate)))
 
 	 (setf (slot-value esd 'column)
 	   (column-name-from-arg

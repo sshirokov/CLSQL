@@ -51,8 +51,8 @@ oriented interface."
 			 (:file "base-classes" :depends-on ("package"))
                          (:file "conditions" :depends-on ("base-classes"))
                          (:file "db-interface" :depends-on ("conditions"))
-			 (:file "time" :depends-on ("package" "conditions"))
 			 (:file "utils" :depends-on ("package" "db-interface"))
+			 (:file "time" :depends-on ("package" "conditions" "utils"))
                          (:file "generics" :depends-on ("package"))))
                (:module database
                         :pathname ""

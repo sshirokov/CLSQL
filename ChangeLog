@@ -1,5 +1,15 @@
+03 Sep 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.7.1
+	* sql/metaclasses.lisp: Rework slot type's to be more AMOP
+	compatibile. Add warning for a metaclass condition that should
+	not occur.
+	* sql/time.lisp: Fixed symbol case inconsistency causing problem
+	in AllegroCL's modern lisp. First sign of bug noted by
+	Joel Reymond on clsql-devel.
+	* clsql.asd: Make time.lisp depend on utils.lisp
+
 31 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>
-	* db-mysql/mysql-loader: Apply patch from Marcus Pearce to push 
+	* db-mysql/mysql-loader.lisp: Apply patch from Marcus Pearce to push 
 	*library-file-dir* to CLSQL's library path.
 
 30 Aug 2006  Kevin Rosenberg <kevin@rosenberg.net>

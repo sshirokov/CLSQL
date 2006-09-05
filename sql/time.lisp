@@ -406,7 +406,9 @@
 );eval-when
 
 (defmacro wrap-time-for-date (time-func &key (result-func))
-  (let ((date-func (intern (replace-string (symbol-name time-func) "TIME" "DATE"))))
+  (let ((date-func (intern (replace-string (symbol-name time-func) 
+                                           (symbol-name-default-case "TIME")
+                                           (symbol-name-default-case "DATE")))))
     `(defun ,date-func (number &rest more-numbers)
       (let ((result (apply #',time-func (mapcar #'date->time (cons number more-numbers)))))
 	,(if result-func
