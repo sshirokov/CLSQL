@@ -43,9 +43,10 @@ well as any of the filenames in any of the clsql:*foreign-library-search-paths*"
 	      (length filenames) filenames
 	      'clsql:*foreign-library-search-paths*)))))
 
+;; searches clsql_uffi64 to accomodate both 32-bit and 64-bit libraries on same system
 (defvar *clsql-uffi-library-filenames*
-  (list #+(or 64bit x86-64) "clsql_uffi64"
-	"clsql_uffi"))
+  `(,@(when (> most-positive-fixnum (expt 2 32)) (list "clsql_uffi64"))
+    "clsql_uffi"))
 
 (defvar *clsql-uffi-supporting-libraries* '("c")
   "Used only by CMU. List of library flags needed to be passed to ld to

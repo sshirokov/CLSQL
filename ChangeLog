@@ -1,3 +1,8 @@
+06 Sep 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* uffi/clsql-uffi-loader.lisp, db-mysql/mysql-loader.lisp: Change from using *features*
+	to decide on 64-bit platform and check size of most-positive-fixnum instead.
+	Needed to support clisp amd64.
+
 03 Sep 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.7.1
 	* sql/metaclasses.lisp: Rework slot type's to be more AMOP

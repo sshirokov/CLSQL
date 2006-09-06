@@ -18,9 +18,10 @@
 
 (in-package #:mysql)
 
+;; searches clsql_mysql64 to accomodate both 32-bit and 64-bit libraries on same system
 (defparameter *clsql-mysql-library-candidate-names*
-  (list #+(or 64bit x86-64) "clsql_mysql64"
-        "clsql_mysql"))
+  `(,@(when (> most-positive-fixnum (expt 2 32)) (list "clsql_mysql64"))
+    "clsql_mysql"))
 
 (defvar *mysql-library-candidate-names*
   '("libmysqlclient" "libmysql"))
