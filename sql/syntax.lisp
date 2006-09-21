@@ -45,9 +45,8 @@ the current syntax state."
     (%disable-sql-reader-syntax)))
 
 (defun %disable-sql-reader-syntax ()
-  (when *original-reader-enter*
-    (set-macro-character *sql-macro-open-char* *original-reader-enter*))
-  (setf *original-reader-enter* nil)
+  (set-macro-character *sql-macro-open-char* *original-reader-enter*)
+  (set-macro-character *sql-macro-close-char* *original-reader-exit*)
   (values))
 
 
@@ -69,10 +68,13 @@ the current syntax state."
     (%enable-sql-reader-syntax)))
 
 (defun %enable-sql-reader-syntax ()
-  (unless *original-reader-enter*
-    (setf *original-reader-enter* (get-macro-character *sql-macro-open-char*)))
-  (set-macro-character *sql-macro-open-char* #'sql-reader-open)
-  (enable-sql-close-syntax)
+  (unless (eq (get-macro-character *sql-macro-open-char*) #'sql-reader-open)
+    (setf *original-reader-enter* (get-macro-character *sql-macro-open-char*))
+    (set-macro-character *sql-macro-open-char* #'sql-reader-open))
+  (unless (eq (get-macro-character *sql-macro-close-char*) 
+              (get-macro-character #\)))
+    (setf *original-reader-exit* (get-macro-character *sql-macro-close-char*))
+    (set-macro-character *sql-macro-close-char* (get-macro-character #\))))
   (values))
 
 (defmacro restore-sql-reader-syntax-state ()
@@ -101,18 +103,6 @@ reader syntax is disabled."
 	  (error 'sql-user-error
 		 :message (format nil "Error ~A occured while attempting to parse '~A' at file position ~A"
 				  (sql-user-error-message c) sqllist (file-position stream))))))))
-
-(defun disable-sql-close-syntax ()
-  "Internal function that disables the close syntax when leaving
-  sql context."
-  (set-macro-character *sql-macro-close-char* *original-reader-exit*)
-  (setf *original-reader-exit* nil))
-
-(defun enable-sql-close-syntax ()
-  "Internal function that enables close syntax when entering SQL
-  context."
-  (setf *original-reader-exit* (get-macro-character *sql-macro-close-char*))
-  (set-macro-character *sql-macro-close-char* (get-macro-character #\))))
 
 (defun generate-sql-reference (&rest arglist)
   (cond ((= (length arglist) 1)	; string, table or attribute

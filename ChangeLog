@@ -1,3 +1,7 @@
+20 Sep 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/syntax.lisp: Apply patch from Marcus Pearce to correctly
+	display sql reader syntax.
+
 06 Sep 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* uffi/clsql-uffi-loader.lisp, db-mysql/mysql-loader.lisp: Change from using *features*
 	to decide on 64-bit platform and check size of most-positive-fixnum instead.
