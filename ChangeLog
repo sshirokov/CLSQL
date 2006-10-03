@@ -1,3 +1,7 @@
+03 Oct 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/syntax.lisp: Commit patch from Marcus Pearce to improve
+	readtable modifications
+
 02 Oct 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/syntax.lisp: Check that original reader syntax functions
 	stored before trying to restore them.
