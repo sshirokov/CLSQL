@@ -45,8 +45,10 @@ the current syntax state."
     (%disable-sql-reader-syntax)))
 
 (defun %disable-sql-reader-syntax ()
-  (set-macro-character *sql-macro-open-char* *original-reader-enter*)
-  (set-macro-character *sql-macro-close-char* *original-reader-exit*)
+  (when *original-reader-enter*
+    (set-macro-character *sql-macro-open-char* *original-reader-enter*))
+  (when *original-reader-exit*
+    (set-macro-character *sql-macro-close-char* *original-reader-exit*))
   (values))
 
 
