@@ -222,7 +222,7 @@
                (error 'sql-database-data-error
                       :database database
                       :expression sql-expression
-                      :error-id (uffi:convert-from-foreign-string (PQresultErrorField result +PG-DIAG-SQLSTATE+))
+                      :error-id (PQresultErrorField result +PG-DIAG-SQLSTATE+)
                       :message (tidy-error-message
 				(PQresultErrorMessage result)))))
           (PQclear result))))))

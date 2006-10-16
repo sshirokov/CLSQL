@@ -1,4 +1,10 @@
 16 Oct 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.7.7
+	* db-postgresql/postgresql-sql.lisp: Remove 
+	uffi:convert-foreign-to-native wrapper since using cstring for
+	PQresultErrorField
+
+16 Oct 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.7.6
 	* db-postgresql/postgresql-api.lisp: Fix UFFI return type for
 	PQresultErrorField foreign function.
