@@ -44,6 +44,10 @@
      #:pgsql-ftype#int8
      #:pgsql-ftype#float4
      #:pgsql-ftype#float8
+
+     ;; Used by PQresultErrorField to get the sql error code
+     #:+PG-DIAG-SQLSTATE+
+
      
      ;; Functions
      #:PQsetdbLogin
@@ -53,6 +57,7 @@
      #:PQerrorMessage
      #:PQexec
      #:PQresultStatus
+     #:PQresultErrorField ; used to grab the SQLSTATE code from an error
      #:PQresultErrorMessage
      #:PQntuples
      #:PQnfields

@@ -105,6 +105,41 @@
   :module "postgresql"
   :returning pgsql-exec-status-type)
 
+; From postgres_ext.h
+
+; #define PG_DIAG_SEVERITY                'S'
+; #define PG_DIAG_SQLSTATE                'C'
+; #define PG_DIAG_MESSAGE_PRIMARY 'M'
+; #define PG_DIAG_MESSAGE_DETAIL  'D'
+; #define PG_DIAG_MESSAGE_HINT    'H'
+; #define PG_DIAG_STATEMENT_POSITION 'P'
+; #define PG_DIAG_INTERNAL_POSITION 'p'
+; #define PG_DIAG_INTERNAL_QUERY  'q'
+; #define PG_DIAG_CONTEXT                 'W'
+; #define PG_DIAG_SOURCE_FILE             'F'
+; #define PG_DIAG_SOURCE_LINE             'L'
+; #define PG_DIAG_SOURCE_FUNCTION 'R'
+(defconstant +PG-DIAG-SEVERITY+ (char-code #\S))
+(defconstant +PG-DIAG-SQLSTATE+ (char-code #\C))
+(defconstant +PG-DIAG-MESSAGE-PRIMARY+ (char-code #\M))
+(defconstant +PG-DIAG-MESSAGE-DETAIL+ (char-code #\D))
+(defconstant +PG-DIAG-MESSAGE-HINT+ (char-code #\H))
+(defconstant +PG-DIAG-STATEMENT-POSITION+ (char-code #\P))
+(defconstant +PG-DIAG-INTERNAL-POSITION+ (char-code #\p))
+(defconstant +PG-DIAG-INTERNAL-QUERY+ (char-code #\q))
+(defconstant +PG-DIAG-CONTEXT+ (char-code #\W))
+(defconstant +PG-DIAG-SOURCE-FILE+ (char-code #\F))
+(defconstant +PG-DIAG-SOURCE-LINE+ (char-code #\L))
+(defconstant +PG-DIAG-SOURCE-FUNCTION+ (char-code #\R))
+
+; PQresultErrorField can return diagnostic information about an error
+(declaim (inline PQresultErrorField))
+(uffi:def-function ("PQresultErrorField" PQresultErrorField)
+    ((res pgsql-result)
+     (field-code :int))
+  :module "postgresql"
+  :returning (* char))
+
 (declaim (inline PQresultErrorMessage))
 (uffi:def-function ("PQresultErrorMessage" PQresultErrorMessage)
   ((res pgsql-result))

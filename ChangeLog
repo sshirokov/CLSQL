@@ -1,5 +1,9 @@
 16 Oct 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.7.5
 	* doc/intro.xml: Update supported platforms.
+	* db-postgresql/postgresql-{package,api,sql}.lisp: Apply
+	changes from Andew Golding to use a more-specific error code
+	from PostgreSQL than the generic fatal error code of the result set.
 
 03 Oct 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/syntax.lisp: Commit patch from Marcus Pearce to improve
