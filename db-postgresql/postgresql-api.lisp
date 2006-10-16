@@ -138,7 +138,7 @@
     ((res pgsql-result)
      (field-code :int))
   :module "postgresql"
-  :returning (* char))
+  :returning :cstring)
 
 (declaim (inline PQresultErrorMessage))
 (uffi:def-function ("PQresultErrorMessage" PQresultErrorMessage)

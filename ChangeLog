@@ -1,4 +1,9 @@
 16 Oct 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.7.6
+	* db-postgresql/postgresql-api.lisp: Fix UFFI return type for
+	PQresultErrorField foreign function.
+
+16 Oct 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.7.5
 	* doc/intro.xml: Update supported platforms.
 	* db-postgresql/postgresql-{package,api,sql}.lisp: Apply
