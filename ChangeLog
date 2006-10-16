@@ -1,3 +1,6 @@
+16 Oct 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* doc/intro.xml: Update supported platforms.
+
 03 Oct 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/syntax.lisp: Commit patch from Marcus Pearce to improve
 	readtable modifications

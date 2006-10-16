@@ -107,29 +107,28 @@
 	implementations of &uffi;. The following implementations are supported:
       </para>
       <itemizedlist mark="opencircle">
-	<listitem><para>&acl; v6.2 and 7.0b on Debian Linux x86 &amp;
+	<listitem><para>&acl; v6.2 through 8.0 on Debian Linux x86 &amp;
 	x86_64 &amp; PowerPC, FreeBSD 4.5, and Microsoft Windows
 	XP.</para></listitem>
-	<listitem><para>&lw; v4.3 on Debian Linux and Microsoft
+	<listitem><para>&lw; v4.3 and v4.4 on Debian Linux and Microsoft
 	Windows XP.</para></listitem>
 	<listitem><para>&cmucl; 18e on Debian Linux, FreeBSD 4.5, and
-	Solaris 2.8.</para></listitem>
-	<listitem><para>&sbcl; 0.8.5 on Debian
+	Solaris 2.8. 19c on Debian Linux.</para></listitem>
+	<listitem><para>&sbcl; 0.8.4 through 0.9.16 on Debian
 	Linux.</para></listitem>
 	<listitem><para>&scl; 1.1.1 on Debian Linux.</para></listitem>
-	<listitem><para>&openmcl; 0.14 on Debian Linux
-	PowerPC.</para></listitem>
+	<listitem><para>&openmcl; 0.14 PowerPC and 1.0pre AMD64 on Debian Linux .</para></listitem>
       </itemizedlist>
     </sect2>
     
     <sect2>
       <title>Supported &sql; Implementation</title>
       <para>
-	Currently, &clsql; supports the following databases:
+	&clsql; supports the following databases:
       </para>
       <itemizedlist mark="opencircle">
-	<listitem><para>&mysql; v3.23.51 and v4.0.18.</para></listitem>
-	<listitem><para>&postgresql; v7.4 with both direct API and TCP
+	<listitem><para>&mysql; (tested v3.23.51, v4.0.18, 5.0.24).</para></listitem>
+	<listitem><para>&postgresql; (tested with v7.4 and 8.0 with both direct API and TCP
 	socket connections.</para></listitem>
 	<listitem><para>&sqlite;.</para></listitem>
 	<listitem><para>&sqlite3;.</para></listitem>
