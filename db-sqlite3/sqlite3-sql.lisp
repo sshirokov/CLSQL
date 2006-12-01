@@ -181,8 +181,8 @@
 		(setf (sqlite3-result-set-n-col result-set) 0))
 	    (sqlite3:sqlite3-error (err)
 	      (error 'sql-database-error
-		     :message "Error in sqlite3-step: ~A"
-		     (sqlite3:sqlite3-error-message err))))
+		     :message (format nil "Error in sqlite3-step: ~A"
+                                      (sqlite3:sqlite3-error-message err)))))
 	  t))))
 
 
