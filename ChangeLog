@@ -1,3 +1,9 @@
+28 Dec 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.7.9
+	* sql/expressions.lisp: Commit patch from Edi Weitz to
+	use *default-database* for SQL-OUTPUT if no database is
+	explicitly passed to function.
+	
 30 Nov 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.7.8
 	* db-sqlite3/sqlite3-sql.lisp: Commit patch from Edi Weitz fixing

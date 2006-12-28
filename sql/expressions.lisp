@@ -22,7 +22,7 @@
 (defvar *sql-stream* nil
   "stream which accumulates SQL output")
 
-(defun sql-output (sql-expr &optional database)
+(defun sql-output (sql-expr &optional (database *default-database*))
   "Top-level call for generating SQL strings. Returns an SQL
   string appropriate for DATABASE which corresponds to the
   supplied lisp expression SQL-EXPR."
