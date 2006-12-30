@@ -3,6 +3,12 @@
 	* sql/expressions.lisp: Commit patch from Edi Weitz to
 	use *default-database* for SQL-OUTPUT if no database is
 	explicitly passed to function.
+	* uffi/clsql-uffi-loader.lisp: Change load order to first try
+	plain name/type before attempting user-specified paths (patch
+	from Edi Weitz)
+	* uffi/ptrbits.c: New file to return number of bits in an pointer
+	* uffi/Makefile: use intbits to name .so file based on bit size.
+	Build both 32-bit and 64-bit libraries on 64-bit platform.
 	
 30 Nov 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.7.8

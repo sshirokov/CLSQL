@@ -1,4 +1,6 @@
 clsql_uffi.so
+clsql_uffi32.so
+clsql_uffi64.so
 uffi.so
 uffi.dll
 uffi.lib
@@ -13,3 +15,4 @@ uffi.dylib
 *.faslm16
 *.faslm8
 *.fsl
+intbits
