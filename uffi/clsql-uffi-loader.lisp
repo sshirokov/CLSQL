@@ -35,9 +35,9 @@ well as any of the filenames in any of the clsql:*foreign-library-search-paths*"
 	   (loop for name in filenames
 		 for pn = (make-pathname :name name :type type)
 		 thereis (or
+                          (try-load pn)
 			  (loop for search-path in clsql:*foreign-library-search-paths*
-				thereis (try-load (merge-pathnames pn search-path)))
-			  (try-load pn))))
+				thereis (try-load (merge-pathnames pn search-path))))))
      (when errorp
        (error "Couldn't load foreign librar~@P ~{~S~^, ~}. (searched ~S)"
 	      (length filenames) filenames
