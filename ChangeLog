@@ -1,3 +1,6 @@
+31 Dec 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/metaclasses.lisp: Remove usused saved-initargs
+	
 30 Dec 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.8.0: BACKWARD INCOMPATABLE CHANGE!
 	* db-postgresql/postgresql-{api,loader,sql,package}.lisp:

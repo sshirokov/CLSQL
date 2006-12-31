@@ -429,8 +429,7 @@ implementations."
 
 (defmethod initialize-instance :around ((obj view-class-direct-slot-definition)
                                         &rest initargs)
-  (do* ((saved-initargs initargs)
-        (parsed (list obj))
+  (do* ((parsed (list obj))
         (name (first initargs) (first initargs))
         (val (second initargs) (second initargs))
         (type nil)
