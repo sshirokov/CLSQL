@@ -75,6 +75,7 @@
 			     ,c-parms
 			   :returning ,c-return)))
        (defun ,lisp-oci-fn (,@ll &key database nulls-ok)
+         (declare (ignore database nulls-ok))
 	 (funcall %lisp-oci-fn ,@ll)))))
 
 

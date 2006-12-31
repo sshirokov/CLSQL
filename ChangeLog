@@ -1,3 +1,14 @@
+30 Dec 2006  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.8.0: BACKWARD INCOMPATABLE CHANGE!
+	* db-postgresql/postgresql-{api,loader,sql,package}.lisp:
+	Apply patch from Edi Weitz to avoid conflict with new Lispworks 5
+	POSTGRESQL package name. CLSQL's new package will be PGSQL, however
+	on non-Lispworks platforms, the nickname POSTGRESQL will still be
+	available. Applications directly using low-level POSTGRESQL package
+	are recommended to use the new PGSQL name.
+	* db-oracle/oracle-{api,sql}.lisp, sql/{expressions,loop-extension}.lisp,
+	Apply patch from Edi Weitz to reduce compiler warnings.
+	
 28 Dec 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.7.9
 	* sql/expressions.lisp: Commit patch from Edi Weitz to

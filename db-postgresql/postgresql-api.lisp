@@ -18,7 +18,7 @@
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
 ;;;; *************************************************************************
 
-(in-package #:postgresql)
+(in-package #:pgsql)
 
 
 ;;;; This file implements as little of the FFI bindings to the

@@ -141,7 +141,7 @@
 (defun clsql-loop-method (method-name iter-var iter-var-data-type
 			  prep-phrases inclusive? allowed-preps
 			  method-specific-data)
-  (declare (ignore method-name inclusive? allowed-preps method-specific-data))
+  (declare (ignore method-name iter-var-data-type inclusive? allowed-preps method-specific-data))
   (let ((in-phrase nil)
 	(from-phrase nil))
     (loop for (prep . rest) in prep-phrases

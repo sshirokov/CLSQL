@@ -390,7 +390,7 @@
   (:documentation "An SQL between expression."))
 
 (defmethod output-sql ((expr sql-between-exp) database)
-  (with-slots (name args)
+  (with-slots (args)
       expr
     (output-sql (first args) database)
     (write-string " BETWEEN " *sql-stream*)

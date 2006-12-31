@@ -16,7 +16,7 @@
 (in-package #:cl-user)
 
 (defpackage #:clsql-postgresql
-    (:use #:common-lisp #:clsql-sys #:postgresql #:clsql-uffi)
+    (:use #:common-lisp #:clsql-sys #:pgsql #:clsql-uffi)
     (:export #:postgresql-database)
     (:documentation "This is the CLSQL interface to PostgreSQL."))
 
@@ -306,7 +306,7 @@
 
 (defmethod database-create-large-object ((database postgresql-database))
   (lo-create (database-conn-ptr database)
-	     (logior postgresql::+INV_WRITE+ postgresql::+INV_READ+)))
+	     (logior pgsql::+INV_WRITE+ pgsql::+INV_READ+)))
 
 
 #+mb-original
@@ -318,7 +318,7 @@
     (with-transaction (:database database)
        (unwind-protect
 	  (progn 
-	    (setf fd (lo-open ptr object-id postgresql::+INV_WRITE+))
+	    (setf fd (lo-open ptr object-id pgsql::+INV_WRITE+))
 	    (when (>= fd 0)
 	      (when (= (lo-write ptr fd data length) length)
 		(setf result t))))
@@ -336,7 +336,7 @@
     (database-execute-command "begin" database)
     (unwind-protect
 	(progn 
-	  (setf fd (lo-open ptr object-id postgresql::+INV_WRITE+))
+	  (setf fd (lo-open ptr object-id pgsql::+INV_WRITE+))
 	  (when (>= fd 0)
 	    (when (= (lo-write ptr fd data length) length)
 	      (setf result t))))
@@ -357,7 +357,7 @@
     (unwind-protect
        (progn
 	 (database-execute-command "begin" database)
-	 (setf fd (lo-open ptr object-id postgresql::+INV_READ+))
+	 (setf fd (lo-open ptr object-id pgsql::+INV_READ+))
 	 (when (>= fd 0)
 	   (setf length (lo-lseek ptr fd 0 2))
 	   (lo-lseek ptr fd 0 0)
@@ -429,7 +429,7 @@
       (coerce-string db)
       (coerce-string user)
       (let ((connection (PQsetdbLogin host port options tty db user password)))
-        (declare (type postgresql::pgsql-conn-ptr connection))
+        (declare (type pgsql::pgsql-conn-ptr connection))
         (unless (eq (PQstatus connection)
 		    pgsql-conn-status-type#connection-ok)
           ;; Connect failed
