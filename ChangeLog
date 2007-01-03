@@ -1,5 +1,7 @@
 31 Dec 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/metaclasses.lisp: Remove usused saved-initargs
+	* clsql.asd: Also check ~/.clsql-init.lisp at load-time (usually used to
+	push search libraries)
 	
 30 Dec 2006  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.8.0: BACKWARD INCOMPATABLE CHANGE!
