@@ -99,9 +99,10 @@ oriented interface."
 (defmethod perform :after ((o load-op) (c (eql (find-system 'clsql))))
   (let* ((init-var (uffi:getenv "CLSQLINIT"))
          (init-file (or (when init-var (probe-file init-var))
-                        (merge-pathnames
-                         (make-pathname :name ".clsql-init" :type "lisp")
-                         (user-homedir-pathname))
+                        (probe-file
+                         (concatenate 'string
+                                      (namestring (user-homedir-pathname))
+                                      ".clsql-init.lisp"))
                         (probe-file "/etc/clsql-init.lisp")
                         #+(or mswin windows win32)
                         (probe-file "c:\\etc\\clsql-init.lisp"))))
