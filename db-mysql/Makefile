@@ -27,7 +27,7 @@ shared_lib=$(base).so
 .PHONY: all
 all: $(shared_lib)
 
-CFLAGS=-I /usr/local/include/mysql -I /usr/include/mysql -I /sw/include/mysql -I /opt/local/include/mysql
+CFLAGS=-I /usr/local/include/mysql -I /usr/include/mysql -I /sw/include/mysql -I /opt/local/include/mysql -I /usr/local/mysql/include
 LDFLAGS=-L/usr/local/lib64/mysql -L/usr/local/lib/mysql -L/usr/lib/mysql -L/sw/lib -L/opt/local/lib/mysql -L/usr/lib/gcc/i686-pc-cygwin/3.4.4 -lmysqlclient -lz -lc 
 
 ifneq ($(OS_CYGWIN),0)
