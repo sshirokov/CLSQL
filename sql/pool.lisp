@@ -48,7 +48,7 @@
   ~S
 Disconnecting.~%"
                          pconn e)
-                   (disconnect :database pconn :error nil)
+                   (ignore-errors (database-disconnect :database pconn))
                    nil)
                  (:no-error (res fields)
                    (declare (ignore res fields))
