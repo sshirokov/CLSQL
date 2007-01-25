@@ -33,8 +33,28 @@
 
 (defun acquire-from-conn-pool (pool)
   (or (with-process-lock ((conn-pool-lock pool) "Acquire from pool")
-	(and (plusp (length (free-connections pool)))
-	     (vector-pop (free-connections pool))))
+	(when (plusp (length (free-connections pool)))
+          (let ((pconn (vector-pop (free-connections pool))))
+            ;; test if connection still valid.
+            ;; Currently, on supported on MySQL
+            (cond
+              ((eq :mysql (database-type pconn))
+               (handler-case
+                   (database-query "SHOW ERRORS LIMIT 1" pconn nil nil)
+                 (error (e)
+                   ;; we could check for error type 2006 for "SERVER GONE AWAY",
+                   ;; but, it's safer just to disconnect the pooled conn for any error
+                   (warn "Database connection ~S had an error when attempted to be acquired from the pool:
+  ~S
+Disconnecting.~%"
+                         pconn e)
+                   (disconnect :database pconn :error nil)
+                   nil)
+                 (:no-error (res)
+                   (declare (ignore res))
+                   pconn)))
+              (t
+               pconn)))))
       (let ((conn (connect (connection-spec pool)
 			   :database-type (pool-database-type pool)
 			   :if-exists :new

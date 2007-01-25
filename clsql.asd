@@ -60,7 +60,7 @@ oriented interface."
                         ((:file "initialize")
 			 (:file "database" :depends-on ("initialize"))
 			 (:file "recording" :depends-on ("database"))
-			 (:file "pool"))
+			 (:file "pool" :depends-on ("database")))
                         :depends-on (base))
 	       (:module syntax
 			:pathname ""
