@@ -50,8 +50,8 @@ Disconnecting.~%"
                          pconn e)
                    (disconnect :database pconn :error nil)
                    nil)
-                 (:no-error (res)
-                   (declare (ignore res))
+                 (:no-error (res fields)
+                   (declare (ignore res fields))
                    pconn)))
               (t
                pconn)))))
