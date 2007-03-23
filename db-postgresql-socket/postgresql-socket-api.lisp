@@ -213,8 +213,7 @@ socket interface"
   (int32 key))
 
 
-(defun read-socket-sequence (stream length)
-  "KMR -- Added to support reading from binary stream into a string"
+(defun read-socket-sequence (stream length &optional (allow-wide t))
   (declare (stream stream)
 	   (optimize (speed 3) (safety 0)))
   #-sb-unicode
@@ -226,8 +225,9 @@ socket interface"
   (let ((bytes (make-array length :element-type '(unsigned-byte 8))))
     (declare (type (simple-array (unsigned-byte 8) (*)) bytes))
     (read-sequence bytes stream)
-    (sb-ext:octets-to-string bytes)))
-
+    (if allow-wide
+        (sb-ext:octets-to-string bytes)
+        (map 'string #'code-char bytes))))
 
 ;;; Support for encrypted password transmission
 
@@ -496,14 +496,14 @@ connection, if it is still open."
 		      (postgresql-connection-password connection))
                       (force-output socket))
 		    (4
-		     (let ((salt (read-socket-sequence socket 2)))
+		     (let ((salt (read-socket-sequence socket 2 nil)))
 		       (send-encrypted-password-message
 			socket
 			(crypt-password
 			 (postgresql-connection-password connection) salt)))
                      (force-output socket))
 		    (5
-		     (let ((salt (read-socket-sequence socket 4)))
+		     (let ((salt (read-socket-sequence socket 4 nil)))
 		       (let* ((pwd2 (encrypt-md5 (postgresql-connection-password connection)
 						 (postgresql-connection-user connection)))
 			      (pwd (encrypt-md5 pwd2 salt)))

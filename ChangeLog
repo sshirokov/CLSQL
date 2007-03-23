@@ -1,3 +1,9 @@
+23 Mar 2007  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.8.2
+	* sql/db-postgresql-socket-api.lisp: Change read-socket-sequence to
+	disable wide characters for crypt salt sequence on SBCL, based
+	on patch from Lars Nostdal.
+
 26 Jan 2007  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.8.1
 	* sql/pool.lisp: Test pooled connection when popped from
