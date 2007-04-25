@@ -2068,7 +2068,7 @@ Error: While trying to access database localhost/test2/root
         <varlistentry>
           <term><parameter>db-var</parameter></term>
           <listitem>
-            <para>A variable to which the specified database is bound. 
+            <para>A variable which is bound to the specified database.
             </para>
           </listitem>
         </varlistentry>

@@ -1,3 +1,6 @@
+25 Apr 2007  Kevin Rosenberg <kevin@rosenberg.net>
+	* doc/connect.xml: variable description fix by Liam Healy
+
 23 Mar 2007  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.8.2
 	* sql/db-postgresql-socket-api.lisp: Change read-socket-sequence to
