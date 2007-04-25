@@ -6,7 +6,7 @@
 ;;;; Purpose:       Package definition for SQL interface
 ;;;;
 ;;;; $Id$
-;;;; 
+;;;;
 ;;;; This file is part of CLSQL.
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
@@ -24,7 +24,7 @@
   (if (find-package 'sb-mop)
       (pushnew :clsql-sbcl-mop cl:*features*)
       (pushnew :clsql-sbcl-pcl cl:*features*))
-  
+
   #+cmu
   (if (eq (symbol-package 'pcl:find-class)
 	  (find-package 'common-lisp))
@@ -42,22 +42,22 @@
 	  #+lispworks #:clos
 	  #+scl #:clos
 	  #+openmcl #:openmcl-mop)
-    
+
     #+allegro
-    (:shadowing-import-from 
+    (:shadowing-import-from
      #:excl)
     #+clisp
-    (:shadowing-import-from 
+    (:shadowing-import-from
      #:clos)
     #+lispworks
-    (:shadowing-import-from 
+    (:shadowing-import-from
      #:clos)
-    #+clsql-sbcl-mop 
-    (:shadowing-import-from 
+    #+clsql-sbcl-mop
+    (:shadowing-import-from
      #:sb-pcl
      #:generic-function-lambda-list)
     #+clsql-sbcl-pcl
-    (:shadowing-import-from 
+    (:shadowing-import-from
      #:sb-pcl
      #:name
      #:class-direct-slots
@@ -75,12 +75,12 @@
      #:class-precedence-list #:slot-definition-type
      #:class-direct-superclasses
      #:compute-class-precedence-list)
-    #+clsql-cmucl-mop 
-    (:shadowing-import-from 
+    #+clsql-cmucl-mop
+    (:shadowing-import-from
      #:pcl
      #:generic-function-lambda-list)
     #+clsql-cmucl-pcl
-    (:shadowing-import-from 
+    (:shadowing-import-from
      #:pcl
      #:class-direct-slots
      #:name
@@ -98,11 +98,11 @@
      #:class-direct-superclasses
      #:compute-class-precedence-list)
     #+scl
-    (:shadowing-import-from 
+    (:shadowing-import-from
      #:clos
      #:class-prototype  ;; note: make-method-lambda is not fbound
      )
-    
+
     (:export
      ;; "Private" exports for use by interface packages
      #:check-connection-spec
@@ -138,7 +138,7 @@
      #:database-destroy
      #:database-probe
      #:database-list
-     
+
      #:db-backend-has-create/destroy-db?
      #:db-type-has-views?
      #:db-type-has-bigint?
@@ -149,7 +149,7 @@
      #:db-type-transaction-capable?
      #:db-type-has-fancy-math?
      #:db-type-default-case
-     #:db-type-use-column-on-drop-index? 
+     #:db-type-use-column-on-drop-index?
      #:db-type-use-fully-qualified-column-on-drop-index?
      #:db-type-has-intersect?
      #:db-type-has-except?
@@ -161,7 +161,7 @@
      #:reload-database-types
      #:is-database-open
 
-     ;; Large objects 
+     ;; Large objects
      #:database-create-large-object
      #:database-write-large-object
      #:database-read-large-object
@@ -203,44 +203,44 @@
      #:number-to-sql-string
      #:float-to-sql-string
      #:sql-escape-quotes
-     #:sql-escape 
+     #:sql-escape
      #:in
 
      ;; Generic backends
      #:generic-postgresql-database
      #:generic-odbc-database
 
-         ;; Subclasses of sql-expresssion (expressions.lisp) 
+         ;; Subclasses of sql-expresssion (expressions.lisp)
          #:sql-function-exp
-         #:sql-value-exp 
-         #:sql-set-exp 
-         #:sql-query-modifier-exp 
-         #:sql-relational-exp 
-         #:sql-upcase-like 
-         #:sql-assignment-exp 
-         #:sql-typecast-exp 
-         #:sql-between-exp 
-         #:sql-ident 
+         #:sql-value-exp
+         #:sql-set-exp
+         #:sql-query-modifier-exp
+         #:sql-relational-exp
+         #:sql-upcase-like
+         #:sql-assignment-exp
+         #:sql-typecast-exp
+         #:sql-between-exp
+         #:sql-ident
          #:sql-ident-attribute
-         #:sql-ident-table 
+         #:sql-ident-table
 
      .
 
-     ;; Shared exports for re-export by CLSQL package. 
+     ;; Shared exports for re-export by CLSQL package.
      #1=(
 
          ;; foreign library loading
          #:*foreign-library-search-paths*
          #:push-library-path
 
-	 ;; Condition system (conditions.lisp) 
+	 ;; Condition system (conditions.lisp)
 	 #:sql-user-error
 	 #:sql-database-error
 	 #:sql-database-data-error
 	 #:sql-connection-error
 	 #:sql-temporary-error
-         #:sql-timeout-error 
-         #:sql-fatal-error 
+         #:sql-timeout-error
+         #:sql-fatal-error
 	 #:sql-error-error-id
 	 #:sql-error-secondary-error-id
 	 #:sql-error-database-message
@@ -249,32 +249,32 @@
 	 #:sql-error
 	 #:sql-warning
 	 #:sql-database-warning
-         #:sql-error-database 
-         #:sql-error-database-type 
-         #:sql-error-connection-spec 
-         #:sql-error-expression 
-         #:sql-warning-database 
-         #:sql-user-error-message 
+         #:sql-error-database
+         #:sql-error-database-type
+         #:sql-error-connection-spec
+         #:sql-error-expression
+         #:sql-warning-database
+         #:sql-user-error-message
          #:*backend-warning-behavior*
 
-         ;; Connection/initialisation (base-classes.lisp, database.lisp, 
+         ;; Connection/initialisation (base-classes.lisp, database.lisp,
          ;;   initialize.lisp)
-         #:*default-database-type*       
-         #:*default-database*	         
+         #:*default-database-type*
+         #:*default-database*
          #:*initialized-database-types*
          #:initialize-database-type
-         #:connect                     
-         #:disconnect		       
-         #:*connect-if-exists*	       
-         #:connected-databases	       
-         #:database		       
-         #:database-name               
-         #:reconnect                   
-         #:find-database               
-         #:status                      
-         ;; CLSQL Extensions 
+         #:connect
+         #:disconnect
+         #:*connect-if-exists*
+         #:connected-databases
+         #:database
+         #:database-name
+         #:reconnect
+         #:find-database
+         #:status
+         ;; CLSQL Extensions
          #:database-name-from-spec
-         #:database-type 
+         #:database-type
          #:with-database
          #:with-default-database
          #:disconnect-pooled
@@ -283,80 +283,80 @@
          #:destroy-database
          #:probe-database
 
-         ;; I/O Recording (recording.lisp) 
-         #:add-sql-stream             
-         #:delete-sql-stream	      
-         #:list-sql-streams	      
-         #:sql-recording-p	      
-         #:sql-stream			
-         #:start-sql-recording		
-         #:stop-sql-recording		
+         ;; I/O Recording (recording.lisp)
+         #:add-sql-stream
+         #:delete-sql-stream
+         #:list-sql-streams
+         #:sql-recording-p
+         #:sql-stream
+         #:start-sql-recording
+         #:stop-sql-recording
 
-	 ;; FDDL (fddl.lisp) 
-	 #:create-table                   
-	 #:drop-table                     
-	 #:list-tables                    
-	 #:table-exists-p                 
-	 #:list-attributes                
-	 #:attribute-type                 
-	 #:list-attribute-types		  
-	 #:create-view                    
-	 #:drop-view                      
-	 #:create-index                   
-	 #:drop-index                     
-         ;; CLSQL Extensions 
+	 ;; FDDL (fddl.lisp)
+	 #:create-table
+	 #:drop-table
+	 #:list-tables
+	 #:table-exists-p
+	 #:list-attributes
+	 #:attribute-type
+	 #:list-attribute-types
+	 #:create-view
+	 #:drop-view
+	 #:create-index
+	 #:drop-index
+         ;; CLSQL Extensions
          #:truncate-database
-	 #:list-views                  
-	 #:view-exists-p               
-	 #:list-indexes                
-	 #:index-exists-p              
-	 #:create-sequence             
-	 #:drop-sequence               
-	 #:list-sequences              
-	 #:sequence-exists-p           
-	 #:sequence-next               
-	 #:sequence-last               
-	 #:set-sequence-position       
+	 #:list-views
+	 #:view-exists-p
+	 #:list-indexes
+	 #:index-exists-p
+	 #:create-sequence
+	 #:drop-sequence
+	 #:list-sequences
+	 #:sequence-exists-p
+	 #:sequence-next
+	 #:sequence-last
+	 #:set-sequence-position
 
-         ;; FDML (fdml.lisp) 
-	 #:select 
-	 #:cache-table-queries     
+         ;; FDML (fdml.lisp)
+	 #:select
+	 #:cache-table-queries
 	 #:*cache-table-queries-default*
-	 #:delete-records               
-	 #:insert-records               
-	 #:update-records               
-	 #:execute-command              
-	 #:query                        
-	 #:print-query                  
-	 #:do-query                     
-	 #:map-query                    
+	 #:delete-records
+	 #:insert-records
+	 #:update-records
+	 #:execute-command
+	 #:query
+	 #:print-query
+	 #:do-query
+	 #:map-query
 	 #:loop
-         ;; CLSQL Extensions 
+         ;; CLSQL Extensions
 	 #:prepare-sql
 	 #:bind-parameter
 	 #:run-prepared-sql
 	 #:free-prepared-sql
 
-         ;; Transaction handling (transaction.lisp) 
+         ;; Transaction handling (transaction.lisp)
          #:with-transaction
-         #:commit                        
-         #:rollback			 
-         ;; CLSQL Extensions 
+         #:commit
+         #:rollback
+         ;; CLSQL Extensions
          #:add-transaction-commit-hook
          #:add-transaction-rollback-hook
-         #:start-transaction             
-         #:in-transaction-p              
+         #:start-transaction
+         #:in-transaction-p
 	 #:set-autocommit
 
-	 ;; OODDL (ooddl.lisp) 
-	 #:standard-db-object               
-	 #:def-view-class                   
-	 #:create-view-from-class           
-	 #:drop-view-from-class             
-	 #:list-classes                     
-	 #:universal-time    
-         ;; CLSQL Extensions 
-	 #:view-table        
+	 ;; OODDL (ooddl.lisp)
+	 #:standard-db-object
+	 #:def-view-class
+	 #:create-view-from-class
+	 #:drop-view-from-class
+	 #:list-classes
+	 #:universal-time
+         ;; CLSQL Extensions
+	 #:view-table
 	 #:bigint
 	 #:varchar
 	 #:generalized-boolean
@@ -365,45 +365,45 @@
 	 #:tinyint
 	 #:*default-string-length*
 
-	 ;; OODML (oodml.lisp) 
-	 #:instance-refreshed               
-	 #:update-objects-joins             
-	 #:*default-update-objects-max-len* 
+	 ;; OODML (oodml.lisp)
+	 #:instance-refreshed
+	 #:update-objects-joins
+	 #:*default-update-objects-max-len*
 	 #:*default-caching*
-	 #:update-slot-from-record          
-	 #:update-instance-from-records     
-	 #:update-records-from-instance     
-	 #:update-record-from-slot          
-	 #:update-record-from-slots         
-	 #:delete-instance-records          
-	 ;; CLSQL Extensions 
-	 #:*db-auto-sync*    
+	 #:update-slot-from-record
+	 #:update-instance-from-records
+	 #:update-records-from-instance
+	 #:update-record-from-slot
+	 #:update-record-from-slots
+	 #:delete-instance-records
+	 ;; CLSQL Extensions
+	 #:*db-auto-sync*
 	 #:write-instance-to-stream
 	 #:read-instance-from-stream
-	 
-	 ;; Symbolic SQL Syntax (syntax.lisp) 
-	 #:sql                              
-	 #:sql-expression                   
-	 #:sql-operation                    
-	 #:sql-operator                     
-	 #:disable-sql-reader-syntax        
-	 #:enable-sql-reader-syntax         
+
+	 ;; Symbolic SQL Syntax (syntax.lisp)
+	 #:sql
+	 #:sql-expression
+	 #:sql-operation
+	 #:sql-operator
+	 #:disable-sql-reader-syntax
+	 #:enable-sql-reader-syntax
 	 #:locally-disable-sql-reader-syntax
-	 #:locally-enable-sql-reader-syntax 
-	 #:restore-sql-reader-syntax-state  
-	 
-	 ;; SQL operations (operations.lisp) 
+	 #:locally-enable-sql-reader-syntax
+	 #:restore-sql-reader-syntax-state
+
+	 ;; SQL operations (operations.lisp)
 	 #:sql-query
 	 #:sql-object-query
 	 #:sql-any
-         #:sql-some 
+         #:sql-some
 	 #:sql-all
 	 #:sql-not
 	 #:sql-union
 	 #:sql-intersect
 	 #:sql-minus
-         #:sql-except 
-         #:sql-order-by 
+         #:sql-except
+         #:sql-order-by
 	 #:sql-null
 	 #:sql-*
 	 #:sql-+
@@ -413,8 +413,8 @@
 	 #:sql-and
 	 #:sql-or
 	 #:sql-in
-         #:sql-substr 
-         #:sql-concat-op 
+         #:sql-substr
+         #:sql-concat-op
 	 #:sql-=
 	 #:sql-<
          #:sql->
@@ -426,16 +426,16 @@
          #:sql-min
          #:sql-avg
          #:sql-sum
-         #:sql-function 
-         #:sql-between 
-         #:sql-distinct 
-         #:sql-nvl 
+         #:sql-function
+         #:sql-between
+         #:sql-distinct
+         #:sql-nvl
          #:sql-slot-value
-         #:sql-userenv 
-         ;; CLSQL Extensions 
+         #:sql-userenv
+         ;; CLSQL Extensions
 	 #:sql-concat
-         #:sql-substring 
-         #:sql-limit 
+         #:sql-substring
+         #:sql-limit
 	 #:sql-group-by
 	 #:sql-having
 	 #:sql-not-null
@@ -443,11 +443,11 @@
 	 #:sql-uplike
 	 #:sql-is
 	 #:sql-==
-         #:sql-the 
-         #:sql-coalesce 
+         #:sql-the
+         #:sql-coalesce
          #:sql-view-class
 
-         ;; Time handling (time.lisp) 
+         ;; Time handling (time.lisp)
          #:bad-component
          #:current-day
          #:current-month
@@ -471,9 +471,9 @@
          #:duration-month
          #:duration-second
          #:duration-year
-         #:duration-reduce 
+         #:duration-reduce
          #:duration-timestring
-         #:extract-roman 
+         #:extract-roman
          #:format-duration
          #:format-time
 	 #:format-date
@@ -549,6 +549,7 @@
          #:week-containing
          #:gregorian-to-mjd
          #:mjd-to-gregorian
+         #:iso-timestring
          ))
     (:documentation "This is the INTERNAL SQL-Interface package of CLSQL."))
 
@@ -565,12 +566,12 @@
   (:export . #1#)
   (:documentation "This is the user package with CLSQL symbols."))
 
-  ;; This is from USQL's pcl-patch  
+  ;; This is from USQL's pcl-patch
   #+(or clsql-sbcl-pcl clsql-cmucl-pcl)
   (progn
-    ;; Note that this will no longer required for cmucl as of version 19a. 
+    ;; Note that this will no longer required for cmucl as of version 19a.
     (in-package #+cmu :pcl #+sbcl :sb-pcl)
-    (defmacro pv-binding1 ((pv calls pv-table-symbol pv-parameters slot-vars) 
+    (defmacro pv-binding1 ((pv calls pv-table-symbol pv-parameters slot-vars)
 			   &body body)
       `(pv-env (,pv ,calls ,pv-table-symbol ,pv-parameters)
 	(let (,@(mapcar #'(lambda (slot-var p) `(,slot-var (get-slots-or-nil ,p)))
@@ -580,18 +581,18 @@
 
 ;; see http://thread.gmane.org/gmane.lisp.lispworks.general/681
 #+lispworks
-(setf *packages-for-warn-on-redefinition* 
+(setf *packages-for-warn-on-redefinition*
       (delete "SQL" *packages-for-warn-on-redefinition* :test 'string=))
 
   #+sbcl
   (if (find-package 'sb-mop)
       (setq cl:*features* (delete :clsql-sbcl-mop cl:*features*))
       (setq cl:*features* (delete :clsql-sbcl-pcl cl:*features*)))
-  
+
   #+cmu
   (if (find-package 'mop)
       (setq cl:*features* (delete :clsql-cmucl-mop cl:*features*))
       (setq cl:*features* (delete :clsql-cmucl-pcl cl:*features*)))
 
-) ;eval-when                                      
+) ;eval-when
 

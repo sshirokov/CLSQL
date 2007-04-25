@@ -170,6 +170,7 @@
 		     (sqlite3-error-code condition) 
 		     (sqlite3-error-message condition)))))
 
+(defgeneric signal-sqlite3-error (db))
 (defmethod signal-sqlite3-error (db)
   (let ((condition
 	 (make-condition 'sqlite3-error

@@ -1,5 +1,9 @@
 25 Apr 2007  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.8.3
 	* doc/connect.xml: variable description fix by Liam Healy
+	* db-sqlite3/sqlite3-api.lisp, uffi/clsql-uffi-loader.lisp:
+	Apply patches from Marcus Pierce to reduce load-time warnings
+	* sql/package.lisp: Export iso-timestring as requested by Kevin Blaisdell
 
 23 Mar 2007  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.8.2

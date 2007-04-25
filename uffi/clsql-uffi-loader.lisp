@@ -28,7 +28,7 @@ well as any of the filenames in any of the clsql:*foreign-library-search-paths*"
 	       (uffi:load-foreign-library testpath
 					  :module module
 					  :supporting-libraries supporting-libraries)
-	     (error (c) (warn "~A" c) nil))))
+	     (error nil)))) ;(c) (warn "~A" c) nil))))
     (or
      (loop for type in (uffi:foreign-library-types)
 	   thereis
