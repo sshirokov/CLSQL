@@ -1,3 +1,7 @@
+02 May 2007  Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/database.lisp: Add ability of WITH-DATABASE to return
+	multiple values (patch from Liam Healy)
+	
 25 Apr 2007  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.8.3
 	* doc/connect.xml: variable description fix by Liam Healy

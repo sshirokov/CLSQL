@@ -312,16 +312,12 @@ system specified by DATABASE-TYPE."
 database connection given by CONNECTION-SPEC and CONNECT-ARGS.  The
 connection is automatically closed or released to the pool on exit
 from the body."
-  (let ((result (gensym "result-")))
-    (unless db-var (setf db-var '*default-database*))
-    `(let ((,db-var (connect ,connection-spec ,@connect-args))
-	   (,result nil))
-      (unwind-protect
-	   (let ((,db-var ,db-var))
-	     (setf ,result (progn ,@body)))
-	(disconnect :database ,db-var))
-      ,result)))
-
+  (unless db-var (setf db-var '*default-database*))
+  `(let ((,db-var (connect ,connection-spec ,@connect-args)))
+     (unwind-protect
+      (let ((,db-var ,db-var))
+        (progn ,@body))
+       (disconnect :database ,db-var))))
 
 (defmacro with-default-database ((database) &rest body)
   "Perform BODY with DATABASE bound as *default-database*."
