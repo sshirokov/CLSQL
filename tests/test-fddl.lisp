@@ -21,15 +21,15 @@
 
 (setq *rt-fddl*
       '(
-	
-;; list current tables 
+
+;; list current tables
 (deftest :fddl/table/1
     (sort (mapcar #'string-downcase
 		  (clsql:list-tables :owner *test-database-user*))
      #'string<)
   ("addr" "big" "company" "ea_join" "employee" "type_bigint" "type_table"))
 
-;; create a table, test for its existence, drop it and test again 
+;; create a table, test for its existence, drop it and test again
 (deftest :fddl/table/2
     (progn (clsql:create-table  [foo]
                                '(([id] integer)
@@ -43,9 +43,9 @@
               (clsql:table-exists-p [foo] :owner *test-database-user*))))
   t nil)
 
-;; create a table, list its attributes and drop it 
+;; create a table, list its attributes and drop it
 (deftest :fddl/table/3
-    (apply #'values 
+    (apply #'values
            (progn (clsql:create-table  [foo]
                                       '(([id] integer)
                                         ([height] float)
@@ -79,50 +79,50 @@
       (clsql:drop-table "MyMixedCase"))
   ((5) (6)))
 
-(deftest :fddl/table/6 
+(deftest :fddl/table/6
     (values
      (clsql:table-exists-p [foo])
      (progn
        (let ((*backend-warning-behavior*
-              (if (member *test-database-type* 
+              (if (member *test-database-type*
                           '(:postgresql :postgresql-socket))
                   :ignore
                   :warn)))
          (case *test-database-underlying-type*
-           (:mssql (clsql:create-table [foo] 
+           (:mssql (clsql:create-table [foo]
                                        '(([bar] integer :not-null :primary-key)
                                          ([baz] string :not-null :unique))))
-           (t (clsql:create-table [foo] 
+           (t (clsql:create-table [foo]
                                   '(([bar] integer :not-null :unique :primary-key)
                                     ([baz] string :not-null :unique))))))
        (clsql:table-exists-p [foo]))
      (progn
        (clsql:drop-table [foo])
        (clsql:table-exists-p [foo])))
-  nil t nil)    
+  nil t nil)
 
-(deftest :fddl/table/7 
+(deftest :fddl/table/7
     (values
      (clsql:table-exists-p [foo])
      (progn
        (let ((*backend-warning-behavior*
-              (if (member *test-database-type* 
+              (if (member *test-database-type*
                           '(:postgresql :postgresql-socket))
                   :ignore
                   :warn)))
-         (clsql:create-table [foo] '(([bar] integer :not-null) 
+         (clsql:create-table [foo] '(([bar] integer :not-null)
                                      ([baz] string :not-null))
-                             :constraints '("UNIQUE (bar,baz)" 
+                             :constraints '("UNIQUE (bar,baz)"
                                             "PRIMARY KEY (bar)")))
        (clsql:table-exists-p [foo]))
      (progn
        (clsql:drop-table [foo])
        (clsql:table-exists-p [foo])))
-  nil t nil)    
+  nil t nil)
 
 (deftest :fddl/attributes/1
     (apply #'values
-           (sort 
+           (sort
             (mapcar #'string-downcase
                     (clsql:list-attributes [employee]
 					   :owner *test-database-user*))
@@ -131,8 +131,8 @@
   "last_name" "managerid" "married")
 
 (deftest :fddl/attributes/2
-    (apply #'values 
-           (sort 
+    (apply #'values
+           (sort
             (mapcar #'(lambda (a) (string-downcase (car a)))
                     (clsql:list-attribute-types [employee]
                                                :owner *test-database-user*))
@@ -170,14 +170,14 @@
 			      :as [select [first-name] [last-name] [email]
 					  :from [employee]
 					  :where [= [managerid] 1]])
-	   (values  
+	   (values
 	    (clsql:view-exists-p [lenins-group] :owner *test-database-user*)
 	    (progn
 	      (clsql:drop-view [lenins-group] :if-does-not-exist :ignore)
 	      (clsql:view-exists-p [lenins-group] :owner *test-database-user*))))
   t nil)
-  
-  ;; create a view, list its attributes and drop it 
+
+  ;; create a view, list its attributes and drop it
 (when (clsql-sys:db-type-has-views? *test-database-underlying-type*)
   (deftest :fddl/view/2
       (progn (clsql:create-view [lenins-group]
@@ -190,40 +190,40 @@
 		       #'string<)
 	       (clsql:drop-view [lenins-group] :if-does-not-exist :ignore)))
     ("email" "first_name" "last_name")))
-  
-  ;; create a view, select stuff from it and drop it 
+
+  ;; create a view, select stuff from it and drop it
 (deftest :fddl/view/3
     (progn (clsql:create-view [lenins-group]
 			      :as [select [first-name] [last-name] [email]
 					  :from [employee]
 					  :where [= [managerid] 1]])
-	   (let ((result 
-		  (list 
-		   ;; Shouldn't exist 
+	   (let ((result
+		  (list
+		   ;; Shouldn't exist
 		   (clsql:select [first-name] [last-name] [email]
 				 :from [lenins-group]
 				 :where [= [last-name] "Lenin"])
-		   ;; Should exist 
+		   ;; Should exist
 		   (car (clsql:select [first-name] [last-name] [email]
 				      :from [lenins-group]
 				      :where [= [last-name] "Stalin"])))))
 	     (clsql:drop-view [lenins-group] :if-does-not-exist :ignore)
 	     (apply #'values result)))
   nil ("Josef" "Stalin" "stalin@soviet.org"))
-  
+
 (deftest :fddl/view/4
     (progn (clsql:create-view [lenins-group]
 			      :column-list '([forename] [surname] [email])
 			      :as [select [first-name] [last-name] [email]
 					  :from [employee]
 					  :where [= [managerid] 1]])
-	   (let ((result 
+	   (let ((result
 		  (list
-		   ;; Shouldn't exist 
+		   ;; Shouldn't exist
 		   (clsql:select [forename] [surname] [email]
 				 :from [lenins-group]
 				 :where [= [surname] "Lenin"])
-		   ;; Should exist 
+		   ;; Should exist
 		   (car (clsql:select [forename] [surname] [email]
 				      :from [lenins-group]
 				      :where [= [surname] "Stalin"])))))
@@ -231,7 +231,7 @@
 	     (apply #'values result)))
   nil ("Josef" "Stalin" "stalin@soviet.org"))
 
-;; create an index, test for existence, drop it and test again 
+;; create an index, test for existence, drop it and test again
 (deftest :fddl/index/1
     (progn (clsql:create-index [bar] :on [employee] :attributes
                               '([first-name] [last-name] [email]) :unique t)
@@ -243,7 +243,7 @@
               (clsql:index-exists-p [bar] :owner *test-database-user*))))
   t nil)
 
-;; create indexes with names as strings, symbols and in square brackets 
+;; create indexes with names as strings, symbols and in square brackets
 (deftest :fddl/index/2
     (let ((names '("foo" foo [foo]))
           (result '()))
@@ -254,7 +254,7 @@
       (apply #'values result))
   t t t)
 
-;; test list-indexes with keyword :ON 
+;; test list-indexes with keyword :ON
 (deftest :fddl/index/3
     (progn
       (clsql:create-table [i3test] '(([a] (string 10))
@@ -267,8 +267,8 @@
        (clsql:table-exists-p [i3test])
        (clsql:index-exists-p [foo])
        (clsql:index-exists-p [bar])
-       (sort 
-	(mapcar 
+       (sort
+	(mapcar
 	 #'string-downcase
 	 (clsql:list-indexes :on [i3test] :owner *test-database-user*))
 	#'string-lessp)
@@ -279,7 +279,7 @@
 	 t)))
   t t t ("bar" "foo") t)
 
-;; create an sequence, test for existence, drop it and test again 
+;; create an sequence, test for existence, drop it and test again
 (deftest :fddl/sequence/1
     (progn (clsql:create-sequence [foo])
            (values
@@ -309,8 +309,8 @@
         (clsql:drop-sequence [foo] :if-does-not-exist :ignore)))
   6)
 
-(deftest :fddl/big/1 
-    (let ((rows (clsql:select [*] :from [big] :field-names nil)))
+(deftest :fddl/big/1
+    (let ((rows (clsql:select [*] :from [big] :order-by [i] :field-names nil)))
       (values
        (length rows)
        (do ((i 0 (1+ i))
@@ -330,32 +330,32 @@
 	     (return nil))))))
   555 t)
 
-(deftest :fddl/owner/1 
-    (and 
-     ;; user tables are an improper subset of all tables 
-     (= (length (intersection (clsql:list-tables :owner nil) 
+(deftest :fddl/owner/1
+    (and
+     ;; user tables are an improper subset of all tables
+     (= (length (intersection (clsql:list-tables :owner nil)
                               (clsql:list-tables :owner :all)
                               :test #'string=))
         (length (clsql:list-tables :owner nil)))
-     ;; user tables are a proper subset of all tables 
-     (> (length (clsql:list-tables :owner :all)) 
+     ;; user tables are a proper subset of all tables
+     (> (length (clsql:list-tables :owner :all))
         (length (clsql:list-tables :owner nil))))
-  t) 
+  t)
 
-(deftest :fddl/cache-table-queries/1 
- (list 
+(deftest :fddl/cache-table-queries/1
+ (list
   (gethash "EMPLOYEE" (clsql-sys::attribute-cache clsql:*default-database*))
-  (progn 
+  (progn
     (clsql:cache-table-queries "EMPLOYEE" :action t)
     (gethash "EMPLOYEE" (clsql-sys::attribute-cache clsql:*default-database*)))
-  (progn 
+  (progn
     (clsql:list-attribute-types "EMPLOYEE")
-    (not 
-     (null 
-      (cadr 
-       (gethash "EMPLOYEE" 
+    (not
+     (null
+      (cadr
+       (gethash "EMPLOYEE"
                 (clsql-sys::attribute-cache clsql:*default-database*))))))
-  (progn 
+  (progn
     (clsql:cache-table-queries "EMPLOYEE" :action :flush)
     (gethash "EMPLOYEE" (clsql-sys::attribute-cache clsql:*default-database*))))
  (nil (t nil) t (t nil)))

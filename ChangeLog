@@ -1,3 +1,7 @@
+29 May 2007  Kevin Rosenberg <kevin@rosenberg.net>
+	* tests/test-fddl.lisp: Add :order-by for :fddl/big/1 as
+	reported by Ricardo Boccato Alves
+
 02 May 2007  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/database.lisp: Add ability of WITH-DATABASE to return
 	multiple values (patch from Liam Healy)
