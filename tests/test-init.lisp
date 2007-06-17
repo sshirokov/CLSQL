@@ -5,7 +5,7 @@
 ;;;; Created: 30/03/2004
 ;;;; Updated: $Id$
 ;;;;
-;;;; Initialisation utilities for running regression tests on CLSQL. 
+;;;; Initialisation utilities for running regression tests on CLSQL.
 ;;;;
 ;;;; This file is part of CLSQL.
 ;;;;
@@ -32,6 +32,8 @@
 (defvar *test-database-underlying-type* nil)
 (defvar *test-database-user* nil)
 (defvar *test-start-utime* nil)
+(defvar *test-connection-spec* nil)
+(defvar *test-connection-db-type* nil)
 
 (defclass thing ()
   ((extraterrestrial :initform nil :initarg :extraterrestrial)))
@@ -44,7 +46,7 @@
    (birthday :type clsql:wall-time :initarg :birthday)
    (bd-utime :type clsql:universal-time :initarg :bd-utime)
    (hobby :db-kind :virtual :initarg :hobby :initform nil)))
-  
+
 (def-view-class employee (person)
   ((emplid
     :db-kind :key
@@ -192,25 +194,25 @@
   (when (clsql-sys:db-backend-has-create/destroy-db? db-type)
     (ignore-errors (destroy-database spec :database-type db-type))
     (ignore-errors (create-database spec :database-type db-type)))
-  
+
   (setf *test-database-type* db-type)
   (setf *test-database-user*
     (cond
      ((eq :oracle db-type) (second spec))
      ((>= (length spec) 3) (third spec))))
-  
+
   ;; Connect to the database
   (clsql:connect spec
 		 :database-type db-type
 		 :make-default t
 		 :if-exists :old)
-  
+
   ;; Ensure database is empty
   (truncate-database :database *default-database*)
-  
+
   (setf *test-database-underlying-type*
 	(clsql-sys:database-underlying-type *default-database*))
-  
+
   *default-database*)
 
 (defparameter company1 nil)
@@ -255,7 +257,7 @@
 	  employee1 (make-instance 'employee
 				   :emplid 1
 				   :groupid 1
-				   :married t 
+				   :married t
 				   :height (1+ (random 1.00))
 				   :bd-utime *test-start-utime*
 				   :birthday now-time
@@ -267,7 +269,7 @@
 				   :emplid 2
 				   :groupid 1
 				   :height (1+ (random 1.00))
-				   :married t 
+				   :married t
 				   :bd-utime *test-start-utime*
 				   :birthday now-time
 				   :first-name "Josef"
@@ -279,7 +281,7 @@
 				   :emplid 3
 				   :groupid 1
 				   :height (1+ (random 1.00))
-				   :married t 
+				   :married t
 				   :bd-utime *test-start-utime*
 				   :birthday now-time
 				   :first-name "Leon"
@@ -349,7 +351,7 @@
 				   :companyid 1)
 	  employee9 (make-instance 'employee
 				   :emplid 9
-				   :groupid 1 
+				   :groupid 1
 				   :married nil
 				   :height (1+ (random 1.00))
 				   :bd-utime *test-start-utime*
@@ -402,10 +404,10 @@
     (let ((max (expt 2 60)))
       (dotimes (i 555)
 	(make-instance 'big :i (1+ i) :bi (truncate max (1+ i))))))
-    
+
   ;; sleep to ensure birthdays are no longer at current time
-  (sleep 1) 
-  
+  (sleep 1)
+
   #||
   ;; Lenin manages everyone
   (clsql:add-to-relation employee2 'manager employee1)
@@ -431,7 +433,7 @@
   ;; Lenin is president of Widgets Inc.
   (clsql:add-to-relation company1 'president employee1)
   ||#
-  
+
   ;; store these instances
   #||
   (clsql:update-records-from-instance employee1)
@@ -483,7 +485,9 @@
     (load-necessary-systems specs)
     (dolist (db-type +all-db-types+)
       (dolist (spec (db-type-spec db-type specs))
-	(do-tests-for-backend db-type spec))))
+        (let ((*test-connection-spec* spec)
+              (*test-connection-db-type* db-type))
+          (do-tests-for-backend db-type spec)))))
   (zerop *error-count*))
 
 (defun load-necessary-systems (specs)
@@ -502,56 +506,56 @@
 ******************************************************************************
 "
 	  report-type
-	  (clsql:format-time 
-	   nil 
+	  (clsql:format-time
+	   nil
 	   (clsql:utime->time (get-universal-time)))
 	  (lisp-implementation-type)
 	  (lisp-implementation-version)
 	  (machine-type)
 	  db-type
 	  (if (not (eq db-type *test-database-underlying-type*))
-	      (format nil " with underlying type ~:@(~A~)" 
+	      (format nil " with underlying type ~:@(~A~)"
 		      *test-database-underlying-type*)
 	      "")
 	  ))
 
 (defun do-tests-for-backend (db-type spec)
   (test-connect-to-database db-type spec)
-  
+
   (unwind-protect
        (multiple-value-bind (test-forms skip-tests)
-	  (compute-tests-for-backend db-type *test-database-underlying-type*)
-	 
-	 (write-report-banner "Test Suite" db-type *report-stream*)
-	 
-	(test-initialise-database)
-	
-	(regression-test:rem-all-tests)
-	(dolist (test-form test-forms)
-	  (eval test-form))
-	
-	(let ((remaining (regression-test:do-tests *report-stream*)))
-	  (when (regression-test:pending-tests)
-	    (incf *error-count* (length remaining))))
-	
-	(let ((sexp-error (list db-type 
-				*test-database-underlying-type* 
-				(get-universal-time)
-				(length test-forms)
-				(regression-test:pending-tests)
-				(lisp-implementation-type) 
-				(lisp-implementation-version)
-				(machine-type))))
-	  (when *sexp-report-stream*
-	    (write sexp-error :stream *sexp-report-stream* :readably t)) 
-	  (push sexp-error *error-list*))
-	
-	(format *report-stream* "~&Tests skipped:")
-	(if skip-tests
-	    (dolist (skipped skip-tests)
-	      (format *report-stream*
-		      "~&   ~20A ~A~%" (car skipped) (cdr skipped)))
-	  (format *report-stream* " None~%")))
+           (compute-tests-for-backend db-type *test-database-underlying-type*)
+
+           (write-report-banner "Test Suite" db-type *report-stream*)
+
+           (test-initialise-database)
+
+           (regression-test:rem-all-tests)
+           (dolist (test-form test-forms)
+             (eval test-form))
+
+           (let ((remaining (regression-test:do-tests *report-stream*)))
+             (when (regression-test:pending-tests)
+               (incf *error-count* (length remaining))))
+
+           (let ((sexp-error (list db-type
+                                   *test-database-underlying-type*
+                                   (get-universal-time)
+                                   (length test-forms)
+                                   (regression-test:pending-tests)
+                                   (lisp-implementation-type)
+                                   (lisp-implementation-version)
+                                   (machine-type))))
+             (when *sexp-report-stream*
+               (write sexp-error :stream *sexp-report-stream* :readably t))
+             (push sexp-error *error-list*))
+
+           (format *report-stream* "~&Tests skipped:")
+           (if skip-tests
+               (dolist (skipped skip-tests)
+                 (format *report-stream*
+                         "~&   ~20A ~A~%" (car skipped) (cdr skipped)))
+               (format *report-stream* " None~%")))
     (disconnect)))
 
 
@@ -581,12 +585,12 @@
 	   (push (cons test "fancy math not supported") skip-tests))
 	  ((and (eql *test-database-type* :sqlite)
 		(clsql-sys:in test :fddl/view/4 :fdml/select/10
-				:fdml/select/21 :fdml/select/32 
+				:fdml/select/21 :fdml/select/32
                                 :fdml/select/33))
 	   (push (cons test "not supported by sqlite") skip-tests))
 	  ((and (eql *test-database-type* :sqlite3)
 		(clsql-sys:in test :fddl/view/4 :fdml/select/10
-			      :fdml/select/21 :fdml/select/32 
+			      :fdml/select/21 :fdml/select/32
 			      :fdml/select/33))
 	   (push (cons test "not supported by sqlite3") skip-tests))
 	  ((and (not (clsql-sys:db-type-has-bigint? db-type))
@@ -596,21 +600,21 @@
 		(clsql-sys:in test :fdml/select/26))
 	   (push (cons test "string table aliases not supported on all mysql versions") skip-tests))
 	  ((and (eql *test-database-underlying-type* :mysql)
-		(clsql-sys:in test :fdml/select/22 :fdml/query/5 
+		(clsql-sys:in test :fdml/select/22 :fdml/query/5
 				:fdml/query/7 :fdml/query/8))
 	   (push (cons test "not supported by mysql") skip-tests))
 	  ((and (null (clsql-sys:db-type-has-union? db-underlying-type))
 		(clsql-sys:in test :fdml/query/6 :fdml/select/31))
 	   (push (cons test "union not supported") skip-tests))
 	  ((and (eq *test-database-type* :oracle)
-		(clsql-sys:in test :fdml/query/8 :fdml/select/21 
+		(clsql-sys:in test :fdml/query/8 :fdml/select/21
                               :fddl/table/6))
 	   (push (cons test "syntax not supported") skip-tests))
           ((and (eq *test-database-type* :odbc)
 		(eq *test-database-underlying-type* :postgresql)
 		(clsql-sys:in test :fddl/owner/1))
            (push (cons test "table ownership not supported by postgresql odbc driver") skip-tests))
-	  ((and (not (member *test-database-underlying-type* 
+	  ((and (not (member *test-database-underlying-type*
                              '(:postgresql :oracle)))
 		(clsql-sys:in test :fddl/owner/1))
            (push (cons test "table ownership not supported") skip-tests))
@@ -623,7 +627,7 @@
           ((and (eq *test-database-underlying-type* :mssql)
                 (clsql-sys:in test :fdml/select/9))
            (push (cons test "mssql uses integer math for AVG") skip-tests))
-          ((and (not (member *test-database-underlying-type* 
+          ((and (not (member *test-database-underlying-type*
                              '(:postgresql :mysql :sqlite3)))
                 (clsql-sys:in test :fdml/select/37 :fdml/select/38))
            (push (cons test "LIMIT keyword not supported in SELECT") skip-tests))
