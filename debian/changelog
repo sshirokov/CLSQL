@@ -1,3 +1,9 @@
+cl-sql (3.8.4-2) unstable; urgency=low
+
+  * debian/control: Change from ${Source-Version} to ${source:Version}
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Fri, 22 Jun 2007 11:00:14 -0600
+
 cl-sql (3.8.4-1) unstable; urgency=low
 
   * Don't load libmysqlclient.so. This is automatically loaded

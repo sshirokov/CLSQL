@@ -16,7 +16,7 @@ Description: SQL Interface for Common Lisp
 
 Package: cl-sql-uffi
 Architecture: any
-Depends: cl-uffi (>= 1.5.11), cl-sql (>= ${Source-Version}), ${shlibs:Depends}
+Depends: cl-uffi (>= 1.5.11), cl-sql (>= ${source:Version}), ${shlibs:Depends}
 Recommends: cl-sql-backend
 Description: Common UFFI functions for CLSQL database backends
  This package provides an interface to several UFFI functions used by multiple
@@ -25,7 +25,7 @@ Description: Common UFFI functions for CLSQL database backends
 
 Package: cl-sql-mysql
 Architecture: any
-Depends: cl-sql (>= ${Source-Version}), cl-sql-uffi (>= ${Source-Version}), ${shlibs:Depends}
+Depends: cl-sql (>= ${source:Version}), cl-sql-uffi (>= ${source:Version}), ${shlibs:Depends}
 Provides: cl-sql-backend
 Description: CLSQL database backend, MySQL
  This package enables you to use the CLSQL data access package
@@ -34,7 +34,7 @@ Description: CLSQL database backend, MySQL
 
 Package: cl-sql-aodbc
 Architecture: all
-Depends: cl-sql (>= ${Source-Version}), cl-sql-mysql, cl-sql-postgresql
+Depends: cl-sql (>= ${source:Version}), cl-sql-mysql, cl-sql-postgresql
 Provides: cl-sql-backend
 Suggests: acl-pro-installer
 Description: CLSQL database backend, AODBC
@@ -44,7 +44,7 @@ Description: CLSQL database backend, AODBC
 
 Package: cl-sql-odbc
 Architecture: all
-Depends: cl-sql (>= ${Source-Version}), unixodbc-dev, cl-sql-mysql, cl-sql-postgresql
+Depends: cl-sql (>= ${source:Version}), unixodbc-dev, cl-sql-mysql, cl-sql-postgresql
 Provides: cl-sql-backend
 Suggests: acl-pro-installer
 Description: CLSQL database backend, ODBC
@@ -54,7 +54,7 @@ Description: CLSQL database backend, ODBC
 
 Package: cl-sql-postgresql
 Architecture: all
-Depends: cl-sql (>= ${Source-Version}), libpq-dev, cl-sql-uffi (>= ${Source-Version})
+Depends: cl-sql (>= ${source:Version}), libpq-dev, cl-sql-uffi (>= ${source:Version})
 Provides: cl-sql-backend
 Description: CLSQL database backend, PostgreSQL
  This package enables you to use the CLSQL data access package
@@ -63,7 +63,7 @@ Description: CLSQL database backend, PostgreSQL
 
 Package: cl-sql-postgresql-socket
 Architecture: all
-Depends: cl-sql (>= ${Source-Version}), cl-md5, cl-sql-uffi (>= ${Source-Version}), libc6-dev
+Depends: cl-sql (>= ${source:Version}), cl-md5, cl-sql-uffi (>= ${source:Version}), libc6-dev
 Provides: cl-sql-backend
 Description: CLSQL database backend, PostgreSQL
  This package enables you to use the CLSQL data access package
@@ -72,7 +72,7 @@ Description: CLSQL database backend, PostgreSQL
 
 Package: cl-sql-sqlite
 Architecture: all
-Depends: cl-sql (>= ${Source-Version}), libsqlite0-dev, cl-sql-uffi (>= ${Source-Version})
+Depends: cl-sql (>= ${source:Version}), libsqlite0-dev, cl-sql-uffi (>= ${source:Version})
 Provides: cl-sql-backend
 Description: CLSQL database backend, SQLite
  This package enables you to use the CLSQL data access package
@@ -81,7 +81,7 @@ Description: CLSQL database backend, SQLite
 
 Package: cl-sql-sqlite3
 Architecture: all
-Depends: cl-sql (>= ${Source-Version}), libsqlite3-dev, cl-sql-uffi (>= ${Source-Version})
+Depends: cl-sql (>= ${source:Version}), libsqlite3-dev, cl-sql-uffi (>= ${source:Version})
 Provides: cl-sql-backend
 Description: CLSQL database backend, SQLite3
  This package enables you to use the CLSQL data access package
@@ -91,7 +91,7 @@ Description: CLSQL database backend, SQLite3
 Package: cl-sql-oracle
 Section: contrib/devel
 Architecture: all
-Depends: cl-sql (>= ${Source-Version}), cl-sql-uffi (>= ${Source-Version})
+Depends: cl-sql (>= ${source:Version}), cl-sql-uffi (>= ${source:Version})
 Provides: cl-sql-backend
 Description: CLSQL database backend, Oracle
  This package enables you to use the CLSQL data access package
