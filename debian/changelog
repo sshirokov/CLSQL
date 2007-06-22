@@ -1,3 +1,10 @@
+cl-sql (3.8.4-1) unstable; urgency=low
+
+  * Don't load libmysqlclient.so. This is automatically loaded
+    when loading clsql_uffi.so. Closes: #427875
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Fri, 22 Jun 2007 10:54:33 -0600
+
 cl-sql (3.8.3-1) unstable; urgency=low
 
   * New upstream

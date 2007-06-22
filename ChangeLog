@@ -1,7 +1,9 @@
-17 Jun 2007  Kevin Rosenberg <kevin@rosenberg.net>
+22 Jun 2007  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.8.4
 	* db-mysql/mysql-loader.lisp: Do not bother loading libmysqlclient since
 	that library is dymically linked to clsql-mysql library. Thus, the mysql
-	library will be automatically loaded.
+	library will be automatically loaded. This has only been tested on Linux,
+	thus far.
 
 29 May 2007  Kevin Rosenberg <kevin@rosenberg.net>
 	* tests/test-fddl.lisp: Add :order-by for :fddl/big/1 as
