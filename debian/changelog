@@ -1,3 +1,10 @@
+cl-sql (3.8.5-1) unstable; urgency=low
+
+  * debian/control: Add libmysqlclient15-dev as dependency for cl-sql-mysql
+    since clsql-mysql modules depends on finding the .so files to load
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Mon, 16 Jul 2007 02:16:22 -0600
+
 cl-sql (3.8.4-2) unstable; urgency=low
 
   * debian/control: Change from ${Source-Version} to ${source:Version}
