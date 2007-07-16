@@ -25,7 +25,7 @@ Description: Common UFFI functions for CLSQL database backends
 
 Package: cl-sql-mysql
 Architecture: any
-Depends: cl-sql (>= ${source:Version}), cl-sql-uffi (>= ${source:Version}), ${shlibs:Depends}
+Depends: cl-sql (>= ${source:Version}), cl-sql-uffi (>= ${source:Version}), ${shlibs:Depends}, libmysqlclient15-dev
 Provides: cl-sql-backend
 Description: CLSQL database backend, MySQL
  This package enables you to use the CLSQL data access package

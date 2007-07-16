@@ -41,12 +41,9 @@ set to the right path before compiling or loading the system.")
   (clsql:push-library-path
    (make-pathname :directory clsql-mysql-system::*library-file-dir*))
 
-  ;; since clsql-mysql is dynamically linked to libmysqlclient, do not need to
-  ;; load libmysqlclient directly
-  ;;
-  ;;(clsql-uffi:find-and-load-foreign-library *mysql-library-candidate-names*
-  ;;                                          :module "mysql"
-  ;;                                          :supporting-libraries *mysql-supporting-libraries*)
+  (clsql-uffi:find-and-load-foreign-library *mysql-library-candidate-names*
+                                            :module "mysql"
+                                            :supporting-libraries *mysql-supporting-libraries*)
 
   (clsql-uffi:find-and-load-foreign-library *clsql-mysql-library-candidate-names*
                                             :module "clsql-mysql"

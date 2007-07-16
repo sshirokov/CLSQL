@@ -1,3 +1,10 @@
+15 Jul 2007  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.8.5
+	* db-mysql/mysql-loader.lisp: Revert previous change since libmysql is
+	not dynamically loaded on Windows
+	* debian/control: Add libmysqlclient15-dev as dependency for cl-sql-mysql
+	since clsql-mysql modules depends on finding the .so files to load
+	
 22 Jun 2007  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.8.4
 	* db-mysql/mysql-loader.lisp: Do not bother loading libmysqlclient since
