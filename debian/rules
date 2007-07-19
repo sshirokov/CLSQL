@@ -88,7 +88,7 @@ clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-arch-stamp build-indep-stamp configure-stamp
-	-$(MAKE) clean
+	[ ! -f Makefile ] || $(MAKE) distclean
 	find . -type f -and -name \*~ -or -name .\*~ -exec rm -f {} \;
 	dh_clean
 
