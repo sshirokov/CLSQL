@@ -1,3 +1,9 @@
+cl-sql (3.8.5-2) unstable; urgency=low
+
+  * debian/watch: New version
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Wed, 18 Jul 2007 20:26:08 -0600
+
 cl-sql (3.8.5-1) unstable; urgency=low
 
   * debian/control: Add libmysqlclient15-dev as dependency for cl-sql-mysql

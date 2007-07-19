@@ -1,5 +1,2 @@
-# Example watch control file for uscan
-# Rename this file to "watch" and then you can run the "uscan" command
-# to check for upstream updates and more.
-# Site		Directory		Pattern			Version	Script
-clsql.med-info.com	/	clsql-(.*)\.tar\.gz	debian	uupdate
+version=3
+http://files.b9.com/clsql/clsql-([\d\.]*)\.tar\.gz	debian	uupdate
