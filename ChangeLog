@@ -1,3 +1,17 @@
+20 Jul 2007  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 3.8.6
+	* db-oracle/oracle-loader.lisp: Rework use of ORACLE_HOME directory
+	(problem noted on clsql-devel by icardo Boccato Alves)
+	* sql/pool.lisp: Remove incorrect keyword
+	* sql/database.lisp: Rework WITH-DATABASE to not make the database the
+	default database (reported by Saurabh Nanda and Chaitanya Gupta)
+	* doc/ref-connect.lisp: Update the documentation to WITH-DATABASE to emphasis
+	that make-default has a default value of nil.
+	* sql/transaction.lisp: Adjust commit/rollback messages for Microsoft SQL Server.
+	(patch from Nathan Bird)
+	* sql/metaclasses.lisp: Use finalize-inheritance hack on SBCL because of trouble with
+	def-view-class compilations (patch from Nathan Bird)
+	
 15 Jul 2007  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.8.5
 	* db-mysql/mysql-loader.lisp: Revert previous change since libmysql is

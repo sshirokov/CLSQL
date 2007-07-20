@@ -2082,7 +2082,12 @@ Error: While trying to access database localhost/test2/root
         <varlistentry>
           <term><parameter>connect-args</parameter></term>
           <listitem>
-            <para>Other optional arguments to <function>connect</function>. 
+            <para>Other optional arguments to
+            <function>connect</function>. This macro use a value of
+            &nil; for <function>connect</function>'s
+            <replaceable>make-default</replaceable> key, This is in
+            contrast to to the connect function which has a default
+            value of &t; for <replaceable>make-default</replaceable>.
             </para>
           </listitem>
         </varlistentry>

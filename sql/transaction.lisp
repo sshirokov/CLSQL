@@ -54,11 +54,16 @@ is called on DATABASE which defaults to *DEFAULT-DATABASE*."
         (:mssql (execute-command "BEGIN TRANSACTION" :database database))
         (t (execute-command "BEGIN" :database database))))))
 
+;;ODBC should potentially be using it's scheme for transactions:
+;; turn off autocommit for begin. then use sqlendtran (or maybe sqltransact)
+;; whatever is appropriate for this version of odbc.
 (defmethod database-commit-transaction ((database database))
   (with-slots (transaction transaction-level autocommit) database
     (if (plusp transaction-level)
         (when (zerop (decf transaction-level))
-	  (execute-command "COMMIT" :database database)
+	  (case (database-underlying-type database)
+	    (:mssql (execute-command "COMMIT TRANSACTION" :database database))
+	    (t (execute-command "COMMIT" :database database)))
 	  (setf autocommit (previous-autocommit transaction))
           (map nil #'funcall (commit-hooks transaction)))
         (warn 'sql-warning
@@ -71,7 +76,9 @@ is called on DATABASE which defaults to *DEFAULT-DATABASE*."
     (if (plusp transaction-level)
         (when (zerop (decf transaction-level))
           (unwind-protect
-               (execute-command "ROLLBACK" :database database)
+	       (case (database-underlying-type database)
+		 (:mssql (execute-command "ROLLBACK TRANSACTION" :database database))
+		 (t (execute-command "ROLLBACK" :database database)))
 	    (setf autocommit (previous-autocommit transaction))
             (map nil #'funcall (rollback-hooks transaction))))
         (warn 'sql-warning

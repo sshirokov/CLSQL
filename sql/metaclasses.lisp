@@ -192,13 +192,13 @@
       (setq all-slots (remove-if #'not-db-col all-slots))
       (setq all-slots (stable-sort all-slots #'string< :key #'car))
       (setf (object-definition class) all-slots))
-    #-allegro
+    #-(or sbcl allegro)
     (setf (key-slots class) (remove-if-not (lambda (slot)
 					     (eql (slot-value slot 'db-kind)
 						  :key))
 					   (ordered-class-slots class)))))
 
-#+allegro
+#+(or sbcl allegro)
 (defmethod finalize-inheritance :after ((class standard-db-class))
   (setf (key-slots class) (remove-if-not (lambda (slot)
 					   (eql (slot-value slot 'db-kind)

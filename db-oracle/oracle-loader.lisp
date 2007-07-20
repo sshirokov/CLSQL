@@ -23,13 +23,7 @@
   "Pathname of ORACLE_HOME as set in user environment.")
 
 (defparameter *oracle-client-library-filenames*
-  (list* "libclntsh" "oci"
-         (when *oracle-home*
-           (loop for dir-name in '("lib" "bin")
-                 nconc (loop for lib-name in '("libclntsh" "oci")
-                             collect (make-pathname :defaults lib-name
-                                                    :directory (append (pathname-directory *oracle-home*)
-                                                                       (list dir-name))))))))
+  (list "libclntsh" "oci"))
 
 (defvar *oracle-supporting-libraries* '("c")
   "Used only by CMU. List of library flags needed to be passed to ld to
@@ -43,6 +37,14 @@ set to the right path before compiling or loading the system.")
   *oracle-library-loaded*)
 
 (defmethod clsql-sys:database-type-load-foreign ((database-type (eql :oracle)))
+  (when *oracle-home*
+    (dolist (dir-name '("lib" "bin"))
+      (dolist (lib-name '("libclntsh" "oci"))
+        (clsql:push-library-path
+         (make-pathname :name lib-name
+                        :directory (append (pathname-directory *oracle-home*)
+                                           (list dir-name)))))))
+
   (clsql-uffi:find-and-load-foreign-library *oracle-client-library-filenames*
                                             :module "clsql-oracle"
                                             :supporting-libraries *oracle-supporting-libraries*)

@@ -36,17 +36,4 @@
      "dbname/user@hostname")
   ("hostname" "dbname" "user"))
 
-(deftest :db/1
-    (let ((inner-db-same)
-          (original-a)
-          (outer-db-unchanged))
-      (print "test-connection-spec")
-      (print *test-connection-spec*)
-      (clsql:with-database (a '*test-connection-spec* :database-type *test-connection-db-type*)
-        (setq original-a a)
-        (clsql:with-database (b '*test-connection-spec* :database-type *test-connection-db-type*)
-          (setq inner-db-same (eq a b)))
-        (setq outer-db-unchanged (eq a original-a))))
-  t t)
-
 ))

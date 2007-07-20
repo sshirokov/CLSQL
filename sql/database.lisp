@@ -307,13 +307,20 @@ system specified by DATABASE-TYPE."
     (setq connection-spec (string-to-list-connection-spec connection-spec)))
   (database-list connection-spec database-type))
 
-(defmacro with-database ((db-var connection-spec &rest connect-args) &body body)
+(defmacro with-database ((db-var connection-spec
+                                 &key make-default pool
+                                 (if-exists *connect-if-exists*)
+                                 (database-type *default-database-type*))
+                                 &body body)
   "Evaluate the body in an environment, where DB-VAR is bound to the
 database connection given by CONNECTION-SPEC and CONNECT-ARGS.  The
 connection is automatically closed or released to the pool on exit
-from the body."
-  (unless db-var (setf db-var '*default-database*))
-  `(let ((,db-var (connect ,connection-spec ,@connect-args)))
+from the body. MAKE-DEFAULT has a default value of NIL."
+  `(let ((,db-var (connect ,connection-spec
+                           :database-type ,database-type
+                           :if-exists ,if-exists
+                           :pool ,pool
+                           :make-default ,make-default)))
      (unwind-protect
       (let ((,db-var ,db-var))
         (progn ,@body))
