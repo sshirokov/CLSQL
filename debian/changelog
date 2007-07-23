@@ -1,3 +1,21 @@
+cl-sql (3.8.6.1-2) unstable; urgency=low
+
+  * debian/control: Tighten version dependencies. Convert source:Version to 
+  binary:Version for any-to-any dependencies. Revert changes in 3.8.6.1-1
+  (closes:434358)
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Mon, 23 Jul 2007 11:59:21 -0600
+
+cl-sql (3.8.6.1-1) unstable; urgency=low
+
+  * debian/control: Change architecture of binary packages which
+  depend on cl-sql-uffi from 'all' to 'any' since cl-sql-uffi is 'any'.
+  Without this change, packages which depend on cl-sql-uffi can become
+  uninstallable if the autobuilder fails to build the 'any' cl-sql-uffi
+  and the dependant 'all' package gets upgraded. (closes: 433907)
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sun, 22 Jul 2007 11:37:13 -0600
+
 cl-sql (3.8.6-1) unstable; urgency=low
 
   * New upstream
