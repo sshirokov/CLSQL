@@ -54,7 +54,7 @@ Description: CLSQL database backend, ODBC
 
 Package: cl-sql-postgresql
 Architecture: all
-Depends: cl-sql (= ${source:Version}), libpq-dev, cl-sql-uffi (= ${source:Version})
+Depends: cl-sql (= ${source:Version}), libpq-dev, cl-sql-uffi (>= ${source:Version})
 Provides: cl-sql-backend
 Description: CLSQL database backend, PostgreSQL
  This package enables you to use the CLSQL data access package
@@ -63,7 +63,7 @@ Description: CLSQL database backend, PostgreSQL
 
 Package: cl-sql-postgresql-socket
 Architecture: all
-Depends: cl-sql (= ${source:Version}), cl-md5, cl-sql-uffi (= ${source:Version}), libc6-dev
+Depends: cl-sql (= ${source:Version}), cl-md5, cl-sql-uffi (>= ${source:Version}), libc6-dev
 Provides: cl-sql-backend
 Description: CLSQL database backend, PostgreSQL
  This package enables you to use the CLSQL data access package
@@ -72,7 +72,7 @@ Description: CLSQL database backend, PostgreSQL
 
 Package: cl-sql-sqlite
 Architecture: all
-Depends: cl-sql (= ${source:Version}), libsqlite0-dev, cl-sql-uffi (= ${source:Version})
+Depends: cl-sql (= ${source:Version}), libsqlite0-dev, cl-sql-uffi (>= ${source:Version})
 Provides: cl-sql-backend
 Description: CLSQL database backend, SQLite
  This package enables you to use the CLSQL data access package
@@ -81,7 +81,7 @@ Description: CLSQL database backend, SQLite
 
 Package: cl-sql-sqlite3
 Architecture: all
-Depends: cl-sql (= ${source:Version}), libsqlite3-dev, cl-sql-uffi (= ${source:Version})
+Depends: cl-sql (= ${source:Version}), libsqlite3-dev, cl-sql-uffi (>= ${source:Version})
 Provides: cl-sql-backend
 Description: CLSQL database backend, SQLite3
  This package enables you to use the CLSQL data access package
@@ -91,7 +91,7 @@ Description: CLSQL database backend, SQLite3
 Package: cl-sql-oracle
 Section: contrib/devel
 Architecture: all
-Depends: cl-sql (= ${source:Version}), cl-sql-uffi (= ${source:Version})
+Depends: cl-sql (= ${source:Version}), cl-sql-uffi (>= ${source:Version})
 Provides: cl-sql-backend
 Description: CLSQL database backend, Oracle
  This package enables you to use the CLSQL data access package
@@ -109,4 +109,3 @@ Description: Testing suite for CLSQL
  required to test the clsql-aodbc interface. See the
  /usr/share/doc/cl-sql-tests/README file if you want to try
  running these regression tests.
-
