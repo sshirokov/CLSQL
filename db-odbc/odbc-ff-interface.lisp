@@ -50,7 +50,7 @@
     ((hdbc sql-handle)          ; HDBC        hdbc
      (*szDSN :cstring)        ; UCHAR  FAR *szDSN
      (cbDSN :short)             ; SWORD       cbDSN
-     (*szUID :cstring)        ; UCHAR  FAR *szUID 
+     (*szUID :cstring)        ; UCHAR  FAR *szUID
      (cbUID :short)             ; SWORD       cbUID
      (*szAuthStr :cstring)    ; UCHAR  FAR *szAuthStr
      (cbAuthStr :short)         ; SWORD       cbAuthStr
@@ -75,7 +75,7 @@
     ((hdbc sql-handle))         ; HDBC        hdbc
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
-  
+
 ;; deprecated
 (def-function "SQLAllocStmt"
     ((hdbc sql-handle)          ; HDBC        hdbc
@@ -300,7 +300,7 @@
   :module "odbc"
   :returning :short)              ; RETCODE_SQL_API
 
-					; level 2
+                                        ; level 2
 (def-function "SQLExtendedFetch"
     ((hstmt sql-handle)         ; HSTMT       hstmt
      (fFetchType :short)        ; UWORD       fFetchType
@@ -333,11 +333,11 @@
 
 ;;; foreign type definitions
 
-;;(defmacro %sql-len-data-at-exec (length) 
+;;(defmacro %sql-len-data-at-exec (length)
 ;;  `(- $SQL_LEN_DATA_AT_EXEC_OFFSET ,length))
 
 
-(def-struct sql-c-time 
+(def-struct sql-c-time
     (hour   :short)
   (minute :short)
   (second :short))
@@ -346,7 +346,7 @@
     (year  :short)
   (month :short)
   (day   :short))
-  
+
 (def-struct sql-c-timestamp
     (year     :short)
   (month    :short)

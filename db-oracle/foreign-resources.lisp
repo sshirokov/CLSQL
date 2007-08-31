@@ -17,36 +17,36 @@
 
 (defstruct (foreign-resource)
   (type (error "Missing TYPE.")
-	:read-only t)
+        :read-only t)
   (sizeof (error "Missing SIZEOF.")
-	  :read-only t)
+          :read-only t)
   (buffer (error "Missing BUFFER.")
-	  :read-only t)
+          :read-only t)
   (in-use nil :type boolean))
 
 
 (defun %get-resource (type sizeof)
   (let ((resources (gethash type *foreign-resource-hash*)))
     (car (member-if
-	  #'(lambda (res)
-	      (and (= (foreign-resource-sizeof res) sizeof)
-		   (not (foreign-resource-in-use res))))
-	  resources))))
+          #'(lambda (res)
+              (and (= (foreign-resource-sizeof res) sizeof)
+                   (not (foreign-resource-in-use res))))
+          resources))))
 
 (defun %insert-foreign-resource (type res)
   (let ((resource (gethash type *foreign-resource-hash*)))
     (setf (gethash type *foreign-resource-hash*)
-	  (cons res resource))))
+          (cons res resource))))
 
 (defmacro acquire-foreign-resource (type &optional size)
   `(let ((res (%get-resource ,type ,size)))
      (unless res
        (setf res (make-foreign-resource
-		  :type ,type :sizeof ,size
-		  :buffer (uffi:allocate-foreign-object ,type ,size)))
+                  :type ,type :sizeof ,size
+                  :buffer (uffi:allocate-foreign-object ,type ,size)))
        (%insert-foreign-resource ',type res))
      (claim-foreign-resource res)))
-	       
+
 (defun free-foreign-resource (ares)
   (setf (foreign-resource-in-use ares) nil)
   ares)

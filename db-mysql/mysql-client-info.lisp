@@ -32,15 +32,15 @@
 
 
   (when (and (stringp *mysql-client-info*)
-	     (plusp (length *mysql-client-info*)))
+             (plusp (length *mysql-client-info*)))
     (cond
       ((eql (schar *mysql-client-info* 0) #\3)
        (pushnew :mysql-client-v3 cl:*features*))
       ((eql (schar *mysql-client-info* 0) #\4)
        (pushnew :mysql-client-v4 cl:*features*)
        (when (and (>= (length *mysql-client-info*) 3)
-		  (string-equal "4.1" *mysql-client-info* :end2 3))
-	 (pushnew :mysql-client-v4.1 cl:*features*)))
+                  (string-equal "4.1" *mysql-client-info* :end2 3))
+         (pushnew :mysql-client-v4.1 cl:*features*)))
       ((eql (schar *mysql-client-info* 0) #\5)
        (pushnew :mysql-client-v5 cl:*features*))
       (t

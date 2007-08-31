@@ -49,7 +49,7 @@
      ;; Used by PQresultErrorField to get the sql error code
      #:+PG-DIAG-SQLSTATE+
 
-     
+
      ;; Functions
      #:PQsetdbLogin
      #:PQlogin
@@ -74,7 +74,7 @@
      #:PQgetisnull
      #:PQclear
      #:PQisBusy
-     
+
      ;;Large Objects (Marc B)
      #:lo-create
      #:lo-open

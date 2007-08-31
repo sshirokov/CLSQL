@@ -43,7 +43,7 @@ the current syntax state."
     (%disable-sql-reader-syntax)))
 
 (defun %disable-sql-reader-syntax ()
-  (when *original-readtable* 
+  (when *original-readtable*
     (setf *readtable* *original-readtable*
           *original-readtable* nil))
   (values))
@@ -89,42 +89,42 @@ reader syntax is disabled."
   (let ((sqllist (read-delimited-list #\] stream t)))
     (unless *read-suppress*
       (handler-case
-	  (cond ((string= (write-to-string (car sqllist)) "||")
-		 (cons (sql-operator 'concat-op) (cdr sqllist)))
-		((and (= (length sqllist) 1) (eql (car sqllist) '*))
-		 (apply #'generate-sql-reference sqllist))
-		((sql-operator (car sqllist))
-		 (cons (sql-operator (car sqllist)) (cdr sqllist)))
-		(t (apply #'generate-sql-reference sqllist)))
-	(sql-user-error (c)
-	  (error 'sql-user-error
-		 :message (format nil "Error ~A occured while attempting to parse '~A' at file position ~A"
-				  (sql-user-error-message c) sqllist (file-position stream))))))))
+          (cond ((string= (write-to-string (car sqllist)) "||")
+                 (cons (sql-operator 'concat-op) (cdr sqllist)))
+                ((and (= (length sqllist) 1) (eql (car sqllist) '*))
+                 (apply #'generate-sql-reference sqllist))
+                ((sql-operator (car sqllist))
+                 (cons (sql-operator (car sqllist)) (cdr sqllist)))
+                (t (apply #'generate-sql-reference sqllist)))
+        (sql-user-error (c)
+          (error 'sql-user-error
+                 :message (format nil "Error ~A occured while attempting to parse '~A' at file position ~A"
+                                  (sql-user-error-message c) sqllist (file-position stream))))))))
 
 (defun generate-sql-reference (&rest arglist)
-  (cond ((= (length arglist) 1)	; string, table or attribute
-	 (if (stringp (car arglist))
-	     (sql-expression :string (car arglist))
+  (cond ((= (length arglist) 1) ; string, table or attribute
+         (if (stringp (car arglist))
+             (sql-expression :string (car arglist))
              (sql-expression :attribute (car arglist))))
-	((<= 2 (length arglist))
-	 (let ((sqltype (when (keywordp (caddr arglist)) (caddr arglist) nil)))
+        ((<= 2 (length arglist))
+         (let ((sqltype (when (keywordp (caddr arglist)) (caddr arglist) nil)))
            (cond
              ((stringp (cadr arglist))
-	     (sql-expression :table (car arglist)
-			     :alias (cadr arglist)
-			     :type sqltype))
-	    ((keywordp (cadr arglist))
-	     (sql-expression :attribute (car arglist)
-			     :type (cadr arglist)))
-	    (t
-	     (sql-expression :attribute (cadr arglist)
-			     :table (car arglist)
-			     :type sqltype)))))
-	(t
-	 (error 'sql-user-error :message "bad expression syntax"))))
+             (sql-expression :table (car arglist)
+                             :alias (cadr arglist)
+                             :type sqltype))
+            ((keywordp (cadr arglist))
+             (sql-expression :attribute (car arglist)
+                             :type (cadr arglist)))
+            (t
+             (sql-expression :attribute (cadr arglist)
+                             :table (car arglist)
+                             :type sqltype)))))
+        (t
+         (error 'sql-user-error :message "bad expression syntax"))))
 
 
-;; Exported functions for dealing with SQL syntax 
+;; Exported functions for dealing with SQL syntax
 
 (defun sql (&rest args)
   "Returns an SQL string generated from the expressions ARGS. The
@@ -176,8 +176,8 @@ function and the remaining values in ARGS its arguments as
 strings."
   (if (sql-operator operator)
       (apply (symbol-function (sql-operator operator)) args)
-      (error 'sql-user-error 
-             :message 
+      (error 'sql-user-error
+             :message
              (format nil "~A is not a recognized SQL operator." operator))))
 
 

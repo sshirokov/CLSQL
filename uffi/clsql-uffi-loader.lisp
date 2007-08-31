@@ -24,24 +24,24 @@ well as any of the filenames in any of the clsql:*foreign-library-search-paths*"
   (setq filenames (if (listp filenames) filenames (list filenames)))
 
   (flet ((try-load (testpath)
-	   (handler-case
-	       (uffi:load-foreign-library testpath
-					  :module module
-					  :supporting-libraries supporting-libraries)
-	     (error nil)))) ;(c) (warn "~A" c) nil))))
+           (handler-case
+               (uffi:load-foreign-library testpath
+                                          :module module
+                                          :supporting-libraries supporting-libraries)
+             (error nil)))) ;(c) (warn "~A" c) nil))))
     (or
      (loop for type in (uffi:foreign-library-types)
-	   thereis
-	   (loop for name in filenames
-		 for pn = (make-pathname :name name :type type)
-		 thereis (or
+           thereis
+           (loop for name in filenames
+                 for pn = (make-pathname :name name :type type)
+                 thereis (or
                           (try-load pn)
-			  (loop for search-path in clsql:*foreign-library-search-paths*
-				thereis (try-load (merge-pathnames pn search-path))))))
+                          (loop for search-path in clsql:*foreign-library-search-paths*
+                                thereis (try-load (merge-pathnames pn search-path))))))
      (when errorp
        (error "Couldn't load foreign librar~@P ~{~S~^, ~}. (searched ~S)"
-	      (length filenames) filenames
-	      'clsql:*foreign-library-search-paths*)))))
+              (length filenames) filenames
+              'clsql:*foreign-library-search-paths*)))))
 
 ;; searches clsql_uffi64 to accomodate both 32-bit and 64-bit libraries on same system
 (defvar *clsql-uffi-library-filenames*

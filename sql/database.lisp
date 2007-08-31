@@ -61,18 +61,18 @@ error is signalled."
            (cerror "Return nil."
                    'sql-database-error
                    :message
-		   (format nil "There exists ~A database called ~A."
-			   (if (zerop count) "no" "more than one")
-			   database)))))
+                   (format nil "There exists ~A database called ~A."
+                           (if (zerop count) "no" "more than one")
+                           database)))))
     (null
      (error "A database must be specified rather than NIL."))))
 
 
 (defun connect (connection-spec
-		&key (if-exists *connect-if-exists*)
-		(make-default t)
+                &key (if-exists *connect-if-exists*)
+                (make-default t)
                 (pool nil)
-		(database-type *default-database-type*))
+                (database-type *default-database-type*))
   "Connects to a database of the supplied DATABASE-TYPE which
 defaults to *DEFAULT-DATABASE-TYPE*, using the type-specific
 connection specification CONNECTION-SPEC. The value of IF-EXISTS,
@@ -97,9 +97,9 @@ be taken from this pool."
 
   (unless (member database-type *loaded-database-types*)
     (asdf:operate 'asdf:load-op (ensure-keyword
-				 (concatenate 'string
-					      (symbol-name '#:clsql-)
-					      (symbol-name database-type)))))
+                                 (concatenate 'string
+                                              (symbol-name '#:clsql-)
+                                              (symbol-name database-type)))))
 
   (if pool
       (let ((conn (acquire-from-pool connection-spec database-type pool)))
@@ -116,17 +116,17 @@ be taken from this pool."
                (setq result
                      (database-connect connection-spec database-type))
                (warn 'sql-warning
-		     :message
-		     (format nil
-			     "Created new connection ~A to database ~A~%, although there is an existing connection (~A)."
-			     result (database-name result) old-db)))
-	      (:error
+                     :message
+                     (format nil
+                             "Created new connection ~A to database ~A~%, although there is an existing connection (~A)."
+                             result (database-name result) old-db)))
+              (:error
                (restart-case
-		   (error 'sql-connection-error
-			  :message
-			  (format nil "There is an existing connection ~A to database ~A."
-			  old-db
-			  (database-name old-db)))
+                   (error 'sql-connection-error
+                          :message
+                          (format nil "There is an existing connection ~A to database ~A."
+                          old-db
+                          (database-name old-db)))
                  (create-new ()
                    :report "Create a new connection."
                    (setq result
@@ -137,17 +137,17 @@ be taken from this pool."
               (:warn-old
                (setq result old-db)
                (warn 'sql-warning
-		     :message
-		     (format nil
-			     "Using existing connection ~A to database ~A."
-			     old-db
-			     (database-name old-db))))
+                     :message
+                     (format nil
+                             "Using existing connection ~A to database ~A."
+                             old-db
+                             (database-name old-db))))
               (:old
                (setq result old-db)))
             (setq result
                   (database-connect connection-spec database-type)))
         (when result
-	  (setf (slot-value result 'state) :open)
+          (setf (slot-value result 'state) :open)
           (pushnew result *connected-databases*)
           (when make-default (setq *default-database* result))
           result))))
@@ -194,10 +194,10 @@ is called by database backends."
      (error 'sql-user-error
       :message
       (format nil
-	      "The connection specification ~A~%is invalid for database type ~A.~%The connection specification must conform to ~A"
-	      ,connection-spec
-	      ,database-type
-	      (quote ,template))))))
+              "The connection specification ~A~%is invalid for database type ~A.~%The connection specification must conform to ~A"
+              ,connection-spec
+              ,database-type
+              (quote ,template))))))
 
 (defun reconnect (&key (database *default-database*) (error nil) (force t))
   "Reconnects DATABASE which defaults to *DEFAULT-DATABASE* to
@@ -213,21 +213,21 @@ closed, if FORCE is non-nil, as it is by default, the connection
 is closed and errors are suppressed. If force is nil and the
 database connection cannot be closed, an error is signalled."
   (let ((db (etypecase database
-	      (database database)
-	      ((or string list)
-	       (let ((db (find-database database :errorp nil)))
-		 (when (null db)
-		   (if (and database error)
-		       (error 'sql-connection-error
-			      :message
-			      (format nil "Unable to find database with connection-spec ~A." database))
-		       (return-from reconnect nil)))
-		 db)))))
+              (database database)
+              ((or string list)
+               (let ((db (find-database database :errorp nil)))
+                 (when (null db)
+                   (if (and database error)
+                       (error 'sql-connection-error
+                              :message
+                              (format nil "Unable to find database with connection-spec ~A." database))
+                       (return-from reconnect nil)))
+                 db)))))
 
     (when (is-database-open db)
       (if force
-	  (ignore-errors (disconnect :database db))
-	  (disconnect :database db :error nil)))
+          (ignore-errors (disconnect :database db))
+          (disconnect :database db :error nil)))
 
     (connect (connection-spec db))))
 
@@ -240,24 +240,24 @@ database is printed."
   (flet ((get-data ()
            (let ((data '()))
              (dolist (db (connected-databases) data)
-	       (push
-		(append
-		 (list (if (equal db *default-database*) "*" "")
-		       (database-name db)
-		       (string-downcase (string (database-type db)))
-		       (cond ((and (command-recording-stream db)
-				   (result-recording-stream db))
-			      "Both")
-			     ((command-recording-stream db) "Commands")
-			     ((result-recording-stream db) "Results")
-			     (t "nil")))
-		 (when full
-		   (list
-		    (if (conn-pool db) "t" "nil")
-		    (format nil "~A" (length (database-list-tables db)))
-		    (format nil "~A" (length (database-list-views db))))))
-		data))))
-	 (compute-sizes (data)
+               (push
+                (append
+                 (list (if (equal db *default-database*) "*" "")
+                       (database-name db)
+                       (string-downcase (string (database-type db)))
+                       (cond ((and (command-recording-stream db)
+                                   (result-recording-stream db))
+                              "Both")
+                             ((command-recording-stream db) "Commands")
+                             ((result-recording-stream db) "Results")
+                             (t "nil")))
+                 (when full
+                   (list
+                    (if (conn-pool db) "t" "nil")
+                    (format nil "~A" (length (database-list-tables db)))
+                    (format nil "~A" (length (database-list-views db))))))
+                data))))
+         (compute-sizes (data)
            (mapcar #'(lambda (x) (apply #'max (mapcar #'length x)))
                    (apply #'mapcar (cons #'list data))))
          (print-separator (size)
@@ -266,9 +266,9 @@ database is printed."
     (let ((data (get-data)))
       (when data
         (let* ((titles (if full
-			   (list "" "DATABASE" "TYPE" "RECORDING" "POOLED"
-				 "TABLES" "VIEWS")
-			   (list "" "DATABASE" "TYPE" "RECORDING")))
+                           (list "" "DATABASE" "TYPE" "RECORDING" "POOLED"
+                                 "TABLES" "VIEWS")
+                           (list "" "DATABASE" "TYPE" "RECORDING")))
                (sizes (compute-sizes (cons titles data)))
                (total-size (+ (apply #'+ sizes) (* 2 (1- (length titles)))))
                (control-string (format nil "~~&~~{~{~~~AA  ~}~~}" sizes)))

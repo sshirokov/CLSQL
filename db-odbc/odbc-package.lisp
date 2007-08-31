@@ -20,7 +20,7 @@
 
 (defpackage #:odbc
   (:use #:cl #:uffi)
-  (:export 
+  (:export
      #:database-library-loaded
 
      #:*null*

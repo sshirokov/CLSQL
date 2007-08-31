@@ -21,12 +21,12 @@
 
 ;;;; Load sqlite3-utils.so library. See Makefile for library creation.
 (unless (uffi:load-foreign-library "/usr/lib/clsql/sqlite3-utils.so"
-				   :module "sqlite3-utils"
-				   :supporting-libraries '("c"))
+                                   :module "sqlite3-utils"
+                                   :supporting-libraries '("c"))
   (error "Unable to load foreign library"))
 
 ;;;; Define the foreign function to be used as init function.
-(uffi:def-function 
+(uffi:def-function
     ("create_iso_8859_15_ci_collation" create-coll)
     ((db sqlite3:sqlite3-db))
   :returning :int
@@ -39,7 +39,7 @@
 
 ;;;; Create a table. Field f2 uses the newly defined collating
 ;;;; sequence.
-(clsql:execute-command 
+(clsql:execute-command
  "CREATE TABLE t1 (f1 CHAR(1), f2 CHAR(1) COLLATE ISO_8859_15_CI)")
 
 ;;;; Populate the table.
@@ -61,10 +61,10 @@
 
 ;;;; Perform some SELECTs.
 (format t "~&SELECT * FROM t1 ==> ~A~%"(clsql:query "SELECT * FROM t1"))
-(format t "~&SELECT * FROM t1 ORDER BY f1 ==> ~A~%" 
-	(clsql:query "SELECT * FROM t1 ORDER BY f1"))
-(format t "~&SELECT * FROM t1 ORDER BY f2 ==> ~A~%" 
-	(clsql:query "SELECT * FROM t1 ORDER BY f2"))
+(format t "~&SELECT * FROM t1 ORDER BY f1 ==> ~A~%"
+        (clsql:query "SELECT * FROM t1 ORDER BY f1"))
+(format t "~&SELECT * FROM t1 ORDER BY f2 ==> ~A~%"
+        (clsql:query "SELECT * FROM t1 ORDER BY f2"))
 
 ;;;; Disconnect from database.
 (clsql:disconnect)

@@ -4,8 +4,8 @@
 ;;;;
 ;;;; Name:          postgresql.cl
 ;;;; Purpose:       Low-level PostgreSQL interface using UFFI
-;;;; Programmers:   Kevin M. Rosenberg based on 
-;;;;                Original code by Pierre R. Mai 
+;;;; Programmers:   Kevin M. Rosenberg based on
+;;;;                Original code by Pierre R. Mai
 ;;;; Date Started:  Feb 2002
 ;;;;
 ;;;; $Id$
@@ -35,7 +35,7 @@
 
 (uffi:def-foreign-type pgsql-oid :unsigned-int)
 
-(uffi:def-enum pgsql-conn-status-type 
+(uffi:def-enum pgsql-conn-status-type
     (:connection-ok
      :connection-bad))
 
@@ -61,7 +61,7 @@
      (:int8 20)
      (:float4 700)
      (:float8 701)))
-  
+
 ;;(declaim (inline PQsetdbLogin)) ;; causes compile error in LW 4.2.0
 (uffi:def-function ("PQsetdbLogin" PQsetdbLogin)
   ((pghost :cstring)
@@ -147,7 +147,7 @@
   :returning :cstring)
 
 (declaim (inline PQntuples))
-(uffi:def-function ("PQntuples" PQntuples) 
+(uffi:def-function ("PQntuples" PQntuples)
   ((res pgsql-result))
   :module "postgresql"
   :returning :int)

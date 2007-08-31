@@ -19,15 +19,15 @@
 #include <windows.h>
 
 BOOL WINAPI DllEntryPoint(HINSTANCE hinstdll, DWORD fdwReason,
-			  LPVOID lpvReserved)
+                          LPVOID lpvReserved)
 {
         return 1;
 }
-       
+
 #define DLLEXPORT __declspec(dllexport)
 
 #else
-#define DLLEXPORT 
+#define DLLEXPORT
 #endif
 
 
@@ -69,7 +69,7 @@ atol64 (const unsigned char* str, unsigned int* pHigh32)
   return lower_32bits(result);
 }
 
-  
-  
+
+
 
 

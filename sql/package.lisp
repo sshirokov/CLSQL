@@ -27,7 +27,7 @@
 
   #+cmu
   (if (eq (symbol-package 'pcl:find-class)
-	  (find-package 'common-lisp))
+          (find-package 'common-lisp))
       (pushnew :clsql-cmucl-mop cl:*features*)
       (pushnew :clsql-cmucl-pcl cl:*features*)))
 
@@ -35,13 +35,13 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defpackage #:clsql-sys
     (:use #:common-lisp
-	  #+clsql-sbcl-mop #:sb-mop
-	  #+clsql-cmucl-mop #:mop
-	  #+allegro #:mop
-	  #+clisp #:clos
-	  #+lispworks #:clos
-	  #+scl #:clos
-	  #+openmcl #:openmcl-mop)
+          #+clsql-sbcl-mop #:sb-mop
+          #+clsql-cmucl-mop #:mop
+          #+allegro #:mop
+          #+clisp #:clos
+          #+lispworks #:clos
+          #+scl #:clos
+          #+openmcl #:openmcl-mop)
 
     #+allegro
     (:shadowing-import-from
@@ -233,22 +233,22 @@
          #:*foreign-library-search-paths*
          #:push-library-path
 
-	 ;; Condition system (conditions.lisp)
-	 #:sql-user-error
-	 #:sql-database-error
-	 #:sql-database-data-error
-	 #:sql-connection-error
-	 #:sql-temporary-error
+         ;; Condition system (conditions.lisp)
+         #:sql-user-error
+         #:sql-database-error
+         #:sql-database-data-error
+         #:sql-connection-error
+         #:sql-temporary-error
          #:sql-timeout-error
          #:sql-fatal-error
-	 #:sql-error-error-id
-	 #:sql-error-secondary-error-id
-	 #:sql-error-database-message
-	 ;; CLSQL Extensions
-	 #:sql-condition
-	 #:sql-error
-	 #:sql-warning
-	 #:sql-database-warning
+         #:sql-error-error-id
+         #:sql-error-secondary-error-id
+         #:sql-error-database-message
+         ;; CLSQL Extensions
+         #:sql-condition
+         #:sql-error
+         #:sql-warning
+         #:sql-database-warning
          #:sql-error-database
          #:sql-error-database-type
          #:sql-error-connection-spec
@@ -292,50 +292,50 @@
          #:start-sql-recording
          #:stop-sql-recording
 
-	 ;; FDDL (fddl.lisp)
-	 #:create-table
-	 #:drop-table
-	 #:list-tables
-	 #:table-exists-p
-	 #:list-attributes
-	 #:attribute-type
-	 #:list-attribute-types
-	 #:create-view
-	 #:drop-view
-	 #:create-index
-	 #:drop-index
+         ;; FDDL (fddl.lisp)
+         #:create-table
+         #:drop-table
+         #:list-tables
+         #:table-exists-p
+         #:list-attributes
+         #:attribute-type
+         #:list-attribute-types
+         #:create-view
+         #:drop-view
+         #:create-index
+         #:drop-index
          ;; CLSQL Extensions
          #:truncate-database
-	 #:list-views
-	 #:view-exists-p
-	 #:list-indexes
-	 #:index-exists-p
-	 #:create-sequence
-	 #:drop-sequence
-	 #:list-sequences
-	 #:sequence-exists-p
-	 #:sequence-next
-	 #:sequence-last
-	 #:set-sequence-position
+         #:list-views
+         #:view-exists-p
+         #:list-indexes
+         #:index-exists-p
+         #:create-sequence
+         #:drop-sequence
+         #:list-sequences
+         #:sequence-exists-p
+         #:sequence-next
+         #:sequence-last
+         #:set-sequence-position
 
          ;; FDML (fdml.lisp)
-	 #:select
-	 #:cache-table-queries
-	 #:*cache-table-queries-default*
-	 #:delete-records
-	 #:insert-records
-	 #:update-records
-	 #:execute-command
-	 #:query
-	 #:print-query
-	 #:do-query
-	 #:map-query
-	 #:loop
+         #:select
+         #:cache-table-queries
+         #:*cache-table-queries-default*
+         #:delete-records
+         #:insert-records
+         #:update-records
+         #:execute-command
+         #:query
+         #:print-query
+         #:do-query
+         #:map-query
+         #:loop
          ;; CLSQL Extensions
-	 #:prepare-sql
-	 #:bind-parameter
-	 #:run-prepared-sql
-	 #:free-prepared-sql
+         #:prepare-sql
+         #:bind-parameter
+         #:run-prepared-sql
+         #:free-prepared-sql
 
          ;; Transaction handling (transaction.lisp)
          #:with-transaction
@@ -346,77 +346,77 @@
          #:add-transaction-rollback-hook
          #:start-transaction
          #:in-transaction-p
-	 #:set-autocommit
+         #:set-autocommit
 
-	 ;; OODDL (ooddl.lisp)
-	 #:standard-db-object
-	 #:def-view-class
-	 #:create-view-from-class
-	 #:drop-view-from-class
-	 #:list-classes
-	 #:universal-time
+         ;; OODDL (ooddl.lisp)
+         #:standard-db-object
+         #:def-view-class
+         #:create-view-from-class
+         #:drop-view-from-class
+         #:list-classes
+         #:universal-time
          ;; CLSQL Extensions
-	 #:view-table
-	 #:bigint
-	 #:varchar
-	 #:generalized-boolean
-	 #:mediumint
-	 #:smallint
-	 #:tinyint
-	 #:*default-string-length*
+         #:view-table
+         #:bigint
+         #:varchar
+         #:generalized-boolean
+         #:mediumint
+         #:smallint
+         #:tinyint
+         #:*default-string-length*
 
-	 ;; OODML (oodml.lisp)
-	 #:instance-refreshed
-	 #:update-objects-joins
-	 #:*default-update-objects-max-len*
-	 #:*default-caching*
-	 #:update-slot-from-record
-	 #:update-instance-from-records
-	 #:update-records-from-instance
-	 #:update-record-from-slot
-	 #:update-record-from-slots
-	 #:delete-instance-records
-	 ;; CLSQL Extensions
-	 #:*db-auto-sync*
-	 #:write-instance-to-stream
-	 #:read-instance-from-stream
+         ;; OODML (oodml.lisp)
+         #:instance-refreshed
+         #:update-objects-joins
+         #:*default-update-objects-max-len*
+         #:*default-caching*
+         #:update-slot-from-record
+         #:update-instance-from-records
+         #:update-records-from-instance
+         #:update-record-from-slot
+         #:update-record-from-slots
+         #:delete-instance-records
+         ;; CLSQL Extensions
+         #:*db-auto-sync*
+         #:write-instance-to-stream
+         #:read-instance-from-stream
 
-	 ;; Symbolic SQL Syntax (syntax.lisp)
-	 #:sql
-	 #:sql-expression
-	 #:sql-operation
-	 #:sql-operator
-	 #:disable-sql-reader-syntax
-	 #:enable-sql-reader-syntax
-	 #:locally-disable-sql-reader-syntax
-	 #:locally-enable-sql-reader-syntax
-	 #:restore-sql-reader-syntax-state
+         ;; Symbolic SQL Syntax (syntax.lisp)
+         #:sql
+         #:sql-expression
+         #:sql-operation
+         #:sql-operator
+         #:disable-sql-reader-syntax
+         #:enable-sql-reader-syntax
+         #:locally-disable-sql-reader-syntax
+         #:locally-enable-sql-reader-syntax
+         #:restore-sql-reader-syntax-state
 
-	 ;; SQL operations (operations.lisp)
-	 #:sql-query
-	 #:sql-object-query
-	 #:sql-any
+         ;; SQL operations (operations.lisp)
+         #:sql-query
+         #:sql-object-query
+         #:sql-any
          #:sql-some
-	 #:sql-all
-	 #:sql-not
-	 #:sql-union
-	 #:sql-intersect
-	 #:sql-minus
+         #:sql-all
+         #:sql-not
+         #:sql-union
+         #:sql-intersect
+         #:sql-minus
          #:sql-except
          #:sql-order-by
-	 #:sql-null
-	 #:sql-*
-	 #:sql-+
-	 #:sql-/
+         #:sql-null
+         #:sql-*
+         #:sql-+
+         #:sql-/
          #:sql--
-	 #:sql-like
-	 #:sql-and
-	 #:sql-or
-	 #:sql-in
+         #:sql-like
+         #:sql-and
+         #:sql-or
+         #:sql-in
          #:sql-substr
          #:sql-concat-op
-	 #:sql-=
-	 #:sql-<
+         #:sql-=
+         #:sql-<
          #:sql->
          #:sql->=
          #:sql-<=
@@ -433,16 +433,16 @@
          #:sql-slot-value
          #:sql-userenv
          ;; CLSQL Extensions
-	 #:sql-concat
+         #:sql-concat
          #:sql-substring
          #:sql-limit
-	 #:sql-group-by
-	 #:sql-having
-	 #:sql-not-null
-	 #:sql-exists
-	 #:sql-uplike
-	 #:sql-is
-	 #:sql-==
+         #:sql-group-by
+         #:sql-having
+         #:sql-not-null
+         #:sql-exists
+         #:sql-uplike
+         #:sql-is
+         #:sql-==
          #:sql-the
          #:sql-coalesce
          #:sql-view-class
@@ -454,10 +454,10 @@
          #:current-year
          #:day-duration
          #:db-timestring
-	 #:db-datestring
+         #:db-datestring
          #:decode-duration
          #:decode-time
-	 #:decode-date
+         #:decode-date
          #:duration
          #:duration+
          #:duration<
@@ -476,9 +476,9 @@
          #:extract-roman
          #:format-duration
          #:format-time
-	 #:format-date
+         #:format-date
          #:get-time
-	 #:get-date
+         #:get-date
          #:utime->time
          #:interval-clear
          #:interval-contained
@@ -493,13 +493,13 @@
          #:make-duration
          #:make-interval
          #:make-time
-	 #:make-date
+         #:make-date
          #:merged-time
          #:midnight
          #:month-name
          #:parse-date-time
          #:parse-timestring
-	 #:parse-datestring
+         #:parse-datestring
          #:parse-yearstring
          #:print-date
          #:roll
@@ -525,23 +525,23 @@
          #:time=
          #:time>
          #:time>=
-	 #:date
-	 #:date+
-	 #:date-
-	 #:date-difference
-	 #:date-compare
-	 #:date-dow
-	 #:date-element
-	 #:date-max
-	 #:date-min
-	 #:date-mjd
-	 #:date-p
-	 #:date-ymd
-	 #:date<
-	 #:date<=
-	 #:date=
-	 #:date>
-	 #:date>=
+         #:date
+         #:date+
+         #:date-
+         #:date-difference
+         #:date-compare
+         #:date-dow
+         #:date-element
+         #:date-max
+         #:date-min
+         #:date-mjd
+         #:date-p
+         #:date-ymd
+         #:date<
+         #:date<=
+         #:date=
+         #:date>
+         #:date>=
          #:timezone
          #:universal-time
          #:wall-time
@@ -572,12 +572,12 @@
     ;; Note that this will no longer required for cmucl as of version 19a.
     (in-package #+cmu :pcl #+sbcl :sb-pcl)
     (defmacro pv-binding1 ((pv calls pv-table-symbol pv-parameters slot-vars)
-			   &body body)
+                           &body body)
       `(pv-env (,pv ,calls ,pv-table-symbol ,pv-parameters)
-	(let (,@(mapcar #'(lambda (slot-var p) `(,slot-var (get-slots-or-nil ,p)))
-			slot-vars pv-parameters))
-	  ,@(mapcar #'(lambda (slot-var) `(declare (ignorable ,slot-var))) slot-vars)
-	  ,@body))))
+        (let (,@(mapcar #'(lambda (slot-var p) `(,slot-var (get-slots-or-nil ,p)))
+                        slot-vars pv-parameters))
+          ,@(mapcar #'(lambda (slot-var) `(declare (ignorable ,slot-var))) slot-vars)
+          ,@body))))
 
 ;; see http://thread.gmane.org/gmane.lisp.lispworks.general/681
 #+lispworks

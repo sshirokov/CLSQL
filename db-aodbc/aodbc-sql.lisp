@@ -28,7 +28,7 @@
   t)
 
 (when (find-package :dbi)
-  (clsql-sys:database-type-load-foreign :aodbc)) 
+  (clsql-sys:database-type-load-foreign :aodbc))
 
 
 ;; AODBC interface
@@ -37,7 +37,7 @@
   ((aodbc-db-type :accessor database-aodbc-db-type :initform :unknown)))
 
 (defmethod database-name-from-spec (connection-spec
-				    (database-type (eql :aodbc)))
+                                    (database-type (eql :aodbc)))
   (check-connection-spec connection-spec database-type (dsn user password))
   (destructuring-bind (dsn user password) connection-spec
     (declare (ignore password))
@@ -48,37 +48,37 @@
   #+aodbc-v2
   (destructuring-bind (dsn user password) connection-spec
     (handler-case
-	(make-instance 'aodbc-database
-	  :name (database-name-from-spec connection-spec :aodbc)
-	  :database-type :aodbc
-	  :dbi-package (find-package '#:dbi)
-	  :odbc-conn
-	  (dbi:connect :user user
-		       :password password
-		       :data-source-name dsn))
+        (make-instance 'aodbc-database
+          :name (database-name-from-spec connection-spec :aodbc)
+          :database-type :aodbc
+          :dbi-package (find-package '#:dbi)
+          :odbc-conn
+          (dbi:connect :user user
+                       :password password
+                       :data-source-name dsn))
       (sql-error (e)
-	(error e))
-      (error () 	;; Init or Connect failed
-	(error 'sql-connection-error
-	       :database-type database-type
-	       :connection-spec connection-spec
-	       :message "Connection failed")))))
+        (error e))
+      (error ()         ;; Init or Connect failed
+        (error 'sql-connection-error
+               :database-type database-type
+               :connection-spec connection-spec
+               :message "Connection failed")))))
 
 
-(defmethod database-query (query-expression (database aodbc-database) 
-			   result-types field-names)
+(defmethod database-query (query-expression (database aodbc-database)
+                           result-types field-names)
   #+aodbc-v2
   (handler-case
       (dbi:sql query-expression
-	       :db (clsql-sys::odbc-conn database)
-	       :types result-types
-	       :column-names field-names)
+               :db (clsql-sys::odbc-conn database)
+               :types result-types
+               :column-names field-names)
     #+ignore
     (error ()
       (error 'sql-database-data-error
-	     :database database
-	     :expression query-expression
-	     :message "Query failed"))))
+             :database database
+             :expression query-expression
+             :message "Query failed"))))
 
 (defmethod database-create (connection-spec (type (eql :aodbc)))
   (warn "Not implemented."))

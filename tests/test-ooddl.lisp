@@ -22,10 +22,10 @@
 
 (setq *rt-ooddl*
       '(
-	
+
 ;; Ensure slots inherited from standard-classes are :virtual
 (deftest :ooddl/metaclass/1
-    (values 
+    (values
      (clsql-sys::view-class-slot-db-kind
       (clsql-sys::slotdef-for-slot-with-class 'extraterrestrial
                                              (find-class 'person)))
@@ -66,8 +66,8 @@
         (clsql:execute-command "set datestyle to 'iso'"))
       (clsql:update-records [employee] :av-pairs `((birthday ,now))
                            :where [= [emplid] 1])
-      (let ((dbobj (car (clsql:select 'employee :where [= [birthday] now] 
-				      :flatp t))))
+      (let ((dbobj (car (clsql:select 'employee :where [= [birthday] now]
+                                      :flatp t))))
         (values
          (slot-value dbobj 'last-name)
          (clsql:time= (slot-value dbobj 'birthday) now))))
@@ -82,7 +82,7 @@
         (clsql:update-records [employee] :av-pairs `((birthday ,now))
                              :where [= [emplid] 1])
         (let ((dbobj (car (clsql:select 'employee :where [= [birthday] now]
-					:flatp t))))
+                                        :flatp t))))
           (unless (clsql:time= (slot-value dbobj 'birthday) now)
             (setf fail-index x))
           (setf now (clsql:roll now :day (* 10 x)))))
@@ -92,13 +92,13 @@
 (deftest :ooddl/time/3
     (progn
       (when (member *test-database-underlying-type* '(:postgresql :postgresql-socket))
-	(clsql:execute-command "set datestyle to 'iso'"))
+        (clsql:execute-command "set datestyle to 'iso'"))
       (let ((dbobj (car (clsql:select 'employee :where [= [emplid] 10]
-				      :flatp t))))
-	(list
-	 (eql *test-start-utime* (slot-value dbobj 'bd-utime))
-	 (clsql:time= (slot-value dbobj 'birthday)
-		      (clsql:utime->time (slot-value dbobj 'bd-utime))))))
+                                      :flatp t))))
+        (list
+         (eql *test-start-utime* (slot-value dbobj 'bd-utime))
+         (clsql:time= (slot-value dbobj 'birthday)
+                      (clsql:utime->time (slot-value dbobj 'bd-utime))))))
   (t t))
 
 ))

@@ -34,39 +34,39 @@
     (unless pkg
       (error "dbi-package is nil."))
     (setf (slot-value db 'disconnect-fn)
-	  (intern (symbol-name '#:disconnect) pkg)
-	  (slot-value db 'sql-fn)
-	  (intern (symbol-name '#:sql) pkg)
-	  (slot-value db 'close-query-fn)
-	  (intern (symbol-name '#:close-query) pkg)
-	  (slot-value db 'fetch-row)
-	  (intern (symbol-name '#:fetch-row) pkg)
-	  (slot-value db 'list-all-database-tables-fn)
-	  (intern (symbol-name '#:list-all-database-tables) pkg)
-	  (slot-value db 'list-all-table-columns-fn)
-	  (intern (symbol-name '#:list-all-table-columns) pkg))))
+          (intern (symbol-name '#:disconnect) pkg)
+          (slot-value db 'sql-fn)
+          (intern (symbol-name '#:sql) pkg)
+          (slot-value db 'close-query-fn)
+          (intern (symbol-name '#:close-query) pkg)
+          (slot-value db 'fetch-row)
+          (intern (symbol-name '#:fetch-row) pkg)
+          (slot-value db 'list-all-database-tables-fn)
+          (intern (symbol-name '#:list-all-database-tables) pkg)
+          (slot-value db 'list-all-table-columns-fn)
+          (intern (symbol-name '#:list-all-table-columns) pkg))))
 
 ;;; Object methods
 
 (defmethod read-sql-value (val (type (eql 'boolean))
-			   (database generic-odbc-database)
-			   (db-type (eql :postgresql)))
+                           (database generic-odbc-database)
+                           (db-type (eql :postgresql)))
   (if (string= "0" val) nil t))
 
 (defmethod read-sql-value (val (type (eql 'generalized-boolean))
-			   (database generic-odbc-database)
-			   (db-type (eql :postgresql)))
+                           (database generic-odbc-database)
+                           (db-type (eql :postgresql)))
   (if (string= "0" val) nil t))
 
 (defmethod read-sql-value (val (type (eql 'boolean)) database
-			   (db-type (eql :mssql)))
+                           (db-type (eql :mssql)))
   (declare (ignore database))
   (etypecase val
     (string (if (string= "0" val) nil t))
     (integer (if (zerop val) nil t))))
 
 (defmethod read-sql-value (val (type (eql 'generalized-boolean)) database
-			   (db-type (eql :mssql)))
+                           (db-type (eql :mssql)))
   (declare (ignore database))
   (etypecase val
     (string (if (string= "0" val) nil t))
@@ -75,7 +75,7 @@
 ;;; Type methods
 
 (defmethod database-get-type-specifier ((type (eql 'wall-time)) args database
-					(db-type (eql :mssql)))
+                                        (db-type (eql :mssql)))
   (declare (ignore args database))
   "DATETIME")
 
@@ -97,12 +97,12 @@
     (t "'Y'")))
 
 (defmethod database-output-sql-as-type ((type (eql 'boolean)) val database
-					(db-type (eql :mssql)))
+                                        (db-type (eql :mssql)))
   (declare (ignore database))
   (if val 1 0))
 
 (defmethod database-output-sql-as-type ((type (eql 'generalized-boolean)) val database
-					(db-type (eql :mssql)))
+                                        (db-type (eql :mssql)))
   (declare (ignore database))
   (if val 1 0))
 
@@ -128,33 +128,33 @@
   t)
 
 (defmethod database-query (query-expression (database generic-odbc-database)
-			   result-types field-names)
+                           result-types field-names)
   (handler-case
       (funcall (sql-fn database)
-	       query-expression :db (odbc-conn database)
-	       :result-types result-types
-	       :column-names field-names)
+               query-expression :db (odbc-conn database)
+               :result-types result-types
+               :column-names field-names)
     #+ignore
     (error ()
       (error 'sql-database-data-error
-	     :database database
-	     :expression query-expression
-	     :message "Query failed"))))
+             :database database
+             :expression query-expression
+             :message "Query failed"))))
 
 
 (defmethod database-execute-command (sql-expression (database generic-odbc-database))
   (handler-case
       (funcall (sql-fn database)
-	       sql-expression :db (odbc-conn database))
+               sql-expression :db (odbc-conn database))
     #+ignore
     (sql-error (e)
       (error e))
     #+ignore
     (error ()
       (error 'sql-database-data-error
-	     :database database
-	     :expression sql-expression
-	     :message "Execute command failed"))))
+             :database database
+             :expression sql-expression
+             :message "Execute command failed"))))
 
 
 (defstruct odbc-result-set
@@ -166,49 +166,49 @@
 
 
 (defmethod database-query-result-set ((query-expression string)
-				      (database generic-odbc-database)
-				      &key full-set result-types)
+                                      (database generic-odbc-database)
+                                      &key full-set result-types)
   (handler-case
       (multiple-value-bind (query column-names)
-	  (funcall (sql-fn database)
-		   query-expression
-		   :db (odbc-conn database)
-		   :row-count nil
-		   :column-names t
-		   :query t
-		   :result-types result-types)
-	(values
-	 (make-odbc-result-set :query query :full-set full-set
-			       :types result-types)
-	 (length column-names)
-	 nil ;; not able to return number of rows with odbc
-	 ))
+          (funcall (sql-fn database)
+                   query-expression
+                   :db (odbc-conn database)
+                   :row-count nil
+                   :column-names t
+                   :query t
+                   :result-types result-types)
+        (values
+         (make-odbc-result-set :query query :full-set full-set
+                               :types result-types)
+         (length column-names)
+         nil ;; not able to return number of rows with odbc
+         ))
     (error ()
       (error 'sql-database-data-error
-	     :database database
-	     :expression query-expression
-	     :message "Query result set failed"))))
+             :database database
+             :expression query-expression
+             :message "Query result set failed"))))
 
 (defmethod database-dump-result-set (result-set (database generic-odbc-database))
   (funcall (close-query-fn database) (odbc-result-set-query result-set))
   t)
 
 (defmethod database-store-next-row (result-set
-				    (database generic-odbc-database)
-				    list)
+                                    (database generic-odbc-database)
+                                    list)
   (let ((row (funcall (fetch-row-fn database)
-		      (odbc-result-set-query result-set) nil 'eof)))
+                      (odbc-result-set-query result-set) nil 'eof)))
     (if (eq row 'eof)
-	nil
+        nil
       (progn
-	(loop for elem in row
-	    for rest on list
-	    do
-	      (setf (car rest) elem))
-	list))))
+        (loop for elem in row
+            for rest on list
+            do
+              (setf (car rest) elem))
+        list))))
 
 (defmethod database-list-tables ((database generic-odbc-database)
-				 &key (owner nil))
+                                 &key (owner nil))
   (declare (ignore owner))
   (multiple-value-bind (rows col-names)
       (funcall (list-all-database-tables-fn database) :db (odbc-conn database))
@@ -216,15 +216,15 @@
     ;; TABLE_SCHEM is hard-coded in second column by ODBC Driver Manager
     ;; TABLE_NAME in third column, TABLE_TYPE in fourth column
     (loop for row in rows
-	  when (and (not (string-equal "information_schema" (nth 1 row)))
-		    (string-equal "TABLE" (nth 3 row))
+          when (and (not (string-equal "information_schema" (nth 1 row)))
+                    (string-equal "TABLE" (nth 3 row))
                     (not (and (eq :mssql (database-underlying-type database))
                               (string-equal "dtproperties" (nth 2 row)))))
-	  collect (nth 2 row))))
+          collect (nth 2 row))))
 
 
 (defmethod database-list-views ((database generic-odbc-database)
-				 &key (owner nil))
+                                 &key (owner nil))
   (declare (ignore owner))
   (multiple-value-bind (rows col-names)
       (funcall (list-all-database-tables-fn database) :db (odbc-conn database))
@@ -232,11 +232,11 @@
     ;; TABLE_SCHEM is hard-coded in second column by ODBC Driver Manager
     ;; TABLE_NAME in third column, TABLE_TYPE in fourth column
     (loop for row in rows
-	  when (and (not (string-equal "information_schema" (nth 1 row)))
-		    (string-equal "VIEW" (nth 3 row))
+          when (and (not (string-equal "information_schema" (nth 1 row)))
+                    (string-equal "VIEW" (nth 3 row))
                     (not (and (eq :mssql (database-underlying-type database))
                               (member (nth 2 row) '("sysconstraints" "syssegments") :test #'string-equal))))
-	  collect (nth 2 row))))
+          collect (nth 2 row))))
 
 
 (defmethod database-list-attributes ((table string) (database generic-odbc-database)
@@ -244,18 +244,18 @@
   (declare (ignore owner))
   (multiple-value-bind (rows col-names)
       (funcall (list-all-table-columns-fn database) table
-	       :db (odbc-conn database))
+               :db (odbc-conn database))
     (declare (ignore col-names))
     ;; COLUMN_NAME is hard-coded by odbc spec as fourth position
     (loop for row in rows
-	collect (fourth row))))
+        collect (fourth row))))
 
 (defmethod database-attribute-type ((attribute string) (table string) (database generic-odbc-database)
-				    &key (owner nil))
+                                    &key (owner nil))
   (declare (ignore owner))
   (multiple-value-bind (rows col-names)
       (funcall (list-all-table-columns-fn database) table
-	       :db (odbc-conn database))
+               :db (odbc-conn database))
     (declare (ignore col-names))
     ;; COLUMN_NAME is hard-coded by odbc spec as fourth position
     ;; TYPE_NAME is the sixth column
@@ -263,12 +263,12 @@
     ;; SCALE/DECIMAL_DIGITS is the ninth column
     ;; NULLABLE is the eleventh column
     (loop for row in rows
-	when (string-equal attribute (fourth row))
-	do
-	(let ((size (seventh row))
-	      (precision (ninth row))
-	      (scale (nth 10 row)))
-	  (return (values (ensure-keyword (sixth row))
-			  (when size (parse-integer size))
-			  (when precision (parse-integer precision))
-			  (when scale (parse-integer scale))))))))
+        when (string-equal attribute (fourth row))
+        do
+        (let ((size (seventh row))
+              (precision (ninth row))
+              (scale (nth 10 row)))
+          (return (values (ensure-keyword (sixth row))
+                          (when size (parse-integer size))
+                          (when precision (parse-integer precision))
+                          (when scale (parse-integer scale))))))))

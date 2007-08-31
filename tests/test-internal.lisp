@@ -21,24 +21,24 @@
 (setq *rt-internal*
   '(
     (deftest :int/convert/1
-	(clsql-sys::prepared-sql-to-postgresql-sql "SELECT FOO FROM BAR")
+        (clsql-sys::prepared-sql-to-postgresql-sql "SELECT FOO FROM BAR")
       "SELECT FOO FROM BAR")
-    
+
     (deftest :int/convert/2
-	(clsql-sys::prepared-sql-to-postgresql-sql "SELECT FOO FROM BAR WHERE ID=?")
+        (clsql-sys::prepared-sql-to-postgresql-sql "SELECT FOO FROM BAR WHERE ID=?")
       "SELECT FOO FROM BAR WHERE ID=$1")
-    
+
     (deftest :int/convert/3
-	(clsql-sys::prepared-sql-to-postgresql-sql "SELECT FOO FROM \"BAR\" WHERE ID=? AND CODE=?")
+        (clsql-sys::prepared-sql-to-postgresql-sql "SELECT FOO FROM \"BAR\" WHERE ID=? AND CODE=?")
       "SELECT FOO FROM \"BAR\" WHERE ID=$1 AND CODE=$2")
-    
+
     (deftest :int/convert/4
-	(clsql-sys::prepared-sql-to-postgresql-sql "SELECT FOO FROM BAR WHERE ID=\"Match?\" AND CODE=?")
+        (clsql-sys::prepared-sql-to-postgresql-sql "SELECT FOO FROM BAR WHERE ID=\"Match?\" AND CODE=?")
       "SELECT FOO FROM BAR WHERE ID=\"Match?\" AND CODE=$1")
-    
+
     (deftest :int/convert/5
-	(clsql-sys::prepared-sql-to-postgresql-sql "SELECT 'FOO' FROM BAR WHERE ID='Match?''?' AND CODE=?")
+        (clsql-sys::prepared-sql-to-postgresql-sql "SELECT 'FOO' FROM BAR WHERE ID='Match?''?' AND CODE=?")
       "SELECT 'FOO' FROM BAR WHERE ID='Match?''?' AND CODE=$1")
-    
+
     ))
 

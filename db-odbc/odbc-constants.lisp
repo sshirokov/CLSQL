@@ -22,7 +22,7 @@
 (defconstant $ODBC-LONG-TYPE :int)
 (defconstant $ODBC-ULONG-TYPE :unsigned-int)
 
-;; (defconstant $ODBCVER	#x0210)
+;; (defconstant $ODBCVER        #x0210)
 
 
 ;; for new SQLAllocHandle functiion
@@ -32,12 +32,12 @@
 (defconstant $SQL_HANDLE_DESC 4)
 
 ;; generally useful constants
-(defconstant $SQL_SPEC_MAJOR 2)		;; Major version of specification 
-(defconstant $SQL_SPEC_MINOR 10) 	;; Minor version of specification 
-(defvar $SQL_SPEC_STRING 	"02.10") ;; String constant for version	  
-(defconstant $SQL_SQLSTATE_SIZE 5)		;; size of SQLSTATE 			  
-(defconstant $SQL_MAX_MESSAGE_LENGTH 512)	;; message buffer size			  
-(defconstant $SQL_MAX_DSN_LENGTH 32)		;; maximum data source name size  
+(defconstant $SQL_SPEC_MAJOR 2)         ;; Major version of specification
+(defconstant $SQL_SPEC_MINOR 10)        ;; Minor version of specification
+(defvar $SQL_SPEC_STRING        "02.10") ;; String constant for version
+(defconstant $SQL_SQLSTATE_SIZE 5)              ;; size of SQLSTATE
+(defconstant $SQL_MAX_MESSAGE_LENGTH 512)       ;; message buffer size
+(defconstant $SQL_MAX_DSN_LENGTH 32)            ;; maximum data source name size
 
 ;; RETCODEs
 (defconstant $SQL_INVALID_HANDLE -2)
@@ -61,13 +61,13 @@
 (defconstant $SQL_TYPE_NULL 0)
 (defconstant $SQL_TYPE_MAX $SQL_VARCHAR)
 
-;; C datatype to SQL datatype mapping	SQL types
+;; C datatype to SQL datatype mapping   SQL types
 
-(defconstant $SQL_C_CHAR $SQL_CHAR)		;; CHAR, VARCHAR, DECIMAL, NUMERIC
-(defconstant $SQL_C_LONG $SQL_INTEGER)		;; INTEGER 
-(defconstant $SQL_C_SHORT $SQL_SMALLINT)	;; SMALLINT 
-(defconstant $SQL_C_FLOAT $SQL_REAL)		;; REAL 
-(defconstant $SQL_C_DOUBLE $SQL_DOUBLE)		;; FLOAT, DOUBLE
+(defconstant $SQL_C_CHAR $SQL_CHAR)             ;; CHAR, VARCHAR, DECIMAL, NUMERIC
+(defconstant $SQL_C_LONG $SQL_INTEGER)          ;; INTEGER
+(defconstant $SQL_C_SHORT $SQL_SMALLINT)        ;; SMALLINT
+(defconstant $SQL_C_FLOAT $SQL_REAL)            ;; REAL
+(defconstant $SQL_C_DOUBLE $SQL_DOUBLE)         ;; FLOAT, DOUBLE
 (defconstant $SQL_C_DEFAULT 99)
 
 ;; NULL status constants.  These are used in SQLColumns, SQLColAttributes,
@@ -105,13 +105,13 @@
 (defconstant $SQL_COLUMN_UNSIGNED 8)
 (defconstant $SQL_COLUMN_MONEY 9)
 (defconstant $SQL_COLUMN_UPDATABLE 10)
-(defconstant $SQL_COLUMN_AUTO_INCREMENT	11)
-(defconstant $SQL_COLUMN_CASE_SENSITIVE	12)
+(defconstant $SQL_COLUMN_AUTO_INCREMENT 11)
+(defconstant $SQL_COLUMN_CASE_SENSITIVE 12)
 (defconstant $SQL_COLUMN_SEARCHABLE 13)
 (defconstant $SQL_COLUMN_TYPE_NAME 14)
 (defconstant $SQL_COLUMN_TABLE_NAME 15)
 (defconstant $SQL_COLUMN_OWNER_NAME 16)
-(defconstant $SQL_COLUMN_QUALIFIER_NAME	17)
+(defconstant $SQL_COLUMN_QUALIFIER_NAME 17)
 (defconstant $SQL_COLUMN_LABEL 18)
 (defconstant $SQL_COLATT_OPT_MAX $SQL_COLUMN_LABEL)
 
@@ -125,7 +125,7 @@
 (defconstant $SQL_ATTR_READWRITE_UNKNOWN 2)
 
 ;; SQLColAttributes subdefines for SQL_COLUMN_SEARCHABLE
-;; These are also used by SQLGetInfo                    
+;; These are also used by SQLGetInfo
 (defconstant $SQL_UNSEARCHABLE 0)
 (defconstant $SQL_LIKE_ONLY 1)
 (defconstant $SQL_ALL_EXCEPT_LIKE 2)
@@ -202,9 +202,9 @@
 (defconstant $SQL_API_SQLSETSCROLLOPTIONS 69)
 (defconstant $SQL_API_SQLTABLEPRIVILEGES  70)
 
-;/*		SDK 2.0 Additions		*/
+;/*             SDK 2.0 Additions               */
 (defconstant $SQL_API_SQLDRIVERS 71)
-(defconstant $SQL_API_SQLBINDPARAMETER	72)
+(defconstant $SQL_API_SQLBINDPARAMETER  72)
 (defconstant $SQL_EXT_API_LAST $SQL_API_SQLBINDPARAMETER)
 
 (defconstant $SQL_API_ALL_FUNCTIONS 0)
@@ -298,202 +298,202 @@
 (defconstant $SQL_NON_NULLABLE_COLUMNS 75)
 
 ;;; ODBC SDK 2.0 Additions
-(defconstant $SQL_DRIVER_HLIB 			76)
-(defconstant $SQL_DRIVER_ODBC_VER		77)
-(defconstant $SQL_LOCK_TYPES			78)
-(defconstant $SQL_POS_OPERATIONS		79)
-(defconstant $SQL_POSITIONED_STATEMENTS		80)
-(defconstant $SQL_GETDATA_EXTENSIONS		81)
-(defconstant $SQL_BOOKMARK_PERSISTENCE		82)
-(defconstant $SQL_STATIC_SENSITIVITY		83)
-(defconstant $SQL_FILE_USAGE			84)
-(defconstant $SQL_NULL_COLLATION		85)
-(defconstant $SQL_ALTER_TABLE 			86)
-(defconstant $SQL_COLUMN_ALIAS			87)
-(defconstant $SQL_GROUP_BY			88)
-(defconstant $SQL_KEYWORDS			89)
-(defconstant $SQL_ORDER_BY_COLUMNS_IN_SELECT	90)
-(defconstant $SQL_OWNER_USAGE 			91)
-(defconstant $SQL_QUALIFIER_USAGE		92)
-(defconstant $SQL_QUOTED_IDENTIFIER_CASE	93)
-(defconstant $SQL_SPECIAL_CHARACTERS		94)
-(defconstant $SQL_SUBQUERIES			95)
-(defconstant $SQL_UNION				96)
-(defconstant $SQL_MAX_COLUMNS_IN_GROUP_BY	97)
-(defconstant $SQL_MAX_COLUMNS_IN_INDEX		98)
-(defconstant $SQL_MAX_COLUMNS_IN_ORDER_BY	99)
-(defconstant $SQL_MAX_COLUMNS_IN_SELECT	       100)
-(defconstant $SQL_MAX_COLUMNS_IN_TABLE		   101)
-(defconstant $SQL_MAX_INDEX_SIZE				   102)
-(defconstant $SQL_MAX_ROW_SIZE_INCLUDES_LONG	   103)
-(defconstant $SQL_MAX_ROW_SIZE				   104)
-(defconstant $SQL_MAX_STATEMENT_LEN			   105)
+(defconstant $SQL_DRIVER_HLIB                   76)
+(defconstant $SQL_DRIVER_ODBC_VER               77)
+(defconstant $SQL_LOCK_TYPES                    78)
+(defconstant $SQL_POS_OPERATIONS                79)
+(defconstant $SQL_POSITIONED_STATEMENTS         80)
+(defconstant $SQL_GETDATA_EXTENSIONS            81)
+(defconstant $SQL_BOOKMARK_PERSISTENCE          82)
+(defconstant $SQL_STATIC_SENSITIVITY            83)
+(defconstant $SQL_FILE_USAGE                    84)
+(defconstant $SQL_NULL_COLLATION                85)
+(defconstant $SQL_ALTER_TABLE                   86)
+(defconstant $SQL_COLUMN_ALIAS                  87)
+(defconstant $SQL_GROUP_BY                      88)
+(defconstant $SQL_KEYWORDS                      89)
+(defconstant $SQL_ORDER_BY_COLUMNS_IN_SELECT    90)
+(defconstant $SQL_OWNER_USAGE                   91)
+(defconstant $SQL_QUALIFIER_USAGE               92)
+(defconstant $SQL_QUOTED_IDENTIFIER_CASE        93)
+(defconstant $SQL_SPECIAL_CHARACTERS            94)
+(defconstant $SQL_SUBQUERIES                    95)
+(defconstant $SQL_UNION                         96)
+(defconstant $SQL_MAX_COLUMNS_IN_GROUP_BY       97)
+(defconstant $SQL_MAX_COLUMNS_IN_INDEX          98)
+(defconstant $SQL_MAX_COLUMNS_IN_ORDER_BY       99)
+(defconstant $SQL_MAX_COLUMNS_IN_SELECT        100)
+(defconstant $SQL_MAX_COLUMNS_IN_TABLE             101)
+(defconstant $SQL_MAX_INDEX_SIZE                                   102)
+(defconstant $SQL_MAX_ROW_SIZE_INCLUDES_LONG       103)
+(defconstant $SQL_MAX_ROW_SIZE                             104)
+(defconstant $SQL_MAX_STATEMENT_LEN                        105)
 (defconstant $SQL_MAX_TABLES_IN_SELECT 106)
 (defconstant $SQL_MAX_USER_NAME_LEN 107)
 (defconstant $SQL_MAX_CHAR_LITERAL_LEN 108)
 (defconstant $SQL_TIMEDATE_ADD_INTERVALS 109)
-(defconstant $SQL_TIMEDATE_DIFF_INTERVALS 	   110)
+(defconstant $SQL_TIMEDATE_DIFF_INTERVALS          110)
 (defconstant $SQL_NEED_LONG_DATA_LEN 111)
-(defconstant $SQL_MAX_BINARY_LITERAL_LEN		   112)
-(defconstant $SQL_LIKE_ESCAPE_CLAUSE			   113)
-(defconstant $SQL_QUALIFIER_LOCATION			   114)
+(defconstant $SQL_MAX_BINARY_LITERAL_LEN                   112)
+(defconstant $SQL_LIKE_ESCAPE_CLAUSE                       113)
+(defconstant $SQL_QUALIFIER_LOCATION                       114)
 (defconstant $SQL_ACTIVE_ENVIRONMENTS 116)
 
 #|
 
 /*** ODBC SDK 2.01 Additions ***/)
-(defconstant $SQL_OJ_CAPABILITIES 			 65003	;; Temp value until ODBC 3.0
+(defconstant $SQL_OJ_CAPABILITIES                        65003  ;; Temp value until ODBC 3.0
 
-(defconstant $SQL_INFO_LAST						SQL_QUALIFIER_LOCATION
+(defconstant $SQL_INFO_LAST                                             SQL_QUALIFIER_LOCATION
 )
 (defconstant $SQL_INFO_DRIVER_START             1000
 
 ;; SQL_CONVERT_*  return value bitmasks
 )
-(defconstant $SQL_CVT_CHAR				#x00000001L)
-(defconstant $SQL_CVT_NUMERIC 			#x00000002L)
-(defconstant $SQL_CVT_DECIMAL 			#x00000004L)
-(defconstant $SQL_CVT_INTEGER 			#x00000008L)
-(defconstant $SQL_CVT_SMALLINT			#x00000010L)
-(defconstant $SQL_CVT_FLOAT				#x00000020L)
-(defconstant $SQL_CVT_REAL				#x00000040L)
-(defconstant $SQL_CVT_DOUBLE				#x00000080L)
-(defconstant $SQL_CVT_VARCHAR 			#x00000100L)
-(defconstant $SQL_CVT_LONGVARCHAR 		#x00000200L)
-(defconstant $SQL_CVT_BINARY				#x00000400L)
-(defconstant $SQL_CVT_VARBINARY			#x00000800L)
-(defconstant $SQL_CVT_BIT 				#x00001000L)
-(defconstant $SQL_CVT_TINYINT 			#x00002000L)
-(defconstant $SQL_CVT_BIGINT				#x00004000L)
-(defconstant $SQL_CVT_DATE				#x00008000L)
-(defconstant $SQL_CVT_TIME				#x00010000L)
-(defconstant $SQL_CVT_TIMESTAMP			#x00020000L)
-(defconstant $SQL_CVT_LONGVARBINARY		#x00040000L)
+(defconstant $SQL_CVT_CHAR                              #x00000001L)
+(defconstant $SQL_CVT_NUMERIC                   #x00000002L)
+(defconstant $SQL_CVT_DECIMAL                   #x00000004L)
+(defconstant $SQL_CVT_INTEGER                   #x00000008L)
+(defconstant $SQL_CVT_SMALLINT                  #x00000010L)
+(defconstant $SQL_CVT_FLOAT                             #x00000020L)
+(defconstant $SQL_CVT_REAL                              #x00000040L)
+(defconstant $SQL_CVT_DOUBLE                            #x00000080L)
+(defconstant $SQL_CVT_VARCHAR                   #x00000100L)
+(defconstant $SQL_CVT_LONGVARCHAR               #x00000200L)
+(defconstant $SQL_CVT_BINARY                            #x00000400L)
+(defconstant $SQL_CVT_VARBINARY                 #x00000800L)
+(defconstant $SQL_CVT_BIT                               #x00001000L)
+(defconstant $SQL_CVT_TINYINT                   #x00002000L)
+(defconstant $SQL_CVT_BIGINT                            #x00004000L)
+(defconstant $SQL_CVT_DATE                              #x00008000L)
+(defconstant $SQL_CVT_TIME                              #x00010000L)
+(defconstant $SQL_CVT_TIMESTAMP                 #x00020000L)
+(defconstant $SQL_CVT_LONGVARBINARY             #x00040000L)
 
 ;; SQL_CONVERT_FUNCTIONS functions)
-(defconstant $SQL_FN_CVT_CONVERT			#x00000001L)
+(defconstant $SQL_FN_CVT_CONVERT                        #x00000001L)
 
 ;; SQL_STRING_FUNCTIONS functions
 
-(defconstant $SQL_FN_STR_CONCAT			#x00000001L)
-(defconstant $SQL_FN_STR_INSERT			#x00000002L)
-(defconstant $SQL_FN_STR_LEFT 			#x00000004L)
-(defconstant $SQL_FN_STR_LTRIM			#x00000008L)
-(defconstant $SQL_FN_STR_LENGTH			#x00000010L)
-(defconstant $SQL_FN_STR_LOCATE			#x00000020L)
-(defconstant $SQL_FN_STR_LCASE			#x00000040L)
-(defconstant $SQL_FN_STR_REPEAT			#x00000080L)
-(defconstant $SQL_FN_STR_REPLACE			#x00000100L)
-(defconstant $SQL_FN_STR_RIGHT			#x00000200L)
-(defconstant $SQL_FN_STR_RTRIM			#x00000400L)
-(defconstant $SQL_FN_STR_SUBSTRING		#x00000800L)
-(defconstant $SQL_FN_STR_UCASE			#x00001000L)
-(defconstant $SQL_FN_STR_ASCII			#x00002000L)
-(defconstant $SQL_FN_STR_CHAR 			#x00004000L
-(defconstant $SQL_FN_STR_DIFFERENCE		#x00008000L)
-(defconstant $SQL_FN_STR_LOCATE_2 		#x00010000L)
-(defconstant $SQL_FN_STR_SOUNDEX			#x00020000L)
-(defconstant $SQL_FN_STR_SPACE			#x00040000L
+(defconstant $SQL_FN_STR_CONCAT                 #x00000001L)
+(defconstant $SQL_FN_STR_INSERT                 #x00000002L)
+(defconstant $SQL_FN_STR_LEFT                   #x00000004L)
+(defconstant $SQL_FN_STR_LTRIM                  #x00000008L)
+(defconstant $SQL_FN_STR_LENGTH                 #x00000010L)
+(defconstant $SQL_FN_STR_LOCATE                 #x00000020L)
+(defconstant $SQL_FN_STR_LCASE                  #x00000040L)
+(defconstant $SQL_FN_STR_REPEAT                 #x00000080L)
+(defconstant $SQL_FN_STR_REPLACE                        #x00000100L)
+(defconstant $SQL_FN_STR_RIGHT                  #x00000200L)
+(defconstant $SQL_FN_STR_RTRIM                  #x00000400L)
+(defconstant $SQL_FN_STR_SUBSTRING              #x00000800L)
+(defconstant $SQL_FN_STR_UCASE                  #x00001000L)
+(defconstant $SQL_FN_STR_ASCII                  #x00002000L)
+(defconstant $SQL_FN_STR_CHAR                   #x00004000L
+(defconstant $SQL_FN_STR_DIFFERENCE             #x00008000L)
+(defconstant $SQL_FN_STR_LOCATE_2               #x00010000L)
+(defconstant $SQL_FN_STR_SOUNDEX                        #x00020000L)
+(defconstant $SQL_FN_STR_SPACE                  #x00040000L
 
 ;; SQL_NUMERIC_FUNCTIONS functions
 )
-(defconstant $SQL_FN_NUM_ABS				#x00000001L)
-(defconstant $SQL_FN_NUM_ACOS 			#x00000002L)
-(defconstant $SQL_FN_NUM_ASIN 			#x00000004L)
-(defconstant $SQL_FN_NUM_ATAN 			#x00000008L)
-(defconstant $SQL_FN_NUM_ATAN2			#x00000010L)
-(defconstant $SQL_FN_NUM_CEILING			#x00000020L)
-(defconstant $SQL_FN_NUM_COS				#x00000040L)
-(defconstant $SQL_FN_NUM_COT				#x00000080L)
-(defconstant $SQL_FN_NUM_EXP				#x00000100L)
-(defconstant $SQL_FN_NUM_FLOOR			#x00000200L)
-(defconstant $SQL_FN_NUM_LOG				#x00000400L)
-(defconstant $SQL_FN_NUM_MOD				#x00000800L)
-(defconstant $SQL_FN_NUM_SIGN 			#x00001000L)
-(defconstant $SQL_FN_NUM_SIN				#x00002000L)
-(defconstant $SQL_FN_NUM_SQRT 			#x00004000L)
-(defconstant $SQL_FN_NUM_TAN				#x00008000L)
-(defconstant $SQL_FN_NUM_PI				#x00010000L)
-(defconstant $SQL_FN_NUM_RAND 			#x00020000L
-(defconstant $SQL_FN_NUM_DEGREES			#x00040000L)
-(defconstant $SQL_FN_NUM_LOG10			#x00080000L)
-(defconstant $SQL_FN_NUM_POWER			#x00100000L)
-(defconstant $SQL_FN_NUM_RADIANS			#x00200000L)
-(defconstant $SQL_FN_NUM_ROUND			#x00400000L)
-(defconstant $SQL_FN_NUM_TRUNCATE 		#x00800000L
+(defconstant $SQL_FN_NUM_ABS                            #x00000001L)
+(defconstant $SQL_FN_NUM_ACOS                   #x00000002L)
+(defconstant $SQL_FN_NUM_ASIN                   #x00000004L)
+(defconstant $SQL_FN_NUM_ATAN                   #x00000008L)
+(defconstant $SQL_FN_NUM_ATAN2                  #x00000010L)
+(defconstant $SQL_FN_NUM_CEILING                        #x00000020L)
+(defconstant $SQL_FN_NUM_COS                            #x00000040L)
+(defconstant $SQL_FN_NUM_COT                            #x00000080L)
+(defconstant $SQL_FN_NUM_EXP                            #x00000100L)
+(defconstant $SQL_FN_NUM_FLOOR                  #x00000200L)
+(defconstant $SQL_FN_NUM_LOG                            #x00000400L)
+(defconstant $SQL_FN_NUM_MOD                            #x00000800L)
+(defconstant $SQL_FN_NUM_SIGN                   #x00001000L)
+(defconstant $SQL_FN_NUM_SIN                            #x00002000L)
+(defconstant $SQL_FN_NUM_SQRT                   #x00004000L)
+(defconstant $SQL_FN_NUM_TAN                            #x00008000L)
+(defconstant $SQL_FN_NUM_PI                             #x00010000L)
+(defconstant $SQL_FN_NUM_RAND                   #x00020000L
+(defconstant $SQL_FN_NUM_DEGREES                        #x00040000L)
+(defconstant $SQL_FN_NUM_LOG10                  #x00080000L)
+(defconstant $SQL_FN_NUM_POWER                  #x00100000L)
+(defconstant $SQL_FN_NUM_RADIANS                        #x00200000L)
+(defconstant $SQL_FN_NUM_ROUND                  #x00400000L)
+(defconstant $SQL_FN_NUM_TRUNCATE               #x00800000L
 
 ;; SQL_TIMEDATE_FUNCTIONS functions
 )
-(defconstant $SQL_FN_TD_NOW				#x00000001L)
-(defconstant $SQL_FN_TD_CURDATE			#x00000002L)
-(defconstant $SQL_FN_TD_DAYOFMONTH		#x00000004L)
-(defconstant $SQL_FN_TD_DAYOFWEEK 		#x00000008L)
-(defconstant $SQL_FN_TD_DAYOFYEAR 		#x00000010L)
-(defconstant $SQL_FN_TD_MONTH 			#x00000020L)
-(defconstant $SQL_FN_TD_QUARTER			#x00000040L)
-(defconstant $SQL_FN_TD_WEEK				#x00000080L)
-(defconstant $SQL_FN_TD_YEAR				#x00000100L)
-(defconstant $SQL_FN_TD_CURTIME			#x00000200L)
-(defconstant $SQL_FN_TD_HOUR				#x00000400L)
-(defconstant $SQL_FN_TD_MINUTE			#x00000800L)
-(defconstant $SQL_FN_TD_SECOND			#x00001000L
-(defconstant $SQL_FN_TD_TIMESTAMPADD		#x00002000L)
-(defconstant $SQL_FN_TD_TIMESTAMPDIFF 	#x00004000L)
-(defconstant $SQL_FN_TD_DAYNAME			#x00008000L)
-(defconstant $SQL_FN_TD_MONTHNAME 		#x00010000L
+(defconstant $SQL_FN_TD_NOW                             #x00000001L)
+(defconstant $SQL_FN_TD_CURDATE                 #x00000002L)
+(defconstant $SQL_FN_TD_DAYOFMONTH              #x00000004L)
+(defconstant $SQL_FN_TD_DAYOFWEEK               #x00000008L)
+(defconstant $SQL_FN_TD_DAYOFYEAR               #x00000010L)
+(defconstant $SQL_FN_TD_MONTH                   #x00000020L)
+(defconstant $SQL_FN_TD_QUARTER                 #x00000040L)
+(defconstant $SQL_FN_TD_WEEK                            #x00000080L)
+(defconstant $SQL_FN_TD_YEAR                            #x00000100L)
+(defconstant $SQL_FN_TD_CURTIME                 #x00000200L)
+(defconstant $SQL_FN_TD_HOUR                            #x00000400L)
+(defconstant $SQL_FN_TD_MINUTE                  #x00000800L)
+(defconstant $SQL_FN_TD_SECOND                  #x00001000L
+(defconstant $SQL_FN_TD_TIMESTAMPADD            #x00002000L)
+(defconstant $SQL_FN_TD_TIMESTAMPDIFF   #x00004000L)
+(defconstant $SQL_FN_TD_DAYNAME                 #x00008000L)
+(defconstant $SQL_FN_TD_MONTHNAME               #x00010000L
 
 ;; SQL_SYSTEM_FUNCTIONS functions
 )
-(defconstant $SQL_FN_SYS_USERNAME 		#x00000001L)
-(defconstant $SQL_FN_SYS_DBNAME			#x00000002L)
-(defconstant $SQL_FN_SYS_IFNULL			#x00000004L
+(defconstant $SQL_FN_SYS_USERNAME               #x00000001L)
+(defconstant $SQL_FN_SYS_DBNAME                 #x00000002L)
+(defconstant $SQL_FN_SYS_IFNULL                 #x00000004L
 
 ;; SQL_TIMEDATE_ADD_INTERVALS and SQL_TIMEDATE_DIFF_INTERVALS functions
 
-(defconstant $SQL_FN_TSI_FRAC_SECOND		#x00000001L)
-(defconstant $SQL_FN_TSI_SECOND			#x00000002L)
-(defconstant $SQL_FN_TSI_MINUTE			#x00000004L)
-(defconstant $SQL_FN_TSI_HOUR 			#x00000008L)
-(defconstant $SQL_FN_TSI_DAY				#x00000010L)
-(defconstant $SQL_FN_TSI_WEEK 			#x00000020L)
-(defconstant $SQL_FN_TSI_MONTH			#x00000040L)
-(defconstant $SQL_FN_TSI_QUARTER			#x00000080L)
-(defconstant $SQL_FN_TSI_YEAR 			#x00000100L
+(defconstant $SQL_FN_TSI_FRAC_SECOND            #x00000001L)
+(defconstant $SQL_FN_TSI_SECOND                 #x00000002L)
+(defconstant $SQL_FN_TSI_MINUTE                 #x00000004L)
+(defconstant $SQL_FN_TSI_HOUR                   #x00000008L)
+(defconstant $SQL_FN_TSI_DAY                            #x00000010L)
+(defconstant $SQL_FN_TSI_WEEK                   #x00000020L)
+(defconstant $SQL_FN_TSI_MONTH                  #x00000040L)
+(defconstant $SQL_FN_TSI_QUARTER                        #x00000080L)
+(defconstant $SQL_FN_TSI_YEAR                   #x00000100L
 
 ;; SQL_ODBC_API_CONFORMANCE values
 )
-(defconstant $SQL_OAC_NONE				#x0000)
-(defconstant $SQL_OAC_LEVEL1				#x0001)
-(defconstant $SQL_OAC_LEVEL2				#x0002
+(defconstant $SQL_OAC_NONE                              #x0000)
+(defconstant $SQL_OAC_LEVEL1                            #x0001)
+(defconstant $SQL_OAC_LEVEL2                            #x0002
 
 ;; SQL_ODBC_SAG_CLI_CONFORMANCE values
 )
-(defconstant $SQL_OSCC_NOT_COMPLIANT		#x0000)
-(defconstant $SQL_OSCC_COMPLIANT			#x0001
+(defconstant $SQL_OSCC_NOT_COMPLIANT            #x0000)
+(defconstant $SQL_OSCC_COMPLIANT                        #x0001
 
 ;; SQL_ODBC_SQL_CONFORMANCE values
 )
-(defconstant $SQL_OSC_MINIMUM 			#x0000)
-(defconstant $SQL_OSC_CORE				#x0001)
-(defconstant $SQL_OSC_EXTENDED			#x0002
+(defconstant $SQL_OSC_MINIMUM                   #x0000)
+(defconstant $SQL_OSC_CORE                              #x0001)
+(defconstant $SQL_OSC_EXTENDED                  #x0002
 
 ;; SQL_CONCAT_NULL_BEHAVIOR values
 )
-(defconstant $SQL_CB_NULL 				#x0000)
-(defconstant $SQL_CB_NON_NULL 			#x0001
+(defconstant $SQL_CB_NULL                               #x0000)
+(defconstant $SQL_CB_NON_NULL                   #x0001
 
 ;; SQL_CURSOR_COMMIT_BEHAVIOR and SQL_CURSOR_ROLLBACK_BEHAVIOR values
 )
-(defconstant $SQL_CB_DELETE				#x0000)
-(defconstant $SQL_CB_CLOSE				#x0001)
-(defconstant $SQL_CB_PRESERVE				#x0002
+(defconstant $SQL_CB_DELETE                             #x0000)
+(defconstant $SQL_CB_CLOSE                              #x0001)
+(defconstant $SQL_CB_PRESERVE                           #x0002
 
 ;; SQL_IDENTIFIER_CASE values
 )
-(defconstant $SQL_IC_UPPER				#x0001)
-(defconstant $SQL_IC_LOWER				#x0002)
-(defconstant $SQL_IC_SENSITIVE			#x0003)
-(defconstant $SQL_IC_MIXED				#x0004
+(defconstant $SQL_IC_UPPER                              #x0001)
+(defconstant $SQL_IC_LOWER                              #x0002)
+(defconstant $SQL_IC_SENSITIVE                  #x0003)
+(defconstant $SQL_IC_MIXED                              #x0004
 
 ;; SQL_TXN_CAPABLE values
 |#
@@ -535,111 +535,111 @@
 #|
 ;; SQL_TXN_ISOLATION_OPTION masks
 )
-(defconstant $SQL_TXN_READ_UNCOMMITTED	#x00000001L)
-(defconstant $SQL_TXN_READ_COMMITTED		#x00000002L)
-(defconstant $SQL_TXN_REPEATABLE_READ 	#x00000004L)
-(defconstant $SQL_TXN_SERIALIZABLE		#x00000008L)
-(defconstant $SQL_TXN_VERSIONING			#x00000010L
+(defconstant $SQL_TXN_READ_UNCOMMITTED  #x00000001L)
+(defconstant $SQL_TXN_READ_COMMITTED            #x00000002L)
+(defconstant $SQL_TXN_REPEATABLE_READ   #x00000004L)
+(defconstant $SQL_TXN_SERIALIZABLE              #x00000008L)
+(defconstant $SQL_TXN_VERSIONING                        #x00000010L
 
 ;; SQL_CORRELATION_NAME values
 )
-(defconstant $SQL_CN_NONE 				#x0000)
-(defconstant $SQL_CN_DIFFERENT			#x0001)
-(defconstant $SQL_CN_ANY					#x0002
+(defconstant $SQL_CN_NONE                               #x0000)
+(defconstant $SQL_CN_DIFFERENT                  #x0001)
+(defconstant $SQL_CN_ANY                                        #x0002
 
 ;; SQL_NON_NULLABLE_COLUMNS values
 )
-(defconstant $SQL_NNC_NULL			   	#x0000)
-(defconstant $SQL_NNC_NON_NULL			#x0001
+(defconstant $SQL_NNC_NULL                              #x0000)
+(defconstant $SQL_NNC_NON_NULL                  #x0001
 
 ;; SQL_NULL_COLLATION values
-									  )
-(defconstant $SQL_NC_HIGH 				#x0000)
-(defconstant $SQL_NC_LOW					#x0001)
-(defconstant $SQL_NC_START				#x0002)
-(defconstant $SQL_NC_END					#x0004
+                                                                          )
+(defconstant $SQL_NC_HIGH                               #x0000)
+(defconstant $SQL_NC_LOW                                        #x0001)
+(defconstant $SQL_NC_START                              #x0002)
+(defconstant $SQL_NC_END                                        #x0004
 
 ;; SQL_FILE_USAGE values
 )
-(defconstant $SQL_FILE_NOT_SUPPORTED		#x0000)
-(defconstant $SQL_FILE_TABLE				#x0001)
-(defconstant $SQL_FILE_QUALIFIER			#x0002
+(defconstant $SQL_FILE_NOT_SUPPORTED            #x0000)
+(defconstant $SQL_FILE_TABLE                            #x0001)
+(defconstant $SQL_FILE_QUALIFIER                        #x0002
 
 ;; SQL_GETDATA_EXTENSIONS values
 )
-(defconstant $SQL_GD_ANY_COLUMN			#x00000001L)
-(defconstant $SQL_GD_ANY_ORDER			#x00000002L)
-(defconstant $SQL_GD_BLOCK				#x00000004L)
-(defconstant $SQL_GD_BOUND				#x00000008L
+(defconstant $SQL_GD_ANY_COLUMN                 #x00000001L)
+(defconstant $SQL_GD_ANY_ORDER                  #x00000002L)
+(defconstant $SQL_GD_BLOCK                              #x00000004L)
+(defconstant $SQL_GD_BOUND                              #x00000008L
 
 ;; SQL_ALTER_TABLE values
 )
-(defconstant $SQL_AT_ADD_COLUMN			#x00000001L)
-(defconstant $SQL_AT_DROP_COLUMN			#x00000002L
+(defconstant $SQL_AT_ADD_COLUMN                 #x00000001L)
+(defconstant $SQL_AT_DROP_COLUMN                        #x00000002L
 
 ;; SQL_POSITIONED_STATEMENTS masks
 )
-(defconstant $SQL_PS_POSITIONED_DELETE	#x00000001L)
-(defconstant $SQL_PS_POSITIONED_UPDATE	#x00000002L)
-(defconstant $SQL_PS_SELECT_FOR_UPDATE	#x00000004L
+(defconstant $SQL_PS_POSITIONED_DELETE  #x00000001L)
+(defconstant $SQL_PS_POSITIONED_UPDATE  #x00000002L)
+(defconstant $SQL_PS_SELECT_FOR_UPDATE  #x00000004L
 
 ;; SQL_GROUP_BY values
 )
-(defconstant $SQL_GB_NOT_SUPPORTED			#x0000)
-(defconstant $SQL_GB_GROUP_BY_EQUALS_SELECT	#x0001)
-(defconstant $SQL_GB_GROUP_BY_CONTAINS_SELECT	#x0002)
-(defconstant $SQL_GB_NO_RELATION				#x0003
-													
+(defconstant $SQL_GB_NOT_SUPPORTED                      #x0000)
+(defconstant $SQL_GB_GROUP_BY_EQUALS_SELECT     #x0001)
+(defconstant $SQL_GB_GROUP_BY_CONTAINS_SELECT   #x0002)
+(defconstant $SQL_GB_NO_RELATION                                #x0003
+
 ;; SQL_OWNER_USAGE masks
 )
-(defconstant $SQL_OU_DML_STATEMENTS		#x00000001L)
+(defconstant $SQL_OU_DML_STATEMENTS             #x00000001L)
 (defconstant $SQL_OU_PROCEDURE_INVOCATION #x00000002L)
-(defconstant $SQL_OU_TABLE_DEFINITION 	#x00000004L)
-(defconstant $SQL_OU_INDEX_DEFINITION 	#x00000008L)
+(defconstant $SQL_OU_TABLE_DEFINITION   #x00000004L)
+(defconstant $SQL_OU_INDEX_DEFINITION   #x00000008L)
 (defconstant $SQL_OU_PRIVILEGE_DEFINITION #x00000010L
 
 ;; SQL_QUALIFIER_USAGE masks
 )
-(defconstant $SQL_QU_DML_STATEMENTS		#x00000001L)
+(defconstant $SQL_QU_DML_STATEMENTS             #x00000001L)
 (defconstant $SQL_QU_PROCEDURE_INVOCATION #x00000002L)
-(defconstant $SQL_QU_TABLE_DEFINITION 	#x00000004L)
-(defconstant $SQL_QU_INDEX_DEFINITION 	#x00000008L)
+(defconstant $SQL_QU_TABLE_DEFINITION   #x00000004L)
+(defconstant $SQL_QU_INDEX_DEFINITION   #x00000008L)
 (defconstant $SQL_QU_PRIVILEGE_DEFINITION #x00000010L
 
 ;; SQL_SUBQUERIES masks
 )
-(defconstant $SQL_SQ_COMPARISON				#x00000001L)
-(defconstant $SQL_SQ_EXISTS					#x00000002L)
-(defconstant $SQL_SQ_IN						#x00000004L)
-(defconstant $SQL_SQ_QUANTIFIED				#x00000008L)
-(defconstant $SQL_SQ_CORRELATED_SUBQUERIES	#x00000010L
+(defconstant $SQL_SQ_COMPARISON                         #x00000001L)
+(defconstant $SQL_SQ_EXISTS                                     #x00000002L)
+(defconstant $SQL_SQ_IN                                         #x00000004L)
+(defconstant $SQL_SQ_QUANTIFIED                         #x00000008L)
+(defconstant $SQL_SQ_CORRELATED_SUBQUERIES      #x00000010L
 
 ;; SQL_UNION masks
 )
-(defconstant $SQL_U_UNION						#x00000001L)
-(defconstant $SQL_U_UNION_ALL					#x00000002L
+(defconstant $SQL_U_UNION                                               #x00000001L)
+(defconstant $SQL_U_UNION_ALL                                   #x00000002L
 
 ;; SQL_BOOKMARK_PERSISTENCE values
 )
-(defconstant $SQL_BP_CLOSE				#x00000001L)
-(defconstant $SQL_BP_DELETE				#x00000002L)
-(defconstant $SQL_BP_DROP 				#x00000004L)
-(defconstant $SQL_BP_TRANSACTION			#x00000008L)
-(defconstant $SQL_BP_UPDATE				#x00000010L)
-(defconstant $SQL_BP_OTHER_HSTMT			#x00000020L)
-(defconstant $SQL_BP_SCROLL				#x00000040L
+(defconstant $SQL_BP_CLOSE                              #x00000001L)
+(defconstant $SQL_BP_DELETE                             #x00000002L)
+(defconstant $SQL_BP_DROP                               #x00000004L)
+(defconstant $SQL_BP_TRANSACTION                        #x00000008L)
+(defconstant $SQL_BP_UPDATE                             #x00000010L)
+(defconstant $SQL_BP_OTHER_HSTMT                        #x00000020L)
+(defconstant $SQL_BP_SCROLL                             #x00000040L
 
 ;; SQL_STATIC_SENSITIVITY values
 )
-(defconstant $SQL_SS_ADDITIONS			#x00000001L)
-(defconstant $SQL_SS_DELETIONS			#x00000002L)
-(defconstant $SQL_SS_UPDATES				#x00000004L
+(defconstant $SQL_SS_ADDITIONS                  #x00000001L)
+(defconstant $SQL_SS_DELETIONS                  #x00000002L)
+(defconstant $SQL_SS_UPDATES                            #x00000004L
 
 ;; SQL_LOCK_TYPESL masks
 )
-(defconstant $SQL_LCK_NO_CHANGE			#x00000001L)
-(defconstant $SQL_LCK_EXCLUSIVE			#x00000002L)
-(defconstant $SQL_LCK_UNLOCK				#x00000004L
+(defconstant $SQL_LCK_NO_CHANGE                 #x00000001L)
+(defconstant $SQL_LCK_EXCLUSIVE                 #x00000002L)
+(defconstant $SQL_LCK_UNLOCK                            #x00000004L
 
 ;; SQL_POS_OPERATIONS masks
 |#
@@ -653,97 +653,97 @@
 #|
 ;; SQL_QUALIFIER_LOCATION values
 )
-(defconstant $SQL_QL_START				#x0001L)
-(defconstant $SQL_QL_END					#x0002L
+(defconstant $SQL_QL_START                              #x0001L)
+(defconstant $SQL_QL_END                                        #x0002L
 
 ;; SQL_OJ_CAPABILITIES values
 
-(defconstant $SQL_OJ_LEFT					#x00000001L)
-(defconstant $SQL_OJ_RIGHT				#x00000002L)
-(defconstant $SQL_OJ_FULL					#x00000004L)
-(defconstant $SQL_OJ_NESTED				#x00000008L)
-(defconstant $SQL_OJ_NOT_ORDERED			#x00000010L)
-(defconstant $SQL_OJ_INNER				#x00000020L)
-(defconstant $SQL_OJ_ALL_COMPARISON_OPS	#x00000040L
+(defconstant $SQL_OJ_LEFT                                       #x00000001L)
+(defconstant $SQL_OJ_RIGHT                              #x00000002L)
+(defconstant $SQL_OJ_FULL                                       #x00000004L)
+(defconstant $SQL_OJ_NESTED                             #x00000008L)
+(defconstant $SQL_OJ_NOT_ORDERED                        #x00000010L)
+(defconstant $SQL_OJ_INNER                              #x00000020L)
+(defconstant $SQL_OJ_ALL_COMPARISON_OPS #x00000040L
 
 ;; options for SQLGetStmtOption/SQLSetStmtOption)
-(defconstant $SQL_QUERY_TIMEOUT			0)
-(defconstant $SQL_MAX_ROWS				1)
-(defconstant $SQL_NOSCAN					2)
-(defconstant $SQL_MAX_LENGTH				3)
-(defconstant $SQL_ASYNC_ENABLE			4)
-(defconstant $SQL_BIND_TYPE				5
-(defconstant $SQL_CURSOR_TYPE 			6)
-(defconstant $SQL_CONCURRENCY 			7)
-(defconstant $SQL_KEYSET_SIZE 			8)
-(defconstant $SQL_ROWSET_SIZE 			9)
-(defconstant $SQL_SIMULATE_CURSOR 		10)
-(defconstant $SQL_RETRIEVE_DATA			11)
-(defconstant $SQL_USE_BOOKMARKS			12)
-(defconstant $SQL_GET_BOOKMARK			13	/*	GetStmtOption Only)
-(defconstant $SQL_ROW_NUMBER				14	/*	GetStmtOption Only)
-(defconstant $SQL_STMT_OPT_MAX			SQL_ROW_NUMBER
+(defconstant $SQL_QUERY_TIMEOUT                 0)
+(defconstant $SQL_MAX_ROWS                              1)
+(defconstant $SQL_NOSCAN                                        2)
+(defconstant $SQL_MAX_LENGTH                            3)
+(defconstant $SQL_ASYNC_ENABLE                  4)
+(defconstant $SQL_BIND_TYPE                             5
+(defconstant $SQL_CURSOR_TYPE                   6)
+(defconstant $SQL_CONCURRENCY                   7)
+(defconstant $SQL_KEYSET_SIZE                   8)
+(defconstant $SQL_ROWSET_SIZE                   9)
+(defconstant $SQL_SIMULATE_CURSOR               10)
+(defconstant $SQL_RETRIEVE_DATA                 11)
+(defconstant $SQL_USE_BOOKMARKS                 12)
+(defconstant $SQL_GET_BOOKMARK                  13      /*      GetStmtOption Only)
+(defconstant $SQL_ROW_NUMBER                            14      /*      GetStmtOption Only)
+(defconstant $SQL_STMT_OPT_MAX                  SQL_ROW_NUMBER
 )
-(defconstant $SQL_STMT_OPT_MIN			SQL_QUERY_TIMEOUT
+(defconstant $SQL_STMT_OPT_MIN                  SQL_QUERY_TIMEOUT
 
 
 ;; SQL_QUERY_TIMEOUT options)
-(defconstant $SQL_QUERY_TIMEOUT_DEFAULT	0UL
+(defconstant $SQL_QUERY_TIMEOUT_DEFAULT 0UL
 
 ;; SQL_MAX_ROWS options)
-(defconstant $SQL_MAX_ROWS_DEFAULT		0UL
+(defconstant $SQL_MAX_ROWS_DEFAULT              0UL
 
 ;; SQL_NOSCAN options)
-(defconstant $SQL_NOSCAN_OFF				0UL	/*	1.0 FALSE)
-(defconstant $SQL_NOSCAN_ON				1UL	/*	1.0 TRUE)
-(defconstant $SQL_NOSCAN_DEFAULT			SQL_NOSCAN_OFF
+(defconstant $SQL_NOSCAN_OFF                            0UL     /*      1.0 FALSE)
+(defconstant $SQL_NOSCAN_ON                             1UL     /*      1.0 TRUE)
+(defconstant $SQL_NOSCAN_DEFAULT                        SQL_NOSCAN_OFF
 
 ;; SQL_MAX_LENGTH options)
-(defconstant $SQL_MAX_LENGTH_DEFAULT		0UL
+(defconstant $SQL_MAX_LENGTH_DEFAULT            0UL
 
 ;; SQL_ASYNC_ENABLE options)
-(defconstant $SQL_ASYNC_ENABLE_OFF		0UL)
-(defconstant $SQL_ASYNC_ENABLE_ON			1UL)
-(defconstant $SQL_ASYNC_ENABLE_DEFAULT	SQL_ASYNC_ENABLE_OFF
+(defconstant $SQL_ASYNC_ENABLE_OFF              0UL)
+(defconstant $SQL_ASYNC_ENABLE_ON                       1UL)
+(defconstant $SQL_ASYNC_ENABLE_DEFAULT  SQL_ASYNC_ENABLE_OFF
 
 ;; SQL_BIND_TYPE options)
-(defconstant $SQL_BIND_BY_COLUMN			0UL)
-(defconstant $SQL_BIND_TYPE_DEFAULT		SQL_BIND_BY_COLUMN		;; Default value
+(defconstant $SQL_BIND_BY_COLUMN                        0UL)
+(defconstant $SQL_BIND_TYPE_DEFAULT             SQL_BIND_BY_COLUMN              ;; Default value
 
 ;; SQL_CONCURRENCY options)
-(defconstant $SQL_CONCUR_READ_ONLY		1)
-(defconstant $SQL_CONCUR_LOCK 			2)
-(defconstant $SQL_CONCUR_ROWVER			3)
-(defconstant $SQL_CONCUR_VALUES			4)
-(defconstant $SQL_CONCUR_DEFAULT			SQL_CONCUR_READ_ONLY	;; Default value
+(defconstant $SQL_CONCUR_READ_ONLY              1)
+(defconstant $SQL_CONCUR_LOCK                   2)
+(defconstant $SQL_CONCUR_ROWVER                 3)
+(defconstant $SQL_CONCUR_VALUES                 4)
+(defconstant $SQL_CONCUR_DEFAULT                        SQL_CONCUR_READ_ONLY    ;; Default value
 
 ;; SQL_CURSOR_TYPE options)
-(defconstant $SQL_CURSOR_FORWARD_ONLY 	0UL)
-(defconstant $SQL_CURSOR_KEYSET_DRIVEN	1UL)
-(defconstant $SQL_CURSOR_DYNAMIC			2UL)
-(defconstant $SQL_CURSOR_STATIC			3UL)
-(defconstant $SQL_CURSOR_TYPE_DEFAULT		SQL_CURSOR_FORWARD_ONLY	;; Default value
+(defconstant $SQL_CURSOR_FORWARD_ONLY   0UL)
+(defconstant $SQL_CURSOR_KEYSET_DRIVEN  1UL)
+(defconstant $SQL_CURSOR_DYNAMIC                        2UL)
+(defconstant $SQL_CURSOR_STATIC                 3UL)
+(defconstant $SQL_CURSOR_TYPE_DEFAULT           SQL_CURSOR_FORWARD_ONLY ;; Default value
 
 ;; SQL_ROWSET_SIZE options)
-(defconstant $SQL_ROWSET_SIZE_DEFAULT 	1UL
+(defconstant $SQL_ROWSET_SIZE_DEFAULT   1UL
 
 ;; SQL_KEYSET_SIZE options)
-(defconstant $SQL_KEYSET_SIZE_DEFAULT		0UL
+(defconstant $SQL_KEYSET_SIZE_DEFAULT           0UL
 
 ;; SQL_SIMULATE_CURSOR options)
-(defconstant $SQL_SC_NON_UNIQUE			0UL)
-(defconstant $SQL_SC_TRY_UNIQUE			1UL)
-(defconstant $SQL_SC_UNIQUE				2UL
+(defconstant $SQL_SC_NON_UNIQUE                 0UL)
+(defconstant $SQL_SC_TRY_UNIQUE                 1UL)
+(defconstant $SQL_SC_UNIQUE                             2UL
 
 ;; SQL_RETRIEVE_DATA options)
-(defconstant $SQL_RD_OFF					0UL)
-(defconstant $SQL_RD_ON					1UL)
-(defconstant $SQL_RD_DEFAULT				SQL_RD_ON
+(defconstant $SQL_RD_OFF                                        0UL)
+(defconstant $SQL_RD_ON                                 1UL)
+(defconstant $SQL_RD_DEFAULT                            SQL_RD_ON
 
 ;; SQL_USE_BOOKMARKS options)
-(defconstant $SQL_UB_OFF					0UL)
-(defconstant $SQL_UB_ON					1UL)
-(defconstant $SQL_UB_DEFAULT				SQL_UB_OFF
+(defconstant $SQL_UB_OFF                                        0UL)
+(defconstant $SQL_UB_ON                                 1UL)
+(defconstant $SQL_UB_DEFAULT                            SQL_UB_OFF
 
 
 |#
@@ -756,7 +756,7 @@
 (defconstant $SQL_OPT_TRACEFILE 105)
 (defconstant $SQL_TRANSLATE_DLL 106)
 (defconstant $SQL_TRANSLATE_OPTION 107)
-(defconstant $SQL_TXN_ISOLATION 108) 
+(defconstant $SQL_TXN_ISOLATION 108)
 (defconstant $SQL_CURRENT_QUALIFIER 109)
 (defconstant $SQL_ODBC_CURSORS 110)
 (defconstant $SQL_QUIET_MODE 111)
@@ -764,7 +764,7 @@
 (defconstant $SQL_CONN_OPT_MAX $SQL_PACKET_SIZE)
 (defconstant $SQL_CONNECT_OPT_DRVR_START 1000)
 
-;;#define	SQL_CONN_OPT_MIN			SQL_ACCESS_MODE
+;;#define       SQL_CONN_OPT_MIN                        SQL_ACCESS_MODE
 
 ;; SQL_ACCESS_MODE options
 (defconstant $SQL_MODE_READ_WRITE 0) ; 0UL
@@ -777,14 +777,14 @@
 (defconstant $SQL_AUTOCOMMIT_DEFAULT $SQL_AUTOCOMMIT_ON)
 
 ;; SQL_LOGIN_TIMEOUT options)
-(defconstant $SQL_LOGIN_TIMEOUT_DEFAULT	15) ; 15UL
+(defconstant $SQL_LOGIN_TIMEOUT_DEFAULT 15) ; 15UL
 
 ;; SQL_OPT_TRACE options)
 (defconstant $SQL_OPT_TRACE_OFF 0) ; 0UL
 (defconstant $SQL_OPT_TRACE_ON 1) ; 1UL
 (defconstant $SQL_OPT_TRACE_DEFAULT $SQL_OPT_TRACE_OFF)
 ; #ifndef SQL_OPT_TRACE_FILE_DEFAULT
-; (defconstant $SQL_OPT_TRACE_FILE_DEFAULT	"\\SQL.LOG"
+; (defconstant $SQL_OPT_TRACE_FILE_DEFAULT      "\\SQL.LOG"
 ;; #endif
 
 (defconstant $SQL_CUR_USE_IF_NEEDED 0) ; 0UL
@@ -797,12 +797,12 @@
 (defconstant $SQL_BEST_ROWID 1)
 (defconstant $SQL_ROWVER 2)
 )
-(defconstant $SQL_SCOPE_CURROW			0)
-(defconstant $SQL_SCOPE_TRANSACTION		1)
-(defconstant $SQL_SCOPE_SESSION			2
+(defconstant $SQL_SCOPE_CURROW                  0)
+(defconstant $SQL_SCOPE_TRANSACTION             1)
+(defconstant $SQL_SCOPE_SESSION                 2
 
 ;; Defines for SQLSetPos)
-(defconstant $SQL_ENTIRE_ROWSET			0
+(defconstant $SQL_ENTIRE_ROWSET                 0
 |#
 
 ;; Operations in SQLSetPos
@@ -819,7 +819,7 @@
 (defconstant $SQL_LOCK_UNLOCK 2)
 
 ;; SQLBindParameter extensions
-(defconstant $SQL_DEFAULT_PARAM	-5)
+(defconstant $SQL_DEFAULT_PARAM -5)
 (defconstant $SQL_IGNORE -6)
 (defconstant $SQL_LEN_DATA_AT_EXEC_OFFSET -100)
 ;(defconstant $SQL_LEN_DATA_AT_EXEC(length) (-length+SQL_LEN_DATA_AT_EXEC_OFFSET)
@@ -838,7 +838,7 @@
 
 ; #ifndef RC_INVOKED
 
-/*	This define is too large for RC)
+/*      This define is too large for RC)
 (defconstant $SQL_ODBC_KEYWORDS \
 "ABSOLUTE,ACTION,ADA,ADD,ALL,ALLOCATE,ALTER,AND,ANY,ARE,AS,"\
 "ASC,ASSERTION,AT,AUTHORIZATION,AVG,"\
@@ -924,7 +924,7 @@
 (defconstant $SQL_TYPE_DRIVER_END $SQL_UNICODE)
 
 
-(defconstant $SQL_SIGNED_OFFSET	-20)
+(defconstant $SQL_SIGNED_OFFSET -20)
 (defconstant $SQL_UNSIGNED_OFFSET -22)
 
 ;; C datatype to SQL datatype mapping

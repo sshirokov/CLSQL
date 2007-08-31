@@ -626,10 +626,10 @@
 (defun mysql-num-rows (res)
   (uffi:with-foreign-object (p-high32 :unsigned-int)
     (let ((low32 (clsql-mysql-num-rows res p-high32))
-	  (high32 (uffi:deref-pointer p-high32 :unsigned-int)))
+          (high32 (uffi:deref-pointer p-high32 :unsigned-int)))
       (if (zerop high32)
-	  low32
-	(make-64-bit-integer high32 low32)))))
+          low32
+        (make-64-bit-integer high32 low32)))))
 
 (uffi:def-function "clsql_mysql_affected_rows"
     ((mysql (* mysql-mysql))
@@ -640,10 +640,10 @@
 (defun mysql-affected-rows (mysql)
   (uffi:with-foreign-object (p-high32 :unsigned-int)
     (let ((low32 (clsql-mysql-affected-rows mysql p-high32))
-	  (high32 (uffi:deref-pointer p-high32 :unsigned-int)))
+          (high32 (uffi:deref-pointer p-high32 :unsigned-int)))
       (if (zerop high32)
-	  low32
-	(make-64-bit-integer high32 low32)))))
+          low32
+        (make-64-bit-integer high32 low32)))))
 
 (uffi:def-function "clsql_mysql_insert_id"
     ((res (* mysql-mysql))
@@ -654,9 +654,9 @@
 (defun mysql-insert-id (mysql)
   (uffi:with-foreign-object (p-high32 :unsigned-int)
   (let ((low32 (clsql-mysql-insert-id mysql p-high32))
-	(high32 (uffi:deref-pointer p-high32 :unsigned-int)))
+        (high32 (uffi:deref-pointer p-high32 :unsigned-int)))
     (if (zerop high32)
-	low32
+        low32
       (make-64-bit-integer high32 low32)))))
 
 

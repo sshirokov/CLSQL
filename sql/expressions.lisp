@@ -114,8 +114,8 @@
     (write-string
      (convert-to-db-default-case
       (etypecase name
-	(string name)
-	(symbol (symbol-name name)))
+        (string name)
+        (symbol (symbol-name name)))
       database)
      *sql-stream*))
   t)
@@ -152,30 +152,30 @@
 (defmethod output-sql ((expr sql-ident-attribute) database)
   (with-slots (qualifier name type) expr
     (if (and (not qualifier) (not type))
-	(etypecase name
-	  ;; Honor care of name
-	  (string
-	   (write-string name *sql-stream*))
-	  (symbol
-	   (write-string (sql-escape (convert-to-db-default-case
-				      (symbol-name name) database)) *sql-stream*)))
+        (etypecase name
+          ;; Honor care of name
+          (string
+           (write-string name *sql-stream*))
+          (symbol
+           (write-string (sql-escape (convert-to-db-default-case
+                                      (symbol-name name) database)) *sql-stream*)))
 
-	;;; KMR: The TYPE field is used by CommonSQL for type conversion -- it
+        ;;; KMR: The TYPE field is used by CommonSQL for type conversion -- it
       ;;; should not be output in SQL statements
       #+ignore
       (format *sql-stream* "~@[~A.~]~A~@[ ~A~]"
-	      (when qualifier
-		(convert-to-db-default-case (sql-escape qualifier) database))
-	      (sql-escape (convert-to-db-default-case name database))
-	      (when type
-		(convert-to-db-default-case (symbol-name type) database)))
+              (when qualifier
+                (convert-to-db-default-case (sql-escape qualifier) database))
+              (sql-escape (convert-to-db-default-case name database))
+              (when type
+                (convert-to-db-default-case (symbol-name type) database)))
       (format *sql-stream* "~@[~A.~]~A"
-	      (when qualifier
+              (when qualifier
                 (typecase qualifier
                   (string (format nil "~s" qualifier))
                   (t (convert-to-db-default-case (sql-escape qualifier)
                                                  database))))
-	      (sql-escape (convert-to-db-default-case name database))))
+              (sql-escape (convert-to-db-default-case name database))))
     t))
 
 (defmethod output-sql-hash-key ((expr sql-ident-attribute) database)
@@ -412,9 +412,9 @@
     (output-sql (car components) database)
     (when components
       (mapc #'(lambda (comp)
-		(write-string ", " *sql-stream*)
-		(output-sql comp database))
-	    (cdr components))))
+                (write-string ", " *sql-stream*)
+                (output-sql comp database))
+            (cdr components))))
   t)
 
 (defclass sql-set-exp (%sql-expression)
@@ -544,26 +544,26 @@ uninclusive, and the args from that keyword to the end."
                                 (find-class arg nil)))
                        target-args))))
     (multiple-value-bind (selections arglist)
-	(query-get-selections args)
+        (query-get-selections args)
       (if (select-objects selections)
-	  (destructuring-bind (&key flatp refresh &allow-other-keys) arglist
-	    (make-instance 'sql-object-query :objects selections
-			   :flatp flatp :refresh refresh
-			   :exp arglist))
-	  (destructuring-bind (&key all flatp set-operation distinct from where
-				    group-by having order-by
-				    offset limit inner-join on &allow-other-keys)
-	      arglist
-	    (if (null selections)
-		(error "No target columns supplied to select statement."))
-	    (if (null from)
-		(error "No source tables supplied to select statement."))
-	    (make-instance 'sql-query :selections selections
-			   :all all :flatp flatp :set-operation set-operation
-			   :distinct distinct :from from :where where
-			   :limit limit :offset offset
-			   :group-by group-by :having having :order-by order-by
-			   :inner-join inner-join :on on))))))
+          (destructuring-bind (&key flatp refresh &allow-other-keys) arglist
+            (make-instance 'sql-object-query :objects selections
+                           :flatp flatp :refresh refresh
+                           :exp arglist))
+          (destructuring-bind (&key all flatp set-operation distinct from where
+                                    group-by having order-by
+                                    offset limit inner-join on &allow-other-keys)
+              arglist
+            (if (null selections)
+                (error "No target columns supplied to select statement."))
+            (if (null from)
+                (error "No source tables supplied to select statement."))
+            (make-instance 'sql-query :selections selections
+                           :all all :flatp flatp :set-operation set-operation
+                           :distinct distinct :from from :where where
+                           :limit limit :offset offset
+                           :group-by group-by :having having :order-by order-by
+                           :inner-join inner-join :on on))))))
 
 (defmethod output-sql ((query sql-query) database)
   (with-slots (distinct selections from where group-by having order-by
@@ -795,8 +795,8 @@ uninclusive, and the args from that keyword to the end."
                (write-char #\Space *sql-stream*)
                (write-string
                 (if (stringp db-type) db-type ; override definition
-		  (database-get-type-specifier (car type) (cdr type) database
-					       (database-underlying-type database)))
+                  (database-get-type-specifier (car type) (cdr type) database
+                                               (database-underlying-type database)))
                 *sql-stream*)
                (let ((constraints (database-constraint-statement
                                    (if (and db-type (symbolp db-type))
@@ -823,9 +823,9 @@ uninclusive, and the args from that keyword to the end."
           (write-string (car modifier) *sql-stream*)))
       (write-char #\) *sql-stream*)
       (when (and (eq :mysql (database-underlying-type database))
-		 transactions
-		 (db-type-transaction-capable? :mysql database))
-	(write-string " Type=InnoDB" *sql-stream*))))
+                 transactions
+                 (db-type-transaction-capable? :mysql database))
+        (write-string " Type=InnoDB" *sql-stream*))))
   t)
 
 
@@ -855,7 +855,7 @@ uninclusive, and the args from that keyword to the end."
 
 (defmethod database-output-sql ((str string) database)
   (declare (optimize (speed 3) (safety 1)
-		     #+cmu (extensions:inhibit-warnings 3)))
+                     #+cmu (extensions:inhibit-warnings 3)))
   (let ((len (length str)))
     (declare (type fixnum len))
     (cond ((zerop len)
@@ -865,13 +865,13 @@ uninclusive, and the args from that keyword to the end."
            (concatenate 'string "'" str "'"))
           (t
            (let ((buf (make-string (+ (* len 2) 2) :initial-element #\')))
-	     (declare (simple-string buf))
-	     (do* ((i 0 (incf i))
+             (declare (simple-string buf))
+             (do* ((i 0 (incf i))
                    (j 1 (incf j)))
                   ((= i len) (subseq buf 0 (1+ j)))
                (declare (type fixnum i j))
                (let ((char (aref str i)))
-		 (declare (character char))
+                 (declare (character char))
                  (cond ((char= char #\')
                         (setf (aref buf j) #\')
                         (incf j)
@@ -923,8 +923,8 @@ uninclusive, and the args from that keyword to the end."
 
 (defmethod database-output-sql ((arg vector) database)
   (format nil "~{~A~^,~}" (map 'list #'(lambda (val)
-					 (sql-output val database))
-			       arg)))
+                                         (sql-output val database))
+                               arg)))
 
 (defmethod output-sql-hash-key ((arg vector) database)
   (list 'vector (map 'list (lambda (arg)
@@ -950,13 +950,13 @@ uninclusive, and the args from that keyword to the end."
 
 (defmethod database-output-sql (thing database)
   (if (or (null thing)
-	  (eq 'null thing))
+          (eq 'null thing))
       +null-string+
     (error 'sql-user-error
            :message
-	   (format nil
-		   "No type conversion to SQL for ~A is defined for DB ~A."
-		   (type-of thing) (type-of database)))))
+           (format nil
+                   "No type conversion to SQL for ~A is defined for DB ~A."
+                   (type-of thing) (type-of database)))))
 
 
 ;;
@@ -991,7 +991,7 @@ uninclusive, and the args from that keyword to the end."
             (if (null output)
                 (error 'sql-user-error
                        :message (format nil "unsupported column constraint '~A'"
-					constraint))
+                                        constraint))
                 (setq string (concatenate 'string string (cdr output))))
             (if (< 1 (length constraint))
                 (setq string (concatenate 'string string " "))))))))

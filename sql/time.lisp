@@ -85,11 +85,11 @@
   (declare (ignore depth))
   (if *print-escape*
       (format stream "#<DURATION: ~a>"
-	      (format-duration nil duration :precision :second))
+              (format-duration nil duration :precision :second))
       (format-duration stream duration :precision :second)))
 
 (defstruct (date (:constructor %make-date)
-		 (:print-function %print-date))
+                 (:print-function %print-date))
   (mjd 0 :type fixnum))
 
 (defun %print-date (date stream depth)
@@ -105,8 +105,8 @@
         (minute (duration-minute duration))
         (hour (duration-hour duration))
         (day (duration-day duration))
-	(month (duration-month duration))
-	(year (duration-year duration)))
+        (month (duration-month duration))
+        (year (duration-year duration)))
     (format nil "P~dY~dM~dD~dH~dM~dS" year month day hour minute second)))
 
 
@@ -126,7 +126,7 @@
 (defun make-date (&key (year 0) (month 1) (day 1) (hour 0) (minute 0)
                        (second 0) (usec 0) (offset 0))
   (time->date (make-time :year year :month month :day day :hour hour
-			 :minute minute :second second :usec usec :offset offset)))
+                         :minute minute :second second :usec usec :offset offset)))
 
 (defun copy-time (time)
   (%make-wall-time :mjd (time-mjd time)
@@ -232,15 +232,15 @@
         (* (duration-reduce duration :hour) 60)))
     (:hour
      (+ (if round
-	    (floor (duration-minute duration) 30)
-	    0)
-	(duration-hour duration)
-	(* (duration-reduce duration :day) 24)))
+            (floor (duration-minute duration) 30)
+            0)
+        (duration-hour duration)
+        (* (duration-reduce duration :day) 24)))
     (:day
      (+ (if round
-	    (floor (duration-hour duration) 12)
-	    0)
-	(duration-day duration)))))
+            (floor (duration-hour duration) 12)
+            0)
+        (duration-day duration)))))
 
 
 ;; ------------------------------------------------------------
@@ -309,19 +309,19 @@
 (defun time/= (number &rest more-numbers)
   "Returns T if no two of its arguments are numerically equal, NIL otherwise."
   (do* ((head number (car nlist))
-	(nlist more-numbers (cdr nlist)))
+        (nlist more-numbers (cdr nlist)))
        ((atom nlist) t)
      (declare (list nlist))
      (unless (do* ((nl nlist (cdr nl)))
-		  ((atom nl) t)
-	       (declare (list nl))
-	       (if (%time= head (car nl)) (return nil)))
+                  ((atom nl) t)
+               (declare (list nl))
+               (if (%time= head (car nl)) (return nil)))
        (return nil))))
 
 (defun time< (number &rest more-numbers)
   "Returns T if its arguments are in strictly increasing order, NIL otherwise."
   (do* ((n number (car nlist))
-	(nlist more-numbers (cdr nlist)))
+        (nlist more-numbers (cdr nlist)))
        ((atom nlist) t)
      (declare (list nlist))
      (if (not (%time< n (car nlist))) (return nil))))
@@ -329,7 +329,7 @@
 (defun time> (number &rest more-numbers)
   "Returns T if its arguments are in strictly decreasing order, NIL otherwise."
   (do* ((n number (car nlist))
-	(nlist more-numbers (cdr nlist)))
+        (nlist more-numbers (cdr nlist)))
        ((atom nlist) t)
      (declare (list nlist))
      (if (not (%time> n (car nlist))) (return nil))))
@@ -337,7 +337,7 @@
 (defun time<= (number &rest more-numbers)
   "Returns T if arguments are in strictly non-decreasing order, NIL otherwise."
   (do* ((n number (car nlist))
-	(nlist more-numbers (cdr nlist)))
+        (nlist more-numbers (cdr nlist)))
        ((atom nlist) t)
      (declare (list nlist))
      (if (not (%time<= n (car nlist))) (return nil))))
@@ -345,7 +345,7 @@
 (defun time>= (number &rest more-numbers)
   "Returns T if arguments are in strictly non-increasing order, NIL otherwise."
   (do* ((n number (car nlist))
-	(nlist more-numbers (cdr nlist)))
+        (nlist more-numbers (cdr nlist)))
        ((atom nlist) t)
      (declare (list nlist))
      (if (not (%time>= n (car nlist))) (return nil))))
@@ -392,28 +392,28 @@
 (defun replace-string (string1 search-string replace-string &key (test #'string=))
   "Search within string1 for search-string, replace with replace-string, non-destructively."
   (let ((replace-string-length (length replace-string))
-	(search-string-length  (length search-string)))
+        (search-string-length  (length search-string)))
     (labels ((sub-replace-string (current-string position)
-	       (let ((found-position (search search-string current-string :test test :start2 position)))
-		 (if (null found-position)
-		     current-string
-		     (sub-replace-string (concatenate 'string
-						      (subseq current-string 0 found-position)
-						      replace-string
-						      (subseq current-string (+ found-position search-string-length)))
-					 (+ position replace-string-length))))))
+               (let ((found-position (search search-string current-string :test test :start2 position)))
+                 (if (null found-position)
+                     current-string
+                     (sub-replace-string (concatenate 'string
+                                                      (subseq current-string 0 found-position)
+                                                      replace-string
+                                                      (subseq current-string (+ found-position search-string-length)))
+                                         (+ position replace-string-length))))))
       (sub-replace-string string1 0))))
 );eval-when
 
 (defmacro wrap-time-for-date (time-func &key (result-func))
-  (let ((date-func (intern (replace-string (symbol-name time-func) 
+  (let ((date-func (intern (replace-string (symbol-name time-func)
                                            (symbol-name-default-case "TIME")
                                            (symbol-name-default-case "DATE")))))
     `(defun ,date-func (number &rest more-numbers)
       (let ((result (apply #',time-func (mapcar #'date->time (cons number more-numbers)))))
-	,(if result-func
-	     `(funcall #',result-func result)
-	     'result)))))
+        ,(if result-func
+             `(funcall #',result-func result)
+             'result)))))
 
 (wrap-time-for-date time=)
 (wrap-time-for-date time/=)
@@ -541,9 +541,9 @@
 
 (defun sort-interval-list (list)
   (sort list (lambda (x y)
-	       (case (interval-relation x y)
-		 ((:precedes :contains) t)
-		 ((:follows :overlaps :contained) nil)))))
+               (case (interval-relation x y)
+                 ((:precedes :contains) t)
+                 ((:follows :overlaps :contained) nil)))))
 
 ;; interval push will return its list of intervals in strict order.
 (defun interval-push (interval-list interval &optional container-rule)
@@ -551,19 +551,19 @@
   (let ((sorted-list (sort-interval-list interval-list)))
     (dotimes (x (length sorted-list))
       (let ((elt (nth x sorted-list)))
-	(case (interval-relation elt interval)
-	  (:follows
-	   (return-from interval-push (insert-at-index x sorted-list interval)))
-	  (:contains
-	   (return-from interval-push
-	     (replace-at-index x sorted-list
-			       (make-interval :start (interval-start elt)
-					      :end (interval-end elt)
-					      :type (interval-type elt)
-					      :contained (interval-push (interval-contained elt) interval)
-					      :data (interval-data elt)))))
-	  ((:overlaps :contained)
-	   (error "Overlap")))))
+        (case (interval-relation elt interval)
+          (:follows
+           (return-from interval-push (insert-at-index x sorted-list interval)))
+          (:contains
+           (return-from interval-push
+             (replace-at-index x sorted-list
+                               (make-interval :start (interval-start elt)
+                                              :end (interval-end elt)
+                                              :type (interval-type elt)
+                                              :contained (interval-push (interval-contained elt) interval)
+                                              :data (interval-data elt)))))
+          ((:overlaps :contained)
+           (error "Overlap")))))
     (append sorted-list (list interval))))
 
 ;; interval lists
@@ -574,9 +574,9 @@
   (let ((list (sort-interval-list list)))
     (dotimes (x (length list))
       (let ((elt (nth x list)))
-	(when (and (time<= (interval-start elt) time)
-		   (time< time (interval-end elt)))
-	  (return-from interval-match x))))))
+        (when (and (time<= (interval-start elt) time)
+                   (time< time (interval-end elt)))
+          (return-from interval-match x))))))
 
 (defun interval-clear (list time)
   (dotimes (x (length list))
@@ -586,7 +586,7 @@
         (if (interval-match (interval-contained elt) time)
             (return-from interval-clear
               (replace-at-index x list
-				(make-interval :start (interval-start elt)
+                                (make-interval :start (interval-start elt)
                                                :end (interval-end elt)
                                                :type (interval-type elt)
                                                :contained (interval-clear (interval-contained elt) time)
@@ -601,24 +601,24 @@ begins at time.  If no changes are made, returns nil."
   (let ((list (sort-interval-list list)))
     (if (null list) nil
       (dotimes (x (length list))
-	(let ((elt (nth x list)))
-	  (when (and (time<= (interval-start elt) time)
-		     (time< time (interval-end elt)))
-	    (or (interval-edit (interval-contained elt) time start end tag)
-		(cond ((and (< 0 x)
-			    (time< start (interval-end (nth (1- x) list))))
-		       (error "Overlap of previous interval"))
-		      ((and (< x (1- (length list)))
-			    (time< (interval-start (nth (1+ x) list)) end))
-		       (error "~S ~S ~S ~S Overlap of next interval" x (length list) (interval-start (nth (1+ x) list)) end ))
-		      ((time= (interval-start elt) time)
-		       (return-from interval-edit
-			 (replace-at-index x list
-					   (make-interval :start start
-							  :end end
-							  :type (interval-type elt)
-							  :contained (restrict-intervals (interval-contained elt) start end)
-							  :data (or tag (interval-data elt))))))))))))))
+        (let ((elt (nth x list)))
+          (when (and (time<= (interval-start elt) time)
+                     (time< time (interval-end elt)))
+            (or (interval-edit (interval-contained elt) time start end tag)
+                (cond ((and (< 0 x)
+                            (time< start (interval-end (nth (1- x) list))))
+                       (error "Overlap of previous interval"))
+                      ((and (< x (1- (length list)))
+                            (time< (interval-start (nth (1+ x) list)) end))
+                       (error "~S ~S ~S ~S Overlap of next interval" x (length list) (interval-start (nth (1+ x) list)) end ))
+                      ((time= (interval-start elt) time)
+                       (return-from interval-edit
+                         (replace-at-index x list
+                                           (make-interval :start start
+                                                          :end end
+                                                          :type (interval-type elt)
+                                                          :contained (restrict-intervals (interval-contained elt) start end)
+                                                          :data (or tag (interval-data elt))))))))))))))
 
 (defun restrict-intervals (list start end &aux newlist)
   (let ((test-interval (make-interval :start start :end end)))
@@ -797,18 +797,18 @@ TIME2."
 
   (let (day-diff sec-diff)
     (setf day-diff (- (time-mjd time2)
-		      (time-mjd time1)))
+                      (time-mjd time1)))
     (if (> day-diff 0)
-	(progn (decf day-diff)
-	       (setf sec-diff (+ (time-second time2)
-				 (- (* 60 60 24)
-				    (time-second time1)))))
+        (progn (decf day-diff)
+               (setf sec-diff (+ (time-second time2)
+                                 (- (* 60 60 24)
+                                    (time-second time1)))))
       (setf sec-diff (- (time-second time2)
-			(time-second time1))))
+                        (time-second time1))))
      (make-duration :day day-diff
                    :second sec-diff))))
     (if (time< time1 time2)
-	(do-diff time1 time2)
+        (do-diff time1 time2)
       (do-diff time2 time1))))
 
 (defun date-difference (date1 date2)
@@ -817,14 +817,14 @@ TIME2."
   (time-difference (date->time date1) (date->time date2)))
 
 (defun format-date (stream date &key format
-		    (date-separator "-")
-		    (internal-separator " "))
+                    (date-separator "-")
+                    (internal-separator " "))
   "produces on stream the datestring corresponding to the date
 with the given options"
   (format-time stream (date->time date)
-	       :format format
-	       :date-separator date-separator
-	       :internal-separator internal-separator))
+               :format format
+               :date-separator date-separator
+               :internal-separator internal-separator))
 
 (defun format-time (stream time &key format
                     (date-separator "-")
@@ -834,29 +834,29 @@ with the given options"
 with the given options"
   (let ((*print-circle* nil))
     (multiple-value-bind (usec second minute hour day month year dow)
-	(decode-time time)
+        (decode-time time)
       (case format
-	(:pretty
-	 (format stream "~A ~A, ~A ~D, ~D"
-		 (pretty-time hour minute)
-		 (day-name dow)
-		 (month-name month)
-		 day
-		 year))
-	(:short-pretty
-	 (format stream "~A, ~D/~D/~D"
-		 (pretty-time hour minute)
-		 month day year))
-	(:iso
-	 (let ((string (iso-timestring time)))
-	   (if stream
-	       (write-string string stream)
+        (:pretty
+         (format stream "~A ~A, ~A ~D, ~D"
+                 (pretty-time hour minute)
+                 (day-name dow)
+                 (month-name month)
+                 day
+                 year))
+        (:short-pretty
+         (format stream "~A, ~D/~D/~D"
+                 (pretty-time hour minute)
+                 month day year))
+        (:iso
+         (let ((string (iso-timestring time)))
+           (if stream
+               (write-string string stream)
              string)))
-	(t
-	 (format stream "~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D.~6,'0D"
-		 year date-separator month date-separator day
-		 internal-separator hour time-separator minute time-separator
-		 second usec))))))
+        (t
+         (format stream "~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D~A~2,'0D.~6,'0D"
+                 year date-separator month date-separator day
+                 internal-separator hour time-separator minute time-separator
+                 second usec))))))
 
 (defun pretty-time (hour minute)
   (cond
@@ -1006,8 +1006,8 @@ with the given options"
         (minute (duration-minute duration))
         (hour (duration-hour duration))
         (day (duration-day duration))
-	(month (duration-month duration))
-	(year (duration-year duration))
+        (month (duration-month duration))
+        (year (duration-year duration))
         (return (null stream))
         (stream (or stream (make-string-output-stream))))
     (ecase precision
@@ -1022,17 +1022,17 @@ with the given options"
     (if (= 0 year month day hour minute)
         (format stream "0 minutes")
         (let ((sent? nil))
-	  (when (< 0 year)
-	    (format stream "~d year~p" year year)
-	    (setf sent? t))
-	  (when (< 0 month)
-	    (when sent?
-	      (write-char #\Space stream))
-	    (format stream "~d month~p" month month)
-	    (setf sent? t))
+          (when (< 0 year)
+            (format stream "~d year~p" year year)
+            (setf sent? t))
+          (when (< 0 month)
+            (when sent?
+              (write-char #\Space stream))
+            (format stream "~d month~p" month month)
+            (setf sent? t))
           (when (< 0 day)
-	    (when sent?
-	      (write-char #\Space stream))
+            (when sent?
+              (write-char #\Space stream))
             (format stream "~d day~p" day day)
             (setf sent? t))
           (when (< 0 hour)
@@ -1160,7 +1160,7 @@ rules"
 
 (defun parse-yearstring (string)
   (let ((year (or (parse-integer-insensitively string)
-		  (extract-roman string))))
+                  (extract-roman string))))
     (when (and year (< 1500 year 2500))
       (make-time :year year))))
 
@@ -1196,7 +1196,7 @@ rules"
     :initarg :bad-component
     :reader bad-component))
   (:report (lambda (c stream)
-	     (format stream "Bad component: ~A " (bad-component c)))))
+             (format stream "Bad component: ~A " (bad-component c)))))
 
 (defun parse-timestring (timestring &key (start 0) end junk-allowed)
   "parse a timestring and return the corresponding wall-time.  If the
@@ -1205,7 +1205,7 @@ formatted date string."
   (declare (ignore junk-allowed))
   (let ((string (subseq timestring start end)))
     (if (char= (aref string 0) #\P)
-	(parse-iso-8601-duration string)
+        (parse-iso-8601-duration string)
       (parse-iso-8601-time string))))
 
 (defun parse-datestring (datestring &key (start 0) end junk-allowed)
@@ -1228,53 +1228,53 @@ Will throw a hissy fit if the date string is a duration. Will ignore any precisi
 
 (defun iso-8601-duration-subseq (string end)
   (let* ((pos (position-if #'iso-8601-delimiter string :end end :from-end t))
-	 (pos2 (when pos
-		 (position-if-not #'digit-char-p string :end pos :from-end t)))
-	 (number (when pos2
-		   (parse-integer
-		    (subseq string (1+ pos2) pos) :junk-allowed t))))
+         (pos2 (when pos
+                 (position-if-not #'digit-char-p string :end pos :from-end t)))
+         (number (when pos2
+                   (parse-integer
+                    (subseq string (1+ pos2) pos) :junk-allowed t))))
     (when number
       (values number
-	      (1+ pos)
-	      (1+ pos2)
-	      (iso-8601-delimiter (aref string pos))))))
+              (1+ pos)
+              (1+ pos2)
+              (iso-8601-delimiter (aref string pos))))))
 
 (defun parse-iso-8601-duration (string)
   "return a wall-time from a duration string"
   (block parse
     (let ((years 0)
-	  (months 0)
-	  (days 0)
-	  (secs 0)
-	  (hours 0)
-	  (minutes 0)
-	  (index (length string))
-	  (months/minutes nil))
+          (months 0)
+          (days 0)
+          (secs 0)
+          (hours 0)
+          (minutes 0)
+          (index (length string))
+          (months/minutes nil))
       (loop
        (multiple-value-bind (duration next-index duration-type)
            (iso-8601-duration-subseq string index)
          (case duration-type
-	   (:years
-	    (incf years duration))
-	   (:months/minutes
-	    (if months/minutes
-		(incf months duration)
-		(progn
-		  (setq months/minutes t)
-		  (incf minutes duration))))
+           (:years
+            (incf years duration))
+           (:months/minutes
+            (if months/minutes
+                (incf months duration)
+                (progn
+                  (setq months/minutes t)
+                  (incf minutes duration))))
            (:days
-	    (setq months/minutes t)
+            (setq months/minutes t)
             (incf days duration))
            (:hours
-	    (setq months/minutes t)
+            (setq months/minutes t)
             (incf hours duration))
            (:seconds
             (incf secs duration))
            (t
             (return-from parse
-	      (make-duration
-	       :year years :month months :day days :hour hours
-	       :minute minutes :second secs))))
+              (make-duration
+               :year years :month months :day days :hour hours
+               :minute minutes :second secs))))
          (setf index next-index))))))
 
 ;; e.g. 2000-11-11 00:00:00-06
@@ -1313,8 +1313,8 @@ Will throw a hissy fit if the date string is a duration. Will ignore any precisi
                                    0))
           (cond
             ((and (> strlen 19)
-		  (or (char= #\, (char string 19))
-		      (char= #\. (char string 19))))
+                  (or (char= #\, (char string 19))
+                      (char= #\. (char string 19))))
              (multiple-value-bind (parsed-usec usec-end)
                  (parse-integer string :start 20 :junk-allowed t)
                (setf usec          (or parsed-usec 0)
@@ -1355,5 +1355,5 @@ Will throw a hissy fit if the date string is a duration. Will ignore any precisi
                              `((year . ,year) (month . ,month)
                                (day . ,day) (hour . ,hour)
                                (minute . ,minute) (second . ,second)
-			       (usec . ,usec)
+                               (usec . ,usec)
                                (timezone . ,gmt-sec-offset)))))))))

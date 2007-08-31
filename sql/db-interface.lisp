@@ -6,7 +6,7 @@
 ;;;; Purpose:       Generic function definitions for DB interfaces
 ;;;; Programmers:   Kevin M. Rosenberg based on
 ;;;;                Original code by Pierre R. Mai. Additions from
-;;;;                onShoreD to support UncommonSQL front-end 
+;;;;                onShoreD to support UncommonSQL front-end
 ;;;; Date Started:  Feb 2002
 ;;;;
 ;;;; $Id$
@@ -44,47 +44,47 @@ was called with the connection-spec."))
 
 (defgeneric database-reconnect (database)
   (:method ((database t))
-	   (signal-no-database-error database))
+           (signal-no-database-error database))
   (:documentation "Internal generic implementation of reconnect."))
 
 (defgeneric database-disconnect (database)
   (:method ((database t))
-	   (signal-no-database-error database))
+           (signal-no-database-error database))
   (:documentation "Internal generic implementation of disconnect."))
 
 (defgeneric database-query (query-expression database result-types field-names)
   (:method (query-expression (database t) result-types field-names)
-	   (declare (ignore query-expression result-types field-names))
-	   (signal-no-database-error database))
+           (declare (ignore query-expression result-types field-names))
+           (signal-no-database-error database))
   (:method (query-expression (database database) result-types field-names)
-	     (declare (ignore query-expression result-types field-names))
-	     (warn "database-query not implemented for database type ~A."
-		   (database-type database)))
+             (declare (ignore query-expression result-types field-names))
+             (warn "database-query not implemented for database type ~A."
+                   (database-type database)))
   (:documentation "Internal generic implementation of query."))
 
 
 (defgeneric database-execute-command (sql-expression database)
   (:method (sql-expression (database t))
-	   (declare (ignore sql-expression))
-	   (signal-no-database-error database))
+           (declare (ignore sql-expression))
+           (signal-no-database-error database))
   (:method (sql-expression (database database))
-	   (declare (ignore sql-expression))
-	   (warn "database-execute-command not implemented for database type ~A."
-		 (database-type database)))
+           (declare (ignore sql-expression))
+           (warn "database-execute-command not implemented for database type ~A."
+                 (database-type database)))
   (:documentation "Internal generic implementation of execute-command."))
 
 ;;; Mapping and iteration
 (defgeneric database-query-result-set
     (query-expression database &key full-set result-types)
   (:method (query-expression (database t) &key full-set result-types)
-	   (declare (ignore query-expression full-set result-types))
-	   (signal-no-database-error database)
-	   (values nil nil nil))
+           (declare (ignore query-expression full-set result-types))
+           (signal-no-database-error database)
+           (values nil nil nil))
   (:method (query-expression (database database) &key full-set result-types)
-	   (declare (ignore query-expression full-set result-types))
-	   (warn "database-query-result-set not implemented for database type ~A."
-		 (database-type database))
-	   (values nil nil nil))
+           (declare (ignore query-expression full-set result-types))
+           (warn "database-query-result-set not implemented for database type ~A."
+                 (database-type database))
+           (values nil nil nil))
   (:documentation
    "Internal generic implementation of query mapping.  Starts the
 query specified by query-expression on the given database and returns
@@ -102,22 +102,22 @@ function should signal a sql-database-data-error."))
 
 (defgeneric database-dump-result-set (result-set database)
   (:method (result-set (database t))
-	   (declare (ignore result-set))
-	   (signal-no-database-error database))
+           (declare (ignore result-set))
+           (signal-no-database-error database))
     (:method (result-set (database database))
-	   (declare (ignore result-set))
-	   (warn "database-dump-result-set not implemented for database type ~A."
-		 (database-type database)))
+           (declare (ignore result-set))
+           (warn "database-dump-result-set not implemented for database type ~A."
+                 (database-type database)))
   (:documentation "Dumps the received result-set."))
 
 (defgeneric database-store-next-row (result-set database list)
   (:method (result-set (database t) list)
-	   (declare (ignore result-set list))
-	   (signal-no-database-error database))
+           (declare (ignore result-set list))
+           (signal-no-database-error database))
     (:method (result-set (database database) list)
-	   (declare (ignore result-set list))
-	   (warn "database-store-next-row not implemented for database type ~A."
-		 (database-type database)))
+           (declare (ignore result-set list))
+           (warn "database-store-next-row not implemented for database type ~A."
+                 (database-type database)))
   (:documentation
    "Returns t and stores the next row in the result set in list or
 returns nil when result-set is finished."))
@@ -131,7 +131,7 @@ returns nil when result-set is finished."))
     (declare (ignore spec))
     (warn "database-proe not support for database-type ~A." type))
   (:documentation
-   "Probes for the existence of a database, returns T if database found or NIL 
+   "Probes for the existence of a database, returns T if database found or NIL
 if not found. May signal an error if unable to communicate with database server."))
 
 (defgeneric database-list (connection-spec type)
@@ -175,17 +175,17 @@ if unable to destory."))
 (defgeneric database-start-transaction (database)
   (:documentation "Start a transaction in DATABASE.")
   (:method ((database t))
-	   (signal-no-database-error database)))
+           (signal-no-database-error database)))
 
 (defgeneric database-commit-transaction (database)
   (:documentation "Commit current transaction in DATABASE.")
   (:method ((database t))
-	   (signal-no-database-error database)))
+           (signal-no-database-error database)))
 
 (defgeneric database-abort-transaction (database)
   (:documentation "Abort current transaction in DATABASE.")
   (:method ((database t))
-	   (signal-no-database-error database)))
+           (signal-no-database-error database)))
 
 (defgeneric database-get-type-specifier (type args database db-underlying-type)
   (:documentation "Return the type SQL type specifier as a string, for
@@ -194,37 +194,37 @@ the given lisp type and parameters."))
 (defgeneric database-list-tables (database &key owner)
   (:documentation "List all tables in the given database")
   (:method ((database database) &key owner)
-	   (declare (ignore owner))
-	   (warn "database-list-tables not implemented for database type ~A."
-		 (database-type database)))
+           (declare (ignore owner))
+           (warn "database-list-tables not implemented for database type ~A."
+                 (database-type database)))
   (:method ((database t) &key owner)
-	   (declare (ignore owner))
-	   (signal-no-database-error database)))
+           (declare (ignore owner))
+           (signal-no-database-error database)))
 
 (defgeneric database-list-tables-and-sequences (database &key owner)
   (:documentation "List all tables in the given database, may include seqeneces")
   (:method ((database t) &key owner)
-	   (declare (ignore owner))
-	   (signal-no-database-error database))
+           (declare (ignore owner))
+           (signal-no-database-error database))
   (:method ((database database) &key owner)
-	   (database-list-tables database :owner owner)))
- 
+           (database-list-tables database :owner owner)))
+
 (defgeneric database-list-views (database &key owner)
   (:documentation "List all views in the DATABASE.")
   (:method ((database database) &key owner)
-	   (declare (ignore owner))
-	   (warn "database-list-views not implemented for database type ~A."
-		 (database-type database)))
+           (declare (ignore owner))
+           (warn "database-list-views not implemented for database type ~A."
+                 (database-type database)))
   (:method ((database t) &key owner)
-	   (declare (ignore owner))
-	   (signal-no-database-error database)))
+           (declare (ignore owner))
+           (signal-no-database-error database)))
 
 (defgeneric database-list-indexes (database &key owner)
   (:documentation "List all indexes in the DATABASE.")
   (:method ((database database) &key owner)
-	   (declare (ignore owner))
-	   (warn "database-list-indexes not implemented for database type ~A."
-		 (database-type database)))
+           (declare (ignore owner))
+           (warn "database-list-indexes not implemented for database type ~A."
+                 (database-type database)))
   (:method ((database t) &key owner)
     (declare (ignore owner))
     (signal-no-database-error database)))
@@ -232,53 +232,53 @@ the given lisp type and parameters."))
 (defgeneric database-list-table-indexes (table database &key owner)
   (:documentation "List all indexes for a table in the DATABASE.")
   (:method (table (database database) &key owner)
-	   (declare (ignore table owner))
-	   (warn "database-list-table-indexes not implemented for database type ~A."
-		 (database-type database)))
-  (:method (table (database t) &key owner) 
-	   (declare (ignore table owner))
-	   (signal-no-database-error database)))
+           (declare (ignore table owner))
+           (warn "database-list-table-indexes not implemented for database type ~A."
+                 (database-type database)))
+  (:method (table (database t) &key owner)
+           (declare (ignore table owner))
+           (signal-no-database-error database)))
 
 (defgeneric database-list-attributes (table database &key owner)
   (:documentation "List all attributes in TABLE.")
   (:method (table (database database) &key owner)
-	   (declare (ignore table owner))
-	   (warn "database-list-attributes not implemented for database type ~A."
-		 (database-type database)))
+           (declare (ignore table owner))
+           (warn "database-list-attributes not implemented for database type ~A."
+                 (database-type database)))
   (:method (table (database t) &key owner)
-	   (declare (ignore table owner))
-	   (signal-no-database-error database)))
+           (declare (ignore table owner))
+           (signal-no-database-error database)))
 
 (defgeneric database-attribute-type (attribute table database &key owner)
   (:documentation "Return the type of ATTRIBUTE in TABLE. Returns multiple values
 of TYPE_NAME (keyword) PRECISION SCALE NULLABLE.")
   (:method (attribute table (database database) &key owner)
-	   (declare (ignore attribute table owner))
-	   (warn "database-list-attribute-type not implemented for database type ~A."
-		 (database-type database)))
+           (declare (ignore attribute table owner))
+           (warn "database-list-attribute-type not implemented for database type ~A."
+                 (database-type database)))
   (:method (attribute table (database t) &key owner)
-	   (declare (ignore attribute table owner))
-	   (signal-no-database-error database)))
+           (declare (ignore attribute table owner))
+           (signal-no-database-error database)))
 
 (defgeneric database-add-attribute (table attribute database)
   (:documentation "Add the attribute to the table.")
   (:method (table attribute (database database))
-	   (declare (ignore table attribute))
-	   (warn "database-add-attribute not implemented for database type ~A."
-		 (database-type database)))
+           (declare (ignore table attribute))
+           (warn "database-add-attribute not implemented for database type ~A."
+                 (database-type database)))
   (:method (table attribute (database t))
-	   (declare (ignore table attribute))
-	   (signal-no-database-error database)))
+           (declare (ignore table attribute))
+           (signal-no-database-error database)))
 
 (defgeneric database-rename-attribute (table oldatt newname database)
   (:documentation "Rename the attribute in the table to NEWNAME.")
   (:method (table oldatt newname (database database))
-	   (declare (ignore table oldatt newname))
-	   (warn "database-rename-attribute not implemented for database type ~A."
-		 (database-type database)))
+           (declare (ignore table oldatt newname))
+           (warn "database-rename-attribute not implemented for database type ~A."
+                 (database-type database)))
   (:method (table oldatt newname (database t))
-	   (declare (ignore table oldatt newname))
-	   (signal-no-database-error database)))
+           (declare (ignore table oldatt newname))
+           (signal-no-database-error database)))
 
 (defgeneric oid (object)
   (:documentation "Return the unique ID of a database object."))
@@ -292,72 +292,72 @@ of TYPE_NAME (keyword) PRECISION SCALE NULLABLE.")
 
 (defgeneric db-type-use-column-on-drop-index? (db-type)
   (:method (db-type)
-	   (declare (ignore db-type))
-	   nil)
+           (declare (ignore db-type))
+           nil)
   (:documentation "NIL [default] if database-type does not use column name on DROP INDEX."))
 
 (defgeneric db-type-use-fully-qualified-column-on-drop-index? (db-type)
   (:method (db-type)
-	   (declare (ignore db-type))
-	   nil)
+           (declare (ignore db-type))
+           nil)
   (:documentation "NIL [default] if database-type does not require fully qualified column name on DROP INDEX."))
 
 (defgeneric db-type-has-views? (db-type)
   (:method (db-type)
-	   (declare (ignore db-type))
-	   ;; SQL92 has views
-	   t)
+           (declare (ignore db-type))
+           ;; SQL92 has views
+           t)
   (:documentation "T [default] if database-type supports views."))
 
 (defgeneric db-type-has-bigint? (db-type)
   (:method (db-type)
-	   (declare (ignore db-type))
-	   ;; SQL92 has bigint
-	   t)
+           (declare (ignore db-type))
+           ;; SQL92 has bigint
+           t)
   (:documentation "T [default] if database-type supports bigint."))
 
 (defgeneric db-type-default-case (db-type)
   (:method (db-type)
-	   (declare (ignore db-type))
-	   ;; By default, CommonSQL converts identifiers to UPPER case. 
-	   :upper)
+           (declare (ignore db-type))
+           ;; By default, CommonSQL converts identifiers to UPPER case.
+           :upper)
   (:documentation ":upper [default] if means identifiers mapped to UPPER case SQL like CommonSQL API. However, Postgresql maps identifiers to lower case, so PostgreSQL uses a value of :lower for this result."))
 
 (defgeneric db-type-has-fancy-math? (db-type)
   (:method (db-type)
-	   (declare (ignore db-type))
-	   nil)
+           (declare (ignore db-type))
+           nil)
   (:documentation "NIL [default] if database-type does not have fancy math."))
 
 (defgeneric db-type-has-subqueries? (db-type)
   (:method (db-type)
-	   (declare (ignore db-type))
-	   t)
+           (declare (ignore db-type))
+           t)
   (:documentation "T [default] if database-type supports views."))
 
 (defgeneric db-type-has-boolean-where? (db-type)
   (:method (db-type)
-	   (declare (ignore db-type))
-	   ;; SQL99 has boolean where
-	   t)
+           (declare (ignore db-type))
+           ;; SQL99 has boolean where
+           t)
   (:documentation "T [default] if database-type supports boolean WHERE clause, such as 'WHERE MARRIED'."))
 
 (defgeneric db-type-has-union? (db-type)
   (:method (db-type)
-	   (declare (ignore db-type))
-	   t)
+           (declare (ignore db-type))
+           t)
   (:documentation "T [default] if database-type supports boolean UNION."))
 
 (defgeneric db-backend-has-create/destroy-db? (db-type)
   (:method (db-type)
-	   (declare (ignore db-type))
-	   t)
+           (declare (ignore db-type))
+           t)
   (:documentation "T [default] if backend can destroy and create databases."))
 
 (defgeneric db-type-transaction-capable? (db database)
   (:method (db database)
-	   (declare (ignore db database))
-	   t)
+           (declare (ignore db database))
+           t)
   (:documentation "T [default] if database can supports transactions."))
 
 (defgeneric db-type-has-prepared-stmt? (db-type)
@@ -367,14 +367,14 @@ of TYPE_NAME (keyword) PRECISION SCALE NULLABLE.")
 
 (defgeneric db-type-has-intersect? (db-type)
   (:method (db-type)
-	   (declare (ignore db-type))
-	   t)
+           (declare (ignore db-type))
+           t)
   (:documentation "T [default] if database-type supports INTERSECT."))
 
 (defgeneric db-type-has-except? (db-type)
   (:method (db-type)
-	   (declare (ignore db-type))
-	   t)
+           (declare (ignore db-type))
+           t)
   (:documentation "T [default] if database-type supports EXCEPT."))
 
 ;;; Large objects support (Marc Battyani)
@@ -400,22 +400,22 @@ of TYPE_NAME (keyword) PRECISION SCALE NULLABLE.")
   (:method (stmt types (database database) result-types field-names)
     (declare (ignore stmt types result-types field-names))
     (error 'sql-database-error
-	   :message
-	   (format nil "DATABASE-PREPARE not implemented for ~S" database)))
+           :message
+           (format nil "DATABASE-PREPARE not implemented for ~S" database)))
   (:documentation "Prepare a statement for later execution."))
 
 (defgeneric database-bind-parameter (prepared-stmt position value)
   (:method ((pstmt t) position value)
     (declare (ignore position value))
     (error 'sql-database-error
-	   :message
-	   (format nil "database-bind-paremeter not implemented for ~S" pstmt)))
+           :message
+           (format nil "database-bind-paremeter not implemented for ~S" pstmt)))
   (:documentation "Bind a parameter for a prepared statement."))
 
 (defgeneric database-run-prepared (prepared-stmt)
   (:method ((pstmt t))
     (error 'sql-database-error
-	   :message (format nil "database-run-prepared not specialized for ~S" pstmt)))
+           :message (format nil "database-run-prepared not specialized for ~S" pstmt)))
   (:documentation "Execute a prepared statement."))
 
 (defgeneric database-free-prepared (prepared-stmt)
@@ -430,8 +430,8 @@ of TYPE_NAME (keyword) PRECISION SCALE NULLABLE.")
   (unless (is-database-open database)
     (signal-closed-database-error database)))
 
-(defmethod database-query :before (query-expression (database database) 
-				   result-set field-names)
+(defmethod database-query :before (query-expression (database database)
+                                   result-set field-names)
   (declare (ignore query-expression result-set field-names))
   (unless (is-database-open database)
     (signal-closed-database-error database)))
@@ -451,7 +451,7 @@ of TYPE_NAME (keyword) PRECISION SCALE NULLABLE.")
   (declare (ignore result-set))
   (unless (is-database-open database)
     (signal-closed-database-error database)))
- 
+
 (defmethod database-store-next-row :before (result-set (database database) list)
   (declare (ignore result-set list))
   (unless (is-database-open database)

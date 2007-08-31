@@ -19,7 +19,7 @@
 (in-package #:clsql-sys)
 
 
-;; FDML 
+;; FDML
 
 (defgeneric execute-command (expression &key database)
   (:documentation
@@ -48,7 +48,7 @@ record selected by QUERY-EXPRESSION, the results are returned as
 elements of a list."))
 
 
-;; OODML 
+;; OODML
 
 (defgeneric update-record-from-slot (object slot &key database)
   (:documentation
@@ -63,7 +63,7 @@ attributes having default values. Furthermore, OBJECT becomes
 associated with DATABASE."))
 
 (defgeneric update-record-from-slots (object slots &key database)
-  (:documentation 
+  (:documentation
    "Updates the values stored in the columns represented by the
 slots, specified by the CLOS slot names SLOTS, of View Class
 instance OBJECT. DATABASE defaults to *DEFAULT-DATABASE* and
@@ -109,8 +109,8 @@ database, *DEFAULT-DATABASE*.  Join slots are updated but
 instances of the class on which the join is made are not
 updated."))
 
-(defgeneric instance-refreshed (object) 
-  (:documentation 
+(defgeneric instance-refreshed (object)
+  (:documentation
    "Provides a hook which is called within an object oriented
 call to SELECT with a non-nil value of REFRESH when the View
 Class instance OBJECT has been updated from the database. A
@@ -143,7 +143,7 @@ DATABASE-NULL-VALUE on the type of the slot."))
   )
 
 
-;; Generation of SQL strings from lisp expressions 
+;; Generation of SQL strings from lisp expressions
 
 (defgeneric output-sql (expr database)
   (:documentation "Writes an SQL string appropriate for DATABASE

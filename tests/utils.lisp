@@ -20,8 +20,8 @@
 
 (defvar *config-pathname*
   (make-pathname :defaults (user-homedir-pathname)
-		 :name ".clsql-test"
-		 :type "config"))
+                 :name ".clsql-test"
+                 :type "config"))
 
 (defvar +all-db-types+
   '(:postgresql :postgresql-socket :mysql :sqlite :sqlite3 :odbc :oracle
@@ -42,19 +42,19 @@
 (defun read-specs (&optional (path *config-pathname*))
   (if (probe-file path)
       (with-open-file (stream path :direction :input)
-	(let ((specs (make-instance 'conn-specs)))
-	  (dolist (spec (read stream) specs)
-	    (push (second spec)
-		  (slot-value specs (intern (symbol-name (first spec))
-					    (find-package '#:clsql-tests)))))))
+        (let ((specs (make-instance 'conn-specs)))
+          (dolist (spec (read stream) specs)
+            (push (second spec)
+                  (slot-value specs (intern (symbol-name (first spec))
+                                            (find-package '#:clsql-tests)))))))
       (progn
-	(warn "CLSQL test config file ~S not found" path)
-	nil)))
+        (warn "CLSQL test config file ~S not found" path)
+        nil)))
 
 (defun spec-fn (db-type)
   (intern (concatenate 'string (symbol-name db-type)
-		       (symbol-name '#:-spec))
-	  (find-package '#:clsql-tests)))
+                       (symbol-name '#:-spec))
+          (find-package '#:clsql-tests)))
 
 (defun db-type-spec (db-type specs)
   (funcall (spec-fn db-type) specs))
@@ -62,34 +62,34 @@
 
 (defun summarize-test-report (sexp &optional (output *standard-output*))
   (flet ((db-title (db-type underlying-db-type)
-	   (format nil "~A~A"
-		   db-type 
-		   (if (eq db-type underlying-db-type)
-		       ""
-		       (format nil "/~A" underlying-db-type)))))
+           (format nil "~A~A"
+                   db-type
+                   (if (eq db-type underlying-db-type)
+                       ""
+                       (format nil "/~A" underlying-db-type)))))
     (with-open-file (in sexp :direction :input)
       (let ((eof (cons nil nil)))
-	(do ((form (read in nil eof) (read in nil eof)))
-	    ((eq form eof))
-	  (destructuring-bind (db-type
-			       underlying-db-type
-			       utime
-			       total-tests
-			       failed-tests
-			       impl-type
-			       impl-version
-			       machine-type)
-	      form
-	    (declare (ignorable utime impl-version))
-	    (if failed-tests
-		(format output "~&~A: ~D of ~D tests failed (~A, ~A).~&"
-			(db-title db-type underlying-db-type)
-			(length failed-tests)
-			total-tests
-			machine-type
-			impl-type)
-		(format output "~&~A: All ~D tests passed (~A, ~A).~%"
-			(db-title db-type underlying-db-type)
-			total-tests
-			machine-type
-			impl-type))))))))
+        (do ((form (read in nil eof) (read in nil eof)))
+            ((eq form eof))
+          (destructuring-bind (db-type
+                               underlying-db-type
+                               utime
+                               total-tests
+                               failed-tests
+                               impl-type
+                               impl-version
+                               machine-type)
+              form
+            (declare (ignorable utime impl-version))
+            (if failed-tests
+                (format output "~&~A: ~D of ~D tests failed (~A, ~A).~&"
+                        (db-title db-type underlying-db-type)
+                        (length failed-tests)
+                        total-tests
+                        machine-type
+                        impl-type)
+                (format output "~&~A: All ~D tests passed (~A, ~A).~%"
+                        (db-title db-type underlying-db-type)
+                        total-tests
+                        machine-type
+                        impl-type))))))))

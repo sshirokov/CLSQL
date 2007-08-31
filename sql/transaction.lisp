@@ -18,9 +18,9 @@
   ((commit-hooks :initform () :accessor commit-hooks)
    (rollback-hooks :initform () :accessor rollback-hooks)
    (previous-autocommit :initarg :previous-autocommit
-			:reader previous-autocommit)
+                        :reader previous-autocommit)
    (status :initform nil :accessor transaction-status
-	   :documentation "nil or :committed")))
+           :documentation "nil or :committed")))
 
 (defun add-transaction-commit-hook (commit-hook &key
                                     (database *default-database*))
@@ -41,8 +41,8 @@ is called on DATABASE which defaults to *DEFAULT-DATABASE*."
 (defmethod database-start-transaction ((database database))
   (unless (transaction database)
     (setf (transaction database)
-	  (make-instance 'transaction :previous-autocommit
-			 (database-autocommit database))))
+          (make-instance 'transaction :previous-autocommit
+                         (database-autocommit database))))
   (setf (database-autocommit database) nil)
   (when (= (incf (transaction-level database)) 1)
     (let ((transaction (transaction database)))
@@ -61,30 +61,30 @@ is called on DATABASE which defaults to *DEFAULT-DATABASE*."
   (with-slots (transaction transaction-level autocommit) database
     (if (plusp transaction-level)
         (when (zerop (decf transaction-level))
-	  (case (database-underlying-type database)
-	    (:mssql (execute-command "COMMIT TRANSACTION" :database database))
-	    (t (execute-command "COMMIT" :database database)))
-	  (setf autocommit (previous-autocommit transaction))
+          (case (database-underlying-type database)
+            (:mssql (execute-command "COMMIT TRANSACTION" :database database))
+            (t (execute-command "COMMIT" :database database)))
+          (setf autocommit (previous-autocommit transaction))
           (map nil #'funcall (commit-hooks transaction)))
         (warn 'sql-warning
               :message
-	      (format nil "Cannot commit transaction against ~A because there is no transaction in progress."
-		      database)))))
+              (format nil "Cannot commit transaction against ~A because there is no transaction in progress."
+                      database)))))
 
 (defmethod database-abort-transaction ((database database))
   (with-slots (transaction transaction-level autocommit) database
     (if (plusp transaction-level)
         (when (zerop (decf transaction-level))
           (unwind-protect
-	       (case (database-underlying-type database)
-		 (:mssql (execute-command "ROLLBACK TRANSACTION" :database database))
-		 (t (execute-command "ROLLBACK" :database database)))
-	    (setf autocommit (previous-autocommit transaction))
+               (case (database-underlying-type database)
+                 (:mssql (execute-command "ROLLBACK TRANSACTION" :database database))
+                 (t (execute-command "ROLLBACK" :database database)))
+            (setf autocommit (previous-autocommit transaction))
             (map nil #'funcall (rollback-hooks transaction))))
         (warn 'sql-warning
-	      :message
-	      (format nil "Cannot abort transaction against ~A because there is no transaction in progress."
-		      database)))))
+              :message
+              (format nil "Cannot abort transaction against ~A because there is no transaction in progress."
+                      database)))))
 
 (defun mark-transaction-committed (database)
   (when (and (transaction database)

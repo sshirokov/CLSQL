@@ -18,8 +18,8 @@
 
 (in-package #:cl-user)
 
-#+allegro 
-(eval-when (:compile-toplevel :load-toplevel :execute) 
+#+allegro
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (require :aodbc-v2))
 #-allegro (warn "This system requires Allegro's AODBC library to operate")
 

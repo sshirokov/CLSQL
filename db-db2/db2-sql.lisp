@@ -24,7 +24,7 @@
 
 
 (defmethod database-name-from-spec (connection-spec
-				    (database-type (eql :db2)))
+                                    (database-type (eql :db2)))
   (check-connection-spec connection-spec database-type (dsn user password))
   (destructuring-bind (dsn user password) connection-spec
     (declare (ignore password))
@@ -34,16 +34,16 @@
   (check-connection-spec connection-spec database-type (dsn user password))
   (destructuring-bind (server user password) connection-spec
     (handler-case
-	(let ((db (make-instance 'db2-database
-		    :name (database-name-from-spec connection-spec :db2)
-		    :database-type :db2)))
-	  (db2-connect db server user password)
-	  db)
-      (error () 	;; Init or Connect failed
-	(error 'sql-connection-error
-	       :database-type database-type
-	       :connection-spec connection-spec
-	       :message "Connection failed")))))
+        (let ((db (make-instance 'db2-database
+                    :name (database-name-from-spec connection-spec :db2)
+                    :database-type :db2)))
+          (db2-connect db server user password)
+          db)
+      (error ()         ;; Init or Connect failed
+        (error 'sql-connection-error
+               :database-type database-type
+               :connection-spec connection-spec
+               :message "Connection failed")))))
 
 
 ;; API Functions
@@ -56,17 +56,17 @@
 
 (defun db2-connect (db server user password)
   (let ((henv (uffi:allocate-foreign-object 'cli-handle))
-	(hdbc (uffi:allocate-foreign-object 'cli-handle)))
+        (hdbc (uffi:allocate-foreign-object 'cli-handle)))
     (sql-alloc-handle SQL_HANDLE_ENV SQL_NULL_HANDLE henv)
     (setf (slot-value db 'henv) henv)
     (setf (slot-value db 'hdbc) hdbc)
-    
+
     (sql-alloc-handle SQL_HANDLE_DBC (deref-vp henv) hdbc)
     (uffi:with-cstrings ((native-server server)
-			 (native-user user)
-			 (native-password password))
+                         (native-user user)
+                         (native-password password))
       (sql-connect (deref-vp hdbc)
-		   native-server SQL_NTS
-		   native-user SQL_NTS
-		   native-password SQL_NTS)))
+                   native-server SQL_NTS
+                   native-user SQL_NTS
+                   native-password SQL_NTS)))
     db)

@@ -20,9 +20,9 @@
 
 (defpackage #:mysql
     (:use #:common-lisp #:clsql-uffi)
-    (:export 
+    (:export
      #:database-library-loaded
-     
+
      #:mysql-socket
      #:mysql-book
      #:mysql-byte
@@ -125,7 +125,7 @@
      #:mysql-info
      #:mysql-info-string
      #:mysql-data-seek
-     
+
      #:mysql-time
      #:mysql-bind
      #:mysql-stmt-param-count
@@ -143,7 +143,7 @@
      #:mysql-stmt-close
      #:mysql-stmt-errno
      #:mysql-stmt-error
-     
+
      #:make-64-bit-integer
      )
     (:documentation "This is the low-level interface MySQL."))

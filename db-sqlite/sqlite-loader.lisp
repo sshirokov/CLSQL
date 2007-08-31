@@ -39,4 +39,4 @@ set to the right path before compiling or loading the system.")
 (clsql-sys:database-type-load-foreign :sqlite)
 
 
-    
+

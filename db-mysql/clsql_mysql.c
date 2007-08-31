@@ -19,15 +19,15 @@
 #include <windows.h>
 
 BOOL WINAPI DllEntryPoint(HINSTANCE hinstdll, DWORD fdwReason,
-			  LPVOID lpvReserved)
+                          LPVOID lpvReserved)
 {
         return 1;
 }
-       
+
 #define DLLEXPORT __declspec(dllexport)
 
 #else
-#define DLLEXPORT 
+#define DLLEXPORT
 #endif
 
 
@@ -37,19 +37,19 @@ BOOL WINAPI DllEntryPoint(HINSTANCE hinstdll, DWORD fdwReason,
 DLLEXPORT
 void
 clsql_mysql_data_seek (MYSQL_RES* res, unsigned int offset_high32,
-		       unsigned int offset_low32)
+                       unsigned int offset_low32)
 {
   my_ulonglong offset;
 
   offset = offset_high32;
   offset = offset << 32;
   offset += offset_low32;
-  
+
   mysql_data_seek (res, offset);
 }
 
 /* The following functions are used to return 64-bit integers to Lisp.
-   They return the 32-bit low part and store in upper 32-bits in a 
+   They return the 32-bit low part and store in upper 32-bits in a
    located sent via a pointer */
 
 static const unsigned int bitmask_32bits = 0xFFFFFFFF;
@@ -127,8 +127,8 @@ allocate_bind (unsigned int n)
 
 DLLEXPORT
 void
-bind_param (MYSQL_BIND bind[], unsigned int n, unsigned long length, unsigned short is_null, 
-	   void* buffer, unsigned short buffer_type, unsigned long buffer_length)
+bind_param (MYSQL_BIND bind[], unsigned int n, unsigned long length, unsigned short is_null,
+           void* buffer, unsigned short buffer_type, unsigned long buffer_length)
 {
   *bind[n].length = length;
   *bind[n].is_null = is_null;

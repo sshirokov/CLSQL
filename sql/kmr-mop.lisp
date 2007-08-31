@@ -25,8 +25,8 @@
 (defmacro process-class-option (metaclass slot-name &optional required)
   #+lispworks
   `(defmethod clos:process-a-class-option ((class ,metaclass)
-					   (name (eql ,slot-name))
-					   value)
+                                           (name (eql ,slot-name))
+                                           value)
     (when (and ,required (null value))
       (error "metaclass ~A class slot ~A must have a value" (quote ,metaclass) name))
     (list name `',value))
@@ -37,10 +37,10 @@
 (defmacro process-slot-option (metaclass slot-name)
   #+lispworks
   `(defmethod clos:process-a-slot-option ((class ,metaclass)
-					  (option (eql ,slot-name))
-					  value
-					  already-processed-options
-					  slot)
+                                          (option (eql ,slot-name))
+                                          value
+                                          already-processed-options
+                                          slot)
     (list* option `',value already-processed-options))
   #-lispworks
   (declare (ignore metaclass slot-name))
@@ -55,7 +55,7 @@
     (ecase (slot-definition-name (first slots))
       (a)
       (b (pushnew :mop-slot-order-reversed cl:*features*)))))
-       
+
 (defun ordered-class-slots (class)
   #+mop-slot-order-reversed (reverse (class-slots class))
   #-mop-slot-order-reversed (class-slots class))

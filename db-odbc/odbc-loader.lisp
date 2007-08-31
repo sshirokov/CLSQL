@@ -18,9 +18,9 @@
 
 (in-package #:odbc)
 
-(defparameter *odbc-library-filenames* 
+(defparameter *odbc-library-filenames*
   '("odbc32" "libodbc" "libiodbc"))
-  
+
 (defvar *odbc-supporting-libraries* '("c")
   "Used only by CMU. List of library flags needed to be passed to ld to
 load the Odbc client library succesfully.  If this differs at your site,
@@ -31,7 +31,7 @@ set to the right path before compiling or loading the system.")
 
 (defmethod clsql-sys:database-type-library-loaded ((database-type (eql :odbc)))
   *odbc-library-loaded*)
-				      
+
 (defmethod clsql-sys:database-type-load-foreign ((database-type (eql :odbc)))
   (clsql-uffi:find-and-load-foreign-library *odbc-library-filenames*
                                             :module "odbc")

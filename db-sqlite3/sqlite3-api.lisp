@@ -25,35 +25,35 @@
            #:sqlite3-error
            #:sqlite3-error-code
            #:sqlite3-error-message
-	   
-	   ;;; API functions.
+
+           ;;; API functions.
            #:sqlite3-open
-	   #:sqlite3-close
+           #:sqlite3-close
 
-	   #:sqlite3-prepare
-	   #:sqlite3-step
-	   #:sqlite3-finalize
+           #:sqlite3-prepare
+           #:sqlite3-step
+           #:sqlite3-finalize
 
-	   #:sqlite3-column-count
-	   #:sqlite3-column-name
-	   #:sqlite3-column-type
-	   #:sqlite3-column-text
-	   #:sqlite3-column-bytes
-	   #:sqlite3-column-blob
+           #:sqlite3-column-count
+           #:sqlite3-column-name
+           #:sqlite3-column-type
+           #:sqlite3-column-text
+           #:sqlite3-column-bytes
+           #:sqlite3-column-blob
 
-	   ;;; Types.
-	   #:sqlite3-db
-	   #:sqlite3-db-type
-	   #:sqlite3-stmt-type
-	   #:unsigned-char-ptr-type
-	   #:null-stmt
+           ;;; Types.
+           #:sqlite3-db
+           #:sqlite3-db-type
+           #:sqlite3-stmt-type
+           #:unsigned-char-ptr-type
+           #:null-stmt
 
-	   ;;; Columnt types.
-	   #:SQLITE-INTEGER
-	   #:SQLITE-FLOAT
-	   #:SQLITE-TEXT
-	   #:SQLITE-BLOB
-	   #:SQLITE-NULL))
+           ;;; Columnt types.
+           #:SQLITE-INTEGER
+           #:SQLITE-FLOAT
+           #:SQLITE-TEXT
+           #:SQLITE-BLOB
+           #:SQLITE-NULL))
 
 (in-package #:sqlite3)
 
@@ -91,7 +91,7 @@
 (defconstant SQLITE-ROW         100  "sqlite3_step() has another row ready")
 (defconstant SQLITE-DONE        101  "sqlite3_step() has finished executing")
 
-(defparameter error-codes 
+(defparameter error-codes
   (list
    (cons SQLITE-OK "not an error")
    (cons SQLITE-ERROR "SQL logic error or missing database")
@@ -166,27 +166,27 @@
   ((message :initarg :message :reader sqlite3-error-message :initform "")
    (code :initarg :code :reader sqlite3-error-code))
   (:report (lambda (condition stream)
-	     (format stream "Sqlite3 error [~A]: ~A"
-		     (sqlite3-error-code condition) 
-		     (sqlite3-error-message condition)))))
+             (format stream "Sqlite3 error [~A]: ~A"
+                     (sqlite3-error-code condition)
+                     (sqlite3-error-message condition)))))
 
 (defgeneric signal-sqlite3-error (db))
 (defmethod signal-sqlite3-error (db)
   (let ((condition
-	 (make-condition 'sqlite3-error
-			 :code (sqlite3-errcode db)
-			 :message (convert-from-cstring (sqlite3-errmsg db)))))
+         (make-condition 'sqlite3-error
+                         :code (sqlite3-errcode db)
+                         :message (convert-from-cstring (sqlite3-errmsg db)))))
     (unless (signal condition)
       (invoke-debugger condition))))
 
 (defmethod signal-sqlite3-error ((code number))
   (let ((condition
-	 (make-condition 'sqlite3-error
-			 :code code
-			 :message (let ((s (cdr (assoc code error-codes))))
-				    (if s
-					s
-					"unknown error")))))
+         (make-condition 'sqlite3-error
+                         :code code
+                         :message (let ((s (cdr (assoc code error-codes))))
+                                    (if s
+                                        s
+                                        "unknown error")))))
     (unless (signal condition)
       (invoke-debugger condition))))
 
@@ -247,41 +247,41 @@
   :returning :int)
 
 (declaim (inline sqlite3-column-count))
-(def-sqlite3-function 
+(def-sqlite3-function
     "sqlite3_column_count"
     ((stmt sqlite3-stmt))
   :returning :int)
 
 (declaim (inline %column-name))
-(def-sqlite3-function 
+(def-sqlite3-function
     ("sqlite3_column_name" %column-name)
     ((stmt sqlite3-stmt)
      (n-col :int))
   :returning :cstring)
 
 (declaim (inline sqlite3-column-type))
-(def-sqlite3-function 
+(def-sqlite3-function
     "sqlite3_column_type"
     ((stmt sqlite3-stmt)
      (n-col :int))
   :returning :int)
 
 (declaim (inline sqlite3-column-text))
-(def-sqlite3-function 
+(def-sqlite3-function
     "sqlite3_column_text"
     ((stmt sqlite3-stmt)
      (n-col :int))
   :returning (* :unsigned-char))
 
 (declaim (inline sqlite3-column-bytes))
-(def-sqlite3-function 
+(def-sqlite3-function
     "sqlite3_column_bytes"
     ((stmt sqlite3-stmt)
      (n-col :int))
   :returning :int)
 
 (declaim (inline sqlite3-column-blob))
-(def-sqlite3-function 
+(def-sqlite3-function
     "sqlite3_column_blob"
     ((stmt sqlite3-stmt)
      (n-col :int))
@@ -295,30 +295,30 @@
   (declare (ignore mode) (type string db-name))
   (let ((dbp (allocate-foreign-object 'sqlite3-db)))
     (declare (type sqlite3-db-ptr-type dbp))
-    (with-cstring (db-name-native db-name) 
+    (with-cstring (db-name-native db-name)
       (let ((result (%open db-name-native dbp)))
-	(if (/=  result 0)
-	    (progn
-	      ;; According to docs, the db must be closed even in case
-	      ;; of error.
-	      (%close (deref-pointer dbp 'sqlite3-db))
-	      (free-foreign-object dbp)
-	      (signal-sqlite3-error result))
-	    (let ((db (deref-pointer dbp 'sqlite3-db)))
-	      (declare (type sqlite3-db-type db))
-	      (setf (gethash db *db-pointers*) dbp)
-	      db))))))
+        (if (/=  result 0)
+            (progn
+              ;; According to docs, the db must be closed even in case
+              ;; of error.
+              (%close (deref-pointer dbp 'sqlite3-db))
+              (free-foreign-object dbp)
+              (signal-sqlite3-error result))
+            (let ((db (deref-pointer dbp 'sqlite3-db)))
+              (declare (type sqlite3-db-type db))
+              (setf (gethash db *db-pointers*) dbp)
+              db))))))
 
 (declaim (ftype (function (sqlite3-db-type) t) sqlite3-close))
 (defun sqlite3-close (db)
   (declare (type sqlite3-db-type db))
   (let ((result (%close db)))
     (if (/= result 0)
-	(signal-sqlite3-error result)
-	(progn
-	  (free-foreign-object (gethash db *db-pointers*))
-	  (remhash db *db-pointers*)
-	  t))))
+        (signal-sqlite3-error result)
+        (progn
+          (free-foreign-object (gethash db *db-pointers*))
+          (remhash db *db-pointers*)
+          t))))
 
 (declaim (ftype (function (sqlite3-db-type string) sqlite3-stmt-type) sqlite3-prepare))
 (defun sqlite3-prepare (db sql)
@@ -327,38 +327,38 @@
     (let ((stmtp (allocate-foreign-object 'sqlite3-stmt)))
       (declare (type sqlite3-stmt-ptr-type stmtp))
       (with-foreign-object (sql-tail '(* :unsigned-char))
-	(let ((result (%prepare db sql-native -1 stmtp sql-tail)))
-	  (if (/= result SQLITE-OK)
-	      (progn
-		(unless (null-pointer-p stmtp)
-		  ;; There is an error, but a statement has been allocated:
-		  ;; finalize it (better safe than sorry).
-		  (%finalize (deref-pointer stmtp 'sqlite3-stmt)))
-		(free-foreign-object stmtp)
-		(signal-sqlite3-error db))
-	      (let ((stmt (deref-pointer stmtp 'sqlite3-stmt)))
-		(declare (type sqlite3-stmt-type stmt))
-		(setf (gethash stmt *stmt-pointers*) stmtp)
-		stmt)))))))
+        (let ((result (%prepare db sql-native -1 stmtp sql-tail)))
+          (if (/= result SQLITE-OK)
+              (progn
+                (unless (null-pointer-p stmtp)
+                  ;; There is an error, but a statement has been allocated:
+                  ;; finalize it (better safe than sorry).
+                  (%finalize (deref-pointer stmtp 'sqlite3-stmt)))
+                (free-foreign-object stmtp)
+                (signal-sqlite3-error db))
+              (let ((stmt (deref-pointer stmtp 'sqlite3-stmt)))
+                (declare (type sqlite3-stmt-type stmt))
+                (setf (gethash stmt *stmt-pointers*) stmtp)
+                stmt)))))))
 
 (declaim (ftype (function (sqlite3-stmt-type) t) sqlite3-step))
 (defun sqlite3-step (stmt)
   (declare (type sqlite3-stmt-type stmt))
   (let ((result (%step stmt)))
     (cond ((= result SQLITE-ROW) t)
-	  ((= result SQLITE-DONE) nil)
-	  (t (signal-sqlite3-error result)))))
+          ((= result SQLITE-DONE) nil)
+          (t (signal-sqlite3-error result)))))
 
 (declaim (ftype (function (sqlite3-stmt-type) t) sqlite3-finalize))
 (defun sqlite3-finalize (stmt)
   (declare (type sqlite3-stmt-type stmt))
   (let ((result (%finalize  stmt)))
     (if (/= result SQLITE-OK)
-	(signal-sqlite3-error result)
-	(progn
-	  (free-foreign-object (gethash stmt *stmt-pointers*))
-	  (remhash stmt *stmt-pointers*)
-	  t))))
+        (signal-sqlite3-error result)
+        (progn
+          (free-foreign-object (gethash stmt *stmt-pointers*))
+          (remhash stmt *stmt-pointers*)
+          t))))
 
 (declaim (inline sqlite3-column-name))
 (defun sqlite3-column-name (stmt n)

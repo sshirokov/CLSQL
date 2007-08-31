@@ -72,26 +72,26 @@
   ((c-oci-symbol lisp-oci-fn) c-return &rest c-parms)
   (let ((ll (mapcar (lambda (x) (declare (ignore x)) (gensym)) c-parms)))
     `(let ((%lisp-oci-fn (uffi:def-function (,c-oci-symbol ,(intern (concatenate 'string "%" (symbol-name lisp-oci-fn))))
-			     ,c-parms
-			   :returning ,c-return)))
+                             ,c-parms
+                           :returning ,c-return)))
        (defun ,lisp-oci-fn (,@ll &key database nulls-ok)
          (declare (ignore database nulls-ok))
-	 (funcall %lisp-oci-fn ,@ll)))))
+         (funcall %lisp-oci-fn ,@ll)))))
 
 
 (def-oci-routine ("OCIInitialize" oci-initialize)
     :int
-  (mode ub4)					; ub4
-  (ctxp :pointer-void)			; dvoid *
-  (malocfp :pointer-void)			; dvoid *(*)
-  (ralocfp :pointer-void)			; dvoid *(*)
-  (mfreefp (* :pointer-void)))		; void *(*)
+  (mode ub4)                                    ; ub4
+  (ctxp :pointer-void)                  ; dvoid *
+  (malocfp :pointer-void)                       ; dvoid *(*)
+  (ralocfp :pointer-void)                       ; dvoid *(*)
+  (mfreefp (* :pointer-void)))          ; void *(*)
 
 
 (def-oci-routine ("OCIEnvInit" oci-env-init)
     :int
   (envpp :pointer-void)                         ; OCIEnv **
-  (mode ub4)                  			; ub4
+  (mode ub4)                                    ; ub4
   (xtramem-sz size_t)            ; size_t
   (usermempp (* :pointer-void)))                    ; dvoid **
 
@@ -109,19 +109,19 @@
 
 (def-oci-routine ("OCIHandleAlloc" oci-handle-alloc)
     :int
-  (parenth      :pointer-void)			; const dvoid *
-  (hndlpp       (* :pointer-void))		; dvoid **
-  (type         ub4)				; ub4
-  (xtramem_sz   size_t)				; size_t
-  (usrmempp     (* :pointer-void)))		; dvoid **
+  (parenth      :pointer-void)                  ; const dvoid *
+  (hndlpp       (* :pointer-void))              ; dvoid **
+  (type         ub4)                            ; ub4
+  (xtramem_sz   size_t)                         ; size_t
+  (usrmempp     (* :pointer-void)))             ; dvoid **
 
 (def-oci-routine ("OCIServerAttach" oci-server-attach)
     :int
   (srvhp        :pointer-void)                  ; oci-server
   (errhp        :pointer-void)                  ; oci-error
-  (dblink       :cstring)        		; :in
-  (dblink-len   sb4)          			; sb4
-  (mode         ub4))         			; ub4
+  (dblink       :cstring)                       ; :in
+  (dblink-len   sb4)                            ; sb4
+  (mode         ub4))                           ; ub4
 
 
 (def-oci-routine ("OCIHandleFree" oci-handle-free)
@@ -131,20 +131,20 @@
 
 (def-oci-routine ("OCILogon" oci-logon)
     :int
-  (envhp        :pointer-void)		; env
-  (errhp        :pointer-void)		; err
-  (svchpp       (* :pointer-void))	; svc
-  (username     (* :unsigned-char))	; username
-  (uname-len    ub4)			;
-  (passwd       (* :unsigned-char))	; passwd
-  (password-len ub4)			;
-  (dsn          (* :unsigned-char))	; datasource
-  (dsn-len      ub4))			;
+  (envhp        :pointer-void)          ; env
+  (errhp        :pointer-void)          ; err
+  (svchpp       (* :pointer-void))      ; svc
+  (username     (* :unsigned-char))     ; username
+  (uname-len    ub4)                    ;
+  (passwd       (* :unsigned-char))     ; passwd
+  (password-len ub4)                    ;
+  (dsn          (* :unsigned-char))     ; datasource
+  (dsn-len      ub4))                   ;
 
 (def-oci-routine ("OCILogoff" oci-logoff)
     :int
-  (p0	:pointer-void)        ; svc
-  (p1	:pointer-void))       ; err
+  (p0   :pointer-void)        ; svc
+  (p1   :pointer-void))       ; err
 
 (declaim (inline oci-error-get))
 (uffi:def-function ("OCIErrorGet" oci-error-get)
@@ -260,26 +260,26 @@
 ;;; for setting up global environment.
 
 (uffi:def-function "OCIInitialize"
-    ((mode ub4)					; ub4
-     (ctxp :pointer-void)			; dvoid *
-     (malocfp :pointer-void)			; dvoid *(*)
-     (ralocfp :pointer-void)			; dvoid *(*)
+    ((mode ub4)                                 ; ub4
+     (ctxp :pointer-void)                       ; dvoid *
+     (malocfp :pointer-void)                    ; dvoid *(*)
+     (ralocfp :pointer-void)                    ; dvoid *(*)
      (mfreefp (* :pointer-void)))
   :returning :int)
 
 (uffi:def-function "OCIEnvInit"
-    ((envpp :pointer-void)			; OCIEnv **
-     (mode ub4)					; ub4
-     (xtramem-sz size_t)			; size_t
+    ((envpp :pointer-void)                      ; OCIEnv **
+     (mode ub4)                                 ; ub4
+     (xtramem-sz size_t)                        ; size_t
      (usermempp (* :pointer-void)))
   :returning :int)
 
 
 (uffi:def-function "OCIHandleAlloc"
-    ((parenth      :pointer-void)		; const dvoid *
-     (hndlpp       (* :pointer-void))		; dvoid **
-     (type         ub4)				; ub4
-     (xtramem_sz   size_t)			; size_t
+    ((parenth      :pointer-void)               ; const dvoid *
+     (hndlpp       (* :pointer-void))           ; dvoid **
+     (type         ub4)                         ; ub4
+     (xtramem_sz   size_t)                      ; size_t
      (usrmempp     (* :pointer-void)))
   :returning :int)
 
@@ -291,27 +291,27 @@
 (defvar *oci-env* nil)
 
 (defvar *oci-handle-types*
-  '(:error				; error report handle (OCIError)
-    :service-context			; service context handle (OCISvcCtx)
-    :statement				; statement (application request) handle (OCIStmt)
-    :describe				; select list description handle (OCIDescribe)
-    :server				; server context handle (OCIServer)
-    :session				; user session handle (OCISession)
-    :transaction			; transaction context handle (OCITrans)
-    :complex-object			; complex object retrieval handle (OCIComplexObject)
-    :security))				; security handle (OCISecurity)
+  '(:error                              ; error report handle (OCIError)
+    :service-context                    ; service context handle (OCISvcCtx)
+    :statement                          ; statement (application request) handle (OCIStmt)
+    :describe                           ; select list description handle (OCIDescribe)
+    :server                             ; server context handle (OCIServer)
+    :session                            ; user session handle (OCISession)
+    :transaction                        ; transaction context handle (OCITrans)
+    :complex-object                     ; complex object retrieval handle (OCIComplexObject)
+    :security))                         ; security handle (OCISecurity)
 
 
 
 (defun oci-init (&key (mode +oci-default+))
   (let ((x (OCIInitialize mode +null-void-pointer+ +null-void-pointer+
-			  +null-void-pointer+ +null-void-pointer-pointer+)))
+                          +null-void-pointer+ +null-void-pointer-pointer+)))
     (if (= x 0)
-	(let ((env (uffi:allocate-foreign-object :pointer-void)))
-	  (setq *oci-initialized* mode)
-	  (let ((x (OCIEnvInit env +oci-default+ 0 +null-void-pointer+)))
-	    (format t ";; OEI: returned ~d~%" x)
-	    (setq *oci-env* env))))))
+        (let ((env (uffi:allocate-foreign-object :pointer-void)))
+          (setq *oci-initialized* mode)
+          (let ((x (OCIEnvInit env +oci-default+ 0 +null-void-pointer+)))
+            (format t ";; OEI: returned ~d~%" x)
+            (setq *oci-env* env))))))
 
 (defun oci-check-return (value)
   (when (= value +oci-invalid-handle+)
@@ -324,13 +324,13 @@
     (:error
      (let ((ptr (uffi:allocate-foreign-object :pointer-void)))
        (let ((x (OCIHandleAlloc
-		 (uffi:deref-pointer *oci-env* void-pointer)
-		 ptr
-		 +oci-default+
-		 0
-		 +null-void-pointer-pointer+)))
-	 (oci-check-return x)
-	 ptr)))
+                 (uffi:deref-pointer *oci-env* void-pointer)
+                 ptr
+                 +oci-default+
+                 0
+                 +null-void-pointer-pointer+)))
+         (oci-check-return x)
+         ptr)))
     (:service-context
      "OCISvcCtx")
     (:statement
@@ -349,8 +349,8 @@
      "OCISecurity")
     (t
      (error 'sql-database-error
-	    :message
-	    (format nil "'~s' is not a valid OCI handle type" type)))))
+            :message
+            (format nil "'~s' is not a valid OCI handle type" type)))))
 
 (defun oci-environment ()
   (let ((envhp (oci-get-handle :type :env)))

@@ -30,38 +30,38 @@
        (nreverse new-types))
     (declare (fixnum length-types length-auto-list i))
     (if (>= i length-types)
-	(push t new-types) ;; types is shorter than num-fields
-	(push
-	 (case (nth i types)
-	   (:int
-	    (case (nth i auto-list)
-	      (:int32
-	       :int32)
-	      (:int64
-	       :int64)
-	      (t
-	       t)))
-	   (:double
-	    (case (nth i auto-list)
-	      (:double
-	       :double)
-	      (t
-	       t)))
-	   (:int32
-	    (if (eq :int32 (nth i auto-list))
-		:int32
-		t))
-	   (:int64
-	    (if (eq :int64 (nth i auto-list))
-		:int64
-	      t))
-	   (:blob
-	    :blob)
-	   (:uint
-	    :uint)
-	   (t
-	    t))
-	 new-types))))
+        (push t new-types) ;; types is shorter than num-fields
+        (push
+         (case (nth i types)
+           (:int
+            (case (nth i auto-list)
+              (:int32
+               :int32)
+              (:int64
+               :int64)
+              (t
+               t)))
+           (:double
+            (case (nth i auto-list)
+              (:double
+               :double)
+              (t
+               t)))
+           (:int32
+            (if (eq :int32 (nth i auto-list))
+                :int32
+                t))
+           (:int64
+            (if (eq :int64 (nth i auto-list))
+                :int64
+              t))
+           (:blob
+            :blob)
+           (:uint
+            :uint)
+           (t
+            t))
+         new-types))))
 
 (uffi:def-function "atoi"
     ((str (* :unsigned-char)))
@@ -107,49 +107,49 @@
 
 (defun strtoul (char-ptr)
   (declare (optimize (speed 3) (safety 0) (space 0))
- 	   (type char-ptr-def char-ptr))
+           (type char-ptr-def char-ptr))
   (c-strtoul char-ptr uffi:+null-cstring-pointer+ 10))
 
 (defun convert-raw-field (char-ptr types index &optional length)
   (declare (optimize (speed 3) (safety 0) (space 0))
- 	   (type char-ptr-def char-ptr))
+           (type char-ptr-def char-ptr))
   (let ((type (if (consp types)
-		  (nth index types)
-		  types)))
+                  (nth index types)
+                  types)))
     (cond
       ((uffi:null-pointer-p char-ptr)
        nil)
       (t
        (case type
-	 (:double
-	  (atof char-ptr))
-	 (:int
-	  (atol char-ptr))
-	 (:int32
-	  (atoi char-ptr))
-	 (:uint32
-	  (strtoul char-ptr))
-	 (:uint
-	  (strtoul char-ptr))
-	 ((:int64 :uint64)
-	  (uffi:with-foreign-object (high32-ptr :unsigned-int)
-	    (let ((low32 (atol64 char-ptr high32-ptr))
-		  (high32 (uffi:deref-pointer high32-ptr :unsigned-int)))
-	      (if (zerop high32)
-		  low32
-		(make-64-bit-integer high32 low32)))))
-	 (:blob
-	  (if length
-	      (uffi:convert-from-foreign-usb8 char-ptr length)
-	    (error "Can't return blob since length is not specified.")))
-	 (t
-	  ;; sb-unicode still broken with converting with length, assume
-	  ;; that string is null terminated
-	  #+sb-unicode
-	  (uffi:convert-from-foreign-string char-ptr :locale :none)
-	  #-sb-unicode
+         (:double
+          (atof char-ptr))
+         (:int
+          (atol char-ptr))
+         (:int32
+          (atoi char-ptr))
+         (:uint32
+          (strtoul char-ptr))
+         (:uint
+          (strtoul char-ptr))
+         ((:int64 :uint64)
+          (uffi:with-foreign-object (high32-ptr :unsigned-int)
+            (let ((low32 (atol64 char-ptr high32-ptr))
+                  (high32 (uffi:deref-pointer high32-ptr :unsigned-int)))
+              (if (zerop high32)
+                  low32
+                (make-64-bit-integer high32 low32)))))
+         (:blob
           (if length
-	      (uffi:convert-from-foreign-string char-ptr :locale :none
+              (uffi:convert-from-foreign-usb8 char-ptr length)
+            (error "Can't return blob since length is not specified.")))
+         (t
+          ;; sb-unicode still broken with converting with length, assume
+          ;; that string is null terminated
+          #+sb-unicode
+          (uffi:convert-from-foreign-string char-ptr :locale :none)
+          #-sb-unicode
+          (if length
+              (uffi:convert-from-foreign-string char-ptr :locale :none
                                                 :null-terminated-p nil
                                                 :length length)
             (uffi:convert-from-foreign-string char-ptr :locale :none))))))))

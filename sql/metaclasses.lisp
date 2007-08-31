@@ -16,21 +16,21 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (when (>= (length (generic-function-lambda-list
-		     (ensure-generic-function
-		      'compute-effective-slot-definition)))
-	    3)
+                     (ensure-generic-function
+                      'compute-effective-slot-definition)))
+            3)
     (pushnew :kmr-normal-cesd cl:*features*))
 
   (when (>= (length (generic-function-lambda-list
-		     (ensure-generic-function
-		      'direct-slot-definition-class)))
-	    3)
+                     (ensure-generic-function
+                      'direct-slot-definition-class)))
+            3)
     (pushnew :kmr-normal-dsdc cl:*features*))
 
   (when (>= (length (generic-function-lambda-list
-		     (ensure-generic-function
-		      'effective-slot-definition-class)))
-	    3)
+                     (ensure-generic-function
+                      'effective-slot-definition-class)))
+            3)
     (pushnew :kmr-normal-esdc cl:*features*)))
 
 
@@ -57,7 +57,7 @@
 ;;; Lispworks 4.2 and before requires special processing of extra slot and class options
 
 (defvar +extra-slot-options+ '(:column :db-kind :db-type :db-reader :void-value :db-constraints
-			       :db-writer :db-info))
+                               :db-writer :db-info))
 (defvar +extra-class-options+ '(:base-table))
 
 #+lispworks
@@ -69,57 +69,57 @@
   (eval `(process-class-option standard-db-class ,class-option)))
 
 (defmethod validate-superclass ((class standard-db-class)
-				(superclass standard-class))
+                                (superclass standard-class))
   t)
 
 (defun table-name-from-arg (arg)
   (cond ((symbolp arg)
-	 arg)
-	((typep arg 'sql-ident)
-	 (slot-value arg 'name))
-	((stringp arg)
-	 (intern arg))))
+         arg)
+        ((typep arg 'sql-ident)
+         (slot-value arg 'name))
+        ((stringp arg)
+         (intern arg))))
 
 (defun column-name-from-arg (arg)
   (cond ((symbolp arg)
-	 arg)
-	((typep arg 'sql-ident)
-	 (slot-value arg 'name))
-	((stringp arg)
-	 (intern (symbol-name-default-case arg)))))
+         arg)
+        ((typep arg 'sql-ident)
+         (slot-value arg 'name))
+        ((stringp arg)
+         (intern (symbol-name-default-case arg)))))
 
 
 (defun remove-keyword-arg (arglist akey)
   (let ((mylist arglist)
-	(newlist ()))
+        (newlist ()))
     (labels ((pop-arg (alist)
-	     (let ((arg (pop alist))
-		   (val (pop alist)))
-	       (unless (equal arg akey)
-		 (setf newlist (append (list arg val) newlist)))
-	       (when alist (pop-arg alist)))))
+             (let ((arg (pop alist))
+                   (val (pop alist)))
+               (unless (equal arg akey)
+                 (setf newlist (append (list arg val) newlist)))
+               (when alist (pop-arg alist)))))
       (pop-arg mylist))
     newlist))
 
 (defmethod initialize-instance :around ((class standard-db-class)
                                         &rest all-keys
-					&key direct-superclasses base-table
+                                        &key direct-superclasses base-table
                                         qualifier
-					&allow-other-keys)
+                                        &allow-other-keys)
   (let ((root-class (find-class 'standard-db-object nil))
-	(vmc 'standard-db-class))
+        (vmc 'standard-db-class))
     (setf (view-class-qualifier class)
           (car qualifier))
     (if root-class
-	(if (some #'(lambda (super) (typep super vmc))
+        (if (some #'(lambda (super) (typep super vmc))
                   direct-superclasses)
-	    (call-next-method)
+            (call-next-method)
             (apply #'call-next-method
                    class
-		   :direct-superclasses (append (list root-class)
+                   :direct-superclasses (append (list root-class)
                                                 direct-superclasses)
-		   (remove-keyword-arg all-keys :direct-superclasses)))
-	(call-next-method))
+                   (remove-keyword-arg all-keys :direct-superclasses)))
+        (call-next-method))
     (setf (view-table class)
           (table-name-from-arg (sql-escape (or (and base-table
                                                     (if (listp base-table)
@@ -135,7 +135,7 @@
                                           direct-superclasses qualifier
                                           &allow-other-keys)
   (let ((root-class (find-class 'standard-db-object nil))
-	(vmc 'standard-db-class))
+        (vmc 'standard-db-class))
     (setf (view-table class)
           (table-name-from-arg (sql-escape (or (and base-table
                                                     (if (listp base-table)
@@ -145,14 +145,14 @@
     (setf (view-class-qualifier class)
           (car qualifier))
     (if (and root-class (not (equal class root-class)))
-	(if (some #'(lambda (super) (typep super vmc))
+        (if (some #'(lambda (super) (typep super vmc))
                   direct-superclasses)
-	    (call-next-method)
+            (call-next-method)
             (apply #'call-next-method
                    class
                    :direct-superclasses (append (list root-class)
                                                 direct-superclasses)
-		   (remove-keyword-arg all-keys :direct-superclasses)))
+                   (remove-keyword-arg all-keys :direct-superclasses)))
         (call-next-method)))
   (register-metaclass class (nth (1+ (position :direct-slots all-keys))
                                  all-keys)))
@@ -194,16 +194,16 @@
       (setf (object-definition class) all-slots))
     #-(or sbcl allegro)
     (setf (key-slots class) (remove-if-not (lambda (slot)
-					     (eql (slot-value slot 'db-kind)
-						  :key))
-					   (ordered-class-slots class)))))
+                                             (eql (slot-value slot 'db-kind)
+                                                  :key))
+                                           (ordered-class-slots class)))))
 
 #+(or sbcl allegro)
 (defmethod finalize-inheritance :after ((class standard-db-class))
   (setf (key-slots class) (remove-if-not (lambda (slot)
-					   (eql (slot-value slot 'db-kind)
-						:key))
-					 (ordered-class-slots class))))
+                                           (eql (slot-value slot 'db-kind)
+                                                :key))
+                                         (ordered-class-slots class))))
 
 ;; return the deepest view-class ancestor for a given view class
 
@@ -300,49 +300,49 @@ column definition in the database.")
 
 (defparameter *db-info-lambda-list*
   '(&key join-class
-	 home-key
-	 foreign-key
+         home-key
+         foreign-key
          (key-join nil)
          (target-slot nil)
-	 (retrieval :immmediate)
-	 (set nil)))
+         (retrieval :immmediate)
+         (set nil)))
 
 (defun parse-db-info (db-info-list)
   (destructuring-bind
-	(&key join-class home-key key-join foreign-key (delete-rule nil)
-	      (target-slot nil) (retrieval :deferred) (set t))
+        (&key join-class home-key key-join foreign-key (delete-rule nil)
+              (target-slot nil) (retrieval :deferred) (set t))
       db-info-list
     (let ((ih (make-hash-table :size 6)))
       (if join-class
-	  (setf (gethash :join-class ih) join-class)
-	  (error "Must specify :join-class in :db-info"))
+          (setf (gethash :join-class ih) join-class)
+          (error "Must specify :join-class in :db-info"))
       (if home-key
-	  (setf (gethash :home-key ih) home-key)
-	  (error "Must specify :home-key in :db-info"))
+          (setf (gethash :home-key ih) home-key)
+          (error "Must specify :home-key in :db-info"))
       (when delete-rule
-	(setf (gethash :delete-rule ih) delete-rule))
+        (setf (gethash :delete-rule ih) delete-rule))
       (if foreign-key
-	  (setf (gethash :foreign-key ih) foreign-key)
-	  (error "Must specify :foreign-key in :db-info"))
+          (setf (gethash :foreign-key ih) foreign-key)
+          (error "Must specify :foreign-key in :db-info"))
       (when key-join
         (setf (gethash :key-join ih) t))
       (when target-slot
-	(setf (gethash :target-slot ih) target-slot))
+        (setf (gethash :target-slot ih) target-slot))
       (when set
-	(setf (gethash :set ih) set))
+        (setf (gethash :set ih) set))
       (when retrieval
-	(progn
-	  (setf (gethash :retrieval ih) retrieval)
-	  (if (eql retrieval :immediate)
-	      (setf (gethash :set ih) nil))))
+        (progn
+          (setf (gethash :retrieval ih) retrieval)
+          (if (eql retrieval :immediate)
+              (setf (gethash :set ih) nil))))
       ih)))
 
 (defclass view-class-direct-slot-definition (view-class-slot-definition-mixin
-					     standard-direct-slot-definition)
+                                             standard-direct-slot-definition)
   ())
 
 (defclass view-class-effective-slot-definition (view-class-slot-definition-mixin
-						standard-effective-slot-definition)
+                                                standard-effective-slot-definition)
   ())
 
 (defmethod direct-slot-definition-class ((class standard-db-class)
@@ -352,8 +352,8 @@ column definition in the database.")
   (find-class 'view-class-direct-slot-definition))
 
 (defmethod effective-slot-definition-class ((class standard-db-class)
-					    #+kmr-normal-esdc &rest
-					    initargs)
+                                            #+kmr-normal-esdc &rest
+                                            initargs)
   (declare (ignore initargs))
   (find-class 'view-class-effective-slot-definition))
 
@@ -368,17 +368,17 @@ column definition in the database.")
   "Need to sort order of class slots so they are the same across
 implementations."
   (let ((slots (call-next-method))
-	desired-sequence
-	output-slots)
+        desired-sequence
+        output-slots)
     (dolist (c (compute-class-precedence-list class))
       (dolist (s (class-direct-slots c))
-	(let ((name (slot-definition-name s)))
-	  (unless (find name desired-sequence)
-	    (push name desired-sequence)))))
+        (let ((name (slot-definition-name s)))
+          (unless (find name desired-sequence)
+            (push name desired-sequence)))))
     (dolist (desired desired-sequence)
       (let ((slot (find desired slots :key #'slot-definition-name)))
-	(assert slot)
-	(push slot output-slots)))
+        (assert slot)
+        (push slot output-slots)))
     output-slots))
 
 (defun compute-lisp-type-from-specified-type (specified-type db-constraints)
@@ -452,8 +452,8 @@ implementations."
     (setq initargs (cddr initargs))))
 
 (defmethod compute-effective-slot-definition ((class standard-db-class)
-					      #+kmr-normal-cesd slot-name
-					      direct-slots)
+                                              #+kmr-normal-cesd slot-name
+                                              direct-slots)
   #+kmr-normal-cesd (declare (ignore slot-name))
 
   ;; KMR: store the user-specified type and then compute
@@ -461,67 +461,67 @@ implementations."
   (let ((dsd (car direct-slots)))
     (let ((esd (call-next-method)))
       (typecase dsd
-	(view-class-slot-definition-mixin
-	 ;; Use the specified :column argument if it is supplied, otherwise
-	 ;; the column slot is filled in with the slot-name,  but transformed
-	 ;; to be sql safe, - to _ and such.
-	 (setf (slot-value esd 'column)
-	   (column-name-from-arg
-	    (if (slot-boundp dsd 'column)
-		(delistify-dsd (view-class-slot-column dsd))
-	      (column-name-from-arg
-	       (sql-escape (slot-definition-name dsd))))))
+        (view-class-slot-definition-mixin
+         ;; Use the specified :column argument if it is supplied, otherwise
+         ;; the column slot is filled in with the slot-name,  but transformed
+         ;; to be sql safe, - to _ and such.
+         (setf (slot-value esd 'column)
+           (column-name-from-arg
+            (if (slot-boundp dsd 'column)
+                (delistify-dsd (view-class-slot-column dsd))
+              (column-name-from-arg
+               (sql-escape (slot-definition-name dsd))))))
 
-	 (setf (slot-value esd 'db-type)
-	   (when (slot-boundp dsd 'db-type)
-	     (delistify-dsd
-	      (view-class-slot-db-type dsd))))
+         (setf (slot-value esd 'db-type)
+           (when (slot-boundp dsd 'db-type)
+             (delistify-dsd
+              (view-class-slot-db-type dsd))))
 
-	 (setf (slot-value esd 'void-value)
-	       (delistify-dsd
-		(view-class-slot-void-value dsd)))
+         (setf (slot-value esd 'void-value)
+               (delistify-dsd
+                (view-class-slot-void-value dsd)))
 
-	 ;; :db-kind slot value defaults to :base (store slot value in
-	 ;; database)
+         ;; :db-kind slot value defaults to :base (store slot value in
+         ;; database)
 
-	 (setf (slot-value esd 'db-kind)
-	   (if (slot-boundp dsd 'db-kind)
-	       (delistify-dsd (view-class-slot-db-kind dsd))
-	     :base))
+         (setf (slot-value esd 'db-kind)
+           (if (slot-boundp dsd 'db-kind)
+               (delistify-dsd (view-class-slot-db-kind dsd))
+             :base))
 
-	 (setf (slot-value esd 'db-reader)
-	   (when (slot-boundp dsd 'db-reader)
-	     (delistify-dsd (view-class-slot-db-reader dsd))))
-	 (setf (slot-value esd 'db-writer)
-	   (when (slot-boundp dsd 'db-writer)
-	     (delistify-dsd (view-class-slot-db-writer dsd))))
-	 (setf (slot-value esd 'db-constraints)
-	   (when (slot-boundp dsd 'db-constraints)
-	     (delistify-dsd (view-class-slot-db-constraints dsd))))
+         (setf (slot-value esd 'db-reader)
+           (when (slot-boundp dsd 'db-reader)
+             (delistify-dsd (view-class-slot-db-reader dsd))))
+         (setf (slot-value esd 'db-writer)
+           (when (slot-boundp dsd 'db-writer)
+             (delistify-dsd (view-class-slot-db-writer dsd))))
+         (setf (slot-value esd 'db-constraints)
+           (when (slot-boundp dsd 'db-constraints)
+             (delistify-dsd (view-class-slot-db-constraints dsd))))
 
-	 ;; I wonder if this slot option and the previous could be merged,
-	 ;; so that :base and :key remain keyword options, but :db-kind
-	 ;; :join becomes :db-kind (:join <db info .... >)?
+         ;; I wonder if this slot option and the previous could be merged,
+         ;; so that :base and :key remain keyword options, but :db-kind
+         ;; :join becomes :db-kind (:join <db info .... >)?
 
-	 (setf (slot-value esd 'db-info)
-	       (when (slot-boundp dsd 'db-info)
-		 (let ((dsd-info (view-class-slot-db-info dsd)))
-		   (cond
-		     ((atom dsd-info)
-		      dsd-info)
-		     ((and (listp dsd-info) (> (length dsd-info) 1)
-			   (atom (car dsd-info)))
-		      (parse-db-info dsd-info))
-		     ((and (listp dsd-info) (= 1 (length dsd-info))
-			   (listp (car dsd-info)))
-		      (parse-db-info (car dsd-info)))))))
+         (setf (slot-value esd 'db-info)
+               (when (slot-boundp dsd 'db-info)
+                 (let ((dsd-info (view-class-slot-db-info dsd)))
+                   (cond
+                     ((atom dsd-info)
+                      dsd-info)
+                     ((and (listp dsd-info) (> (length dsd-info) 1)
+                           (atom (car dsd-info)))
+                      (parse-db-info dsd-info))
+                     ((and (listp dsd-info) (= 1 (length dsd-info))
+                           (listp (car dsd-info)))
+                      (parse-db-info (car dsd-info)))))))
 
-	 (setf (specified-type esd)
-	       (delistify-dsd (specified-type dsd)))
+         (setf (specified-type esd)
+               (delistify-dsd (specified-type dsd)))
 
-	 )
-	;; all other slots
-	(t
+         )
+        ;; all other slots
+        (t
          (unless (typep esd 'view-class-effective-slot-definition)
            (warn "Non view-class-direct-slot object with non-view-class-effective-slot-definition in compute-effective-slot-definition")
 
@@ -533,26 +533,26 @@ implementations."
              #+openmcl (setf (slot-value esd 'ccl::type-predicate)
                              type-predicate)))
 
-	 (setf (slot-value esd 'column)
-	   (column-name-from-arg
-	    (sql-escape (slot-definition-name dsd))))
+         (setf (slot-value esd 'column)
+           (column-name-from-arg
+            (sql-escape (slot-definition-name dsd))))
 
-	 (setf (slot-value esd 'db-info) nil)
-	 (setf (slot-value esd 'db-kind) :virtual)
-	 (setf (specified-type esd) (slot-definition-type dsd)))
-	)
+         (setf (slot-value esd 'db-info) nil)
+         (setf (slot-value esd 'db-kind) :virtual)
+         (setf (specified-type esd) (slot-definition-type dsd)))
+        )
       esd)))
 
 (defun slotdefs-for-slots-with-class (slots class)
   (let ((result nil))
     (dolist (s slots)
       (let ((c (slotdef-for-slot-with-class s class)))
-	(if c (setf result (cons c result)))))
+        (if c (setf result (cons c result)))))
     result))
 
 (defun slotdef-for-slot-with-class (slot class)
   (find-if #'(lambda (d) (eql slot (slot-definition-name d)))
-	   (class-slots class)))
+           (class-slots class)))
 
 #+ignore
 (eval-when (:compile-toplevel :load-toplevel :execute)

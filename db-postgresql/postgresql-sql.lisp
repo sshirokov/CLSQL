@@ -29,33 +29,33 @@
     (dotimes (i num-fields)
       (declare (fixnum i))
       (let* ((type (PQftype res-ptr i)))
-	(push
-	 (case type
-	   ((#.pgsql-ftype#bytea
-	     #.pgsql-ftype#int2
-	     #.pgsql-ftype#int4)
-	    :int32)
-	   (#.pgsql-ftype#int8
-	    :int64)
-	   ((#.pgsql-ftype#float4
-	     #.pgsql-ftype#float8)
-	    :double)
-	   (otherwise
-	    t))
-	 new-types)))
+        (push
+         (case type
+           ((#.pgsql-ftype#bytea
+             #.pgsql-ftype#int2
+             #.pgsql-ftype#int4)
+            :int32)
+           (#.pgsql-ftype#int8
+            :int64)
+           ((#.pgsql-ftype#float4
+             #.pgsql-ftype#float8)
+            :double)
+           (otherwise
+            t))
+         new-types)))
       (nreverse new-types)))
 
 (defun canonicalize-types (types num-fields res-ptr)
   (if (null types)
       nil
       (let ((auto-list (make-type-list-for-auto num-fields res-ptr)))
-	(cond
-	  ((listp types)
-	   (canonicalize-type-list types auto-list))
-	  ((eq types :auto)
-	   auto-list)
-	  (t
-	   nil)))))
+        (cond
+          ((listp types)
+           (canonicalize-type-list types auto-list))
+          ((eq types :auto)
+           auto-list)
+          (t
+           nil)))))
 
 (defun tidy-error-message (message)
   (unless (stringp message)
@@ -70,7 +70,7 @@
        message))))
 
 (defmethod database-initialize-database-type ((database-type
-					       (eql :postgresql)))
+                                               (eql :postgresql)))
   t)
 
 (uffi:def-type pgsql-conn-def pgsql-conn)
@@ -79,7 +79,7 @@
 
 (defclass postgresql-database (generic-postgresql-database)
   ((conn-ptr :accessor database-conn-ptr :initarg :conn-ptr
-	     :type pgsql-conn-def)
+             :type pgsql-conn-def)
    (lock
     :accessor database-lock
     :initform (make-process-lock "conn"))))
@@ -88,45 +88,45 @@
   :postgresql)
 
 (defmethod database-name-from-spec (connection-spec (database-type
-						     (eql :postgresql)))
+                                                     (eql :postgresql)))
   (check-connection-spec connection-spec database-type
-			 (host db user password &optional port options tty))
+                         (host db user password &optional port options tty))
   (destructuring-bind (host db user password &optional port options tty)
       connection-spec
     (declare (ignore password options tty))
-    (concatenate 'string 
+    (concatenate 'string
       (etypecase host
-	(null "localhost")
-	(pathname (namestring host))
-	(string host))
-      (when port 
-	(concatenate 'string
-		     ":"
-		     (etypecase port
-		       (integer (write-to-string port))
-		       (string port))))
+        (null "localhost")
+        (pathname (namestring host))
+        (string host))
+      (when port
+        (concatenate 'string
+                     ":"
+                     (etypecase port
+                       (integer (write-to-string port))
+                       (string port))))
       "/" db "/" user)))
 
 
 (defmethod database-connect (connection-spec (database-type (eql :postgresql)))
   (check-connection-spec connection-spec database-type
-			 (host db user password &optional port options tty))
+                         (host db user password &optional port options tty))
   (destructuring-bind (host db user password &optional port options tty)
       connection-spec
     (uffi:with-cstrings ((host-native host)
-			 (user-native user)
-			 (password-native password)
-			 (db-native db)
-			 (port-native port)
-			 (options-native options)
-			 (tty-native tty))
+                         (user-native user)
+                         (password-native password)
+                         (db-native db)
+                         (port-native port)
+                         (options-native options)
+                         (tty-native tty))
       (let ((connection (PQsetdbLogin host-native port-native
-				      options-native tty-native
-				      db-native user-native
-				      password-native)))
-	(declare (type pgsql-conn-def connection))
-	(when (not (eq (PQstatus connection) 
-		       pgsql-conn-status-type#connection-ok))
+                                      options-native tty-native
+                                      db-native user-native
+                                      password-native)))
+        (declare (type pgsql-conn-def connection))
+        (when (not (eq (PQstatus connection)
+                       pgsql-conn-status-type#connection-ok))
           (let ((pqstatus (PQstatus connection))
                 (pqmessage (tidy-error-message (PQerrorMessage connection))))
             (PQfinish connection)
@@ -135,12 +135,12 @@
                    :connection-spec connection-spec
                    :error-id pqstatus
                    :message  pqmessage)))
-	(make-instance 'postgresql-database
-		       :name (database-name-from-spec connection-spec
-						      database-type)
-		       :database-type :postgresql
-		       :connection-spec connection-spec
-		       :conn-ptr connection)))))
+        (make-instance 'postgresql-database
+                       :name (database-name-from-spec connection-spec
+                                                      database-type)
+                       :database-type :postgresql
+                       :connection-spec connection-spec
+                       :conn-ptr connection)))))
 
 
 (defmethod database-disconnect ((database postgresql-database))
@@ -160,36 +160,36 @@
                  :message (tidy-error-message (PQerrorMessage conn-ptr))))
         (unwind-protect
             (case (PQresultStatus result)
-	      ;; User gave a command rather than a query 
+              ;; User gave a command rather than a query
               (#.pgsql-exec-status-type#command-ok
                nil)
               (#.pgsql-exec-status-type#empty-query
                nil)
               (#.pgsql-exec-status-type#tuples-ok
-	       (let ((num-fields (PQnfields result)))
-		 (when result-types
-		   (setq result-types
-		     (canonicalize-types result-types num-fields
-					 result)))
-		 (let ((res (loop for tuple-index from 0 below (PQntuples result)
-				collect
-				  (loop for i from 0 below num-fields
-				      collect
-					(if (zerop (PQgetisnull result tuple-index i))
-					    (convert-raw-field
-					     (PQgetvalue result tuple-index i)
-					     result-types i)
-					  nil)))))
-		   (if field-names
-		       (values res (result-field-names num-fields result))
-		     res))))
+               (let ((num-fields (PQnfields result)))
+                 (when result-types
+                   (setq result-types
+                     (canonicalize-types result-types num-fields
+                                         result)))
+                 (let ((res (loop for tuple-index from 0 below (PQntuples result)
+                                collect
+                                  (loop for i from 0 below num-fields
+                                      collect
+                                        (if (zerop (PQgetisnull result tuple-index i))
+                                            (convert-raw-field
+                                             (PQgetvalue result tuple-index i)
+                                             result-types i)
+                                          nil)))))
+                   (if field-names
+                       (values res (result-field-names num-fields result))
+                     res))))
               (t
                (error 'sql-database-data-error
                       :database database
                       :expression query-expression
                       :error-id (PQresultStatus result)
                       :message (tidy-error-message
-				(PQresultErrorMessage result)))))
+                                (PQresultErrorMessage result)))))
           (PQclear result))))))
 
 (defun result-field-names (num-fields result)
@@ -224,19 +224,19 @@
                       :expression sql-expression
                       :error-id (PQresultErrorField result +PG-DIAG-SQLSTATE+)
                       :message (tidy-error-message
-				(PQresultErrorMessage result)))))
+                                (PQresultErrorMessage result)))))
           (PQclear result))))))
 
 (defstruct postgresql-result-set
-  (res-ptr (uffi:make-null-pointer 'pgsql-result) 
-	   :type pgsql-result-def)
-  (types nil) 
+  (res-ptr (uffi:make-null-pointer 'pgsql-result)
+           :type pgsql-result-def)
+  (types nil)
   (num-tuples 0 :type integer)
   (num-fields 0 :type integer)
   (tuple-index 0 :type integer))
 
 (defmethod database-query-result-set ((query-expression string)
-				      (database postgresql-database) 
+                                      (database postgresql-database)
                                       &key full-set result-types)
   (let ((conn-ptr (database-conn-ptr database)))
     (declare (type pgsql-conn-def conn-ptr))
@@ -250,44 +250,44 @@
         (case (PQresultStatus result)
           ((#.pgsql-exec-status-type#empty-query
             #.pgsql-exec-status-type#tuples-ok)
-	   (let ((result-set (make-postgresql-result-set
+           (let ((result-set (make-postgresql-result-set
                         :res-ptr result
                         :num-fields (PQnfields result)
                         :num-tuples (PQntuples result)
-			:types (canonicalize-types 
-				      result-types
-				      (PQnfields result)
-				      result))))
-	     (if full-set
-		 (values result-set
-			 (PQnfields result)
-			 (PQntuples result))
-		 (values result-set
-			 (PQnfields result)))))
-	  (t
-	   (unwind-protect
+                        :types (canonicalize-types
+                                      result-types
+                                      (PQnfields result)
+                                      result))))
+             (if full-set
+                 (values result-set
+                         (PQnfields result)
+                         (PQntuples result))
+                 (values result-set
+                         (PQnfields result)))))
+          (t
+           (unwind-protect
                (error 'sql-database-data-error
                       :database database
                       :expression query-expression
                       :error-id (PQresultStatus result)
                       :message (tidy-error-message
-				(PQresultErrorMessage result)))
+                                (PQresultErrorMessage result)))
              (PQclear result))))))))
-  
+
 (defmethod database-dump-result-set (result-set (database postgresql-database))
-  (let ((res-ptr (postgresql-result-set-res-ptr result-set))) 
+  (let ((res-ptr (postgresql-result-set-res-ptr result-set)))
     (declare (type pgsql-result-def res-ptr))
     (PQclear res-ptr)
     t))
 
-(defmethod database-store-next-row (result-set (database postgresql-database) 
+(defmethod database-store-next-row (result-set (database postgresql-database)
                                     list)
   (let ((result (postgresql-result-set-res-ptr result-set))
-	(types (postgresql-result-set-types result-set)))
+        (types (postgresql-result-set-types result-set)))
     (declare (type pgsql-result-def result))
     (if (>= (postgresql-result-set-tuple-index result-set)
-	    (postgresql-result-set-num-tuples result-set))
-	nil
+            (postgresql-result-set-num-tuples result-set))
+        nil
       (loop with tuple-index = (postgresql-result-set-tuple-index result-set)
           for i from 0 below (postgresql-result-set-num-fields result-set)
           for rest on list
@@ -296,7 +296,7 @@
               (if (zerop (PQgetisnull result tuple-index i))
                   (convert-raw-field
                    (PQgetvalue result tuple-index i)
-		   types i)
+                   types i)
                 nil))
           finally
             (incf (postgresql-result-set-tuple-index result-set))
@@ -306,71 +306,71 @@
 
 (defmethod database-create-large-object ((database postgresql-database))
   (lo-create (database-conn-ptr database)
-	     (logior pgsql::+INV_WRITE+ pgsql::+INV_READ+)))
+             (logior pgsql::+INV_WRITE+ pgsql::+INV_READ+)))
 
 
 #+mb-original
 (defmethod database-write-large-object (object-id (data string) (database postgresql-database))
   (let ((ptr (database-conn-ptr database))
-	(length (length data))
-	(result nil)
-	(fd nil))
+        (length (length data))
+        (result nil)
+        (fd nil))
     (with-transaction (:database database)
        (unwind-protect
-	  (progn 
-	    (setf fd (lo-open ptr object-id pgsql::+INV_WRITE+))
-	    (when (>= fd 0)
-	      (when (= (lo-write ptr fd data length) length)
-		(setf result t))))
-	 (progn
-	   (when (and fd (>= fd 0))
-	     (lo-close ptr fd))
-	   )))
+          (progn
+            (setf fd (lo-open ptr object-id pgsql::+INV_WRITE+))
+            (when (>= fd 0)
+              (when (= (lo-write ptr fd data length) length)
+                (setf result t))))
+         (progn
+           (when (and fd (>= fd 0))
+             (lo-close ptr fd))
+           )))
     result))
 
 (defmethod database-write-large-object (object-id (data string) (database postgresql-database))
   (let ((ptr (database-conn-ptr database))
-	(length (length data))
-	(result nil)
-	(fd nil))
+        (length (length data))
+        (result nil)
+        (fd nil))
     (database-execute-command "begin" database)
     (unwind-protect
-	(progn 
-	  (setf fd (lo-open ptr object-id pgsql::+INV_WRITE+))
-	  (when (>= fd 0)
-	    (when (= (lo-write ptr fd data length) length)
-	      (setf result t))))
+        (progn
+          (setf fd (lo-open ptr object-id pgsql::+INV_WRITE+))
+          (when (>= fd 0)
+            (when (= (lo-write ptr fd data length) length)
+              (setf result t))))
       (progn
-	(when (and fd (>= fd 0))
-	  (lo-close ptr fd))
-	(database-execute-command (if result "commit" "rollback") database)))
+        (when (and fd (>= fd 0))
+          (lo-close ptr fd))
+        (database-execute-command (if result "commit" "rollback") database)))
     result))
 
 ;; (MB) the begin/commit/rollback stuff will be removed when with-transaction wil be implemented
 ;; (KMR) Can't use with-transaction since that function is in high-level code
 (defmethod database-read-large-object (object-id (database postgresql-database))
   (let ((ptr (database-conn-ptr database))
-	(buffer nil)
-	(result nil)
-	(length 0)
-	(fd nil))
+        (buffer nil)
+        (result nil)
+        (length 0)
+        (fd nil))
     (unwind-protect
        (progn
-	 (database-execute-command "begin" database)
-	 (setf fd (lo-open ptr object-id pgsql::+INV_READ+))
-	 (when (>= fd 0)
-	   (setf length (lo-lseek ptr fd 0 2))
-	   (lo-lseek ptr fd 0 0)
-	   (when (> length 0)
-	     (setf buffer (uffi:allocate-foreign-string 
-			   length :unsigned t))
-	     (when (= (lo-read ptr fd buffer length) length)
-	       (setf result (uffi:convert-from-foreign-string
-			     buffer :length length :null-terminated-p nil))))))
+         (database-execute-command "begin" database)
+         (setf fd (lo-open ptr object-id pgsql::+INV_READ+))
+         (when (>= fd 0)
+           (setf length (lo-lseek ptr fd 0 2))
+           (lo-lseek ptr fd 0 0)
+           (when (> length 0)
+             (setf buffer (uffi:allocate-foreign-string
+                           length :unsigned t))
+             (when (= (lo-read ptr fd buffer length) length)
+               (setf result (uffi:convert-from-foreign-string
+                             buffer :length length :null-terminated-p nil))))))
       (progn
-	(when buffer (uffi:free-foreign-object buffer))
-	(when (and fd (>= fd 0)) (lo-close ptr fd))
-	(database-execute-command (if result "commit" "rollback") database)))
+        (when buffer (uffi:free-foreign-object buffer))
+        (when (and fd (>= fd 0)) (lo-close ptr fd))
+        (database-execute-command (if result "commit" "rollback") database)))
     result))
 
 (defmethod database-delete-large-object (object-id (database postgresql-database))
@@ -380,36 +380,36 @@
 ;;; Object listing
 
 
-  
+
 (defmethod database-create (connection-spec (type (eql :postgresql)))
   (destructuring-bind (host name user password) connection-spec
     (declare (ignore user password))
     (multiple-value-bind (output status)
-	(clsql-sys:command-output "createdb -h~A ~A"
-				       (if host host "localhost")
-				       name)
+        (clsql-sys:command-output "createdb -h~A ~A"
+                                       (if host host "localhost")
+                                       name)
       (if (or (not (zerop status))
-	      (search "database creation failed: ERROR:" output))
-	  (error 'sql-database-error
-		 :message
-		 (format nil "createdb failed for postgresql backend with connection spec ~A."
-			 connection-spec))
-	t))))
+              (search "database creation failed: ERROR:" output))
+          (error 'sql-database-error
+                 :message
+                 (format nil "createdb failed for postgresql backend with connection spec ~A."
+                         connection-spec))
+        t))))
 
 (defmethod database-destroy (connection-spec (type (eql :postgresql)))
   (destructuring-bind (host name user password) connection-spec
     (declare (ignore user password))
     (multiple-value-bind (output status)
-	(clsql-sys:command-output "dropdb -h~A ~A"
-				       (if host host "localhost")
-				       name)
+        (clsql-sys:command-output "dropdb -h~A ~A"
+                                       (if host host "localhost")
+                                       name)
       (if (or (not (zerop status))
-	      (search "database removal failed: ERROR:" output))
-	  (error 'sql-database-error
-		 :message
-		 (format nil "dropdb failed for postgresql backend with connection spec ~A."
-			 connection-spec))
-	t))))
+              (search "database removal failed: ERROR:" output))
+          (error 'sql-database-error
+                 :message
+                 (format nil "dropdb failed for postgresql backend with connection spec ~A."
+                         connection-spec))
+        t))))
 
 
 (defmethod database-probe (connection-spec (type (eql :postgresql)))
@@ -420,7 +420,7 @@
 
 (defun %pg-database-connection (connection-spec)
   (check-connection-spec connection-spec :postgresql
-			 (host db user password &optional port options tty))
+                         (host db user password &optional port options tty))
   (macrolet ((coerce-string (var)
                `(unless (typep ,var 'simple-base-string)
                  (setf ,var (coerce ,var 'simple-base-string)))))
@@ -431,7 +431,7 @@
       (let ((connection (PQsetdbLogin host port options tty db user password)))
         (declare (type pgsql::pgsql-conn-ptr connection))
         (unless (eq (PQstatus connection)
-		    pgsql-conn-status-type#connection-ok)
+                    pgsql-conn-status-type#connection-ok)
           ;; Connect failed
           (error 'sql-connection-error
                  :database-type :postgresql
@@ -444,9 +444,9 @@
   (let ((lock (database-lock database)))
     (with-process-lock (lock "Reconnecting")
       (with-slots (connection-spec conn-ptr)
-	  database
-	(setf conn-ptr (%pg-database-connection connection-spec))
-	database))))
+          database
+        (setf conn-ptr (%pg-database-connection connection-spec))
+        database))))
 
 ;;; Database capabilities
 

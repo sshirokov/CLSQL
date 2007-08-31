@@ -19,10 +19,10 @@
 (defparameter *db2-lib-path*
   (let ((db2-home (getenv "DB2_HOME")))
     (when db2-home
-      (make-pathname :directory 
-		     (append 
-		      (pathname-directory
-		       (parse-namestring (concatenate 'string db2-home "/")))
+      (make-pathname :directory
+                     (append
+                      (pathname-directory
+                       (parse-namestring (concatenate 'string db2-home "/")))
                       (list "lib"))))))
 
 (defparameter *db2-library-filenames*
@@ -45,7 +45,7 @@ set to the right path before compiling or loading the system.")
 (defmethod clsql-sys:database-type-load-foreign ((database-type (eql :db2)))
   (clsql-uffi:find-and-load-foreign-library *db2-library-filenames*
                                             :module "clsql-db2"
-                                            :supporting-libraries 
+                                            :supporting-libraries
                                             *db2-supporting-libraries*)
   (setq *db2-library-loaded* t))
 

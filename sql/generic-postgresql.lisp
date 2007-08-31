@@ -23,29 +23,29 @@
 ;; Object functions
 
 (defmethod database-get-type-specifier (type args database
-					(db-type (eql :postgresql)))
+                                        (db-type (eql :postgresql)))
   (declare (ignore type args database))
   "VARCHAR")
 
 (defmethod database-get-type-specifier ((type (eql 'string)) args database
-					(db-type (eql :postgresql)))
+                                        (db-type (eql :postgresql)))
   (declare (ignore database))
   (if args
       (format nil "CHAR(~A)" (car args))
     "VARCHAR"))
 
 (defmethod database-get-type-specifier ((type (eql 'tinyint)) args database
-					(db-type (eql :postgresql)))
+                                        (db-type (eql :postgresql)))
   (declare (ignore args database))
   "INT2")
 
 (defmethod database-get-type-specifier ((type (eql 'smallint)) args database
-					(db-type (eql :postgresql)))
+                                        (db-type (eql :postgresql)))
   (declare (ignore args database))
   "INT2")
 
 (defmethod database-get-type-specifier ((type (eql 'wall-time)) args database
-					(db-type (eql :postgresql)))
+                                        (db-type (eql :postgresql)))
   (declare (ignore args database))
   "TIMESTAMP WITHOUT TIME ZONE")
 
@@ -91,8 +91,8 @@
 
 (defun database-list-objects-of-type (database type owner)
   (mapcar #'car
-	  (database-query
-	   (format nil
+          (database-query
+           (format nil
                    (if (and (has-table-pg_roles database)
                             (not (eq owner :all)))
                        "
@@ -106,9 +106,9 @@
        ~A"
                        "SELECT relname FROM pg_class WHERE (relkind =
 '~A')~A")
-		   type
-		   (owner-clause owner))
-	   database nil nil)))
+                   type
+                   (owner-clause owner))
+           database nil nil)))
 
 (defmethod database-list-tables ((database generic-postgresql-database)
                                  &key (owner nil))
@@ -124,26 +124,26 @@
 
 
 (defmethod database-list-table-indexes (table (database generic-postgresql-database)
-					&key (owner nil))
+                                        &key (owner nil))
   (let ((indexrelids
-	 (database-query
-	  (format
-	   nil
-	   "select indexrelid from pg_index where indrelid=(select relfilenode from pg_class where relname='~A'~A)"
-	   (string-downcase table)
-	   (owner-clause owner))
-	  database :auto nil))
-	(result nil))
+         (database-query
+          (format
+           nil
+           "select indexrelid from pg_index where indrelid=(select relfilenode from pg_class where relname='~A'~A)"
+           (string-downcase table)
+           (owner-clause owner))
+          database :auto nil))
+        (result nil))
     (dolist (indexrelid indexrelids (nreverse result))
       (push
        (caar (database-query
-	      (format nil "select relname from pg_class where relfilenode='~A'"
-		      (car indexrelid))
-	      database nil nil))
+              (format nil "select relname from pg_class where relfilenode='~A'"
+                      (car indexrelid))
+              database nil nil))
        result))))
 
 (defmethod database-list-attributes ((table string)
-				     (database generic-postgresql-database)
+                                     (database generic-postgresql-database)
                                      &key (owner nil))
   (let* ((owner-clause
           (cond ((stringp owner)
@@ -151,9 +151,9 @@
                 ((null owner) " AND (not (relowner=1))")
                 (t "")))
          (result
-	  (mapcar #'car
-		  (database-query
-		   (format nil "SELECT attname FROM pg_class,pg_attribute WHERE pg_class.oid=attrelid AND attisdropped = FALSE AND relname='~A'~A"
+          (mapcar #'car
+                  (database-query
+                   (format nil "SELECT attname FROM pg_class,pg_attribute WHERE pg_class.oid=attrelid AND attisdropped = FALSE AND relname='~A'~A"
                            (string-downcase table)
                            owner-clause)
                    database nil nil))))
@@ -169,14 +169,14 @@
                    result))))
 
 (defmethod database-attribute-type (attribute (table string)
-				    (database generic-postgresql-database)
+                                    (database generic-postgresql-database)
                                     &key (owner nil))
   (let ((row (car (database-query
-		   (format nil "SELECT pg_type.typname,pg_attribute.attlen,pg_attribute.atttypmod,pg_attribute.attnotnull FROM pg_type,pg_class,pg_attribute WHERE pg_class.oid=pg_attribute.attrelid AND pg_class.relname='~A' AND pg_attribute.attname='~A' AND pg_attribute.atttypid=pg_type.oid~A"
-			   (string-downcase table)
-			   (string-downcase attribute)
-			   (owner-clause owner))
-		   database nil nil))))
+                   (format nil "SELECT pg_type.typname,pg_attribute.attlen,pg_attribute.atttypmod,pg_attribute.attnotnull FROM pg_type,pg_class,pg_attribute WHERE pg_class.oid=pg_attribute.attrelid AND pg_class.relname='~A' AND pg_attribute.attname='~A' AND pg_attribute.atttypid=pg_type.oid~A"
+                           (string-downcase table)
+                           (string-downcase attribute)
+                           (owner-clause owner))
+                   database nil nil))))
     (when row
       (destructuring-bind (typname attlen atttypmod attnull) row
 
@@ -203,13 +203,13 @@
            (values coltype collen colprec colnull))))))
 
 (defmethod database-create-sequence (sequence-name
-				     (database generic-postgresql-database))
+                                     (database generic-postgresql-database))
   (database-execute-command
    (concatenate 'string "CREATE SEQUENCE " (sql-escape sequence-name))
    database))
 
 (defmethod database-drop-sequence (sequence-name
-				   (database generic-postgresql-database))
+                                   (database generic-postgresql-database))
   (database-execute-command
    (concatenate 'string "DROP SEQUENCE " (sql-escape sequence-name)) database))
 
@@ -227,7 +227,7 @@
       database nil nil)))))
 
 (defmethod database-sequence-next (sequence-name
-				   (database generic-postgresql-database))
+                                   (database generic-postgresql-database))
   (values
    (parse-integer
     (caar
@@ -247,15 +247,15 @@
   (destructuring-bind (host name user password) connection-spec
     (declare (ignore name))
     (let ((database (database-connect (list host "template1" user password)
-				      type)))
+                                      type)))
       (unwind-protect
-	   (progn
-	     (setf (slot-value database 'clsql-sys::state) :open)
-	     (mapcar #'car (database-query "select datname from pg_database"
-					   database nil nil)))
-	(progn
-	  (database-disconnect database)
-	  (setf (slot-value database 'clsql-sys::state) :closed))))))
+           (progn
+             (setf (slot-value database 'clsql-sys::state) :open)
+             (mapcar #'car (database-query "select datname from pg_database"
+                                           database nil nil)))
+        (progn
+          (database-disconnect database)
+          (setf (slot-value database 'clsql-sys::state) :closed))))))
 
 (defmethod database-list (connection-spec (type (eql :postgresql)))
   (postgresql-database-list connection-spec type))
@@ -302,45 +302,45 @@
     ((and (consp type) (in (car type) :char :varchar)) "VARCHAR")
     (t
      (error 'sql-user-error
-	    :message
-	    (format nil "Unknown clsql type ~A." type)))))
+            :message
+            (format nil "Unknown clsql type ~A." type)))))
 
 (defun prepared-sql-to-postgresql-sql (sql)
   ;; FIXME: Convert #\? to "$n". Don't convert within strings
   (declare (simple-string sql))
   (with-output-to-string (out)
     (do ((len (length sql))
-	 (param 0)
-	 (in-str nil)
-	 (pos 0 (1+ pos)))
-	((= len pos))
+         (param 0)
+         (in-str nil)
+         (pos 0 (1+ pos)))
+        ((= len pos))
       (declare (fixnum len param pos))
       (let ((c (schar sql pos)))
-	(declare (character c))
-	(cond
-	 ((or (char= c #\") (char= c #\'))
-	  (setq in-str (not in-str))
-	  (write-char c out))
-	 ((and (char= c #\?) (not in-str))
-	  (write-char #\$ out)
-	  (write-string (write-to-string (incf param)) out))
-	 (t
-	  (write-char c out)))))))
+        (declare (character c))
+        (cond
+         ((or (char= c #\") (char= c #\'))
+          (setq in-str (not in-str))
+          (write-char c out))
+         ((and (char= c #\?) (not in-str))
+          (write-char #\$ out)
+          (write-string (write-to-string (incf param)) out))
+         (t
+          (write-char c out)))))))
 
 (defmethod database-prepare (sql-stmt types (database generic-postgresql-database) result-types field-names)
   (let ((id (next-prepared-id)))
     (database-execute-command
      (format nil "PREPARE ~A (~{~A~^,~}) AS ~A"
-	     id
-	     (mapcar #'clsql-type->postgresql-type types)
-	     (prepared-sql-to-postgresql-sql sql-stmt))
+             id
+             (mapcar #'clsql-type->postgresql-type types)
+             (prepared-sql-to-postgresql-sql sql-stmt))
      database)
     (make-instance 'postgresql-stmt
-		   :id id
-		   :database database
-		   :result-types result-types
-		   :field-names field-names
-		   :bindings (make-list (length types)))))
+                   :id id
+                   :database database
+                   :result-types result-types
+                   :field-names field-names
+                   :bindings (make-list (length types)))))
 
 (defmethod database-bind-parameter ((stmt postgresql-stmt) position value)
   (setf (nth (1- position) (bindings stmt)) value))
@@ -355,18 +355,18 @@
 (defmethod database-run-prepared ((stmt postgresql-stmt))
   (with-slots (database id bindings field-names result-types) stmt
     (let ((query (format nil "EXECUTE ~A (~{~A~^,~})"
-			 id (mapcar #'binding-to-param bindings))))
+                         id (mapcar #'binding-to-param bindings))))
       (cond
        ((and field-names (not (consp field-names)))
-	(multiple-value-bind (res names)
-	    (database-query query database result-types field-names)
-	  (setf field-names names)
-	  (values res names)))
+        (multiple-value-bind (res names)
+            (database-query query database result-types field-names)
+          (setf field-names names)
+          (values res names)))
        (field-names
-	(values (nth-value 0 (database-query query database result-types nil))
-		field-names))
+        (values (nth-value 0 (database-query query database result-types nil))
+                field-names))
        (t
-	(database-query query database result-types field-names))))))
+        (database-query query database result-types field-names))))))
 
 ;;; Capabilities
 

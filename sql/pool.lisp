@@ -25,15 +25,15 @@
   ((connection-spec :accessor connection-spec :initarg :connection-spec)
    (database-type :accessor pool-database-type :initarg :pool-database-type)
    (free-connections :accessor free-connections
-		     :initform (make-array 5 :fill-pointer 0 :adjustable t))
+                     :initform (make-array 5 :fill-pointer 0 :adjustable t))
    (all-connections :accessor all-connections
-		    :initform (make-array 5 :fill-pointer 0 :adjustable t))
+                    :initform (make-array 5 :fill-pointer 0 :adjustable t))
    (lock :accessor conn-pool-lock
-	 :initform (make-process-lock "Connection pool"))))
+         :initform (make-process-lock "Connection pool"))))
 
 (defun acquire-from-conn-pool (pool)
   (or (with-process-lock ((conn-pool-lock pool) "Acquire from pool")
-	(when (plusp (length (free-connections pool)))
+        (when (plusp (length (free-connections pool)))
           (let ((pconn (vector-pop (free-connections pool))))
             ;; test if connection still valid.
             ;; Currently, on supported on MySQL
@@ -56,13 +56,13 @@ Disconnecting.~%"
               (t
                pconn)))))
       (let ((conn (connect (connection-spec pool)
-			   :database-type (pool-database-type pool)
-			   :if-exists :new
+                           :database-type (pool-database-type pool)
+                           :if-exists :new
                            :make-default nil)))
-	(with-process-lock ((conn-pool-lock pool) "Acquire from pool")
-	  (vector-push-extend conn (all-connections pool))
-	  (setf (conn-pool conn) pool))
-	conn)))
+        (with-process-lock ((conn-pool-lock pool) "Acquire from pool")
+          (vector-push-extend conn (all-connections pool))
+          (setf (conn-pool conn) pool))
+        conn)))
 
 (defun release-to-conn-pool (conn)
   (let ((pool (conn-pool conn)))
@@ -72,9 +72,9 @@ Disconnecting.~%"
 (defun clear-conn-pool (pool)
   (with-process-lock ((conn-pool-lock pool) "Clear pool")
     (loop for conn across (all-connections pool)
-	  do (setf (conn-pool conn) nil)
-	  ;; disconnect may error if remote side closed connection
-	  (ignore-errors (disconnect :database conn)))
+          do (setf (conn-pool conn) nil)
+          ;; disconnect may error if remote side closed connection
+          (ignore-errors (disconnect :database conn)))
     (setf (fill-pointer (free-connections pool)) 0)
     (setf (fill-pointer (all-connections pool)) 0))
   nil)
@@ -84,12 +84,12 @@ Disconnecting.~%"
 if not found"
   (with-process-lock (*db-pool-lock* "Find-or-create connection")
     (let* ((key (list connection-spec database-type))
-	   (conn-pool (gethash key *db-pool*)))
+           (conn-pool (gethash key *db-pool*)))
       (unless conn-pool
-	(setq conn-pool (make-instance 'conn-pool
-				       :connection-spec connection-spec
-				       :pool-database-type database-type))
-	(setf (gethash key *db-pool*) conn-pool))
+        (setq conn-pool (make-instance 'conn-pool
+                                       :connection-spec connection-spec
+                                       :pool-database-type database-type))
+        (setf (gethash key *db-pool*) conn-pool))
       conn-pool)))
 
 (defun acquire-from-pool (connection-spec database-type &optional pool)
@@ -105,8 +105,8 @@ if not found"
   (with-process-lock (*db-pool-lock* "Disconnect pooled")
     (maphash
      #'(lambda (key conn-pool)
-	 (declare (ignore key))
-	 (clear-conn-pool conn-pool))
+         (declare (ignore key))
+         (clear-conn-pool conn-pool))
      *db-pool*)
     (when clear (clrhash *db-pool*)))
   t)
@@ -115,13 +115,13 @@ if not found"
 ;  "Start all stream in the pool recording actions of TYPES"
 ;  (dolist (con (pool-connections pool))
 ;    (start-sql-recording :type types
-;			 :database (connection-database con))))
+;                        :database (connection-database con))))
 
 ;(defun pool-stop-sql-recording (pool &key (types :command))
 ;  "Start all stream in the pool recording actions of TYPES"
 ;  (dolist (con (pool-connections pool))
 ;    (stop-sql-recording :type types
-;			  :database (connection-database con))))
+;                         :database (connection-database con))))
 
 ;(defmacro with-database-connection (pool &body body)
 ;  `(let ((connection (obtain-connection ,pool))

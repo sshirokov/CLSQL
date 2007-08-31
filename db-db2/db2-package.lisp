@@ -19,7 +19,7 @@
 (defpackage #:clsql-db2
   (:use #:common-lisp #:clsql-sys #:clsql-uffi)
   (:export #:db2-database
-	   #:*db2-server-version*
-	   #:*db2-so-load-path*
-	   #:*db2-so-libraries*)
+           #:*db2-server-version*
+           #:*db2-so-load-path*
+           #:*db2-so-libraries*)
   (:documentation "This is the CLSQL interface to Db2."))

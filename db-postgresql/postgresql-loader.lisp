@@ -28,11 +28,11 @@ set to the right path before compiling or loading the system.")
   "T if foreign library was able to be loaded successfully")
 
 (defmethod clsql-sys:database-type-library-loaded ((database-type
-						    (eql :postgresql)))
+                                                    (eql :postgresql)))
   *postgresql-library-loaded*)
-				      
+
 (defmethod clsql-sys:database-type-load-foreign ((database-type
-						  (eql :postgresql)))
+                                                  (eql :postgresql)))
   (clsql-uffi:find-and-load-foreign-library "libpq"
                                             :module "postgresql"
                                             :supporting-libraries *postgresql-supporting-libraries*)

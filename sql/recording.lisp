@@ -50,7 +50,7 @@ by passing TYPE value of :both."
 
 (defun sql-recording-p (&key (type :commands) (database *default-database*))
   "Predicate to test whether the SQL recording specified by TYPE
-is currently enabled for DATABASE which defaults to *DEFAULT-DATABASE*.  
+is currently enabled for DATABASE which defaults to *DEFAULT-DATABASE*.
 TYPE may be one of :commands, :results, :both or :either, defaulting to
 :commands, otherwise nil is returned."
   (when (or (and (eq type :commands)
@@ -88,7 +88,7 @@ both."
                    (cons stream (list-sql-streams :type :results
                                                   :database database))))))
   stream)
-			      
+
 (defun delete-sql-stream (stream &key (type :commands)
                                  (database *default-database*))
  "Removes the supplied stream STREAM from the recording broadcast
@@ -142,12 +142,12 @@ returned is that used for recording SQL commands or results."
      (result-recording-stream database))
     (t
      (error "Unknown recording type. ~A" type))))
-  
+
 (defun record-sql-command (expr database)
   (when database
     (with-slots (command-recording-stream)
         database
-      (when command-recording-stream 
+      (when command-recording-stream
         (format command-recording-stream "~&;; ~A ~A => ~A~%"
                 (iso-timestring (get-time))
                 (database-name database)
@@ -157,11 +157,11 @@ returned is that used for recording SQL commands or results."
   (when database
     (with-slots (result-recording-stream)
         database
-      (when result-recording-stream 
+      (when result-recording-stream
         (format result-recording-stream "~&;; ~A ~A <= ~A~%"
                 (iso-timestring (get-time))
                 (database-name database)
                 res)))))
 
-  
+
 

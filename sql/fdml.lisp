@@ -3,7 +3,7 @@
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; The CLSQL Functional Data Manipulation Language (FDML). 
+;;;; The CLSQL Functional Data Manipulation Language (FDML).
 ;;;;
 ;;;; This file is part of CLSQL.
 ;;;;
@@ -13,7 +13,7 @@
 ;;;; *************************************************************************
 
 (in-package #:clsql-sys)
-  
+
 ;;; Basic operations on databases
 
 (defmethod database-query-result-set ((expr %sql-expression) database
@@ -36,15 +36,15 @@
 (defmethod query ((query-expression string) &key (database *default-database*)
                   (result-types :auto) (flatp nil) (field-names t))
   (record-sql-command query-expression database)
-  (multiple-value-bind (rows names) 
+  (multiple-value-bind (rows names)
       (database-query query-expression database result-types field-names)
     (let ((result (if (and flatp (= 1 (length (car rows))))
                       (mapcar #'car rows)
                     rows)))
       (record-sql-result result database)
       (if field-names
-	  (values result names)
-	result))))
+          (values result names)
+        result))))
 
 (defmethod query ((expr %sql-expression) &key (database *default-database*)
                   (result-types :auto) (flatp nil) (field-names t))
@@ -52,19 +52,19 @@
          :result-types result-types :field-names field-names))
 
 (defmethod query ((expr sql-object-query) &key (database *default-database*)
-		  (result-types :auto) (flatp nil) (field-names t))
+                  (result-types :auto) (flatp nil) (field-names t))
   (declare (ignore result-types field-names))
   (apply #'select (append (slot-value expr 'objects)
-			  (slot-value expr 'exp) 
-			  (when (slot-value expr 'refresh) 
-			    (list :refresh (sql-output expr database)))
-			  (when (or flatp (slot-value expr 'flatp) )
-			    (list :flatp t))
-			  (list :database database))))
+                          (slot-value expr 'exp)
+                          (when (slot-value expr 'refresh)
+                            (list :refresh (sql-output expr database)))
+                          (when (or flatp (slot-value expr 'flatp) )
+                            (list :flatp t))
+                          (list :database database))))
 
 
 (defun print-query (query-exp &key titles (formats t) (sizes t) (stream t)
-			      (database *default-database*))
+                              (database *default-database*))
   "Prints a tabular report of the results returned by the SQL
 query QUERY-EXP, which may be a symbolic SQL expression or a
 string, in DATABASE which defaults to *DEFAULT-DATABASE*. The
@@ -80,8 +80,8 @@ selected by QUERY-EXP. The default value of FORMATS is t meaning
 that ~A is used to format all columns or ~VA if column sizes are
 used."
   (flet ((compute-sizes (data)
-           (mapcar #'(lambda (x) 
-                       (apply #'max (mapcar #'(lambda (y) 
+           (mapcar #'(lambda (x)
+                       (apply #'max (mapcar #'(lambda (y)
                                                 (if (null y) 3 (length y)))
                                             x)))
                    (apply #'mapcar (cons #'list data))))
@@ -92,9 +92,9 @@ used."
     (let* ((query-exp (etypecase query-exp
                         (string query-exp)
                         (sql-query (sql-output query-exp database))))
-           (data (query query-exp :database database :result-types nil 
+           (data (query query-exp :database database :result-types nil
                         :field-names nil))
-           (sizes (if (or (null sizes) (listp sizes)) sizes 
+           (sizes (if (or (null sizes) (listp sizes)) sizes
                       (compute-sizes (if titles (cons titles data) data))))
            (formats (if (or (null formats) (not (listp formats)))
                         (make-list (length (car data)) :initial-element
@@ -105,11 +105,11 @@ used."
       (dolist (d data (values)) (format-record d control-string sizes)))))
 
 (defun insert-records (&key (into nil)
-			    (attributes nil)
-			    (values nil)
-			    (av-pairs nil)
-			    (query nil)
-			    (database *default-database*))
+                            (attributes nil)
+                            (values nil)
+                            (av-pairs nil)
+                            (query nil)
+                            (database *default-database*))
   "Inserts records into the table specified by INTO in DATABASE
 which defaults to *DEFAULT-DATABASE*. There are five ways of
 specifying the values inserted into each row. In the first VALUES
@@ -126,38 +126,38 @@ and ATTRIBUTES is a list of column names and QUERY is a symbolic
 SQL query expression which returns values for the specified
 columns."
   (let ((stmt (make-sql-insert :into into :attrs attributes
-			       :vals values :av-pairs av-pairs
-			       :subquery query)))
+                               :vals values :av-pairs av-pairs
+                               :subquery query)))
     (execute-command stmt :database database)))
 
 (defun make-sql-insert (&key (into nil)
-			    (attrs nil)
-			    (vals nil)
-			    (av-pairs nil)
-			    (subquery nil))
+                            (attrs nil)
+                            (vals nil)
+                            (av-pairs nil)
+                            (subquery nil))
   (unless into
       (error 'sql-user-error :message ":into keyword not supplied"))
   (let ((insert (make-instance 'sql-insert :into into)))
     (with-slots (attributes values query)
       insert
       (cond ((and vals (not attrs) (not query) (not av-pairs))
-	     (setf values vals))
-	    ((and vals attrs (not subquery) (not av-pairs))
-	     (setf attributes attrs)
-	     (setf values vals))
-	    ((and av-pairs (not vals) (not attrs) (not subquery))
-	     (setf attributes (mapcar #'car av-pairs))
-	     (setf values (mapcar #'cadr av-pairs)))
-	    ((and subquery (not vals) (not attrs) (not av-pairs))
-	     (setf query subquery))
-	    ((and subquery attrs (not vals) (not av-pairs))
-	     (setf attributes attrs)
-	     (setf query subquery))
-	    (t
-	     (error 'sql-user-error
+             (setf values vals))
+            ((and vals attrs (not subquery) (not av-pairs))
+             (setf attributes attrs)
+             (setf values vals))
+            ((and av-pairs (not vals) (not attrs) (not subquery))
+             (setf attributes (mapcar #'car av-pairs))
+             (setf values (mapcar #'cadr av-pairs)))
+            ((and subquery (not vals) (not attrs) (not av-pairs))
+             (setf query subquery))
+            ((and subquery attrs (not vals) (not av-pairs))
+             (setf attributes attrs)
+             (setf query subquery))
+            (t
+             (error 'sql-user-error
                     :message "bad or ambiguous keyword combination.")))
       insert)))
-    
+
 (defun delete-records (&key (from nil)
                             (where nil)
                             (database *default-database*))
@@ -168,10 +168,10 @@ defaults to *DEFAULT-DATABASE*."
     (execute-command stmt :database database)))
 
 (defun update-records (table &key (attributes nil)
-			    (values nil)
-			    (av-pairs nil)
-			    (where nil)
-			    (database *default-database*))
+                            (values nil)
+                            (av-pairs nil)
+                            (where nil)
+                            (database *default-database*))
   "Updates the attribute values of existing records satsifying
 the SQL expression WHERE in the table specified by TABLE in
 DATABASE which defaults to *DEFAULT-DATABASE*. There are three
@@ -186,17 +186,17 @@ are nil and AV-PAIRS is an alist of (attribute value) pairs."
     (setf attributes (mapcar #'car av-pairs)
           values (mapcar #'cadr av-pairs)))
   (let ((stmt (make-instance 'sql-update :table table
-			     :attributes attributes
-			     :values values
-			     :where where)))
+                             :attributes attributes
+                             :values values
+                             :where where)))
     (execute-command stmt :database database)))
 
 
 ;;; Iteration
 
 (defmacro do-query (((&rest args) query-expression
-		     &key (database '*default-database*) (result-types :auto))
-		    &body body)
+                     &key (database '*default-database*) (result-types :auto))
+                    &body body)
   "Repeatedly executes BODY within a binding of ARGS on the
 fields of each row selected by the SQL query QUERY-EXPRESSION,
 which may be a string or a symbolic SQL expression, in DATABASE
@@ -207,36 +207,36 @@ QUERY-EXPRESSION. If RESULT-TYPES is nil all results are returned
 as strings whereas the default value of :auto means that the lisp
 types are automatically computed for each field."
   (let ((result-set (gensym "RESULT-SET-"))
-	(qe (gensym "QUERY-EXPRESSION-"))
-	(columns (gensym "COLUMNS-"))
-	(row (gensym "ROW-"))
-	(db (gensym "DB-")))
+        (qe (gensym "QUERY-EXPRESSION-"))
+        (columns (gensym "COLUMNS-"))
+        (row (gensym "ROW-"))
+        (db (gensym "DB-")))
     `(let ((,qe ,query-expression))
       (typecase ,qe
-	(sql-object-query
+        (sql-object-query
          (dolist (,row (query ,qe))
-           (destructuring-bind ,args 
+           (destructuring-bind ,args
                ,row
              ,@body)))
-	(t
-	 ;; Functional query 
-	 (let ((,db ,database))
-	   (multiple-value-bind (,result-set ,columns)
-	       (database-query-result-set ,qe ,db
-					  :full-set nil 
-					  :result-types ,result-types)
-	     (when ,result-set
-	       (unwind-protect
-		    (do ((,row (make-list ,columns)))
-			((not (database-store-next-row ,result-set ,db ,row))
-			 nil)
-		      (destructuring-bind ,args ,row
-			,@body))
-		 (database-dump-result-set ,result-set ,db))))))))))
+        (t
+         ;; Functional query
+         (let ((,db ,database))
+           (multiple-value-bind (,result-set ,columns)
+               (database-query-result-set ,qe ,db
+                                          :full-set nil
+                                          :result-types ,result-types)
+             (when ,result-set
+               (unwind-protect
+                    (do ((,row (make-list ,columns)))
+                        ((not (database-store-next-row ,result-set ,db ,row))
+                         nil)
+                      (destructuring-bind ,args ,row
+                        ,@body))
+                 (database-dump-result-set ,result-set ,db))))))))))
 
 (defun map-query (output-type-spec function query-expression
-		  &key (database *default-database*)
-		  (result-types :auto))
+                  &key (database *default-database*)
+                  (result-types :auto))
   "Map the function FUNCTION over the attribute values of each
 row selected by the SQL query QUERY-EXPRESSION, which may be a
 string or a symbolic SQL expression, in DATABASE which defaults
@@ -250,35 +250,35 @@ computed for each field."
   (typecase query-expression
     (sql-object-query
      (map output-type-spec #'(lambda (x) (apply function x))
-	  (query query-expression)))
+          (query query-expression)))
     (t
-     ;; Functional query 
+     ;; Functional query
      (macrolet ((type-specifier-atom (type)
-		  `(if (atom ,type) ,type (car ,type))))
+                  `(if (atom ,type) ,type (car ,type))))
        (case (type-specifier-atom output-type-spec)
-	 ((nil) 
-	  (map-query-for-effect function query-expression database 
-				result-types))
-	 (list 
-	  (map-query-to-list function query-expression database result-types))
-	 ((simple-vector simple-string vector string array simple-array
-			 bit-vector simple-bit-vector base-string
-			 simple-base-string)
-	  (map-query-to-simple output-type-spec function query-expression 
-			       database result-types))
-	 (t
-	  (funcall #'map-query 
-		   (cmucl-compat:result-type-or-lose output-type-spec t)
-		   function query-expression :database database 
-		   :result-types result-types)))))))
-  
+         ((nil)
+          (map-query-for-effect function query-expression database
+                                result-types))
+         (list
+          (map-query-to-list function query-expression database result-types))
+         ((simple-vector simple-string vector string array simple-array
+                         bit-vector simple-bit-vector base-string
+                         simple-base-string)
+          (map-query-to-simple output-type-spec function query-expression
+                               database result-types))
+         (t
+          (funcall #'map-query
+                   (cmucl-compat:result-type-or-lose output-type-spec t)
+                   function query-expression :database database
+                   :result-types result-types)))))))
+
 (defun map-query-for-effect (function query-expression database result-types)
   (multiple-value-bind (result-set columns)
       (database-query-result-set query-expression database :full-set nil
-				 :result-types result-types)
-    (let ((flatp (and (= columns 1) 
-		      (typep query-expression 'sql-query)
-		      (slot-value query-expression 'flatp))))
+                                 :result-types result-types)
+    (let ((flatp (and (= columns 1)
+                      (typep query-expression 'sql-query)
+                      (slot-value query-expression 'flatp))))
       (when result-set
         (unwind-protect
              (do ((row (make-list columns)))
@@ -288,14 +288,14 @@ computed for each field."
                    (apply function row)
                    (funcall function row)))
           (database-dump-result-set result-set database))))))
-		     
+
 (defun map-query-to-list (function query-expression database result-types)
   (multiple-value-bind (result-set columns)
       (database-query-result-set query-expression database :full-set nil
-				 :result-types result-types)
-    (let ((flatp (and (= columns 1) 
-		      (typep query-expression 'sql-query)
-		      (slot-value query-expression 'flatp))))
+                                 :result-types result-types)
+    (let ((flatp (and (= columns 1)
+                      (typep query-expression 'sql-query)
+                      (slot-value query-expression 'flatp))))
       (when result-set
         (unwind-protect
              (let ((result (list nil)))
@@ -303,8 +303,8 @@ computed for each field."
                     (current-cons result (cdr current-cons)))
                    ((not (database-store-next-row result-set database row))
                     (cdr result))
-                 (rplacd current-cons 
-                         (list (if flatp 
+                 (rplacd current-cons
+                         (list (if flatp
                                    (apply function row)
                                    (funcall function (copy-list row)))))))
           (database-dump-result-set result-set database))))))
@@ -312,10 +312,10 @@ computed for each field."
 (defun map-query-to-simple (output-type-spec function query-expression database result-types)
   (multiple-value-bind (result-set columns rows)
       (database-query-result-set query-expression database :full-set t
-				 :result-types result-types)
-    (let ((flatp (and (= columns 1) 
-		      (typep query-expression 'sql-query)
-		      (slot-value query-expression 'flatp))))
+                                 :result-types result-types)
+    (let ((flatp (and (= columns 1)
+                      (typep query-expression 'sql-query)
+                      (slot-value query-expression 'flatp))))
       (when result-set
         (unwind-protect
              (if rows
@@ -328,7 +328,7 @@ computed for each field."
                       result)
                    (declare (fixnum index))
                    (setf (aref result index)
-                         (if flatp 
+                         (if flatp
                              (apply function row)
                              (funcall function (copy-list row)))))
                  ;; Database can't report row count in advance, so we have
@@ -345,7 +345,7 @@ computed for each field."
                      (setq allocated-length (* allocated-length 2)
                            result (adjust-array result allocated-length)))
                    (setf (aref result index)
-                         (if flatp 
+                         (if flatp
                              (apply function row)
                              (funcall function (copy-list row))))))
           (database-dump-result-set result-set database))))))
@@ -355,32 +355,32 @@ computed for each field."
 (defmacro for-each-row (((&rest fields) &key from order-by where distinct limit)
                         &body body)
   (let ((d (gensym "DISTINCT-"))
-	(bind-fields (loop for f in fields collect (car f)))
-	(w (gensym "WHERE-"))
-	(o (gensym "ORDER-BY-"))
-	(frm (gensym "FROM-"))
-	(l (gensym "LIMIT-"))
-	(q (gensym "QUERY-")))
+        (bind-fields (loop for f in fields collect (car f)))
+        (w (gensym "WHERE-"))
+        (o (gensym "ORDER-BY-"))
+        (frm (gensym "FROM-"))
+        (l (gensym "LIMIT-"))
+        (q (gensym "QUERY-")))
     `(let ((,frm ,from)
-	   (,w ,where)
-	   (,d ,distinct)
-	   (,l ,limit)
-	   (,o ,order-by))
+           (,w ,where)
+           (,d ,distinct)
+           (,l ,limit)
+           (,o ,order-by))
       (let ((,q (query-string ',fields ,frm ,w ,d ,o ,l)))
-	(loop for tuple in (query ,q)
-	      collect (destructuring-bind ,bind-fields tuple
-		   ,@body))))))
+        (loop for tuple in (query ,q)
+              collect (destructuring-bind ,bind-fields tuple
+                   ,@body))))))
 
 (defun query-string (fields from where distinct order-by limit)
   (concatenate
    'string
-   (format nil "select ~A~{~A~^,~} from ~{~A~^ and ~}" 
-	   (if distinct "distinct " "") (field-names fields)
-	   (from-names from))
+   (format nil "select ~A~{~A~^,~} from ~{~A~^ and ~}"
+           (if distinct "distinct " "") (field-names fields)
+           (from-names from))
    (if where (format nil " where ~{~A~^ ~}"
-		     (where-strings where)) "")
+                     (where-strings where)) "")
    (if order-by (format nil " order by ~{~A~^, ~}"
-			(order-by-strings order-by)))
+                        (order-by-strings order-by)))
    (if limit (format nil " limit ~D" limit) "")))
 
 (defun lisp->sql-name (field)
@@ -393,32 +393,32 @@ computed for each field."
 (defun field-names (field-forms)
   "Return a list of field name strings from a fields form"
   (loop for field-form in field-forms
-	collect
-	(lisp->sql-name
-	 (if (cadr field-form)
-	     (cadr field-form)
-	     (car field-form)))))
+        collect
+        (lisp->sql-name
+         (if (cadr field-form)
+             (cadr field-form)
+             (car field-form)))))
 
 (defun from-names (from)
   "Return a list of field name strings from a fields form"
   (loop for table in (if (atom from) (list from) from)
-	collect (lisp->sql-name table)))
+        collect (lisp->sql-name table)))
 
 
 (defun where-strings (where)
   (loop for w in (if (atom (car where)) (list where) where)
-	collect
-	(if (consp w)
-	    (format nil "~A ~A ~A" (second w) (first w) (third w))
-	    (format nil "~A" w))))
+        collect
+        (if (consp w)
+            (format nil "~A ~A ~A" (second w) (first w) (third w))
+            (format nil "~A" w))))
 
 (defun order-by-strings (order-by)
   (loop for o in order-by
-	collect
-	(if (atom o)
-	    (lisp->sql-name o)
-	    (format nil "~A ~A" (lisp->sql-name (car o))
-		    (lisp->sql-name (cadr o))))))
+        collect
+        (if (atom o)
+            (lisp->sql-name o)
+            (format nil "~A ~A" (lisp->sql-name (car o))
+                    (lisp->sql-name (cadr o))))))
 
 
 ;;; Large objects support
@@ -455,11 +455,11 @@ A type can be
   (:string n)
 "
   (unless (db-type-has-prepared-stmt? (database-type database))
-    (error 'sql-user-error 
-	   :message
-	   (format nil
-		   "Database backend type ~:@(~A~) does not support prepared statements."
-		   (database-type database))))
+    (error 'sql-user-error
+           :message
+           (format nil
+                   "Database backend type ~:@(~A~) does not support prepared statements."
+                   (database-type database))))
 
   (database-prepare sql-stmt types database result-types field-names))
 

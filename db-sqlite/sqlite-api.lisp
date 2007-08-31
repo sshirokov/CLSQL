@@ -24,38 +24,38 @@
     (:export
            ;;; Conditions
            #:sqlite-error
-	   #:sqlite-error-code
-	   #:sqlite-error-message
-	   
-	   ;;; Core API.
+           #:sqlite-error-code
+           #:sqlite-error-message
+
+           ;;; Core API.
            #:sqlite-open
-	   #:sqlite-close
+           #:sqlite-close
 
-	   ;;; New API.
-	   #:sqlite-compile
-	   #:sqlite-step
-	   #:sqlite-finalize
-	   
-	   ;;; Extended API.
-	   #:sqlite-get-table
-	   #:sqlite-free-table
-	   #:sqlite-version		; Defined as constant.
-	   #:sqlite-encoding		; Defined as constant.
-	   #:sqlite-last-insert-rowid
+           ;;; New API.
+           #:sqlite-compile
+           #:sqlite-step
+           #:sqlite-finalize
 
-	   ;;; Utility functions.
-	   #:make-null-row
-	   #:make-null-vm
-	   #:null-row-p
-	   #:sqlite-aref
-	   #:sqlite-raw-aref
-	   #:sqlite-free-row
-	   
-	   ;;; Types.
-	   #:sqlite-row
-	   #:sqlite-row-pointer
-	   #:sqlite-row-pointer-type
-	   #:sqlite-vm-pointer))
+           ;;; Extended API.
+           #:sqlite-get-table
+           #:sqlite-free-table
+           #:sqlite-version             ; Defined as constant.
+           #:sqlite-encoding            ; Defined as constant.
+           #:sqlite-last-insert-rowid
+
+           ;;; Utility functions.
+           #:make-null-row
+           #:make-null-vm
+           #:null-row-p
+           #:sqlite-aref
+           #:sqlite-raw-aref
+           #:sqlite-free-row
+
+           ;;; Types.
+           #:sqlite-row
+           #:sqlite-row-pointer
+           #:sqlite-row-pointer-type
+           #:sqlite-vm-pointer))
 
 (in-package #:sqlite)
 
@@ -78,16 +78,16 @@
   (:report (lambda (condition stream)
              (let ((code (sqlite-error-code condition)))
                (format stream "SQLite error [~A]: ~A"
-		       code (sqlite-error-message condition))))))
+                       code (sqlite-error-message condition))))))
 
 (defun signal-sqlite-error (code &optional message)
   (let ((condition
-	 (make-condition 'sqlite-error
-			 :code code
-			 :message (if message
-				      message
-				    (uffi:convert-from-cstring
-				     (sqlite-error-string code))))))
+         (make-condition 'sqlite-error
+                         :code code
+                         :message (if message
+                                      message
+                                    (uffi:convert-from-cstring
+                                     (sqlite-error-string code))))))
     (unless (signal condition)
       (invoke-debugger condition))))
 
@@ -221,53 +221,53 @@
 (defparameter sqlite-encoding (sqlite-libencoding))
 
 (defun sqlite-open (db-name &optional (mode 0))
-  (with-cstring (db-name-native db-name) 
+  (with-cstring (db-name-native db-name)
     (let ((db (%open db-name-native mode +null-errmsg-pointer+)))
       (if (null-pointer-p db)
-	  (signal-sqlite-error SQLITE-ERROR
-			       (format nil "unable to open ~A" db-name))
-	  db))))
+          (signal-sqlite-error SQLITE-ERROR
+                               (format nil "unable to open ~A" db-name))
+          db))))
 
 (defun sqlite-compile (db sql)
   (with-cstring (sql-native sql)
     (let ((vm (allocate-foreign-object 'sqlite-vm)))
       (with-foreign-object (sql-tail '(* :unsigned-char))
-	(let ((result (%compile db sql-native sql-tail vm +null-errmsg-pointer+)))
-	  (if (= result SQLITE-OK)
-	      vm
-	      (progn
-		(free-foreign-object vm)
-		(signal-sqlite-error result))))))))
+        (let ((result (%compile db sql-native sql-tail vm +null-errmsg-pointer+)))
+          (if (= result SQLITE-OK)
+              vm
+              (progn
+                (free-foreign-object vm)
+                (signal-sqlite-error result))))))))
 
 (defun sqlite-step (vm)
   (declare (type sqlite-vm-pointer vm))
   (with-foreign-object (cols-n :int)
     (let ((cols (allocate-foreign-object '(* (* :unsigned-char))))
-	  (col-names (allocate-foreign-object '(* (* :unsigned-char)))))
+          (col-names (allocate-foreign-object '(* (* :unsigned-char)))))
       (declare (type sqlite-row-pointer-type cols col-names))
       (let ((result (%step (deref-pointer vm 'sqlite-vm)
-			   cols-n cols col-names)))
-	(cond
-	  ((= result SQLITE-ROW)
-	   (let ((n (deref-pointer cols-n :int)))
-	     (values n cols col-names)))
-	  ((= result SQLITE-DONE)
-	   (free-foreign-object cols)
-	   (free-foreign-object col-names)
-	   (values 0 +null-string-pointer-pointer+ +null-string-pointer-pointer+))
-	  (t
-	   (free-foreign-object cols)
-	   (free-foreign-object col-names)
-	   (signal-sqlite-error result)))))))
+                           cols-n cols col-names)))
+        (cond
+          ((= result SQLITE-ROW)
+           (let ((n (deref-pointer cols-n :int)))
+             (values n cols col-names)))
+          ((= result SQLITE-DONE)
+           (free-foreign-object cols)
+           (free-foreign-object col-names)
+           (values 0 +null-string-pointer-pointer+ +null-string-pointer-pointer+))
+          (t
+           (free-foreign-object cols)
+           (free-foreign-object col-names)
+           (signal-sqlite-error result)))))))
 
 (defun sqlite-finalize (vm)
   (declare (type sqlite-vm-pointer vm))
   (let ((result (%finalize (deref-pointer vm 'sqlite-vm) +null-errmsg-pointer+)))
     (if (= result SQLITE-OK)
-	(progn
-	  (free-foreign-object vm)
-	  t)
-	(signal-sqlite-error result))))
+        (progn
+          (free-foreign-object vm)
+          t)
+        (signal-sqlite-error result))))
 
 (defun sqlite-get-table (db sql)
   (declare (type sqlite-db-type db))
@@ -275,15 +275,15 @@
     (let ((rows (allocate-foreign-object '(* (* :unsigned-char)))))
       (declare (type sqlite-row-pointer-type rows))
       (with-foreign-object (rows-n :int)
-	(with-foreign-object (cols-n :int)
-	  (let ((result (%get-table db sql-native rows rows-n cols-n +null-errmsg-pointer+)))
-	    (if (= result SQLITE-OK)
-		(let ((cn (deref-pointer cols-n :int))
-		      (rn (deref-pointer rows-n :int)))
-		  (values rows rn cn))
-		(progn
-		  (free-foreign-object rows)
-		  (signal-sqlite-error result)))))))))
+        (with-foreign-object (cols-n :int)
+          (let ((result (%get-table db sql-native rows rows-n cols-n +null-errmsg-pointer+)))
+            (if (= result SQLITE-OK)
+                (let ((cn (deref-pointer cols-n :int))
+                      (rn (deref-pointer rows-n :int)))
+                  (values rows rn cn))
+                (progn
+                  (free-foreign-object rows)
+                  (signal-sqlite-error result)))))))))
 
 (declaim (inline sqlite-free-table))
 (defun sqlite-free-table (table)

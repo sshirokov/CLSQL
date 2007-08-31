@@ -47,36 +47,36 @@
 (defmacro def-cli-routine ((c-cli-symbol lisp-cli-fn) c-return &rest c-parms)
   (let ((ll (mapcar (lambda (x) (declare (ignore x)) (gensym)) c-parms)))
     `(let ((%lisp-cli-fn (uffi:def-function
-			     (,c-cli-symbol ,(intern (concatenate 'string "%" (symbol-name lisp-cli-fn))))
-			     ,c-parms
-			     :returning ,c-return)))
+                             (,c-cli-symbol ,(intern (concatenate 'string "%" (symbol-name lisp-cli-fn))))
+                             ,c-parms
+                             :returning ,c-return)))
        (defun ,lisp-cli-fn (,@ll &key database nulls-ok)
-	 (let ((result (funcall %lisp-cli-fn ,@ll)))
-	   (case result
-	     (#.SQL_SUCCESS
-	      SQL_SUCCESS)
-	     (#.SQL_SUCCESS_WITH_INFO
-	      (format *standard-output* "sucess with info")
-	      SQL_SUCCESS)
-	     (#.SQL_ERROR
-	      (error 'sql-database-error
-		     :error-id result
-		     :message
-		     (format nil "DB2 error" result)))
-	     (t
-	      (error 'sql-database-error
-		     :message
-		     (format nil "DB2 unknown error, code=~A" result)))))))))
-  
+         (let ((result (funcall %lisp-cli-fn ,@ll)))
+           (case result
+             (#.SQL_SUCCESS
+              SQL_SUCCESS)
+             (#.SQL_SUCCESS_WITH_INFO
+              (format *standard-output* "sucess with info")
+              SQL_SUCCESS)
+             (#.SQL_ERROR
+              (error 'sql-database-error
+                     :error-id result
+                     :message
+                     (format nil "DB2 error" result)))
+             (t
+              (error 'sql-database-error
+                     :message
+                     (format nil "DB2 unknown error, code=~A" result)))))))))
+
 
 (defmacro def-raw-cli-routine
   ((c-cli-symbol lisp-cli-fn) c-return &rest c-parms)
   (let ((ll (mapcar (lambda (x) (declare (ignore x)) (gensym)) c-parms)))
     `(let ((%lisp-cli-fn (uffi:def-function (,c-cli-symbol ,(intern (concatenate 'string "%" (symbol-name lisp-cli-fn))))
-			     ,c-parms
-			   :returning ,c-return)))
+                             ,c-parms
+                           :returning ,c-return)))
        (defun ,lisp-cli-fn (,@ll &key database nulls-ok)
-	 (funcall %lisp-cli-fn ,@ll)))))
+         (funcall %lisp-cli-fn ,@ll)))))
 
 
 (def-cli-routine ("SQLAllocHandle" sql-alloc-handle)

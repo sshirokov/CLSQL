@@ -22,14 +22,14 @@
 
 (defun database-identifier (name database)
   (sql-escape (etypecase name
-		;; honor case of strings
+                ;; honor case of strings
                 (string name
-			#+nil (convert-to-db-default-case name database))
+                        #+nil (convert-to-db-default-case name database))
                 (sql-ident (sql-output name database))
                 (symbol (sql-output name database)))))
 
 
-;; Truncate database 
+;; Truncate database
 
 (defun truncate-database (&key (database *default-database*))
   "Drops all tables, views, indexes and sequences in DATABASE which
@@ -54,7 +54,7 @@ defaults to *DEFAULT-DATABASE*."
   (values))
 
 
-;; Tables 
+;; Tables
 
 (defun create-table (name description &key (database *default-database*)
                           (constraints nil) (transactions t))
@@ -67,7 +67,7 @@ the table.  CONSTRAINTS is a string representing an SQL table
 constraint expression or a list of such strings. With MySQL
 databases, if TRANSACTIONS is t an InnoDB table is created which
 supports transactions."
-  (let* ((table-name (etypecase name 
+  (let* ((table-name (etypecase name
                        (symbol (sql-expression :attribute name))
                        (string (sql-expression :attribute name))
                        (sql-ident name)))
@@ -75,11 +75,11 @@ supports transactions."
                               :name table-name
                               :columns description
                               :modifiers constraints
-			      :transactions transactions)))
+                              :transactions transactions)))
     (execute-command stmt :database database)))
 
 (defun drop-table (name &key (if-does-not-exist :error)
-			     (database *default-database*)
+                             (database *default-database*)
                              (owner nil))
   "Drops the table called NAME from DATABASE which defaults to
 *DEFAULT-DATABASE*. If the table does not exist and
@@ -93,15 +93,15 @@ an error is signalled if IF-DOES-NOT-EXIST is :error."
          (return-from drop-table nil)))
       (:error
        t))
-    
+
     ;; Fixme: move to clsql-oracle
     (let ((expr (concatenate 'string "DROP TABLE " table-name)))
       (when (and (find-package 'clsql-oracle)
-		 (eq :oracle (database-type database))
-		 (eql 10 (slot-value database 
-				     (intern (symbol-name '#:major-server-version)
-					     (symbol-name '#:clsql-oracle)))))
-	(setq expr (concatenate 'string expr " PURGE")))
+                 (eq :oracle (database-type database))
+                 (eql 10 (slot-value database
+                                     (intern (symbol-name '#:major-server-version)
+                                             (symbol-name '#:clsql-oracle)))))
+        (setq expr (concatenate 'string expr " PURGE")))
 
       (execute-command expr :database database))))
 
@@ -126,7 +126,7 @@ examined."
     t))
 
 
-;; Views 
+;; Views
 
 (defun create-view (name &key as column-list (with-check-option nil)
                          (database *default-database*))
@@ -136,7 +136,7 @@ the columns of the view may be specified using the COLUMN-LIST
 parameter. The WITH-CHECK-OPTION is nil by default but if it has
 a non-nil value, then all insert/update commands on the view are
 checked to ensure that the new data satisfy the query AS."
-  (let* ((view-name (etypecase name 
+  (let* ((view-name (etypecase name
                       (symbol (sql-expression :attribute name))
                       (string (sql-expression :attribute (make-symbol name)))
                       (sql-ident name)))
@@ -183,7 +183,7 @@ examined. If OWNER is :all then all views are examined."
     t))
 
 
-;; Indexes 
+;; Indexes
 
 (defun create-index (name &key on (unique nil) attributes
                           (database *default-database*))
@@ -236,15 +236,15 @@ tables. Meaningful values for ON are nil (the default) which
 means that all tables are considered, a string, symbol or SQL
 expression representing a table name in DATABASE or a list of
 such table identifiers."
-  (if (null on) 
+  (if (null on)
       (database-list-indexes database :owner owner)
       (let ((tables (typecase on (cons on) (t (list on)))))
-        (reduce #'append 
-                (mapcar #'(lambda (table) (database-list-table-indexes 
+        (reduce #'append
+                (mapcar #'(lambda (table) (database-list-table-indexes
                                            (database-identifier table database)
                                            database :owner owner))
                         tables)))))
-  
+
 (defun index-exists-p (name &key (owner nil) (database *default-database*))
   "Tests for the existence of an SQL index called NAME in DATABASE
 which defaults to *DEFAULT-DATABASE*. OWNER is nil by default
@@ -257,9 +257,9 @@ examined."
                 :test #'string-equal)
     t))
 
-;; Attributes 
+;; Attributes
 
-(defvar *cache-table-queries-default* nil 
+(defvar *cache-table-queries-default* nil
   "Specifies the default behaivour for caching of attribute
   types. Meaningful values are t, nil and :flush as described for
   the action argument to CACHE-TABLE-QUERIES.")
@@ -282,38 +282,38 @@ caching action has not been explicitly set."
     (cond
       ((stringp table)
        (multiple-value-bind (val found) (gethash table attribute-cache)
-	 (cond
-	   ((and found (eq action :flush))
-	    (setf (gethash table attribute-cache) (list t nil)))
-	   ((and found (eq action t))
-	    (setf (gethash table attribute-cache) (list t (second val))))
-	   ((and found (null action))
-	    (setf (gethash table attribute-cache) (list nil nil)))
-	   ((not found)
-	    (setf (gethash table attribute-cache) (list action nil))))))
+         (cond
+           ((and found (eq action :flush))
+            (setf (gethash table attribute-cache) (list t nil)))
+           ((and found (eq action t))
+            (setf (gethash table attribute-cache) (list t (second val))))
+           ((and found (null action))
+            (setf (gethash table attribute-cache) (list nil nil)))
+           ((not found)
+            (setf (gethash table attribute-cache) (list action nil))))))
       ((eq table t)
        (maphash (lambda (k v)
-		  (cond
-		    ((eq action :flush)
-		     (setf (gethash k attribute-cache) (list t nil)))
-		    ((null action)
-		     (setf (gethash k attribute-cache) (list nil nil)))
-		    ((eq t action)
-		     (setf (gethash k attribute-cache) (list t (second v))))))
-		attribute-cache))
+                  (cond
+                    ((eq action :flush)
+                     (setf (gethash k attribute-cache) (list t nil)))
+                    ((null action)
+                     (setf (gethash k attribute-cache) (list nil nil)))
+                    ((eq t action)
+                     (setf (gethash k attribute-cache) (list t (second v))))))
+                attribute-cache))
       ((eq table :default)
        (maphash (lambda (k v)
-		  (when (eq (first v) :unspecified)
-		    (cond
-		      ((eq action :flush)
-		       (setf (gethash k attribute-cache) (list t nil)))
-		      ((null action)
-		       (setf (gethash k attribute-cache) (list nil nil)))
-		      ((eq t action)
-		       (setf (gethash k attribute-cache) (list t (second v)))))))
-		attribute-cache))))
+                  (when (eq (first v) :unspecified)
+                    (cond
+                      ((eq action :flush)
+                       (setf (gethash k attribute-cache) (list t nil)))
+                      ((null action)
+                       (setf (gethash k attribute-cache) (list nil nil)))
+                      ((eq t action)
+                       (setf (gethash k attribute-cache) (list t (second v)))))))
+                attribute-cache))))
   (values))
-		  
+
 
 (defun list-attributes (name &key (owner nil) (database *default-database*))
   "Returns a list of strings representing the attributes of table
@@ -322,7 +322,7 @@ nil by default which means that only attributes owned by users
 are listed. If OWNER is a string denoting a user name, only
 attributes owned by OWNER are listed. If OWNER is :all then all
 attributes are listed."
-  (database-list-attributes (database-identifier name database) database 
+  (database-list-attributes (database-identifier name database) database
                             :owner owner))
 
 (defun attribute-type (attribute table &key (owner nil)
@@ -357,30 +357,30 @@ the attribute accepts null values and otherwise 0."
   (with-slots (attribute-cache) database
     (let ((table-ident (database-identifier table database)))
       (multiple-value-bind (val found) (gethash table-ident attribute-cache)
-	(if (and found (second val))
-	    (second val)
-	    (let ((types (mapcar #'(lambda (attribute)
-				     (cons attribute
-					   (multiple-value-list
-					    (database-attribute-type
-					     (database-identifier attribute 
+        (if (and found (second val))
+            (second val)
+            (let ((types (mapcar #'(lambda (attribute)
+                                     (cons attribute
+                                           (multiple-value-list
+                                            (database-attribute-type
+                                             (database-identifier attribute
                                                                   database)
-					     table-ident
-					     database
-					     :owner owner))))
-				 (list-attributes table :database database 
+                                             table-ident
+                                             database
+                                             :owner owner))))
+                                 (list-attributes table :database database
                                                   :owner owner))))
-	      (cond
-		((and (not found) (eq t *cache-table-queries-default*))
-		 (setf (gethash table-ident attribute-cache) 
+              (cond
+                ((and (not found) (eq t *cache-table-queries-default*))
+                 (setf (gethash table-ident attribute-cache)
                        (list :unspecified types)))
-		((and found (eq t (first val)) 
-		      (setf (gethash table-ident attribute-cache) 
+                ((and found (eq t (first val))
+                      (setf (gethash table-ident attribute-cache)
                             (list t types)))))
-	      types))))))
-  
+              types))))))
 
-;; Sequences 
+
+;; Sequences
 
 (defun create-sequence (name &key (database *default-database*))
   "Creates a sequence called NAME in DATABASE which defaults to
@@ -425,7 +425,7 @@ sequences are examined."
                 (list-sequences :owner owner :database database)
                 :test #'string-equal)
     t))
-  
+
 (defun sequence-next (name &key (database *default-database*))
   "Increment and return the next value in the sequence called
   NAME in DATABASE which defaults to *DEFAULT-DATABASE*."
@@ -435,7 +435,7 @@ sequences are examined."
   "Explicitly set the the position of the sequence called NAME in
 DATABASE, which defaults to *DEFAULT-DATABSE*, to POSITION which
 is returned."
-  (database-set-sequence-position (database-identifier name database) 
+  (database-set-sequence-position (database-identifier name database)
                                   position database))
 
 (defun sequence-last (name &key (database *default-database*))

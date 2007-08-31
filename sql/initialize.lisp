@@ -4,7 +4,7 @@
 ;;;;
 ;;;; Name:          initialize.lisp
 ;;;; Purpose:       Initializion routines for backend
-;;;; Programmers:   Kevin M. Rosenberg 
+;;;; Programmers:   Kevin M. Rosenberg
 ;;;; Date Started:  May 2002
 ;;;;
 ;;;; $Id$
@@ -49,13 +49,13 @@ DATABASE-TYPE and, if DATABASE-TYPE has not been initialised, it
 is added to *INITIALIZED-DATABASE-TYPES*. "
   (when (member database-type *initialized-database-types*)
     (return-from initialize-database-type database-type))
-  
-  (let ((system (intern (concatenate 'string 
-			  (symbol-name '#:clsql-)
-			  (symbol-name database-type)))))
+
+  (let ((system (intern (concatenate 'string
+                          (symbol-name '#:clsql-)
+                          (symbol-name database-type)))))
     (when (not (find-package system))
       (asdf:operate 'asdf:load-op system)))
-  
+
   (when (database-initialize-database-type database-type)
     (push database-type *initialized-database-types*)
     (setf *default-database-type* database-type)
