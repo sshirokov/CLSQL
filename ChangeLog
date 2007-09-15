@@ -1,3 +1,44 @@
+14 Sep 2007  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 4.0.0: Major version increase to warn of potential
+	backwards incompatibility.
+	* NEWS: Document potentional backward incompatible changes
+	* db-mysql/mysql-sql.lisp: Changes session SQL mode to ANSI immediately
+	after connecting. This may break compatibility with some applications
+	who are using non-ANSI features with MySQL. This change is required to
+	properly support view-classes using a string as their :base-table
+	attribute. This allows users to specify the case of table names. 
+	This is feature is even	more essential for MySQL itself since MySQL
+	uses case-sensitive table names. Use connection-based database-create
+	and database-destroy rather than trying to invoke command-line mysql 
+	utility. Remove automatic upcasing of strings from list-indices. 
+	* db-postgresql/postgresql-sql.lisp: Use connection-based 
+	database-create	and database-destroy rather than trying to invoke
+	command-line utilities.
+	* db-postgresql-socket/postgresql-socket-sql.lisp: Use
+	database-execute-command rather than execute-command for
+	database-{create,destroy}. Connect to postgres database
+	rather than template1 for those database creation/deletion.
+	* sql/metaclasses.lisp: Store the string value of :base-table if a 
+	string is provided. Perform sql-escape at time of view-table name
+	creation.
+	* tests/test-init.lisp: Use "ej_join" as a string, rather than a 
+	symbol, since "ej_join"	is specified as :base-table. Clear the
+	expression output-cache in case the code for generating sql output
+	has changed.
+	* test/test-oodml.lisp: whitespace fix
+	* sql/ooddl.lisp: Use quoted string for primary key constraint if
+	table name is specified as a string.
+	* sql/oodml.lisp: Don't convert a string view-table name to database's 
+	default case.
+	* sql/expressions.lisp: Properly handle table and attribute identifiers
+	when they are a string. Do not change case of symbols to match database
+	default case.
+	* sql/operations.lisp: Change multiword symbols to upper case.
+	* sql/fddl.lisp: Quote base-table if a string to preserve case
+	for drop-table and create-table.
+	* tests/test-syntax.lisp: Add tests of low-level string attribute
+	identifiers.
+	
 20 Jul 2007  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.8.6
 	* db-oracle/oracle-loader.lisp: Rework use of ORACLE_HOME directory
@@ -5,12 +46,12 @@
 	* sql/pool.lisp: Remove incorrect keyword
 	* sql/database.lisp: Rework WITH-DATABASE to not make the database the
 	default database (reported by Saurabh Nanda and Chaitanya Gupta)
-	* doc/ref-connect.lisp: Update the documentation to WITH-DATABASE to emphasis
-	that make-default has a default value of nil.
-	* sql/transaction.lisp: Adjust commit/rollback messages for Microsoft SQL Server.
-	(patch from Nathan Bird)
-	* sql/metaclasses.lisp: Use finalize-inheritance hack on SBCL because of trouble with
-	def-view-class compilations (patch from Nathan Bird)
+	* doc/ref-connect.lisp: Update the documentation to WITH-DATABASE to
+	emphasis that make-default has a default value of nil.
+	* sql/transaction.lisp: Adjust commit/rollback messages for Microsoft
+	SQL Server. (patch from Nathan Bird)
+	* sql/metaclasses.lisp: Use finalize-inheritance hack on SBCL because
+	of trouble with def-view-class compilations (patch from Nathan Bird)
 	
 15 Jul 2007  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 3.8.5

@@ -949,7 +949,6 @@ maximum of MAX-LEN instances updated in each query."
                                    (listify order-by)))
            (join-where nil))
 
-
       ;;(format t "sclasses: ~W~%ijc: ~W~%tables: ~W~%" sclasses immediate-join-classes tables)
 
       (dolist (ob order-by-slots)
@@ -1094,7 +1093,7 @@ as elements of a list."
             ;; one selected table. This is required so FIND-ALL won't duplicate
             ;; the field
             (when (and order-by (= 1 (length target-args)))
-              (let ((table-name  (view-table (find-class (car target-args))))
+              (let ((table-name (view-table (find-class (car target-args))))
                     (order-by-list (copy-seq (listify order-by))))
 
                 (loop for i from 0 below (length order-by-list)

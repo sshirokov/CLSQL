@@ -1,3 +1,9 @@
+cl-sql (4.0.0-1) unstable; urgency=low
+
+  * New upstream
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Fri, 14 Sep 2007 11:55:03 -0600
+
 cl-sql (3.8.6.1-4) unstable; urgency=low
 
   * make package binNMU safe (closes:435968)

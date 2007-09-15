@@ -156,14 +156,21 @@
                              :connection-spec connection-spec
                              :error-id (mysql-errno mysql-ptr)
                              :message (mysql-error-string mysql-ptr)))
-                  (make-instance 'mysql-database
-                                 :name (database-name-from-spec connection-spec
-                                                                database-type)
-                                 :database-type :mysql
-                                 :connection-spec connection-spec
-                                 :server-info (uffi:convert-from-cstring
-                                               (mysql:mysql-get-server-info mysql-ptr))
-                                 :mysql-ptr mysql-ptr))
+                    (let ((db
+                           (make-instance 'mysql-database
+                                          :name (database-name-from-spec connection-spec
+                                                                         database-type)
+                                          :database-type :mysql
+                                          :connection-spec connection-spec
+                                           :server-info (uffi:convert-from-cstring
+                                                         (mysql:mysql-get-server-info mysql-ptr))
+                                           :mysql-ptr mysql-ptr))
+                          (cmd "SET SESSION sql_mode='ANSI'"))
+                      (if (zerop (mysql-real-query mysql-ptr cmd (expression-length cmd)))
+                          db
+                          (progn
+                            (warn "Error setting ANSI mode for MySQL.")
+                            db))))
               (when error-occurred (mysql-close mysql-ptr)))))))))
 
 
@@ -346,7 +353,7 @@
   (declare (ignore owner))
   (do ((results nil)
        (rows (database-query
-              (format nil "SHOW INDEX FROM ~A" (string-upcase table))
+              (format nil "SHOW INDEX FROM ~A" table)
               database nil nil)
              (cdr rows)))
       ((null rows) (nreverse results))
@@ -443,35 +450,22 @@
            database :auto nil))))
 
 (defmethod database-create (connection-spec (type (eql :mysql)))
-  (destructuring-bind (host name user password &optional port) connection-spec
-    (multiple-value-bind (output status)
-        (clsql-sys:command-output "mysqladmin create -u~A -p~A -h~A~@[ -P~A~] ~A"
-                                       user password
-                                       (if host host "localhost")
-                                       port name
-                                       name)
-      (if (or (not (eql 0 status))
-              (and (search "failed" output) (search "error" output)))
-          (error 'sql-database-error
-                 :message
-                 (format nil "mysql database creation failed with connection-spec ~A."
-                         connection-spec))
-        t))))
+  (destructuring-bind (host name user password) connection-spec
+    (let ((database (database-connect (list host "" user password)
+                                      type)))
+      (setf (slot-value database 'clsql-sys::state) :open)
+      (unwind-protect
+           (database-execute-command (format nil "create database ~A" name) database)
+        (database-disconnect database)))))
 
 (defmethod database-destroy (connection-spec (type (eql :mysql)))
-  (destructuring-bind (host name user password &optional port) connection-spec
-    (multiple-value-bind (output status)
-        (clsql-sys:command-output "mysqladmin drop -f -u~A -p~A -h~A~@[ -P~A~] ~A"
-                                       user password
-                                       (if host host "localhost")
-                                       port name)
-      (if (or (not (eql 0 status))
-              (and (search "failed" output) (search "error" output)))
-          (error 'sql-database-error
-                 :message
-                 (format nil "mysql database deletion failed with connection-spec ~A."
-                         connection-spec))
-        t))))
+  (destructuring-bind (host name user password) connection-spec
+    (let ((database (database-connect (list host "" user password)
+                                      type)))
+      (setf (slot-value database 'clsql-sys::state) :open)
+      (unwind-protect
+          (database-execute-command (format nil "drop database ~A" name) database)
+        (database-disconnect database)))))
 
 (defmethod database-probe (connection-spec (type (eql :mysql)))
   (when (find (second connection-spec) (database-list connection-spec type)

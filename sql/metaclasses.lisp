@@ -74,11 +74,13 @@
 
 (defun table-name-from-arg (arg)
   (cond ((symbolp arg)
-         arg)
+         (intern (sql-escape arg)))
         ((typep arg 'sql-ident)
-         (slot-value arg 'name))
+         (if (symbolp (slot-value arg 'name))
+             (intern (sql-escape (slot-value arg 'name)))
+             (sql-escape (slot-value arg 'name))))
         ((stringp arg)
-         (intern arg))))
+         (sql-escape arg))))
 
 (defun column-name-from-arg (arg)
   (cond ((symbolp arg)
@@ -121,11 +123,11 @@
                    (remove-keyword-arg all-keys :direct-superclasses)))
         (call-next-method))
     (setf (view-table class)
-          (table-name-from-arg (sql-escape (or (and base-table
-                                                    (if (listp base-table)
-                                                        (car base-table)
-                                                        base-table))
-                                               (class-name class)))))
+          (table-name-from-arg (or (and base-table
+                                        (if (listp base-table)
+                                            (car base-table)
+                                            base-table))
+                                   (class-name class))))
     (register-metaclass class (nth (1+ (position :direct-slots all-keys))
                                    all-keys))))
 

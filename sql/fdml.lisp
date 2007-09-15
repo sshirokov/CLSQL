@@ -140,6 +140,7 @@ columns."
   (let ((insert (make-instance 'sql-insert :into into)))
     (with-slots (attributes values query)
       insert
+
       (cond ((and vals (not attrs) (not query) (not av-pairs))
              (setf values vals))
             ((and vals attrs (not subquery) (not av-pairs))

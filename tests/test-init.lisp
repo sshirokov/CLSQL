@@ -474,6 +474,8 @@
 
 
 (defun run-tests (&key (report-stream *standard-output*) (sexp-report-stream nil))
+  ;; clear SQL-OUTPUT cache
+  (setq clsql-sys::*output-hash* (make-hash-table :test #'equal))
   (let ((specs (read-specs))
         (*report-stream* report-stream)
         (*sexp-report-stream* sexp-report-stream)

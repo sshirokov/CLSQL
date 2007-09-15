@@ -112,11 +112,9 @@
 (defmethod output-sql ((expr sql-ident) database)
   (with-slots (name) expr
     (write-string
-     (convert-to-db-default-case
-      (etypecase name
-        (string name)
-        (symbol (symbol-name name)))
-      database)
+     (etypecase name
+       (string name)
+       (symbol (symbol-name name) database))
      *sql-stream*))
   t)
 
@@ -137,9 +135,8 @@
 
 (defmethod collect-table-refs ((sql sql-ident-attribute))
   (let ((qual (slot-value sql 'qualifier)))
-    (if (and qual (symbolp (slot-value sql 'qualifier)))
-        (list (make-instance 'sql-ident-table :name
-                             (slot-value sql 'qualifier))))))
+    (when qual
+      (list (make-instance 'sql-ident-table :name qual)))))
 
 (defmethod make-load-form ((sql sql-ident-attribute) &optional environment)
   (declare (ignore environment))
@@ -153,29 +150,29 @@
   (with-slots (qualifier name type) expr
     (if (and (not qualifier) (not type))
         (etypecase name
-          ;; Honor care of name
           (string
            (write-string name *sql-stream*))
           (symbol
-           (write-string (sql-escape (convert-to-db-default-case
-                                      (symbol-name name) database)) *sql-stream*)))
+           (write-string
+            (sql-escape (symbol-name name)) *sql-stream*)))
 
         ;;; KMR: The TYPE field is used by CommonSQL for type conversion -- it
       ;;; should not be output in SQL statements
       #+ignore
       (format *sql-stream* "~@[~A.~]~A~@[ ~A~]"
               (when qualifier
-                (convert-to-db-default-case (sql-escape qualifier) database))
-              (sql-escape (convert-to-db-default-case name database))
+                (sql-escape qualifier))
+              (sql-escape name)
               (when type
-                (convert-to-db-default-case (symbol-name type) database)))
+                (symbol-name type)))
       (format *sql-stream* "~@[~A.~]~A"
               (when qualifier
                 (typecase qualifier
                   (string (format nil "~s" qualifier))
-                  (t (convert-to-db-default-case (sql-escape qualifier)
-                                                 database))))
-              (sql-escape (convert-to-db-default-case name database))))
+                  (t (sql-escape qualifier))))
+              (typecase name
+                (string (format nil "~s" (sql-escape name)))
+                (t (sql-escape name)))))
     t))
 
 (defmethod output-sql-hash-key ((expr sql-ident-attribute) database)
@@ -199,19 +196,13 @@
 
 (defmethod output-sql ((expr sql-ident-table) database)
   (with-slots (name alias) expr
-     (let ((namestr (if (symbolp name)
-                        (symbol-name name)
-                      name)))
-       (if (null alias)
-           (write-string
-            (sql-escape (convert-to-db-default-case namestr database))
-            *sql-stream*)
-         (progn
-           (write-string
-            (sql-escape (convert-to-db-default-case namestr database))
-            *sql-stream*)
-           (write-char #\Space *sql-stream*)
-           (format *sql-stream* "~s" alias)))))
+    (etypecase name
+      (string
+       (format *sql-stream* "~s" (sql-escape name)))
+      (symbol
+       (write-string (sql-escape name) *sql-stream*)))
+    (when alias
+      (format *sql-stream* " ~s" alias)))
   t)
 
 (defmethod output-sql-hash-key ((expr sql-ident-table) database)
@@ -596,7 +587,7 @@ uninclusive, and the args from that keyword to the end."
                                    (remove-duplicates from
                                                       :test #'ident-table-equal))
                             database))
-          (string (write-string from *sql-stream*))
+          (string (format *sql-stream* "~s" (sql-escape from)))
           (t (let ((*in-subselect* t))
                (output-sql from database))))))
     (when inner-join
@@ -687,7 +678,7 @@ uninclusive, and the args from that keyword to the end."
     (write-string "INSERT INTO " *sql-stream*)
     (output-sql
      (typecase into
-       (string (sql-expression :attribute into))
+       (string (sql-expression :table into))
        (t into))
      database)
     (when attributes
@@ -809,7 +800,10 @@ uninclusive, and the args from that keyword to the end."
     (with-slots (name columns modifiers transactions)
       stmt
       (write-string "CREATE TABLE " *sql-stream*)
-      (output-sql name database)
+      (etypecase name
+          (string (format *sql-stream* "~s" (sql-escape name)))
+          (symbol (write-string (sql-escape name) *sql-stream*))
+          (sql-ident (output-sql name database)))
       (write-string " (" *sql-stream*)
       (do ((column columns (cdr column)))
           ((null (cdr column))
@@ -891,11 +885,9 @@ uninclusive, and the args from that keyword to the end."
   (defmethod database-output-sql ((sym symbol) database)
   (if (null sym)
       +null-string+
-      (convert-to-db-default-case
-       (if (equal (symbol-package sym) keyword-package)
-           (concatenate 'string "'" (string sym) "'")
-           (symbol-name sym))
-       database))))
+    (if (equal (symbol-package sym) keyword-package)
+        (concatenate 'string "'" (string sym) "'")
+      (symbol-name sym)))))
 
 (defmethod database-output-sql ((tee (eql t)) database)
   (if database

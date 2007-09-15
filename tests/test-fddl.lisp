@@ -73,7 +73,7 @@
     (prog1
         (progn
           (clsql:create-table "MyMixedCase" '(([a] integer)))
-          (clsql:execute-command "insert into MyMixedCase values (5)")
+          (clsql:execute-command "insert into \"MyMixedCase\" values (5)")
            (clsql:insert-records :into "MyMixedCase" :values '(6))
            (clsql:select [a] :from "MyMixedCase" :order-by '((a :asc))))
       (clsql:drop-table "MyMixedCase"))

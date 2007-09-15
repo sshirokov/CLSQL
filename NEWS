@@ -1,3 +1,18 @@
+Sep 14 2006
+-----------
+Version 4.0.0 release with incompatible backward change: 
+ - using ANSI mode for MySQL backend
+ - reducing case changes in SQL output for symbols which will have an effect
+ for users of mlisp (Allegro "Modern" Lisp) .
+ - Add support for generating quoted strings in SQL output when
+specifying table names as strings rather than symbols. This may have
+an effect on applications that use strings as table names and use
+inconsistent case in the table names. Previously, those varying case
+strings would be mapped to a canonical case unquoted SQL output. But
+to accomodate users which need to specify case in table names, this
+mapping has been removed.
+See ChangeLog entry for details.
+
 Dec 30 2006
 -----------
 Version 3.8.0 released with incompatible backward change. See

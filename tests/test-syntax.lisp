@@ -17,6 +17,7 @@
 
 #.(clsql:locally-enable-sql-reader-syntax)
 
+
 (setq *rt-syntax*
       '(
 
@@ -62,7 +63,7 @@
 
 (deftest :syntax/ident/5
     (clsql:sql [foo "bar"])
-  "FOO \"bar\"")
+    "FOO \"bar\"")
 
 (deftest :syntax/ident/6
     (clsql:sql ["foo" bar])
@@ -72,6 +73,22 @@
     (clsql:sql ["foo" bar :integer])
  "\"foo\".BAR")
 
+
+(deftest :syntax/attribute/1
+    (clsql:sql (clsql:sql-expression :table 'foo :attribute 'bar))
+  "FOO.BAR")
+
+(deftest :syntax/attribute/2
+    (clsql:sql (clsql:sql-expression :table 'foo :attribute "bar"))
+  "FOO.\"bar\"")
+
+(deftest :syntax/attribute/3
+    (clsql:sql (clsql:sql-expression :table "foo" :attribute 'bar))
+  "\"foo\".BAR")
+
+(deftest :syntax/attribute/4
+    (clsql:sql (clsql:sql-expression :table "foo" :attribute "bar"))
+  "\"foo\".\"bar\"")
 
 
 (deftest :syntax/subquery/1
@@ -254,9 +271,9 @@
 (deftest :syntax/group-by/2
     (clsql:sql
      (clsql-sys::make-query [foo] [bar] [count [foo]]
-                            :from [table]
-                            :group-by '([foo] [bar])
-                            :order-by '([foo] [bar])))
+      :from [table]
+      :group-by '([foo] [bar])
+      :order-by '([foo] [bar])))
   "SELECT FOO,BAR,COUNT(FOO) FROM TABLE GROUP BY FOO,BAR ORDER BY FOO,BAR")
 
 
@@ -323,7 +340,7 @@
   "SELECT COUNT(*) FROM EMP")
 
 
-(deftest :syntax/expression1
+(deftest :syntax/expression/1
     (clsql:sql
      (clsql:sql-operation
       'select

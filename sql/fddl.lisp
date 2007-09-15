@@ -23,8 +23,7 @@
 (defun database-identifier (name database)
   (sql-escape (etypecase name
                 ;; honor case of strings
-                (string name
-                        #+nil (convert-to-db-default-case name database))
+                (string name)
                 (sql-ident (sql-output name database))
                 (symbol (sql-output name database)))))
 
@@ -67,16 +66,13 @@ the table.  CONSTRAINTS is a string representing an SQL table
 constraint expression or a list of such strings. With MySQL
 databases, if TRANSACTIONS is t an InnoDB table is created which
 supports transactions."
-  (let* ((table-name (etypecase name
-                       (symbol (sql-expression :attribute name))
-                       (string (sql-expression :attribute name))
-                       (sql-ident name)))
-         (stmt (make-instance 'sql-create-table
-                              :name table-name
-                              :columns description
-                              :modifiers constraints
-                              :transactions transactions)))
-    (execute-command stmt :database database)))
+  (execute-command
+   (make-instance 'sql-create-table
+                  :name name
+                  :columns description
+                  :modifiers constraints
+                  :transactions transactions)
+   :database database))
 
 (defun drop-table (name &key (if-does-not-exist :error)
                              (database *default-database*)
@@ -94,8 +90,12 @@ an error is signalled if IF-DOES-NOT-EXIST is :error."
       (:error
        t))
 
-    ;; Fixme: move to clsql-oracle
-    (let ((expr (concatenate 'string "DROP TABLE " table-name)))
+    (let ((expr (etypecase name
+                  ;; keep quotes for strings for mixed-case names
+                  (string (format nil "DROP TABLE ~S" table-name))
+                  ((or symbol sql-ident)
+                   (concatenate 'string "DROP TABLE " table-name)))))
+      ;; Fixme: move to clsql-oracle
       (when (and (find-package 'clsql-oracle)
                  (eq :oracle (database-type database))
                  (eql 10 (slot-value database

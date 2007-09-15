@@ -104,13 +104,16 @@ in DATABASE which defaults to *DEFAULT-DATABASE*."
   t)
 
 (defmethod database-pkey-constraint ((class standard-db-class) database)
-  (let ((keylist (mapcar #'view-class-slot-column (keyslots-for-class class))))
+  (let ((keylist (mapcar #'view-class-slot-column (keyslots-for-class class)))
+        (table (view-table class)))
     (when keylist
-      (convert-to-db-default-case
-       (format nil "CONSTRAINT ~APK PRIMARY KEY~A"
-               (sql-output (view-table class) database)
-               (sql-output keylist database))
-       database))))
+      (etypecase table
+        (string
+         (format nil "CONSTRAINT \"~APK\" PRIMARY KEY~A" table
+                 (sql-output keylist database)))
+        ((or symbol sql-ident)
+         (format nil "CONSTRAINT ~APK PRIMARY KEY~A" table
+                 (sql-output keylist database)))))))
 
 (defmethod database-generate-column-definition (class slotdef database)
   (declare (ignore database class))

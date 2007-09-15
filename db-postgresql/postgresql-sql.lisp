@@ -383,33 +383,21 @@
 
 (defmethod database-create (connection-spec (type (eql :postgresql)))
   (destructuring-bind (host name user password) connection-spec
-    (declare (ignore user password))
-    (multiple-value-bind (output status)
-        (clsql-sys:command-output "createdb -h~A ~A"
-                                       (if host host "localhost")
-                                       name)
-      (if (or (not (zerop status))
-              (search "database creation failed: ERROR:" output))
-          (error 'sql-database-error
-                 :message
-                 (format nil "createdb failed for postgresql backend with connection spec ~A."
-                         connection-spec))
-        t))))
+    (let ((database (database-connect (list host "postgres" user password)
+                                      type)))
+      (setf (slot-value database 'clsql-sys::state) :open)
+      (unwind-protect
+           (database-execute-command (format nil "create database ~A" name) database)
+        (database-disconnect database)))))
 
 (defmethod database-destroy (connection-spec (type (eql :postgresql)))
   (destructuring-bind (host name user password) connection-spec
-    (declare (ignore user password))
-    (multiple-value-bind (output status)
-        (clsql-sys:command-output "dropdb -h~A ~A"
-                                       (if host host "localhost")
-                                       name)
-      (if (or (not (zerop status))
-              (search "database removal failed: ERROR:" output))
-          (error 'sql-database-error
-                 :message
-                 (format nil "dropdb failed for postgresql backend with connection spec ~A."
-                         connection-spec))
-        t))))
+    (let ((database (database-connect (list host "postgres" user password)
+                                      type)))
+      (setf (slot-value database 'clsql-sys::state) :open)
+      (unwind-protect
+           (database-execute-command (format nil "drop database ~A" name) database)
+        (database-disconnect database)))))
 
 
 (defmethod database-probe (connection-spec (type (eql :postgresql)))

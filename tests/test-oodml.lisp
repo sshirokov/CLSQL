@@ -442,7 +442,7 @@
 
         (deftest :oodml/uoj/1
             (progn
-              (let* ((dea-list (select 'deferred-employee-address :caching nil :order-by [ea_join aaddressid]
+              (let* ((dea-list (select 'deferred-employee-address :caching nil :order-by ["ea_join" aaddressid]
                                        :flatp t))
                      (dea-list-copy (copy-seq dea-list))
                      (initially-unbound (every #'(lambda (dea) (not (slot-boundp dea 'address))) dea-list)))

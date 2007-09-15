@@ -74,11 +74,11 @@
 
 (defsql sql-group-by (:symbol "group-by") (&rest rest)
   (make-instance 'sql-query-modifier-exp
-                 :modifier '|group by| :components rest))
+                 :modifier '|GROUP BY| :components rest))
 
 (defsql sql-order-by (:symbol "order-by") (&rest rest)
   (make-instance 'sql-query-modifier-exp
-                 :modifier '|order by| :components rest))
+                 :modifier '|ORDER BY| :components rest))
 
 (defsql sql-having (:symbol "having") (&rest rest)
   (make-instance 'sql-query-modifier-exp

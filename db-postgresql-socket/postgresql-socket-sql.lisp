@@ -9,7 +9,7 @@
 ;;;;
 ;;;; $Id$
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2007 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
@@ -324,19 +324,21 @@ doesn't depend on UFFI."
             (wait-for-query-results (database-connection database)))))))
 
 (defmethod database-create (connection-spec (type (eql :postgresql-socket)))
-  (destructuring-bind (host name user password) connection-spec
-    (let ((database (database-connect (list host "template1" user password)
+  (destructuring-bind (host name user password &optional port options tty) connection-spec
+    (let ((database (database-connect (list host "postgres" user password)
                                       type)))
+      (setf (slot-value database 'clsql-sys::state) :open)
       (unwind-protect
-           (execute-command (format nil "create database ~A" name))
+           (database-execute-command (format nil "create database ~A" name) database)
         (database-disconnect database)))))
 
 (defmethod database-destroy (connection-spec (type (eql :postgresql-socket)))
-  (destructuring-bind (host name user password) connection-spec
-    (let ((database (database-connect (list host "template1" user password)
+  (destructuring-bind (host name user password &optional port optional tty) connection-spec
+    (let ((database (database-connect (list host "postgres" user password)
                                       type)))
+      (setf (slot-value database 'clsql-sys::state) :open)
       (unwind-protect
-          (execute-command (format nil "drop database ~A" name))
+          (database-execute-command (format nil "drop database ~A" name) database)
         (database-disconnect database)))))
 
 
