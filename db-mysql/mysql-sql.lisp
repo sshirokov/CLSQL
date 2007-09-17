@@ -156,21 +156,22 @@
                              :connection-spec connection-spec
                              :error-id (mysql-errno mysql-ptr)
                              :message (mysql-error-string mysql-ptr)))
-                    (let ((db
-                           (make-instance 'mysql-database
-                                          :name (database-name-from-spec connection-spec
-                                                                         database-type)
-                                          :database-type :mysql
-                                          :connection-spec connection-spec
+                    (let* ((db
+                            (make-instance 'mysql-database
+                                           :name (database-name-from-spec connection-spec
+                                                                          database-type)
+                                           :database-type :mysql
+                                           :connection-spec connection-spec
                                            :server-info (uffi:convert-from-cstring
                                                          (mysql:mysql-get-server-info mysql-ptr))
                                            :mysql-ptr mysql-ptr))
-                          (cmd "SET SESSION sql_mode='ANSI'"))
-                      (if (zerop (mysql-real-query mysql-ptr cmd (expression-length cmd)))
-                          db
-                          (progn
-                            (warn "Error setting ANSI mode for MySQL.")
-                            db))))
+                           (cmd "SET SESSION sql_mode='ANSI'"))
+                      (uffi:with-cstring (cmd-cs cmd)
+                        (if (zerop (mysql-real-query mysql-ptr cmd-cs (expression-length cmd)))
+                            db
+                            (progn
+                              (warn "Error setting ANSI mode for MySQL.")
+                              db)))))
               (when error-occurred (mysql-close mysql-ptr)))))))))
 
 

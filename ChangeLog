@@ -1,3 +1,9 @@
+17 Sep 2007  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 4.0.1
+	* db-mysql/mysql-sql.lisp: Convert query to uffi cstring (thanks to
+	Albert Krewinkel).
+	* doc/Makefile, doc/html.xsl: Change output encoding from ISO-8859-1 to UTF-8
+	
 14 Sep 2007  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 4.0.0: Major version increase to warn of potential
 	backwards incompatibility.
