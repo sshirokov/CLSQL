@@ -187,7 +187,7 @@
                (error 'sql-database-data-error
                       :database database
                       :expression query-expression
-                      :error-id (PQresultStatus result)
+                      :error-id (PQresultErrorField result +PG-DIAG-SQLSTATE+)
                       :message (tidy-error-message
                                 (PQresultErrorMessage result)))))
           (PQclear result))))))
@@ -269,7 +269,7 @@
                (error 'sql-database-data-error
                       :database database
                       :expression query-expression
-                      :error-id (PQresultStatus result)
+                      :error-id (PQresultErrorField result +PG-DIAG-SQLSTATE+)
                       :message (tidy-error-message
                                 (PQresultErrorMessage result)))
              (PQclear result))))))))
