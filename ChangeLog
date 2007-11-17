@@ -1,3 +1,12 @@
+17 Nov 2007  Kevin Rosenberg <kevin@rosenberg.net>
+	* BUGS: Add note about benefit of using configure file to create
+	Makefiles (suggestion from Joe Corneli)
+	
+22 Oct 2007  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 4.0.2
+	* db-postgresql/postgresql-sql.lisp: Patch from Gabriele Favalessa based on
+	Andrew Golding suggestion for more informative :error-id slot.
+	
 17 Sep 2007  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 4.0.1
 	* db-mysql/mysql-sql.lisp: Convert query to uffi cstring (thanks to
