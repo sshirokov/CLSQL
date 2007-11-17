@@ -13,3 +13,7 @@ more information about libpq's SIGPIPE handler.
 Aleksandar Bakic reported the documentation says that :home-key and
 :foreign-key properties of the :db-info property may contain lists of
 symbols. However, update-objects-joins fails in such cases.
+
+2. configure file
+Automatically generate makefiles based on the configuration of an
+end-users system
