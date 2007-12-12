@@ -1,3 +1,11 @@
+11 Dec 2007  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 4.0.3
+	* sql/metaclasses.lisp: Unify base-table processing by extracting 
+	the correct code from initialize-instance :around into the helper
+	function set-view-table-slot. Call that function also in
+	reinitialize-instance :around replacing erroneous code discovered
+	by Josh Feinstein.
+	
 17 Nov 2007  Kevin Rosenberg <kevin@rosenberg.net>
 	* BUGS: Add note about benefit of using configure file to create
 	Makefiles (suggestion from Joe Corneli)

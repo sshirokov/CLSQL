@@ -103,6 +103,14 @@
       (pop-arg mylist))
     newlist))
 
+(defun set-view-table-slot (class base-table)
+  (setf (view-table class)
+        (table-name-from-arg (or (and base-table
+                                      (if (listp base-table)
+                                          (car base-table)
+                                          base-table))
+                                 (class-name class)))))
+
 (defmethod initialize-instance :around ((class standard-db-class)
                                         &rest all-keys
                                         &key direct-superclasses base-table
@@ -122,12 +130,7 @@
                                                 direct-superclasses)
                    (remove-keyword-arg all-keys :direct-superclasses)))
         (call-next-method))
-    (setf (view-table class)
-          (table-name-from-arg (or (and base-table
-                                        (if (listp base-table)
-                                            (car base-table)
-                                            base-table))
-                                   (class-name class))))
+    (set-view-table-slot class base-table)
     (register-metaclass class (nth (1+ (position :direct-slots all-keys))
                                    all-keys))))
 
@@ -138,12 +141,7 @@
                                           &allow-other-keys)
   (let ((root-class (find-class 'standard-db-object nil))
         (vmc 'standard-db-class))
-    (setf (view-table class)
-          (table-name-from-arg (sql-escape (or (and base-table
-                                                    (if (listp base-table)
-                                                        (car base-table)
-                                                        base-table))
-                                               (class-name class)))))
+    (set-view-table-slot class base-table)
     (setf (view-class-qualifier class)
           (car qualifier))
     (if (and root-class (not (equal class root-class)))
