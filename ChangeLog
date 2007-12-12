@@ -1,3 +1,7 @@
+12 Dec 2007  Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/expressions.lisp: Bind *in-subselect* when outputting
+	selections (patch from unknown source).
+	
 11 Dec 2007  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 4.0.3
 	* sql/metaclasses.lisp: Unify base-table processing by extracting 

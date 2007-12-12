@@ -571,7 +571,8 @@ uninclusive, and the args from that keyword to the end."
         (write-string "ON " *sql-stream*)
         (output-sql distinct database)
         (write-char #\Space *sql-stream*)))
-    (output-sql (apply #'vector selections) database)
+    (let ((*in-subselect* t))
+      (output-sql (apply #'vector selections) database))
     (when from
       (write-string " FROM " *sql-stream*)
       (flet ((ident-table-equal (a b)
