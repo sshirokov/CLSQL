@@ -16,65 +16,114 @@
 
 (in-package #:clsql-sys)
 
+(defparameter *db-pool-max-free-connections* 4
+  "Threshold of free-connections in the pool before we disconnect a
+  database rather than returning it to the pool. This is really a heuristic
+that should, on avg keep the free connections about this size.")
+
 (defvar *db-pool* (make-hash-table :test #'equal))
 (defvar *db-pool-lock* (make-process-lock "DB Pool lock"))
 
 (defclass conn-pool ()
   ((connection-spec :accessor connection-spec :initarg :connection-spec)
    (database-type :accessor pool-database-type :initarg :pool-database-type)
-   (free-connections :accessor free-connections
-                     :initform (make-array 5 :fill-pointer 0 :adjustable t))
-   (all-connections :accessor all-connections
-                    :initform (make-array 5 :fill-pointer 0 :adjustable t))
+   (free-connections :accessor free-connections :initform nil)
+   (all-connections :accessor all-connections :initform nil)
    (lock :accessor conn-pool-lock
          :initform (make-process-lock "Connection pool"))))
 
-(defun acquire-from-conn-pool (pool)
-  (or (with-process-lock ((conn-pool-lock pool) "Acquire from pool")
-        (when (plusp (length (free-connections pool)))
-          (let ((pconn (vector-pop (free-connections pool))))
-            ;; test if connection still valid.
-            ;; Currently, on supported on MySQL
-            (cond
-              ((eq :mysql (database-type pconn))
-               (handler-case
-                   (database-query "SHOW ERRORS LIMIT 1" pconn nil nil)
-                 (error (e)
-                   ;; we could check for error type 2006 for "SERVER GONE AWAY",
-                   ;; but, it's safer just to disconnect the pooled conn for any error
-                   (warn "Database connection ~S had an error when attempted to be acquired from the pool:
+
+(defun acquire-from-pool (connection-spec database-type &optional pool)
+  "Try to find a working database connection in the pool or create a new
+one if needed. This performs 1 query against the DB to ensure it's still
+valid. When possible (postgres, mssql) that query will be a reset
+command to put the connection back into its default state."
+  (unless (typep pool 'conn-pool)
+    (setf pool (find-or-create-connection-pool connection-spec database-type)))
+  (or
+   (loop for pconn = (with-process-lock ((conn-pool-lock pool) "Acquire")
+		       (pop (free-connections pool)))
+	 always pconn
+	 thereis
+	 ;; test if connection still valid.
+	 ;; (e.g. db reboot -> invalid connection )
+	 (handler-case
+	     (progn (database-acquire-from-conn-pool pconn)
+		    pconn)
+	   (sql-database-error (e)
+	     ;; we could check for a specific error,
+	     ;; but, it's safer just to disconnect the pooled conn for any error ?
+	     (warn "Database connection ~S had an error while acquiring from the pool:
   ~S
 Disconnecting.~%"
-                         pconn e)
-                   (ignore-errors (database-disconnect pconn))
-                   nil)
-                 (:no-error (res fields)
-                   (declare (ignore res fields))
-                   pconn)))
-              (t
-               pconn)))))
-      (let ((conn (connect (connection-spec pool)
-                           :database-type (pool-database-type pool)
-                           :if-exists :new
-                           :make-default nil)))
-        (with-process-lock ((conn-pool-lock pool) "Acquire from pool")
-          (vector-push-extend conn (all-connections pool))
-          (setf (conn-pool conn) pool))
-        conn)))
+		   pconn e)
+	     ;;run database disconnect to give chance for cleanup
+	     ;;there, then remove it from the lists of connected
+	     ;;databases.
+	     (%pool-force-disconnect pconn)
+	     (with-process-lock ((conn-pool-lock pool) "remove dead conn")
+	       (setf (all-connections pool)
+		     (delete pconn (all-connections pool))))
+	     nil)))
+   (let ((conn (connect (connection-spec pool)
+			:database-type (pool-database-type pool)
+			:if-exists :new
+			:make-default nil)))
+     (with-process-lock ((conn-pool-lock pool) "new conection")
+       (push conn (all-connections pool))
+       (setf (conn-pool conn) pool))
+     conn)))
 
-(defun release-to-conn-pool (conn)
-  (let ((pool (conn-pool conn)))
-    (with-process-lock ((conn-pool-lock pool) "Release to pool")
-      (vector-push-extend conn (free-connections pool)))))
+(defun release-to-pool (database)
+  "Release a database connection to the pool. The backend will have a
+chance to do cleanup."
+  (let ((pool (conn-pool database)))
+    (cond
+      ;;We read the list of free-connections outside the lock. This
+      ;;should be fine as long as that list is never dealt with
+      ;;destructively (push and pop destructively modify the place,
+      ;;not the list). Multiple threads getting to this test at the
+      ;;same time might result in the free-connections getting
+      ;;longer... meh.
+      ((>= (length (free-connections pool))
+	   *db-pool-max-free-connections*)
+       (%pool-force-disconnect database)
+       (with-process-lock ((conn-pool-lock pool) "Remove extra Conn")
+	 (setf (all-connections pool)
+	       (delete database (all-connections pool)))))
+      (t
+       ;;let it do cleanup
+       (database-release-to-conn-pool database)
+       (with-process-lock ((conn-pool-lock pool) "Release to pool")
+	 (push database (free-connections pool)))))))
+
+(defmethod database-acquire-from-conn-pool (database)
+  (case (database-underlying-type database)
+    (:postgresql
+       (database-execute-command "RESET ALL" database))
+    (:mysql
+       (database-query "SHOW ERRORS LIMIT 1" database nil nil))
+    (:mssql
+       ;; rpc escape sequence since this can't be called as a normal sp.
+       ;;http://msdn.microsoft.com/en-us/library/aa198358%28SQL.80%29.aspx
+       (database-execute-command "{rpc sp_reset_connection}" database))
+    (T
+       (database-query "SELECT 1;"  database '(integer) nil))))
+
+(defmethod database-release-to-conn-pool (database)
+  (case (database-underlying-type database)
+    (:postgresql
+       (ignore-errors
+	 ;;http://www.postgresql.org/docs/current/static/sql-discard.html
+	 ;;this was introduced relatively recently, wrap in ignore-errors
+	 ;;so that it doesn't choke older versions.
+	 (database-execute-command "DISCARD ALL" database)))))
 
 (defun clear-conn-pool (pool)
   (with-process-lock ((conn-pool-lock pool) "Clear pool")
-    (loop for conn across (all-connections pool)
-          do (setf (conn-pool conn) nil)
-          ;; disconnect may error if remote side closed connection
-          (ignore-errors (disconnect :database conn)))
-    (setf (fill-pointer (free-connections pool)) 0)
-    (setf (fill-pointer (all-connections pool)) 0))
+    (mapc #'%pool-force-disconnect (all-connections pool))
+    (setf (all-connections pool) nil
+	  (free-connections pool) nil))
   nil)
 
 (defun find-or-create-connection-pool (connection-spec database-type)
@@ -90,16 +139,9 @@ if not found"
         (setf (gethash key *db-pool*) conn-pool))
       conn-pool)))
 
-(defun acquire-from-pool (connection-spec database-type &optional pool)
-  (unless (typep pool 'conn-pool)
-    (setf pool (find-or-create-connection-pool connection-spec database-type)))
-  (acquire-from-conn-pool pool))
-
-(defun release-to-pool (database)
-  (release-to-conn-pool database))
-
 (defun disconnect-pooled (&optional clear)
-  "Disconnects all connections in the pool."
+  "Disconnects all connections in the pool. When clear, also deletes
+the pool objects."
   (with-process-lock (*db-pool-lock* "Disconnect pooled")
     (maphash
      #'(lambda (key conn-pool)
@@ -108,6 +150,13 @@ if not found"
      *db-pool*)
     (when clear (clrhash *db-pool*)))
   t)
+
+(defun %pool-force-disconnect (database)
+  "Force disconnection of a connection from the pool."
+  ;;so it isn't just returned to pool
+  (setf (conn-pool database) nil)
+  ;; disconnect may error if remote side closed connection
+  (ignore-errors (disconnect :database database)))
 
 ;(defun pool-start-sql-recording (pool &key (types :command))
 ;  "Start all stream in the pool recording actions of TYPES"

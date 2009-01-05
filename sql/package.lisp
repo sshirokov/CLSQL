@@ -136,6 +136,8 @@
      #:database-destroy
      #:database-probe
      #:database-list
+     #:database-acquire-from-conn-pool
+     #:database-release-to-conn-pool
 
      #:db-backend-has-create/destroy-db?
      #:db-type-has-views?
@@ -159,6 +161,7 @@
      #:*loaded-database-types*
      #:reload-database-types
      #:is-database-open
+     #:*db-pool-max-free-connections*
 
      ;; Large objects
      #:database-create-large-object
