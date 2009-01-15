@@ -332,6 +332,7 @@
                                                      :result-types nil
                                                      :database vd))))
              (when res
+	       (setf (slot-value instance 'view-database) vd)
                (get-slot-values-from-view instance (mapcar #'car sels) (car res))))
             (pres)
             (t nil)))))
@@ -358,6 +359,7 @@
            (res (select att-ref :from  view-table :where view-qual
                                                   :result-types nil)))
       (when res
+	(setf (slot-value instance 'view-database) vd)
         (get-slot-values-from-view instance (list slot-def) (car res))))))
 
 (defmethod update-slot-with-null ((object standard-db-object)
