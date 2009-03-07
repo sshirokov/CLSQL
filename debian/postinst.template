@@ -6,7 +6,7 @@ pkg=%%
 case "$1" in
     configure)
 	#clc-only-compatible $pkg allegro cmucl lispworks openmcl
-	/usr/sbin/register-common-lisp-source $pkg
+	register-common-lisp-source $pkg
 	;;
     abort-upgrade|abort-remove|abort-deconfigure)
 	;;
