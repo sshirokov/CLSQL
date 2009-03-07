@@ -1,3 +1,7 @@
+25 Feb 2008  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 4.0.4
+	* sql/expressions.lisp: Remove stray form (thanks to Samuel Ward)
+
 12 Dec 2007  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/expressions.lisp: Bind *in-subselect* when outputting
 	selections (patch from unknown source).

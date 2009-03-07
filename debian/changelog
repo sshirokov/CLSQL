@@ -1,3 +1,10 @@
+cl-sql (4.0.4-1) unstable; urgency=low
+
+  * Update Oracle FFI based on changes in CLSQL. Thanks to Paul
+  Metcalfe, Liam Healy, and Alan Salewski (closes:481029)
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sat, 07 Mar 2009 13:32:00 -0700
+
 cl-sql (4.0.3-1) unstable; urgency=low
 
   * New upstream
