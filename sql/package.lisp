@@ -394,6 +394,7 @@
          #:locally-disable-sql-reader-syntax
          #:locally-enable-sql-reader-syntax
          #:restore-sql-reader-syntax-state
+	 #:file-enable-sql-reader-syntax
 
          ;; SQL operations (operations.lisp)
          #:sql-query
