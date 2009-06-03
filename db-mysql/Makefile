@@ -28,7 +28,7 @@ shared_lib=$(base).so
 all: $(shared_lib)
 
 CFLAGS=-I /usr/local/include/mysql -I /usr/include/mysql -I /sw/include/mysql -I /opt/local/include/mysql -I /usr/local/mysql/include
-LDFLAGS=-L/usr/local/lib64/mysql -L/usr/local/lib/mysql -L/usr/lib/mysql -L/sw/lib -L/opt/local/lib/mysql -L/usr/local/mysql/lib -L/usr/lib/gcc/i686-pc-cygwin/3.4.4 -lmysqlclient -lz -lc 
+LDFLAGS=-L/usr/local/lib64/mysql -L/usr/local/mysql/lib32 -L/usr/local/lib/mysql -L/usr/lib/mysql -L/sw/lib -L/opt/local/lib/mysql -L/usr/local/mysql/lib -L/usr/lib/gcc/i686-pc-cygwin/3.4.4 -lmysqlclient -lz -lc 
 
 ifneq ($(OS_CYGWIN),0)
   CFLAGS=-I /cygdrive/c/Program\ Files/MySQL/MySQL\ Server\ 5.0/include
