@@ -580,8 +580,12 @@
        (format nil "~F" val))))
 
 (defmethod read-sql-value (val type database db-type)
-  (declare (ignore type database db-type))
-  (read-from-string val))
+  (declare (ignore database db-type))
+  (cond
+    ((null type) val) ;;we have no desired type, just give the value
+    ((typep val type) val) ;;check that it hasn't already been converted.
+    ((typep val 'string) (read-from-string val)) ;;maybe read will just take care of it?
+    (T (error "Unable to read-sql-value ~a as type ~a" val type))))
 
 (defmethod read-sql-value (val (type (eql 'string)) database db-type)
   (declare (ignore database db-type))
