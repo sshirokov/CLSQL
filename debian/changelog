@@ -1,7 +1,8 @@
 cl-sql (4.0.5-1) unstable; urgency=low
 
   * New upstream version
-  * Change build dependency to be independent of libmysqlclient version (closes:538459)
+  * Change build dependency to be independent of libmysqlclient version
+  (closes:538459)
 
  -- Kevin M. Rosenberg <kmr@debian.org>  Sun, 26 Jul 2009 17:30:19 -0600
 

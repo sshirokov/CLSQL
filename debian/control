@@ -3,7 +3,7 @@ Section: devel
 Priority: extra
 Maintainer: Kevin M. Rosenberg <kmr@debian.org>
 Build-Depends: debhelper (>= 4.0.0), libmysqlclient-dev, libpq-dev
-Standards-Version: 3.7.3.0
+Standards-Version: 3.8.1
 
 Package: cl-sql
 Architecture: all
