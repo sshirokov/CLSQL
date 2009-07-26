@@ -37,7 +37,7 @@
 			    (probe-file (make-pathname :directory dir
 						       :name (component-name c)
 						       :type library-file-type)))
-			'((:absolute "usr" "lib" "clsql"))))) 
+			'((:absolute "usr" "lib" "clsql")))))
     (list (if found
 	      found
 	      (make-pathname :name (component-name c)
@@ -50,11 +50,11 @@
 (defmethod operation-done-p ((o load-op) (c clsql-mysql-source-file))
   (and (symbol-function (intern (symbol-name '#:mysql-get-client-info)
 				(find-package '#:mysql)))
-       t)) 
+       t))
 
 (defmethod perform ((o compile-op) (c clsql-mysql-source-file))
   (unless (operation-done-p o c)
-    #-(or win32 mswindows)
+    #-(or win32 win64 windows mswindows)
     (unless (zerop (run-shell-command
 		    #-freebsd "cd ~A; make"
 		    #+freebsd "cd ~A; gmake"

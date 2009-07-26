@@ -15,7 +15,7 @@
  * (http://opensource.franz.com/preamble.html), also known as the LLGPL.
  ***************************************************************************/
 
-#ifdef WIN32
+#if defined(WIN32)||defined(WIN64)
 #include <windows.h>
 
 BOOL WINAPI DllEntryPoint(HINSTANCE hinstdll, DWORD fdwReason,
