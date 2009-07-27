@@ -1,7 +1,8 @@
 cl-sql (4.0.5-2) unstable; urgency=low
 
   * Change section from devel to lisp
-
+  * Update debhelper compat version to 5
+  
  -- Kevin M. Rosenberg <kmr@debian.org>  Sun, 26 Jul 2009 20:28:14 -0600
 
 cl-sql (4.0.5-1) unstable; urgency=low

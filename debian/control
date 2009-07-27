@@ -2,7 +2,7 @@ Source: cl-sql
 Section: lisp
 Priority: extra
 Maintainer: Kevin M. Rosenberg <kmr@debian.org>
-Build-Depends: debhelper (>= 4.0.0), libmysqlclient-dev, libpq-dev
+Build-Depends: debhelper (>= 5.0.0), libmysqlclient-dev, libpq-dev
 Standards-Version: 3.7.3.0
 
 Package: cl-sql
