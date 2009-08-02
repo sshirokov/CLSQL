@@ -96,7 +96,7 @@ install: DH_OPTIONS=
 install: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k
+	dh_prep
 	dh_installdirs
 
 	dh_installdirs --all  $(clc-systems) $(clc-source)
@@ -183,26 +183,16 @@ install: build
 binary-indep: build install
 	dh_testdir -i
 	dh_testroot -i
-#	dh_installdebconf -i
 	dh_installdocs -i
 	dh_installexamples -i examples/*
 	dh_installmenu -i
-#	dh_installlogrotate -i
-#	dh_installemacsen -i
-#	dh_installpam -i
-#	dh_installmime -i
-#	dh_installinit -i
 	dh_installcron -i
-#	dh_installman -i
 	dh_installinfo -i
-#	dh_undocumented -i
 	dh_installchangelogs ChangeLog -i
 	dh_link -i
 	dh_compress -i
 	dh_fixperms -i
-#	dh_makeshlibs -i
 	dh_installdeb -i
-#	dh_perl -i
 	dh_gencontrol -i
 	dh_md5sums -i
 	dh_builddeb -i
@@ -211,27 +201,17 @@ binary-indep: build install
 binary-arch: build install
 	dh_testdir -a
 	dh_testroot -a
-#	dh_installdebconf -a
 	dh_installdocs -a
 	dh_installexamples -a
 	dh_installmenu -a
-#	dh_installlogrotate -a
-#	dh_installemacsen -a
-#	dh_installpam -a
-#	dh_installmime -a
-#	dh_installinit -a
 	dh_installcron -a
-#	dh_installman -a
 	dh_installinfo -a
-#	dh_undocumented -a
 	dh_installchangelogs ChangeLog -a
 	dh_strip -a
 	dh_link -a
 	dh_compress -a
 	dh_fixperms -a
-#	dh_makeslhibs -a
 	dh_installdeb -a
-#	dh_perl -a
 	dh_shlibdeps -a
 	dh_gencontrol -a
 	dh_md5sums -a

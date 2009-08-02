@@ -1,3 +1,11 @@
+cl-sql (4.0.5-3) unstable; urgency=low
+
+  * control: Update debhelper compat to 7, add Homepage and Vgs-Git
+  fields.
+  * rules: update to DH 7 compatible
+
+ -- Kevin M. Rosenberg <kmr@debian.org>  Sun, 02 Aug 2009 00:21:45 -0600
+
 cl-sql (4.0.5-2) unstable; urgency=low
 
   * Change section from devel to lisp

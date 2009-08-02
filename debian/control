@@ -2,8 +2,10 @@ Source: cl-sql
 Section: lisp
 Priority: extra
 Maintainer: Kevin M. Rosenberg <kmr@debian.org>
-Build-Depends: debhelper (>= 5.0.0), libmysqlclient-dev, libpq-dev
-Standards-Version: 3.7.3.0
+Build-Depends: debhelper (>= 7.0.0), libmysqlclient-dev, libpq-dev
+Standards-Version: 3.8.2.0
+Homepage: http://clsql.b9.com/
+Vcs-Git: git://git.b9.com/clsql.git
 
 Package: cl-sql
 Architecture: all
@@ -56,18 +58,19 @@ Package: cl-sql-postgresql
 Architecture: all
 Depends: cl-sql (= ${source:Version}), libpq-dev, cl-sql-uffi (>= ${source:Version})
 Provides: cl-sql-backend
-Description: CLSQL database backend, PostgreSQL
+Description: CLSQL database backend, PostgreSQL via library
  This package enables you to use the CLSQL data access package
- with PostgreSQL databases.
+ with PostgreSQL databases using the PostgreSQL client library.
  CLSQL is a Common Lisp interface to SQL databases.
 
 Package: cl-sql-postgresql-socket
 Architecture: all
 Depends: cl-sql (= ${source:Version}), cl-md5, cl-sql-uffi (>= ${source:Version}), libc6-dev
 Provides: cl-sql-backend
-Description: CLSQL database backend, PostgreSQL
+Description: CLSQL database backend, PostgreSQL via sockets
  This package enables you to use the CLSQL data access package
- with PostgreSQL databases via a socket interface.
+ with PostgreSQL databases via a socket interface to the PostgreSQL
+ server.
  CLSQL is a Common Lisp interface to SQL databases.
 
 Package: cl-sql-sqlite
