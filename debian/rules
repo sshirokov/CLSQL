@@ -19,7 +19,7 @@ all-pkgs	:= $(pkg) $(pkg-uffi) $(pkg-mysql) $(pkg-pg) $(pkg-pg-socket) $(pkg-aod
 UPSTREAM_VER	:= $(shell sed -n -e "s/${pkg} (\(.*\)-[0-9A-Za-z\.]).*/\1/p" < debian/changelog |head -1)
 
 ## Lisp sources
-srcs		:= $(wildcard sql/*.lisp) clsql.asd
+srcs-sql	:= $(wildcard sql/*.lisp)
 srcs-uffi	:= $(wildcard uffi/*.lisp) $(wildcard uffi/*.c)
 srcs-uffi-so	= $(wildcard uffi/*.so)
 srcs-mysql	:= $(wildcard db-mysql/*.lisp) $(wildcard db-mysql/*.c)
@@ -106,7 +106,7 @@ install: build
 	dh_installdirs -p $(pkg-tests) $(lispdir-tests)
 
 	# Main package
-	dh_install -p $(pkg) $(srcs) $(lispdir-sql)
+	dh_install -p $(pkg) $(srcs-sql) $(lispdir-sql)
 	dh_install -p $(pkg) clsql.asd $(clc-clsql)
 	dh_install -p $(pkg) debian/clsql-init.lisp etc
 

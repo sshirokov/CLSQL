@@ -1,3 +1,9 @@
+cl-sql (4.0.5-5) unstable; urgency=low
+
+  * debian/rules: Fix bug introduced by change to dh-lisp (closes:540816)
+  
+ -- Kevin M. Rosenberg <kmr@debian.org>  Mon, 10 Aug 2009 10:05:16 -0600
+
 cl-sql (4.0.5-4) unstable; urgency=low
 
   * debian/control:
