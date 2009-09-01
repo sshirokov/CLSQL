@@ -1,4 +1,19 @@
 31 Aug 2009  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 4.1.0
+	* db-mysql/mysql-{sql,api}.lisp,db-mysql/clsql_mysql.c:
+	Latest version of mysqlclient once again changed the C
+	structures from which the mysql backend reads data.
+	Rather than adding yet another structure definition which
+	is enabled by the client version as read by mysql-client-info.lisp,
+	the mysql backend has been re-written to ignore in the internal
+	C structures. Instead, C wrapper functions for slot access have
+	been added to clsql_mysql.c and are used by mysql-sql.lisp to
+	access the internals of C structures. This adds a bit of overhead,
+	but completely separates the lisp code from trying to keep up
+	with the continually changing internal C structure of mysql.
+	All tests in the test suite executed correctly with this change.
+
+31 Aug 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 4.0.6
 	* sql/database.lisp: Fix syntax on process-lock (thanks to
 	Stian Sletner)
