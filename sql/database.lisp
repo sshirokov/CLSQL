@@ -166,7 +166,7 @@ from a pool it will be released to this pool."
   (let ((database (find-database database :errorp (and database error))))
     (when database
       (if (conn-pool database)
-          (with-process-lock ((conn-pool-lock pool) "Delete from pool")
+          (with-process-lock ((conn-pool-lock (conn-pool database)) "Delete from pool")
             (when (release-to-pool database)
               (setf *connected-databases* (delete database *connected-databases*))
               (when (eq database *default-database*)

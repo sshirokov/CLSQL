@@ -1,3 +1,12 @@
+31 Aug 2009  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 4.0.6
+	* sql/database.lisp: Fix syntax on process-lock (thanks to
+	Stian Sletner)
+	* db-mysql/mysql-sql.lisp: Allow use of database parameter
+	in database-list function (thanks to Michael Pheasant)
+	* sql/oodml.lisp: Allow NULL values for floating-point fields
+	(thanks to Jan Rychter)
+	
 02 Jun 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 4.0.5
 	* sql/database.lisp: Add process-lock for deleting database from

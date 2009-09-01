@@ -495,8 +495,10 @@
 
 (defmethod database-output-sql-as-type ((type (eql 'float)) val database db-type)
   (declare (ignore database db-type))
-  (let ((*read-default-float-format* (type-of val)))
-    (format nil "~F" val)))
+  (if (eq (type-of val) 'null)
+      nil
+      (let ((*read-default-float-format* (type-of val)))
+       (format nil "~F" val))))
 
 (defmethod read-sql-value (val type database db-type)
   (declare (ignore type database db-type))
