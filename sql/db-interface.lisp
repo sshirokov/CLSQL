@@ -129,7 +129,7 @@ returns nil when result-set is finished."))
 (defgeneric database-probe (connection-spec type)
   (:method (spec type)
     (declare (ignore spec))
-    (warn "database-proe not support for database-type ~A." type))
+    (warn "database-probe not support for database-type ~A." type))
   (:documentation
    "Probes for the existence of a database, returns T if database found or NIL
 if not found. May signal an error if unable to communicate with database server."))
