@@ -1,6 +1,9 @@
 31 Aug 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/db-interface.lisp: Fix spelling error (thanks to 
 	David Thompson)
+	* clsql-mysql.asd/db-mysql/mysql-loader.lisp: Commit
+	patch from Andreas Franke to honor windows drive letter
+	when loading clsql_mysql C library.
 	
 31 Aug 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 4.1.0

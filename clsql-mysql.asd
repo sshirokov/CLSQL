@@ -23,8 +23,10 @@
   (unless (find-package 'uffi)
     (asdf:operate 'asdf:load-op 'uffi)))
 
-(defvar *library-file-dir* (append (pathname-directory *load-truename*)
-				   (list "db-mysql")))
+(defvar *library-file-dir* 
+  (merge-pathnames "db-mysql/" 
+                   (make-pathname :name nil :type nil 
+                                  :defaults *load-truename*)))
 
 (defclass clsql-mysql-source-file (c-source-file)
   ())
@@ -42,7 +44,7 @@
 	      found
 	      (make-pathname :name (component-name c)
 			     :type library-file-type
-			     :directory *library-file-dir*)))))
+			     :defaults *library-file-dir*)))))
 
 (defmethod perform ((o load-op) (c clsql-mysql-source-file))
   t)
@@ -58,9 +60,7 @@
     (unless (zerop (run-shell-command
 		    #-freebsd "cd ~A; make"
 		    #+freebsd "cd ~A; gmake"
-		    (namestring (make-pathname :name nil
-					       :type nil
-					       :directory *library-file-dir*))))
+		    (namestring *library-file-dir*)))
       (error 'operation-error :component c :operation o))))
 
 (defmethod operation-done-p ((o compile-op) (c clsql-mysql-source-file))
