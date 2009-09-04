@@ -14,6 +14,8 @@
 	transactions (thanks to Eli Naeher)
 	* sql/time.lisp: Commit patch to fix parse-iso-8601-duration
 	(thanks to Stephen Compall)
+	* sql/database.lisp: Use :verbose nil for asdf:operate
+	invocation (Thanks to Mackram Raydan)
 
 31 Aug 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/db-interface.lisp: Fix spelling error (thanks to
