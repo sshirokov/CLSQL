@@ -12,6 +12,8 @@
 	*default-database-type* (thanks to Desmond O. Chang)
 	* sql/transactions.lisp: Improved handlining of nested
 	transactions (thanks to Eli Naeher)
+	* sql/time.lisp: Commit patch to fix parse-iso-8601-duration
+	(thanks to Stephen Compall)
 
 31 Aug 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/db-interface.lisp: Fix spelling error (thanks to

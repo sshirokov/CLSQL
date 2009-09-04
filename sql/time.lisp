@@ -1,8 +1,6 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; A variety of structures and function for creating and
 ;;;; manipulating dates, times, durations and intervals for
 ;;;; CLSQL.
@@ -1251,8 +1249,9 @@ Will throw a hissy fit if the date string is a duration. Will ignore any precisi
           (index (length string))
           (months/minutes nil))
       (loop
-       (multiple-value-bind (duration next-index duration-type)
+       (multiple-value-bind (duration end next-index duration-type)
            (iso-8601-duration-subseq string index)
+         (declare (ignore end))
          (case duration-type
            (:years
             (incf years duration))
