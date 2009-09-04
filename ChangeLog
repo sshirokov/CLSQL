@@ -6,6 +6,8 @@
 	parameters for postgresql databases (thanks to Stephen Compall)
 	* doc/ref-{clsql,connect}.xml, sql/db-interfaces.lisp:
 	Fix transposed letters (thanks to Stephen Compall)
+	* db-mysql/Makefile: Add directory for MacPorts mysql5 port
+	(thanks to Stephen Compall)
 
 31 Aug 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/db-interface.lisp: Fix spelling error (thanks to
