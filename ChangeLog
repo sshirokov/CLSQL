@@ -1,3 +1,8 @@
+04 Sep 2009  Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/fdml.lisp: Rework do-query to use supplied database
+	parameter when passed a sql-object-query 
+	(thanks to JTK <jetmonk@gmail.com>)
+
 31 Aug 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/db-interface.lisp: Fix spelling error (thanks to 
 	David Thompson)
