@@ -280,28 +280,28 @@ database is printed."
           (print-separator total-size))))
     (values)))
 
-(defun create-database (connection-spec &key database-type)
+(defun create-database (connection-spec &key (database-type *default-database-type*))
   "This function creates a database in the database system specified
 by DATABASE-TYPE."
   (when (stringp connection-spec)
     (setq connection-spec (string-to-list-connection-spec connection-spec)))
   (database-create connection-spec database-type))
 
-(defun probe-database (connection-spec &key database-type)
+(defun probe-database (connection-spec &key (database-type *default-database-type*))
   "This function tests for the existence of a database in the database
 system specified by DATABASE-TYPE."
   (when (stringp connection-spec)
     (setq connection-spec (string-to-list-connection-spec connection-spec)))
   (database-probe connection-spec database-type))
 
-(defun destroy-database (connection-spec &key database-type)
+(defun destroy-database (connection-spec &key (database-type *default-database-type*))
   "This function destroys a database in the database system specified
 by DATABASE-TYPE."
   (when (stringp connection-spec)
     (setq connection-spec (string-to-list-connection-spec connection-spec)))
   (database-destroy connection-spec database-type))
 
-(defun list-databases (connection-spec &key database-type)
+(defun list-databases (connection-spec &key (database-type *default-database-type*))
   "This function returns a list of databases existing in the database
 system specified by DATABASE-TYPE."
   (when (stringp connection-spec)
