@@ -1,8 +1,6 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; CLSQL metaclass for standard-db-objects created in the OODDL.
 ;;;;
 ;;;; This file is part of CLSQL.
@@ -427,29 +425,17 @@ implementations."
       (car list)
       list))
 
-(defmethod initialize-instance :around ((obj view-class-direct-slot-definition)
-                                        &rest initargs)
-  (do* ((parsed (list obj))
-        (name (first initargs) (first initargs))
-        (val (second initargs) (second initargs))
-        (type nil)
-        (db-constraints nil))
-      ((null initargs)
-       (setq parsed
-             (append parsed
-                     (list 'specified-type type
-                           :type (compute-lisp-type-from-specified-type
-                                  type db-constraints))))
-       (apply #'call-next-method parsed))
-    (case name
-      (:db-constraints
-       (setq db-constraints val)
-       (setq parsed (append parsed (list name val))))
-      (:type
-       (setq type val))
-      (t
-       (setq parsed (append parsed (list name val)))))
-    (setq initargs (cddr initargs))))
+(defmethod initialize-instance :around
+    ((obj view-class-direct-slot-definition)
+     &rest initargs &key db-constraints db-kind type &allow-other-keys)
+  (when (and (not db-kind) (member :primary-key (listify db-constraints)))
+    (warn "Slot ~S constrained to be :primary-key, but not marked as :db-kind :key"
+          (slot-definition-name obj)))
+  (apply #'call-next-method obj
+         'specified-type type
+         :type (compute-lisp-type-from-specified-type
+                type db-constraints)
+         initargs))
 
 (defmethod compute-effective-slot-definition ((class standard-db-class)
                                               #+kmr-normal-cesd slot-name

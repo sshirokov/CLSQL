@@ -16,6 +16,8 @@
 	(thanks to Stephen Compall)
 	* sql/database.lisp: Use :verbose nil for asdf:operate
 	invocation (Thanks to Mackram Raydan)
+	* sql/metaclasses.lisp: Rework initialize-instance for
+	view-class-direct-slot-definition (thanks to Stephen Compall)
 
 31 Aug 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/db-interface.lisp: Fix spelling error (thanks to
