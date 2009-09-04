@@ -1,17 +1,19 @@
 04 Sep 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/fdml.lisp: Rework do-query to use supplied database
-	parameter when passed a sql-object-query 
+	parameter when passed a sql-object-query
 	(thanks to JTK <jetmonk@gmail.com>)
 	* sql/generic-postgresql.lisp: Allow optional connect
 	parameters for postgresql databases (thanks to Stephen Compall)
+	* doc/ref-{clsql,connect}.xml, sql/db-interfaces.lisp:
+	Fix transposed letters (thanks to Stephen Compall)
 
 31 Aug 2009  Kevin Rosenberg <kevin@rosenberg.net>
-	* sql/db-interface.lisp: Fix spelling error (thanks to 
+	* sql/db-interface.lisp: Fix spelling error (thanks to
 	David Thompson)
 	* clsql-mysql.asd/db-mysql/mysql-loader.lisp: Commit
 	patch from Andreas Franke to honor windows drive letter
 	when loading clsql_mysql C library.
-	
+
 31 Aug 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 4.1.0
 	* db-mysql/mysql-{sql,api}.lisp,db-mysql/clsql_mysql.c:
@@ -35,7 +37,7 @@
 	in database-list function (thanks to Michael Pheasant)
 	* sql/oodml.lisp: Allow NULL values for floating-point fields
 	(thanks to Jan Rychter)
-	
+
 02 Jun 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 4.0.5
 	* sql/database.lisp: Add process-lock for deleting database from
