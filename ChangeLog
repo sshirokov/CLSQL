@@ -10,6 +10,8 @@
 	(thanks to Stephen Compall)
 	* sql/database.lisp: Have database-type default be
 	*default-database-type* (thanks to Desmond O. Chang)
+	* sql/transactions.lisp: Improved handlining of nested
+	transactions (thanks to Eli Naeher)
 
 31 Aug 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/db-interface.lisp: Fix spelling error (thanks to
