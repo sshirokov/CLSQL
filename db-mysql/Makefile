@@ -70,7 +70,7 @@ else
     endif
   endif
 endif
-	rm $(object)
+	rm -f $(object)
 
 .PHONY: distclean
 distclean: clean
