@@ -1,3 +1,9 @@
+21 Nov 2009  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 4.1.2
+	* Makefiles: On 64-bit Linux systems, try to build both 32 and 64-bit
+	interface libraries. This requires the installation of multiarch build tools
+	as well as 32-bit support libraries (libc, libz and libmysqlclient).
+
 04 Sep 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 4.1.1
 	* sql/fdml.lisp: Rework do-query to use supplied database
