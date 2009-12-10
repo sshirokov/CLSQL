@@ -1,3 +1,11 @@
+ 10 Dec 2009  Kevin Rosenberg <kevin@rosenberg.net>
+	Large patch from Thijs Oppermann <thijso+clsql@gmail.com> to add
+	support for normalized view classes.  When having view class that
+	inherit from others, CLSQL by default builds tab all the columns
+	from the parent in the child. This patch is meant to normali so
+	that a join is done on the primary keys of the concerned tables to
+	get a set.
+
 10 Dec 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/time.lisp: Patch from Oleg Tihonov to SYNTAX-PARSE-ISO-8601
 	to properly parse fractions of seconds.
