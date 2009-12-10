@@ -1315,16 +1315,18 @@ Will throw a hissy fit if the date string is a duration. Will ignore any precisi
                       (char= #\. (char string 19))))
              (multiple-value-bind (parsed-usec usec-end)
                  (parse-integer string :start 20 :junk-allowed t)
-               (setf usec          (or parsed-usec 0)
-                     gmt-sec-offset (if (<= (+ 3 usec-end)  strlen)
-                                        (let ((skip-to (or (position #\+ string :start 19)
-                                                           (position #\- string :start 19))))
-                                          (if skip-to
-                                              (* 60 60
-                                                 (parse-integer string :start skip-to
-                                                                :end (+ skip-to 3)))
-                                              0))
-                                        0))))
+               (let ((parsed-usec (and parsed-usec
+				       (floor (* parsed-usec (expt 10 (+ 6 (- usec-end) 20)))))))
+		 (setf usec          (or parsed-usec 0)
+		       gmt-sec-offset (if (<= (+ 3 usec-end)  strlen)
+					  (let ((skip-to (or (position #\+ string :start 19)
+							     (position #\- string :start 19))))
+					    (if skip-to
+						(* 60 60
+						   (parse-integer string :start skip-to
+								  :end (+ skip-to 3)))
+						0))
+					  0)))))
             (t
              (setf usec           0
                    gmt-sec-offset (if (<= 22  strlen)
