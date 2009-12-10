@@ -1,3 +1,7 @@
+10 Dec 2009  Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/time.lisp: Patch from Oleg Tihonov to roll function
+	to properly use USEC argument.
+
 21 Nov 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 4.1.2
 	* Makefiles: On 64-bit Linux systems, try to build both 32 and 64-bit

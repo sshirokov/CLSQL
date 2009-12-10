@@ -1071,10 +1071,9 @@ with the given options"
              (setf (time-mjd date) (time-mjd new-date))
              (setq date new-date))))))
   (let ((mjd (time-mjd date))
-        (sec (time-second date))
-        (usec (time-usec date)))
+        (sec (time-second date)))
     (multiple-value-bind (sec-new usec-new)
-        (floor (+ usec
+        (floor (+ usec (time-usec date)
                   (* 1000000
                      (+ sec second
                         (* 60 minute)
