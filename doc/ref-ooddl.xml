@@ -696,14 +696,16 @@ SQL table USER:
       <screen>
 CLSQL> (setq test-user (make-instance 'user :node-id 1 :nick "test-user"
                                             :title "This is a test user"))
-#<USER {1003B392E1}>
+<![CDATA[#<USER {1003B392E1}>]]>
 
 CLSQL> (update-records-from-instance test-user :database db)
+<![CDATA[
 ;; .. => INSERT INTO NODE (NODE_ID,TITLE) VALUES (1,'This is a test user')
 ;; .. <= T
 ;; .. => INSERT INTO USER (USER_ID,NICK) VALUES (1,'test-user')
 ;; .. <= T
 1
+]]>
 
 CLSQL> (node-id test-user)
 1

@@ -1,4 +1,10 @@
- 10 Dec 2009  Kevin Rosenberg <kevin@rosenberg.net>
+10 Dec 2009  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 4.2.0
+	* doc/ref-ooddl.lisp: Add needed CDATA escapes
+	* doc/clsql.pdf, doc/html.tar.gz: Build new manuals with
+	normalized view classes.
+
+10 Dec 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	Large patch from Thijs Oppermann <thijso+clsql@gmail.com> to add
 	support for normalized view classes.  When having view class that
 	inherit from others, CLSQL by default builds tab all the columns
