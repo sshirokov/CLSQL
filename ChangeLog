@@ -1,3 +1,7 @@
+7 Jan 2009  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 4.2.1
+	* sql/utils.lisp: Changes to support Lispworks 6
+
 10 Dec 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 4.2.0
 	* doc/ref-ooddl.lisp: Add needed CDATA escapes
