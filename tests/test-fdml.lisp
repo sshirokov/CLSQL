@@ -22,111 +22,6 @@
 (setq *rt-fdml*
       '(
 
-;; inserts a record using all values only and then deletes it
-(deftest :fdml/insert/1
-    (let ((now (get-universal-time)))
-      (clsql:insert-records :into [employee]
-       :values `(11 1 "Yuri" "Gagarin" "gagarin@soviet.org"
-                    1 1 1.85 t ,(clsql:utime->time now) ,now))
-      (values
-       (clsql:select [first-name] [last-name] [email]
-                    :from [employee] :where [= [emplid] 11])
-       (progn (clsql:delete-records :from [employee] :where [= [emplid] 11])
-              (clsql:select [*] :from [employee] :where [= [emplid] 11]))))
-  (("Yuri" "Gagarin" "gagarin@soviet.org")) nil)
-
-;; inserts a record using attributes and values and then deletes it
-(deftest :fdml/insert/2
-    (progn
-      (clsql:insert-records :into [employee]
-                           :attributes '(emplid groupid first_name last_name
-                                         email ecompanyid managerid)
-                           :values '(11 1 "Yuri" "Gagarin" "gagarin@soviet.org"
-                                     1 1))
-      (values
-       (clsql:select [first-name] [last-name] [email] :from [employee]
-                    :where [= [emplid] 11])
-       (progn (clsql:delete-records :from [employee] :where [= [emplid] 11])
-              (clsql:select [*] :from [employee] :where [= [emplid] 11]))))
-  (("Yuri" "Gagarin" "gagarin@soviet.org")) nil)
-
-;; inserts a record using av-pairs and then deletes it
-(deftest :fdml/insert/3
-    (progn
-      (clsql:insert-records :into [employee]
-                           :av-pairs'((emplid 11) (groupid 1)
-                                      (first_name "Yuri")
-                                      (last_name "Gagarin")
-                                      (email "gagarin@soviet.org")
-                                      (ecompanyid 1) (managerid 1)))
-      (values
-       (clsql:select [first-name] [last-name] [email] :from [employee]
-                    :where [= [emplid] 11])
-       (progn (clsql:delete-records :from [employee] :where [= [emplid] 11])
-              (clsql:select [first-name] [last-name] [email] :from [employee]
-                           :where [= [emplid] 11]))))
-  (("Yuri" "Gagarin" "gagarin@soviet.org")) nil)
-
-;; inserts a records using a query from another table
-(deftest :fdml/insert/4
-    (progn
-      (clsql:create-table [employee2] '(([forename] string)
-                                 ([surname] string)
-                                 ([email] string)))
-      (clsql:insert-records :into [employee2]
-                     :query [select [first-name] [last-name] [email]
-                                    :from [employee]]
-                     :attributes '(forename surname email))
-      (prog1
-          (equal (clsql:select [*] :from [employee2])
-                 (clsql:select [first-name] [last-name] [email]
-                              :from [employee]))
-        (clsql:drop-table [employee2] :if-does-not-exist :ignore)))
-  t)
-
-;; updates a record using attributes and values and then deletes it
-(deftest :fdml/update/1
-    (progn
-      (clsql:update-records [employee]
-                           :attributes '(first_name last_name email)
-                           :values '("Yuri" "Gagarin" "gagarin@soviet.org")
-                           :where [= [emplid] 1])
-      (values
-       (clsql:select [first-name] [last-name] [email] :from [employee]
-                    :where [= [emplid] 1])
-       (progn
-         (clsql:update-records [employee]
-                              :av-pairs'((first_name "Vladimir")
-                                         (last_name "Lenin")
-                                         (email "lenin@soviet.org"))
-                              :where [= [emplid] 1])
-         (clsql:select [first-name] [last-name] [email] :from [employee]
-                      :where [= [emplid] 1]))))
-  (("Yuri" "Gagarin" "gagarin@soviet.org"))
-  (("Vladimir" "Lenin" "lenin@soviet.org")))
-
-;; updates a record using av-pairs and then deletes it
-(deftest :fdml/update/2
-    (progn
-      (clsql:update-records [employee]
-                           :av-pairs'((first_name "Yuri")
-                                      (last_name "Gagarin")
-                                      (email "gagarin@soviet.org"))
-                           :where [= [emplid] 1])
-      (values
-       (clsql:select [first-name] [last-name] [email] :from [employee]
-                    :where [= [emplid] 1])
-       (progn
-         (clsql:update-records [employee]
-                              :av-pairs'((first_name "Vladimir")
-                                         (last_name "Lenin")
-                                         (email "lenin@soviet.org"))
-                              :where [= [emplid] 1])
-         (clsql:select [first-name] [last-name] [email]
-                      :from [employee] :where [= [emplid] 1]))))
-  (("Yuri" "Gagarin" "gagarin@soviet.org"))
-  (("Vladimir" "Lenin" "lenin@soviet.org")))
-
 
 ;; Computed values are not always classified as numeric by psqlodbc
 (deftest :fdml/query/1
@@ -572,6 +467,113 @@
       [select [addressid] :from [addr] :order-by [addressid]]
       collect addressid)
   (1 2))
+
+;; inserts a record using all values only and then deletes it
+(deftest :fdml/insert/1
+    (let ((now (get-universal-time)))
+      (clsql:insert-records :into [employee]
+       :values `(11 1 "Yuri" "Gagarin" "gagarin@soviet.org"
+                    1 1 1.85 t ,(clsql:utime->time now) ,now))
+      (values
+       (clsql:select [first-name] [last-name] [email]
+                    :from [employee] :where [= [emplid] 11])
+       (progn (clsql:delete-records :from [employee] :where [= [emplid] 11])
+              (clsql:select [*] :from [employee] :where [= [emplid] 11]))))
+  (("Yuri" "Gagarin" "gagarin@soviet.org")) nil)
+
+;; inserts a record using attributes and values and then deletes it
+(deftest :fdml/insert/2
+    (progn
+      (clsql:insert-records :into [employee]
+                           :attributes '(emplid groupid first_name last_name
+                                         email ecompanyid managerid)
+                           :values '(11 1 "Yuri" "Gagarin" "gagarin@soviet.org"
+                                     1 1))
+      (values
+       (clsql:select [first-name] [last-name] [email] :from [employee]
+                    :where [= [emplid] 11])
+       (progn (clsql:delete-records :from [employee] :where [= [emplid] 11])
+              (clsql:select [*] :from [employee] :where [= [emplid] 11]))))
+  (("Yuri" "Gagarin" "gagarin@soviet.org")) nil)
+
+;; inserts a record using av-pairs and then deletes it
+(deftest :fdml/insert/3
+    (progn
+      (clsql:insert-records :into [employee]
+                           :av-pairs'((emplid 11) (groupid 1)
+                                      (first_name "Yuri")
+                                      (last_name "Gagarin")
+                                      (email "gagarin@soviet.org")
+                                      (ecompanyid 1) (managerid 1)))
+      (values
+       (clsql:select [first-name] [last-name] [email] :from [employee]
+                    :where [= [emplid] 11])
+       (progn (clsql:delete-records :from [employee] :where [= [emplid] 11])
+              (clsql:select [first-name] [last-name] [email] :from [employee]
+                           :where [= [emplid] 11]))))
+  (("Yuri" "Gagarin" "gagarin@soviet.org")) nil)
+
+;; inserts a records using a query from another table
+(deftest :fdml/insert/4
+    (progn
+      (clsql:create-table [employee2] '(([forename] string)
+                                 ([surname] string)
+                                 ([email] string)))
+      (clsql:insert-records :into [employee2]
+                     :query [select [first-name] [last-name] [email]
+                                    :from [employee]]
+                     :attributes '(forename surname email))
+      (prog1
+          (equal (clsql:select [*] :from [employee2])
+                 (clsql:select [first-name] [last-name] [email]
+                              :from [employee]))
+        (clsql:drop-table [employee2] :if-does-not-exist :ignore)))
+  t)
+
+;; updates a record using attributes and values and then deletes it
+(deftest :fdml/update/1
+    (progn
+      (clsql:update-records [employee]
+                           :attributes '(first_name last_name email)
+                           :values '("Yuri" "Gagarin" "gagarin@soviet.org")
+                           :where [= [emplid] 1])
+      (values
+       (clsql:select [first-name] [last-name] [email] :from [employee]
+                    :where [= [emplid] 1])
+       (progn
+         (clsql:update-records [employee]
+                              :av-pairs'((first_name "Vladimir")
+                                         (last_name "Lenin")
+                                         (email "lenin@soviet.org"))
+                              :where [= [emplid] 1])
+         (clsql:select [first-name] [last-name] [email] :from [employee]
+                      :where [= [emplid] 1]))))
+  (("Yuri" "Gagarin" "gagarin@soviet.org"))
+  (("Vladimir" "Lenin" "lenin@soviet.org")))
+
+;; updates a record using av-pairs and then deletes it
+(deftest :fdml/update/2
+    (progn
+      (clsql:update-records [employee]
+                           :av-pairs'((first_name "Yuri")
+                                      (last_name "Gagarin")
+                                      (email "gagarin@soviet.org"))
+                           :where [= [emplid] 1])
+      (values
+       (clsql:select [first-name] [last-name] [email] :from [employee]
+                    :where [= [emplid] 1])
+       (progn
+         (clsql:update-records [employee]
+                              :av-pairs'((first_name "Vladimir")
+                                         (last_name "Lenin")
+                                         (email "lenin@soviet.org"))
+                              :where [= [emplid] 1])
+         (clsql:select [first-name] [last-name] [email]
+                      :from [employee] :where [= [emplid] 1]))))
+  (("Yuri" "Gagarin" "gagarin@soviet.org"))
+  (("Vladimir" "Lenin" "lenin@soviet.org")))
+
+
 
 ;; starts a transaction deletes a record and then rolls back the deletion
 (deftest :fdml/transaction/1
