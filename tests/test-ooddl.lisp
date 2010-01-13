@@ -85,6 +85,27 @@
     (slot-value (employee-manager employee2) 'last-name)
   "Lenin")
 
+(deftest :ooddl/big/1
+    (let ((rows (clsql:select [*] :from [big] :order-by [i] :field-names nil)))
+      (values
+       (length rows)
+       (do ((i 0 (1+ i))
+            (max (expt 2 60))
+            (rest rows (cdr rest)))
+           ((= i (length rows)) t)
+         (let ((index (1+ i))
+               (int (first (car rest)))
+               (bigint (second (car rest))))
+           (when (and (or (eq *test-database-type* :oracle)
+                          (and (eq *test-database-type* :odbc)
+                               (eq *test-database-underlying-type* :postgresql)))
+                      (stringp bigint))
+             (setf bigint (parse-integer bigint)))
+           (unless (and (eql int index)
+                        (eql bigint (truncate max index)))
+             (return nil))))))
+  555 t)
+
 (deftest :ooddl/time/1
     (let* ((now (clsql:get-time)))
       (when (member *test-database-underlying-type* '(:postgresql :postgresql-socket))

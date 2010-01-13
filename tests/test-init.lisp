@@ -291,23 +291,23 @@
 
 
 (defun test-initialise-database ()
-  (test-basic-initialize)
 ;;  (start-sql-recording :type :both)
   (let ((*backend-warning-behavior*
          (if (member *test-database-type* '(:postgresql :postgresql-socket))
              :ignore
            :warn)))
-    (clsql:create-view-from-class 'employee)
-    (clsql:create-view-from-class 'company)
-    (clsql:create-view-from-class 'address)
-    (clsql:create-view-from-class 'employee-address)
-    (clsql:create-view-from-class 'big)
-    (clsql:create-view-from-class 'node)
-    (clsql:create-view-from-class 'setting)
-    (clsql:create-view-from-class 'user)
-    (clsql:create-view-from-class 'theme)
-    (clsql:create-view-from-class 'location)
-    (clsql:create-view-from-class 'subloc))
+    ;; (clsql:create-view-from-class 'employee)
+    ;; (clsql:create-view-from-class 'company)
+    ;; (clsql:create-view-from-class 'address)
+    ;; (clsql:create-view-from-class 'employee-address)
+    ;; (clsql:create-view-from-class 'big)
+    ;; (clsql:create-view-from-class 'node)
+    ;; (clsql:create-view-from-class 'setting)
+    ;; (clsql:create-view-from-class 'user)
+    ;; (clsql:create-view-from-class 'theme)
+    ;; (clsql:create-view-from-class 'location)
+    ;; (clsql:create-view-from-class 'subloc)
+    )
 
   (setq *test-start-utime* (get-universal-time))
   (let* ((*db-auto-sync* t)
@@ -625,7 +625,7 @@
 
            (write-report-banner "Test Suite" db-type *report-stream*)
 
-           (test-initialise-database)
+;           (test-initialise-database)
 
            (regression-test:rem-all-tests)
            (dolist (test-form test-forms)
@@ -737,7 +737,7 @@
   (when *default-database*
       (disconnect :database *default-database*))
   (test-connect-to-database type (nth position (db-type-spec type (read-specs))))
-  (test-initialise-database)
+  ;(test-initialise-database)
   *default-database*)
 
 (defun rl ()
