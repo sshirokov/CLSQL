@@ -261,7 +261,7 @@
 	     (values
 	       (clsql:index-exists-p [bar] :owner *test-database-user*)
 	       (progn
-		 (clsql:drop-index [bar] :on [employee]
+		 (clsql:drop-index [bar] :on [alpha]
 				   :if-does-not-exist :ignore)
 		 (clsql:index-exists-p [bar] :owner *test-database-user*)))))
   t nil)

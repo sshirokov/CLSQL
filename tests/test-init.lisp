@@ -36,8 +36,6 @@
 
 
 
-
-
 (defun test-connect-to-database (db-type spec)
   (when (clsql-sys:db-backend-has-create/destroy-db? db-type)
     (ignore-errors (destroy-database spec :database-type db-type))

@@ -70,7 +70,6 @@
 	     :warn)))
     (mapc #'clsql:create-view-from-class
 	  '(node setting user theme location subloc)))
-    
 
   (setq *test-start-utime* (get-universal-time))
   (let* ((*db-auto-sync* t))
@@ -104,19 +103,15 @@
 				 :loc "a subloc")
 	  subloc2 (make-instance 'subloc
 				 :title "subloc-2"
-				 :loc "second subloc")))
-
-
-  )
+				 :loc "second subloc"))))
 
 
 
 
- (def-dataset *ds-employees*
-   (:setup initialize-ds-employees)
+ (def-dataset *ds-nodes*
+   (:setup initialize-ds-nodes)
    (:cleanup (lambda ()
 	       (mapc #'clsql-sys:drop-view-from-class
-		     '(employee company address employee-address
-		       node setting user theme location subloc)))))
+		     '(node setting user theme location subloc)))))
 
 #.(clsql:restore-sql-reader-syntax-state)
