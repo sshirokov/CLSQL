@@ -243,6 +243,20 @@
                              '(:postgresql :mysql :sqlite3)))
                 (clsql-sys:in test :fdml/select/37 :fdml/select/38))
            (push (cons test "LIMIT keyword not supported in SELECT") skip-tests))
+	  ((and (not (clsql-sys:db-type-has-auto-increment? db-underlying-type))
+		(clsql-sys:in test :oodml/select/12 :oodml/select/13 :oodml/select/14
+			      :oodml/select/15 :oodml/select/16 :oodml/select/17
+			      :oodml/select/18 :oodml/select/19 :oodml/select/20
+			      :oodml/select/21 :oodml/select/22
+			      :oodml/update-records/4 :oodml/update-records/4-slots
+			      :oodml/update-records/5 :oodml/update-records/5-slots
+			      :oodml/update-records/6 :oodml/update-records/7
+			      :oodml/update-records/8 :oodml/update-records/9
+			      :oodml/update-records/9-slots :oodml/update-instance/3
+			      :oodml/update-instance/4 :oodml/update-instance/5
+			      :oodml/update-instance/6 :oodml/update-instance/7
+			      :oodml/db-auto-sync/3 :oodml/db-auto-sync/4))
+	   (push (cons test ":auto-increment not by backend.") skip-tests))
           (t
            (push test-form test-forms)))))
       (values (nreverse test-forms) (nreverse skip-tests))))
