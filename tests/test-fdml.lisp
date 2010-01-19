@@ -124,19 +124,6 @@
   t (2 3 4 5 6 7 8 9 10))
 
 
-(deftest :fdml/execute-command/1
-    (with-dataset *ds-employees*
-      (values
-	(clsql:table-exists-p [foo] :owner *test-database-user*)
-	(progn
-	  (clsql:execute-command "create table foo (bar integer)")
-	  (clsql:table-exists-p [foo] :owner *test-database-user*))
-	(progn
-	  (clsql:execute-command "drop table foo")
-	  (clsql:table-exists-p [foo] :owner *test-database-user*))))
-  nil t nil)
-
-
 ;; compare min, max and average hieghts in inches (they're quite short
 ;; these guys!)
 (deftest :fdml/select/1

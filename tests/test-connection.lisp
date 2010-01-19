@@ -36,4 +36,23 @@
      "dbname/user@hostname")
   ("hostname" "dbname" "user"))
 
+(deftest :connection/execute-command
+    ;;check that we can issue basic commands.
+    (values
+      (clsql-sys:execute-command "CREATE TABLE DUMMY (foo integer)")
+      (clsql-sys:execute-command "DROP TABLE DUMMY"))
+  nil nil)
+
+(deftest :connection/query
+    ;;check that we can do a basic query
+    (first (clsql:query "SELECT 1" :flatp t :field-names nil))
+  1)
+
+(deftest :connection/query-command
+    ;;queries that are commands (no result set) shouldn't cause breakage
+    (values
+      (clsql-sys:query "CREATE TABLE DUMMY (foo integer)")
+      (clsql-sys:query "DROP TABLE DUMMY"))
+  nil nil)
+
 ))
