@@ -1,5 +1,8 @@
-7 Jan 2009  Kevin Rosenberg <kevin@rosenberg.net>
-	* Version 4.2.1
+20 Jan 2009  Nathan Bird <nathan@acceleration.net>
+	* Version 4.3.0
+	* Rewrite tests to use datasets
+
+07 Jan 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/utils.lisp: Changes to support Lispworks 6
 
 10 Dec 2009  Kevin Rosenberg <kevin@rosenberg.net>
