@@ -134,16 +134,45 @@
 
 
 (deftest :syntax/logical/1
-    (clsql:sql [and [foo] [bar]])
-  "(FOO AND BAR)")
-
-(deftest :syntax/logical/2
-    (clsql:sql [or [foo] [bar]])
+    (values (clsql:sql [and [foo] [bar]])
+	    (clsql:sql [or [foo] [bar]]))
+  "(FOO AND BAR)"
   "(FOO OR BAR)")
 
-(deftest :syntax/logical/3
+(deftest :syntax/logical/2
     (clsql:sql [not [foo]])
   "(NOT (FOO))")
+
+;;; Test how we apply logical operators when we have different numbers of children
+;;; This is useful if we wish to (apply #'sql-and some-list) without having to do
+;;; alot of length checking
+(deftest :syntax/logical/3
+    (values (clsql:sql [and ])
+	    (clsql:sql [and [foo]])
+	    (clsql:sql [and [not [foo]]])
+	    (clsql:sql [and [foo] [bar] [baz]]))
+  ""
+  "FOO"
+  "(NOT (FOO))"
+  "(FOO AND BAR AND BAZ)")
+
+(deftest :syntax/logical/4
+    (clsql:sql [and [= [foo] [bar]]])
+  "(FOO = BAR)")
+
+(deftest :syntax/logical/5
+  (clsql:sql [and [= [foo] [bar]]
+		  [= [bar] [bast]]
+		  [= [block] [blech]]])
+  "((FOO = BAR) AND (BAR = BAST) AND (BLOCK = BLECH))")
+
+(deftest :syntax/logical/6
+    (clsql:sql
+     (apply #'sql-and
+	    (list [= [foo] [bar]]
+		  [and ]
+		  [and [= [bar] [bast]]])))
+  "((FOO = BAR) AND (BAR = BAST))")
 
 
 (deftest :syntax/null/1
