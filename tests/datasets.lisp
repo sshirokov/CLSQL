@@ -43,7 +43,10 @@ should we debug (T) or just print and quit.")
 	      (retry-dataset-init ()
 		:report ,(format nil "Retry dataset('~a) init: (with any dataset changes)"
 				(symbol-name name))
-		(%dataset-init ,name)))
+		(%dataset-init ,name))
+	      (skip-this-test ()
+		:report "FAIL and run the next test"
+		(throw 'quit-dataset :data-set-failure)))
 	    ,@body)
        (%dataset-cleanup ,name))))
 
