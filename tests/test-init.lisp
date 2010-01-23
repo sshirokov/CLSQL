@@ -44,7 +44,7 @@
   (setf *test-database-type* db-type)
   (setf *test-database-user*
     (cond
-     ((eq :oracle db-type) (second spec))
+     ((member db-type '(:oracle :odbc :aodbc)) (second spec))
      ((>= (length spec) 3) (third spec))))
 
   ;; Connect to the database
