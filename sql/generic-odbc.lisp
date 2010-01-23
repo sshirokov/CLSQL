@@ -207,36 +207,44 @@
               (setf (car rest) elem))
         list))))
 
-(defmethod database-list-tables ((database generic-odbc-database)
-                                 &key (owner nil))
-  (declare (ignore owner))
+
+(defun %database-list-* (database type owner)
+  "Internal function used by database-list-tables and
+database-list-views"
   (multiple-value-bind (rows col-names)
       (funcall (list-all-database-tables-fn database) :db (odbc-conn database))
     (declare (ignore col-names))
+    ;; http://msdn.microsoft.com/en-us/library/ms711831%28VS.85%29.aspx
     ;; TABLE_SCHEM is hard-coded in second column by ODBC Driver Manager
     ;; TABLE_NAME in third column, TABLE_TYPE in fourth column
-    (loop for row in rows
-          when (and (not (string-equal "information_schema" (nth 1 row)))
-                    (string-equal "TABLE" (nth 3 row))
-                    (not (and (eq :mssql (database-underlying-type database))
-                              (string-equal "dtproperties" (nth 2 row)))))
-          collect (nth 2 row))))
+    (loop for (category schema name ttype . rest) in rows
+	  when (and (string-equal type ttype)
+		    (or (null owner) (string-equal owner schema))
+		    ;; unless requesting by name, skip system schema
+		    (not (and (null owner)
+			      (member schema '("information_schema" "sys")
+				      :test #'string-equal)))
+		    ;; skip system specific tables in mssql2000
+		    (not (and (eql :mssql (database-underlying-type database))
+			      (member name '("dtproperties" "sysconstraints"
+					     "syssegments")
+				      :test #'string-equal))))
+	    collect name)))
+
+(defmethod database-list-tables ((database generic-odbc-database)
+				 &key (owner nil))
+  "Since ODBC doesn't expose the owner we use that parameter to filter
+on schema since that's what tends to be exposed. Some DBs like mssql
+2000 conflate the two so at least there it works nicely."
+  (%database-list-* database "TABLE" owner))
 
 
 (defmethod database-list-views ((database generic-odbc-database)
-                                 &key (owner nil))
-  (declare (ignore owner))
-  (multiple-value-bind (rows col-names)
-      (funcall (list-all-database-tables-fn database) :db (odbc-conn database))
-    (declare (ignore col-names))
-    ;; TABLE_SCHEM is hard-coded in second column by ODBC Driver Manager
-    ;; TABLE_NAME in third column, TABLE_TYPE in fourth column
-    (loop for row in rows
-          when (and (not (string-equal "information_schema" (nth 1 row)))
-                    (string-equal "VIEW" (nth 3 row))
-                    (not (and (eq :mssql (database-underlying-type database))
-                              (member (nth 2 row) '("sysconstraints" "syssegments") :test #'string-equal))))
-          collect (nth 2 row))))
+				&key (owner nil))
+  "Since ODBC doesn't expose the owner we use that parameter to filter
+on schema since that's what tends to be exposed. Some DBs like mssql
+2000 conflate the two so at least there it works nicely."
+  (%database-list-* database "VIEW" owner))
 
 
 (defmethod database-list-attributes ((table string) (database generic-odbc-database)
