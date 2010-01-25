@@ -20,11 +20,17 @@
 #.(clsql:locally-enable-sql-reader-syntax)
 
 (def-dataset *ds-fddl*
-  (:setup ("CREATE TABLE ALPHA (A integer, B integer, C varchar (30), d date, f float)"
-	   "CREATE TABLE BRAVO (jack integer, jill integer)"))
-  (:sqldata "ALPHA" "A,B,C,d,f"
-	    "1,1,'asdf','2010-01-01',3.14"
-	    "2,1,'blarg','2012-12-21',0.1")
+  (:setup (lambda ()
+	    (create-table [alpha] '(([a] integer)
+				    ([c] (varchar 30))
+				    ([d] date)
+				    ([f] float)))
+	    (create-table [bravo] '(([foo] integer)
+				    ([bar] integer)))))
+  (:sqldata "ALPHA" "A,C,D,F"
+	    "1,'asdf','2010-01-01',3.14"
+	    "2,'blarg','2012-12-21',0.1"
+	    "3,'matey','1992-02-29',0.0")
   (:cleanup "DROP TABLE ALPHA" "DROP TABLE BRAVO"))
 
 (setq *rt-fddl*
@@ -136,7 +142,7 @@
 	(mapcar #'string-downcase
 		(clsql:list-attributes [alpha] :owner *test-database-user*))
 	#'string<)))
-  "a" "b" "c" "d" "f")
+  "a" "c" "d" "f")
 
 (deftest :fddl/attributes/2
     (with-dataset *ds-fddl*
@@ -146,7 +152,7 @@
 		      (clsql:list-attribute-types [alpha]
 						  :owner *test-database-user*))
 	      #'string<)))
-  "a" "b" "c" "d" "f")
+  "a" "c" "d" "f")
 
 ;; Attribute types are vendor specific so need to test a range
 (deftest :fddl/attributes/3
@@ -180,22 +186,22 @@
 ;; create a view, test for existence, drop it and test again
 (deftest :fddl/view/1
     (with-dataset *ds-fddl*
-    (progn (clsql:create-view [v1]
-			      :as [select [a] [b] [c]
-					  :from [alpha]
-					  :where [= [a] 1]])
-	   (values
-	    (clsql:view-exists-p [v1] :owner *test-database-user*)
-	    (progn
-	      (clsql:drop-view [v1] :if-does-not-exist :ignore)
-	      (clsql:view-exists-p [v1] :owner *test-database-user*)))))
+      (progn (clsql:create-view [v1]
+				:as [select [a] [c] [d]
+					    :from [alpha]
+					    :where [= [a] 1]])
+	     (values
+	       (clsql:view-exists-p [v1])
+	       (progn
+		 (clsql:drop-view [v1] :if-does-not-exist :ignore)
+		 (clsql:view-exists-p [v1])))))
   t nil)
 
   ;; create a view, list its attributes and drop it
 (deftest :fddl/view/2
       (with-dataset *ds-fddl*
 	(progn (clsql:create-view [v1]
-			      :as [select [a] [b] [c]
+			      :as [select [a] [c] [d]
 					  :from [alpha]
 					  :where [= [a] 1]])
 	     (unwind-protect
@@ -203,61 +209,64 @@
 				(clsql:list-attributes [v1]))
 			#'string<)
 	       (clsql:drop-view [v1] :if-does-not-exist :ignore))))
-    ("a" "b" "c"))
+    ("a" "c" "d"))
 
   ;; create a view, select stuff from it and drop it
 (deftest :fddl/view/3
     (with-dataset *ds-fddl*
       (progn
 	(clsql:create-view [v1]
-			   :as [select [a] [b] [c]
+			   :as [select [a] [c] [d]
 				       :from [alpha]
 				       :where [= [a] 1]])
 	(unwind-protect
 	     (let ((result
 		    (list
 		     ;; Shouldn't exist
-		     (clsql:select [a] [b] [c]
+		     (clsql:select [a] [c] 
 				   :from [v1]
 				   :where [= [a] -1])
 		     ;; Should exist
-		     (car (clsql:select [a] [b] [c]
+		     (car (clsql:select [a] [c]
 					:from [v1]
 					:where [= [a] 1])))))
 
 	       (apply #'values result))
 	  (clsql:drop-view [v1] :if-does-not-exist :ignore))))
-  nil (1 1 "asdf"))
+  nil (1 "asdf"))
 
 (deftest :fddl/view/4
     (with-dataset *ds-fddl*
       (progn
 	(clsql:create-view [v1]
 			   :column-list '([x] [y] [z])
-			   :as [select [a] [b] [c]
+			   :as [select [a] [c] [d]
 				       :from [alpha]
 				       :where [= [a] 1]])
 	(unwind-protect
 	     (let ((result
 		    (list
+		     (sort (mapcar #'string-downcase
+				   (clsql:list-attributes [v1]))
+			   #'string<)
 		     ;; Shouldn't exist
-		     (clsql:select [x] [y] [z]
+		     (clsql:select [x] [y] 
 				   :from [v1]
 				   :where [= [x] -1])
 		     ;; Should exist
-		     (car (clsql:select [x] [y] [z]
+		     (car (clsql:select [x] [y] 
 					:from [v1]
 					:where [= [x] 1])))))
 
 	       (apply #'values result))
 	  (clsql:drop-view [v1] :if-does-not-exist :ignore))))
-  nil (1 1 "asdf"))
+  ("x" "y" "z") nil (1 "asdf"))
 
 ;; create an index, test for existence, drop it and test again
 (deftest :fddl/index/1
     (with-dataset *ds-fddl*
       (progn (clsql:create-index [bar] :on [alpha] :attributes
-				 '([a] [b] [c]) :unique t)
+				 '([a] [c]) :unique t)
 	     (values
 	       (clsql:index-exists-p [bar] :owner *test-database-user*)
 	       (progn
