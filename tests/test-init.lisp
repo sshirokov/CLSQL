@@ -30,6 +30,8 @@
 (defvar *test-database-type* nil)
 (defvar *test-database-underlying-type* nil)
 (defvar *test-database-user* nil)
+(defvar *test-false-database-user* "adsfjalsdkfjlakjsdfl"
+  "For testing ownership, a user that isn't the owner.")
 (defvar *test-start-utime* nil)
 (defvar *test-connection-spec* nil)
 (defvar *test-connection-db-type* nil)
@@ -227,11 +229,19 @@
            (push (cons test "syntax not supported") skip-tests))
           ((and (eq *test-database-type* :odbc)
                 (eq *test-database-underlying-type* :postgresql)
-                (clsql-sys:in test :fddl/owner/1))
+                (clsql-sys:in test :fddl/owner/1 :fddl/owner/table
+			      :fddl/owner/attributes
+			      :fddl/owner/attribute-types
+			      :fddl/owner/index
+			      :fddl/owner/sequence))
            (push (cons test "table ownership not supported by postgresql odbc driver") skip-tests))
           ((and (not (member *test-database-underlying-type*
                              '(:postgresql :oracle)))
-                (clsql-sys:in test :fddl/owner/1))
+                (clsql-sys:in test :fddl/owner/1 :fddl/owner/table
+			      :fddl/owner/attributes
+			      :fddl/owner/attribute-types
+			      :fddl/owner/index
+			      :fddl/owner/sequence))
            (push (cons test "table ownership not supported") skip-tests))
           ((and (null (clsql-sys:db-type-has-intersect? db-underlying-type))
                 (clsql-sys:in test :fdml/query/7))
