@@ -107,14 +107,15 @@
     (when (db-type-spec db-type specs)
       (clsql-sys:initialize-database-type :database-type db-type))))
 
-(defun write-report-banner (report-type db-type stream)
+(defun write-report-banner (report-type db-type stream db-name)
   (format stream
           "~&
 ******************************************************************************
 ***     CLSQL ~A begun at ~A
 ***     ~A
 ***     ~A on ~A
-***     Database ~:@(~A~) backend~A.
+***     Database ~:@(~A~)
+***     Type: ~:@(~A~) backend~A.
 ******************************************************************************
 "
           report-type
@@ -124,6 +125,7 @@
           (lisp-implementation-type)
           (lisp-implementation-version)
           (machine-type)
+	  db-name
           db-type
           (if (not (eq db-type *test-database-underlying-type*))
               (format nil " with underlying type ~:@(~A~)"
@@ -138,7 +140,8 @@
        (multiple-value-bind (test-forms skip-tests)
            (compute-tests-for-backend db-type *test-database-underlying-type*)
 
-           (write-report-banner "Test Suite" db-type *report-stream*)
+           (write-report-banner "Test Suite" db-type *report-stream*
+				(database-name-from-spec spec db-type))
 
 ;           (test-initialise-database)
 
