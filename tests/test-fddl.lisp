@@ -33,6 +33,12 @@
 	    "3,'matey','1992-02-29',0.0")
   (:cleanup "DROP TABLE ALPHA" "DROP TABLE BRAVO"))
 
+(def-dataset *ds-fddl-parsing-oddities*
+  (:setup "CREATE TABLE ATEST (
+A varchar (32),
+B varchar(32))")
+  (:cleanup "DROP TABLE ATEST"))
+
 (setq *rt-fddl*
       '(
 
@@ -180,6 +186,14 @@
     (with-dataset *ds-bigint*
       (and (member (clsql:attribute-type [t_bigint] [TYPE_BIGINT]) '(:bigint :int8)) t))
   t)
+
+(deftest :fddl/attributes/8
+    ;;this is mostly from sqlite3 sending back
+    (with-dataset *ds-fddl-parsing-oddities*
+      (values
+	(clsql-sys:in (clsql:attribute-type [a] [atest]) :varchar :varchar2)
+	(clsql-sys:in (clsql:attribute-type [b] [atest]) :varchar :varchar2)))
+  t t)
 
 
 ;; create a view, test for existence, drop it and test again
