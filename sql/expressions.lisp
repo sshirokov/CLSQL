@@ -242,19 +242,34 @@
 ;; should do arity checking of subexpressions
 
 (defmethod output-sql ((expr sql-relational-exp) database)
-  (with-slots (operator sub-expressions)
-    expr
-    (let ((subs (if (consp (car sub-expressions))
-                    (car sub-expressions)
-                    sub-expressions)))
-      (write-char #\( *sql-stream*)
-      (do ((sub subs (cdr sub)))
-          ((null (cdr sub)) (output-sql (car sub) database))
-        (output-sql (car sub) database)
-        (write-char #\Space *sql-stream*)
-        (output-sql operator database)
-        (write-char #\Space *sql-stream*))
-      (write-char #\) *sql-stream*)))
+  (with-slots (operator sub-expressions) expr
+     ;; we do this as two runs so as not to emit confusing superflous parentheses
+     ;; The first loop renders all the child outputs so that we can skip anding with
+     ;; empty output (which causes sql errors)
+     ;; the next loop simply emits each sub-expression with the appropriate number of
+     ;; parens and operators
+     (flet ((trim (sub)
+	      (string-trim '(#\space #\newline #\return #\tab #\no-break_space)
+			   (with-output-to-string (*sql-stream*)
+			     (output-sql sub database)))))
+       (let ((str-subs (loop for sub in sub-expressions
+			     for str-sub = (trim sub)
+			   when (and str-sub (> (length str-sub) 0))
+			     collect str-sub)))
+	 (case (length str-subs)
+	   (0 nil)
+	   (1 (write-string (first str-subs) *sql-stream*))
+	   (t
+	      (write-char #\( *sql-stream*)
+	      (write-string (first str-subs) *sql-stream*)
+	      (loop for str-sub in (rest str-subs)
+		    do
+		 (write-char #\Space *sql-stream*)
+		 (output-sql operator database)
+		 (write-char #\Space *sql-stream*)
+		 (write-string str-sub *sql-stream*))
+	      (write-char #\) *sql-stream*))
+	   ))))
   t)
 
 (defclass sql-upcase-like (sql-relational-exp)
