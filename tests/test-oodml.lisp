@@ -594,6 +594,27 @@
   "10 Altered subloc title Altered loc"
   "10 subloc-1 a subloc")
 
+;; Verify that we can set a float to nil and then read it back
+;; (was failing in Postgresql at somepoint)
+(deftest :oodml/update-records/10
+    (with-dataset *ds-employees*
+      (let ((emp (first (clsql:select 'employee :where [= [emplid] 1] :flatp T))))
+	(setf (height emp) nil)
+	(clsql-sys:update-record-from-slot emp 'height)
+	(values
+	  (clsql:select [height] :from [employee] :where [= [emplid] 1])
+	  (progn
+	    (setf (height emp) 42.0)
+	    (clsql-sys:update-record-from-slot emp 'height)
+	    (clsql:select [height] :from [employee] :where [= [emplid] 1]))
+	  (progn
+	    (setf (height emp) 24.13d0)
+	    (clsql-sys:update-record-from-slot emp 'height)
+	    (clsql:select [height] :from [employee] :where [= [emplid] 1])))))
+  ((nil))
+  ((42.0d0))
+  ((24.13d0)))
+
 
 ;; tests update-instance-from-records
 (deftest :oodml/update-instance/1

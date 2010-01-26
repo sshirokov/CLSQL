@@ -650,8 +650,6 @@
   (("Yuri" "Gagarin" "gagarin@soviet.org"))
   (("Vladimir" "Lenin" "lenin@soviet.org")))
 
-
-
 ;; starts a transaction deletes a record and then rolls back the deletion
 (deftest :fdml/transaction/1
     (with-dataset *ds-employees*
