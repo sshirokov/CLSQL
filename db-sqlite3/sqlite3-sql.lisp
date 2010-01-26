@@ -281,14 +281,16 @@
                                     (database sqlite3-database)
                                     &key (owner nil))
   (declare (ignore owner))
+  
   (loop for field-info in (sqlite3-table-info table database)
       when (string= attribute (second field-info))
       return
         (let* ((raw-type (third field-info))
                (start-length (position #\( raw-type))
-               (type (if start-length
-                         (subseq raw-type 0 start-length)
-                       raw-type))
+               (type (string-trim '(#\space #\tab #\newline)
+				  (if start-length
+				      (subseq raw-type 0 start-length)
+				      raw-type)))
                (length (if start-length
                            (parse-integer (subseq raw-type (1+ start-length))
                                           :junk-allowed t)
