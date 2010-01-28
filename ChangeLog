@@ -1,3 +1,7 @@
+28 Jan 2009  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 4.3.1
+	* sql/utils.lisp: Ensure Lispworks 6 lock is created in sharing mode
+
 20 Jan 2009  Nathan Bird <nathan@acceleration.net>
 	* Version 4.3.0
 	* Rewrite tests to use datasets
