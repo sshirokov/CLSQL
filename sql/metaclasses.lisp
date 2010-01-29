@@ -112,6 +112,7 @@
                                           base-table))
                                  (class-name class)))))
 
+(defgeneric ordered-class-direct-slots (class))
 (defmethod ordered-class-direct-slots ((self standard-db-class))
   (let ((direct-slot-names
          (mapcar #'slot-definition-name (class-direct-slots self)))
