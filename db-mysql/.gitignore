@@ -1,3 +1,4 @@
+clsql_mysql64.so
 clsql_mysql.so
 .mysql.so
 *.fasl*

@@ -630,7 +630,7 @@
 	  (slot-value employee1 'email))))
   "lenin@soviet.org" "lenin-nospam@soviet.org")
 
-;; tests normalisedp update-instance-from-records
+;; tests normalizedp update-instance-from-records
 (deftest :oodml/update-instance/3
     (with-dataset *ds-nodes*
       (values
@@ -697,7 +697,7 @@
   "11 subloc-2 second subloc"
   "11 Altered title Altered loc")
 
-;; tests update-slot-from-record with normalisedp stuff
+;; tests update-slot-from-record with normalizedp stuff
 (deftest :oodml/update-instance/6
     (with-dataset *ds-nodes*
       (values

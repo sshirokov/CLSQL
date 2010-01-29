@@ -45,7 +45,7 @@
                 (setf (slot-value instance slot-name)
                       (fault-join-slot class instance slot-object))
                 (setf (slot-value instance slot-name) nil)))
-          (when (and (normalisedp class)
+          (when (and (normalizedp class)
                      (not (member slot-name
                                   (mapcar #'(lambda (esd) (slot-definition-name esd))
                                           (ordered-class-direct-slots class))))
@@ -53,7 +53,7 @@
             (let ((*db-deserializing* t))
               (if (view-database instance)
                   (setf (slot-value instance slot-name)
-                        (fault-join-normalised-slot class instance slot-object))
+                        (fault-join-normalized-slot class instance slot-object))
                   (setf (slot-value instance slot-name) nil)))))))
   (call-next-method))
 
@@ -93,7 +93,7 @@ in DATABASE which defaults to *DEFAULT-DATABASE*."
     (if tclass
         (let ((*default-database* database)
               (pclass (car (class-direct-superclasses tclass))))
-          (when (and (normalisedp tclass) (not (table-exists-p (view-table pclass))))
+          (when (and (normalizedp tclass) (not (table-exists-p (view-table pclass))))
             (create-view-from-class (class-name pclass)
                                     :database database :transactions transactions))
           (%install-class tclass database :transactions transactions))
@@ -104,7 +104,7 @@ in DATABASE which defaults to *DEFAULT-DATABASE*."
 (defmethod %install-class ((self standard-db-class) database
                            &key (transactions t))
   (let ((schemadef '())
-        (ordered-slots (if (normalisedp self)
+        (ordered-slots (if (normalizedp self)
                            (ordered-class-direct-slots self)
                            (ordered-class-slots self))))
     (dolist (slotdef ordered-slots)
@@ -113,7 +113,7 @@ in DATABASE which defaults to *DEFAULT-DATABASE*."
         (when res
           (push res schemadef))))
     (if (not schemadef)
-        (unless (normalisedp self)
+        (unless (normalizedp self)
           (error "Class ~s has no :base slots" self))
         (progn
           (create-table (sql-expression :table (view-table self)) (nreverse schemadef)

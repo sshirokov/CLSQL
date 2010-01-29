@@ -1,8 +1,6 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; The CLSQL Object Oriented Data Manipulation Language (OODML).
 ;;;;
 ;;;; This file is part of CLSQL.
@@ -55,7 +53,7 @@
 (defun generate-selection-list (vclass)
   (let* ((sels nil)
          (this-class vclass)
-         (slots (if (normalisedp vclass)
+         (slots (if (normalizedp vclass)
                     (labels ((getdslots ()
                                (let ((sl (ordered-class-direct-slots this-class)))
                                  (cond (sl)
@@ -174,8 +172,8 @@
                                     (database *default-database*))
   (let* ((database (or (view-database obj) database))
          (view-class (class-of obj)))
-    (when (normalisedp view-class)
-      ;; If it's normalised, find the class that actually contains
+    (when (normalizedp view-class)
+      ;; If it's normalized, find the class that actually contains
       ;; the slot that's tied to the db
       (setf view-class
             (do ((this-class view-class
@@ -208,6 +206,13 @@
 
 (defmethod update-record-from-slots ((obj standard-db-object) slots &key
                                      (database *default-database*))
+  (when (normalizedp (class-of obj))
+    ;; FIXME: Rewrite to bundle slots for same table to be written
+    ;; as avpairs (like how is done for non-normalized view-classes below)
+    (dolist (slot slots)
+      (update-record-from-slot obj slot :database database))
+    (return-from update-record-from-slots (values)))
+
   (let* ((database (or (view-database obj) database))
          (vct (view-table (class-of obj)))
          (sds (slotdefs-for-slots-with-class slots (class-of obj)))
@@ -250,20 +255,20 @@
              (pk-slot (car (keyslots-for-class view-class)))
              (view-class-table (view-table view-class))
              (pclass (car (class-direct-superclasses view-class))))
-        (when (normalisedp view-class)
+        (when (normalizedp view-class)
           (setf pk (update-records-from-instance obj :database database
                                                  :this-class pclass))
           (when pk-slot
             (setf (slot-value obj (slot-definition-name pk-slot)) pk)))
         (let* ((slots (remove-if-not #'slot-storedp
-                                     (if (normalisedp view-class)
+                                     (if (normalizedp view-class)
                                          (ordered-class-direct-slots view-class)
                                          (ordered-class-slots view-class))))
                (record-values (mapcar #'slot-value-list slots)))
-          (cond ((and (not (normalisedp view-class))
+          (cond ((and (not (normalizedp view-class))
                       (not record-values))
                  (error "No settable slots."))
-                ((and (normalisedp view-class)
+                ((and (normalizedp view-class)
                       (not record-values))
                  nil)
                 ((view-database obj)
@@ -311,7 +316,7 @@
   (let* ((view-class (or this-class (class-of instance)))
          (pclass (car (class-direct-superclasses view-class)))
          (pres nil))
-    (when (normalisedp view-class)
+    (when (normalizedp view-class)
       (setf pres (update-instance-from-records instance :database database
                                                :this-class pclass)))
     (let* ((view-table (sql-expression :table (view-table view-class)))
@@ -335,8 +340,8 @@
                                     slot &key (database *default-database*))
   (let* ((view-class (find-class (class-name (class-of instance))))
          (slot-def (slotdef-for-slot-with-class slot view-class)))
-    (when (normalisedp view-class)
-      ;; If it's normalised, find the class that actually contains
+    (when (normalizedp view-class)
+      ;; If it's normalized, find the class that actually contains
       ;; the slot that's tied to the db
       (setf view-class
             (do ((this-class view-class
@@ -875,7 +880,7 @@ maximum of MAX-LEN instances updated in each query."
 ;;;; Should we not return the whole result, instead of only
 ;;;; the one slot-value? We get all the values from the db
 ;;;; anyway, so?
-(defun fault-join-normalised-slot (class object slot-def)
+(defun fault-join-normalized-slot (class object slot-def)
   (labels ((getsc (this-class)
              (let ((sc (car (class-direct-superclasses this-class))))
                (if (key-slots sc)
@@ -898,7 +903,7 @@ maximum of MAX-LEN instances updated in each query."
                                   (slot-value object hk))
                                  (t hk)))))
 
-        ;; Caching nil in next select, because in normalised mode
+        ;; Caching nil in next select, because in normalized mode
         ;; records can be changed through other instances (children,
         ;; parents) so changes possibly won't be noticed
         (let ((res (car (select (class-name sc) :where jq
@@ -907,14 +912,14 @@ maximum of MAX-LEN instances updated in each query."
                                                 :database (view-database object))))
               (slot-name (slot-definition-name slot-def)))
 
-          ;; If current class is normalised and wanted slot is not
+          ;; If current class is normalized and wanted slot is not
           ;; a direct member, recurse up
-          (if (and (normalisedp class)
+          (if (and (normalizedp class)
                    (not (member slot-name
                                 (mapcar #'(lambda (esd) (slot-definition-name esd))
                                         (ordered-class-direct-slots class))))
                    (not (slot-boundp res slot-name)))
-              (fault-join-normalised-slot sc res slot-def)
+              (fault-join-normalized-slot sc res slot-def)
               (slot-value res slot-name)))))) )
 
 (defun join-qualifier (class object slot-def)
@@ -979,7 +984,7 @@ maximum of MAX-LEN instances updated in each query."
                          ;; find all immediate-select slots and join-vals for this object
                          (let* ((jo-class (class-of jo))
                                 (slots
-                                 (if (normalisedp jo-class)
+                                 (if (normalizedp jo-class)
                                      (class-direct-slots jo-class)
                                      (class-slots jo-class)))
                                 (pos-list (remove-if #'null

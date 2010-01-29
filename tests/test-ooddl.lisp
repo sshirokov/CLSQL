@@ -71,20 +71,20 @@
             (clsql-sys::class-slots (find-class 'company))))
   t t t t t t)
 
-;; Ensure classes are correctly marked normalised or not, default not
+;; Ensure classes are correctly marked normalized or not, default not
 ;(deftest :ooddl/metaclass/3
 ;    (values
-;     (clsql-sys::normalisedp derivednode1)
-;    (clsql-sys::normalisedp basenode)
-;    (clsql-sys::normalisedp company1)
-;    (clsql-sys::normalisedp employee3)
-;    (clsql-sys::normalisedp derivednode-sc-2))
+;     (clsql-sys::normalizedp derivednode1)
+;    (clsql-sys::normalizedp basenode)
+;    (clsql-sys::normalizedp company1)
+;    (clsql-sys::normalizedp employee3)
+;    (clsql-sys::normalizedp derivednode-sc-2))
 ;  t nil nil nil t)
 
 ;(deftest :ooddl/metaclass/3
 ; (values
-;  (normalisedp (find-class 'baseclass))
-;  (normalisedp (find-class 'normderivedclass)))
+;  (normalizedp (find-class 'baseclass))
+;  (normalizedp (find-class 'normderivedclass)))
 ; nil t)
 
 (deftest :ooddl/join/1

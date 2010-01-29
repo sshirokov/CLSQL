@@ -27,7 +27,7 @@ shared64_lib=$(base)64.so
 all: $(shared_lib)
 
 CFLAGS=-I /usr/local/include/mysql -I /usr/include/mysql -I /sw/include/mysql -I /opt/local/include/mysql -I /opt/local/include/mysql5/mysql -I /usr/local/mysql/include
-LDFLAGS=-L/usr/local/lib64/mysql -L/usr/local/mysql/lib32 -L/usr/local/lib/mysql -L/usr/lib/mysql -L/sw/lib -L/opt/local/lib/mysql -L/opt/local/lib/mysql5/mysql -L/usr/local/mysql/lib -L/usr/lib/gcc/i686-pc-cygwin/3.4.4 -lmysqlclient -lz -lc
+LDFLAGS=-L/usr/local/lib64/mysql -L/usr/local/lib/mysql -L/usr/lib64/mysql -L/usr/lib/mysql -L/sw/lib -L/opt/local/lib/mysql -L/opt/local/lib/mysql5/mysql -L/usr/local/mysql/lib -L/usr/lib/gcc/i686-pc-cygwin/3.4.4 -lmysqlclient -lz -lc
 
 CFLAGS32=-I /usr/local/include/mysql -I /usr/include/mysql -I /sw/include/mysql -I /opt/local/include/mysql -I /opt/local/include/mysql5/mysql -I /usr/local/mysql/include -m32
 LDFLAGS32=-L/lib32 -L/usr/lib32 -melf_i386 -lmysqlclient -lz -lc

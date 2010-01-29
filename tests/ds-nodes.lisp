@@ -19,7 +19,7 @@
 
 
 
-;; classes for testing the normalisedp stuff
+;; classes for testing the normalizedp stuff
 (def-view-class node ()
   ((node-id :accessor node-id :initarg :node-id
             :type integer :db-kind :key
@@ -34,31 +34,31 @@
   ((setting-id :accessor setting-id :initarg :setting-id
                :type integer :db-kind :key :db-constraints (:not-null))
    (vars :accessor vars :initarg :vars :type (varchar 240)))
-  (:normalisedp t))
+  (:normalizedp t))
 
 (def-view-class user (node)
   ((user-id :accessor user-id :initarg :user-id
             :type integer :db-kind :key :db-constraints (:not-null))
    (nick :accessor nick :initarg :nick :type (varchar 64)))
-  (:normalisedp t))
+  (:normalizedp t))
 
 (def-view-class theme (setting)
   ((theme-id :accessor theme-id :initarg :theme-id
              :type integer :db-kind :key :db-constraints (:not-null))
    (doc :accessor doc :initarg :doc :type (varchar 240)))
-  (:normalisedp t))
+  (:normalizedp t))
 
 ;; A class that uses only a superclass db table
 (def-view-class location (node)
   ()
   (:base-table node)
-  (:normalisedp t))
+  (:normalizedp t))
 
 (def-view-class subloc (location)
   ((subloc-id :accessor subloc-id :initarg :subloc-id
 	      :type integer :db-kind :key :db-constraints (:not-null))
    (loc :accessor loc :initarg :loc :type (varchar 64)))
-  (:normalisedp t))
+  (:normalizedp t))
 
 
 

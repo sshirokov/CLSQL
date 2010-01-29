@@ -46,8 +46,8 @@
    (key-slots
     :accessor key-slots
     :initform nil)
-   (normalisedp
-    :accessor normalisedp
+   (normalizedp
+    :accessor normalizedp
     :initform nil)
    (class-qualifier
     :accessor view-class-qualifier
@@ -112,6 +112,7 @@
                                           base-table))
                                  (class-name class)))))
 
+(defgeneric ordered-class-direct-slots (class))
 (defmethod ordered-class-direct-slots ((self standard-db-class))
   (let ((direct-slot-names
          (mapcar #'slot-definition-name (class-direct-slots self)))
@@ -125,7 +126,7 @@
 (defmethod initialize-instance :around ((class standard-db-class)
                                         &rest all-keys
                                         &key direct-superclasses base-table
-                                        qualifier normalisedp
+                                        qualifier normalizedp
                                         &allow-other-keys)
   (let ((root-class (find-class 'standard-db-object nil))
         (vmc 'standard-db-class))
@@ -142,19 +143,19 @@
                    (remove-keyword-arg all-keys :direct-superclasses)))
         (call-next-method))
     (set-view-table-slot class base-table)
-    (setf (normalisedp class) (car normalisedp))
+    (setf (normalizedp class) (car normalizedp))
     (register-metaclass class (nth (1+ (position :direct-slots all-keys))
                                    all-keys))))
 
 (defmethod reinitialize-instance :around ((class standard-db-class)
                                           &rest all-keys
-                                          &key base-table normalisedp
+                                          &key base-table normalizedp
                                           direct-superclasses qualifier
                                           &allow-other-keys)
   (let ((root-class (find-class 'standard-db-object nil))
         (vmc 'standard-db-class))
     (set-view-table-slot class base-table)
-    (setf (normalisedp class) (car normalisedp))
+    (setf (normalizedp class) (car normalizedp))
     (setf (view-class-qualifier class)
           (car qualifier))
     (if (and root-class (not (equal class root-class)))
@@ -209,7 +210,7 @@
     (setf (key-slots class) (remove-if-not (lambda (slot)
                                              (eql (slot-value slot 'db-kind)
                                                   :key))
-                                           (if (normalisedp class)
+                                           (if (normalizedp class)
                                                (ordered-class-direct-slots class)
                                                (ordered-class-slots class))))))
 
@@ -218,7 +219,7 @@
   (setf (key-slots class) (remove-if-not (lambda (slot)
                                            (eql (slot-value slot 'db-kind)
                                                 :key))
-                                         (if (normalisedp class)
+                                         (if (normalizedp class)
                                              (ordered-class-direct-slots class)
                                              (ordered-class-slots class)))))
 
