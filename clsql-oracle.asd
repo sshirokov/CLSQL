@@ -7,8 +7,6 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; This file is part of CLSQL.
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software

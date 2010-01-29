@@ -2,12 +2,10 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          clsql-sqlite.asd
+;;;; Name:          clsql-sqlite3.asd
 ;;;; Purpose:       ASDF file for CLSQL SQLite3 backend
 ;;;; Programmer:    Aurelio Bignoli
 ;;;; Date Started:  Oct 2004
-;;;;
-;;;; $Id$
 ;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2004 by Aurelio Bignoli
 ;;;;

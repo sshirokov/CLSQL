@@ -3,9 +3,8 @@
 ;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; File:     clsql-tests.asd
-;;;; Authors:  Marcus Pearce <m.t.pearce@city.ac.uk> and Kevin Rosenberg 
+;;;; Authors:  Marcus Pearce <m.t.pearce@city.ac.uk> and Kevin Rosenberg
 ;;;; Created:  30/03/2004
-;;;; Updated:  $Id$
 ;;;;
 ;;;; This file is part of CLSQL.
 ;;;;
@@ -26,7 +25,7 @@
     :licence ""
     :description "A regression test suite for CLSQL."
     :depends-on (clsql rt)
-    :components 
+    :components
     ((:module tests
 	      :serial t
 	      :components ((:file "package")

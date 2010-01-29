@@ -7,9 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id$
-;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2010 by Kevin M. Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
@@ -23,9 +21,9 @@
   (unless (find-package 'uffi)
     (asdf:operate 'asdf:load-op 'uffi)))
 
-(defvar *library-file-dir* 
-  (merge-pathnames "db-mysql/" 
-                   (make-pathname :name nil :type nil 
+(defvar *library-file-dir*
+  (merge-pathnames "db-mysql/"
+                   (make-pathname :name nil :type nil
                                   :defaults *load-truename*)))
 
 (defclass clsql-mysql-source-file (c-source-file)
@@ -80,7 +78,7 @@
   :description "Common Lisp SQL MySQL Driver"
   :long-description "cl-sql-mysql package provides a database driver to the MySQL database system."
 
-  :depends-on (uffi clsql clsql-uffi)
+  :depends-on (clsql clsql-uffi)
   :components
   ((:module :db-mysql
 	    :components

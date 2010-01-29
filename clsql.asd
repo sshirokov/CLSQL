@@ -3,11 +3,9 @@
 ;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:     clsql.asd
-;;;; Purpose:  System definition for CLSQL-CLASSIC
+;;;; Purpose:  ASDF system definition for CLSQL
 ;;;; Authors:  Marcus Pearce and Kevin M. Rosenberg
 ;;;; Created:  March 2004
-;;;;
-;;;; $Id$
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License

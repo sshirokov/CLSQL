@@ -7,8 +7,6 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
@@ -29,7 +27,7 @@
   :description "Common Lisp PostgreSQL API Driver"
   :long-description "cl-sql-postgresql package provides a the database driver for the PostgreSQL API."
 
-  :depends-on (uffi clsql clsql-uffi)
+  :depends-on (clsql clsql-uffi)
   :components
   ((:module :db-postgresql
 	    :components
