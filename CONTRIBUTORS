@@ -5,6 +5,7 @@ Marcus Pearce <m.t.pearce@city.ac.uk> (initial port UncommonSQL, co-developer of
 Pierre Mai (original author MaiSQL from which CLSQL was based)
 Aurelio Bignoli (SQLite backend)
 Marc Battyani (Large object support for postgresql, initial connection pool code)
+Nathan Bird (sponsored by http://www.acceleration.net/programming/)
 
 
 USQL Contributors
