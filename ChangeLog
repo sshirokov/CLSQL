@@ -1,6 +1,8 @@
 2010-01-29  Nathan Bird  <nathan@acceleration.net>
-	* A lot more tests and test setup tweaks.
-	* output-sql on sql-relational-exp does better arity checking now. (apply #'sql-and some-list) gives better results.
+	* tests/*.lisp: A lot more tests and test setup tweaks.
+	* sql/expressions.lisp: output-sql on sql-relational-exp does
+	better arity checking now. (apply #'sql-and some-list) gives
+	better results.
 
 29 Jan 2009  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/oodml.lisp: Fix for UPDATE-RECORD-FROM-SLOTS for normalized
