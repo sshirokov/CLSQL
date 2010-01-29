@@ -3,7 +3,7 @@
 ;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; Name:     clsql.asd
-;;;; Purpose:  ASDF system definition for CLSQL
+;;;; Purpose:  ASDF System definition for CLSQL
 ;;;; Authors:  Marcus Pearce and Kevin M. Rosenberg
 ;;;; Created:  March 2004
 ;;;;
@@ -16,14 +16,15 @@
 (defpackage #:clsql-system (:use #:asdf #:cl))
 (in-package #:clsql-system)
 
-#+clisp
-(progn
-  (asdf:operate 'asdf:load-op 'cffi)
-  (asdf:operate 'asdf:load-op 'cffi-uffi-compat)
-  (asdf:defsystem uffi :depends-on (cffi-uffi-compat)))
+#+(and clisp (not :clsql-cffi))
+(asdf:operate 'asdf:load-op 'clsql-cffi)
 
 ;; need to load uffi for below perform :after method
 (eval-when (:compile-toplevel :load-toplevel :execute)
+  #+:clsql-cffi
+  (unless (find-package 'cffi-uffi-compat)
+    (asdf:operate 'asdf:load-op 'cffi-uffi-compat))
+  #-:clsql-cffi
   (unless (find-package 'uffi)
     (asdf:operate 'asdf:load-op 'uffi)))
 

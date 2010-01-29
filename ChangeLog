@@ -1,3 +1,8 @@
+2010-01-29  Kevin Rosenberg <kevin@rosenberg.net
+	* clsql-cffi.asd: New file that causes CLSQL to use
+	CFFI-UFFI-COMPAT library rather than UFFI. Perform 'asdf:load-op
+	on this system rather than clsql to use CFFI-UFFI-COMPAT.
+
 2010-01-29  Nathan Bird  <nathan@acceleration.net>
 	* tests/*.lisp: A lot more tests and test setup tweaks.
 	* sql/expressions.lisp: output-sql on sql-relational-exp does
