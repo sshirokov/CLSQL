@@ -1,4 +1,5 @@
 2010-01-29  Kevin Rosenberg <kevin@rosenberg.net
+	* Version 4.3.3
 	* clsql-cffi.asd: New file that causes CLSQL to use
 	CFFI-UFFI-COMPAT library rather than UFFI. Perform 'asdf:load-op
 	on this system rather than clsql to use CFFI-UFFI-COMPAT.
