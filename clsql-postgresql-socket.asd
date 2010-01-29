@@ -7,8 +7,6 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
@@ -29,7 +27,7 @@
   :description "Common Lisp SQL PostgreSQL Socket Driver"
   :long-description "cl-sql-postgresql-socket package provides a database driver to the PostgreSQL database via a socket interface."
 
-  :depends-on (clsql uffi md5 #+sbcl sb-bsd-sockets)
+  :depends-on (clsql md5 #-:clsql-cffi uffi #+:clsql-cffi cffi-uffi-compat #+sbcl sb-bsd-sockets)
   :components
   ((:module :db-postgresql-socket
 	    :components

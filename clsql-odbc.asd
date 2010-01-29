@@ -7,8 +7,6 @@
 ;;;; Author:   Kevin M. Rosenberg
 ;;;; Created:  April 2004
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 200d42 by Kevin M. Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
@@ -27,7 +25,7 @@
   :description "Common Lisp SQL ODBC Driver"
   :long-description "cl-sql-odbc package provides a database driver to the ODBC database system."
 
-  :depends-on (uffi clsql clsql-uffi)
+  :depends-on (clsql clsql-uffi)
   :components
   ((:module :db-odbc
 	    :components
