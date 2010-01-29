@@ -166,7 +166,7 @@
            (if skip-tests
                (dolist (skipped skip-tests)
                  (format *report-stream*
-                         "~&   ~20A ~A~%" (car skipped) (cdr skipped)))
+                         "~&   ~30A ~A~%" (car skipped) (cdr skipped)))
                (format *report-stream* " None~%")))
     (disconnect)))
 
@@ -256,7 +256,7 @@
 			      :oodml/update-instance/4 :oodml/update-instance/5
 			      :oodml/update-instance/6 :oodml/update-instance/7
 			      :oodml/db-auto-sync/3 :oodml/db-auto-sync/4))
-	   (push (cons test ":auto-increment not supported.") skbip-tests))
+	   (push (cons test ":auto-increment not supported.") skip-tests))
           (t
            (push test-form test-forms)))))
       (values (nreverse test-forms) (nreverse skip-tests))))
