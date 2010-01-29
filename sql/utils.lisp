@@ -7,9 +7,7 @@
 ;;;; Programmer:   Kevin M. Rosenberg
 ;;;; Date Started: Mar 2002
 ;;;;
-;;;; $Id$
-;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2010 by Kevin M. Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
@@ -17,6 +15,15 @@
 ;;;; *************************************************************************
 
 (in-package #:clsql-sys)
+
+(defvar +whitespace-chars+
+  '(#\space #\tab #\newline #\return
+    ;; Tested: sbcl, allegrocl, and clisp use #\no-break_space
+    ;; lispworks uses #\no-break-space
+    #+lispworks #\no-break-space
+    #-lispworks #\no-break_space
+    )
+  "List of whitespace characters for this lisp implementation.")
 
 (defun number-to-sql-string (num)
   (etypecase num
@@ -353,7 +360,7 @@ list of characters and replacement strings."
     (string-upcase str)))
 
 (defun ensure-keyword (name)
-  "Returns keyword for a name"
+  "Returns keyword for a name."
   (etypecase name
     (keyword name)
     (string (nth-value 0 (intern (symbol-name-default-case name) :keyword)))
