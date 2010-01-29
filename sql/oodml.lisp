@@ -1,8 +1,6 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; The CLSQL Object Oriented Data Manipulation Language (OODML).
 ;;;;
 ;;;; This file is part of CLSQL.
@@ -208,6 +206,13 @@
 
 (defmethod update-record-from-slots ((obj standard-db-object) slots &key
                                      (database *default-database*))
+  (when (normalizedp (class-of obj))
+    ;; FIXME: Rewrite to bundle slots for same table to be written
+    ;; as avpairs (like how is done for non-normalized view-classes below)
+    (dolist (slot slots)
+      (update-record-from-slot obj slot :database database))
+    (return-from update-record-from-slots (values)))
+
   (let* ((database (or (view-database obj) database))
          (vct (view-table (class-of obj)))
          (sds (slotdefs-for-slots-with-class slots (class-of obj)))
