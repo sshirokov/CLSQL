@@ -287,7 +287,7 @@
       return
         (let* ((raw-type (third field-info))
                (start-length (position #\( raw-type))
-               (type (string-trim '(#\space #\tab #\newline)
+               (type (string-trim clsql-sys::+whitespace-chars+
 				  (if start-length
 				      (subseq raw-type 0 start-length)
 				      raw-type)))
