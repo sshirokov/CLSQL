@@ -249,7 +249,12 @@
      ;; the next loop simply emits each sub-expression with the appropriate number of
      ;; parens and operators
      (flet ((trim (sub)
-	      (string-trim '(#\space #\newline #\return #\tab #\no-break-space)
+	      (string-trim '(#\space #\newline #\return #\tab
+                             ;; sbcl, allegrocl, and clisp use #\no-break_space
+                             ;; lispworks uses #\no-break-space
+                             #-lispworks #\no-break_space
+                             #+lispworks #\no-break-space
+                             )
 			   (with-output-to-string (*sql-stream*)
 			     (output-sql sub database)))))
        (let ((str-subs (loop for sub in sub-expressions
