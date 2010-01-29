@@ -1,4 +1,5 @@
 28 Jan 2009  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 4.3.2
 	* Change "normalise" from British spelling for consistency with
 	other American spellings in CLSQL.
 
