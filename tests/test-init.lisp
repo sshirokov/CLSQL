@@ -277,6 +277,17 @@
 			      :oodml/update-instance/6 :oodml/update-instance/7
 			      :oodml/db-auto-sync/3 :oodml/db-auto-sync/4))
 	   (push (cons test ":auto-increment not supported.") skip-tests))
+         ((and (not (member *test-database-underlying-type*
+			    '(:postgresql :postgresql-socket)))
+               (clsql-sys:in test
+                             :time/pg/fdml/usec :time/pg/oodml/no-usec :time/pg/oodml/usec))
+          (push (cons test "cant run the same date/time tests everywhere that we do on postgres because there are not standard datetime database types.")
+                skip-tests))
+         ((and (member *test-database-underlying-type* '(:mysql))
+               (clsql-sys:in test :time/cross-platform/usec/no-tz :time/cross-platform/usec/tz))
+          (push (cons test "Mysql does not support fractional seconds (on timestamp columns), see http://forge.mysql.com/worklog/task.php?id=946 perhaps?")
+                skip-tests))
+
           (t
            (push test-form test-forms)))))
       (values (nreverse test-forms) (nreverse skip-tests))))

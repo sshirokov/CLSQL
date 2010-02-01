@@ -6,6 +6,29 @@
 ;;; Test time functions (time.lisp)
 
 (in-package #:clsql-tests)
+#.(clsql-sys:locally-enable-sql-reader-syntax)
+
+(def-dataset *ds-datetest*
+  (:setup (lambda () (clsql-sys:create-view-from-class 'datetest)))
+  (:cleanup "DROP TABLE datetest"))
+
+(def-dataset *cross-platform-datetest*
+  (:setup "CREATE TABLE DATETEST (TESTTIME TIMESTAMP)")
+  (:cleanup "DROP TABLE DATETEST"))
+
+(def-view-class datetest ()
+  ((testtimetz :COLUMN "testtimetz" :TYPE
+	       clsql-sys:wall-time :DB-KIND :BASE
+	       :DB-CONSTRAINTS COMMON-LISP:NIL
+	       :ACCESSOR testtimetz :INITARG
+	       :testtimetz :INITFORM COMMON-LISP:NIL
+	       :DB-TYPE "timestamptz")
+   (testtime :COLUMN "testtime" :TYPE
+	     clsql-sys:wall-time :DB-KIND :BASE
+	     :DB-CONSTRAINTS COMMON-LISP:NIL
+	     :ACCESSOR testtime :INITARG
+	     :testtime :INITFORM COMMON-LISP:NIL
+	     :DB-TYPE "timestamp")))
 
 (setq *rt-time*
       '(
@@ -213,4 +236,153 @@
       (clsql:time= add-time roll-time))
   t)
 
+
+(deftest :time/14-usec
+    ;;make sure when we print and parse we get the same time.
+    (let* ((time (clsql-sys:make-time :year 2010 :month 1 :day 4
+				      :hour 14 :minute 15 :second 44 :usec 3))
+	   (string-time (clsql-sys:format-time nil time :format :iso))
+	   (time2 (clsql-sys:parse-timestring string-time)))
+      (format-time nil time2 :format :iso))
+  #.(format-time nil (clsql-sys:make-time :year 2010 :month 1 :day 4
+				      :hour 14 :minute 15 :second 44 :usec 3)
+     :format :iso)
+  t)
+
+
+;;; The cross platform dataset uses the 'timestamp' column type which is
+;;; in sql-92, for all that means.
+
+(deftest :time/cross-platform/no-usec/no-tz
+    (with-dataset *cross-platform-datetest*
+      (let ((time (parse-timestring "2008-09-09T14:37:29")))
+	(clsql-sys:insert-records :into [datetest]
+				  :attributes '([testtime])
+				  :values (list time))
+	(let ((testtime
+	       (first (clsql:select [testtime]
+				    :from [datetest]
+				    :limit 1 :flatp T
+				    :where [= [testtime] time] ))))
+	  (format-time nil (parse-timestring testtime) :format :iso)
+	  )))
+  #.(format-time nil (parse-timestring "2008-09-09T14:37:29") :format :iso))
+
+(deftest :time/cross-platform/no-usec/tz
+    (with-dataset *cross-platform-datetest*
+      (let ((time (parse-timestring "2008-09-09T14:37:29-04:00")))
+	(clsql-sys:insert-records :into [datetest]
+				  :attributes '([testtime])
+				  :values (list time))
+	(let ((testtime
+	       (first (clsql:select [testtime]
+				    :from [datetest]
+				    :limit 1 :flatp T
+				    :where [= [testtime] time] ))))
+	  (format-time nil (parse-timestring testtime) :format :iso)
+	  )))
+  #.(format-time nil (parse-timestring "2008-09-09T14:37:29-04:00") :format :iso))
+
+(deftest :time/cross-platform/usec/no-tz
+    (with-dataset *cross-platform-datetest*
+      (let ((time (parse-timestring "2008-09-09T14:37:29.000213")))
+	(clsql-sys:insert-records :into [datetest]
+				  :attributes '([testtime])
+				  :values (list time))
+	(let ((testtime
+	       (first (clsql:select [testtime]
+				    :from [datetest]
+				    :limit 1 :flatp T
+				    :where [= [testtime] time] ))))
+	  (format-time nil (parse-timestring testtime) :format :iso)
+	  )))
+  #.(format-time nil (parse-timestring "2008-09-09T14:37:29.000213") :format :iso))
+
+(deftest :time/cross-platform/usec/tz
+    (with-dataset *cross-platform-datetest*
+      (let ((time (parse-timestring "2008-09-09T14:37:29.000213-04:00")))
+	(clsql-sys:insert-records :into [datetest]
+				  :attributes '([testtime])
+				  :values (list time))
+	(let ((testtime
+	       (first (clsql:select [testtime]
+				    :from [datetest]
+				    :limit 1 :flatp T
+				    :where [= [testtime] time] ))))
+	  (format-time nil (parse-timestring testtime) :format :iso)
+	  )))
+  #.(format-time nil (parse-timestring "2008-09-09T14:37:29.000213-04:00") :format :iso))
+
+
+
+;;; All odbc databases use local times exclusively (they do not send timezone info)
+;;; Postgresql can use timezones, except when being used over odbc.  This test when
+;;; run through both postgres socket and postgres odbc should test a fairly
+;;; broad swath of available problem space
+;;;
+;;; Things the following tests try to prove correct
+;;;  * Reading and writing usec and usec-less times
+;;;  * reading and writing timezones (Z=utc) when appropriate (eg: postgresql-socket)
+;;;  * reading and writing localtimes when appropriate (eg: ODBC)
+;;;  * reading and writing through both the oodml and fdml layers
+
+
+
+(deftest :time/pg/fdml/usec
+    (with-dataset *ds-datetest*
+      (let ((time (parse-timestring "2008-09-09T14:37:29.000213-04:00")))
+	(clsql-sys:insert-records :into [datetest]
+				  :attributes '([testtimetz] [testtime])
+				  :values (list time time))
+	(destructuring-bind (testtimetz testtime)
+	    (first (clsql:select [testtimetz] [testtime]
+				 :from [datetest]
+				 :limit 1 :flatp T
+				 :where [= [testtime] time] ))
+	  (assert (time= (parse-timestring testtimetz) time) (testtimetz time)
+		  "Timetz of o: ~s should be time:~s" testtimetz time)
+	  (assert (time= (parse-timestring testtime) time) (testtime time)
+		  "Time of o: ~s should be time:~s" testtime time))))
+  nil)
+
+(deftest :time/pg/oodml/no-usec
+    (with-dataset *ds-datetest*
+      (let ((time (parse-timestring "2008-09-09T14:37:29-04:00")))
+	(clsql-sys:update-records-from-instance
+	 (make-instance 'datetest :testtimetz time :testtime time))
+	(let ((o (first (clsql:select
+			 'datetest
+			 :limit 1 :flatp T
+			 :where [= [testtime] time] ))))
+	  (assert o (o) "o shouldnt be null here (we should have just inserted)")
+	  (update-records-from-instance o)
+	  (update-instance-from-records o)
+	  (assert (time= (testtime o) time) (time o)
+		  "Time of o: ~s should be time:~s" (testtime o) time)
+	  (assert (time= (testtimetz o) time) (time o)
+		  "Timetz of o: ~s should be time:~s" (testtime o) time))))
+  nil)
+
+(deftest :time/pg/oodml/usec
+    (with-dataset *ds-datetest*
+      (let ((time (parse-timestring "2008-09-09T14:37:29.000278-04:00")))
+	(clsql-sys:update-records-from-instance
+	 (make-instance 'datetest :testtimetz time :testtime time))
+	(let ((o (first (clsql:select
+			 'datetest
+			 :limit 1 :flatp T
+			 :where [= [testtime] time] ))))
+	  (assert o (o) "o shouldnt be null here (we should have just inserted)")
+	  (update-records-from-instance o)
+	  (update-instance-from-records o)
+	  (assert (time= (testtime o) time) (time o)
+		  "Time of o: ~s should be time:~s" (testtime o) time)
+	  (assert (time= (testtimetz o) time) (time o)
+		  "Timetz of o: ~s should be time:~s" (testtime o) time)
+	  )))
+  nil)
+
 ))
+
+
+#.(clsql-sys:locally-disable-sql-reader-syntax)
