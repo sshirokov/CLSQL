@@ -183,6 +183,9 @@
                                *rt-ooddl* *rt-oodml* *rt-syntax*))
       (let ((test (second test-form)))
         (cond
+	  ((and (not (eql db-underlying-type :mysql))
+		(clsql-sys:in test :connection/query-command))
+	   (push (cons test "Known to only work in mysql as yet.") skip-tests))
           ((and (null (clsql-sys:db-type-has-views? db-underlying-type))
                 (clsql-sys:in test :fddl/view/1 :fddl/view/2 :fddl/view/3 :fddl/view/4))
            (push (cons test "views not supported.") skip-tests))
