@@ -178,58 +178,6 @@
   (setf (database-mysql-ptr database) nil)
   t)
 
-
-(defmethod database-query (query-expression (database mysql-database)
-			   result-types field-names)
-  (declare (optimize (speed 3) (safety 0) (debug 0) (space 0)))
-  (let ((mysql-ptr (database-mysql-ptr database)))
-    (uffi:with-cstring (query-native query-expression)
-      (if (zerop (mysql-real-query mysql-ptr query-native
-				   (expression-length query-expression)))
-	  (let ((res-ptr (mysql-use-result mysql-ptr)))
-	    (if (and res-ptr (not (uffi:null-pointer-p res-ptr)))
-		(unwind-protect
-		     (let ((num-fields (mysql-num-fields res-ptr)))
-		       (declare (fixnum num-fields))
-		       (setq result-types (canonicalize-types
-					   result-types res-ptr))
-		       (values
-			 (loop for row = (mysql-fetch-row res-ptr)
-			       for lengths = (mysql-fetch-lengths res-ptr)
-			       until (uffi:null-pointer-p row)
-			       collect
-			    (do* ((rlist (make-list num-fields))
-				  (i 0 (1+ i))
-				  (pos rlist (cdr pos)))
-				((= i num-fields) rlist)
-			      (declare (fixnum i))
-			      (setf (car pos)
-				    (convert-raw-field
-				     (uffi:deref-array row '(:array
-							     (* :unsigned-char))
-						       i)
-				     result-types i
-				     (uffi:deref-array lengths '(:array :unsigned-long)
-						       i)))))
-			 (when field-names
-			   (result-field-names res-ptr))))
-		  (mysql-free-result res-ptr))
-		(unless (zerop (mysql-errno mysql-ptr))
-		  ;;from http://dev.mysql.com/doc/refman/5.0/en/mysql-field-count.html
-		  ;; if mysql_use_result or mysql_store_result return a null ptr,
-		  ;; we use a mysql_errno check to see if it had a problem or just
-		  ;; was a query without a result. If no error, just return nil.
-		  (error 'sql-database-data-error
-			 :database database
-			 :expression query-expression
-			 :error-id (mysql-errno mysql-ptr)
-			 :message (mysql-error-string mysql-ptr)))))
-	  (error 'sql-database-data-error
-		 :database database
-		 :expression query-expression
-		 :error-id (mysql-errno mysql-ptr)
-		 :message (mysql-error-string mysql-ptr))))))
-
 (defmethod database-execute-command (sql-expression (database mysql-database))
   (uffi:with-cstring (sql-native sql-expression)
     (let ((mysql-ptr (database-mysql-ptr database)))
@@ -244,6 +192,53 @@
                :message (mysql-error-string mysql-ptr))))))
 
 
+(defmethod database-query (query-expression (database mysql-database)
+			   result-types field-names)
+  (declare (optimize (speed 3) (safety 0) (debug 0) (space 0)))
+  (let ((mysql-ptr (database-mysql-ptr database)))
+    (declare (type mysql-mysql-ptr-def mysql-ptr))
+    (when (database-execute-command query-expression database)
+      (let ((res-ptr (mysql-use-result mysql-ptr)))
+	(declare (type mysql-mysql-res-ptr-def res-ptr))
+	(if (and res-ptr (not (uffi:null-pointer-p res-ptr)))
+	    (unwind-protect
+		 (let ((num-fields (mysql-num-fields res-ptr)))
+		   (declare (fixnum num-fields))
+		   (setq result-types (canonicalize-types
+				       result-types res-ptr))
+		   (values
+		     (loop for row = (mysql-fetch-row res-ptr)
+			   for lengths = (mysql-fetch-lengths res-ptr)
+			   until (uffi:null-pointer-p row)
+			   collect
+			(do* ((rlist (make-list num-fields))
+			      (i 0 (1+ i))
+			      (pos rlist (cdr pos)))
+			    ((= i num-fields) rlist)
+			  (declare (fixnum i))
+			  (setf (car pos)
+				(convert-raw-field
+				 (uffi:deref-array row '(:array
+							 (* :unsigned-char))
+						   i)
+				 result-types i
+				 (uffi:deref-array lengths '(:array :unsigned-long)
+						   i)))))
+		     (when field-names
+		       (result-field-names res-ptr))))
+	      (mysql-free-result res-ptr))
+	    (unless (zerop (mysql-errno mysql-ptr))
+	      ;;from http://dev.mysql.com/doc/refman/5.0/en/mysql-field-count.html
+	      ;; if mysql_use_result or mysql_store_result return a null ptr,
+	      ;; we use a mysql_errno check to see if it had a problem or just
+	      ;; was a query without a result. If no error, just return nil.
+	      (error 'sql-database-data-error
+		     :database database
+		     :expression query-expression
+		     :error-id (mysql-errno mysql-ptr)
+		     :message (mysql-error-string mysql-ptr))))))))
+
+
 (defstruct mysql-result-set
   (res-ptr (uffi:make-null-pointer 'mysql-mysql-res) :type mysql-mysql-res-ptr-def)
   (types nil :type list)
@@ -254,40 +249,34 @@
 (defmethod database-query-result-set ((query-expression string)
                                       (database mysql-database)
                                       &key full-set result-types)
-  (uffi:with-cstring (query-native query-expression)
-    (let ((mysql-ptr (database-mysql-ptr database)))
-     (declare (type mysql-mysql-ptr-def mysql-ptr))
-      (if (zerop (mysql-real-query mysql-ptr query-native
-                                   (expression-length query-expression)))
-          (let ((res-ptr (if full-set
-                             (mysql-store-result mysql-ptr)
-                           (mysql-use-result mysql-ptr))))
-            (declare (type mysql-mysql-res-ptr-def res-ptr))
-            (if (not (uffi:null-pointer-p res-ptr))
-                (let* ((num-fields (mysql-num-fields res-ptr))
-                       (result-set (make-mysql-result-set
-                                    :res-ptr res-ptr
-                                    :num-fields num-fields
-                                    :full-set full-set
-                                    :types
-                                    (canonicalize-types
-                                     result-types res-ptr))))
-                  (if full-set
-                      (values result-set
-                              num-fields
-                              (mysql-num-rows res-ptr))
-                      (values result-set
-                              num-fields)))
-                (error 'sql-database-data-error
-                     :database database
-                     :expression query-expression
-                     :error-id (mysql-errno mysql-ptr)
-                     :message (mysql-error-string mysql-ptr))))
-        (error 'sql-database-data-error
-               :database database
-               :expression query-expression
-               :error-id (mysql-errno mysql-ptr)
-               :message (mysql-error-string mysql-ptr))))))
+  (let ((mysql-ptr (database-mysql-ptr database)))
+    (declare (type mysql-mysql-ptr-def mysql-ptr))
+    (when (database-execute-command query-expression database)
+      (let ((res-ptr (if full-set
+			 (mysql-store-result mysql-ptr)
+			 (mysql-use-result mysql-ptr))))
+	(declare (type mysql-mysql-res-ptr-def res-ptr))
+	(if (not (uffi:null-pointer-p res-ptr))
+	    (let* ((num-fields (mysql-num-fields res-ptr))
+		   (result-set (make-mysql-result-set
+				:res-ptr res-ptr
+				:num-fields num-fields
+				:full-set full-set
+				:types
+				(canonicalize-types
+				 result-types res-ptr))))
+	      (if full-set
+		  (values result-set
+			  num-fields
+			  (mysql-num-rows res-ptr))
+		  (values result-set
+			  num-fields)))
+	    (error 'sql-database-data-error
+		   :database database
+		   :expression query-expression
+		   :error-id (mysql-errno mysql-ptr)
+		   :message (mysql-error-string mysql-ptr))))
+      )))
 
 (defmethod database-dump-result-set (result-set (database mysql-database))
   (mysql-free-result (mysql-result-set-res-ptr result-set))
