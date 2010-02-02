@@ -8,14 +8,6 @@
 (in-package #:clsql-tests)
 #.(clsql-sys:locally-enable-sql-reader-syntax)
 
-(def-dataset *ds-datetest*
-  (:setup (lambda () (clsql-sys:create-view-from-class 'datetest)))
-  (:cleanup "DROP TABLE datetest"))
-
-(def-dataset *cross-platform-datetest*
-  (:setup "CREATE TABLE DATETEST (TESTTIME TIMESTAMP)")
-  (:cleanup "DROP TABLE DATETEST"))
-
 (def-view-class datetest ()
   ((testtimetz :COLUMN "testtimetz" :TYPE
 	       clsql-sys:wall-time :DB-KIND :BASE
@@ -29,6 +21,18 @@
 	     :ACCESSOR testtime :INITARG
 	     :testtime :INITFORM COMMON-LISP:NIL
 	     :DB-TYPE "timestamp without time zone")))
+
+(def-dataset *ds-datetest*
+  (:setup (lambda () (clsql-sys:create-view-from-class 'datetest)))
+  (:cleanup "DROP TABLE datetest"))
+
+
+(def-dataset *cross-platform-datetest*
+  (:setup (lambda () (create-table [datetest]
+				   '(([testtime] wall-time)))))
+  (:cleanup (lambda ()
+	      (drop-table [datetest]))))
+
 
 (setq *rt-time*
       '(
@@ -260,8 +264,7 @@
 				  :values (list time))
 	(let ((testtime
 	       (first (clsql:select [testtime]
-				    :from [datetest]
-				    :limit 1 :flatp T
+				    :from [datetest] :flatp T
 				    :where [= [testtime] time] ))))
 	  (format-time nil (parse-timestring testtime) :format :iso)
 	  )))
@@ -275,8 +278,7 @@
 				  :values (list time))
 	(let ((testtime
 	       (first (clsql:select [testtime]
-				    :from [datetest]
-				    :limit 1 :flatp T
+				    :from [datetest] :flatp T
 				    :where [= [testtime] time] ))))
 	  (format-time nil (parse-timestring testtime) :format :iso)
 	  )))
@@ -290,8 +292,7 @@
 				  :values (list time))
 	(let ((testtime
 	       (first (clsql:select [testtime]
-				    :from [datetest]
-				    :limit 1 :flatp T
+				    :from [datetest] :flatp T
 				    :where [= [testtime] time] ))))
 	  (format-time nil (parse-timestring testtime) :format :iso)
 	  )))
