@@ -362,39 +362,37 @@
 
 
 (deftest :time/pg/fdml/usec
-    (with-dataset *ds-datetest*
-      (let ((time (parse-timestring "2008-09-09T14:37:29.000213-04:00")))
-	(clsql-sys:insert-records :into [datetest]
-				  :attributes '([testtimetz] [testtime])
-				  :values (list time time))
-	(destructuring-bind (testtimetz testtime)
-	    (first (clsql:select [testtimetz] [testtime]
-				 :from [datetest]
-				 :limit 1 :flatp T
-				 :where [= [testtime] time] ))
-	  (assert (time= (parse-timestring testtimetz) time) (testtimetz time)
-		  "Timetz of db: ~s should be time:~s" testtimetz time)
-	  (assert (time= (parse-timestring testtime) time) (testtime time)
-		  "Time of db: ~s should be time:~s" testtime time))))
-  nil)
+  (with-dataset *ds-datetest*
+    (let ((time (parse-timestring "2008-09-09T14:37:29.000213-04:00")))
+      (clsql-sys:insert-records :into [datetest]
+				:attributes '([testtimetz] [testtime])
+				:values (list time time))
+      (destructuring-bind (testtimetz testtime)
+	  (first (clsql:select [testtimetz] [testtime]
+			       :from [datetest]
+			       :limit 1 :flatp T
+			       :where [= [testtime] time] ))
+	(values (iso-timestring (parse-timestring testtime))
+		(iso-timestring (parse-timestring testtimetz))))))
+  #.(iso-timestring (parse-timestring "2008-09-09T14:37:29.000213-04:00"))
+  #.(iso-timestring (parse-timestring "2008-09-09T14:37:29.000213-04:00")))
 
 (deftest :time/pg/oodml/no-usec
-    (with-dataset *ds-datetest*
-      (let ((time (parse-timestring "2008-09-09T14:37:29-04:00")))
-	(clsql-sys:update-records-from-instance
-	 (make-instance 'datetest :testtimetz time :testtime time))
-	(let ((o (first (clsql:select
-			 'datetest
-			 :limit 1 :flatp T
-			 :where [= [testtime] time] ))))
-	  (assert o (o) "o shouldnt be null here (we should have just inserted)")
-	  (update-records-from-instance o)
-	  (update-instance-from-records o)
-	  (assert (time= (testtime o) time) (time o)
-		  "Time of o: ~s should be time:~s" (testtime o) time)
-	  (assert (time= (testtimetz o) time) (time o)
-		  "Timetz of o: ~s should be time:~s" (testtime o) time))))
-  nil)
+  (with-dataset *ds-datetest*
+    (let ((time (parse-timestring "2008-09-09T14:37:29-04:00")))
+      (clsql-sys:update-records-from-instance
+       (make-instance 'datetest :testtimetz time :testtime time))
+      (let ((o (first (clsql:select
+			  'datetest
+			:limit 1 :flatp T
+			:where [= [testtime] time] ))))
+	(assert o (o) "o shouldnt be null here (we should have just inserted)")
+	(update-records-from-instance o)
+	(update-instance-from-records o)
+	(values (iso-timestring (testtime o))
+		(iso-timestring (testtimetz o))))))
+  #.(iso-timestring (parse-timestring "2008-09-09T14:37:29-04:00"))
+  #.(iso-timestring (parse-timestring "2008-09-09T14:37:29-04:00")))
 
 (deftest :time/pg/oodml/usec
     (with-dataset *ds-datetest*
@@ -408,12 +406,11 @@
 	  (assert o (o) "o shouldnt be null here (we should have just inserted)")
 	  (update-records-from-instance o)
 	  (update-instance-from-records o)
-	  (assert (time= (testtime o) time) (time o)
-		  "Time of o: ~s should be time:~s" (testtime o) time)
-	  (assert (time= (testtimetz o) time) (time o)
-		  "Timetz of o: ~s should be time:~s" (testtime o) time)
+	  (values (iso-timestring (testtime o))
+		  (iso-timestring (testtimetz o)))
 	  )))
-  nil)
+    #.(iso-timestring (parse-timestring "2008-09-09T14:37:29.000278-04:00"))
+    #.(iso-timestring (parse-timestring "2008-09-09T14:37:29.000278-04:00")))
 
 ))
 
