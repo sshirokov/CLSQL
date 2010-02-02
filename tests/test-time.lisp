@@ -22,13 +22,13 @@
 	       :DB-CONSTRAINTS COMMON-LISP:NIL
 	       :ACCESSOR testtimetz :INITARG
 	       :testtimetz :INITFORM COMMON-LISP:NIL
-	       :DB-TYPE "timestamptz")
+	       :DB-TYPE "timestamp with time zone")
    (testtime :COLUMN "testtime" :TYPE
 	     clsql-sys:wall-time :DB-KIND :BASE
 	     :DB-CONSTRAINTS COMMON-LISP:NIL
 	     :ACCESSOR testtime :INITARG
 	     :testtime :INITFORM COMMON-LISP:NIL
-	     :DB-TYPE "timestamp")))
+	     :DB-TYPE "timestamp without time zone")))
 
 (setq *rt-time*
       '(
@@ -246,8 +246,7 @@
       (format-time nil time2 :format :iso))
   #.(format-time nil (clsql-sys:make-time :year 2010 :month 1 :day 4
 				      :hour 14 :minute 15 :second 44 :usec 3)
-     :format :iso)
-  t)
+     :format :iso))
 
 
 ;;; The cross platform dataset uses the 'timestamp' column type which is
@@ -315,6 +314,7 @@
 
 
 
+
 ;;; All odbc databases use local times exclusively (they do not send timezone info)
 ;;; Postgresql can use timezones, except when being used over odbc.  This test when
 ;;; run through both postgres socket and postgres odbc should test a fairly
@@ -340,9 +340,9 @@
 				 :limit 1 :flatp T
 				 :where [= [testtime] time] ))
 	  (assert (time= (parse-timestring testtimetz) time) (testtimetz time)
-		  "Timetz of o: ~s should be time:~s" testtimetz time)
+		  "Timetz of db: ~s should be time:~s" testtimetz time)
 	  (assert (time= (parse-timestring testtime) time) (testtime time)
-		  "Time of o: ~s should be time:~s" testtime time))))
+		  "Time of db: ~s should be time:~s" testtime time))))
   nil)
 
 (deftest :time/pg/oodml/no-usec
