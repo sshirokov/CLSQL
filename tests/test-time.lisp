@@ -37,6 +37,38 @@
 (setq *rt-time*
       '(
 
+;; we use parse timestring a lot through here verifying other things
+;; start off just checking that.
+(deftest :time/iso-parse/0
+    (let* ((time1 (parse-timestring "2010-01-23")))
+      (decode-time time1))
+  0 0 0 0 23 1 2010 6)
+
+(deftest :time/iso-parse/1
+    (let* ((time1 (parse-timestring "2010-01-23T14:56:32Z")))
+      (decode-time time1))
+  0 32 56 14 23 1 2010 6)
+
+(deftest :time/iso-parse/2
+    (let* ((time1 (parse-timestring "2008-02-29 12:46:32")))
+      (decode-time time1))
+  0 32 46 12 29 2 2008 5)
+
+(deftest :time/iso-parse/3
+    (let* ((time1 (parse-timestring "2010-01-23 14:56:32.44")))
+      (decode-time time1))
+  440000 32 56 14 23 1 2010 6)
+
+(deftest :time/iso-parse/4
+    (let* ((time1 (parse-timestring "2010-01-23 14:56:32.0044")))
+      (decode-time time1))
+  4400 32 56 14 23 1 2010 6)
+
+(deftest :time/iso-parse/5
+    (let* ((time1 (parse-timestring "2010-01-23 14:56:32.000003")))
+      (decode-time time1))
+  3 32 56 14 23 1 2010 6)
+
 ;; relations of intervals
 (deftest :time/1
     (let* ((time-1 (clsql:parse-timestring "2002-01-01 10:00:00"))
