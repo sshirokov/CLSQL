@@ -20,6 +20,7 @@ should we debug (T) or just print and quit.")
   (when (and *dataset-debug-on-error*
 	     *debugger-hook*)
     (invoke-debugger e))
+  (fresh-line *error-output*)
   (princ e *error-output*)
   (throw 'quit-dataset e))
 
