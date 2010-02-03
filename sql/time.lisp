@@ -447,8 +447,8 @@
 	     (princ month stream)
 	     (princ #\- stream)
 	     (when (< day 10) (princ #\0 stream))
-	     (princ month stream)
-	     (princ #\space stream)
+	     (princ day stream)
+	     (princ #\T stream) ;strict ISO says T here isn't optional.
 	     (when (< hour 10) (princ #\0 stream))
 	     (princ hour stream)
 	     (princ #\: stream)

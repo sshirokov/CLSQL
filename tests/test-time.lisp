@@ -69,6 +69,25 @@
       (decode-time time1))
   3 32 56 14 23 1 2010 6)
 
+(deftest :time/print-parse/1
+    ;;make sure when we print and parse we get the same time.
+    (let* ((time (clsql-sys:make-time :year 2010 :month 1 :day 4
+				      :hour 14 :minute 15 :second 44))
+	   (string-time (iso-timestring time))
+	   (time2 (parse-timestring string-time)))
+      (decode-time time2))
+  0 44 15 14 4 1 2010 1)
+
+(deftest :time/print-parse/2
+    ;;make sure when we print and parse we get the same time.
+    (let* ((time (clsql-sys:make-time :year 2010 :month 1 :day 4
+				      :hour 14 :minute 15 :second 44 :usec 3))
+	   (string-time (iso-timestring time))
+	   (time2 (parse-timestring string-time)))
+      (decode-time time2))
+  3 44 15 14 4 1 2010 1)
+
+
 ;; relations of intervals
 (deftest :time/1
     (let* ((time-1 (clsql:parse-timestring "2002-01-01 10:00:00"))
@@ -272,17 +291,6 @@
       (clsql:time= add-time roll-time))
   t)
 
-
-(deftest :time/14-usec
-    ;;make sure when we print and parse we get the same time.
-    (let* ((time (clsql-sys:make-time :year 2010 :month 1 :day 4
-				      :hour 14 :minute 15 :second 44 :usec 3))
-	   (string-time (clsql-sys:format-time nil time :format :iso))
-	   (time2 (clsql-sys:parse-timestring string-time)))
-      (format-time nil time2 :format :iso))
-  #.(format-time nil (clsql-sys:make-time :year 2010 :month 1 :day 4
-				      :hour 14 :minute 15 :second 44 :usec 3)
-     :format :iso))
 
 
 ;;; The cross platform dataset uses the 'timestamp' column type which is
