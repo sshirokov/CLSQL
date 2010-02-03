@@ -1,8 +1,12 @@
-2010-01-29  Kevin Rosenberg <kevin@rosenberg.net
+2010-02-03  Kevin Rosenberg <kevin@rosenberg.net>
+	* tests/test-init.lisp: Add *test-report-width* variable
+	and word-wrap skipped test reason field.
+
+2010-01-29  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 4.3.3
 	* clsql-cffi.asd: New file that causes CLSQL to use
 	CFFI-UFFI-COMPAT library rather than UFFI. Perform 'asdf:load-op
-	on this system rather than clsql to use CFFI-UFFI-COMPAT.
+	on CLSQL-CFFI rather than CLSQL system to use CFFI-UFFI-COMPAT.
 
 2010-01-29  Nathan Bird  <nathan@acceleration.net>
 	* tests/*.lisp: A lot more tests and test setup tweaks.

@@ -35,7 +35,7 @@
 (defvar *test-start-utime* nil)
 (defvar *test-connection-spec* nil)
 (defvar *test-connection-db-type* nil)
-
+(defvar *test-report-width* 80 "Width of test report in ems.")
 
 
 (defun test-connect-to-database (db-type spec)
@@ -155,7 +155,8 @@
            (dolist (test-form test-forms)
              (eval test-form))
 
-           (let ((remaining (regression-test:do-tests *report-stream*)))
+           (let* ((cl:*print-right-margin* *test-report-width*)
+                  (remaining (regression-test:do-tests *report-stream*)))
              (when (regression-test:pending-tests)
                (incf *error-count* (length remaining))))
 
@@ -180,7 +181,22 @@
                        (setq max-test-name len))))
                  (let ((fmt (format nil "~~&  ~~~DA ~~A~~%" max-test-name)))
                    (dolist (skipped skip-tests)
-                     (format *report-stream* fmt (car skipped) (cdr skipped)))))
+                     ;; word-wrap the reason string field
+                     (let* ((test (car skipped))
+                            (reason (cdr skipped))
+                            (rlen (length reason))
+                            (rwidth (max 20 (- (or *test-report-width* 80) max-test-name 3)))
+                            (rwords (clsql-sys::delimited-string-to-list reason #\space t))
+                            (rformat (format nil "~~{~~<~%~~1,~D:;~~A~~> ~~}" rwidth))
+                            (rwrapped (format nil rformat rwords))
+                            (rlines (clsql-sys::delimited-string-to-list rwrapped #\Newline t)))
+                       (dolist (rline rlines)
+                         (format *report-stream* fmt (if test
+                                                         (prog1
+                                                             test
+                                                           (setq test nil))
+                                                         "")
+                                 rline))))))
                (format *report-stream* " None~%")))
     (disconnect)))
 
@@ -194,7 +210,7 @@
         (cond
 	  ((and (not (eql db-underlying-type :mysql))
 		(clsql-sys:in test :connection/query-command))
-	   (push (cons test "Known to only work in mysql as yet.") skip-tests))
+	   (push (cons test "known to work only in MySQL as yet.") skip-tests))
           ((and (null (clsql-sys:db-type-has-views? db-underlying-type))
                 (clsql-sys:in test :fddl/view/1 :fddl/view/2 :fddl/view/3 :fddl/view/4))
            (push (cons test "views not supported.") skip-tests))
@@ -227,7 +243,7 @@
            (push (cons test "bigint not supported.") skip-tests))
           ((and (eql *test-database-underlying-type* :mysql)
                 (clsql-sys:in test :fdml/select/26))
-           (push (cons test "string table aliases not supported on all mysql versions.") skip-tests))
+           (push (cons test "string table aliases not supported on all MySQL versions.") skip-tests))
           ((and (eql *test-database-underlying-type* :mysql)
                 (clsql-sys:in test :fdml/select/22 :fdml/query/5
                                 :fdml/query/7 :fdml/query/8))
