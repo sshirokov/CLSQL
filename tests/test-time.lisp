@@ -324,6 +324,22 @@
 	  )))
   #.(format-time nil (parse-timestring "2008-09-09T14:37:29-04:00") :format :iso))
 
+;;;This test gets at the databases that only support miliseconds,
+;;; not microseconds.
+(deftest :time/cross-platform/msec
+    (with-dataset *cross-platform-datetest*
+      (let ((time (parse-timestring "2008-09-09T14:37:29.423")))
+	(clsql-sys:insert-records :into [datetest]
+				  :attributes '([testtime])
+				  :values (list time))
+	(let ((testtime
+	       (first (clsql:select [testtime]
+				    :from [datetest] :flatp T
+				    :where [= [testtime] time] ))))
+	  (format-time nil (parse-timestring testtime) :format :iso)
+	  )))
+  #.(format-time nil (parse-timestring "2008-09-09T14:37:29.423") :format :iso))
+
 (deftest :time/cross-platform/usec/no-tz
     (with-dataset *cross-platform-datetest*
       (let ((time (parse-timestring "2008-09-09T14:37:29.000213")))

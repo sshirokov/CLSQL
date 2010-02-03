@@ -289,10 +289,14 @@
           (push (cons test "Postgres specific test.")
                 skip-tests))
          ((and (member *test-database-underlying-type* '(:mysql))
-               (clsql-sys:in test :time/cross-platform/usec/no-tz :time/cross-platform/usec/tz))
-          (push (cons test "MySQL does not support fractional seconds on timestamp columns (http://forge.mysql.com/worklog/task.php?id=946).")
+               (clsql-sys:in test :time/cross-platform/msec
+			     :time/cross-platform/usec/no-tz :time/cross-platform/usec/tz))
+          (push (cons test "MySQL doesn't support fractional seconds on timestamp columns (http://forge.mysql.com/worklog/task.php?id=946).")
                 skip-tests))
-
+	  ((and (member *test-database-underlying-type* '(:mssql))
+               (clsql-sys:in test :time/cross-platform/usec/no-tz :time/cross-platform/usec/tz))
+          (push (cons test "MSSQL doesn't support micro-seconds on datetime columns.")
+                skip-tests))
           (t
            (push test-form test-forms)))))
       (values (nreverse test-forms) (nreverse skip-tests))))
