@@ -173,8 +173,8 @@
 
            (format *report-stream* "~&Tests skipped:")
            (if skip-tests
-               (let ((max-test-name 20))
-                 (dolist (skipped skip-tests)
+               (let ((max-test-name (length (symbol-name (caar skip-tests)))))
+                 (dolist (skipped (cdr skip-tests))
                    (let ((len (length (symbol-name (car skipped)))))
                      (when (> len max-test-name)
                        (setq max-test-name len))))
