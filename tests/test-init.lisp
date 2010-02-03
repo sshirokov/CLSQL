@@ -173,9 +173,14 @@
 
            (format *report-stream* "~&Tests skipped:")
            (if skip-tests
-               (dolist (skipped skip-tests)
-                 (format *report-stream*
-                         "~&   ~30A ~A~%" (car skipped) (cdr skipped)))
+               (let ((max-test-name 20))
+                 (dolist (skipped skip-tests)
+                   (let ((len (length (symbol-name (car skipped)))))
+                     (when (> len max-test-name)
+                       (setq max-test-name len))))
+                 (let ((fmt (format nil "~~&  ~~~DA ~~A~~%" max-test-name)))
+                   (dolist (skipped skip-tests)
+                     (format *report-stream* fmt (car skipped) (cdr skipped)))))
                (format *report-stream* " None~%")))
     (disconnect)))
 
