@@ -281,11 +281,11 @@
 			    '(:postgresql :postgresql-socket)))
                (clsql-sys:in test
                              :time/pg/fdml/usec :time/pg/oodml/no-usec :time/pg/oodml/usec))
-          (push (cons test "cant run the same date/time tests everywhere that we do on postgres because there are not standard datetime database types.")
+          (push (cons test "Postgres specific test.")
                 skip-tests))
          ((and (member *test-database-underlying-type* '(:mysql))
                (clsql-sys:in test :time/cross-platform/usec/no-tz :time/cross-platform/usec/tz))
-          (push (cons test "Mysql does not support fractional seconds (on timestamp columns), see http://forge.mysql.com/worklog/task.php?id=946 perhaps?")
+          (push (cons test "MySQL does not support fractional seconds on timestamp columns (http://forge.mysql.com/worklog/task.php?id=946).")
                 skip-tests))
 
           (t
