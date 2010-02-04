@@ -227,16 +227,6 @@
 			"mismatch on a. inserted: ~a returned: ~a" len (length a)))
 	      )))
       nil)
-
-    (deftest :basic/i18n/1
-	(first (query "SELECT 'Iñtërnâtiônàlizætiøn'"
-		      :flatp t :field-names nil))
-      "Iñtërnâtiônàlizætiøn")
-
-    (deftest :basic/i18n/2
-	(first (query "SELECT 'Iñtërnâtiônàližætiøn'"
-		      :flatp t :field-names nil))
-      "Iñtërnâtiônàližætiøn")
     ))
 
 
