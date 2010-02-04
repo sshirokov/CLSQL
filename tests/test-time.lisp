@@ -9,18 +9,20 @@
 #.(clsql-sys:locally-enable-sql-reader-syntax)
 
 (def-view-class datetest ()
-  ((testtimetz :COLUMN "testtimetz" :TYPE
-	       clsql-sys:wall-time :DB-KIND :BASE
-	       :DB-CONSTRAINTS COMMON-LISP:NIL
-	       :ACCESSOR testtimetz :INITARG
-	       :testtimetz :INITFORM COMMON-LISP:NIL
-	       :DB-TYPE "timestamp with time zone")
-   (testtime :COLUMN "testtime" :TYPE
-	     clsql-sys:wall-time :DB-KIND :BASE
-	     :DB-CONSTRAINTS COMMON-LISP:NIL
-	     :ACCESSOR testtime :INITARG
-	     :testtime :INITFORM COMMON-LISP:NIL
-	     :DB-TYPE "timestamp without time zone")))
+e  ((testtimetz :column "testtimetz"
+                :type clsql-sys:wall-time
+                :db-kind :base
+                :db-constraints nil
+	        :accessor testtimetz :initarg :testtimetz
+                :initform nil
+	        :db-type "timestamp with time zone")
+   (testtime :column "testtime"
+             :type clsql-sys:wall-time
+             :db-kind :base
+	     :db-constraints nil
+	     :accessor testtime :initarg :testtime
+             :initform nil
+	     :db-type "timestamp without time zone")))
 
 (def-dataset *ds-datetest*
   (:setup (lambda () (clsql-sys:create-view-from-class 'datetest)))
