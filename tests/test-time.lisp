@@ -1,5 +1,4 @@
 ;;; -*- Mode: Lisp -*-
-;;; $Id$
 ;;;
 ;;; Copyright (c) 2000, 2001 onShore Development, Inc.
 ;;;
@@ -9,7 +8,7 @@
 #.(clsql-sys:locally-enable-sql-reader-syntax)
 
 (def-view-class datetest ()
-e  ((testtimetz :column "testtimetz"
+  ((testtimetz :column "testtimetz"
                 :type clsql-sys:wall-time
                 :db-kind :base
                 :db-constraints nil
