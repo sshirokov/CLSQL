@@ -1,3 +1,9 @@
+2010-02-05  Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/utils.lisp: Reading #\no-break_space causes an
+	error for non-unicode SBCL. Conditionalize read of
+	#\no-break_space for non-unicode SBCL and 8-bit string
+	Allegro.
+
 2010-02-03  Kevin Rosenberg <kevin@rosenberg.net>
 	* tests/test-init.lisp: Add *test-report-width* variable
 	and word-wrap skipped test reason field.

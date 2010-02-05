@@ -18,10 +18,13 @@
 
 (defvar +whitespace-chars+
   '(#\space #\tab #\newline #\return
-    ;; Tested: sbcl, allegrocl, and clisp use #\no-break_space
+    ;; Tested: sbcl unicode, allegrocl, and clisp use #\no-break_space
     ;; lispworks uses #\no-break-space
+    ;; sbcl non-unicode doesn't support no break space
+    ;; AllegroCL 8-bit strings don't fail on reading #\no-break_space,
+    ;; but can't represent such a character
     #+lispworks #\no-break-space
-    #-lispworks #\no-break_space
+    #+(or (and sbcl sb-unicode) (and allegro ics) clisp) #\no-break_space
     )
   "List of whitespace characters for this lisp implementation.")
 
