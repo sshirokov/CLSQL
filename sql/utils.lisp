@@ -23,6 +23,7 @@
     ;; sbcl non-unicode doesn't support no break space
     ;; AllegroCL 8-bit strings don't fail on reading #\no-break_space,
     ;; but can't represent such a character
+    ;; CMUCL errors when trying to read #\no-break_space
     #+lispworks #\no-break-space
     #+(or (and sbcl sb-unicode) (and allegro ics) clisp) #\no-break_space
     )
