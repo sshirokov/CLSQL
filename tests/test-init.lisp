@@ -26,6 +26,8 @@
 (defvar *rt-oodml*)
 (defvar *rt-syntax*)
 (defvar *rt-time*)
+;; Below must be set as nil since test-i18n.lisp is not loaded on all platforms.
+(defvar *rt-i18n* nil)
 
 (defvar *test-database-type* nil)
 (defvar *test-database-underlying-type* nil)
@@ -66,7 +68,7 @@
 (defun default-suites ()
   "The default list of tests to run."
   (append *rt-internal* *rt-connection* *rt-basic* *rt-fddl* *rt-fdml*
-	  *rt-ooddl* *rt-oodml* *rt-syntax* *rt-time*))
+	  *rt-ooddl* *rt-oodml* *rt-syntax* *rt-time* *rt-i18n*))
 
 
 (defvar *error-count* 0)

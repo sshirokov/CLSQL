@@ -24,7 +24,7 @@
     ;; AllegroCL 8-bit strings don't fail on reading #\no-break_space,
     ;; but can't represent such a character
     ;; CMUCL errors when trying to read #\no-break_space
-    #+lispworks #\no-break-space
+    #+(and lispworks unicode) #\no-break-space
     #+(or (and sbcl sb-unicode) (and allegro ics) (and clisp i18n)
        (and openmcl openmcl-unicode-strings))
     #\no-break_space

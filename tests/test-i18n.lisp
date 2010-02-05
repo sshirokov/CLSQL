@@ -16,6 +16,9 @@
 
 (in-package #:clsql-tests)
 
+(setq *rt-i18n*
+      '(
+
 ;;; The point of these two is to require proper encoding support
 ;;; UTF-8 for example can handle these easily.
 ;; I show this as a 20char string and 27 bytes in utf-8
@@ -30,3 +33,5 @@
     (first (query "SELECT 'Iñtërnâtiônàližætiøn'"
 		  :flatp t :field-names nil))
   "Iñtërnâtiônàližætiøn")
+
+))

@@ -43,7 +43,9 @@
 			   (:file "test-fdml")
 			   (:file "test-ooddl")
 			   (:file "test-oodml")
-			   (:file "test-syntax")))))
+			   (:file "test-syntax")
+                           #-uffi:no-i18n (:file "test-i18n")
+                           ))))
 
 (defmethod perform ((o test-op) (c (eql (find-system 'clsql-tests))))
   (operate 'load-op 'clsql)

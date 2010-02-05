@@ -1,4 +1,9 @@
 2010-02-05  Kevin Rosenberg <kevin@rosenberg.net>
+	* clsql-test.asd, tests/{test-i18n,test-init}.lisp: 
+	Load test-i18n.lisp and use its tests as long as 'uffi:no-i18n is
+	not present in cl:*features*. This requires UFFI 1.7.2 or above.
+
+2010-02-05  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/utils.lisp: Reading #\no-break_space causes an
 	error for non-unicode SBCL. Conditionalize read of
 	#\no-break_space for non-unicode SBCL and 8-bit string
