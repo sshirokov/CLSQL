@@ -3,7 +3,6 @@
 ;;;; File:    test-fdml.lisp
 ;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>, Kevin Rosenberg
 ;;;; Created: 30/03/2004
-;;;; Updated: $Id$
 ;;;;
 ;;;; Tests for the CLSQL Functional Data Manipulation Language
 ;;;; (FDML).

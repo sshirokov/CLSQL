@@ -597,7 +597,7 @@
 ;; (was failing in Postgresql at somepoint)
 (deftest :oodml/update-records/10
     (with-dataset *ds-employees*
-      (let ((emp (first (clsql:select 'employee :where [= [emplid] 1] :flatp T))))
+      (let ((emp (first (clsql:select 'employee :where [= [emplid] 1] :flatp t))))
 	(setf (height emp) nil)
 	(clsql-sys:update-record-from-slot emp 'height)
 	(values
