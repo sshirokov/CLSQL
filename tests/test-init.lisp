@@ -63,6 +63,10 @@
   (setf *test-database-underlying-type*
         (clsql-sys:database-underlying-type *default-database*))
 
+  ;; If Postgres, turn off notices to console
+  (when (eql db-type :postgresql)
+    (clsql:execute-command "SET client_min_messages = WARNING"))
+
   *default-database*)
 
 (defun default-suites ()

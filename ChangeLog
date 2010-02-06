@@ -1,3 +1,7 @@
+2010-02-06  Kevin Rosenberg <kevin@rosenberg.net>
+	* tests/test-init.lisp: Turn off the benign console notices for
+	testing on postgres.
+
 2010-02-05  Kevin Rosenberg <kevin@rosenberg.net>
 	* clsql-test.asd, tests/{test-i18n,test-init}.lisp: 
 	Load test-i18n.lisp and use its tests as long as 'uffi:no-i18n is
