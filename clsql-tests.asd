@@ -3,7 +3,7 @@
 ;;;; FILE IDENTIFICATION
 ;;;;
 ;;;; File:     clsql-tests.asd
-;;;; Authors:  Marcus Pearce <m.t.pearce@city.ac.uk> and Kevin Rosenberg
+;;;; Authors:  Marcus Pearce and Kevin Rosenberg
 ;;;; Created:  30/03/2004
 ;;;;
 ;;;; This file is part of CLSQL.
@@ -16,6 +16,10 @@
 (in-package #:cl-user)
 (defpackage #:clsql-tests-system (:use #:asdf #:cl))
 (in-package #:clsql-tests-system)
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (unless (find-package '#:uffi)
+    (asdf:operate 'asdf:load-op 'uffi)))
 
 (defsystem clsql-tests
     :name "CLSQL Tests"
