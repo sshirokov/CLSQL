@@ -1,5 +1,12 @@
-clsql_mysql64.so
 clsql_mysql.so
+clsql_mysql.dylib
+clsql_mysql32.so
+clsql_mysql32.dylib
+clsql_mysql64.so
+clsql_mysql64.dylib
+z.dylib
+z32.dylib
+z64.dylib
 .mysql.so
 *.fasl*
 .bin
