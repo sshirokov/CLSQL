@@ -305,7 +305,7 @@
 				  :values (list time))
 	(let ((testtime
 	       (first (clsql:select [testtime]
-				    :from [datetest] :flatp T
+				    :from [datetest] :flatp t
 				    :where [= [testtime] time] ))))
 	  (format-time nil (parse-timestring testtime) :format :iso)
 	  )))
@@ -319,7 +319,7 @@
 				  :values (list time))
 	(let ((testtime
 	       (first (clsql:select [testtime]
-				    :from [datetest] :flatp T
+				    :from [datetest] :flatp t
 				    :where [= [testtime] time] ))))
 	  (format-time nil (parse-timestring testtime) :format :iso)
 	  )))
@@ -335,7 +335,7 @@
 				  :values (list time))
 	(let ((testtime
 	       (first (clsql:select [testtime]
-				    :from [datetest] :flatp T
+				    :from [datetest] :flatp t
 				    :where [= [testtime] time] ))))
 	  (format-time nil (parse-timestring testtime) :format :iso)
 	  )))
@@ -349,7 +349,7 @@
 				  :values (list time))
 	(let ((testtime
 	       (first (clsql:select [testtime]
-				    :from [datetest] :flatp T
+				    :from [datetest] :flatp t
 				    :where [= [testtime] time] ))))
 	  (format-time nil (parse-timestring testtime) :format :iso)
 	  )))
@@ -364,7 +364,7 @@
 	(let ((testtime
 	       (first (clsql:select [testtime]
 				    :from [datetest]
-				    :limit 1 :flatp T
+				    :limit 1 :flatp t
 				    :where [= [testtime] time] ))))
 	  (format-time nil (parse-timestring testtime) :format :iso)
 	  )))
@@ -395,7 +395,7 @@
       (destructuring-bind (testtimetz testtime)
 	  (first (clsql:select [testtimetz] [testtime]
 			       :from [datetest]
-			       :limit 1 :flatp T
+			       :limit 1 :flatp t
 			       :where [= [testtime] time] ))
 	(values (iso-timestring (parse-timestring testtime))
 		(iso-timestring (parse-timestring testtimetz))))))
@@ -409,7 +409,7 @@
        (make-instance 'datetest :testtimetz time :testtime time))
       (let ((o (first (clsql:select
 			  'datetest
-			:limit 1 :flatp T
+			:limit 1 :flatp t
 			:where [= [testtime] time] ))))
 	(assert o (o) "o shouldnt be null here (we should have just inserted)")
 	(update-records-from-instance o)
@@ -426,7 +426,7 @@
 	 (make-instance 'datetest :testtimetz time :testtime time))
 	(let ((o (first (clsql:select
 			 'datetest
-			 :limit 1 :flatp T
+			 :limit 1 :flatp t
 			 :where [= [testtime] time] ))))
 	  (assert o (o) "o shouldnt be null here (we should have just inserted)")
 	  (update-records-from-instance o)

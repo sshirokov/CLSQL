@@ -1,7 +1,6 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; ======================================================================
 ;;;; File:    test-oodml.lisp
-;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>
 ;;;; Created: 01/04/2004
 ;;;;
 ;;;; Tests for the CLSQL Object Oriented Data Definition Language
@@ -458,7 +457,7 @@
 		 (format nil "~a ~a ~a"
 			 (slot-value node 'setting-id)
 			 (slot-value node 'title)
-			 (slot-value node 'vars)))))
+			 (or (slot-value node 'vars) "NIL")))))
 	(values
 	  (print-fresh-setting)
 	  (let ((node (car (clsql:select 'setting
@@ -511,7 +510,7 @@
 		 (with-slots (node-id setting-id theme-id title vars doc) node
 		   (format nil "~a ~a ~a ~a ~a ~a"
 			   node-id setting-id theme-id
-			   title vars doc)))))
+			   title (or vars "NIL") doc)))))
 	(values
 	  (print-fresh-theme)
 	  (let ((node (car (clsql:select 'setting
@@ -659,7 +658,7 @@
 	  (format out "~a ~a ~a ~a"
 		  (slot-value theme2 'theme-id)
 		  (slot-value theme2 'title)
-		  (slot-value theme2 'vars)
+		  (or (slot-value theme2 'vars) "NIL")
 		  (slot-value theme2 'doc)))
 	(progn
 	  (clsql:update-records [node] :av-pairs '(([title] "Altered title"))
@@ -974,18 +973,18 @@
 				   :doc "test-doc")))
 	  (setf (slot-value inst 'title) "alternate-test-theme")
 	  (format nil "~a ~a ~a ~a"
-		  (select [title] :from [node]
-			  :where [= [title] "test-theme"]
-			  :flatp t :field-names nil)
-		  (select [vars] :from [setting]
-			  :where [= [vars] "test-vars"]
-			  :flatp t :field-names nil)
-		  (select [doc] :from [theme]
-			  :where [= [doc] "test-doc"]
-			  :flatp t :field-names nil)
-		  (select [title] :from [node]
-			  :where [= [title] "alternate-test-theme"]
-			  :flatp t :field-names nil)))
+		  (or (select [title] :from [node]
+                              :where [= [title] "test-theme"]
+                              :flatp t :field-names nil) "NIL")
+		  (or (select [vars] :from [setting]
+                              :where [= [vars] "test-vars"]
+                              :flatp t :field-names nil) "NIL")
+		  (or (select [doc] :from [theme]
+                              :where [= [doc] "test-doc"]
+                              :flatp t :field-names nil) "NIL")
+		  (or (select [title] :from [node]
+                              :where [= [title] "alternate-test-theme"]
+                              :flatp t :field-names nil) "NIL")))
 	(let* ((*db-auto-sync* t)
 	       (inst (make-instance 'theme
 				    :title "test-theme" :vars "test-vars"
@@ -993,18 +992,18 @@
 	  (setf (slot-value inst 'title) "alternate-test-theme")
 	  (prog1
 	      (format nil "~a ~a ~a ~a"
-		      (select [title] :from [node]
-			      :where [= [title] "test-theme"]
-			      :flatp t :field-names nil)
-		      (select [vars] :from [setting]
-			      :where [= [vars] "test-vars"]
-			      :flatp t :field-names nil)
-		      (select [doc] :from [theme]
-			      :where [= [doc] "test-doc"]
-			      :flatp t :field-names nil)
-		      (select [title] :from [node]
-			      :where [= [title] "alternate-test-theme"]
-			      :flatp t :field-names nil))
+		      (or (select [title] :from [node]
+                                  :where [= [title] "test-theme"]
+                                  :flatp t :field-names nil) "NIL")
+		      (or (select [vars] :from [setting]
+                                  :where [= [vars] "test-vars"]
+                                  :flatp t :field-names nil) "NIL")
+		      (or (select [doc] :from [theme]
+                                  :where [= [doc] "test-doc"]
+                                  :flatp t :field-names nil) "NIL")
+		      (or (select [title] :from [node]
+                                  :where [= [title] "alternate-test-theme"]
+                                  :flatp t :field-names nil) "NIL"))
 	    (delete-records :from [node] :where [= [title] "alternate-test-theme"])
 	    (delete-records :from [setting] :where [= [vars] "test-vars"])
 	    (delete-records :from [theme] :where [= [doc] "test-doc"])))))
