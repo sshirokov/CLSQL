@@ -425,7 +425,7 @@ implementations."
             specified-type))))
     (if (and type (not (member :not-null (listify db-constraints))))
         `(or null ,type)
-      type)))
+        (or type t))))
 
 ;; Compute the slot definition for slots in a view-class.  Figures out
 ;; what kind of database value (if any) is stored there, generates and
@@ -453,8 +453,10 @@ implementations."
           (slot-definition-name obj)))
   (apply #'call-next-method obj
          'specified-type type
-         :type (compute-lisp-type-from-specified-type
-                type db-constraints)
+         :type (if (and (eql db-kind :virtual) (null type))
+                   t
+                   (compute-lisp-type-from-specified-type
+                    type db-constraints))
          initargs))
 
 (defmethod compute-effective-slot-definition ((class standard-db-class)

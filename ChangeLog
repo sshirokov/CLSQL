@@ -1,4 +1,9 @@
 2010-02-06  Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/metaclasses.lisp: If no declared slot type in
+	compute-lisp-type-from-specified-type, then use t as lisp type.
+	Issue noted when testing Clozure CL 1.4.
+
+2010-02-06  Kevin Rosenberg <kevin@rosenberg.net>
 	* tests/test-init.lisp: Turn off the benign console notices for
 	testing on postgres.
 
