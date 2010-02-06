@@ -970,7 +970,8 @@
       (values
 	(let ((inst (make-instance 'theme
 				   :title "test-theme" :vars "test-vars"
-				   :doc "test-doc")))
+				   :doc "test-doc"))
+              (*print-circle* nil))
 	  (setf (slot-value inst 'title) "alternate-test-theme")
 	  (format nil "~a ~a ~a ~a"
 		  (or (select [title] :from [node]
