@@ -5,8 +5,6 @@
 ;;;; Name:          db2-constants.lisp
 ;;;; Purpose:       Constants for CLSQL Db2 interface
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; This file is part of CLSQL.
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software

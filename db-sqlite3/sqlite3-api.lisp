@@ -7,8 +7,6 @@
 ;;;; Authors:  Aurelio Bignoli
 ;;;; Created:  Oct 2004
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2004 by Aurelio Bignoli
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software

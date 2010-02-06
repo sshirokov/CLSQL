@@ -6,8 +6,6 @@
 ;;;; Purpose:       High-level PostgreSQL interface using UFFI
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.

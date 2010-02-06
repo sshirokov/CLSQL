@@ -1,18 +1,19 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
-;;;; ======================================================================
-;;;; File:     package.lisp
-;;;; Authors:  Marcus Pearce <m.t.pearce@city.ac.uk> and Kevin Rosenberg
-;;;; Created:  30/03/2004
-;;;; Updated:  $Id$
+;;;; *************************************************************************
+;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Package definition for CLSQL test suite.
+;;;; Name:     package.lisp
+;;;; Purpose:  Package definition for CLSQL test suite
+;;;; Authors:  Marcus Pearce and Kevin M. Rosenberg
+;;;; Created:  March 2004
 ;;;;
 ;;;; This file is part of CLSQL.
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
-;;;; ======================================================================
+;;;; *************************************************************************
+
 
 (in-package #:cl-user)
 

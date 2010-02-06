@@ -5,8 +5,6 @@
 ;;;; Name:          package.lisp
 ;;;; Purpose:       Package definition for SQL interface
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; This file is part of CLSQL.
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software

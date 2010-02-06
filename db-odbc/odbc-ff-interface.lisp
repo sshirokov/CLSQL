@@ -6,8 +6,6 @@
 ;;;; Purpose:  Function definitions for UFFI interface to ODBC
 ;;;; Author:   Kevin M. Rosenberg
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2004 by Kevin M. Rosenberg
 ;;;; and Copyright (C) Paul Meurer 1999 - 2001. All rights reserved.
 ;;;;

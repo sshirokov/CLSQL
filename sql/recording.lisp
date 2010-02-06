@@ -1,8 +1,6 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; CLSQL broadcast streams which can be used to monitor the
 ;;;; flow of commands to, and results from, a database.
 ;;;;

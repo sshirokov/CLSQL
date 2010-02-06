@@ -1,8 +1,6 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; CLSQL square bracket symbolic query syntax. Functions for
 ;;;; enabling and disabling the syntax and for building SQL
 ;;;; expressions using the syntax.

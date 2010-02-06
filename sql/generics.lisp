@@ -4,12 +4,10 @@
 ;;;;
 ;;;; Name:     generics.lisp
 ;;;; Purpose:  Generic function definitions for DB interfaces
-;;;; Author:   Kevin M. Rosenberg based on
+;;;; Author:   Kevin M. Rosenberg
 ;;;; Created:  Apr 2004
 ;;;;
-;;;; $Id$
-;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2004-2010 by Kevin M. Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License

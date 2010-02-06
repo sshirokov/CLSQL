@@ -1,8 +1,6 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; Generic postgresql layer, used by db-postgresql and db-postgresql-socket
 ;;;;
 ;;;; This file is part of CLSQL.

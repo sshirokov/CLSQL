@@ -7,9 +7,7 @@
 #  Author:  Kevin M. Rosenberg
 #  Created: Mar 2002
 #
-#  CVS Id:   $Id: Makefile.msvc,v 1.1 2002/09/18 07:43:40 kevin Exp $
-#
-# This file, part of CLSQL, is Copyright (c) 2002-2009 by Kevin M. Rosenberg
+# This file, part of CLSQL, is Copyright (c) 2002-2010 by Kevin M. Rosenberg
 #
 # CLSQL users are granted the rights to distribute and use this software
 # as governed by the terms of the Lisp Lesser GNU Public License

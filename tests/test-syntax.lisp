@@ -1,17 +1,16 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
-;;;; ======================================================================
-;;;; File:    test-syntax.lisp
-;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>
-;;;; Created: 30/03/2004
-;;;; Updated: $Id$
-;;;; ======================================================================
+;;;; *************************************************************************
+;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Description ==========================================================
-;;;; ======================================================================
+;;;; Name:     clsql.asd
+;;;; Purpose:  Tests for the CLSQL Symbolic SQL syntax.
+;;;; Authors:  Marcus Pearce and Kevin M. Rosenberg
+;;;; Created:  March 2004
 ;;;;
-;;;; Tests for the CLSQL Symbolic SQL syntax.
-;;;;
-;;;; ======================================================================
+;;;; CLSQL users are granted the rights to distribute and use this software
+;;;; as governed by the terms of the Lisp Lesser GNU Public License
+;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+;;;; *************************************************************************
 
 (in-package #:clsql-tests)
 

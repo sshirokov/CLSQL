@@ -7,8 +7,6 @@
 ;;;; Authors:  Aurelio Bignoli
 ;;;; Created:  Oct 2004
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2004 by Aurelio Bignoli
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
@@ -281,7 +279,7 @@
                                     (database sqlite3-database)
                                     &key (owner nil))
   (declare (ignore owner))
-  
+
   (loop for field-info in (sqlite3-table-info table database)
       when (string= attribute (second field-info))
       return

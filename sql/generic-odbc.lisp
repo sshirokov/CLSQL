@@ -1,8 +1,6 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; Generic ODBC layer, used by db-odbc and db-aodbc backends
 ;;;;
 ;;;; This file is part of CLSQL.

@@ -31,14 +31,10 @@
     <affiliation><jobtitle>Author of UncommonSQL Package</jobtitle></affiliation>
   </author>
   </authorgroup>
-  <printhistory>
-    <simpara>$Date$</simpara>
-    <simpara>$Id$</simpara>
-  </printhistory>
   <legalnotice>
     <itemizedlist>
       <listitem>
-	<para>&clsql; is Copyright &copy; 2002-2004 by Kevin M. Rosenberg,
+	<para>&clsql; is Copyright &copy; 2002-2010 by Kevin M. Rosenberg,
 	Copyright &copy; 1999-2001 by Pierre R. Mai, and Copyright
 	&copy; 1999-2003 onShore Development, Inc.</para>
        </listitem>

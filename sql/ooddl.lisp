@@ -1,8 +1,6 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; The CLSQL Object Oriented Data Definitional Language (OODDL)
 ;;;;
 ;;;; This file is part of CLSQL.

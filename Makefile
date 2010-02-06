@@ -1,3 +1,5 @@
+#!/usr/bin/make
+##########################################################################
 # FILE IDENTIFICATION
 # 
 #  Name:         Makefile
@@ -5,13 +7,13 @@
 #  Programer:    Kevin M. Rosenberg
 #  Date Started: Mar 2002
 #
-#  CVS Id:   $Id$
-#
-# This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
+# This file, part of CLSQL, is Copyright (c) 2002-2010 by Kevin M. Rosenberg
 #
 # CLSQL users are granted the rights to distribute and use this software
 # as governed by the terms of the Lisp Lesser GNU Public License
 # (http://opensource.franz.com/preamble.html), also known as the LLGPL.
+##########################################################################
+
 
 PKG	:= clsql
 DEBPKG	:= cl-sql

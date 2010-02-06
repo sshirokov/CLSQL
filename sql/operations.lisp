@@ -1,8 +1,6 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; Definition of SQL operations used with the symbolic SQL syntax.
 ;;;;
 ;;;; This file is part of CLSQL.

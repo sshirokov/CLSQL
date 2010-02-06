@@ -7,8 +7,6 @@
 ;;;; Authors:  Aurelio Bignoli and Kevin Rosenberg
 ;;;; Created:  Nov 2003
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2003 by Aurelio Bignoli
 ;;;; and Copyright (c) 2003-2004 by Kevin Rosenberg
 ;;;;

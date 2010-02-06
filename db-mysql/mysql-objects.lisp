@@ -6,8 +6,6 @@
 ;;;; Purpose:  CLSQL Object layer for MySQL
 ;;;; Created:  May 2004
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.

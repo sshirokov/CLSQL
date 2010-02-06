@@ -7,8 +7,6 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Apr 2003
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; This file imports MOP symbols into the CLSQL-MOP package and then
 ;;;; re-exports into CLSQL-SYS them to hide differences in
 ;;;; MOP implementations.

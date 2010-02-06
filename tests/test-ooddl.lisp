@@ -1,19 +1,18 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
-;;;; ======================================================================
-;;;; File:    test-ooddl.lisp
-;;;; Author:  Marcus Pearce <m.t.pearce@city.ac.uk>
-;;;; Created: 30/03/2004
-;;;; Updated: $Id$
+;;;; *************************************************************************
+;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Tests for the CLSQL Object Oriented Data Definition Language
-;;;; (OODDL).
+;;;; Name:     test-ooddl.lisp
+;;;; Purpose:  Tests for the CLSQL Object Oriented Data Definition Language
+;;;; Authors:  Marcus Pearce and Kevin M. Rosenberg
+;;;; Created:  March 2004
 ;;;;
 ;;;; This file is part of CLSQL.
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
-;;;; ======================================================================
+;;;; *************************************************************************
 
 
 (in-package #:clsql-tests)

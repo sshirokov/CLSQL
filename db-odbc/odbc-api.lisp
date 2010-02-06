@@ -6,8 +6,6 @@
 ;;;; Purpose:  Low-level ODBC API using UFFI
 ;;;; Authors:  Kevin M. Rosenberg and Paul Meurer
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; This file, part of CLSQL, is Copyright (c) 2004 by Kevin M. Rosenberg
 ;;;; and Copyright (C) Paul Meurer 1999 - 2001. All rights reserved.
 ;;;;

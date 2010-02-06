@@ -1,18 +1,19 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
-;;;; ======================================================================
-;;;; File:    benchmarks.lisp
-;;;; Authors: Kevin Rosenberg
-;;;; Created: 03/05/2004
-;;;; Updated: $Id$
+;;;; *************************************************************************
+;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Benchmark suite
+;;;; Name:     benchmarks.lisp
+;;;; Purpose:  Time performance tests for CLSQL
+;;;; Authors:  Kevin M. Rosenberg
+;;;; Created:  March 5, 2004
 ;;;;
 ;;;; This file is part of CLSQL.
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
-;;;; ======================================================================
+;;;; *************************************************************************
+
 
 (in-package #:clsql-tests)
 

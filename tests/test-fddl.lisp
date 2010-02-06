@@ -1,19 +1,19 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
-;;;; ======================================================================
-;;;; File:     test-fddl.lisp
-;;;; Authors:  Marcus Pearce <m.t.pearce@city.ac.uk> and Kevin Rosenberg
-;;;; Created:  30/03/2004
-;;;; Updated:  $Id$
+;;;; *************************************************************************
+;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Tests for the CLSQL Functional Data Definition Language
-;;;; (FDDL).
+;;;; Name:     test-fddl.lisp
+;;;; Purpose:  Tests for the CLSQL Functional Data Definition Language
+;;;; Authors:  Marcus Pearce and Kevin M. Rosenberg
+;;;; Created:  March 2004
 ;;;;
 ;;;; This file is part of CLSQL.
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
 ;;;; (http://opensource.franz.com/preamble.html), also known as the LLGPL.
-;;;; ======================================================================
+;;;; *************************************************************************
+
 
 (in-package #:clsql-tests)
 
@@ -236,7 +236,7 @@ B varchar(32))")
 	     (let ((result
 		    (list
 		     ;; Shouldn't exist
-		     (clsql:select [a] [c] 
+		     (clsql:select [a] [c]
 				   :from [v1]
 				   :where [= [a] -1])
 		     ;; Should exist
@@ -263,11 +263,11 @@ B varchar(32))")
 				   (clsql:list-attributes [v1]))
 			   #'string<)
 		     ;; Shouldn't exist
-		     (clsql:select [x] [y] 
+		     (clsql:select [x] [y]
 				   :from [v1]
 				   :where [= [x] -1])
 		     ;; Should exist
-		     (car (clsql:select [x] [y] 
+		     (car (clsql:select [x] [y]
 					:from [v1]
 					:where [= [x] 1])))))
 
@@ -402,7 +402,7 @@ B varchar(32))")
 	       (clsql:index-exists-p [bar] )
 	       (clsql:index-exists-p [bar] :owner *test-database-user*)
 	       (clsql:index-exists-p [bar] :owner *test-false-database-user*)
-	       
+
 	       (length (clsql-sys:list-indexes :on [alpha]))
 	       (length (clsql-sys:list-indexes :on [alpha] :owner *test-database-user*))
 	       (length (clsql-sys:list-indexes :on [alpha] :owner *test-false-database-user*))
@@ -421,7 +421,7 @@ B varchar(32))")
 	    (clsql:sequence-exists-p [foo])
 	    (clsql:sequence-exists-p [foo] :owner *test-database-user*)
 	    (clsql:sequence-exists-p [foo] :owner *test-false-database-user*)
-	    
+
 	    (progn
 	      (clsql:drop-sequence [foo] :if-does-not-exist :ignore)
 	      (clsql:sequence-exists-p [foo] ))))

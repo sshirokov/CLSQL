@@ -35,8 +35,8 @@
     :licence "Lessor Lisp General Public License"
     :description "Common Lisp SQL Interface library"
     :long-description "A Common Lisp interface to SQL RDBMS based on
-the Xanalys CommonSQL interface for Lispworks. It depends on the
-low-level database interfaces as well as a functional and an object
+the Xanalys CommonSQL interface for Lispworks. It provides low-level
+database interfaces as well as a functional and an object
 oriented interface."
     :components
     ((:module sql

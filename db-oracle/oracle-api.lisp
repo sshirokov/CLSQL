@@ -5,8 +5,6 @@
 ;;;; Name:          oracle.lisp
 ;;;; Purpose:       Package definition for CLSQL Oracle interface
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; This file is part of CLSQL.
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software

@@ -4,8 +4,6 @@
 ;;;;
 ;;;; Name: oracle-objects.lisp
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; This file is part of CLSQL.
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software

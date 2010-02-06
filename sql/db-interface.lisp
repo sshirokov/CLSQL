@@ -9,9 +9,7 @@
 ;;;;                onShoreD to support UncommonSQL front-end
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; $Id$
-;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2010 by Kevin M. Rosenberg
 ;;;; and Copyright (c) 1999-2001 by Pierre R. Mai, and onShoreD
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software

@@ -5,8 +5,6 @@
 ;;;; Name:          oracle-loader.lisp
 ;;;; Purpose:       Foreign library loader for CLSQL Oracle interface
 ;;;;
-;;;; $Id$
-;;;;
 ;;;; This file is part of CLSQL.
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
