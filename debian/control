@@ -3,7 +3,7 @@ Section: lisp
 Priority: extra
 Maintainer: Kevin M. Rosenberg <kmr@debian.org>
 Build-Depends: dh-lisp, debhelper (>= 7.0.0), libmysqlclient-dev, libpq-dev
-Standards-Version: 3.8.3.0
+Standards-Version: 3.8.4.0
 Homepage: http://clsql.b9.com/
 Vcs-Git: git://git.b9.com/clsql.git
 Vcs-Browser: http://git.b9.com/?p=clsql.git
