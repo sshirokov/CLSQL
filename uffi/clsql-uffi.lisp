@@ -147,8 +147,8 @@
           (uffi:convert-from-foreign-string char-ptr :locale :none)
           #-sb-unicode
           (if length
-              (uffi:convert-from-foreign-string char-ptr :locale :none
+              (uffi:convert-from-foreign-string char-ptr
                                                 :null-terminated-p nil
                                                 :length length)
-            (uffi:convert-from-foreign-string char-ptr :locale :none))))))))
+            (uffi:convert-from-foreign-string char-ptr))))))))
 

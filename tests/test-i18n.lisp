@@ -4,10 +4,10 @@
 ;;;;
 ;;;; Name:    test-i18n.lisp
 ;;;; Purpose: Tests for passing non-ascii encoded strings to db and back
-;;;; Author:  Nathan Bird
+;;;; Author:  Nathan Bird & Kevin M. Rosenberg
 ;;;; Created: Feb 2010
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002-2010 by Kevin M. Rosenberg
+;;;; This file is part of CLSQL.
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
@@ -23,15 +23,17 @@
 ;;; UTF-8 for example can handle these easily.
 ;; I show this as a 20char string and 27 bytes in utf-8
 (deftest :basic/i18n/1
-    (first (query "SELECT 'Iñtërnâtiônàlizætiøn'"
-		  :flatp t :field-names nil))
-  "Iñtërnâtiônàlizætiøn")
+ (let ((uffi:*default-external-format* :utf-8))
+   (first (query "SELECT 'Iñtërnâtiônàlizætiøn'"
+                 :flatp t :field-names nil)))
+ "Iñtërnâtiônàlizætiøn")
 
 ;; the z in this one is even stronger
 ;; I show this as a 20char string and 28 bytes in utf-8
 (deftest :basic/i18n/2
-    (first (query "SELECT 'Iñtërnâtiônàližætiøn'"
-		  :flatp t :field-names nil))
-  "Iñtërnâtiônàližætiøn")
+ (let ((uffi:*default-external-format* :utf-8))
+   (first (query "SELECT 'Iñtërnâtiônàližætiøn'"
+                 :flatp t :field-names nil)))
+ "Iñtërnâtiônàližætiøn")
 
 ))

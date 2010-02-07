@@ -1,4 +1,10 @@
 2010-02-06  Kevin Rosenberg <kevin@rosenberg.net>
+	* tests/test-i18n.lisp: Bind UFFI:*DEFAULT-EXTERNAL-FORMAT*
+	for testing multibyte encodings.
+	* uffi/clsql-uffi.lisp: Changes for UFFI 1.7.4's new support
+	for encoding foreign strings with a specified external format.
+
+2010-02-06  Kevin Rosenberg <kevin@rosenberg.net>
 	* sql/metaclasses.lisp: If no declared slot type in
 	compute-lisp-type-from-specified-type, then use t as lisp type.
 	Issue noted when testing Clozure CL 1.4.
