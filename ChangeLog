@@ -1,4 +1,14 @@
 2010-02-06  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 5.0.0: First release of CLSQL to formally and
+	consistently support non-ASCII strings with encoding of external
+	formats for SQL strings. UFFI version 1.8.1 is higher is required.
+
+	This change may introduce some differences in string handling for
+	people who are using non-ASCII encoded characters.  Thus, because
+	of the risk of BACKWARD INCOMPATIBILITY, the major version number
+	was incremented with this release.
+
+2010-02-06  Kevin Rosenberg <kevin@rosenberg.net>
 	* tests/test-i18n.lisp: Bind UFFI:*DEFAULT-EXTERNAL-FORMAT*
 	for testing multibyte encodings.
 	* uffi/clsql-uffi.lisp: Changes for UFFI 1.7.4's new support
@@ -14,7 +24,7 @@
 	testing on postgres.
 
 2010-02-05  Kevin Rosenberg <kevin@rosenberg.net>
-	* clsql-test.asd, tests/{test-i18n,test-init}.lisp: 
+	* clsql-test.asd, tests/{test-i18n,test-init}.lisp:
 	Load test-i18n.lisp and use its tests as long as 'uffi:no-i18n is
 	not present in cl:*features*. This requires UFFI 1.7.2 or above.
 

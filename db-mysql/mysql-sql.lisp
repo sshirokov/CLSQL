@@ -6,7 +6,7 @@
 ;;;; Purpose:       High-level MySQL interface using UFFI
 ;;;; Date Started:  Feb 2002
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002-2009 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2010 by Kevin M. Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
@@ -19,12 +19,6 @@
     (:documentation "This is the CLSQL interface to MySQL."))
 
 (in-package #:clsql-mysql)
-
-;; if we have :sb-unicode, UFFI will treat :cstring as a UTF-8 string
-(defun expression-length (query-expression)
-  (length #+sb-unicode (sb-ext:string-to-octets query-expression
-                                                :external-format :utf8)
-          #-sb-unicode query-expression))
 
 ;;; Field conversion functions
 
@@ -165,7 +159,7 @@
                                            :mysql-ptr mysql-ptr))
                            (cmd "SET SESSION sql_mode='ANSI'"))
                       (uffi:with-cstring (cmd-cs cmd)
-                        (if (zerop (mysql-real-query mysql-ptr cmd-cs (expression-length cmd)))
+                        (if (zerop (mysql-real-query mysql-ptr cmd-cs (uffi:foreign-encoded-string-octets cmd)))
                             db
                             (progn
                               (warn "Error setting ANSI mode for MySQL.")
@@ -183,7 +177,7 @@
     (let ((mysql-ptr (database-mysql-ptr database)))
       (declare (type mysql-mysql-ptr-def mysql-ptr))
       (if (zerop (mysql-real-query mysql-ptr sql-native
-                                   (expression-length sql-expression)))
+                                   (uffi:foreign-encoded-string-octets sql-expression)))
           t
         (error 'sql-database-data-error
                :database database
@@ -515,7 +509,7 @@
              :message (mysql-error-string mysql-ptr)))
 
     (uffi:with-cstring (native-query sql-stmt)
-      (unless (zerop (mysql-stmt-prepare stmt native-query (expression-length sql-stmt)))
+      (unless (zerop (mysql-stmt-prepare stmt native-query (uffi:foreign-encoded-string-octets sql-stmt)))
         (mysql-stmt-close stmt)
         (error 'sql-database-error
                :error-id (mysql-errno mysql-ptr)
