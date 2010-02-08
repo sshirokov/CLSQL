@@ -2,8 +2,8 @@
 ;;;; *************************************************************************
 ;;;; FILE IDENTIFICATION
 ;;;;
-;;;; Name:          classes.lisp
-;;;; Purpose:       Classes for High-level SQL interface
+;;;; Name:          base-classes.lisp
+;;;; Purpose:       Base classes for high-level SQL interface
 ;;;; Programmers:   Kevin M. Rosenberg based on
 ;;;;                 original code by Pierre R. Mai
 ;;;; Date Started:  Feb 2002
@@ -23,9 +23,11 @@
   ((name :initform nil :initarg :name :reader database-name)
    (connection-spec :initform nil :initarg :connection-spec
                     :reader connection-spec
-                    :documentation "Require to use connection pool")
+                    :documentation "Required to use connection pool.")
    (database-type :initarg :database-type :initform :unknown
                   :reader database-type)
+   (encoding :initarg :encoding :initform nil
+             :documentation "External format character encoding.")
    (state :initform :closed :reader database-state)
    (autocommit :initform t :accessor database-autocommit)
    (command-recording-stream :accessor command-recording-stream :initform nil)

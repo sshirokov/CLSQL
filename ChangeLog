@@ -1,3 +1,10 @@
+2010-02-07  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 5.0.1
+	* sql/{base-classes,database}.lisp: Add encoding slot for 
+	non-ASCII strings.
+	* db-mysql/mysql-sql.lisp: Use UFFI:FOREIGN-ENCODED-OCTET-COUNT.
+	Requires UFFI version 1.8.2 or above.
+
 2010-02-06  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.0.0: First release of CLSQL to formally and
 	consistently support non-ASCII strings with encoding of external

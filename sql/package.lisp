@@ -189,6 +189,7 @@
      #:database-state
      #:attribute-cache
      #:database-autocommit
+     #:encoding
 
      ;; utils.lisp
      #:without-interrupts

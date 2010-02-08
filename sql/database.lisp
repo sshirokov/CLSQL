@@ -70,7 +70,8 @@ error is signalled."
                 &key (if-exists *connect-if-exists*)
                 (make-default t)
                 (pool nil)
-                (database-type *default-database-type*))
+                (database-type *default-database-type*)
+                (encoding nil))
   "Connects to a database of the supplied DATABASE-TYPE which
 defaults to *DEFAULT-DATABASE-TYPE*, using the type-specific
 connection specification CONNECTION-SPEC. The value of IF-EXISTS,
@@ -149,6 +150,7 @@ be taken from this pool."
           (setf (slot-value result 'state) :open)
           (pushnew result *connected-databases*)
           (when make-default (setq *default-database* result))
+          (setf (encoding result) encoding)
           result))))
 
 
@@ -307,10 +309,28 @@ system specified by DATABASE-TYPE."
     (setq connection-spec (string-to-list-connection-spec connection-spec)))
   (database-list connection-spec database-type))
 
+(defun encoding (db)
+  (when (typep db 'database)
+    (slot-value db 'encoding)))
+
+(defun (setf encoding) (encoding db)
+  (when (typep db 'database)
+    (setf (slot-value db 'encoding) encoding)
+    (when (eql (slot-value db 'state) :open)
+      (case database-type
+        ;; FIXME: If database object is open then
+        ;; send command to SQL engine specifying the character
+        ;; encoding for the database
+        (:mysql
+         )
+        ((:postgresql :postgresql-socket)
+         )))))
+
 (defmacro with-database ((db-var connection-spec
                                  &key make-default pool
                                  (if-exists *connect-if-exists*)
-                                 (database-type *default-database-type*))
+                                 (database-type *default-database-type*)
+                                 (encoding nil))
                                  &body body)
   "Evaluate the body in an environment, where DB-VAR is bound to the
 database connection given by CONNECTION-SPEC and CONNECT-ARGS.  The
@@ -320,7 +340,8 @@ from the body. MAKE-DEFAULT has a default value of NIL."
                            :database-type ,database-type
                            :if-exists ,if-exists
                            :pool ,pool
-                           :make-default ,make-default)))
+                           :make-default ,make-default
+                           :encoding ,encoding)))
      (unwind-protect
       (let ((,db-var ,db-var))
         (progn ,@body))
@@ -331,4 +352,3 @@ from the body. MAKE-DEFAULT has a default value of NIL."
   `(progv '(*default-database*)
        (list ,database)
      ,@body))
-
