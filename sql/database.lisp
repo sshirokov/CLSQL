@@ -317,7 +317,7 @@ system specified by DATABASE-TYPE."
   (when (typep db 'database)
     (setf (slot-value db 'encoding) encoding)
     (when (eql (slot-value db 'state) :open)
-      (case database-type
+      (case (database-type db)
         ;; FIXME: If database object is open then
         ;; send command to SQL engine specifying the character
         ;; encoding for the database

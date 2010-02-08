@@ -1,3 +1,10 @@
+2010-02-08  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 5.0.2
+	* sql/database.lisp: Fix missing slot-accessor 
+	(Thanks to Stelian Ionescu)
+	* sql/generics.lisp: Add missing keyword to defgeneric
+	(Thanks to Stelian Ionescu)
+
 2010-02-07  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.0.1
 	* sql/{base-classes,database}.lisp: Add encoding slot for 
