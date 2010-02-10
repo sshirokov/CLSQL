@@ -159,7 +159,7 @@
                                            :mysql-ptr mysql-ptr))
                            (cmd "SET SESSION sql_mode='ANSI'"))
                       (uffi:with-cstring (cmd-cs cmd)
-                        (if (zerop (mysql-real-query mysql-ptr cmd-cs (uffi:foreign-encoded-string-octets cmd)))
+                        (if (zerop (mysql-real-query mysql-ptr cmd-cs (uffi:foreign-encoded-octet-count cmd)))
                             db
                             (progn
                               (warn "Error setting ANSI mode for MySQL.")
@@ -177,7 +177,7 @@
     (let ((mysql-ptr (database-mysql-ptr database)))
       (declare (type mysql-mysql-ptr-def mysql-ptr))
       (if (zerop (mysql-real-query mysql-ptr sql-native
-                                   (uffi:foreign-encoded-string-octets sql-expression)))
+                                   (uffi:foreign-encoded-octet-count sql-expression)))
           t
         (error 'sql-database-data-error
                :database database
@@ -509,7 +509,7 @@
              :message (mysql-error-string mysql-ptr)))
 
     (uffi:with-cstring (native-query sql-stmt)
-      (unless (zerop (mysql-stmt-prepare stmt native-query (uffi:foreign-encoded-string-octets sql-stmt)))
+      (unless (zerop (mysql-stmt-prepare stmt native-query (uffi:foreign-encoded-octet-count sql-stmt)))
         (mysql-stmt-close stmt)
         (error 'sql-database-error
                :error-id (mysql-errno mysql-ptr)
