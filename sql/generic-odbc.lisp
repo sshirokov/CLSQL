@@ -76,6 +76,10 @@
                                         (db-type (eql :mssql)))
   (declare (ignore args database))
   "DATETIME")
+(defmethod database-get-type-specifier ((type (eql 'date)) args database
+                                        (db-type (eql :mssql)))
+  (declare (ignore args database))
+  "DATETIME")
 
 (defmethod database-get-type-specifier ((type (eql 'boolean)) args database
                                         (db-type (eql :mssql)))
