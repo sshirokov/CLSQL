@@ -107,10 +107,10 @@
     ;; and stick a value in there.
     (progn (clsql-sys:create-view-from-class 'big)
 	   (values
-	     (clsql:table-exists-p [big] :owner *test-database-user*)
+	     (clsql:table-exists-p [big] )
 	     (progn
 	       (clsql:drop-table [big] :if-does-not-exist :ignore)
-	       (clsql:table-exists-p [big] :owner *test-database-user*)))
+	       (clsql:table-exists-p [big])))
 	   )
   t nil)
 
