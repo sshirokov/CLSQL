@@ -217,9 +217,10 @@
 				 (uffi:deref-array row '(:array
 							 (* :unsigned-char))
 						   i)
-				 result-types i
-				 (uffi:deref-array lengths '(:array :unsigned-long)
-						   i)))))
+				 (nth i result-types)
+                                 :length
+				 (uffi:deref-array lengths '(:array :unsigned-long) i)
+                                 :encoding (encoding database)))))
 		     (when field-names
 		       (result-field-names res-ptr))))
 	      (mysql-free-result res-ptr))
@@ -293,9 +294,10 @@
             (setf (car rest)
                   (convert-raw-field
                    (uffi:deref-array row '(:array (* :unsigned-char)) i)
-                   types
-                   i
-                   (uffi:deref-array lengths '(:array :unsigned-long) i))))
+                   (nth i types)
+                   :length
+                   (uffi:deref-array lengths '(:array :unsigned-long) i)
+                   :encoding (encoding database))))
       list)))
 
 
@@ -684,21 +686,21 @@
                    ((#.mysql-field-types#var-string #.mysql-field-types#string
                      #.mysql-field-types#tiny-blob #.mysql-field-types#blob
                      #.mysql-field-types#medium-blob #.mysql-field-types#long-blob)
-                    (uffi:convert-from-foreign-string buffer))
-                    (#.mysql-field-types#tiny
-                     (uffi:ensure-char-integer
-                      (uffi:deref-pointer buffer :byte)))
-                    (#.mysql-field-types#short
-                     (uffi:deref-pointer buffer :short))
-                    (#.mysql-field-types#long
-                     (uffi:deref-pointer buffer :int))
-                    #+64bit
-                    (#.mysql-field-types#longlong
+                    (uffi:convert-from-foreign-string buffer :encoding (encoding (database stmt))))
+                   (#.mysql-field-types#tiny
+                    (uffi:ensure-char-integer
+                     (uffi:deref-pointer buffer :byte)))
+                   (#.mysql-field-types#short
+                    (uffi:deref-pointer buffer :short))
+                   (#.mysql-field-types#long
+                    (uffi:deref-pointer buffer :int))
+                   #+64bit
+                   (#.mysql-field-types#longlong
                      (uffi:deref-pointer buffer :long))
-                    (#.mysql-field-types#float
-                     (uffi:deref-pointer buffer :float))
-                    (#.mysql-field-types#double
-                     (uffi:deref-pointer buffer :double))
+                   (#.mysql-field-types#float
+                    (uffi:deref-pointer buffer :float))
+                   (#.mysql-field-types#double
+                    (uffi:deref-pointer buffer :double))
                    ((#.mysql-field-types#time #.mysql-field-types#date
                                               #.mysql-field-types#datetime #.mysql-field-types#timestamp)
                     (let ((year (uffi:get-slot-value buffer 'mysql-time 'mysql::year))
@@ -706,7 +708,7 @@
                           (day (uffi:get-slot-value buffer 'mysql-time 'mysql::day))
                           (hour (uffi:get-slot-value buffer 'mysql-time 'mysql::hour))
                           (minute (uffi:get-slot-value buffer 'mysql-time 'mysql::minute))
-                  (second (uffi:get-slot-value buffer 'mysql-time 'mysql::second)))
+                          (second (uffi:get-slot-value buffer 'mysql-time 'mysql::second)))
                       (db-timestring
                        (make-time :year year :month month :day day :hour hour
                                   :minute minute :second second))))

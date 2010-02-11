@@ -97,7 +97,7 @@
                (when (> n-col 0)
                  (when field-names
                    (setf col-names (loop for i from 0 below n-col
-                                         collect (sqlite:sqlite-aref sqlite-col-names i))))
+                                         collect (sqlite:sqlite-aref sqlite-col-names i (encoding database)))))
                  (let ((canonicalized-result-types
                         (canonicalize-result-types result-types n-col sqlite-col-names)))
                    (flet ((extract-row-data (row)
@@ -105,7 +105,8 @@
                             (loop for i from 0 below n-col
                                   collect (clsql-uffi:convert-raw-field
                                            (sqlite:sqlite-raw-aref row i)
-                                           canonicalized-result-types i))))
+                                           (nth i canonicalized-result-types)
+                                           :encoding (encoding database)))))
                      (push (extract-row-data new-row) rows)
 
                      ;; Read subsequent rows.
@@ -224,8 +225,8 @@
                 do (setf (car rest)
                          (clsql-uffi:convert-raw-field
                           (sqlite:sqlite-raw-aref row i)
-                          result-types
-                          i)))
+                          (nth i result-types)
+                          :encoding (encoding database))))
           (sqlite:sqlite-free-row row)
           t))))
 

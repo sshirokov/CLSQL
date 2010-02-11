@@ -1,7 +1,13 @@
+2010-02-11  Kevin Rosenberg <kevin@rosenberg.net>
+	* multiple-files: Further internationalization. Change
+	UFFI:CONVERT-RAW-FIELD and UFFI:CONVERT-FROM-FOREIGN-STRINGS
+	invocations to use the foreign character set encoding of the
+	database object.
+
 2010-02-11  Nathan Bird  <nathan@acceleration.net>
 	* MSSQL: better support for fddl 'date type.
 
-2010-02-20  Kevin Rosenberg <kevin@rosenberg.net>
+2010-02-11  Kevin Rosenberg <kevin@rosenberg.net>
 	* Makefile.common, uffi/Makefile, db-mysql/Makefile:
 	Better support OS X Snow Leopard by building universal
 	(x86_64,i386) dylib bundles

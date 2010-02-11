@@ -166,7 +166,9 @@ the length of that format.")
                           (uffi:char-array-to-pointer errbuf)
                           +errbuf-len+ +oci-htype-error+))
          (let ((subcode (uffi:deref-pointer errcode 'sb4))
-               (errstr (uffi:convert-from-foreign-string errbuf)))
+               (errstr (uffi:convert-from-foreign-string
+                        errbuf
+                        :encoding (when database (encoding database)))))
            (uffi:free-foreign-object errcode)
            (uffi:free-foreign-object errbuf)
            (unless (and nulls-ok (= subcode +null-value-returned+))
@@ -215,14 +217,15 @@ the length of that format.")
 
 (uffi:def-type string-pointer (* :unsigned-char))
 
-(defun deref-oci-string (arrayptr string-index size)
+(defun deref-oci-string (arrayptr string-index size encoding)
   (declare (type string-pointer arrayptr))
   (declare (type (mod #.+n-buf-rows+) string-index))
   (declare (type (and unsigned-byte fixnum) size))
   (let ((str (uffi:convert-from-foreign-string
               (uffi:make-pointer
                (+ (uffi:pointer-address arrayptr) (* string-index size))
-               :unsigned-char))))
+               :unsigned-char)
+              :encoding encoding)))
     (if (string-equal str "NULL") nil str)))
 
 ;; the OCI library, part Z: no-longer used logic to convert from
@@ -402,7 +405,7 @@ the length of that format.")
                                         ; from it after that..
 
 
-(defun fetch-row (qc &optional (eof-errorp t) eof-value)
+(defun fetch-row (qc (eof-errorp t) eof-value encoding)
   (declare (optimize (speed 3)))
   (cond ((zerop (qc-n-from-oci qc))
          (if eof-errorp
@@ -412,7 +415,7 @@ the length of that format.")
         ((>= (qc-n-to-dbi qc)
              (qc-n-from-oci qc))
          (refill-qc-buffers qc)
-         (fetch-row qc nil eof-value))
+         (fetch-row qc nil eof-value encoding))
         (t
          (let ((cds (qc-cds qc))
                (reversed-result nil)
@@ -721,7 +724,8 @@ the length of that format.")
                               (deref-vp errhp))
                 (setq colname-string (uffi:convert-from-foreign-string
                                       (uffi:deref-pointer colname '(* :unsigned-char))
-                                      :length (uffi:deref-pointer colnamelen 'ub4))))
+                                      :length (uffi:deref-pointer colnamelen 'ub4)
+                                      :encoding (encoding database))))
               (push (make-cd :name colname-string
                              :sizeof sizeof
                              :buffer buffer
@@ -894,7 +898,7 @@ the length of that format.")
       (do ((reversed-result nil))
           (nil)
         (let* ((eof-value :eof)
-               (row (fetch-row cursor nil eof-value)))
+               (row (fetch-row cursor nil eof-value (encoding database))))
           (when (eq row eof-value)
             (close-query cursor)
             (if field-names
@@ -1019,7 +1023,7 @@ the length of that format.")
 
 (defmethod database-store-next-row (result-set (database oracle-database) list)
   (let* ((eof-value :eof)
-         (row (fetch-row result-set nil eof-value)))
+         (row (fetch-row result-set nil eof-value (encoding database))))
     (unless (eq eof-value row)
       (loop for i from 0 below (length row)
           do (setf (nth i list) (nth i row)))

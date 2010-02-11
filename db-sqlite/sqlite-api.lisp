@@ -305,10 +305,11 @@
   (null-pointer-p row))
 
 (declaim (inline sqlite-aref))
-(defun sqlite-aref (a n)
+(defun sqlite-aref (a n encoding)
   (declare (type sqlite-row-pointer-type a))
   (convert-from-foreign-string
-   (deref-array (deref-pointer a 'sqlite-row-pointer) '(:array (* :unsigned-char)) n)))
+   (deref-array (deref-pointer a 'sqlite-row-pointer) '(:array (* :unsigned-char)) n)
+   :encoding encoding))
 
 (declaim (inline sqlite-raw-aref))
 (defun sqlite-raw-aref (a n)

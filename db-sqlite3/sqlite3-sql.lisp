@@ -4,10 +4,10 @@
 ;;;;
 ;;;; Name:     sqlite-sql.lisp
 ;;;; Purpose:  High-level SQLite3 interface
-;;;; Authors:  Aurelio Bignoli
+;;;; Authors:  Aurelio Bignoli & Kevin Rosenberg
 ;;;; Created:  Oct 2004
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2004 by Aurelio Bignoli
+;;;; This file, part of CLSQL, is Copyright (c) 2004-2010 by Aurelio Bignoli & Kevin Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
@@ -168,11 +168,13 @@
                          (if (eq (first types) :blob)
                              (clsql-uffi:convert-raw-field
                               (sqlite3:sqlite3-column-blob stmt i)
-                              types 0
-                              (sqlite3:sqlite3-column-bytes stmt i))
+                              (car types)
+                              :length (sqlite3:sqlite3-column-bytes stmt i)
+                              :encoding (encoding database))
                              (clsql-uffi:convert-raw-field
                               (sqlite3:sqlite3-column-text stmt i)
-                              types 0))))
+                              (car types)
+                              :encoding (encoding database)))))
           ;; Advance result set cursor.
           (handler-case
               (unless (sqlite3:sqlite3-step stmt)
@@ -201,11 +203,13 @@
                                 collect (if (eq (first types) :blob)
                                             (clsql-uffi:convert-raw-field
                                              (sqlite3:sqlite3-column-blob stmt i)
-                                             types 0
-                                             (sqlite3:sqlite3-column-bytes stmt i))
+                                             (car types)
+                                             :length (sqlite3:sqlite3-column-bytes stmt i)
+                                             :encoding (encoding database))
                                             (clsql-uffi:convert-raw-field
                                              (sqlite3:sqlite3-column-text stmt i)
-                                             types 0)))))
+                                             (car types)
+                                             :encoding (encoding database))))))
                    (when field-names
                      (setf col-names (loop for n from 0 below n-col
                                            collect (sqlite3:sqlite3-column-name stmt n))))

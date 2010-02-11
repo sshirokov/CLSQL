@@ -108,47 +108,37 @@
            (type char-ptr-def char-ptr))
   (c-strtoul char-ptr uffi:+null-cstring-pointer+ 10))
 
-(defun convert-raw-field (char-ptr types index &optional length)
+(defun convert-raw-field (char-ptr type &key length encoding)
   (declare (optimize (speed 3) (safety 0) (space 0))
            (type char-ptr-def char-ptr))
-  (let ((type (if (consp types)
-                  (nth index types)
-                  types)))
-    (cond
-      ((uffi:null-pointer-p char-ptr)
-       nil)
-      (t
-       (case type
-         (:double
-          (atof char-ptr))
-         (:int
-          (atol char-ptr))
-         (:int32
-          (atoi char-ptr))
-         (:uint32
-          (strtoul char-ptr))
-         (:uint
-          (strtoul char-ptr))
-         ((:int64 :uint64)
-          (uffi:with-foreign-object (high32-ptr :unsigned-int)
-            (let ((low32 (atol64 char-ptr high32-ptr))
-                  (high32 (uffi:deref-pointer high32-ptr :unsigned-int)))
-              (if (zerop high32)
-                  low32
+  (cond
+    ((uffi:null-pointer-p char-ptr)
+     nil)
+    (t
+     (case type
+       (:double
+        (atof char-ptr))
+       (:int
+        (atol char-ptr))
+       (:int32
+        (atoi char-ptr))
+       (:uint32
+        (strtoul char-ptr))
+       (:uint
+        (strtoul char-ptr))
+       ((:int64 :uint64)
+        (uffi:with-foreign-object (high32-ptr :unsigned-int)
+          (let ((low32 (atol64 char-ptr high32-ptr))
+                (high32 (uffi:deref-pointer high32-ptr :unsigned-int)))
+            (if (zerop high32)
+                low32
                 (make-64-bit-integer high32 low32)))))
-         (:blob
-          (if length
-              (uffi:convert-from-foreign-usb8 char-ptr length)
+       (:blob
+        (if length
+            (uffi:convert-from-foreign-usb8 char-ptr length)
             (error "Can't return blob since length is not specified.")))
-         (t
-          ;; sb-unicode doesn't work converting with length, assume
-          ;; that string is null terminated
-          #+sb-unicode
-          (uffi:convert-from-foreign-string char-ptr)
-          #-sb-unicode
-          (if length
-              (uffi:convert-from-foreign-string char-ptr
-                                                :null-terminated-p nil
-                                                :length length)
-            (uffi:convert-from-foreign-string char-ptr))))))))
-
+       (t
+        (uffi:convert-from-foreign-string char-ptr
+                                          :null-terminated-p nil
+                                          :length length
+                                          :encoding encoding))))))
