@@ -49,30 +49,31 @@ else
     ifneq ($(OS_DARWIN64),0)
 	cc $(CFLAGS) -arch x86_64 -arch i386 -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress $(source) -o $(dylib)
 	cc -arch x86_64 -arch i386 -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress /usr/lib/libz.dylib -o z.dylib
+	@echo "D2:" $(OS_DARWIN64)
     else
-    ifneq ($(OS_DARWIN),0)
-	cc $(CFLAGS)  -arch x86_64 -arch i386 -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress $(source) -o $(dylib)
-	cc -arch x86_64 -arch i386 -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress /usr/lib/libz.dylib -o z.dylib
-    else
-      ifneq ($(OS_CYGWIN),0)
-	gcc $(CFLAGS) -DWIN32 -c $(source) -o $(object)
-	ld -shared -soname=$(base)  $(object) $(LDFLAGS) -o $(shared_lib)
+      ifneq ($(OS_DARWIN),0)
+	cc $(CFLAGS) -arch i386 -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress $(source) -o $(dylib)
+	cc -arch i386 -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress /usr/lib/libz.dylib -o z.dylib
       else
-        ifneq ($(OS_LINUX64),0)
-	  gcc $(CFLAGS) -fPIC -c $(source) -o $(object)
-	  ld -shared -soname=$(base) $(object) $(LDFLAGS) -o $(shared64_lib)
-	  rm $(object)
-	  @echo "Ensure that you have multiarch i386 build tools and libraries if you want to build 32-bit library"
-	  -gcc $(CFLAGS32) -fPIC -c $(source) -o $(object)
-	  -ld -shared -soname=$(base) $(object) $(LDFLAGS32) -o $(shared_lib)
+        ifneq ($(OS_CYGWIN),0)
+	  gcc $(CFLAGS) -DWIN32 -c $(source) -o $(object)
+	  ld -shared -soname=$(base)  $(object) $(LDFLAGS) -o $(shared_lib)
         else
-	  gcc $(CFLAGS) -fPIC -c $(source) -o $(object)
-	  ld -shared -soname=$(base) $(object) $(LDFLAGS) -o $(shared_lib)
+          ifneq ($(OS_LINUX64),0)
+	    gcc $(CFLAGS) -fPIC -c $(source) -o $(object)
+	    ld -shared -soname=$(base) $(object) $(LDFLAGS) -o $(shared64_lib)
+	    rm $(object)
+	    @echo "Ensure that you have multiarch i386 build tools and libraries if you want to build 32-bit library"
+	    -gcc $(CFLAGS32) -fPIC -c $(source) -o $(object)
+	    -ld -shared -soname=$(base) $(object) $(LDFLAGS32) -o $(shared_lib)
+          else
+	    gcc $(CFLAGS) -fPIC -c $(source) -o $(object)
+	    ld -shared -soname=$(base) $(object) $(LDFLAGS) -o $(shared_lib)
+          endif
         endif
       endif
     endif
   endif
-endif
 endif
 	rm -f $(object)
 

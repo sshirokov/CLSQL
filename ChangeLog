@@ -1,8 +1,10 @@
 2010-02-11  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 5.0.3
 	* multiple-files: Further internationalization. Change
 	UFFI:CONVERT-RAW-FIELD and UFFI:CONVERT-FROM-FOREIGN-STRINGS
 	invocations to use the foreign character set encoding of the
-	database object.
+	database object. Requires UFFI v.1.8.6
+	* Makefile.common: Fix OS_DARWIN64 setting
 
 2010-02-11  Nathan Bird  <nathan@acceleration.net>
 	* MSSQL: better support for fddl 'date type.
