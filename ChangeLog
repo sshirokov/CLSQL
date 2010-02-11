@@ -1,3 +1,6 @@
+2010-02-11  Nathan Bird  <nathan@acceleration.net>
+	* MSSQL: better support for fddl 'date type.
+
 2010-02-20  Kevin Rosenberg <kevin@rosenberg.net>
 	* Makefile.common, uffi/Makefile, db-mysql/Makefile:
 	Better support OS X Snow Leopard by building universal
