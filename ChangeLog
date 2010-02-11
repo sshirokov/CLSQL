@@ -1,3 +1,8 @@
+2010-02-20  Kevin Rosenberg <kevin@rosenberg.net>
+	* Makefile.common, uffi/Makefile, db-mysql/Makefile:
+	Better support OS X Snow Leopard by building universal
+	(x86_64,i386) dylib bundles
+
 2010-02-08  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.0.2
 	* sql/database.lisp: Fix missing slot-accessor 
