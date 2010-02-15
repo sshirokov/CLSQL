@@ -97,8 +97,8 @@
 (defmethod database-name-from-spec (connection-spec (database-type (eql :mysql)))
   (check-connection-spec connection-spec database-type
                          (host db user password &optional port options))
-  (destructuring-bind (host db user password &optional port) connection-spec
-    (declare (ignore password))
+  (destructuring-bind (host db user password &optional port options) connection-spec
+    (declare (ignore password options))
     (concatenate 'string
                  (etypecase host
                    (null "localhost")
@@ -131,19 +131,27 @@
           (let ((option-code (lookup-option-code option)))
             (when option-code
               (mysql-options mysql-ptr option-code uffi:+null-cstring-pointer+)))
-          (destructuring-bind (name value) option
+          (destructuring-bind (name . value) option
             (let ((option-code (lookup-option-code name)))
               (when option-code
                 (case (lookup-option-type name)
                   (:none
                    (mysql-options mysql-ptr option-code uffi:+null-cstring-pointer+))
                   (:char-ptr
-                   (uffi:with-foreign-string (fs value)
-                       (mysql-options mysql-ptr option-code fs)))
+                   (if (stringp value)
+                       (uffi:with-foreign-string (fs value)
+                           (mysql-options mysql-ptr option-code fs))
+                       (warn "Expecting string argument for mysql option ~A, got ~A ~
+- ignoring.~%"
+                             name value)))
                   (:uint-ptr
-                   (uffi:with-foreign-object (fo :unsigned-int)
-                     (setf (uffi:deref-pointer fo :unsigned-int) value)
-                     (mysql-options mysql-ptr option-code fo)))
+                   (if (integerp value)
+                       (uffi:with-foreign-object (fo :unsigned-int)
+                         (setf (uffi:deref-pointer fo :unsigned-int) value)
+                         (mysql-options mysql-ptr option-code fo))
+                       (warn "Expecting integer argument for mysql option ~A, got ~A ~
+- ignoring.~%"
+                             name value)))
                   (:boolean-ptr
                    (uffi:with-foreign-object (fo :byte)
                      (setf (uffi:deref-pointer fo :byte)
@@ -503,7 +511,8 @@
     t))
 
 (defmethod database-list (connection-spec (type (eql :mysql)))
-  (destructuring-bind (host name user password &optional port) connection-spec
+  (destructuring-bind (host name user password &optional port options) connection-spec
+    (declare (ignore options))
     (let ((database (database-connect (list host (or name "mysql")
                                             user password port) type)))
       (unwind-protect
