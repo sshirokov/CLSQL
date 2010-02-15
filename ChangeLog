@@ -1,3 +1,8 @@
+2010-02-15  Kevin Rosenberg <kevin@rosenberg.net>
+	* db-mysql/mysql-{api,sql}.lisp: Support sending options
+	to MySQL using mysql_options, which occurs between the API calls
+	of mysql_init and mysql_real_connect.
+	
 2010-02-11  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.0.3
 	* multiple-files: Further internationalization. Change

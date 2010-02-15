@@ -74,7 +74,47 @@
      :named-pipe
      :init-command
      :read-default-file
-     :read-default-group))
+     :read-default-group
+     :set-charset-dir
+     :set-charset-name
+     :local-infile
+     :protocol
+     :shared-memory-base-name
+     :read-timeout
+     :write-timeout
+     :use-result
+     :use-remote-connection
+     :use-embedded-connection
+     :guess-connection
+     :set-client-ip
+     :secure-auth
+     :report-data-truncation
+     :reconnect
+     :ssl-verify-server-cert))
+
+(defvar +mysql-option-parameter-map+
+  '((:connect-timeout . :uint-ptr)
+    (:compress . :none)
+    (:named-pipe . :none)
+    (:init-command . :char-ptr)
+    (:read-default-file . :char-ptr)
+    (:read-default-group . :char-ptr)
+    (:set-charset-dir . :char-ptr)
+    (:set-charset-name . :char-ptr)
+    (:local-infile . :uint-ptr)
+    (:protocol . :uint-ptr)
+    (:shared-memory-base-name . :char-ptr)
+    (:read-timeout . :uint-ptr)
+    (:write-timeout . :uint-ptr)
+    (:use-result . :none)
+    (:use-remote-connection . :none)
+    (:use-embedded-connection . :none)
+    (:guess-connection . :none)
+    (:set-client-ip . :char-ptr)
+    (:secure-auth . :boolean-ptr)
+    (:report-data-truncation . :boolean-ptr)
+    (:reconnect . :boolean-ptr)
+    (:ssl-verify-server-cert . :boolean-ptr)))
 
 (uffi:def-enum mysql-status
     (:ready
@@ -246,7 +286,7 @@
 (uffi:def-function "mysql_options"
   ((mysql mysql-mysql)
    (option mysql-option)
-   (arg :cstring))
+   (arg (* :void)))
   :module "mysql"
   :returning :int)
 

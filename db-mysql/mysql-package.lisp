@@ -146,5 +146,7 @@
      #:clsql-mysql-field-name
      #:clsql-mysql-field-type
      #:clsql-mysql-field-flags
+
+     #:+mysql-option-parameter-map+
      )
     (:documentation "This is the low-level interface MySQL."))

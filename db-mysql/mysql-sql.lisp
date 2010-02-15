@@ -96,7 +96,7 @@
 
 (defmethod database-name-from-spec (connection-spec (database-type (eql :mysql)))
   (check-connection-spec connection-spec database-type
-                         (host db user password &optional port))
+                         (host db user password &optional port options))
   (destructuring-bind (host db user password &optional port) connection-spec
     (declare (ignore password))
     (concatenate 'string
@@ -113,10 +113,49 @@
                      "")
                  "/" db "/" user)))
 
+(defun lookup-option-code (option)
+  (if (assoc option +mysql-option-parameter-map+)
+      (symbol-value (intern
+                     (concatenate 'string (symbol-name-default-case "mysql-option#")
+                                  (symbol-name option))
+                     (symbol-name '#:mysql)))
+      (progn
+        (warn "Unknown mysql option name ~A - ignoring.~%" option)
+        nil)))
+
+(defun set-mysql-options (mysql-ptr options)
+  (flet ((lookup-option-type (option)
+           (cdr (assoc option +mysql-option-parameter-map+))))
+    (dolist (option options)
+      (if (atom option)
+          (let ((option-code (lookup-option-code option)))
+            (when option-code
+              (mysql-options mysql-ptr option-code uffi:+null-cstring-pointer+)))
+          (destructuring-bind (name value) option
+            (let ((option-code (lookup-option-code name)))
+              (when option-code
+                (case (lookup-option-type name)
+                  (:none
+                   (mysql-options mysql-ptr option-code uffi:+null-cstring-pointer+))
+                  (:char-ptr
+                   (uffi:with-foreign-string (fs value)
+                       (mysql-options mysql-ptr option-code fs)))
+                  (:uint-ptr
+                   (uffi:with-foreign-object (fo :unsigned-int)
+                     (setf (uffi:deref-pointer fo :unsigned-int) value)
+                     (mysql-options mysql-ptr option-code fo)))
+                  (:boolean-ptr
+                   (uffi:with-foreign-object (fo :byte)
+                     (setf (uffi:deref-pointer fo :byte)
+                           (if (or (zerop value) (null value))
+                               0
+                               1))
+                     (mysql-options mysql-ptr option-code fo)))))))))))
+
 (defmethod database-connect (connection-spec (database-type (eql :mysql)))
   (check-connection-spec connection-spec database-type
-                         (host db user password &optional port))
-  (destructuring-bind (host db user password &optional port) connection-spec
+                         (host db user password &optional port options))
+  (destructuring-bind (host db user password &optional port options) connection-spec
     (let ((mysql-ptr (mysql-init (uffi:make-null-pointer 'mysql-mysql)))
           (socket nil))
       (if (uffi:null-pointer-p mysql-ptr)
@@ -130,6 +169,8 @@
                             (password-native password)
                             (db-native db)
                             (socket-native socket))
+          (when options
+            (set-mysql-options mysql-ptr options))
           (let ((error-occurred nil))
             (unwind-protect
                 (if (uffi:null-pointer-p
