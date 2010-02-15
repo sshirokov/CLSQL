@@ -6,7 +6,7 @@ OS_AIX=$(shell expr "$(UNAME)" : '.*AIX.*')
 OS_SUNOS=$(shell expr "$(UNAME)" : '.*SunOS.*')
 OS_DARWIN=$(shell expr "$(UNAME)" : '.*Darwin.*')
 ifneq ($(OS_DARWIN),0) 
-  OS_DARWIN64=$(shell expr match "$(DARWIN_LIBC)" '.*x86_64.*')
+  OS_DARWIN64=$(shell expr "$(DARWIN_LIBC)" : '.*x86_64.*')
 else
   OS_DARWIN64=0
 endif

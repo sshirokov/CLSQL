@@ -49,7 +49,6 @@ else
     ifneq ($(OS_DARWIN64),0)
 	cc $(CFLAGS) -arch x86_64 -arch i386 -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress $(source) -o $(dylib)
 	cc -arch x86_64 -arch i386 -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress /usr/lib/libz.dylib -o z.dylib
-	@echo "D2:" $(OS_DARWIN64)
     else
       ifneq ($(OS_DARWIN),0)
 	cc $(CFLAGS) -arch i386 -bundle /usr/lib/bundle1.o -flat_namespace -undefined suppress $(source) -o $(dylib)
