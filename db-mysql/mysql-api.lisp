@@ -286,7 +286,7 @@
 (uffi:def-function "mysql_options"
   ((mysql mysql-mysql)
    (option mysql-option)
-   (arg (* :void)))
+   (arg :pointer-void))
   :module "mysql"
   :returning :int)
 

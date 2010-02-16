@@ -379,8 +379,14 @@
         <varlistentry>
           <term><parameter>connection-spec</parameter></term>
           <listitem>
-            <para>A vendor specific connection specification supplied
-            as a list or as a string.</para>
+            <para>A SQL backend specific connection specification
+            supplied as a list or as a string.</para>
+            <para>For the MySQL backend, this list includes an
+            optional associative list of connection options. The
+            options list is parsed and supplied to the MySQL API
+            using <function>mysql_options</function> in between the
+            calls to <function>mysql_init</function>
+            and <function>mysql_real_connect</function>.</para>
           </listitem>
         </varlistentry>
         <varlistentry>
