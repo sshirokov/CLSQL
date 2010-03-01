@@ -639,10 +639,19 @@
   (declare (ignore database db-type))
   ;; writing 1.0 writes 1, so we we *really* want a float, must do (float ...)
   (etypecase val
-    (string
-     (float (read-from-string val)))
-    (float
-     val)))
+    (string (float (read-from-string val)))
+    (float val)))
+
+(defmethod read-sql-value (val (type (eql 'double-float)) database db-type)
+  (declare (ignore database db-type))
+  ;; writing 1.0 writes 1, so if we *really* want a float, must do (float ...)
+  (etypecase val
+    (string (float
+	     (let ((*read-default-float-format* 'double-float))
+	       (read-from-string val))
+	     1.0d0))
+    (double-float val)
+    (float (coerce val 'double-float))))
 
 (defmethod read-sql-value (val (type (eql 'boolean)) database db-type)
   (declare (ignore database db-type))
