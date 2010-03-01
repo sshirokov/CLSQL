@@ -409,6 +409,80 @@
     </refsect1>
   </refentry>
 
+  <refentry id="file-enable-sql-reader-syntax">
+    <refmeta>
+      <refentrytitle>FILE-ENABLE-SQL-READER-SYNTAX</refentrytitle>
+    </refmeta>
+    <refnamediv>
+      <refname>FILE-ENABLE-SQL-READER-SYNTAX</refname>
+      <refpurpose>
+	Enable the square bracket reader syntax for the duration of the file.
+      </refpurpose>
+      <refclass>Macro</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Syntax</title>
+      <synopsis>
+      <function>file-enable-sql-reader-syntax</function> => <returnvalue></returnvalue></synopsis>
+    </refsect1>
+    <refsect1>
+      <title>Arguments and Values</title>
+      <para>None.</para> 
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Uncoditionally enables the SQL reader syntax. Unlike <link
+      linkend="enable-sql-reader-syntax">
+      <function>enable-sql-reader-syntax</function></link> and <link
+      linkend="disable-sql-reader-syntax">
+      <function>disable-sql-reader-syntax</function></link> which try to keep track of whether
+	the syntax has been enabled or disabled and keep track of the old read-table for restoration this function just enables it unconditionally.
+      </para>
+      <para>Once enabled this way there is no corresponding disable function but instead relies on being used in a file context. The spec for <ulink url="http://www.lispworks.com/documentation/lw51/CLHS/Body/f_load.htm">load</ulink> and <ulink url="http://www.lispworks.com/documentation/lw51/CLHS/Body/f_cmp_fi.htm">compile-file</ulink> states that the *readtable* will be restored after processing the file.
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <para>Intended to be used at the top of a file that contains sql reader syntax.</para>
+      <screen>
+	(in-package :my-package)
+	(clsql:file-enable-sql-reader-syntax)
+	...
+	;;functions that use the square bracket syntax.
+      </screen> 
+    </refsect1>
+    <refsect1>
+      <title>Side Effects</title>
+      <para>
+        Modifies the readtable.
+      </para> 
+    </refsect1>
+    <refsect1>
+      <title>Affected by</title>
+      <para>None.</para> 
+    </refsect1>
+    <refsect1>
+      <title>Exceptional Situations</title>
+      <para>
+        None. 
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <simplelist>
+        <member><link linkend="enable-sql-reader-syntax"><function>enable-sql-reader-syntax</function></link></member>
+        <member><link linkend="disable-sql-reader-syntax"><function>disable-sql-reader-syntax</function></link></member>
+        <member><link linkend="locally-enable-sql-reader-syntax"><function>locally-enable-sql-reader-syntax</function></link></member>
+        <member><link linkend="locally-disable-sql-reader-syntax"><function>locally-disable-sql-reader-syntax</function></link></member>
+      </simplelist>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <para> 
+        Unique to &clsql;, not present in &commonsql;.
+      </para>
+    </refsect1>
+  </refentry>
+
   <refentry id="sql">
     <refmeta>
       <refentrytitle>SQL</refentrytitle>
