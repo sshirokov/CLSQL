@@ -22,3 +22,6 @@ POSSIBLE EXTENSIONS
 
 * improve large object api and extend to databases beyond postgresql 
 * add support for prepared statements
+
+RACE CONDITIONS
+* sql/databases.lisp: *connected-databases* is shared globally but not modified in a threadsafe manner.
