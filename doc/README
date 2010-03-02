@@ -1,4 +1,3 @@
-
 Building the documentation:
 
 You will need the following packages:
@@ -10,3 +9,16 @@ You will need the following packages:
  * fop
 
 These are the debian/ubuntu package names; on other systems there are probably similar.
+
+
+General Build:
+> make
+
+Check the validity of the source
+> make check
+
+Build just the html:
+> make html
+
+Build just the pdf:
+> make pdf
