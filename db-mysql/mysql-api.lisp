@@ -121,12 +121,6 @@
      :get-result
      :use-result))
 
-#+(or mysql-client-v4.1 mysql-client-v5)
-(uffi:def-enum mysql-field-types
-    (:ready
-     :get-result
-     :use-result))
-
 ;;; Opaque pointers to mysql C-defined structures
 (uffi:def-foreign-type mysql-mysql (* :void))
 (uffi:def-foreign-type mysql-mysql-res (* :void))
