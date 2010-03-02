@@ -425,6 +425,20 @@ of TYPE_NAME (keyword) PRECISION SCALE NULLABLE.")
     nil)
   (:documentation "Free the resources of a prepared statement."))
 
+(defgeneric database-acquire-from-conn-pool (database)
+  (:documentation "Acquire a database connection from the pool.  This
+is a chance to test the connection for validity before returning it to
+the user. If this function returns NIL or throws an error that
+database connection is considered bad and we make a new one.
+
+Database objects have a chance to specialize, otherwise the default
+method uses the database-underlying-type and tries to do something
+appropriate."))
+
+(defgeneric database-release-to-conn-pool (database)
+  (:documentation "Chance for the database to cleanup before it is
+  returned to the connection pool."))
+
 ;; Checks for closed database
 
 (defmethod database-disconnect :before ((database database))

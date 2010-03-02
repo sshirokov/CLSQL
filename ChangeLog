@@ -1,3 +1,18 @@
+2010-03-02  Nathan Bird  <nathan@acceleration.net>
+	* doc/: Added a README on how to build doc; now builds on Ubuntu.
+	* sql/oodml.lisp: READ-SQL-VALUE now has explicit method for
+	handling double-floats and the default method will no longer
+	attempt to convert values that have already been converted.
+	* sql/syntax.lisp: Introduce file-enable-sql-reader-syntax which
+	enables the syntax for the scope of the file without trying to
+	keep track of the current syntax state.
+	* sql/pool.lisp: Introduce
+	clsql-sys:*db-pool-max-free-connections* which is a heuristic
+	threshold for when to disconnect a connection rather than
+	returning it to the pool.
+	* sql/pool.lisp: Check connections for validity before returning
+	to the user.
+
 2010-03-01  Kevin Rosenberg <kevin@rosenberg.net>
 	* db-mysql/mysql-api.lisp: Remove spurious enumeration
 

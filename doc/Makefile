@@ -26,6 +26,7 @@ SUSE91=$(shell expr "`cat /etc/issue 2> /dev/null`" : '.*SuSE Linux 9.1.*')
 REDHAT=$(shell expr "`cat /etc/issue 2> /dev/null`" : '.*Red Hat.*')
 MANDRAKE=$(shell expr "`cat /etc/issue 2> /dev/null`" : '.*Mandrake.*')
 DARWIN=$(shell expr "`uname -a`" : '.*Darwin.*')
+UBUNTU=$(shell expr "`cat /etc/issue 2> /dev/null`" : '.*Ubuntu.*')
 
 
 ifneq (${DEBIAN},0)
@@ -45,6 +46,10 @@ else
 	else   
           ifneq (${DARWIN},0)
             OS=darwin
+	  else
+	    ifneq (${UBUNTU},0)
+		OS:=debian
+	    endif
 	  endif 
         endif
       endif
