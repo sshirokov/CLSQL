@@ -616,6 +616,7 @@
 	this class.
       </para>
 
+      <refsect2>
       <title>Normalized inheritance schemas</title>
       <para>
     Specifying that <symbol>:normalizedp</symbol> is <symbol>T</symbol>
@@ -716,7 +717,7 @@ CLSQL> (title test-user)
 CLSQL> (nick test-user)
 "test-user"
       </screen>
-
+      </refsect2>
     </refsect1>
     <refsect1>
       <title>Examples</title>

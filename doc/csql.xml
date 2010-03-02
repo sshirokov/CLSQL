@@ -465,24 +465,24 @@ There are other :join-info options available in &clsql;, but we will
 save those till we get to the many-to-many relation examples.
 </para>
 
+<simplesect>
+  <title>Object Oriented Class Relations</title>
 
-    <title>Object Oriented Class Relations</title>
-
-<para>
-&clsql; provides an Object Oriented Data Definition Language, which
-provides a mapping from &sql; tables to CLOS objects. By default class
-inheritance is handled by including all the columns from parent
-classes into the child class. This means your database schema becomes
-very much denormalized. The class option <symbol>:normalizedp</symbol>
-can be used to disable the default behaviour and have &clsql;
-normalize the database schemas of inherited classes.
-</para>
-
-<para>
-See <link linkend="def-view-class"><function>def-view-class</function></link>
-for more information.
-</para>
-
+  <para>
+    &clsql; provides an Object Oriented Data Definition Language, which
+    provides a mapping from &sql; tables to CLOS objects. By default class
+    inheritance is handled by including all the columns from parent
+    classes into the child class. This means your database schema becomes
+    very much denormalized. The class option <symbol>:normalizedp</symbol>
+    can be used to disable the default behaviour and have &clsql;
+    normalize the database schemas of inherited classes.
+  </para>
+  
+  <para>
+    See <link linkend="def-view-class"><function>def-view-class</function></link>
+    for more information.
+  </para>
+</simplesect>
 </sect1>
 
 <sect1 id="csql-creat">

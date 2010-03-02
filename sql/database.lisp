@@ -18,6 +18,8 @@
 CONNECT. Meaningful values are :new, :warn-new, :error, :warn-old
 and :old.")
 
+;;TODO: this variable appears to be global, not thread specific and is
+;; not protected when modifying the list.
 (defvar *connected-databases* nil
   "List of active database objects.")
 
@@ -174,6 +176,7 @@ from a pool it will be released to this pool."
                 (setf *default-database* (car *connected-databases*)))
               t))
           (when (database-disconnect database)
+	    ;;TODO: RACE COND: 2 threads disconnecting could stomp on *connected-databases*
             (setf *connected-databases* (delete database *connected-databases*))
             (when (eq database *default-database*)
               (setf *default-database* (car *connected-databases*)))
