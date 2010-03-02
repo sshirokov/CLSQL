@@ -30,7 +30,7 @@ that should, on avg keep the free connections about this size.")
    (free-connections :accessor free-connections :initform nil)
    (all-connections :accessor all-connections :initform nil)
    (lock :accessor conn-pool-lock
-         :initform (make-process-lock "Connection pool"))))
+	 :initform (make-process-lock "Connection pool"))))
 
 
 (defun acquire-from-pool (connection-spec database-type &optional pool)
@@ -131,12 +131,12 @@ chance to do cleanup."
 if not found"
   (with-process-lock (*db-pool-lock* "Find-or-create connection")
     (let* ((key (list connection-spec database-type))
-           (conn-pool (gethash key *db-pool*)))
+	   (conn-pool (gethash key *db-pool*)))
       (unless conn-pool
-        (setq conn-pool (make-instance 'conn-pool
-                                       :connection-spec connection-spec
-                                       :pool-database-type database-type))
-        (setf (gethash key *db-pool*) conn-pool))
+	(setq conn-pool (make-instance 'conn-pool
+				       :connection-spec connection-spec
+				       :pool-database-type database-type))
+	(setf (gethash key *db-pool*) conn-pool))
       conn-pool)))
 
 (defun disconnect-pooled (&optional clear)
@@ -145,8 +145,8 @@ the pool objects."
   (with-process-lock (*db-pool-lock* "Disconnect pooled")
     (maphash
      #'(lambda (key conn-pool)
-         (declare (ignore key))
-         (clear-conn-pool conn-pool))
+	 (declare (ignore key))
+	 (clear-conn-pool conn-pool))
      *db-pool*)
     (when clear (clrhash *db-pool*)))
   t)
