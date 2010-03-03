@@ -125,6 +125,60 @@
       <para>None.</para>
     </refsect1>
   </refentry>
+  <refentry id="db-pool-max-free-connections">
+    <refmeta>
+      <refentrytitle>*DB-POOL-MAX-FREE-CONNECTIONS*</refentrytitle>
+    </refmeta>
+    <refnamediv>
+      <refname>*DB-POOL-MAX-FREE-CONNECTIONS*</refname>
+      <refpurpose>How many free connections should the connection pool try to keep.</refpurpose>
+      <refclass>Parameter</refclass>
+    </refnamediv>
+    <refsect1>
+      <title>Value Type</title>
+      <para>Integer</para>
+    </refsect1>
+    <refsect1>
+      <title>Initial Value</title>
+      <para>4</para>
+    </refsect1>
+    <refsect1>
+      <title>Description</title>
+      <para>Threshold of free-connections in the pool before we disconnect a
+  database rather than returning it to the pool. This is really a heuristic
+that should, on avg keep the free connections about this size.</para>
+      <note>
+        <para>This is not a hard limit, the number of connections in
+        the pool may exceed this value.</para>
+      </note>
+    </refsect1>
+    <refsect1>
+      <title>Examples</title>
+      <screen>
+	(setf clsql-sys:*db-pool-max-free-connections* 2)
+      </screen>
+    </refsect1>
+    <refsect1>
+      <title>Affected By</title>
+      <para>None</para>
+    </refsect1>
+    <refsect1>
+      <title>See Also</title>
+      <para>
+        <simplelist>
+          <member><link linkend="connect"><function>connect</function></link></member>
+          <member><link linkend="disconnect"><function>disconnect</function></link></member>
+        </simplelist>
+      </para>
+    </refsect1>
+    <refsect1>
+      <title>Notes</title>
+      <note>
+	<para></para>
+      </note>
+    </refsect1>
+  </refentry>
+
 
   <refentry id="default-database">
     <refmeta>
@@ -550,8 +604,16 @@
 	<title>Affected by</title>
 	<para>
 	<simplelist>
-	  <member><symbol>*default-database-type*</symbol></member>
-	  <member><symbol>*connect-if-exists*</symbol></member>
+	  <member>
+	    <link linkend="default-database-type">
+	      <symbol>*default-database-type*</symbol>
+	    </link>
+	  </member>
+	  <member>
+	    <link linkend="connect-if-exists">
+	      <symbol>*connect-if-exists*</symbol>
+	    </link>
+	  </member>
 	</simplelist>
 	</para>
       </refsect1>
@@ -1072,24 +1134,46 @@
       </refsect1>
       <refsect1>
 	<title>Side Effects</title>
-	<para>The database connection is closed, and the database
-	  object is removed from the list of connected databases as
-	  returned by <function>connected-databases</function>.</para>
-	<para>The state of the database object is changed to
-	<type>closed</type>.</para>
+	<para>The database object is removed from the list of connected databases as
+	  returned by <link linkend="connected-databases"><function>connected-databases</function></link>.</para>
 	<para>If the database object passed is the same under
-	<function>eq</function> as the value of
-	<symbol>*default-database*</symbol>, then
-	<symbol>*default-database*</symbol> is set to the first
-	remaining database from
-	<function>connected-databases</function> or to &nil; if no
-	further active database exists.</para>
+	  <function>eq</function> as the value of
+	  <symbol>*default-database*</symbol>, then
+	  <symbol>*default-database*</symbol> is set to the first
+	  remaining database from
+	  <function>connected-databases</function> or to &nil; if no
+	  further active database exists.</para>
+	<refsect2>
+	  <title>Non-pooled</title>
+	  <para>The database connection is closed and the state of the
+	  database object is changed to <type>closed</type>.</para>
+	</refsect2>
+	<refsect2>
+	  <title>Pooled</title>
+	  <para>Unless there are already <link linkend="db-pool-max-free-connections">
+	      <symbol>*db-pool-max-free-connections*</symbol>
+	    </link> free connections in the pool it is returned to the
+	    pool, with the backend having an opportunity to run
+	    generic cleanup on the connection first. If the max free
+	    connections has already been reached then it is
+	    disconnected as if it were not in the pool.
+	  </para>
+	</refsect2>
       </refsect1>
       <refsect1>
 	<title>Affected by</title>
 	<para>
 	<simplelist>
-	  <member><symbol>*default-database*</symbol></member>
+	  <member>
+	    <link linkend="default-database">
+	      <symbol>*default-database*</symbol>
+	    </link>
+	  </member>
+	  <member>
+	    <link linkend="db-pool-max-free-connections">
+	      <symbol>*db-pool-max-free-connections*</symbol>
+	    </link>
+	  </member>
 	</simplelist>
 	</para>
       </refsect1>
@@ -1126,7 +1210,7 @@
       </refnamediv>
       <refsect1>
 	<title>Syntax</title>
-	<synopsis><function>disconnect-pooled</function> => <returnvalue>t</returnvalue></synopsis>
+	<synopsis><function>disconnect-pooled</function> &amp;optional <symbol>clear</symbol> => <returnvalue>t</returnvalue></synopsis>
       </refsect1>
       <refsect1>
 	<title>Description</title>
@@ -1135,6 +1219,8 @@
 	  linkend="connect"><function>connect</function></link> with 
           :pool &t;.
 	</para>
+	<para>If optional argument <symbol>clear</symbol> is non-&nil;
+	then the connection-pool objects are also removed.</para>
       </refsect1>
       <refsect1>
 	<title>Examples</title>
@@ -1145,8 +1231,10 @@
       </refsect1>
       <refsect1>
 	<title>Side Effects</title>
-	<para>Database connections will be closed and entries in the pool are removed.
-	</para>
+	<para>Database connections will be closed and *all* entries in
+	the pool are removed. This is done with great prejudice and no
+	thought to thread safety or whether that connection is
+	currently in use.</para>
       </refsect1>
       <refsect1>
 	<title>Affected by</title>
