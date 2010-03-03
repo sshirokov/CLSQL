@@ -85,8 +85,9 @@ chance to do cleanup."
       ;;not the list). Multiple threads getting to this test at the
       ;;same time might result in the free-connections getting
       ;;longer... meh.
-      ((>= (length (free-connections pool))
-	   *db-pool-max-free-connections*)
+      ((and *db-pool-max-free-connections*
+	    (>= (length (free-connections pool))
+		*db-pool-max-free-connections*))
        (%pool-force-disconnect database)
        (with-process-lock ((conn-pool-lock pool) "Remove extra Conn")
 	 (setf (all-connections pool)
