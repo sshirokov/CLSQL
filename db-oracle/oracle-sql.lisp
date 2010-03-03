@@ -405,7 +405,7 @@ the length of that format.")
                                         ; from it after that..
 
 
-(defun fetch-row (qc (eof-errorp t) eof-value encoding)
+(defun fetch-row (qc &optional (eof-errorp t) eof-value encoding)
   (declare (optimize (speed 3)))
   (cond ((zerop (qc-n-from-oci qc))
          (if eof-errorp
