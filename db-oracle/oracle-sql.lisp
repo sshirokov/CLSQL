@@ -430,7 +430,7 @@ the length of that format.")
                        (unless (= indicator -1)
                          (ecase (cd-oci-data-type cd)
                            (#.SQLT-STR
-                            (deref-oci-string b irow (cd-sizeof cd)))
+                            (deref-oci-string b irow (cd-sizeof cd) encoding))
                            (#.SQLT-FLT
                             (locally
                                 (declare (type double-array b))
@@ -442,7 +442,7 @@ the length of that format.")
                                    (declare (type int-array b))
                                  (uffi:deref-array b '(:array :int) irow)))))
                            (#.SQLT-DATE
-                            (deref-oci-string b irow (cd-sizeof cd))))))))
+                            (deref-oci-string b irow (cd-sizeof cd) encoding)))))))
                (when (and (eq :string (cd-result-type cd))
                           value
                           (not (stringp value)))
