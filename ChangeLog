@@ -1,3 +1,6 @@
+2010-03-21  Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/fdml.lisp: Fix DO-QUERY to actually return the last value of the body
+
 2010-03-02  Nathan Bird  <nathan@acceleration.net>
 	* doc/: Added a README on how to build doc; now builds on Ubuntu.
 	* sql/oodml.lisp: READ-SQL-VALUE now has explicit method for

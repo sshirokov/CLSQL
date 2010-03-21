@@ -7,7 +7,7 @@
 ;;;; Author:   Kevin M. Rosenberg
 ;;;; Created:  Feb 2002
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002-2004 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2010 by Kevin M. Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
@@ -36,17 +36,16 @@ set to the right path before compiling or loading the system.")
   *mysql-library-loaded*)
 
 (defmethod clsql-sys:database-type-load-foreign ((database-type (eql :mysql)))
-  (clsql:push-library-path clsql-mysql-system::*library-file-dir*)
+  (unless *mysql-library-loaded*
+    (clsql:push-library-path clsql-mysql-system::*library-file-dir*)
 
-  (clsql-uffi:find-and-load-foreign-library *mysql-library-candidate-names*
-                                            :module "mysql"
-                                            :supporting-libraries *mysql-supporting-libraries*)
+    (clsql-uffi:find-and-load-foreign-library *mysql-library-candidate-names*
+                                              :module "mysql"
+                                              :supporting-libraries *mysql-supporting-libraries*)
 
-  (clsql-uffi:find-and-load-foreign-library *clsql-mysql-library-candidate-names*
-                                            :module "clsql-mysql"
-                                            :supporting-libraries *mysql-supporting-libraries*)
-  (setq *mysql-library-loaded* t))
-
+    (clsql-uffi:find-and-load-foreign-library *clsql-mysql-library-candidate-names*
+                                              :module "clsql-mysql"
+                                              :supporting-libraries *mysql-supporting-libraries*)
+    (setq *mysql-library-loaded* t)))
 
 (clsql-sys:database-type-load-foreign :mysql)
-

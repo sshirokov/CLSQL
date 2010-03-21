@@ -209,7 +209,8 @@ types are automatically computed for each field."
         (qe (gensym "QUERY-EXPRESSION-"))
         (columns (gensym "COLUMNS-"))
         (row (gensym "ROW-"))
-        (db (gensym "DB-")))
+        (db (gensym "DB-"))
+        (last-form-eval (gensym "LFE-")))
     `(let ((,qe ,query-expression)
            (,db ,database))
       (typecase ,qe
@@ -226,11 +227,14 @@ types are automatically computed for each field."
                                           :result-types ,result-types)
            (when ,result-set
              (unwind-protect
-                  (do ((,row (make-list ,columns)))
+                  (do ((,row (make-list ,columns))
+                       (,last-form-eval nil))
                       ((not (database-store-next-row ,result-set ,db ,row))
-                       nil)
+                       ,last-form-eval)
                     (destructuring-bind ,args ,row
-                      ,@body))
+                      (setq ,last-form-eval
+                            (progn
+                              ,@body))))
                (database-dump-result-set ,result-set ,db)))))))))
 
 (defun map-query (output-type-spec function query-expression
