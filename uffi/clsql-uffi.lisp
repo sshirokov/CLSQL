@@ -139,6 +139,6 @@
             (error "Can't return blob since length is not specified.")))
        (t
         (uffi:convert-from-foreign-string char-ptr
-                                          :null-terminated-p nil
+                                          :null-terminated-p (not length)
                                           :length length
                                           :encoding encoding))))))

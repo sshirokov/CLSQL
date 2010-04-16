@@ -526,6 +526,11 @@ implementations."
 
          (setf (specified-type esd)
                (delistify-dsd (specified-type dsd)))
+	 ;; The type-check-function is computed at defclass expansion,
+	 ;; which is too early for the CLSQL type conversion to take
+	 ;; place.  This gets rid of it.  It's ugly but it's better
+	 ;; than nothing -wcp10/4/10.
+	 #+sbcl (setf (slot-value esd 'sb-pcl::%type-check-function) nil)
 
          )
         ;; all other slots

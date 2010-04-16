@@ -1,3 +1,13 @@
+2010-04-16  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 5.0.6
+	* db-postgresql.lisp, sql/fddl.lisp: Fix typos [Thanks to
+	Walter C. Pelissero]
+	* sql/metaclasses.lisp: Work around type-check-function being set
+	during defclass expansion in SBCL [Thanks to Walter C. Pelissero]
+	* uffi/clsql-uffi.lisp: In call to uffi:convert-from-foreign-string,
+	Set null-terminated-p to T when length not specified.
+	[Thanks to Walter C. Pelissero]
+
 2010-03-21  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.0.5
 	* sql/fdml.lisp: Fix DO-QUERY to actually return the last value of

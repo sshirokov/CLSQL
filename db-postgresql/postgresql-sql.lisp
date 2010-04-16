@@ -210,7 +210,7 @@
                  :database database
                  :expression sql-expression
                  :message (tidy-error-message (PQerrorMessage conn-ptr)
-                                              (encoding databse))))
+                                              (encoding database))))
         (unwind-protect
             (case (PQresultStatus result)
               (#.pgsql-exec-status-type#command-ok
