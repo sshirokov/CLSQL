@@ -7,7 +7,7 @@
 ;;;; Programmer:    Kevin M. Rosenberg
 ;;;; Date Started:  Aug 2002
 ;;;;
-;;;; This file, part of CLSQL, is Copyright (c) 2002 by Kevin M. Rosenberg
+;;;; This file, part of CLSQL, is Copyright (c) 2002-2010 by Kevin M. Rosenberg
 ;;;;
 ;;;; CLSQL users are granted the rights to distribute and use this software
 ;;;; as governed by the terms of the Lisp Lesser GNU Public License
@@ -77,7 +77,8 @@
   :description "Common UFFI Helper functions for Common Lisp SQL Interface Library"
   :long-description "cl-sql-uffi package provides common helper functions using the UFFI for the CLSQL package."
 
-  :depends-on (clsql #-:clsql-cffi uffi #+:clsql-cffi cffi-uffi-compat)
+  :depends-on (clsql #-:clsql-cffi (:version uffi "2.0")
+                     #+:clsql-cffi cffi-uffi-compat)
 
   :components
   ((:module :uffi

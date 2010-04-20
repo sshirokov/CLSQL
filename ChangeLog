@@ -1,3 +1,8 @@
+2010-04-20  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 5.1.0 [DEPENDENCY UPGRADE: UFFI 2.x needed]
+	* clsql-uffi.asd: Depend on UFFI version >= 2.0
+	to support foreign encoding of strings.
+
 2010-04-16  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.0.6
 	* db-postgresql.lisp, sql/fddl.lisp: Fix typos [Thanks to
