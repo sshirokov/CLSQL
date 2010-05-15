@@ -48,7 +48,8 @@
   t)
 
 (defmethod operation-done-p ((o load-op) (c clsql-mysql-source-file))
-  (and (symbol-function (intern (symbol-name '#:mysql-get-client-info)
+  (and (find-package '#:mysql)
+       (symbol-function (intern (symbol-name '#:mysql-get-client-info)
 				(find-package '#:mysql)))
        t))
 
