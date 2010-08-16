@@ -1,3 +1,10 @@
+2010-08-16  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 5.1.2
+	* uffi/clsql-uffi.lisp: Commit patch from JT Klein fixing
+	invocation of uffi:convert-from-foreign-string macro. When
+	time allows, I'll investigate changing UFFI's macro to
+	a function call and then revert this patch.
+
 2010-06-15  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.1.1
 	* clsql-{uffi,mysql}.asd: Modify operation-done-p functions
