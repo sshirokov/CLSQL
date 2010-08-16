@@ -637,13 +637,13 @@ as possible second argument) to the desired representation of date/time/timestam
 
 (defun get-cast-binary (ptr len format)
   "FORMAT is one of :unsigned-byte-vector, :bit-vector (:string, :hex-string)"
-  (with-cast-pointer (casted ptr :byte)
+  (with-cast-pointer (casted ptr :unsigned-byte)
     (ecase format
       (:unsigned-byte-vector
        (let ((vector (make-array len :element-type '(unsigned-byte 8))))
          (dotimes (i len)
            (setf (aref vector i)
-                 (deref-array casted '(:array :byte) i)))
+                 (deref-array casted '(:array :unsigned-byte) i)))
          vector))
       (:bit-vector
        (let ((vector (make-array (ash len 3) :element-type 'bit)))
@@ -902,27 +902,28 @@ as possible second argument) to the desired representation of date/time/timestam
                                           (let ((*read-base* 10))
                                             (read-from-string str))
                                         str)))
-                   (otherwise
-                    (let ((str (make-string out-len)))
-                      (loop do (if (= c-type #.$SQL_CHAR)
-                                   (setf offset (%cstring-into-vector ;string
-                                                 data-ptr str
-                                                 offset
-                                                 (min out-len (1- +max-precision+))))
-                                 (error 'clsql:sql-database-error :message "wrong type. preliminary."))
-                            while
-                            (and (= res $SQL_SUCCESS_WITH_INFO)
-                                 #+ingore(eq (sql-state +null-handle-ptr+ +null-handle-ptr+ hstmt)
-                                             $sql-data-truncated)
-                                 (equal (sql-state +null-handle-ptr+ +null-handle-ptr+ hstmt)
-                                        "01004"))
-                            do (setf res (%sql-get-data hstmt column-nr c-type data-ptr
-                                                        +max-precision+ out-len-ptr)
-                                     out-len (deref-pointer out-len-ptr #.$ODBC-LONG-TYPE)))
+                    (otherwise
+                    (let ((str)
+                          (offset 0)
+                          (octets (make-array out-len :element-type '(unsigned-byte 8) :initial-element 0)))
+                      (loop
+                         do
+                             (loop for i from 0 to (1- (min out-len +max-precision+))
+                                do (setf (aref octets (+ offset i)) (deref-array data-ptr '(:array :unsigned-byte) i))
+                                finally (incf offset (1- i)))
+                         while
+                           (and (= res $SQL_SUCCESS_WITH_INFO)
+                                #+ingore(eq (sql-state +null-handle-ptr+ +null-handle-ptr+ hstmt)
+                                            $sql-data-truncated)
+                                (equal (sql-state +null-handle-ptr+ +null-handle-ptr+ hstmt) "01004"))
+                         do
+                           (setf res (%sql-get-data hstmt column-nr c-type data-ptr +max-precision+ out-len-ptr)
+                                 out-len (deref-pointer out-len-ptr #.$ODBC-LONG-TYPE)))
+                      (setf str (sb-ext:octets-to-string octets))
                       (if (= sql-type $SQL_DECIMAL)
                           (let ((*read-base* 10))
                             (read-from-string str))
-                        str))))))
+                          str))))))
     (setf (deref-pointer out-len-ptr #.$ODBC-LONG-TYPE) #.$SQL_NO_TOTAL) ;; reset the out length for the next row
     result))
 
@@ -1037,4 +1038,5 @@ as possible second argument) to the desired representation of date/time/timestam
         (free-foreign-object dsn)
         (free-foreign-object desc)))
     (nreverse results)))
+
 

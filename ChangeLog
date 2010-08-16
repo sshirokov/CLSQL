@@ -1,4 +1,9 @@
 2010-08-16  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 5.1.3
+	* db-odbc/odbc-{api,dbi}.lisp: Commit patch from
+	Memet Bilgin to fix issue with unicode and ODBC.
+
+2010-08-16  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.1.2
 	* uffi/clsql-uffi.lisp: Commit patch from JT Klein fixing
 	invocation of uffi:convert-from-foreign-string macro. When
