@@ -104,7 +104,7 @@ be taken from this pool."
                   :verbose nil))
 
   (if pool
-      (let ((conn (acquire-from-pool connection-spec database-type pool)))
+      (let ((conn (acquire-from-pool connection-spec database-type pool encoding)))
         (when make-default (setq *default-database* conn))
         conn)
       (let* ((db-name (database-name-from-spec connection-spec database-type))
@@ -234,7 +234,7 @@ database connection cannot be closed, an error is signalled."
           (ignore-errors (disconnect :database db))
           (disconnect :database db :error nil)))
 
-    (connect (connection-spec db))))
+    (connect (connection-spec db) :encoding (encoding db))))
 
 
 (defun status (&optional full)

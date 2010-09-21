@@ -1,3 +1,8 @@
+2010-09-20  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 5.1.4
+	* sql/{pool,database}.lisp: Pass encoding argument to
+	connections made from pool and with reconnect.
+
 2010-08-16  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.1.3
 	* db-odbc/odbc-{api,dbi}.lisp: Commit patch from

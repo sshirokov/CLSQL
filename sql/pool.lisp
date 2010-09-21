@@ -33,7 +33,7 @@ that should, on avg keep the free connections about this size.")
 	 :initform (make-process-lock "Connection pool"))))
 
 
-(defun acquire-from-pool (connection-spec database-type &optional pool)
+(defun acquire-from-pool (connection-spec database-type &optional pool encoding)
   "Try to find a working database connection in the pool or create a new
 one if needed. This performs 1 query against the DB to ensure it's still
 valid. When possible (postgres, mssql) that query will be a reset
@@ -68,7 +68,8 @@ Disconnecting.~%"
    (let ((conn (connect (connection-spec pool)
 			:database-type (pool-database-type pool)
 			:if-exists :new
-			:make-default nil)))
+			:make-default nil
+                        :encoding encoding)))
      (with-process-lock ((conn-pool-lock pool) "new conection")
        (push conn (all-connections pool))
        (setf (conn-pool conn) pool))
