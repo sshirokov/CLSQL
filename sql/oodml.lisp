@@ -265,6 +265,7 @@
                                          (ordered-class-direct-slots view-class)
                                          (ordered-class-slots view-class))))
                (record-values (mapcar #'slot-value-list slots)))
+
           (cond ((and (not (normalizedp view-class))
                       (not record-values))
                  (error "No settable slots."))
@@ -285,16 +286,22 @@
                  (insert-records :into (sql-expression :table view-class-table)
                                  :av-pairs record-values
                                  :database database)
+
                  (when pk-slot
                    (if (or (and (listp (view-class-slot-db-constraints pk-slot))
                                 (member :auto-increment (view-class-slot-db-constraints pk-slot)))
                            (eql (view-class-slot-db-constraints pk-slot) :auto-increment))
+                       (unless pk
+                         (let ((db-pk (car (query "SELECT LAST_INSERT_ID();"
+                                                  :flatp t :field-names nil
+                                                  :database database))))
+                           (setf pk db-pk
+                                 (slot-value
+                                  obj (slot-definition-name pk-slot)) db-pk)))
+
                        (setf pk (or pk
-                                    (car (query "SELECT LAST_INSERT_ID();"
-                                                :flatp t :field-names nil
-                                                :database database))))
-                       (setf pk (or pk
-                                    (slot-value obj (slot-definition-name pk-slot))))))
+                                    (slot-value
+                                     obj (slot-definition-name pk-slot))))))
                  (when (eql this-class nil)
                    (setf (slot-value obj 'view-database) database)))))))
     pk))
