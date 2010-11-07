@@ -919,7 +919,7 @@ as possible second argument) to the desired representation of date/time/timestam
                          do
                            (setf res (%sql-get-data hstmt column-nr c-type data-ptr +max-precision+ out-len-ptr)
                                  out-len (deref-pointer out-len-ptr #.$ODBC-LONG-TYPE)))
-                      (setf str (sb-ext:octets-to-string octets))
+                      (setf str (uffi:octets-to-string octets))
                       (if (= sql-type $SQL_DECIMAL)
                           (let ((*read-base* 10))
                             (read-from-string str))

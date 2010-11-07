@@ -192,15 +192,25 @@
     sql
     `(make-instance 'sql-ident-table :name ',name :table-alias ',alias)))
 
+(defun special-char-p (s)
+  "Check if a string has any special characters"
+  (loop for char across s
+       thereis (find char '(#\space #\, #\. #\! #\@ #\# #\$ #\%
+                                 #\^ #\& #\* #\| #\( #\) #\- #\+))))
+
 (defmethod output-sql ((expr sql-ident-table) database)
   (with-slots (name alias) expr
-    (etypecase name
-      (string
-       (format *sql-stream* "~s" (sql-escape name)))
-      (symbol
-       (write-string (sql-escape name) *sql-stream*)))
-    (when alias
-      (format *sql-stream* " ~s" alias)))
+    (flet ((p (s) ;; the etypecase is in sql-escape too
+	     (let ((sym? (symbolp s))
+		   (s (sql-escape s)))
+	       (format *sql-stream*
+		       (if (and sym? (not (special-char-p s)))
+			   "~a" "~s")
+		       s))))
+      (p name)
+      (when alias
+	(princ #\space *sql-stream*)
+	(p alias))))
   t)
 
 (defmethod output-sql-hash-key ((expr sql-ident-table) database)

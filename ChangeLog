@@ -1,3 +1,15 @@
+2010-10-24  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 5.2.0
+	* db-odbc/odbc-api.lisp: Change from SBCL-specific
+	to UFFI version of octets-to-strings. Reported by
+	Daniel Brunner <daniel@dbrunner.de>
+	* sql/oodml.lisp: Apply patch from Rupert Swarbrick
+	<rswarbrick@gmail.com>: Fix behaviour with auto-inc
+	primary keys.
+	* sql/expressions.lisp, tests/test-syntax.lisp: Apply
+	patch from Russ Tyndall	to quote identifiers with space
+	or special character.
+
 2010-09-20  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.1.4
 	* sql/{pool,database}.lisp: Pass encoding argument to
