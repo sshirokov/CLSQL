@@ -314,7 +314,13 @@ column definition in the database.")
     :accessor specified-type
     :initarg specified-type
     :initform nil
-    :documentation "Internal slot storing the :type specified by user.")))
+    :documentation "Internal slot storing the :type specified by user.")
+   (autoincrement-sequence
+    :accessor view-class-slot-autoincrement-sequence
+    :initarg :autoincrement-sequence
+    :initform nil
+    :documentation "A string naming the (possibly automatically generated) sequence 
+for a slot with an :auto-increment constraint.")))
 
 (defparameter *db-info-lambda-list*
   '(&key join-class

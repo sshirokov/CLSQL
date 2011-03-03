@@ -288,7 +288,8 @@
                                  :database database)
 
 		  (when (and pk-slot (not pk))
-		    (setf pk (if (member :auto-increment (listify (view-class-slot-db-constraints pk-slot)))
+		    (setf pk (if (or (member :auto-increment (listify (view-class-slot-db-constraints pk-slot)))
+				     (not (null (view-class-slot-autoincrement-sequence pk-slot))))
 				 (setf (slot-value obj (slot-definition-name pk-slot))
 				       (database-last-auto-increment-id database
 								       table

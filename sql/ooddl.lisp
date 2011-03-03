@@ -106,7 +106,7 @@ in DATABASE which defaults to *DEFAULT-DATABASE*."
                            (ordered-class-direct-slots self)
                            (ordered-class-slots self))))
     (dolist (slotdef ordered-slots)
-      (let ((res (database-generate-column-definition (class-name self)
+      (let ((res (database-generate-column-definition self
                                                       slotdef database)))
         (when res
           (push res schemadef))))
