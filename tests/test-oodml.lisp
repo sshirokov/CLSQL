@@ -216,6 +216,8 @@
       (length (clsql:select 'artist :flatp t :caching nil)))
   0)
 
+
+
 ;; test retrieval is deferred
 (deftest :oodm/retrieval/1
     (with-dataset *ds-employees*
@@ -304,15 +306,16 @@
 ;; tests update-record-from-slot
 (deftest :oodml/update-records/2
     (with-dataset *ds-employees*
+      ;(start-sql-recording :type :both)
       (values
 	(employee-email
 	 (car (clsql:select 'employee
 			    :where [= 1 [slot-value 'employee 'emplid]]
 			    :flatp t
 			    :caching nil)))
-	(progn
-	  (setf (slot-value employee1 'email) "lenin-nospam@soviet.org")
-	  (clsql:update-record-from-slot employee1 'email)
+ 	(progn
+ 	  (setf (slot-value employee1 'email) "lenin-nospam@soviet.org")
+ 	  (clsql:update-record-from-slot employee1 'email)
 	  (employee-email
 	   (car (clsql:select 'employee
 			      :where [= 1 [slot-value 'employee 'emplid]]
@@ -624,6 +627,12 @@
       (clsql:update-records-from-instance artist1)
       (list (name artist1) (artist_id artist1)))
   ("Mogwai" 1))
+
+(deftest :oodml/update-records/12
+    (with-dataset *ds-artists*
+      (clsql:update-records-from-instance artist1)
+      (list (name artist1) (genre artist1)))
+  ("Mogwai" "Unknown"))
 
 ;; tests update-instance-from-records
 (deftest :oodml/update-instance/1

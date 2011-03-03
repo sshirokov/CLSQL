@@ -8,7 +8,8 @@
   ((artist_id :accessor artist_id :initarg :id
 	      :type integer :db-kind :key :db-constraints (:not-null :auto-increment)
 	      :autoincrement-sequence 'artist_artist_id_seq)
-   (name :accessor name :initarg :name :type (varchar 20))))
+   (name :accessor name :initarg :name :type (varchar 20))
+   (genre :accessor genre :initarg :genre :type (varchar 10) :db-constraints (:default "'Unknown'"))))
 
 (defun initialize-ds-artists ()
    ;   (start-sql-recording :type :both)

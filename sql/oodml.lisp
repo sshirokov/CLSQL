@@ -287,23 +287,24 @@
                                  :av-pairs record-values
                                  :database database)
 
-                 (when pk-slot
-                   (if (or (and (listp (view-class-slot-db-constraints pk-slot))
-                                (member :auto-increment (view-class-slot-db-constraints pk-slot)))
-                           (eql (view-class-slot-db-constraints pk-slot) :auto-increment))
-                       (unless pk
-                         (let ((db-pk (car (query "SELECT LAST_INSERT_ID();"
-                                                  :flatp t :field-names nil
-                                                  :database database))))
-                           (setf pk db-pk
-                                 (slot-value
-                                  obj (slot-definition-name pk-slot)) db-pk)))
-
-                       (setf pk (or pk
-                                    (slot-value
-                                     obj (slot-definition-name pk-slot))))))
+		  (when (and pk-slot (not pk))
+		    (setf pk (if (member :auto-increment (listify (view-class-slot-db-constraints pk-slot)))
+				 (setf (slot-value obj (slot-definition-name pk-slot))
+				       (database-last-auto-increment-id database
+								       table
+								       pk-slot)))))
+		  (setf pk (or pk
+			       (slot-value
+				obj (slot-definition-name pk-slot)))))
                  (when (eql this-class nil)
-                   (setf (slot-value obj 'view-database) database)))))))
+                   (setf (slot-value obj 'view-database) database))))))
+    ;; handle slots with defaults
+    (dolist (slot slots)
+      (when (and (slot-exists-p slot 'db-constraints)
+		 (listp (view-class-slot-db-constraints slot))
+		 (member :default (view-class-slot-db-constraints slot)))
+	(update-slot-from-record obj (slot-definition-name slot))))
+
     pk))
 
 (defmethod delete-instance-records ((instance standard-db-object))
