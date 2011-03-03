@@ -38,6 +38,7 @@
 			   (:file "datasets")
 			   (:file "ds-employees")
 			   (:file "ds-nodes")
+			   (:file "ds-artists")
 			   (:file "benchmarks")
 			   (:file "test-internal")
 			   (:file "test-basic")
@@ -48,7 +49,7 @@
 			   (:file "test-ooddl")
 			   (:file "test-oodml")
 			   (:file "test-syntax")
-                           #-uffi:no-i18n (:file "test-i18n")
+                           ; #-uffi:no-i18n (:file "test-i18n")
                            ))))
 
 (defmethod perform ((o test-op) (c (eql (find-system 'clsql-tests))))

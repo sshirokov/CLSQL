@@ -211,6 +211,11 @@
 	  (slot-value a 'loc))))
   10 10 "subloc-1" "a subloc")
 
+(deftest :oodml/select/23
+    (with-dataset *ds-artists*
+      (length (clsql:select 'artist :flatp t :caching nil)))
+  0)
+
 ;; test retrieval is deferred
 (deftest :oodm/retrieval/1
     (with-dataset *ds-employees*
@@ -614,6 +619,11 @@
   ((42.0d0))
   ((24.13d0)))
 
+(deftest :oodml/update-records/11
+    (with-dataset *ds-artists*
+      (clsql:update-records-from-instance artist1)
+      (list (name artist1) (artist_id artist1)))
+  ("Mogwai" 1))
 
 ;; tests update-instance-from-records
 (deftest :oodml/update-instance/1
