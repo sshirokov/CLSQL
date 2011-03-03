@@ -32,19 +32,20 @@
 
 (def-view-class setting (node)
   ((setting-id :accessor setting-id :initarg :setting-id
-               :type integer :db-kind :key :db-constraints (:not-null))
+               :type integer :db-kind :key :db-constraints (:not-null :auto-increment))
    (vars :accessor vars :initarg :vars :type (varchar 240)))
   (:normalizedp t))
 
 (def-view-class user (node)
   ((user-id :accessor user-id :initarg :user-id
-            :type integer :db-kind :key :db-constraints (:not-null))
+            :type integer :db-kind :key :db-constraints (:not-null :auto-increment))
    (nick :accessor nick :initarg :nick :type (varchar 64)))
+  (:base-table "nodeuser")
   (:normalizedp t))
 
 (def-view-class theme (setting)
   ((theme-id :accessor theme-id :initarg :theme-id
-             :type integer :db-kind :key :db-constraints (:not-null))
+             :type integer :db-kind :key :db-constraints (:not-null :auto-increment))
    (doc :accessor doc :initarg :doc :type (varchar 240)))
   (:normalizedp t))
 
@@ -56,7 +57,7 @@
 
 (def-view-class subloc (location)
   ((subloc-id :accessor subloc-id :initarg :subloc-id
-	      :type integer :db-kind :key :db-constraints (:not-null))
+	      :type integer :db-kind :key :db-constraints (:not-null :auto-increment))
    (loc :accessor loc :initarg :loc :type (varchar 64)))
   (:normalizedp t))
 
@@ -112,6 +113,12 @@
    (:setup initialize-ds-nodes)
    (:cleanup (lambda ()
 	       (mapc #'clsql-sys:drop-view-from-class
-		     '(node setting user theme location subloc)))))
+		     '(node setting user theme location subloc))
+	       (ignore-errors
+		 (clsql-sys:execute-command "DROP TABLE nodeuser")
+		 (mapc #'clsql-sys:drop-sequence
+		       '(node_node_id_seq setting_setting_id_seq subloc_subloc_id_seq
+			 theme_theme_id_seq nodeuser_user_id_seq)
+		       )))))
 
 #.(clsql:restore-sql-reader-syntax-state)
