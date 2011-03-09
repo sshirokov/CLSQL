@@ -428,3 +428,5 @@
 (defmethod db-type-has-prepared-stmt? ((db-type (eql :postgresql-socket)))
   t)
 
+(defmethod db-type-has-auto-increment? ((db-type (eql :postgresql)))
+  t)

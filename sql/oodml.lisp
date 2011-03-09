@@ -283,7 +283,7 @@
                    (setf pk (or pk
                                 (slot-value obj (slot-definition-name pk-slot))))))
                 (t
-                 (insert-records :into (sql-expression :table view-class-table)
+		 (insert-records :into (sql-expression :table view-class-table)
                                  :av-pairs record-values
                                  :database database)
 
@@ -292,19 +292,26 @@
 				     (not (null (view-class-slot-autoincrement-sequence pk-slot))))
 				 (setf (slot-value obj (slot-definition-name pk-slot))
 				       (database-last-auto-increment-id database
-								       table
+								       view-class-table
 								       pk-slot)))))
-		  (setf pk (or pk
-			       (slot-value
-				obj (slot-definition-name pk-slot)))))
-                 (when (eql this-class nil)
-                   (setf (slot-value obj 'view-database) database))))))
+		  (when pk-slot
+		    (setf pk (or pk
+				 (slot-value
+				  obj (slot-definition-name pk-slot)))))
+		  (when (eql this-class nil)
+		    (setf (slot-value obj 'view-database) database)))))))
     ;; handle slots with defaults
-    (dolist (slot slots)
-      (when (and (slot-exists-p slot 'db-constraints)
-		 (listp (view-class-slot-db-constraints slot))
-		 (member :default (view-class-slot-db-constraints slot)))
-	(update-slot-from-record obj (slot-definition-name slot))))
+    (let* ((view-class (or this-class (class-of obj)))
+	   (slots (if (normalizedp view-class)
+		     (ordered-class-direct-slots view-class)
+		     (ordered-class-slots view-class)))) 
+      (dolist (slot slots)
+	(when (and (slot-exists-p slot 'db-constraints)
+		   (listp (view-class-slot-db-constraints slot))
+		   (member :default (view-class-slot-db-constraints slot)))
+	  (unless (and (slot-boundp obj (slot-definition-name slot))
+		       (slot-value obj (slot-definition-name slot)))
+	    (update-slot-from-record obj (slot-definition-name slot))))))
 
     pk))
 
