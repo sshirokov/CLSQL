@@ -487,6 +487,12 @@
                         (%sequence-name-to-table sequence-name))
            database :auto nil))))
 
+(defmethod database-last-auto-increment-id ((database mysql-database) table column)
+  (declare (ignore table column))
+  (car (query "SELECT LAST_INSERT_ID();"
+             :flatp t :field-names nil
+             :database database)))
+
 (defmethod database-create (connection-spec (type (eql :mysql)))
   (destructuring-bind (host name user password) connection-spec
     (let ((database (database-connect (list host "" user password)

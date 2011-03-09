@@ -129,6 +129,7 @@
      #:database-list-sequences
      #:database-sequence-last
      #:database-sequence-exists-p
+     #:database-last-auto-increment-id
      #:database-list-attributes
      #:database-attribute-type
      #:database-type-library-loaded

@@ -167,6 +167,12 @@ if unable to destory."))
 (defgeneric database-sequence-last (name database)
   (:documentation "Select the last value in sequence NAME in DATABASE."))
 
+(defgeneric database-last-autoincrement-id (database table column)
+  (:documentation "Many databases have the notion of an auto-increment
+  id; i.e. a sequence implicitly on a table. This function should
+  return that ID." ))
+
+
 (defgeneric database-start-transaction (database)
   (:documentation "Start a transaction in DATABASE.")
   (:method ((database t))
