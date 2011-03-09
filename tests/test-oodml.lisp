@@ -554,6 +554,8 @@
 	       (let ((sl (car (clsql:select 'subloc
 					    :where [= 10 [slot-value 'subloc 'subloc-id]]
 					    :flatp t :caching nil))))
+		 (unless sl
+		   (error "Couldn't find expected sublocation"))
 		 (format nil "~a ~a ~a"
 			 (slot-value sl 'subloc-id)
 			 (slot-value sl 'title)
@@ -576,6 +578,8 @@
 	       (let ((sl (car (clsql:select 'subloc
 					    :where [= 10 [slot-value 'subloc 'subloc-id]]
 					    :flatp t :caching nil))))
+		 (unless sl
+		   (error "In psfl: found no sublocation with id = 10"))
 		 (format nil "~a ~a ~a"
 			 (slot-value sl 'subloc-id)
 			 (slot-value sl 'title)
@@ -585,6 +589,8 @@
 	  (let ((sl (car (clsql:select 'subloc
 				       :where [= 10 [slot-value 'subloc 'subloc-id]]
 				       :flatp t :caching nil))))
+	    (unless sl
+	      (error "Select for modification: Found no sublocation with id = 10"))
 	    (setf (slot-value sl 'title) "Altered subloc title")
 	    (setf (slot-value sl 'loc) "Altered loc")
 	    (clsql:update-record-from-slot sl 'title)
@@ -593,9 +599,11 @@
 	  (let ((sl (car (clsql:select 'subloc
 				       :where [= 10 [slot-value 'subloc 'subloc-id]]
 				       :flatp t :caching nil))))
+	    (unless sl
+	      (error "Select for next modification: Found no sublocation with id = 10"))
 	    (setf (slot-value sl 'title) "subloc-1")
 	    (setf (slot-value sl 'loc) "a subloc")
-	    (clsql:update-record-from-slot sl '(title loc))
+	    (clsql:update-record-from-slots sl '(title loc))
 	    (print-fresh-subloc)))))
   "10 subloc-1 a subloc"
   "10 Altered subloc title Altered loc"
