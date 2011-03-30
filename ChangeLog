@@ -1,4 +1,4 @@
-2011-03-30  Kevin Rosenberg <kevin@rosenberg.net>
+2011-03-29  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.3.0
 	* sql/metaclasses.lisp: Apply one-line patch to fix
 	for newer SBCL (thanks to Nikodemus Siivola)
