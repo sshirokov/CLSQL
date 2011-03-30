@@ -1,3 +1,7 @@
+2011-03-30  Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/metaclasses.lisp: Apply one-line patch to fix
+	for newer SBCL (thanks to Nikodemus Siivola)
+
 2010-10-24  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.2.0
 	* db-odbc/odbc-api.lisp: Change from SBCL-specific
