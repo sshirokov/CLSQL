@@ -1,6 +1,9 @@
 2011-03-30  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 5.3.0
 	* sql/metaclasses.lisp: Apply one-line patch to fix
 	for newer SBCL (thanks to Nikodemus Siivola)
+	* many_files: Applied multiple patches from Holger Schauer
+	to improve autoincrement capability.
 
 2010-10-24  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.2.0
