@@ -1,3 +1,8 @@
+2011-03-30  Kevin Rosenberg <kevin@rosenberg.net>
+	* Version 5.3.1
+	* sql/metaclasses.lisp: Fix previous patch to work
+	on non-SBCL systems
+
 2011-03-29  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.3.0
 	* sql/metaclasses.lisp: Apply one-line patch to fix

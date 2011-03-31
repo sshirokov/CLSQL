@@ -319,7 +319,7 @@ column definition in the database.")
     :accessor view-class-slot-autoincrement-sequence
     :initarg :autoincrement-sequence
     :initform nil
-    :documentation "A string naming the (possibly automatically generated) sequence 
+    :documentation "A string naming the (possibly automatically generated) sequence
 for a slot with an :auto-increment constraint.")))
 
 (defparameter *db-info-lambda-list*
@@ -536,7 +536,9 @@ implementations."
          ;; defclass expansion, which is too early for the CLSQL type
          ;; conversion to take place. This gets rid of it. It's ugly
          ;; but it's better than nothing -wcp10/4/10.
-         #+(and sbcl #.(cl:if (cl:find-symbol "%TYPE-CHECK-FUNCTION" :sb-pcl) '(and) '(or)))
+         #+(and sbcl #.(cl:if (cl:and (cl:find-package :sb-pcl)
+                                      (cl:find-symbol "%TYPE-CHECK-FUNCTION" :sb-pcl))
+                              '(list 'cl:and) '(list 'cl:or)))
          (setf (slot-value esd 'sb-pcl::%type-check-function) nil)
 
          )
