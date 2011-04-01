@@ -1,3 +1,7 @@
+2011-04-01  Kevin Rosenberg <kevin@rosenberg.net>
+	* db-mysql/mysql-client-info.lisp: Add recognition of
+	version 6 of MySQL client library.
+
 2011-03-30  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.3.1
 	* sql/metaclasses.lisp: Fix previous patch to work

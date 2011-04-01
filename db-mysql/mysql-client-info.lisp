@@ -44,6 +44,8 @@
        (when (and (>= (length *mysql-client-info*) 3)
                   (string-equal "5.1" *mysql-client-info* :end2 3))
          (pushnew :mysql-client-v5.1 cl:*features*)))
+      ((eql (schar *mysql-client-info* 0) #\6)
+       (pushnew :mysql-client-v6 cl:*features*))
       (t
        (error "Unknown mysql client version '~A'." *mysql-client-info*)))))
 
