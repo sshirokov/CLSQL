@@ -538,7 +538,7 @@ implementations."
          ;; but it's better than nothing -wcp10/4/10.
          #+(and sbcl #.(cl:if (cl:and (cl:find-package :sb-pcl)
                                       (cl:find-symbol "%TYPE-CHECK-FUNCTION" :sb-pcl))
-                              '(list 'cl:and) '(list 'cl:or)))
+                              '(cl:and) '(cl:or)))
          (setf (slot-value esd 'sb-pcl::%type-check-function) nil)
 
          )
