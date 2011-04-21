@@ -142,6 +142,9 @@ DATABASE-NULL-VALUE on the type of the slot."))
 (defgeneric database-make-autoincrement-sequence (class slotdef database)
   )
 
+(defgeneric database-last-auto-increment-id (database table column)
+  )
+
 ;; Generation of SQL strings from lisp expressions
 
 (defgeneric output-sql (expr database)

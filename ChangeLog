@@ -1,8 +1,12 @@
+2011-04-21  Kevin Rosenberg <kevin@rosenberg.net>
+	* sql/generics.lisp: Add defgeneric for new
+	database-last-auto-increment-id
+
 2011-04-01  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.3.2
 	* db-mysql/mysql-client-info.lisp: Add recognition of
 	version 6 of MySQL client library.
-	* sql/metaclass.lisp: Fix the fix in the reader condition
+	* sql/metaclass.lisp: Fix the fix in the reader conditional
 
 2011-03-30  Kevin Rosenberg <kevin@rosenberg.net>
 	* Version 5.3.1
