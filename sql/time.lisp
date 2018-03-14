@@ -1,7 +1,7 @@
 ;;;; -*- Mode: LISP; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 ;;;; *************************************************************************
 ;;;;
-;;;; A variety of structures and function for creating and
+;;;; A variety of structures and functions for creating and
 ;;;; manipulating dates, times, durations and intervals for
 ;;;; CLSQL.
 ;;;;
